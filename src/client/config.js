@@ -35,9 +35,8 @@
 
 module.exports = {
   auth: {
-    login: {
-      username: '',
-      password: ''
+    ui: {
+      title: 'Welcome to OX ZION'
     }
   }
 };
