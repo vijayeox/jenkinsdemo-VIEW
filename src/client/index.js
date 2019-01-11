@@ -57,12 +57,14 @@ import {
 import {
   DialogServiceProvider
 } from '@osjs/dialogs';
+import localConfig from './local.js';
 import * as config from './config.js';
 import loginAdapter from './auth/AuthAdapter.js';
 
-
 const init = () => {
-  const osjs = new Core(config, {});
+  let mergedConfig = Object.assign({}, config, localConfig);
+  console.log(mergedConfig);
+  const osjs = new Core(mergedConfig, {});
 
   // Register your service providers
   osjs.register(CoreServiceProvider);
