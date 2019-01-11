@@ -6,3 +6,4 @@ node_modules
 /.env*
 /session-store.db
 local.js
+dist
