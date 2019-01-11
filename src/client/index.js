@@ -46,11 +46,17 @@ import {
   NotificationServiceProvider,
   SettingsServiceProvider,
   AuthServiceProvider
-} from '@osjs/client';
+} from '../osjs-client/index.js';
 
-import {PanelServiceProvider} from '@osjs/panels';
-import {GUIServiceProvider} from '@osjs/gui';
-import {DialogServiceProvider} from '@osjs/dialogs';
+import {
+  PanelServiceProvider
+} from '@osjs/panels';
+import {
+  GUIServiceProvider
+} from '@osjs/gui';
+import {
+  DialogServiceProvider
+} from '@osjs/dialogs';
 import * as config from './config.js';
 import loginAdapter from './auth/AuthAdapter.js';
 
@@ -63,10 +69,12 @@ const init = () => {
   osjs.register(DesktopServiceProvider);
   osjs.register(VFSServiceProvider);
   osjs.register(NotificationServiceProvider);
-  osjs.register(SettingsServiceProvider, {before: true});
+  osjs.register(SettingsServiceProvider, {
+    before: true
+  });
   osjs.register(AuthServiceProvider, {
     before: true,
-    args:{
+    args: {
       adapter: loginAdapter
     }
   });
