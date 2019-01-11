@@ -4,7 +4,9 @@ const minimize = mode === 'production';
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {DefinePlugin} = webpack;
+const {
+  DefinePlugin
+} = webpack;
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const npm = require('./package.json');
 const plugins = [];
@@ -48,20 +50,22 @@ module.exports = {
       favicon: path.resolve(__dirname, 'src/client/favicon.png'),
       title: 'OS.js'
     }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jquery: "jQuery",
+      "window.jQuery": "jquery"
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
     }),
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [
-          {
-            loader: 'file-loader'
-          }
-        ]
+        use: [{
+          loader: 'file-loader'
+        }]
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
