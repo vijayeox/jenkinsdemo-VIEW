@@ -15,10 +15,11 @@ const loginAdapter = (core, config) => ({
 
 
     var request = new XMLHttpRequest();
-    console.log("login call")
-    
+    let url = core.config('auth.url');
+    console.log("login call - " + url);
+
     // call to login API
-    request.open('POST', 'http://jenkins.oxzion.com:8080/auth', false);
+    request.open('POST', url, false);
     request.send(reqData);
     if (request.status === 200) {
       const resp = JSON.parse(request.responseText);
@@ -30,7 +31,7 @@ const loginAdapter = (core, config) => ({
         token: resp.data.jwt
       });
     }
-   
+
   },
 
   logout: (req, res) => {
