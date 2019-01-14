@@ -45,7 +45,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
-      favicon: path.resolve(__dirname, 'src/client/favicon.png'),
+      favicon: path.resolve(__dirname, 'src/client/OXZion.png'),
       title: 'OS.js'
     }),
     new MiniCssExtractPlugin({
@@ -91,20 +91,6 @@ module.exports = {
             }
           }
         ]
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
-      },
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        use: {
-          loader: 'source-map-loader'
-        }
       }
     ]
   }

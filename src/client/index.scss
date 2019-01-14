@@ -45,3 +45,46 @@ html {
   width: 100%;
   height: 100%;
 }
+
+#login-container {
+	
+	position:fixed;
+    padding:0;
+    margin:0;
+
+    top:0;
+    left:0;
+
+    width: 100%;
+    height: 100%;
+}
+
+#ox-container {
+	height: 100%;
+
+}
+
+#ox-login-form {
+	height:auto;
+	
+}
+
+.row {
+	margin-bottom: 0;
+}
+
+.ox-form {
+	padding: 50px;
+	margin: 0;
+}
+
+.ox-content {
+	width: 100%;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+}

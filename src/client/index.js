@@ -48,18 +48,12 @@ import {
   AuthServiceProvider
 } from '../osjs-client/index.js';
 
-import {
-  PanelServiceProvider
-} from '@osjs/panels';
-import {
-  GUIServiceProvider
-} from '@osjs/gui';
-import {
-  DialogServiceProvider
-} from '@osjs/dialogs';
+import {PanelServiceProvider} from '@osjs/panels';
+import {GUIServiceProvider} from '@osjs/gui';
+import {DialogServiceProvider} from '@osjs/dialogs';
 import * as config from './config.js';
 import loginAdapter from './auth/AuthAdapter.js';
-
+import oxLogin from './newLogin.js'
 
 const init = () => {
   const osjs = new Core(config, {});
@@ -69,14 +63,14 @@ const init = () => {
   osjs.register(DesktopServiceProvider);
   osjs.register(VFSServiceProvider);
   osjs.register(NotificationServiceProvider);
-  osjs.register(SettingsServiceProvider, {
-    before: true
-  });
+  osjs.register(SettingsServiceProvider, {before: true});
   osjs.register(AuthServiceProvider, {
     before: true,
-    args: {
-      adapter: loginAdapter
-    }
+    args: 
+      { 
+        adapter:  loginAdapter,
+        login: (core,options) => new oxLogin(core,options)
+      }
   });
   osjs.register(PanelServiceProvider);
   osjs.register(DialogServiceProvider);
