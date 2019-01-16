@@ -80,6 +80,26 @@ html {
 
 .ox-content {
 	width: 100%;
+    padding: -5 px;
+}
+
+.form-filler {
+    width: 100;
+    height:120px;
+}
+
+.footer-CR {
+    color: white;
+}
+
+.footer-links {
+    float:right;
+
+}
+
+.footer-links > a {
+    padding: 5px;
+    color: white;
 }
 
 #footer {

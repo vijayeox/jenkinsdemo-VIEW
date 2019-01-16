@@ -38,21 +38,24 @@ export default class oxLogin extends Login {
     const view = (state,actions) => 
     h("main",{id: 'login-container ', className: 'row  deep-purple lighten-3 '},[
       
-      h('div',{id:'ox-content', className: 'col s8  deep-purple lighten-3 ' },[
-        h('img',{src:require('../../dist/OXZion.png')}),
+      h('div',{id:'ox-content', className: 'col s8  deep-purple lighten-3 ' ,style: 'padding: 0px;'},[
         h("br"),
         h('div',{id:'content-container'}),
         h("br"),
         h('div',{id:'footer',className:'ox-content-footer purple darken-4 footer'},[
-          h('a',{href:'#'},'Link-1'),
-          h('a',{href:'#'},'Link-2'),
-          h('a',{href:'#'},'Link-3')
+          h('span',{className:'footer-CR'},'Copyright © 2004-2019 Vantage Agora. All rights reserved.'),
+          h('span',{className:'footer-links'},[
+            h('a',{  href:'#'},'Terms and Conditions'),
+            h('a',{href:'#'},'Privacy'),
+            h('a',{href:'#'},'About Us'),
+            h('a',{href:'#'},'FAQ')
+          ])
         ])
       ]), // left panel content
       
       h('div',{id: 'ox-login-form', className: 'col s4 grey lighten-5 right-align'},[
         h("form",{action:"#",method: "post",onsubmit: actions.submit, className:'ox-form '},[
-          h('h3',{id:' ox-login-title'},'Login to OX Zion'),
+          h('img',{id:'ox-logo',src:require('../../dist/OXZion.png')}),
           h("br"),
           h('div',{className: 'input-field'},[
             h("input",{type: "text",name:"username",className:'validate',id:'username'}),
@@ -68,7 +71,8 @@ export default class oxLogin extends Login {
           h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
           h("br"),
           h('a',{href: '#'},'Forgot your password?')
-        ])        
+        ]),
+        h('div',{id:'filler',className:'form-filler grey lighten-5'})
       ])
 
     ])
