@@ -6,29 +6,34 @@ For more information about authentication adapters, visit:
 */
 const loginAdapter = (core, config) => ({
   login: (req, res) => {
-    
+
     const username = req.username;
-    
+
     var reqData = new FormData();
-    reqData.append("username",req.username);
-    reqData.append("password",req.password);
-    
+    reqData.append("username", req.username);
+    reqData.append("password", req.password);
+
 
     var request = new XMLHttpRequest();
     console.log("login call")
-   
+
     // call to login API
-    request.open('POST','http://jenkins.oxzion.com:8080/auth',false);
+    request.open('POST', 'http://jenkins.oxzion.com:8080/auth', false);
     request.send(reqData);
     if (request.status === 200) {
-  		console.log(request.responseText);
+      console.log(request.responseText);
       const resp = JSON.parse(request.responseText);
       console.log(resp["status"])
-      if(resp["status"]=="success")
-    	 { return Promise.resolve({id: 666, username, groups: ['admin']}); }
-      else
-        { alert('incorrect username or password'); }
-	 }
+      if (resp["status"] == "success") {
+        return Promise.resolve({
+          id: 666,
+          username,
+          groups: ['admin']
+        });
+      } else {
+        return Promise.reject(new Error(resp.message))
+      }
+    }
 
     /*
 		var data = new FormData();
