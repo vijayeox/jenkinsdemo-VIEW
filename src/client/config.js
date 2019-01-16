@@ -36,7 +36,11 @@
 module.exports = {
   auth: {
     ui: {
-      title: 'Welcome to OX ZION'
+      title: 'Welcome to OX ZION',
+      logo: {
+      	position: 'top',
+      	src: require('./OXZion.png')
+      }
     }
   }
 };
