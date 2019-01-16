@@ -11,10 +11,7 @@ export default class oxLogin extends Login {
 
 
     const login = this.core.config('auth.login', {});
-    console.log(login);
-
-
-
+    
     const actions = {
       setLoading: loading => state => ({loading}),
       setError: error => state => ({error, hidden: false}),
@@ -28,8 +25,6 @@ export default class oxLogin extends Login {
         const values = Array.from(ev.target.elements)
           .filter(el => el.type !== 'submit')
           .reduce((o, el) => Object.assign(o, {[el.name] : el.value}), {});
-        console.log(ev);
-        console.log(values);
         this.emit('login:post', values);
       }
     }	
@@ -77,26 +72,11 @@ export default class oxLogin extends Login {
 
     ])
 
-    // basic form
-    /*h("form",{action:"#",method: "post",onsubmit: actions.submit},[
-        h("input",{type: "text",name:"username"}),
-        h("input",{type:"password",name: "password"}),
-        h("input",{type:"submit",value:"login",})
-      ])
-    */    
-
     const a = app(Object.assign({hidden: startHidden},login),actions,view,document.body);
 
     // Bind the events
      this.on('login:start', () => a.setLoading(true));
     this.on('login:stop', () => a.setLoading(false));
     this.on('login:error', err => a.setError(err));
-    // To submit a login form (ex when you press a button):
-    /*
-    this.emit('login:post', {
-      username: 'foo',
-      password: 'bar'
-    });
-    */
-  }
+   }
 }
