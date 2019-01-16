@@ -17,6 +17,9 @@ docker run -p 8000:8000 osjs/osjs:v3
 # Install dependencies
 npm install
 
+cd src/osjs-client
+npm install
+
 # It's recommended that you keep your dependencies (including OS.js) up-to-date
 npm update
 
