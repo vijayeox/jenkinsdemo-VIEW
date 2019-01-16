@@ -36,10 +36,11 @@
 module.exports = {
   auth: {
     ui: {
+      url: "http://localhost/auth",
       title: 'Welcome to OX ZION',
       logo: {
-      	position: 'top',
-      	src: require('./OXZion.png')
+        position: 'top',
+        src: require('./OXZion.png')
       }
     }
   }
