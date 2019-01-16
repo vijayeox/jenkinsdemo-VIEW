@@ -28,7 +28,9 @@
  * @licence Simplified BSD License
  */
 
-import {ServiceProvider} from '@osjs/common';
+import {
+  ServiceProvider
+} from '@osjs/common';
 import Login from '../login';
 
 const serverAuth = (core, options) => {
@@ -39,7 +41,7 @@ const serverAuth = (core, options) => {
 
   return {
     login: (values) => request(core.url('/login'), values),
-    logout: () =>  request(core.url('/logout'))
+    logout: () => request(core.url('/logout'))
   };
 };
 
@@ -72,15 +74,15 @@ export default class AuthServiceProvider extends ServiceProvider {
 
     const defaultUi = core.config('auth.ui', {});
 
-    const adapter = core.config('standalone')
-      ? localStorageAuth
-      : typeof args.adapter === 'function'
-        ? args.adapter
-        : defaultAdapters[args.adapter || 'server'];
+    const adapter = core.config('standalone') ?
+      localStorageAuth :
+      typeof args.adapter === 'function' ?
+      args.adapter :
+      defaultAdapters[args.adapter || 'server'];
 
-    this.ui = args.login
-      ? args.login(core, args.config || {})
-      : new Login(core, args.ui || defaultUi);
+    this.ui = args.login ?
+      args.login(core, args.config || {}) :
+      new Login(core, args.ui || defaultUi);
 
     this.adapter = Object.assign({
       login: () => Promise.reject(new Error('Not implemented')),
@@ -89,7 +91,7 @@ export default class AuthServiceProvider extends ServiceProvider {
       destroy: () => {}
     }, adapter(core, args.config || {}));
 
-    this.callback = function() {};
+    this.callback = function () {};
   }
 
   /**
@@ -162,7 +164,7 @@ export default class AuthServiceProvider extends ServiceProvider {
         console.warn(e);
       }
 
-      this.ui.emit('login:error', 'Login failed');
+      this.ui.emit('login:error', e.message);
 
       return false;
     } finally {
