@@ -48,17 +48,25 @@ import {
   AuthServiceProvider
 } from '../osjs-client/index.js';
 
+
 import {PanelServiceProvider} from '@osjs/panels';
 import {GUIServiceProvider} from '@osjs/gui';
 import {DialogServiceProvider} from '@osjs/dialogs';
+import {WidgetServiceProvider} from '@osjs/widgets';
 import * as config from './config.js';
 import loginAdapter from './auth/AuthAdapter.js';
-import oxLogin from './newLogin.js'
+import oxLogin from './oxLogin.js';
+import '../../node_modules/materialize-css/dist/css/materialize.min.css';
+import '../../node_modules/materialize-css/dist/js/materialize.min.js';
+
+/*import announcementWidget from './customWidget.js';
+import customPanelItem from './customPanel.js'*/
+
 
 const init = () => {
   const osjs = new Core(config, {});
 
-  // Register your service providers
+  // Register your service providers  
   osjs.register(CoreServiceProvider);
   osjs.register(DesktopServiceProvider);
   osjs.register(VFSServiceProvider);
@@ -72,9 +80,23 @@ const init = () => {
         login: (core,options) => new oxLogin(core,options)
       }
   });
+  /*osjs.register(PanelServiceProvider,{
+    args: {
+    registry: {
+      'my-panel-item': customPanelItem
+    }
+  }
+  });*/
   osjs.register(PanelServiceProvider);
   osjs.register(DialogServiceProvider);
   osjs.register(GUIServiceProvider);
+  /*osjs.register(WidgetServiceProvider,{
+     args: {
+    registry: {
+      'my-widget': announcementWidget
+    }
+  }
+  });*/
 
   osjs.boot();
 };

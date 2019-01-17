@@ -65,7 +65,9 @@
     "@osjs/server": "^3.0.18",
     "@osjs/settings-application": "^1.1.1",
     "@osjs/standard-theme": "^4.0.3",
-    "@osjs/textpad-application": "^1.2.4"
+    "@osjs/textpad-application": "^1.2.4",
+    "@osjs/widgets": "^3.0.1",
+    "materialize-css": "^1.0.0"
   },
   "repository": {
     "type": "git",
