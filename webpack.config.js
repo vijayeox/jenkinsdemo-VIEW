@@ -26,7 +26,7 @@ module.exports = {
   entry: {
     osjs: [
       path.resolve(__dirname, 'src/client/index.js'),
-      path.resolve(__dirname, 'src/client/index.scss')
+      path.resolve(__dirname, 'src/client/assets/scss/index.scss')
     ]
   },
   performance: {
@@ -45,8 +45,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
-      favicon: path.resolve(__dirname, 'src/client/OXZion.png'),
-      title: 'OS.js'
+      favicon: path.resolve(__dirname, 'src/client/favicon.ico'),
+      title: 'OX Zion'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css'

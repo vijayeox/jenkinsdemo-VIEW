@@ -40,7 +40,7 @@ module.exports = {
       title: 'Welcome to OX ZION',
       logo: {
         position: 'top',
-        src: require('./OXZion.png')
+        src: require('./assets/images/OXZion.png')
       }
     }
   }
