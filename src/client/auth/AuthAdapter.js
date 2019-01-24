@@ -4,10 +4,16 @@ For more information about authentication adapters, visit:
 - https://manual.os-js.org/v3/guide/auth/
 - https://manual.os-js.org/v3/development/
 */
+
+import LocalStorageAdapter from '../localStorageAdapter.js';
+
+
 const loginAdapter = (core, config) => ({
   login: (req, res) => {
 
     const username = req.username;
+    var lsHelper = new LocalStorageAdapter;
+
 
     var reqData = new FormData();
     reqData.append("username", req.username);
@@ -15,41 +21,32 @@ const loginAdapter = (core, config) => ({
 
 
     var request = new XMLHttpRequest();
-    console.log("login call")
-
+    
     // call to login API
     request.open('POST', 'http://jenkins.oxzion.com:8080/auth', false);
     request.send(reqData);
     if (request.status === 200) {
-      console.log(request.responseText);
       const resp = JSON.parse(request.responseText);
-      console.log(resp["status"])
+      
       if (resp["status"] == "success") {
-        return Promise.resolve({
-          id: 666,
-          username,
-          groups: ['admin']
-        });
+        if(lsHelper.supported() || lsHelper.cookieEnabled()){
+          lsHelper.set('JWT',resp["data"]["jwt"]);
+
+          console.log(lsHelper.get('JWT'));
+          console.log(lsHelper.get('JT'));
+          return Promise.resolve({jwt:resp["data"]["jwt"]}); 
+        }
+        else if() {
+          console.log('login failed.');
+          return Promise.reject(new Error(resp.message));
+        }
+        
       } else {
-        return Promise.reject(new Error(resp.message))
+        return Promise.reject(new Error(resp.message));
       }
     }
 
-    /*
-		var data = new FormData();
-    data.append('username',req.username);
-    data.append('password',req.password);
-    const resp = fetch('http://jenkins.oxzion.com:8080/auth',{
-    	method: 'POST',
-    	body: data
-    });
-	const respData = await resp.json()
-    console.log(respData);
-
-    return Promise.resolve({id: 666, username, groups: ['admin']});
-      if (req.username === 'test' && req.password === 'demo') {
-      return Promise.resolve({id: 666, username, groups: ['admin']});
-    }*/
+    
   },
 
   logout: (req, res) => {

@@ -1,4 +1,4 @@
-/*
+  /*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -34,7 +34,7 @@ import Splash from './splash';
 import {CoreBase} from '@osjs/common';
 import {defaultConfiguration} from './config';
 import {fetch} from './utils/fetch';
-
+import LocalStorageAdapter from '../../client/localStorageAdapter.js';
 /**
  * Core
  *
@@ -155,7 +155,28 @@ export default class Core extends CoreBase {
       .then(() => {
         this.emit('osjs/core:booted');
 
-        if (this.has('osjs/auth')) {
+
+        // auto login check
+        var lsHelper = new LocalStorageAdapter;
+
+        // to check if local storage present in browser
+        //lsHelper.supported();
+
+        const autoLogin = lsHelper.get('OX_JWT');
+        //console.log(autoLogin);
+        if(autoLogin) {
+          console.log('auto login called.')
+          this.emit('osjs/core:logged-in');
+          
+          if (this.has('osjs/settings')) {
+              this.make('osjs/settings').load()
+                .then(() => done())
+                .catch(() => done());
+            } else {
+            done();
+          }
+        }
+        else if (this.has('osjs/auth')) {
           return this.make('osjs/auth').show(user => {
             this.user = user;
 
