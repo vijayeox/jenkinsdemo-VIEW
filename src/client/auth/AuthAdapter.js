@@ -16,7 +16,7 @@ const loginAdapter = (core, config) => ({
 
 
     var reqData = new FormData();
-    reqData.append("username", req.username);
+    reqData.append("username", username);
     reqData.append("password", req.password);
 
 
@@ -32,7 +32,7 @@ const loginAdapter = (core, config) => ({
         if(lsHelper.supported() || lsHelper.cookieEnabled()){
           lsHelper.set('OX_JWT',resp["data"]["jwt"]);
 
-          return Promise.resolve({jwt:resp["data"]["jwt"]}); 
+          return Promise.resolve({jwt:resp["data"]["jwt"], username : username}); 
         }
         else {
           console.log('login failed.');
