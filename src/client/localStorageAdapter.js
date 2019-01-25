@@ -61,7 +61,6 @@ export default class LocalStorageAdapter {
 						try {
 							var obj = { key:data,timestamp: new Date().getTime()}
 							window.localStorage.setItem(key,JSON.stringify(obj));
-	
 							console.log('local storage set');
 							return true;
 						}
