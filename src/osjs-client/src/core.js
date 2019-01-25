@@ -163,7 +163,7 @@ export default class Core extends CoreBase {
         //lsHelper.supported();
 
         const autoLogin = lsHelper.get('OX_JWT');
-        //console.log(autoLogin);
+        console.log(autoLogin);
         if(autoLogin) {
           console.log('auto login called.')
           this.emit('osjs/core:logged-in');

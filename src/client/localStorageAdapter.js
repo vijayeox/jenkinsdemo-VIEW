@@ -59,7 +59,8 @@ export default class LocalStorageAdapter {
 					const value = window.localStorage.getItem(key) || null;
 					if(value === null) {
 						try {
-							window.localStorage.setItem(key,data);
+							var obj = { key:data,timestamp: new Date().getTime()}
+							window.localStorage.setItem(key,JSON.stringify(obj));
 							console.log('local storage set');
 							return true;
 						}
@@ -74,7 +75,9 @@ export default class LocalStorageAdapter {
 		else if(this.useCookies) {
 			console.log('cookie used');
 			var cookies = document.cookie;
-			var token =  key + ':' + data + ';';
+			var now = new Date();
+			now.setTime(now.getTime() + 3 * 3600 * 1000);
+			var token =  key + ':' + data + 'expires='+ now.toUTCString() + ';';
 			cookies += token;
 			document.cookie = cookies;
 			return true;
@@ -88,7 +91,7 @@ export default class LocalStorageAdapter {
 			try {
 					if(key != null) {
 						const data = window.localStorage.getItem(key);
-						return data;
+						return JSON.parse(data);
 					}
 					else
 						return null;

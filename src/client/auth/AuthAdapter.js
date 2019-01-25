@@ -32,11 +32,9 @@ const loginAdapter = (core, config) => ({
         if(lsHelper.supported() || lsHelper.cookieEnabled()){
           lsHelper.set('JWT',resp["data"]["jwt"]);
 
-          console.log(lsHelper.get('JWT'));
-          console.log(lsHelper.get('JT'));
           return Promise.resolve({jwt:resp["data"]["jwt"]}); 
         }
-        else if() {
+        else {
           console.log('login failed.');
           return Promise.reject(new Error(resp.message));
         }
