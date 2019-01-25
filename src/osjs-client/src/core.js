@@ -160,7 +160,7 @@ export default class Core extends CoreBase {
         var lsHelper = new LocalStorageAdapter;
 
         // to check if local storage present in browser
-        //lsHelper.supported();
+        lsHelper.supported();
 
         const autoLogin = lsHelper.get('OX_JWT');
         //console.log(autoLogin);
