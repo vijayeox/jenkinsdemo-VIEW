@@ -5,7 +5,7 @@ For more information about authentication adapters, visit:
 - https://manual.os-js.org/v3/development/
 */
 
-import LocalStorageAdapter from '../localStorageAdapter.js';
+import LocalStorageAdapter from './localStorageAdapter.js';
 
 
 const loginAdapter = (core, config) => ({
@@ -48,7 +48,11 @@ const loginAdapter = (core, config) => ({
   },
 
   logout: (req, res) => {
-    return Promise.resolve(true);
+    var lsHelper = new LocalStorageAdapter;
+    if(lsHelper.supported() || lsHelper.cookieEnabled()){
+      lsHelper.set('OX_JWT','');
+      return Promise.resolve(true); 
+    }
   }
 });
 

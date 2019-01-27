@@ -35,7 +35,7 @@ import {CoreBase} from '@osjs/common';
 import {defaultConfiguration} from './config';
 import {fetch} from './utils/fetch';
 import merge from 'deepmerge';
-import LocalStorageAdapter from '../../client/localStorageAdapter.js';
+import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 /**
  * Core
  *
@@ -137,7 +137,6 @@ export default class Core extends CoreBase {
 
         // to check if local storage present in browser
         lsHelper.supported();
-
         const autoLogin = lsHelper.get('OX_JWT');
         if(autoLogin) {
           this.emit('osjs/core:logged-in');

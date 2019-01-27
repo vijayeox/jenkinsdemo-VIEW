@@ -1,5 +1,8 @@
-import {Login} from '../osjs-client/index.js';
+import {Login} from '../../osjs-client/index.js';
 import {h, app} from 'hyperapp';
+import '../../../node_modules/materialize-css/dist/css/materialize.min.css';
+import '../../../node_modules/materialize-css/dist/js/materialize.min.js';
+import '../assets/scss/login.scss';
 
 export default class oxLogin extends Login {
   render(startHidden) {
@@ -51,7 +54,7 @@ export default class oxLogin extends Login {
       h('div',{id: 'ox-login-form', className: 'col s4 grey lighten-5 right-align'},[
 
       h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
-          h('img',{id:'ox-logo', className: 'ox-img',src:require('./assets/images/OXZion.png')}),
+          h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
           ]),
       h('div',{ className: ' grey lighten-5 right-align'},[
         h("form",{action:"#",method: "post",onsubmit: actions.submit, className:'ox-form '},[
