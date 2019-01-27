@@ -1,5 +1,32 @@
 # Changelog for osjs-client
 
+## 3.0.41
+
+* Updated @osjs/event-emitter
+
+## 3.0.40
+
+* HOTFIX: Added missing core class property
+
+## 3.0.39
+
+* Added support for setting 'fetch' options internally
+
+## 3.0.38
+
+* Updated websocket connection handling
+* Correctly detect attributes in maximize/minimize (#54)
+
+## 3.0.37
+
+* Fixed desktop panel space calculations (#48)
+* Added codeclimate badge to README
+* Better handling of singleton app launch queue
+* Cleanups
+* Added codeclimate config
+* Updated some console warning/error messages
+* Updated locale esdoc
+
 ## 3.0.36
 
 * Added Chinese (zh_CN) translations (#44)

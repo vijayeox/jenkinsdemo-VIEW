@@ -45,9 +45,9 @@ export const de_DE = {
   ERR_WINDOW_ID_EXISTS: 'Fenster mit der ID \'{0}\' existiert schon',
   ERR_INVALID_LOCALE: 'Invalid locale \'{0}\'',
   LBL_CONNECTION_LOST: 'Verbindung unterbrochen',
-  LBL_CONNECTION_LOST_MESSAGE: 'Die Verbindung zu OX Zion wurde unterbrochen. Wiederverbinden... ',
+  LBL_CONNECTION_LOST_MESSAGE: 'Die Verbindung zu OS.js wurde unterbrochen. Wiederverbinden... ',
   LBL_CONNECTION_RESTORED: 'Verbindung wiederhergestellt',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'Die Verbindung OX Zion server was restored.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'Die Verbindung OS.js server was restored.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'IT-Entwicklung',

@@ -45,11 +45,11 @@ export const vi_VN = {
   ERR_WINDOW_ID_EXISTS: 'Cửa sổ với ID \'{0}\' đã tồn tại',
   ERR_INVALID_LOCALE: 'Ngôn ngữ không hợp lệ \'{0}\'',
   LBL_CONNECTION_LOST: 'Mất kết nối',
-  LBL_CONNECTION_LOST_MESSAGE: 'Kết nối với OX Zion đã bị mất. Đang kết nối lại....',
+  LBL_CONNECTION_LOST_MESSAGE: 'Kết nối với OS.js đã bị mất. Đang kết nối lại....',
   LBL_CONNECTION_RESTORED: 'Đã khôi phục kết nối',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'Kết nối với máy chủ OX Zion đã được khôi phục.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'Kết nối với máy chủ OS.js đã được khôi phục.',
   LBL_CONNECTION_FAILED: 'Kết nối thất bại',
-  LBL_CONNECTION_FAILED_MESSAGE: 'Không thể kết nối đến máy chủ OX Zion. Một số tính năng có thể không hoạt động ổn định.',
+  LBL_CONNECTION_FAILED_MESSAGE: 'Không thể kết nối đến máy chủ OS.js. Một số tính năng có thể không hoạt động ổn định.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'Phát triển',

@@ -45,9 +45,9 @@ export const fr_FR = {
   ERR_WINDOW_ID_EXISTS: 'La fénêtre avec l\'identifiant \'{0}\' existe déjà',
   ERR_INVALID_LOCALE: 'Paramètre de langue invalide \'{0}\'',
   LBL_CONNECTION_LOST: 'Connexion perdue',
-  LBL_CONNECTION_LOST_MESSAGE: 'La connexion à OX Zion a été perdue. Reconnexion...',
+  LBL_CONNECTION_LOST_MESSAGE: 'La connexion à OS.js a été perdue. Reconnexion...',
   LBL_CONNECTION_RESTORED: 'Connexion Restaurée',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'La connexion à OX Zion a été restaurée.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'La connexion à OS.js a été restaurée.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'Développement',

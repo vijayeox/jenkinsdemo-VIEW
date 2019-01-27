@@ -30,7 +30,6 @@
 import {EventEmitter} from '@osjs/event-emitter';
 import Websocket from './websocket';
 import Window from './window';
-import {fetch} from './utils/fetch';
 
 const applications = [];
 let applicationCount = 0;
@@ -123,6 +122,12 @@ export default class Application extends EventEmitter {
     this.workers = [];
 
     /**
+     * Options for internal fetch/requests
+     * @type {Object}
+     */
+    this.requestOptions = {};
+
+    /**
      * The application destruction state
      * @type {Boolean}
      */
@@ -169,7 +174,7 @@ export default class Application extends EventEmitter {
       try {
         list.forEach(fn);
       } catch (e) {
-        console.warn(e);
+        console.warn('Exception on application destruction', e);
       }
 
       return [];
@@ -227,7 +232,7 @@ export default class Application extends EventEmitter {
   request(path = '/', options = {}, type = 'json') {
     const uri = this.resource(path);
 
-    return fetch(uri, options, type);
+    return this.core.request(uri, options, type);
   }
 
   /**
@@ -415,7 +420,7 @@ export default class Application extends EventEmitter {
       try {
         proc.destroy(false);
       } catch (e) {
-        console.warn(e);
+        console.warn('Exception on destroyAll', e);
       }
     });
 

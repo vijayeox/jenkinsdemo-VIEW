@@ -45,11 +45,11 @@ export const nb_NO = {
   ERR_WINDOW_ID_EXISTS: 'Vindu med ID \'{0}\' eksisterer allerede',
   ERR_INVALID_LOCALE: 'Ugyldig lokalisering \'{0}\'',
   LBL_CONNECTION_LOST: 'Tilkobling tapt',
-  LBL_CONNECTION_LOST_MESSAGE: 'Tilkobling til OX Zion var tapt. Kobler til på nytt....',
+  LBL_CONNECTION_LOST_MESSAGE: 'Tilkobling til OS.js var tapt. Kobler til på nytt....',
   LBL_CONNECTION_RESTORED: 'Tilkobling gjenopprettet',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'Tilkobling til OX Zion var gjenopprettet.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'Tilkobling til OS.js var gjenopprettet.',
   LBL_CONNECTION_FAILED: 'Tilkobling feilet',
-  LBL_CONNECTION_FAILED_MESSAGE: 'Tilkobling til OX Zion var ikke vellykket. Noen egenskaper er utilgjenglig.',
+  LBL_CONNECTION_FAILED_MESSAGE: 'Tilkobling til OS.js var ikke vellykket. Noen egenskaper er utilgjenglig.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'Utvikling',

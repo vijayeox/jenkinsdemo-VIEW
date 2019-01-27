@@ -1,4 +1,4 @@
-  /*
+/*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -34,6 +34,7 @@ import Splash from './splash';
 import {CoreBase} from '@osjs/common';
 import {defaultConfiguration} from './config';
 import {fetch} from './utils/fetch';
+import merge from 'deepmerge';
 import LocalStorageAdapter from '../../client/localStorageAdapter.js';
 /**
  * Core
@@ -60,12 +61,11 @@ export default class Core extends CoreBase {
 
     this.user = null;
     this.ws = null;
-    this.connected = false;
-    this.reconnecting = false;
     this.ping = null;
     this.splash = new Splash(this);
     this.$root = options.root;
     this.$resourceRoot = options.resourceRoot || document.querySelector('head');
+    this.requestOptions = {};
 
     this.options.classNames.forEach(n => this.$root.classList.add(n));
 
@@ -97,9 +97,7 @@ export default class Core extends CoreBase {
 
     this.user = null;
     this.ws = null;
-    this.connected = false;
     this.connecting = false;
-    this.reconnecting = false;
     this.connectfailed = false;
     this.ping = null;
 
@@ -112,7 +110,7 @@ export default class Core extends CoreBase {
   boot() {
     const done = e => {
       if (e) {
-        console.error(e);
+        console.error('Error while booting', e);
       }
 
       console.groupEnd();
@@ -126,29 +124,7 @@ export default class Core extends CoreBase {
 
     console.group('Core::boot()');
 
-    // Attaches sounds for certain events
-    this.on('osjs/core:started', () => {
-      if (this.has('osjs/sounds')) {
-        this.make('osjs/sounds').play('service-login');
-      }
-    });
-
-    this.on('osjs/core:destroy', () => {
-      if (this.has('osjs/sounds')) {
-        this.make('osjs/sounds').play('service-logout');
-      }
-    });
-
-    // Forwards messages to an application from internal websocket
-    this.on('osjs/application:socket:message', ({pid, args}) => {
-      const found = Application.getApplications()
-        .find(proc => proc && proc.pid === pid);
-
-      if (found) {
-        found.emit('ws:message', ...args);
-      }
-    });
-
+    this._attachEvents();
     this.emit('osjs/core:boot');
 
     return super.boot()
@@ -163,11 +139,8 @@ export default class Core extends CoreBase {
         lsHelper.supported();
 
         const autoLogin = lsHelper.get('OX_JWT');
-        console.log(autoLogin);
         if(autoLogin) {
-          console.log('auto login called.')
           this.emit('osjs/core:logged-in');
-          
           if (this.has('osjs/settings')) {
               this.make('osjs/settings').load()
                 .then(() => done())
@@ -218,7 +191,7 @@ export default class Core extends CoreBase {
       this.emit('osjs/core:started');
 
       if (err) {
-        console.warn(err);
+        console.warn('Error while starting', err);
       }
 
       console.groupEnd();
@@ -233,16 +206,6 @@ export default class Core extends CoreBase {
     console.group('Core::start()');
 
     this.emit('osjs/core:start');
-
-    this.on('osjs/core:connected', config => {
-      const pingTime = config.cookie.maxAge / 2;
-
-      this.ping = setInterval(() => {
-        if (this.connected && !this.reconnecting) {
-          this.request('/ping').catch(e => console.warn(e));
-        }
-      }, pingTime);
-    });
 
     this._createListeners();
 
@@ -261,51 +224,84 @@ export default class Core extends CoreBase {
   }
 
   /**
+   * Attaches some internal events
+   */
+  _attachEvents() {
+    // Attaches sounds for certain events
+    this.on('osjs/core:started', () => {
+      if (this.has('osjs/sounds')) {
+        this.make('osjs/sounds').play('service-login');
+      }
+    });
+
+    this.on('osjs/core:destroy', () => {
+      if (this.has('osjs/sounds')) {
+        this.make('osjs/sounds').play('service-logout');
+      }
+    });
+
+    // Forwards messages to an application from internal websocket
+    this.on('osjs/application:socket:message', ({pid, args}) => {
+      const found = Application.getApplications()
+        .find(proc => proc && proc.pid === pid);
+
+      if (found) {
+        found.emit('ws:message', ...args);
+      }
+    });
+
+    // Sets up a server ping
+    this.on('osjs/core:connected', config => {
+      const pingTime = config.cookie.maxAge / 2;
+
+      this.ping = setInterval(() => {
+        if (this.ws) {
+          if (this.ws.connected && !this.ws.reconnecting) {
+            this.request('/ping').catch(e => console.warn('Error on ping', e));
+          }
+        }
+      }, pingTime);
+    });
+
+  }
+
+  /**
    * Creates the main connection to server
    */
   _createConnection(cb) {
-    cb = cb || function() {};
-
     if (this.configuration.standalone) {
       return false;
-    } else if (this.connected) {
-      throw new Error('Already connecting');
     }
 
     const {uri} = this.config('ws');
+    let wasConnected = false;
 
     console.log('Creating websocket connection on', uri);
 
-    this.ws = new Websocket('CoreSocket', uri);
+    this.ws = new Websocket('CoreSocket', uri, {
+      interval: this.config('ws.connectInterval', 1000)
+    });
 
-    this.ws.on('open', ev => {
-      const reconnected = !!this.reconnecting;
-      clearInterval(this.reconnecting);
-      this.connected = true;
-      this.reconnecting = false;
-      this.connectfailed = false;
-
+    this.ws.once('connected', () => {
       // Allow for some grace-time in case we close prematurely
-      setTimeout(() => cb(), 100);
+      setTimeout(() => {
+        wasConnected = true;
+        cb();
+      }, 100);
+    });
 
+    this.ws.on('connected', (ev, reconnected) => {
       this.emit('osjs/core:connect', ev, reconnected);
     });
 
-    this.ws.on('close', ev => {
-      if (!this.connected && !this.connectfailed) {
+    this.ws.once('failed', ev => {
+      if (!wasConnected) {
+        cb(new Error('Connection closed'));
         this.emit('osjs/core:connection-failed', ev);
-        this.connectfailed = true;
       }
+    });
 
-      clearInterval(this.reconnecting);
-      this.reconnecting = setInterval(() => {
-        this._createConnection();
-      }, this.config('ws.connectInterval', 1000));
-
-      this.connected = false;
-
-      cb(new Error('Connection closed'));
-
+    this.ws.on('disconnected', ev => {
       this.emit('osjs/core:disconnect', ev);
     });
 
@@ -317,7 +313,7 @@ export default class Core extends CoreBase {
         console.debug('WebSocket message', data);
         this.emit(data.name, ...params);
       } catch (e) {
-        console.warn(e);
+        console.warn('Exception on websocket message', e);
       }
     });
 
@@ -408,8 +404,9 @@ export default class Core extends CoreBase {
       return Promise.reject(new Error(_('ERR_REQUEST_STANDALONE')));
     }
 
-    if (!url.match(/^((http|ws|ftp)s?:)?/i)) {
+    if (!url.match(/^((http|ws|ftp)s?:)/i)) {
       url = this.url(url);
+      options = merge(options || {}, this.requestOptions || {});
     }
 
     return fetch(url, options, type)
@@ -466,7 +463,7 @@ export default class Core extends CoreBase {
 
           return true;
         } catch (e) {
-          console.warn(e);
+          console.warn('Exception on compability check', e);
         }
       }
 
@@ -488,6 +485,14 @@ export default class Core extends CoreBase {
     }
 
     return super.off(name, callback, force);
+  }
+
+  /**
+   * Set the internal fetch/request options
+   * @param {Object} options Request options
+   */
+  setRequestOptions(options) {
+    this.requestOptions = Object.assign({}, options);
   }
 
   /**

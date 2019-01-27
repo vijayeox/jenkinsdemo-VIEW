@@ -45,11 +45,11 @@ export const zh_CN = {
   ERR_WINDOW_ID_EXISTS: 'ID为\'{0}\'的窗口已存在',
   ERR_INVALID_LOCALE: '无效的区域设置 \'{0}\'',
   LBL_CONNECTION_LOST: '连接丢失',
-  LBL_CONNECTION_LOST_MESSAGE: '与OX Zion的连接丢失了。重新连接....',
+  LBL_CONNECTION_LOST_MESSAGE: '与OS.js的连接丢失了。重新连接....',
   LBL_CONNECTION_RESTORED: '连接已恢复',
-  LBL_CONNECTION_RESTORED_MESSAGE: '已恢复与OX Zion服务器的连接。',
+  LBL_CONNECTION_RESTORED_MESSAGE: '已恢复与OS.js服务器的连接。',
   LBL_CONNECTION_FAILED: '连接失败',
-  LBL_CONNECTION_FAILED_MESSAGE: '无法建立与OX Zion的连接。 某些功能可能无法正常工作。',
+  LBL_CONNECTION_FAILED_MESSAGE: '无法建立与OS.js的连接。 某些功能可能无法正常工作。',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: '开发',
