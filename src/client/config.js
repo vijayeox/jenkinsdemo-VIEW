@@ -43,5 +43,14 @@ module.exports = {
         src: require('./assets/images/OXZion.png')
       }
     }
+  },
+  desktop:{
+    settings:{
+      background:{
+        src: require('./assets/images/background.png'),
+        color: '#000',
+        style: 'cover'
+      }
+    }
   }
 };
