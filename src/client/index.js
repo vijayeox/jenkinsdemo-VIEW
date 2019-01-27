@@ -49,15 +49,13 @@ import {
 } from '../osjs-client/index.js';
 
 
-import {PanelServiceProvider} from '@osjs/panels';
+import {PanelServiceProvider} from './packages/panels';
 import {GUIServiceProvider} from '@osjs/gui';
 import {DialogServiceProvider} from '@osjs/dialogs';
 import {WidgetServiceProvider} from '@osjs/widgets';
 import * as config from './config.js';
-import loginAdapter from './auth/AuthAdapter.js';
-import oxLogin from './oxLogin.js';
-import '../../node_modules/materialize-css/dist/css/materialize.min.css';
-import '../../node_modules/materialize-css/dist/js/materialize.min.js';
+import loginAdapter from './adapters/AuthAdapter.js';
+import oxLogin from './pages/oxLogin.js';
 
 /*import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
