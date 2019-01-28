@@ -19,6 +19,9 @@ const loginAdapter = (core, config) => ({
     reqData.append("username", username);
     reqData.append("password", req.password);
 
+    // making request using the rest client
+    //var caller =  core.make('oxzion/restClient')
+    //console.log(caller.request('test call','http://jenkins.oxzion.com:8080/auth',reqData,'POST'));
 
     var request = new XMLHttpRequest();
     
@@ -50,7 +53,7 @@ const loginAdapter = (core, config) => ({
   logout: (req, res) => {
     var lsHelper = new LocalStorageAdapter;
     if(lsHelper.supported() || lsHelper.cookieEnabled()){
-      lsHelper.set('OX_JWT','');
+      lsHelper.purge('OX_JWT');
       return Promise.resolve(true); 
     }
   }
