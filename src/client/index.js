@@ -54,16 +54,19 @@ import {GUIServiceProvider} from '@osjs/gui';
 import {DialogServiceProvider} from '@osjs/dialogs';
 import {WidgetServiceProvider} from '@osjs/widgets';
 import * as config from './config.js';
+import localConfig from './local.js';
 import loginAdapter from './adapters/AuthAdapter.js';
 import oxLogin from './pages/oxLogin.js';
-
+import merge from 'deepmerge';
 /*import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
 
 
 const init = () => {
-  const osjs = new Core(config, {});
-
+  let mergedConfig = merge(config, localConfig);
+  console.log(mergedConfig);
+  const osjs = new Core(mergedConfig, {});
+  
   // Register your service providers  
   osjs.register(CoreServiceProvider);
   osjs.register(DesktopServiceProvider);
