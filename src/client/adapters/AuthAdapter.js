@@ -24,9 +24,11 @@ const loginAdapter = (core, config) => ({
     //console.log(caller.request('test call','http://jenkins.oxzion.com:8080/auth',reqData,'POST'));
 
     var request = new XMLHttpRequest();
-    
+    let url = core.config('auth.url');
+    console.log("login call - " + url);
+
     // call to login API
-    request.open('POST', 'http://jenkins.oxzion.com:8080/auth', false);
+    request.open('POST', url, false);
     request.send(reqData);
     if (request.status === 200) {
       const resp = JSON.parse(request.responseText);
