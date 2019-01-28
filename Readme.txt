@@ -16,6 +16,9 @@ docker run -p 8000:8000 osjs/osjs:v3
 
 # Install dependencies
 npm install
+# To override client config.js values
+Create a file called local.js and override any property that can be added in config.js
+This local.js is specific to the local instance and never checked in.
 
 # It's recommended that you keep your dependencies (including OS.js) up-to-date
 npm update
@@ -32,7 +35,7 @@ npm run build
 
 # Start serving
 npm run serve
-```
+``` 
 
 #### Docker
 
