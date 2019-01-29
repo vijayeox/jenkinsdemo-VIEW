@@ -1,4 +1,3 @@
-
 const isStorageSupported = storageName => {
 	if (storageName in window && window[storageName] && window[storageName].setItem)
 	{
@@ -109,5 +108,29 @@ export default class LocalStorageAdapter {
 			}
 		}
 		return null;
+	}
+	
+	purge(key) {
+		if(this.localStorageExists) {
+			try {
+				if(key != null) {
+					window.localStorage.removeItem(key);
+					console.log('JWT token removed');
+				}
+				else {
+					console.log('invalid operation');
+				}
+			}
+			catch (e) {}
+		}
+		else if(this.cookieEnabled) {
+			try {
+				document.cookie = "";
+			}
+			catch (e) {}
+		}
+		else {
+			console.log('invalid operation');
+		}
 	}
 }
