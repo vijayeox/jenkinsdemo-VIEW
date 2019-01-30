@@ -1,0 +1,16 @@
+{
+  "type": "application",
+  "name": "announcements",
+  "category": null,
+  "server": "server.js",
+  "title": {
+    "en_EN": "announcements"
+  },
+  "description": {
+    "en_EN": "announcements"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

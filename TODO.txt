@@ -1,0 +1,5 @@
+1. Email Login credentials saving and auto login
+2. Contact integration
+3. Login page customization
+4. Removing reference to Rainloop in UI
+5.  

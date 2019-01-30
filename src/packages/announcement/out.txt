@@ -1,0 +1,761 @@
+
+> announcements@ build /home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement
+> webpack
+
+Hash: 7c5249d29ab41cc76143
+Version: webpack 4.29.0
+Time: 17915ms
+Built at: 2019-01-21 13:07:09
+       Asset      Size  Chunks             Chunk Names
+    main.css  1.55 KiB    main  [emitted]  main
+main.css.map  2.51 KiB    main  [emitted]  main
+     main.js  28.1 MiB    main  [emitted]  main
+ main.js.map  29.9 MiB    main  [emitted]  main
+Entrypoint main = main.css main.js main.css.map main.js.map
+[0] multi ./index.js ./index.scss 40 bytes {main} [built]
+[./ sync recursive ^\.\/.*$] . sync ^\.\/.*$ 484 bytes {main} [built]
+[./img1.jpg] 177 bytes {main} [optional] [built] [failed] [1 error]
+[./img1.png] 177 bytes {main} [optional] [built] [failed] [1 error]
+[./img2.jpg] 177 bytes {main} [optional] [built] [failed] [1 error]
+[./index.js] 1.34 KiB {main} [built]
+[./index.scss] 39 bytes {main} [built]
+[./metadata.json] 248 bytes {main} [built]
+[./out.txt] 247 bytes {main} [optional] [built] [failed] [1 error]
+[./package-lock.json] 388 KiB {main} [optional] [built]
+[./package.json] 1.21 KiB {main} [optional] [built]
+[./server.js] 644 bytes {main} [optional] [built]
+[./slider.js] 3.5 KiB {main} [built]
+[./webpack.config.js] 1.29 KiB {main} [optional] [built]
+[osjs] external "OSjs" 42 bytes {main} [built]
+    + 3648 hidden modules
+
+WARNING in ./node_modules/terser-webpack-plugin/dist/worker.js 12:130-137
+Critical dependency: require function is used in a way in which dependencies cannot be statically extracted
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/is-resolvable/index.js 11:2-9
+Critical dependency: require function is used in a way in which dependencies cannot be statically extracted
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/cssnano/dist/index.js 71:31-42
+Critical dependency: the request of a dependency is an expression
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/worker-farm/lib/child/index.js 49:33-53
+Critical dependency: the request of a dependency is an expression
+ @ ./node_modules/worker-farm/lib/fork.js
+ @ ./node_modules/worker-farm/lib/farm.js
+ @ ./node_modules/worker-farm/lib/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/loader-runner/lib/loadLoader.js 5:2-28
+Critical dependency: the request of a dependency is an expression
+ @ ./node_modules/loader-runner/lib/LoaderRunner.js
+ @ (webpack)/lib/NormalModule.js
+ @ (webpack)/lib/AutomaticPrefetchPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/cosmiconfig/node_modules/import-fresh/index.js 28:8-25
+Critical dependency: the request of a dependency is an expression
+ @ ./node_modules/cosmiconfig/dist/loaders.js
+ @ ./node_modules/cosmiconfig/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/cssnano/dist/index.js 76:31-45
+Critical dependency: the request of a dependency is an expression
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/chokidar/lib/fsevents-handler.js
+Module not found: Error: Can't resolve 'fsevents' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/chokidar/lib'
+ @ ./node_modules/chokidar/lib/fsevents-handler.js
+ @ ./node_modules/chokidar/index.js
+ @ ./node_modules/watchpack/lib/DirectoryWatcher.js
+ @ ./node_modules/watchpack/lib/watcherManager.js
+ @ ./node_modules/watchpack/lib/watchpack.js
+ @ (webpack)/lib/node/NodeWatchFileSystem.js
+ @ (webpack)/lib/node/NodeEnvironmentPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in (webpack)/lib/debug/ProfilingPlugin.js
+Module not found: Error: Can't resolve 'inspector' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib/debug'
+ @ (webpack)/lib/debug/ProfilingPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./img1.jpg 1:0
+Module parse failed: Unexpected character '�' (1:0)
+You may need an appropriate loader to handle this file type.
+(Source code omitted for this binary file)
+ @ . sync ^\.\/.*$ ./img1.jpg
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./img2.jpg 1:0
+Module parse failed: Unexpected character '�' (1:0)
+You may need an appropriate loader to handle this file type.
+(Source code omitted for this binary file)
+ @ . sync ^\.\/.*$ ./img2.jpg
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./img1.png 1:0
+Module parse failed: Unexpected character '�' (1:0)
+You may need an appropriate loader to handle this file type.
+(Source code omitted for this binary file)
+ @ . sync ^\.\/.*$ ./img1.png
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./out.txt 2:0
+Module parse failed: Unexpected token (2:0)
+You may need an appropriate loader to handle this file type.
+| 
+> > announcements@ build /home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement
+| > webpack
+| 
+ @ . sync ^\.\/.*$ ./out.txt
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+WARNING in ./node_modules/loader-runner/lib/loadLoader.js 5:2-28
+System.import() is deprecated and will be removed soon. Use import() instead.
+For more info visit https://webpack.js.org/guides/code-splitting/
+ @ ./node_modules/loader-runner/lib/LoaderRunner.js 7:17-40
+ @ (webpack)/lib/NormalModule.js
+ @ (webpack)/lib/AutomaticPrefetchPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/worker-farm/lib/fork.js
+Module not found: Error: Can't resolve 'child_process' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/worker-farm/lib'
+ @ ./node_modules/worker-farm/lib/fork.js 3:21-45
+ @ ./node_modules/worker-farm/lib/farm.js
+ @ ./node_modules/worker-farm/lib/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/cacache/get.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/cacache'
+ @ ./node_modules/cacache/get.js 6:11-24
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/cacache/node_modules/y18n/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/cacache/node_modules/y18n'
+ @ ./node_modules/cacache/node_modules/y18n/index.js 1:9-22
+ @ ./node_modules/cacache/lib/util/y.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/chokidar/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/chokidar'
+ @ ./node_modules/chokidar/index.js 3:9-22
+ @ ./node_modules/watchpack/lib/DirectoryWatcher.js
+ @ ./node_modules/watchpack/lib/watcherManager.js
+ @ ./node_modules/watchpack/lib/watchpack.js
+ @ (webpack)/lib/node/NodeWatchFileSystem.js
+ @ (webpack)/lib/node/NodeEnvironmentPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/chokidar/lib/nodefs-handler.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/chokidar/lib'
+ @ ./node_modules/chokidar/lib/nodefs-handler.js 3:9-22
+ @ ./node_modules/chokidar/index.js
+ @ ./node_modules/watchpack/lib/DirectoryWatcher.js
+ @ ./node_modules/watchpack/lib/watcherManager.js
+ @ ./node_modules/watchpack/lib/watchpack.js
+ @ (webpack)/lib/node/NodeWatchFileSystem.js
+ @ (webpack)/lib/node/NodeEnvironmentPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/chokidar/lib/fsevents-handler.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/chokidar/lib'
+ @ ./node_modules/chokidar/lib/fsevents-handler.js 3:9-22
+ @ ./node_modules/chokidar/index.js
+ @ ./node_modules/watchpack/lib/DirectoryWatcher.js
+ @ ./node_modules/watchpack/lib/watcherManager.js
+ @ ./node_modules/watchpack/lib/watchpack.js
+ @ (webpack)/lib/node/NodeWatchFileSystem.js
+ @ (webpack)/lib/node/NodeEnvironmentPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/chownr/chownr.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/chownr'
+ @ ./node_modules/chownr/chownr.js 2:11-24
+ @ ./node_modules/cacache/lib/util/fix-owner.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/copy-concurrently/copy.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/copy-concurrently'
+ @ ./node_modules/copy-concurrently/copy.js 8:13-26
+ @ ./node_modules/move-concurrently/move.js
+ @ ./node_modules/cacache/lib/util/move-file.js
+ @ ./node_modules/cacache/lib/content/write.js
+ @ ./node_modules/cacache/put.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/cosmiconfig/dist/readFile.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/cosmiconfig/dist'
+ @ ./node_modules/cosmiconfig/dist/readFile.js 4:11-24
+ @ ./node_modules/cosmiconfig/dist/createExplorer.js
+ @ ./node_modules/cosmiconfig/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/css-declaration-sorter/src/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/css-declaration-sorter/src'
+ @ ./node_modules/css-declaration-sorter/src/index.js 3:11-24
+ @ ./node_modules/cssnano-preset-default/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/fs.realpath/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/fs.realpath'
+ @ ./node_modules/fs.realpath/index.js 8:9-22
+ @ ./node_modules/glob/glob.js
+ @ ./node_modules/rimraf/rimraf.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/fs.realpath/old.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/fs.realpath'
+ @ ./node_modules/fs.realpath/old.js 24:9-22
+ @ ./node_modules/fs.realpath/index.js
+ @ ./node_modules/glob/glob.js
+ @ ./node_modules/rimraf/rimraf.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/glob/sync.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/glob'
+ @ ./node_modules/glob/sync.js 4:9-22
+ @ ./node_modules/glob/glob.js
+ @ ./node_modules/rimraf/rimraf.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/glob/glob.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/glob'
+ @ ./node_modules/glob/glob.js 43:9-22
+ @ ./node_modules/rimraf/rimraf.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/graceful-fs/graceful-fs.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/graceful-fs'
+ @ ./node_modules/graceful-fs/graceful-fs.js 1:9-22
+ @ ./node_modules/watchpack/lib/DirectoryWatcher.js
+ @ ./node_modules/watchpack/lib/watcherManager.js
+ @ ./node_modules/watchpack/lib/watchpack.js
+ @ (webpack)/lib/node/NodeWatchFileSystem.js
+ @ (webpack)/lib/node/NodeEnvironmentPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/is-directory/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/is-directory'
+ @ ./node_modules/is-directory/index.js 10:9-22
+ @ ./node_modules/cosmiconfig/dist/getDirectory.js
+ @ ./node_modules/cosmiconfig/dist/createExplorer.js
+ @ ./node_modules/cosmiconfig/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/loader-runner/lib/LoaderRunner.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/loader-runner/lib'
+ @ ./node_modules/loader-runner/lib/LoaderRunner.js 5:9-22
+ @ (webpack)/lib/NormalModule.js
+ @ (webpack)/lib/AutomaticPrefetchPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/make-dir/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/make-dir'
+ @ ./node_modules/make-dir/index.js 2:11-24
+ @ ./node_modules/find-cache-dir/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/mkdirp/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/mkdirp'
+ @ ./node_modules/mkdirp/index.js 2:9-22
+ @ ./node_modules/cacache/lib/util/fix-owner.js
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/move-concurrently/move.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/move-concurrently'
+ @ ./node_modules/move-concurrently/move.js 4:13-26
+ @ ./node_modules/cacache/lib/util/move-file.js
+ @ ./node_modules/cacache/lib/content/write.js
+ @ ./node_modules/cacache/put.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/path-exists/index.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/path-exists'
+ @ ./node_modules/path-exists/index.js 2:11-24
+ @ ./node_modules/locate-path/index.js
+ @ ./node_modules/find-up/index.js
+ @ ./node_modules/pkg-dir/index.js
+ @ ./node_modules/find-cache-dir/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/rimraf/rimraf.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/rimraf'
+ @ ./node_modules/rimraf/rimraf.js 6:9-22
+ @ ./node_modules/cacache/lib/util/tmp.js
+ @ ./node_modules/cacache/locales/en.js
+ @ ./node_modules/cacache/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/TaskRunner.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/schema-utils/src/validateOptions.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/schema-utils/src'
+ @ ./node_modules/schema-utils/src/validateOptions.js 8:11-24
+ @ ./node_modules/schema-utils/src/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/index.js
+ @ ./node_modules/terser-webpack-plugin/dist/cjs.js
+ @ (webpack)/lib/WebpackOptionsDefaulter.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/snapdragon/lib/source-maps.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/snapdragon/lib'
+ @ ./node_modules/snapdragon/lib/source-maps.js 3:9-22
+ @ ./node_modules/snapdragon/lib/compiler.js
+ @ ./node_modules/snapdragon/index.js
+ @ ./node_modules/nanomatch/lib/utils.js
+ @ ./node_modules/nanomatch/index.js
+ @ ./node_modules/micromatch/lib/compilers.js
+ @ ./node_modules/micromatch/index.js
+ @ (webpack)/lib/optimize/SideEffectsFlagPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/svgo/lib/svgo/config.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/svgo/lib/svgo'
+ @ ./node_modules/svgo/lib/svgo/config.js 3:9-22
+ @ ./node_modules/svgo/lib/svgo.js
+ @ ./node_modules/postcss-svgo/dist/index.js
+ @ ./node_modules/cssnano-preset-default/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/lib/debug/ProfilingPlugin.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib/debug'
+ @ (webpack)/lib/debug/ProfilingPlugin.js 1:11-24
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/lib/node/NodeOutputFileSystem.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib/node'
+ @ (webpack)/lib/node/NodeOutputFileSystem.js 7:11-24
+ @ (webpack)/lib/node sync ^\.\/.*$
+ @ (webpack)/lib/node/NodeMainTemplate.runtime.js
+ @ (webpack)/lib/node/NodeMainTemplatePlugin.js
+ @ (webpack)/lib/node/NodeTemplatePlugin.js
+ @ ./node_modules/mini-css-extract-plugin/dist/loader.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/lib/node/NodeMainTemplateAsync.runtime.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib/node'
+ @ (webpack)/lib/node/NodeMainTemplateAsync.runtime.js 10:2-15 28:3-16
+ @ (webpack)/lib/node/NodeMainTemplatePlugin.js
+ @ (webpack)/lib/node/NodeTemplatePlugin.js
+ @ ./node_modules/mini-css-extract-plugin/dist/loader.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/node_modules/schema-utils/src/validateOptions.js
+Module not found: Error: Can't resolve 'fs' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/node_modules/schema-utils/src'
+ @ (webpack)/node_modules/schema-utils/src/validateOptions.js 8:11-24
+ @ (webpack)/node_modules/schema-utils/src/index.js
+ @ (webpack)/lib/optimize/LimitChunkCountPlugin.js
+ @ ./node_modules/mini-css-extract-plugin/dist/loader.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/cosmiconfig/node_modules/resolve-from/index.js
+Module not found: Error: Can't resolve 'module' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/cosmiconfig/node_modules/resolve-from'
+ @ ./node_modules/cosmiconfig/node_modules/resolve-from/index.js 3:15-32
+ @ ./node_modules/cosmiconfig/node_modules/import-fresh/index.js
+ @ ./node_modules/cosmiconfig/dist/loaders.js
+ @ ./node_modules/cosmiconfig/dist/index.js
+ @ ./node_modules/cssnano/dist/index.js
+ @ ./node_modules/optimize-css-assets-webpack-plugin/src/index.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in ./node_modules/mini-css-extract-plugin/dist/loader.js
+Module not found: Error: Can't resolve 'module' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/mini-css-extract-plugin/dist'
+ @ ./node_modules/mini-css-extract-plugin/dist/loader.js 10:14-31
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/lib/NormalModule.js
+Module not found: Error: Can't resolve 'module' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib'
+ @ (webpack)/lib/NormalModule.js 7:21-38
+ @ (webpack)/lib/AutomaticPrefetchPlugin.js
+ @ (webpack)/lib/webpack.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+
+ERROR in (webpack)/lib/node/NodeTargetPlugin.js
+Module not found: Error: Can't resolve 'module' in '/home/rajesh/MyProjects/VA/Oxzion/oxzion3.0/view/src/packages/announcement/node_modules/webpack/lib/node'
+ @ (webpack)/lib/node/NodeTargetPlugin.js 11:1-18
+ @ ./node_modules/mini-css-extract-plugin/dist/loader.js
+ @ ./node_modules/mini-css-extract-plugin/dist/index.js
+ @ ./node_modules/mini-css-extract-plugin/dist/cjs.js
+ @ ./webpack.config.js
+ @ . sync ^\.\/.*$
+ @ ./slider.js
+ @ ./index.js
+ @ multi ./index.js ./index.scss
+Child mini-css-extract-plugin node_modules/css-loader/index.js??ref--4-1!node_modules/sass-loader/lib/loader.js??ref--4-2!index.scss:
+    Entrypoint mini-css-extract-plugin = *
+    [./node_modules/css-loader/index.js?!./node_modules/sass-loader/lib/loader.js?!./index.scss] ./node_modules/css-loader??ref--4-1!./node_modules/sass-loader/lib/loader.js??ref--4-2!./index.scss 4.35 KiB {mini-css-extract-plugin} [built]
+        + 1 hidden module

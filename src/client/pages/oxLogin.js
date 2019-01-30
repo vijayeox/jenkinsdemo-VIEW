@@ -1,7 +1,7 @@
 import {Login} from '../../osjs-client/index.js';
 import {h, app} from 'hyperapp';
-import '../../../node_modules/materialize-css/dist/css/materialize.min.css';
-import '../../../node_modules/materialize-css/dist/js/materialize.min.js';
+//import '../../../node_modules/materialize-css/dist/css/materialize.min.css';
+//import '../../../node_modules/materialize-css/dist/js/materialize.min.js';
 import '../assets/scss/login.scss';
 
 export default class oxLogin extends Login {
@@ -77,12 +77,27 @@ export default class oxLogin extends Login {
       ])
 
     ])
-
+    let style = document.createElement("link");
+    style.id = "materialize-css";
+    style.rel = "stylesheet"
+    style.href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css";
+    document.head.appendChild(style);
+    let script = document.createElement("script");
+    script.id = "materialize-js";
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js";
+    document.body.appendChild(script);
     const a = app(Object.assign({hidden: startHidden},login),actions,view,document.body);
+    
 
     // Bind the events
      this.on('login:start', () => a.setLoading(true));
-    this.on('login:stop', () => a.setLoading(false));
+    this.on('login:stop', () => {
+      let tag = document.getElementById('materialize-css');
+      document.head.removeChild(tag);
+      tag = document.getElementById('materialize-js');
+      document.body.removeChild(tag);
+      return a.setLoading(false);
+    });
     this.on('login:error', err => a.setError(err));
    }
 }
