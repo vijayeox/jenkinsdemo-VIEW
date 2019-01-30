@@ -35,8 +35,8 @@
 
 module.exports = {
   auth: {
+    url: "http://localhost/auth",
     ui: {
-      url: "http://localhost/auth",
       title: 'Welcome to OX ZION',
       logo: {
         position: 'top',
@@ -44,12 +44,20 @@ module.exports = {
       }
     }
   },
-  desktop:{
-    settings:{
-      background:{
+  desktop: {
+    settings: {
+      background: {
         src: require('./assets/images/background.png'),
         color: '#000',
         style: 'cover'
+      }
+    }
+  },
+  application: {
+    categories: {
+      development: {
+        label: 'LBL_APP_CAT_DEVELOPMENT',
+        icon: 'applications-development'
       }
     }
   }

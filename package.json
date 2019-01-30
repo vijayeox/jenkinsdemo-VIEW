@@ -69,8 +69,10 @@
     "css-mediaquery": "^0.1.2",
     "dateformat": "^3.0.3",
     "deepmerge": "^3.1.0",
+    "font-awesome": "^4.7.0",
     "materialize-css": "^1.0.0",
-    "simplejsonconf": "^2.0.5"
+    "simplejsonconf": "^2.0.5",
+    "url-loader": "^1.1.2"
   },
   "repository": {
     "type": "git",

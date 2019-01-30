@@ -30,6 +30,7 @@
   ],
   "dependencies": {
     "@osjs/event-emitter": "^1.0.5"
+    "browserslist": "^4.4.1"
   },
   "author": "Anders Evenrud <andersevenrud@gmail.com>",
   "license": "BSD-2-Clause",
