@@ -29,7 +29,6 @@
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/runtime": "^7.3.1",
-    "PPM": "file:../apps/PPM",
     "OXMail": "file:../apps/OXMail",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
