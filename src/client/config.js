@@ -46,8 +46,9 @@ module.exports = {
   },
   desktop: {
     settings: {
+      font: "Century Gothic",
       background: {
-        src: require('./assets/images/background.png'),
+        src: require('./assets/images/OX_Background.png'),
         color: '#000',
         style: 'cover'
       }

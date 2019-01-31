@@ -33,7 +33,7 @@ import PanelItem from '../panel-item';
 import * as languages from '../locales';
 
 // const menuIcon = require('../logo-white-32x32.png');
-const menuIcon = require('../../../../assets/images/oxfav.png');
+const menuIcon = require('../../../../assets/images/oxMenu.png');
 const defaultIcon = require('../../../../assets/images/oxfav.png');
 const sortBy = fn => (a, b) => -(fn(a) < fn(b)) || +(fn(a) > fn(b));
 const sortByLabel = iter => String(iter.label).toLowerCase();
@@ -165,8 +165,8 @@ export default class MenuPanelItem extends PanelItem {
         h('img', {
           src: menuIcon,
           alt: _('LBL_MENU')
-        }),
-        h('span', {}, _('LBL_MENU'))
+        })//,
+        //h('span', {}, _('LBL_MENU'))
       ])
     ]);
   }
