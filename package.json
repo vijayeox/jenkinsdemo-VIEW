@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/runtime": "^7.3.1",
     "OXMail": "file:../apps/OXMail",
+    "OXAnnouncements": "file:../apps/OXAnnouncements",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
