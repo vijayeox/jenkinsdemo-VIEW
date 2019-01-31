@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/runtime": "^7.3.1",
     "OXMail": "file:../apps/OXMail",
+    "OXAnnouncements": "file:../apps/OXAnnouncements",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
@@ -69,8 +70,10 @@
     "css-mediaquery": "^0.1.2",
     "dateformat": "^3.0.3",
     "deepmerge": "^3.1.0",
+    "font-awesome": "^4.7.0",
     "materialize-css": "^1.0.0",
-    "simplejsonconf": "^2.0.5"
+    "simplejsonconf": "^2.0.5",
+    "url-loader": "^1.1.2"
   },
   "repository": {
     "type": "git",

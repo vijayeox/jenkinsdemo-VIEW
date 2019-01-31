@@ -32,7 +32,6 @@ export default class LocalStorageAdapter {
 		const isSupported = isStorageSupported('localStorage');
 		if(isSupported) {
 			this.localStorageExists = true;
-			console.log(this.localStorageExists);
 			return true;	
 		}
 		return false;		
@@ -115,7 +114,7 @@ export default class LocalStorageAdapter {
 			try {
 				if(key != null) {
 					window.localStorage.removeItem(key);
-					console.log('JWT token removed');
+					console.log('token removed');
 				}
 				else {
 					console.log('invalid operation');

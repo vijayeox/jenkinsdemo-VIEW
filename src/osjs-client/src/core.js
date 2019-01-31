@@ -138,7 +138,11 @@ export default class Core extends CoreBase {
         // to check if local storage present in browser
         lsHelper.supported();
         const autoLogin = lsHelper.get('OX_JWT');
+        //console.log(autoLogin);
         if(autoLogin) {
+          // reset the user details on refresh
+          this.user = {jwt: autoLogin["key"],username: lsHelper.get('OX_user')["key"]};
+          //console.log(this.user);
           this.emit('osjs/core:logged-in');
           if (this.has('osjs/settings')) {
               this.make('osjs/settings').load()
@@ -151,7 +155,7 @@ export default class Core extends CoreBase {
         else if (this.has('osjs/auth')) {
           return this.make('osjs/auth').show(user => {
             this.user = user;
-
+            //console.log(this.user);
             this.emit('osjs/core:logged-in');
 
             if (this.has('osjs/settings')) {
@@ -407,7 +411,7 @@ export default class Core extends CoreBase {
       url = this.url(url);
       options = merge(options || {}, this.requestOptions || {});
     }
-
+    console.log(options);
     return fetch(url, options, type)
       .catch(error => {
         throw new Error(_('ERR_REQUEST_NOT_OK', error));

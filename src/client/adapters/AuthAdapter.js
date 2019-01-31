@@ -20,35 +20,24 @@ const loginAdapter = (core, config) => ({
     reqData.append("password", req.password);
 
     // making request using the rest client
-    //var caller =  core.make('oxzion/restClient')
-    //console.log(caller.request('test call','http://jenkins.oxzion.com:8080/auth',reqData,'POST'));
-
-    var request = new XMLHttpRequest();
-    let url = core.config('auth.url');
-    console.log("login call - " + url);
-
-    // call to login API
-    request.open('POST', url, false);
-    request.send(reqData);
-    if (request.status === 200) {
-      const resp = JSON.parse(request.responseText);
-      
-      if (resp["status"] == "success") {
+    var caller =  core.make('oxzion/restClient');
+    return (async() => {
+      var res = await caller.authenticate(reqData);
+      if (res["status"] == "success") {
         if(lsHelper.supported() || lsHelper.cookieEnabled()){
-          lsHelper.set('OX_JWT',resp["data"]["jwt"]);
-
-          return Promise.resolve({jwt:resp["data"]["jwt"], username : username}); 
+          lsHelper.set('OX_JWT',res["data"]["jwt"]);
+          lsHelper.set('OX_user',username);
+          return Promise.resolve({jwt:res["data"]["jwt"], username : username}); 
         }
         else {
           console.log('login failed.');
-          return Promise.reject(new Error(resp.message));
+          return Promise.reject(new Error(res.message));
         }
         
       } else {
-        return Promise.reject(new Error(resp.message));
+        return Promise.reject(new Error(res.message));
       }
-    }
-
+    })();
     
   },
 

@@ -38,6 +38,8 @@
 // https://manual.os-js.org/v3/resource/official/
 //
 
+import 'font-awesome/css/font-awesome.min.css'; 
+
 import {
   Core,
   CoreServiceProvider,
@@ -58,7 +60,9 @@ import localConfig from './local.js';
 import loginAdapter from './adapters/AuthAdapter.js';
 import oxLogin from './pages/oxLogin.js';
 import merge from 'deepmerge';
-/*import announcementWidget from './customWidget.js';
+import { oxRestClientServiceProvider } from './oxRestClient.js'
+/*import {MyApiServiceProvider} from './testProvider.js';
+import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
 
 
@@ -91,7 +95,11 @@ const init = () => {
   osjs.register(PanelServiceProvider);
   osjs.register(DialogServiceProvider);
   osjs.register(GUIServiceProvider);
-  /*osjs.register(WidgetServiceProvider,{
+  
+
+  osjs.register(oxRestClientServiceProvider,{before: true});
+  /*osjs.register(MyApiServiceProvider);
+  osjs.register(WidgetServiceProvider,{
      args: {
     registry: {
       'my-widget': announcementWidget
