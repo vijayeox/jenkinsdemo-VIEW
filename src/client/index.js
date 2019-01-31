@@ -60,7 +60,7 @@ import localConfig from './local.js';
 import loginAdapter from './adapters/AuthAdapter.js';
 import oxLogin from './pages/oxLogin.js';
 import merge from 'deepmerge';
-import { oxRestClientServiceProvider } from './oxRestClient.js'
+import { RestClientServiceProvider } from './RestClient.js'
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -97,7 +97,7 @@ const init = () => {
   osjs.register(GUIServiceProvider);
   
 
-  osjs.register(oxRestClientServiceProvider,{before: true});
+  osjs.register(RestClientServiceProvider,{before: true});
   /*osjs.register(MyApiServiceProvider);
   osjs.register(WidgetServiceProvider,{
      args: {
