@@ -47,6 +47,7 @@ const {
   SettingsServiceProvider
 } = require('./../osjs-server');
 
+const WebSocketProvider = require('./providers/WebSocketProvider');
 const config = require('./config.js');
 const osjs = new Core(config, {});
 
@@ -55,6 +56,7 @@ osjs.register(PackageServiceProvider);
 osjs.register(VFSServiceProvider);
 osjs.register(AuthServiceProvider);
 osjs.register(SettingsServiceProvider);
+osjs.register(WebSocketProvider);
 
 process.on('SIGTERM', () => osjs.destroy());
 process.on('SIGINT', () => osjs.destroy());
