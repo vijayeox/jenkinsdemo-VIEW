@@ -30,7 +30,7 @@
 
 .osjs-panel {
   display: flex;
-  min-height: 1em;
+  min-height: 4em;
   align-items: center;
   box-sizing: border-box;
   position: absolute;
@@ -54,7 +54,7 @@
     min-height: 1em;
     position: relative;
     box-sizing: border-box;
-    padding: $base-margin / 1.5;
+    padding: 0.1em;
   }
 
   .osjs-panel-item--icon {
