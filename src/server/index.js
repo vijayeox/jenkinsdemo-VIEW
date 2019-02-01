@@ -45,7 +45,7 @@ const {
   VFSServiceProvider,
   AuthServiceProvider,
   SettingsServiceProvider
-} = require('@osjs/server');
+} = require('./../osjs-server');
 
 const config = require('./config.js');
 const osjs = new Core(config, {});
