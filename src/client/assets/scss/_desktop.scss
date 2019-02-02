@@ -18,9 +18,7 @@
   transition: all $transition-duration $transition-timing-function;
 
   &:hover {
-    background-color: $panel-foreground;
-    color: $panel-background;
-    box-shadow: 0 0 $base-margin rgba($panel-foreground, 0.5);
+    background-color: rgba(255, 255, 255, 0.3);
   }
 }
 

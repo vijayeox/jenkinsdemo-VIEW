@@ -130,8 +130,6 @@ max-width: calc(100% - #{$base-margin / 10});
 }
 
 .osjs-window-title {
-text-align: center;
-margin-left: 3em;
 padding: $base-margin / 2;
 }
 
@@ -162,8 +160,13 @@ background-color: #d7d7d7;
 .osjs-gui-button {
 & > button {
 // Fallback
-background-color: #eaeaec;
+    background-color: #010101;
 }
+}
+.osjs-gui-button > button {
+    background: #010101;
+    border: 1px solid #fff;
+    color: #ffffff;
 }
 .osjs-gui-tabs-header>div{
 background-color:#452767;

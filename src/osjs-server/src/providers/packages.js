@@ -1,4 +1,4 @@
-/*!
+/**
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,40 +28,41 @@
  * @licence Simplified BSD License
  */
 
-//
-// This is the server bootstrapping script.
-// This is where you can register service providers or set up
-// your libraries etc.
-//
-// https://manual.os-js.org/v3/guide/provider/
-// https://manual.os-js.org/v3/install/
-// https://manual.os-js.org/v3/resource/official/
-//
+const path = require('path');
+const {ServiceProvider} = require('@osjs/common');
+const Packages = require('../packages');
 
-const {
-  Core,
-  CoreServiceProvider,
-  PackageServiceProvider,
-  VFSServiceProvider,
-  AuthServiceProvider,
-  SettingsServiceProvider
-} = require('./../osjs-server');
+/**
+ * OS.js Package Service Provider
+ *
+ * @desc Provides package services
+ */
+class PackageServiceProvider extends ServiceProvider {
+  constructor(core) {
+    super(core);
+    this.packages = new Packages(core);
+  }
 
-const WebSocketProvider = require('./providers/WebSocketProvider');
-const config = require('./config.js');
-const osjs = new Core(config, {});
+  init() {
+    const {configuration} = this.core;
+    const manifestFile = path.join(configuration.public, configuration.packages.metadata);
+    const discoveredFile = path.resolve(configuration.root, configuration.packages.discovery);
 
-osjs.register(CoreServiceProvider, {before: true});
-osjs.register(PackageServiceProvider);
-osjs.register(VFSServiceProvider);
-osjs.register(AuthServiceProvider);
-osjs.register(SettingsServiceProvider);
-osjs.register(WebSocketProvider);
+    this.core.logger.info('Using package discovery file', discoveredFile);
+    this.core.logger.info('Using package manifest file', manifestFile);
 
-process.on('SIGTERM', () => osjs.destroy());
-process.on('SIGINT', () => osjs.destroy());
-process.on('exit', () => osjs.destroy());
-process.on('uncaughtException', e => console.error(e));
-process.on('unhandledRejection', e => console.error(e));
+    this.core.singleton('osjs/packages', () => this.packages);
 
-osjs.boot();
+    return this.packages.init(manifestFile, discoveredFile);
+  }
+
+  start() {
+    this.packages.start();
+  }
+
+  destroy() {
+    this.packages.destroy();
+  }
+}
+
+module.exports = PackageServiceProvider;

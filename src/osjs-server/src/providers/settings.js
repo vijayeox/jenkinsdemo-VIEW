@@ -1,4 +1,4 @@
-/*!
+/**
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,40 +28,36 @@
  * @licence Simplified BSD License
  */
 
-//
-// This is the server bootstrapping script.
-// This is where you can register service providers or set up
-// your libraries etc.
-//
-// https://manual.os-js.org/v3/guide/provider/
-// https://manual.os-js.org/v3/install/
-// https://manual.os-js.org/v3/resource/official/
-//
+const Settings = require('../settings');
+const {ServiceProvider} = require('@osjs/common');
 
-const {
-  Core,
-  CoreServiceProvider,
-  PackageServiceProvider,
-  VFSServiceProvider,
-  AuthServiceProvider,
-  SettingsServiceProvider
-} = require('./../osjs-server');
+/**
+ * OS.js Settings Service Provider
+ *
+ * @desc Provides services for settings
+ */
+class SettingsServiceProvider extends ServiceProvider {
 
-const WebSocketProvider = require('./providers/WebSocketProvider');
-const config = require('./config.js');
-const osjs = new Core(config, {});
+  constructor(core, options) {
+    super(core, options);
 
-osjs.register(CoreServiceProvider, {before: true});
-osjs.register(PackageServiceProvider);
-osjs.register(VFSServiceProvider);
-osjs.register(AuthServiceProvider);
-osjs.register(SettingsServiceProvider);
-osjs.register(WebSocketProvider);
+    this.settings = new Settings(core, options);
+  }
 
-process.on('SIGTERM', () => osjs.destroy());
-process.on('SIGINT', () => osjs.destroy());
-process.on('exit', () => osjs.destroy());
-process.on('uncaughtException', e => console.error(e));
-process.on('unhandledRejection', e => console.error(e));
+  destroy() {
+    super.destroy();
+    this.settings.destroy();
+  }
 
-osjs.boot();
+  async init() {
+    this.core.make('osjs/express')
+      .routeAuthenticated('post', '/settings', (req, res) => this.settings.save(req, res));
+
+    this.core.make('osjs/express')
+      .routeAuthenticated('get', '/settings', (req, res) => this.settings.load(req, res));
+
+    return this.settings.init();
+  }
+}
+
+module.exports = SettingsServiceProvider;

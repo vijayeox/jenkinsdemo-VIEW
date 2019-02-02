@@ -1,4 +1,4 @@
-/*!
+/**
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,40 +28,18 @@
  * @licence Simplified BSD License
  */
 
-//
-// This is the server bootstrapping script.
-// This is where you can register service providers or set up
-// your libraries etc.
-//
-// https://manual.os-js.org/v3/guide/provider/
-// https://manual.os-js.org/v3/install/
-// https://manual.os-js.org/v3/resource/official/
-//
+const Core = require('./src/core.js');
+const CoreServiceProvider = require('./src/providers/core');
+const PackageServiceProvider = require('./src/providers/packages');
+const VFSServiceProvider = require('./src/providers/vfs');
+const AuthServiceProvider = require('./src/providers/auth');
+const SettingsServiceProvider = require('./src/providers/settings');
 
-const {
+module.exports = {
   Core,
   CoreServiceProvider,
   PackageServiceProvider,
   VFSServiceProvider,
   AuthServiceProvider,
   SettingsServiceProvider
-} = require('./../osjs-server');
-
-const WebSocketProvider = require('./providers/WebSocketProvider');
-const config = require('./config.js');
-const osjs = new Core(config, {});
-
-osjs.register(CoreServiceProvider, {before: true});
-osjs.register(PackageServiceProvider);
-osjs.register(VFSServiceProvider);
-osjs.register(AuthServiceProvider);
-osjs.register(SettingsServiceProvider);
-osjs.register(WebSocketProvider);
-
-process.on('SIGTERM', () => osjs.destroy());
-process.on('SIGINT', () => osjs.destroy());
-process.on('exit', () => osjs.destroy());
-process.on('uncaughtException', e => console.error(e));
-process.on('unhandledRejection', e => console.error(e));
-
-osjs.boot();
+};

@@ -1,7 +1,7 @@
 import {ServiceProvider} from '@osjs/common';
 
 
-export class oxRestClientServiceProvider extends ServiceProvider {
+export class RestClientServiceProvider extends ServiceProvider {
 
 	constructor(core, options = {}) {
 	    super(core, options || {});
@@ -51,18 +51,39 @@ export class oxRestClientServiceProvider extends ServiceProvider {
 		this.token = userData["jwt"];
 		try {
 			
-			let auth = 'Bearer ' + this.token;
-			const resp = await fetch(url,{
-				method: method,
-				credentials:'include',
-				headers: {
-			      'Authorization': auth,
-      			  'Content-Type': 'application/json'
-			    }
-				
-			})
+			if(method == 'get')  {
+				let auth = 'Bearer ' + this.token;
+				const resp = await fetch(url,{
+					method: method,
+					credentials:'include',
+					headers: {
+				      'Authorization': auth,
+	      			  'Content-Type': 'application/json'
+				    }
+					
+				})
+
+				return resp.json();
+			}
+			else if(method == 'post') {
+				let auth = 'Bearer ' + this.token;
+				const resp = await fetch(url,{
+					method: method,
+					credentials:'include',
+					headers: {
+				      'Authorization': auth,
+				    },
+					body: params.data
+				})	
+
+				return resp.json();
+			}
+			else
+			{
+				console.log('Unsupported method.');
+			}
 			// TODO - handle refresh
-			return resp.json();			
+			return null;			
 		}
 		catch (e) {
 			return Promise.reject(e);
