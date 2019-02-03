@@ -1,5 +1,5 @@
 /*
- * OS.js - JavaScript Cloud/Web Desktop Platform
+ * OX Zion - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
@@ -45,11 +45,11 @@ export const en_EN = {
   ERR_WINDOW_ID_EXISTS: 'Window with ID \'{0}\' already exists',
   ERR_INVALID_LOCALE: 'Invalid locale \'{0}\'',
   LBL_CONNECTION_LOST: 'Connection Lost',
-  LBL_CONNECTION_LOST_MESSAGE: 'The connection to the OS.js was lost. Reconnecting....',
+  LBL_CONNECTION_LOST_MESSAGE: 'The connection to the OX Zion was lost. Reconnecting...',
   LBL_CONNECTION_RESTORED: 'Connection Restored',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'The connection to the OS.js server was restored.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'The connection to the OX Zion server was restored.',
   LBL_CONNECTION_FAILED: 'Connection Failed',
-  LBL_CONNECTION_FAILED_MESSAGE: 'The connection to the OS.js could not be established. Some features might not work properly.',
+  LBL_CONNECTION_FAILED_MESSAGE: 'The connection to the OX Zion could not be established. Some features might not work properly.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'Development',
@@ -144,5 +144,10 @@ export const en_EN = {
   LBL_BACK: 'Back',
   LBL_FORWARD: 'Forward',
   LBL_UPLOAD: 'Upload',
-  LBL_IMAGE: 'Image'
+  LBL_IMAGE: 'Image',
+
+  // File path
+  FILE_PATH_DESKTOP_BACKGROUND : './assets/images/OX_Background_Ontherocks.png',
+  FILE_PATH_DESKTOP_BACKGROUND : './assets/images/OX_Background_Ontherocks.png',
+  FILE_PATH_TITLE: './assets/images/OXZion.png'
 };
