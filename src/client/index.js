@@ -58,7 +58,7 @@ import {WidgetServiceProvider} from '@osjs/widgets';
 import * as config from './config.js';
 import localConfig from './local.js';
 import loginAdapter from './adapters/AuthAdapter.js';
-import oxLogin from './pages/oxLogin.js';
+import Login from './pages/Login.js';
 import merge from 'deepmerge';
 import { RestClientServiceProvider } from './RestClient.js'
 /*import {MyApiServiceProvider} from './testProvider.js';
@@ -82,7 +82,7 @@ const init = () => {
     args: 
       { 
         adapter:  loginAdapter,
-        login: (core,options) => new oxLogin(core,options)
+        login: (core,options) => new Login(core,options)
       }
   });
   /*osjs.register(PanelServiceProvider,{

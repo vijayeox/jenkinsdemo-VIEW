@@ -78,6 +78,39 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 				return resp.json();
 			}
+			else if(method == 'put') {
+				let jsonObject = {};
+				for (const [key, value]  of params.data.entries()) {
+    				jsonObject[key] = value;
+				}
+				console.log(jsonObject)
+				let auth = 'Bearer ' + this.token;
+				console.log(params.data)
+				const resp = await fetch(url,{
+					method: method,
+					credentials:'include',
+					headers: new Headers({
+				      'Authorization': auth,
+				      'Content-Type':'application/json'
+				    }),
+					body: JSON.stringify(jsonObject)
+				})	
+
+				return resp.json();
+			}
+			else if(method == 'delete') {
+				let auth = 'Bearer ' + this.token;
+				const resp = await fetch(url,{
+					method: method,
+					credentials:'include',
+					headers: new Headers({
+				      'Authorization': auth,
+				    }),
+					
+				})
+
+				return resp.json();
+			}
 			else
 			{
 				console.log('Unsupported method.');
