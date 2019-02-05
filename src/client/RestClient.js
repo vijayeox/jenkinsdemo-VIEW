@@ -7,6 +7,8 @@ export class RestClientServiceProvider extends ServiceProvider {
 	    super(core, options || {});
 		this.core = core;
 		this.token = null;
+		this.baseUrl = this.core.config('wrapper.url');
+		//console.log(this.baseUrl);
 	}
 
 
@@ -29,8 +31,9 @@ export class RestClientServiceProvider extends ServiceProvider {
 	async authenticate(params) {
 		try {
 			var respData ;
-			let url = this.core.config('auth.url');
-			const testURL = 'http://localhost/data.json';
+			let url = this.baseUrl + this.core.config('auth.url');
+			//console.log(url);
+			const testURL = this.core.config('auth.url');
 			const resp = await fetch(url, {
 				method: 'post',
 				body: params
@@ -48,12 +51,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// method - string
 	async makeRequest(version,url,params,method) {
 		let userData =  this.core.getUser();
+		let urlString = this.baseUrl + url;
+		//console.log(urlString);
 		this.token = userData["jwt"];
 		try {
 			
 			if(method == 'get')  {
 				let auth = 'Bearer ' + this.token;
-				const resp = await fetch(url,{
+				const resp = await fetch(urlString,{
 					method: method,
 					credentials:'include',
 					headers: {
@@ -67,7 +72,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 			}
 			else if(method == 'post') {
 				let auth = 'Bearer ' + this.token;
-				const resp = await fetch(url,{
+				const resp = await fetch(urlString,{
 					method: method,
 					credentials:'include',
 					headers: {
@@ -86,7 +91,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				console.log(jsonObject)
 				let auth = 'Bearer ' + this.token;
 				console.log(params.data)
-				const resp = await fetch(url,{
+				const resp = await fetch(urlString,{
 					method: method,
 					credentials:'include',
 					headers: new Headers({
@@ -100,7 +105,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 			}
 			else if(method == 'delete') {
 				let auth = 'Bearer ' + this.token;
-				const resp = await fetch(url,{
+				const resp = await fetch(urlString,{
 					method: method,
 					credentials:'include',
 					headers: new Headers({
