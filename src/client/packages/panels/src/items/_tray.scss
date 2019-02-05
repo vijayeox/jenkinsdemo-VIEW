@@ -43,6 +43,34 @@
   }
 }
 
+.badgeCheck {
+  height: 24px;
+  width: 25px;
+  border-radius: 14px;
+  top: -2px;
+  left: 79px;
+  position: absolute;
+  background-color: red;
+  font-size: 12px;
+  padding: 4px;
+  padding-left: 2px;
+  padding-top: 4px;
+  text-align: center
+  
+ /* height: 24px;
+  width: 25px;
+  border-radius: 14px;
+  top: -11px;
+  left: 7px;
+  position: relative;
+  background-color: red;
+  font-size: 12px;
+  padding: 4px;
+  padding-left: 2px;
+  padding-top: 4px;
+  text-align: center;*/
+}
+
 .osjs-root[data-dir="rtl"] {
   .osjs-panel-item[data-name=tray] > div:not(:last-child) {
     margin-right: 0;
