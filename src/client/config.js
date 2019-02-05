@@ -35,7 +35,7 @@
 
 module.exports = {
   auth: {
-    url: "http://localhost/auth",
+    url: "/auth",
     ui: {
       title: 'Welcome to OX Zion',
       logo: {
@@ -43,6 +43,9 @@ module.exports = {
         src: require('./assets/images/OXZion.png')
       }
     }
+  },
+  wrapper: {
+      url: "http://jenkins.oxzion.com:8080",
   },
   desktop: {
     settings: {
