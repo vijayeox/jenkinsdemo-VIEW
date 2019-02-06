@@ -32,6 +32,8 @@
     "Announcements": "file:../apps/Announcements",
     "OXMail": "file:../apps/OXMail",
     "Preferences": "file:../apps/Preferences",
+    "MyTodo": "file:../apps/MyTodo",
+    "OxzionTheme": "file:../themes/OxzionTheme",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
