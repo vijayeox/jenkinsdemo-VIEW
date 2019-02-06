@@ -20,7 +20,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 	async init() {
 		this.core.instance('oxzion/restClient', () => ({
-			request: (version,url,params,method) => this.makeRequest(version,url,params,method),
+			request: (version,action,params,method) => this.makeRequest(version,action,params,method),
 			authenticate: (params) => this.authenticate(params)
 		}));
 
@@ -31,7 +31,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 	async authenticate(params) {
 		try {
 			var respData ;
-			let url = this.baseUrl + this.core.config('auth.url');
+			let url = this.baseUrl + 'auth';
 			//console.log(url);
 			const testURL = this.core.config('auth.url');
 			const resp = await fetch(url, {
@@ -49,9 +49,11 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// action - string
 	// params - *
 	// method - string
-	async makeRequest(version,url,params,method) {
+	async makeRequest(version,action,params,method) {
 		let userData =  this.core.getUser();
-		let urlString = this.baseUrl + url;
+		if(action.charAt(0)== '/')
+			action = action.substr(1);
+		let urlString = this.baseUrl + action;
 		//console.log(urlString);
 		this.token = userData["jwt"];
 		try {

@@ -35,7 +35,6 @@
 
 module.exports = {
   auth: {
-    url: "/auth",
     ui: {
       title: 'Welcome to OX Zion',
       logo: {
@@ -45,7 +44,7 @@ module.exports = {
     }
   },
   wrapper: {
-      url: "http://jenkins.oxzion.com:8080",
+      url: "http://jenkins.oxzion.com:8080/",
   },
   desktop: {
     settings: {
