@@ -48,6 +48,7 @@ module.exports = {
   },
   desktop: {
     settings: {
+      theme: "OxzionTheme",
       font: "Century Gothic",
       background: {
         src: require('./assets/images/OX_UnderConstruction.png'),
