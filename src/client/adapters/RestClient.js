@@ -78,7 +78,8 @@ export class RestClientServiceProvider extends ServiceProvider {
 					method: method,
 					credentials:'include',
 					headers: {
-				      'Authorization': auth,
+					  'Authorization': auth,
+					  'Content-Type': 'application/json'
 				    },
 					body: params.data
 				})	
