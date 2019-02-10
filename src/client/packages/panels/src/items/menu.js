@@ -182,6 +182,27 @@ export default class MenuPanelItem extends PanelItem {
 
       this.core.make('osjs/auth').logout();
     };
+    const addSearch = (searchDiv, input) => {
+      let  filter, items, i;
+      filter = input.value.toUpperCase();
+      console.log(filter);
+      items = document.getElementsByClassName('appcaption');
+      for (i = 0; i < items.length; i++) {
+        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+          items[i].parentElement.parentElement.parentElement.style.display = 'block';
+          items[i].parentElement.style.display = 'flex';
+        } else {
+          items[i].parentElement.style.display = 'none';
+          items[i].parentElement.parentElement.parentElement.style.display = 'none';
+        }
+      }
+      for (i = 0; i < items.length; i++) {
+        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+          items[i].parentElement.parentElement.parentElement.style.display = 'block';
+          items[i].parentElement.style.display = 'flex';
+        }
+      }
+    };
 
     const onclick = (ev) => {
       const packages = this.core.make('osjs/packages').getPackages(m => (!m.type || m.type === 'application'));
@@ -200,7 +221,9 @@ export default class MenuPanelItem extends PanelItem {
       let input = document.createElement('input');
       input.type = 'text';
       input.name = 'appsearch';
+      input.id = 'appsearch';
       input.placeholder = 'Search...';
+      input.onkeyup = function() { addSearch(searchDiv, input); };
       searchBarDiv.appendChild(input);
       searchDiv.appendChild(searchBarDiv);
       appmenuElement.appendChild(searchDiv);
