@@ -49,6 +49,7 @@ module.exports = {
   desktop: {
     settings: {
       theme: "OxzionTheme",
+      icons: "oxzioniconpack",
       font: "Century Gothic",
       background: {
         src: require('./assets/images/OX_UnderConstruction.png'),
@@ -57,6 +58,14 @@ module.exports = {
       }
     }
   },
+  vfs: {
+    mountpoints: [{
+      name: 'temp',
+      label: 'Temporary Files',
+      adapter: 'system', // You can leave this out as 'system' is default
+      attributes: {}
+     }]
+   },
   application: {
     categories: {
       development: {
