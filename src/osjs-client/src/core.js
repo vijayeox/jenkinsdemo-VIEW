@@ -137,11 +137,11 @@ export default class Core extends CoreBase {
 
         // to check if local storage present in browser
         lsHelper.supported();
-        const autoLogin = lsHelper.get('OX_JWT');
+        const autoLogin = lsHelper.get('AUTH_token');
         //console.log(autoLogin);
         if(autoLogin) {
           // reset the user details on refresh
-          this.user = {jwt: autoLogin["key"],username: lsHelper.get('OX_user')["key"]};
+          this.user = {jwt: autoLogin["key"],username: lsHelper.get('User')["key"]};
           //console.log(this.user);
           this.emit('osjs/core:logged-in');
           if (this.has('osjs/settings')) {
