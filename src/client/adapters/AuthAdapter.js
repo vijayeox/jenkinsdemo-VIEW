@@ -25,8 +25,8 @@ const loginAdapter = (core, config) => ({
       var res = await caller.authenticate(reqData);
       if (res["status"] == "success") {
         if(lsHelper.supported() || lsHelper.cookieEnabled()){
-          lsHelper.set('OX_JWT',res["data"]["jwt"]);
-          lsHelper.set('OX_user',username);
+          lsHelper.set('AUTH_token',res["data"]["jwt"]);
+          lsHelper.set('User',username);
           return Promise.resolve({jwt:res["data"]["jwt"], username : username}); 
         }
         else {
@@ -44,7 +44,7 @@ const loginAdapter = (core, config) => ({
   logout: (req, res) => {
     var lsHelper = new LocalStorageAdapter;
     if(lsHelper.supported() || lsHelper.cookieEnabled()){
-      lsHelper.purge('OX_JWT');
+      lsHelper.purge('AUTH_token');
       return Promise.resolve(true); 
     }
   }

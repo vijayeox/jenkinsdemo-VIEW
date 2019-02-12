@@ -1,5 +1,27 @@
 # Changelog for osjs-client
 
+## 3.0.46
+
+* Improve Window#resizeFit (#60)
+
+## 3.0.45
+
+* Fixed parsing of certain backend error messages
+
+## 3.0.44
+
+* Updated system VFS request calls
+
+## 3.0.43
+
+* Updated server auth provider
+
+## 3.0.42
+
+* Support percentages as initial window position (#56)
+* Fixed request options getting corrupted
+* Support percentages as initial window dimension (#56)
+
 ## 3.0.41
 
 * Updated @osjs/event-emitter
