@@ -108,7 +108,7 @@ export default class Panel extends EventEmitter {
 
     this.$element = document.createElement('div');
     this.$element.classList.add('osjs-panel');
-    // this.$element.classList.add('osjs__contextmenu');
+    this.$element.classList.add('osjs__contextmenu');
     this.$element.addEventListener('contextmenu', ev => {
       ev.preventDefault();
 
@@ -133,16 +133,9 @@ export default class Panel extends EventEmitter {
     });
     this.$element.setAttribute('data-position', this.options.position);
     this.$element.setAttribute('data-ontop', String(this.options.ontop));
+
     this.core.$root.appendChild(this.$element);
-    let appmenuElement = document.createElement('div');
-    appmenuElement.classList.add('appmenu');
-    appmenuElement.id = 'appmenu';
-    this.core.$root.appendChild(appmenuElement);
-    if(this.options.position === 'top') {
-      appmenuElement.style['margin-top'] = '3.5em';
-    } else {
-      appmenuElement.style['margin-top'] = '0';
-    }
+
     this.items.forEach(item => item.init());
 
     this.emit('create');
@@ -166,12 +159,7 @@ export default class Panel extends EventEmitter {
 
   setPosition(position) {
     this.options.position = position;
-    let appMenu = document.getElementById('appmenu');
-    if(position === 'top') {
-      appMenu.style['margin-top'] = '3.5em';
-    } else {
-      appMenu.style['margin-top'] = '0';
-    }
+
     return this.core.make('osjs/panels').save()
       .then(() => {
         const desktop = this.core.make('osjs/desktop');

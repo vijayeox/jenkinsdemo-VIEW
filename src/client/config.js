@@ -35,6 +35,7 @@
 
 module.exports = {
   auth: {
+    url: "http://localhost/auth",
     ui: {
       title: 'Welcome to OX Zion',
       logo: {
@@ -43,29 +44,16 @@ module.exports = {
       }
     }
   },
-  wrapper: {
-      url: "http://jenkins.oxzion.com:8080/",
-  },
   desktop: {
     settings: {
-      theme: "OxzionTheme",
-      icons: "oxzioniconpack",
       font: "Century Gothic",
       background: {
-        src: require('./assets/images/OX_UnderConstruction.png'),
+        src: require('./assets/images/OX_Background_Ontherocks.png'),
         color: '#452767',
         style: 'cover'
       }
     }
   },
-  vfs: {
-    mountpoints: [{
-      name: 'temp',
-      label: 'Temporary Files',
-      adapter: 'system', // You can leave this out as 'system' is default
-      attributes: {}
-     }]
-   },
   application: {
     categories: {
       development: {

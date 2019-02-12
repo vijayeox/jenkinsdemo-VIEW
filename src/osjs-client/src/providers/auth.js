@@ -38,8 +38,8 @@ const serverAuth = (core, options) => {
   }, 'json');
 
   return {
-    login: (values) => request('/login', values),
-    logout: () =>  request('/logout')
+    login: (values) => request(core.url('/login'), values),
+    logout: () =>  request(core.url('/logout'))
   };
 };
 

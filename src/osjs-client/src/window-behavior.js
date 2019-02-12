@@ -117,11 +117,11 @@ const getCascadePosition = (win, rect, pos) => {
   const newX = startX + ((win.wid % wrap) * distance);
   const newY = startY + ((win.wid % wrap) * distance);
 
-  const top = typeof pos.top === 'number' && Number.isInteger(pos.top)
+  const top = typeof pos.top === 'number'
     ? Math.max(rect.top, pos.top)
     : newY;
 
-  const left = typeof pos.left === 'number' && Number.isInteger(pos.left)
+  const left = typeof pos.left === 'number'
     ? Math.max(rect.left, pos.left)
     : newX;
 

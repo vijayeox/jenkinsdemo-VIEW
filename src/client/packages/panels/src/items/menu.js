@@ -28,7 +28,7 @@
  * @licence Simplified BSD License
  */
 
-import { h } from 'hyperapp';
+import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
 import * as languages from '../locales';
 
@@ -50,56 +50,6 @@ const getTitle = (locale, item) => locale
 const getCategory = (locale, cat) => locale
   .translate(cat);
 
-const makeCategory = (category, core) => {
-  let categoryDiv = document.createElement('div');
-  categoryDiv.classList.add('category');
-  let captionDiv = document.createElement('div');
-  captionDiv.classList.add('caption');
-  let categoryLabel = document.createTextNode(category.label);
-  captionDiv.append(categoryLabel);
-  categoryDiv.appendChild(captionDiv);
-  categoryDiv = makeAppList(category, categoryDiv, core);
-  if(category.data && category.data.action === 'logout') {
-    categoryDiv.onclick = core.make('osjs/auth').logout();
-  }
-  return categoryDiv;
-};
-const getRandomColor = () => {
-  let letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-const makeAppList = (category, categoryDiv, core) => {
-  if (category.items) {
-    let appListDiv = document.createElement('div');
-    appListDiv.classList.add('applist');
-    let categoryColor = getRandomColor();
-    for (let i = 0; i < category.items.length; i++) {
-      const appItem = category.items[i];
-      let appDiv = document.createElement('div');
-      appDiv.classList.add('app');
-      let captionDiv = document.createElement('div');
-      let icon = document.createElement('i');
-      icon.classList.add('osjs-icon');
-      icon.setAttribute('data-icon', appItem.icon);
-      icon.style['background-image'] = 'url(' + appItem.icon + ')';
-      icon.style['background-size'] = '28px';
-      icon.style['background-color'] = categoryColor;
-      captionDiv.classList.add('appcaption');
-      let appLabel = document.createTextNode(appItem.label);
-      captionDiv.append(appLabel);
-      appDiv.appendChild(icon);
-      appDiv.appendChild(captionDiv);
-      appDiv.onclick = function() { core.run(appItem.data.name); };
-      appListDiv.appendChild(appDiv);
-    }
-    categoryDiv.appendChild(appListDiv);
-  }
-  return categoryDiv;
-};
 const makeTree = (core, __, metadata) => {
   const configuredCategories = core.config('application.categories');
   const categories = {};
@@ -111,7 +61,7 @@ const makeTree = (core, __, metadata) => {
 
     if (!categories[cat]) {
       categories[cat] = {
-        icon: found.icon ? { name: found.icon } : defaultIcon,
+        icon: found.icon ? {name: found.icon} : defaultIcon,
         label: getCategory(locale, found.label),
         items: []
       };
@@ -131,6 +81,8 @@ const makeTree = (core, __, metadata) => {
   });
 
   const system = [{
+    type: 'separator'
+  }, {
     icon: defaultIcon,
     label: __('LBL_LOG_OUT'),
     data: {
@@ -154,7 +106,7 @@ export default class MenuPanelItem extends PanelItem {
   attachKeybindings(el) {
     const onkeydown = ev => {
       const checkKeys = (this.options.boundKey || 'Alt+a').toLowerCase().split('+');
-      const modifierNames = ['ctrl', 'shift', 'alt', 'meta'];
+      const modifierNames =  ['ctrl', 'shift', 'alt', 'meta'];
       const keyName = String(ev.key).toLowerCase();
       const validKeypress = checkKeys.every(k => modifierNames.indexOf(k) !== -1
         ? ev[k + 'Key']
@@ -182,86 +134,40 @@ export default class MenuPanelItem extends PanelItem {
 
       this.core.make('osjs/auth').logout();
     };
-    const addSearch = (searchDiv, input) => {
-      let  filter, items, i;
-      filter = input.value.toUpperCase();
-      console.log(filter);
-      items = document.getElementsByClassName('appcaption');
-      for (i = 0; i < items.length; i++) {
-        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-          items[i].parentElement.parentElement.parentElement.style.display = 'block';
-          items[i].parentElement.style.display = 'flex';
-        } else {
-          items[i].parentElement.style.display = 'none';
-          items[i].parentElement.parentElement.parentElement.style.display = 'none';
-        }
-      }
-      for (i = 0; i < items.length; i++) {
-        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-          items[i].parentElement.parentElement.parentElement.style.display = 'block';
-          items[i].parentElement.style.display = 'flex';
-        }
-      }
-    };
 
     const onclick = (ev) => {
-      const packages = this.core.make('osjs/packages').getPackages(m => (!m.type || m.type === 'application'));
-      let appArray = makeTree(this.core, __, [].concat(packages));
-      console.log(appArray);
-      let appmenuElement = document.getElementById('appmenu');
-      appmenuElement.innerHTML = '';
-      let appBarDiv = document.createElement('div');
-      appBarDiv.classList.add('app-bar');
+      const packages = this.core.make('osjs/packages')
+        .getPackages(m => (!m.type || m.type === 'application'));
 
-      let searchDiv = document.createElement('div');
-      searchDiv.classList.add('app-search-div');
-      let searchBarDiv = document.createElement('div');
-      searchBarDiv.classList.add('app-search-bar-div');
+      this.core.make('osjs/contextmenu').show({
+        menu: makeTree(this.core, __, [].concat(packages)),
+        position: ev.target,
+        callback: (item) => {
+          const {name, action} = item.data || {};
 
-      let input = document.createElement('input');
-      input.type = 'text';
-      input.name = 'appsearch';
-      input.id = 'appsearch';
-      input.placeholder = 'Search...';
-      input.onkeyup = function() { addSearch(searchDiv, input); };
-      searchBarDiv.appendChild(input);
-      searchDiv.appendChild(searchBarDiv);
-      appmenuElement.appendChild(searchDiv);
-
-      appmenuElement.classList.toggle('appmenu-visible');
-      console.log(packages);
-      for (let category = 0; category < appArray.length; category++) {
-        appBarDiv.appendChild(makeCategory(appArray[category], this.core));
-      }
-      appmenuElement.appendChild(appBarDiv);
-      // this.core.make('osjs/contextmenu').show({
-      //   menu: makeTree(this.core, __, [].concat(packages)),
-      //   position: ev.target,
-      //   callback: (item) => {
-      //     const {name, action} = item.data || {};
-
-      //     if (name) {
-      //       this.core.run(name);
-      //     } else if (action === 'saveAndLogOut') {
-      //       logout(true);
-      //     } else if (action === 'logOut') {
-      //       logout(false);
-      //     }
-      //   }
-      // });
+          if (name) {
+            this.core.run(name);
+          } else if (action === 'saveAndLogOut') {
+            logout(true);
+          } else if (action === 'logOut') {
+            logout(false);
+          }
+        }
+      });
     };
+
     return super.render('menu', [
       h('div', {
         onclick,
         oncreate: el => this.attachKeybindings(el),
         className: 'osjs-panel-item--clickable osjs-panel-item--icon'
       }, [
-          h('img', {
-            src: menuIcon,
-            alt: _('LBL_MENU')
-          })//,
-          //h('span', {}, _('LBL_MENU'))
-        ])
+        h('img', {
+          src: menuIcon,
+          alt: _('LBL_MENU')
+        })//,
+        //h('span', {}, _('LBL_MENU'))
+      ])
     ]);
   }
 
