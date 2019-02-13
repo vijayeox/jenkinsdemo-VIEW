@@ -1,0 +1,16 @@
+{
+  "type": "application",
+  "name": "OXMail",
+  "category": null,
+  "icon": "OXZion.png",
+  "title": {
+    "en_EN": "OX Mail"
+  },
+  "description": {
+    "en_EN": "OX Mail"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

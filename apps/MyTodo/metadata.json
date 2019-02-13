@@ -1,0 +1,17 @@
+{
+  "type": "application",
+  "name": "MyTodo",
+  "icon": "icon.png",
+  "category": null,
+  "server": "server.js",
+  "title": {
+    "en_EN": "MyTodo"
+  },
+  "description": {
+    "en_EN": "MyTodo"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

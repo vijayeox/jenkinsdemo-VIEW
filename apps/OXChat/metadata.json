@@ -1,0 +1,18 @@
+{
+    "type": "application",
+    "name": "OXChat",
+    "icon":"oxchat.png",
+    "category": null,
+    "server": "server.js",
+    "title": {
+      "en_EN": "OXChat"
+    },
+    "description": {
+      "en_EN": "OXChat"
+    },
+    "files": [
+      "main.js",
+      "main.css"
+    ]
+  }
+  
