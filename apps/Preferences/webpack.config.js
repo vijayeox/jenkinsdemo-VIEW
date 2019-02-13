@@ -29,6 +29,9 @@ module.exports = {
     minimize,
   },
   plugins: [
+    new CopyWebpackPlugin([
+      'bg.jpg','hicon.png','bg1.png','BG3.png','cardbg.jpeg'
+    ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

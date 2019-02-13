@@ -1,0 +1,345 @@
+i {
+  margin-top: 20px;
+  margin-right: 5px;
+  margin-bottom: 20px;
+}
+
+#imgsave{
+	margin-left:10px;
+	margin-right: 10px;
+}
+#label1 {
+  font-size: 17px;
+  color: black;
+  word-break: break-word;
+  font-style: "italic";
+  font-family: "Cambria";
+}
+#name {
+  font-size: 15px;
+  color: black;
+  
+}
+.name {
+  font-size: 15px;
+  color: black;
+}
+#cardwidth {
+  width: 100%;
+}
+.img1 {
+  margin-bottom: 20px;
+}
+.form {
+  height: 100%;
+  width: 100%;
+}
+.tabs {
+  height: 100%;
+  width: 100%;
+}
+#edit1 {
+  cursor: pointer;
+}
+
+#goBack {
+	margin-bottom: 20px;
+	margin-top:20px;
+	margin-left:10px;
+}
+.imgupload{
+	margin-left: 10px;
+}
+#goBack1{
+	margin-left:10px;
+
+}
+.row {
+  padding-bottom: 2%;
+}
+
+.buttons {
+  margin-right: 3%;
+  margin-left: 3%;
+}
+#imgcrop {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+#label2 {
+  font-size: 20px;
+  color: black;
+  font-style: "italic";
+  font-family: "Georgia";
+}
+
+.add {
+  word-wrap: break-word;
+} 
+
+#card {
+  margin-right: 10%;
+  background-image: url('/apps/Preferences/cardbg.jpeg');
+  background-size: cover;
+  margin-left: 10%;
+  margin-top:5%;
+  
+} 
+.dropdown-content{
+	height:200px;
+	width: 350px !important;
+	left:95px !important;
+}
+
+#container-circles {
+  position: absolute;
+  left: 50%;
+  bottom: 90px;
+}
+#outer-circle {
+  left: -37px;
+  height: 75px;
+  width: 75px;
+  background-color: hsla(0, 0%, 100%, 0.4);
+  z-index: 1;
+}
+#inner-circle,
+#outer-circle {
+  position: absolute;
+  border-radius: 50%;
+}
+#inner-circle {
+  left: 50%;
+  top: 38px;
+  height: 44px;
+  width: 44px;
+  background: #fff;
+  margin: -22px 0 0 -22px;
+  z-index: 2;
+}
+#inner-circle.is-clicked {
+  height: 38px;
+  width: 38px;
+  margin: -19px 0 0 -19px;
+}
+#white-flash.normal {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 1;
+  -webkit-transition: opacity 0.9s ease-out;
+  -o-transition: opacity 0.9s ease-out;
+  transition: opacity 0.9s ease-out;
+}
+#white-flash.do-transition {
+  opacity: 0;
+  background: #fff;
+}
+#display-error {
+  color: #000;
+  background-color: #fff;
+}
+.react-html5-camera-photo {
+  /* position: relative; */
+  text-align: center;
+}
+.react-html5-camera-photo > img,
+.react-html5-camera-photo > video {
+	width: 50%;
+	height:50%;
+}
+.react-html5-camera-photo > .display-error {
+  width: 768px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .react-html5-camera-photo > .display-error,
+  .react-html5-camera-photo > img,
+  .react-html5-camera-photo > video {
+    width: 100%;
+  }
+}
+/*# sourceMappingURL=index.css.map*/
+
+.react-phone-number-input__row
+{
+	/* This is done to stretch the contents of this component */
+	display     : flex;
+	align-items : center;
+}
+
+.react-phone-number-input__phone
+{
+	/* The phone number input stretches to fill all empty space */
+	flex : 1;
+
+	/* The phone number input should shrink
+	   to make room for the extension input */
+	min-width : 0;
+}
+
+.react-phone-number-input__icon
+{
+	/* The flag icon size is 4x3 hence the exact `width` and `height` values */
+	width      : 1.24em;
+	height     : 0.93em;
+
+	/* `1px` is still too much for a "retina" screen but there's no way in CSS to specify "hairline" border width. */
+	border     : 1px solid rgba(0, 0, 0, 0.5);
+
+	/* Makes sure `width`x`height` is exactly `4x3` and `border` width is not included in it */
+	box-sizing : content-box;
+}
+
+.react-phone-number-input__icon--international
+{
+	/* The international icon size is square */
+	/* and also has no border hence the `2 * 1px` `width` and `height` compensation */
+	width  : calc(0.93em + 2px);
+	height : calc(0.93em + 2px);
+
+	/* The international icon size is square hence the exact `padding` value */
+	/* for precise alignment with `4x3` sized country flags. */
+	padding-left  : 0.155em;
+	padding-right : 0.155em;
+
+	border : none;
+}
+
+.react-phone-number-input__error
+{
+	margin-left : calc(1.24em + 2px + 0.3em + 0.35em + 0.5em);
+	margin-top  : calc(0.3rem);
+	color       : #D30F00;
+}
+
+.react-phone-number-input__icon-image
+{
+	max-width  : 100%;
+	max-height : 100%;
+}
+
+/* Removes `<input type="number"/>` up/down arrows in Webkit browsers. */
+.react-phone-number-input__ext-input::-webkit-inner-spin-button,
+.react-phone-number-input__ext-input::-webkit-outer-spin-button
+{
+	margin             : 0 !important;
+	-webkit-appearance : none !important;
+	-moz-appearance    : textfield !important;
+}
+
+.react-phone-number-input__ext-input
+{
+	width : 3em;
+}
+
+.react-phone-number-input__ext
+{
+	white-space: nowrap;
+}
+
+.react-phone-number-input__ext,
+.react-phone-number-input__ext-input
+{
+	margin-left : 0.5em;
+}
+
+/* Styling native country `<select/>`. */
+
+.react-phone-number-input__country--native
+{
+	position     : relative;
+	align-self   : stretch;
+	display      : flex;
+	align-items  : center;
+	margin-right : 0.5em;
+}
+
+.react-phone-number-input__country-select
+{
+	position : absolute;
+	top      : 0;
+	left     : 0;
+	height   : 100%;
+	width    : 100%;
+	z-index  : 1;
+	border   : 0;
+	opacity  : 0;
+	cursor   : pointer;
+}
+
+.react-phone-number-input__country-select-arrow
+{
+	display            : block;
+	content            : '';
+	width              : 0;
+	height             : 0;
+	margin-bottom      : 0.1em;
+	margin-top         : 0.3em;
+	margin-left        : 0.3em;
+	border-width       : 0.35em 0.2em 0 0.2em;
+	border-style       : solid;
+	border-left-color  : transparent;
+	border-right-color : transparent;
+	color              : #B8BDC4;
+	opacity            : 0.7;
+	transition         : color 0.1s;
+}
+
+/* Something from stackoverflow. */
+.react-phone-number-input__country-select-divider
+{
+	font-size  : 1px;
+	background : black;
+}
+
+.react-phone-number-input__country-select:focus + .react-phone-number-input__country-select-arrow,
+.react-phone-number-input__country.rrui__select--focus .rrui__select__arrow
+{
+	color : #03B2CB;
+}
+
+/* Styling phone number input */
+
+.react-phone-number-input__input
+{
+	height        : calc(0.3rem * 6);
+	outline       : none;
+	border-radius : 0;
+	padding       : 0;
+	appearance    : none;
+	border        : none;
+	border-bottom : 1px solid #C5D2E0;
+	transition    : border 0.1s;
+	font-size     : inherit;
+}
+
+.react-phone-number-input__input:focus
+{
+	border-color : #03B2CB;
+}
+
+.react-phone-number-input__input--disabled
+{
+	cursor : default;
+}
+
+.react-phone-number-input__input--invalid,
+.react-phone-number-input__input--invalid:focus
+{
+	border-color : #EB2010;
+}
+
+/* Overrides Chrome autofill yellow background color */
+.react-phone-number-input__input:-webkit-autofill
+{
+	box-shadow : 0 0 0 1000px white inset;
+}
+
+/* A small fix for `react-responsive-ui` */
+.react-phone-number-input__country .rrui__select__button
+{
+	border-bottom : none;
+}

@@ -2,11 +2,14 @@
 }
 
 .rwt__tabs[data-rwt-vertical="true"] {
-  display: flex;
+	display: flex;
 }
+
+
 
 .rwt__tablist:not([aria-orientation="vertical"]) {
 	border-bottom: 1px solid #ddd;
+	position: relative;
 }
 
 .rwt__tablist[aria-orientation="vertical"] {
@@ -16,6 +19,9 @@
 	flex-grow: 0;
 	border-right: 1px solid #ddd;
 	margin-right: 1rem;
+
+	
+
 }
 
 .rwt__tab {
@@ -24,7 +30,7 @@
 	text-align:left;
 	font-family: inherit;
 	font-size: inherit;
-	padding: 1rem 2rem;
+	// padding: 1rem 2rem;
 	padding-left: 5px;
   transition: background 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
   > i{
@@ -62,10 +68,39 @@
   height: 100%;
   border-right: 3px solid #00d8ff;
 }
+
+.rwt__tabs{
+	height:100%;
+	position:fixed;
+	width:100%;
+}
 .rwt__tabpanel{
 	width:100%;
 	overflow-y:auto;
+	height:calc(100% - 92px);
 }
 .form{
 	padding:15px;
+	position:relative;
+}
+
+//  .tab1{
+// 	background-image: url('/apps/Preferences/BG3.png');
+	
+//  }
+
+//  .tabHeader{
+// 	 padding-bottom: 10%;
+//  }
+
+//  .tab1{
+//  	position: absolute;
+// 		 top: 60px;
+	
+//  }
+
+.AvatarPicker-canvas{
+	margin-top: 150px;
+// width:40%;
+	position: relative;
 }

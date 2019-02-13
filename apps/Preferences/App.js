@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import { Tabs, Tab, TabPanel, TabList } from 'react-web-tabs';
-import EditProfile from './tabs/EditProfile.js';
 import ChangePassword from './tabs/ChangePassword.js';
-import UpdateProfileIcon from './tabs/UpdateProfileIcon.js';
 import Preferences from './tabs/Preferences.js';
+import Profile from './tabs/Profile.js';
+import './tabs/Sample.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
+  //  this.core = this.props.args;
     this.state = {
       height : this.props.args.windows[0].$content.scrollHeight
     }
@@ -27,32 +27,25 @@ class App extends Component {
 
   render() {
     return (
-      <Tabs defaultTab="vertical-tab-one" vertical>
+      <Tabs defaultTab="vertical-tab-one">
       <TabList>
-      <Tab tabFor="vertical-tab-one"><i className="fa fa-home"></i><span className="tabHeader">Profile</span></Tab>
-      <Tab tabFor="vertical-tab-two"><i className="fa fa-home"></i><span className="tabHeader">Edit Profile</span></Tab>
-      <Tab tabFor="vertical-tab-three"><i className="fa fa-home"></i><span className="tabHeader">Change Password</span></Tab>
-      <Tab tabFor="vertical-tab-four"><i className="fa fa-person"></i><span className="tabHeader">Update Profile Picture</span></Tab>
-      <Tab tabFor="vertical-tab-five"><i className="fa fa-cogs"></i><span className="tabHeader">Preferences</span></Tab>
+      <Tab tabFor="vertical-tab-one"><i className="fa fa-user-circle"></i><span className="tabHeader">Profile</span></Tab>
+      <Tab tabFor="vertical-tab-two"><i className="fa fa-key"></i><span className="tabHeader">Change Password</span></Tab>
+      <Tab tabFor="vertical-tab-three"><i className="fa fa-cogs"></i><span className="tabHeader">Preferences</span></Tab>
       </TabList>
-      <TabPanel style={{height: this.state.height}} tabId="vertical-tab-one">
-      <p>Tab 1 content</p>
+      <TabPanel tabId="vertical-tab-one" className="tab1">
+      <Profile /* args = {this.core}*/ />
       </TabPanel>
-      <TabPanel style={{height: this.state.height}} tabId="vertical-tab-two">
-      <EditProfile />
-      </TabPanel>
-      <TabPanel style={{height: this.state.height}} tabId="vertical-tab-three">
+      <TabPanel tabId="vertical-tab-two" className="tab1">
       <ChangePassword />
       </TabPanel>
-      <TabPanel style={{height: this.state.height}} tabId="vertical-tab-four">
-      <UpdateProfileIcon />
-      </TabPanel>
-      <TabPanel style={{height: this.state.height}} tabId="vertical-tab-five">
+      <TabPanel tabId="vertical-tab-three" className="tab1">
       <Preferences />
       </TabPanel>
+      
       </Tabs>
       );
   }
 }
 
-export default Profile;
+export default App;
