@@ -12,5 +12,6 @@
   "files": [
     "main.js",
     "main.css"
-  ]
+  ],
+  "mailServer": "http://localhost:8075"
 }

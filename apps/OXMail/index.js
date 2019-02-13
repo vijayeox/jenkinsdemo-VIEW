@@ -27,9 +27,8 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
-import { name as applicationName } from "./metadata.json";
+import { name as applicationName, mailServer as baseUrl } from "./metadata.json";
 
-let baseUrl = "http://localhost";
 const createIframe = (bus, proc, win, cb) => {
   const iframe = document.createElement("iframe");
   iframe.style.width = "100%";
@@ -110,7 +109,7 @@ OSjs.make("osjs/packages").register(
         const user = core.make("osjs/auth").user();
         // Get path to iframe content
         const src = proc.resource(
-          baseUrl + "/rainloop/oxindex.php?username=" + user.username
+          baseUrl + "/oxindex.php?username=" + user.username
         );
 
         // Create DOM element
