@@ -6,5 +6,6 @@ dist
 /sessions
 /.env*
 /session-store.db
+local.js
 npm-debug.log
 package-lock.json
