@@ -1,0 +1,23 @@
+{
+    "name": "Oxzion",
+    "version": "3.0.0",
+    "description": "Oxzion 3.0",
+    "scripts": {
+        "clean": "bash clean.sh",
+        "build": "bash build.sh",
+        "serve": "node bos/src/server/index.js"
+    },
+    "keywords": [
+        "Oxzion"
+    ],
+    "devDependencies": {},
+    "dependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "git@code.oxzion.com:root/oxzion3.0.git"
+    },
+    "homepage": "https://www.oxzion.com",
+    "engines": {
+        "node": ">=8.0.0"
+    }
+}
