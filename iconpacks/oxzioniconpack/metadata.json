@@ -1,0 +1,14 @@
+{
+  "type": "icons",
+  "name": "oxzioniconpack",
+  "category": null,
+  "title": {
+    "en_EN": "OX Zion Icons"
+  },
+  "description": {
+    "en_EN": "OX Zion Icons"
+  },
+  "files": [
+    "main.css"
+  ]
+}
