@@ -1,0 +1,15 @@
+{
+  "type": "theme",
+  "name": "OxzionTheme",
+  "category": null,
+  "title": {
+    "en_EN": "OxzionTheme"
+  },
+  "description": {
+    "en_EN": "OxzionTheme"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

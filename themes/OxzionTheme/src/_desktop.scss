@@ -1,0 +1,36 @@
+//
+// Panel
+//
+
+.osjs-panel {
+  @include panel;
+}
+
+.osjs-panel-item[data-name=windows] {
+  & > div[data-focused=false] {
+    opacity: 0.5;
+  }
+}
+
+.osjs-panel-item--clickable {
+  cursor: pointer;
+  transition: all $transition-duration $transition-timing-function;
+
+}
+
+//
+// Search
+//
+
+.osjs-search-input {
+  border: 0 none;
+  background-color: #fff;
+}
+
+.osjs-search-result {
+  &:hover,
+  &.osjs__active {
+    background-color: #fff;
+    color: #333;
+  }
+}
