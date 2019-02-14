@@ -28,7 +28,7 @@
  * @licence Simplified BSD License
  */
 
-import { h } from 'hyperapp';
+import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
 import * as languages from '../locales';
 
@@ -111,7 +111,7 @@ const makeTree = (core, __, metadata) => {
 
     if (!categories[cat]) {
       categories[cat] = {
-        icon: found.icon ? { name: found.icon } : defaultIcon,
+        icon: found.icon ? {name: found.icon} : defaultIcon,
         label: getCategory(locale, found.label),
         items: []
       };
@@ -130,18 +130,10 @@ const makeTree = (core, __, metadata) => {
     categories[k].items.sort(sortBy(sortByLabel));
   });
 
-  const system = [{
-    icon: defaultIcon,
-    label: __('LBL_LOG_OUT'),
-    data: {
-      action: 'logOut'
-    }
-  }];
-
   const sorted = Object.values(categories);
   sorted.sort(sortBy(sortByLabel));
 
-  return [...sorted, ...system];
+  return [...sorted];
 };
 
 /**
@@ -175,13 +167,6 @@ export default class MenuPanelItem extends PanelItem {
     const _ = this.core.make('osjs/locale').translate;
     const __ = this.core.make('osjs/locale').translatable(languages);
 
-    const logout = async (save) => {
-      if (save) {
-        await this.core.make('osjs/session').save();
-      }
-
-      this.core.make('osjs/auth').logout();
-    };
     const addSearch = (searchDiv, input) => {
       let  filter, items, i;
       filter = input.value.toUpperCase();
@@ -256,12 +241,10 @@ export default class MenuPanelItem extends PanelItem {
         oncreate: el => this.attachKeybindings(el),
         className: 'osjs-panel-item--clickable osjs-panel-item--icon'
       }, [
-          h('img', {
-            src: menuIcon,
-            alt: _('LBL_MENU')
-          })//,
-          //h('span', {}, _('LBL_MENU'))
-        ])
+        h('img', {
+          src: menuIcon,
+          alt: _('LBL_MENU')
+        })])
     ]);
   }
 

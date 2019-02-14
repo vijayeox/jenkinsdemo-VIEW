@@ -67,7 +67,7 @@ pointer-events: none;
 
 &::after {
 background: rgba(0, 0, 0, 0.5);
-background-color: #452767;
+background-color: #333333;
 }
 }
 }
@@ -140,7 +140,7 @@ padding: $base-margin / 2;
 
 .osjs-gui-menu {
 ul {
-background-color: #452767;
+background-color: #333333;
 border: 1px solid #000;
 color: #white;
 }
@@ -169,11 +169,11 @@ border: 1px solid #fff;
 color: #ffffff;
 }
 .osjs-gui-tabs-header>div{
-background-color:#452767;
+background-color:#333333;
 color:white;
 }
 .osjs-gui-tabs-header > div.osjs__active{
-background-color:#452767;
+background-color:#333333;
 }
 .osjs-window-title{
 color:#fff;

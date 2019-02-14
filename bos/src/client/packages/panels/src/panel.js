@@ -144,7 +144,6 @@ export default class Panel extends EventEmitter {
       appmenuElement.style['margin-top'] = '0';
     }
     this.items.forEach(item => item.init());
-
     this.emit('create');
   }
 

@@ -32,7 +32,7 @@ import './index.scss';
 import PanelServiceProvider from './src/provider';
 import WindowsPanelItem from './src/items/windows';
 import TrayPanelItem from './src/items/tray';
-import ClockPanelItem from './src/items/clock';
+import LogoutPanelItem from './src/items/logout';
 import MenuPanelItem from './src/items/menu';
 import PanelItem from './src/panel-item';
 import Panel from './src/panel';
@@ -43,6 +43,6 @@ export {
   Panel,
   WindowsPanelItem,
   TrayPanelItem,
-  ClockPanelItem,
+  LogoutPanelItem,
   MenuPanelItem
 };

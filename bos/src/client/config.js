@@ -55,7 +55,16 @@ module.exports = {
         src: require('./assets/images/OX_UnderConstruction.png'),
         color: '#452767',
         style: 'cover'
-      }
+      },
+      panels: [{
+        position: 'top',
+        items: [
+          {name: 'menu'},
+          {name: 'windows'},
+          {name: 'tray'},
+          {name: 'logout'}
+        ]
+      }],
     }
   },
   vfs: {

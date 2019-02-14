@@ -28,8 +28,43 @@
  * @licence Simplified BSD License
  */
 
-.osjs-panel-item[data-name=clock] {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
+import {h} from 'hyperapp';
+import PanelItem from '../panel-item';
+const logoutIcon = require('../../../../assets/images/logout.png');
+
+/**
+ * Logout
+ *
+ * @desc Logout Panel Item
+ */
+export default class LogoutPanelItem extends PanelItem {
+
+  init() {
+    if (this.inited) {
+      return;
+    }
+    super.init();
+  }
+  destroy() {
+    this.interval = clearInterval(this.interval);
+    super.destroy();
+  }
+
+  render(state, actions) {
+    const logout = async () => {
+      console.log('test');
+      await this.core.make('osjs/session').save();
+      this.core.make('osjs/auth').logout();
+    };
+    return super.render('logout', [
+      h('div', {
+        onclick: logout,
+        className: 'osjs-panel-logout'
+      }, [
+        h('img', {
+          src: logoutIcon,
+          alt: 'Log Out'
+        })])
+    ]);
+  }
 }
