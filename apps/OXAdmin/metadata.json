@@ -2,7 +2,7 @@
   "type": "application",
   "name": "OXAdmin",
   "category": null,
-  "autostart":true,
+  "autostart":false,
   "server": "server.js",
   "title": {
     "en_EN": "OXAdmin"
