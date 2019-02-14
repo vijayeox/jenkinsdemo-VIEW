@@ -74,7 +74,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 			}
 			else if (method == 'post') {
 				let auth = 'Bearer ' + this.token;
-				let parameters = params.data;
+				let parameters = params;
 				if (typeof parameters === 'string') {
 					parameters = JSON.parse(parameters)
 				}
@@ -94,7 +94,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				return resp.json();
 			}
 			else if (method == 'put') {
-				let parameters = params.data;
+				let parameters = params;
 				if (typeof parameters === 'string') {
 					parameters = JSON.parse(parameters)
 				}
