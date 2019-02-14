@@ -33,6 +33,7 @@
     "MyTodo": "file:../apps/MyTodo",
     "OXMail": "file:../apps/OXMail",
     "OXChat": "file:../apps/OXChat",
+    "OXAdmin": "file:../apps/OXAdmin",
     "OxzionTheme": "file:../themes/OxzionTheme",
     "oxzioniconpack": "file:../iconpacks/oxzioniconpack",
     "Preferences": "file:../apps/Preferences",
