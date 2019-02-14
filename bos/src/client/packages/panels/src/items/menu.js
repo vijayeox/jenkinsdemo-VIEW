@@ -59,9 +59,6 @@ const makeCategory = (category, core) => {
   captionDiv.append(categoryLabel);
   categoryDiv.appendChild(captionDiv);
   categoryDiv = makeAppList(category, categoryDiv, core);
-  if(category.data && category.data.action === 'logout') {
-    categoryDiv.onclick = core.make('osjs/auth').logout();
-  }
   return categoryDiv;
 };
 const getRandomColor = () => {
@@ -93,7 +90,7 @@ const makeAppList = (category, categoryDiv, core) => {
       captionDiv.append(appLabel);
       appDiv.appendChild(icon);
       appDiv.appendChild(captionDiv);
-      appDiv.onclick = function() { core.run(appItem.data.name); };
+      appDiv.onclick = function() { core.run(appItem.data.name);document.getElementById('appmenu').classList.remove('appmenu-visible'); };
       appListDiv.appendChild(appDiv);
     }
     categoryDiv.appendChild(appListDiv);
@@ -170,7 +167,6 @@ export default class MenuPanelItem extends PanelItem {
     const addSearch = (searchDiv, input) => {
       let  filter, items, i;
       filter = input.value.toUpperCase();
-      console.log(filter);
       items = document.getElementsByClassName('appcaption');
       for (i = 0; i < items.length; i++) {
         if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
@@ -192,7 +188,6 @@ export default class MenuPanelItem extends PanelItem {
     const onclick = (ev) => {
       const packages = this.core.make('osjs/packages').getPackages(m => (!m.type || m.type === 'application'));
       let appArray = makeTree(this.core, __, [].concat(packages));
-      console.log(appArray);
       let appmenuElement = document.getElementById('appmenu');
       appmenuElement.innerHTML = '';
       let appBarDiv = document.createElement('div');
