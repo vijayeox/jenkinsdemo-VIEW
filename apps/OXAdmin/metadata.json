@@ -1,0 +1,17 @@
+{
+  "type": "application",
+  "name": "OXAdmin",
+  "category": null,
+  "autostart":true,
+  "server": "server.js",
+  "title": {
+    "en_EN": "OXAdmin"
+  },
+  "description": {
+    "en_EN": "OXAdmin"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
