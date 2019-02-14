@@ -148,7 +148,7 @@ export const defaultConfiguration = {
           {name: 'menu'},
           {name: 'windows'},
           {name: 'tray'},
-          {name: 'clock'}
+          {name: 'logout'}
         ]
       }],
       widgets: [],
