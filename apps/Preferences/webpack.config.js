@@ -30,7 +30,7 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'bg.jpg','hicon.png','bg1.png','BG3.png','cardbg.jpeg'
+      'hicon.png'
     ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -39,8 +39,7 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(sa|sc|c)ss$/,
         exclude: /(node_modules|bower_components)/,
         use: [
