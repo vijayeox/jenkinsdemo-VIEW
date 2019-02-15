@@ -15,6 +15,7 @@ const register = (core, args, options, metadata) => {
     .createWindow({
       id: "OXAdminWindow",
       title: metadata.title.en_EN,
+      icon: proc.resource(icon),
       dimension: { width: 650, height: 510 },
       position: { left: 200, top: 50 }
     })

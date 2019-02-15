@@ -93,7 +93,7 @@ class Dash extends React.Component {
               <div>
                 <div id="d1">
                   <img
-                    src="icons/svg/org.svg"
+                    src="apps/OXAdmin/org.svg"
                     className="img-fluid"
                     id="orgButton"
                     alt="Responsive image"
@@ -106,7 +106,7 @@ class Dash extends React.Component {
               <div>
                 <div id="d1">
                   <img
-                    src="icons/svg/group.svg"
+                    src="apps/OXAdmin/group.svg"
                     className="img-fluid"
                     id="groupButton"
                     alt="Responsive image"
@@ -118,7 +118,7 @@ class Dash extends React.Component {
               <div>
                 <div id="d1">
                   <img
-                    src="icons/svg/101-project.svg"
+                    src="apps/OXAdmin/101-project.svg"
                     className="img-fluid"
                     id="prjButton"
                     alt="Responsive image"
@@ -132,7 +132,7 @@ class Dash extends React.Component {
               <div>
                 <div id="d1">
                   <img
-                    src="icons/svg/115-manager.svg"
+                    src="apps/OXAdmin/115-manager.svg"
                     className="img-fluid"
                     id="userButton"
                     alt="Responsive image"
@@ -144,7 +144,7 @@ class Dash extends React.Component {
               <div>
                 <div id="d1">
                   <img
-                    src="icons/svg/056-development-1.svg"
+                    src="apps/OXAdmin/056-development-1.svg"
                     className="img-fluid"
                     alt="Responsive image"
                   />

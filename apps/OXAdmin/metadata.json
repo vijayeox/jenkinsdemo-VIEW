@@ -2,8 +2,10 @@
   "type": "application",
   "name": "OXAdmin",
   "category": null,
-  "autostart":false,
+  "autostart": false,
   "server": "server.js",
+  "icon": "icon.png",
+  "singleton": true,
   "title": {
     "en_EN": "OXAdmin"
   },
