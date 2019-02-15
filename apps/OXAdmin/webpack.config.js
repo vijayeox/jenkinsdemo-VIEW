@@ -39,17 +39,14 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              publicPath: "/apps/OXAdmin"
-            }
+        use: [{
+          loader: "file-loader",
+          options: {
+            publicPath: "/apps/OXAdmin"
           }
-        ]
+        }]
       },
       {
         test: /\.(eot|ttf|woff|woff2)$/,
@@ -64,7 +61,22 @@ module.exports = {
       },
       {
         test: /\.(sa|sc|c)ss$/,
-        loader: "style-loader!css-loader"
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              minimize,
+              sourceMap: true
+            }
+          }
+        ]
       },
       {
         test: /\.js$/,
