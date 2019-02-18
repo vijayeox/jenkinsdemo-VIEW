@@ -16,8 +16,9 @@ const register = (core, args, options, metadata) => {
       id: "OXAdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
-      dimension: { width: 650, height: 510 },
-      position: { left: 200, top: 50 }
+      dimension: { width: 650, height: 530 },
+      position: { left: 200, top: 50 },
+      resource: "/icon.png"
     })
     .on("destroy", () => proc.destroy())
     .render($content => ReactDOM.render(<Dash args={core} />, $content));

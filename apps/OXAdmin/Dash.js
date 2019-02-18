@@ -2,9 +2,9 @@ import React from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
+
 import "jquery/dist/jquery.js";
 import $ from "jquery";
-import osjs from "osjs";
 
 import Org from "./modules/Org";
 import Prj from "./modules/Prj";
@@ -82,9 +82,16 @@ class Dash extends React.Component {
   render() {
     return (
       <div>
-        <div className="DashBG" style={{ marginBottom: "200px" }}>
+        <div
+          className="DashBG"
+          style={{
+            marginBottom: "200px",
+            backgroundImage: "url( apps/OXAdmin/wait.jpg)",
+            backgroundSize: "auto"
+          }}
+        >
           <center>
-            <div className="container">
+            <div className="container" style={{ paddingTop: "10px" }}>
               <div className="jumbotron" id="set1">
                 <h1 className="mainHead">Admin Control Center</h1>
               </div>
@@ -128,7 +135,10 @@ class Dash extends React.Component {
               </div>
             </div>
 
-            <div className="d-flex justify-content-center">
+            <div
+              className="d-flex justify-content-center"
+              style={{ paddingBottom: "100px" }}
+            >
               <div>
                 <div id="d1">
                   <img
@@ -139,6 +149,18 @@ class Dash extends React.Component {
                   />
                 </div>
                 <h5>User</h5>
+              </div>
+
+              <div>
+                <div id="d1">
+                  <img
+                    src="apps/OXAdmin/005-workflow.svg"
+                    className="img-fluid"
+                    id="userButton"
+                    alt="Responsive image"
+                  />
+                </div>
+                <h5>Privileges</h5>
               </div>
 
               <div>

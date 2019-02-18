@@ -1,17 +1,97 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
-import axios from "axios";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
+    this.core = this.props.args;
+
     this.state = {
       productInEdit: this.props.dataItem || null,
       visibleDialog: false,
-      show: false
+      show: false,
+
+      name: "",
+      address: "",
+      city: "",
+      state: "",
+      zip: "",
+      logo: "",
+      languagefile: ""
     };
   }
+
+  async pushData() {
+    let helper = this.core.make("oxzion/restClient");
+    let announ = await helper.request(
+      "v1",
+      "/organization",
+      {
+        name: this.state.name,
+        address: this.state.address,
+        city: this.state.city,
+        state: this.state.state,
+        zip: this.state.zip,
+        logo: this.state.logo,
+        languagefile: this.state.languagefile
+      },
+      "post"
+    );
+  }
+
+  handleName = event => {
+    this.onDialogInputChange(event);
+    this.setState({
+      name: event.target.value
+    });
+  };
+
+  handleAddress = event => {
+    this.onDialogInputChange(event);
+    this.setState({
+      address: event.target.value
+    });
+  };
+
+  handleCity = event => {
+    this.onDialogInputChange(event);
+
+    this.setState({
+      city: event.target.value
+    });
+  };
+
+  handleState = event => {
+    this.onDialogInputChange(event);
+
+    this.setState({
+      state: event.target.value
+    });
+  };
+
+  handleZip = event => {
+    this.onDialogInputChange(event);
+
+    this.setState({
+      zip: event.target.value
+    });
+  };
+  handleLogo = event => {
+    this.onDialogInputChange(event);
+
+    this.setState({
+      logo: event.target.value
+    });
+  };
+
+  handleLanguage = event => {
+    this.onDialogInputChange(event);
+
+    this.setState({
+      languagefile: event.target.value
+    });
+  };
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -30,6 +110,11 @@ export default class DialogContainer extends React.Component {
     event.preventDefault();
   };
 
+  submitData = event => {
+    this.pushData();
+    this.props.save();
+  };
+
   render() {
     return (
       <Dialog onClose={this.props.cancel}>
@@ -37,7 +122,11 @@ export default class DialogContainer extends React.Component {
           {
             <form
               onSubmit={this.handleSubmit}
-              style={{ display: "table-caption", width: "200px" }}
+              style={{
+                display: "table-caption",
+                width: "200px",
+                height: "300px"
+              }}
             >
               <label>
                 Name:
@@ -45,7 +134,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="name"
                   value={this.state.productInEdit.name || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleName}
                 />
               </label>
               <label>
@@ -54,7 +143,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="address"
                   value={this.state.productInEdit.address || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleAddress}
                 />
               </label>
               <label>
@@ -63,7 +152,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="city"
                   value={this.state.productInEdit.city || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleCity}
                 />
               </label>{" "}
               <label>
@@ -72,7 +161,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="state"
                   value={this.state.productInEdit.state || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleState}
                 />
               </label>
               <label>
@@ -81,7 +170,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="zip"
                   value={this.state.productInEdit.zip || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleZip}
                 />
               </label>
               <label>
@@ -90,7 +179,7 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="logo"
                   value={this.state.productInEdit.logo || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleLogo}
                 />
               </label>
               <label>
@@ -99,17 +188,17 @@ export default class DialogContainer extends React.Component {
                   type="text"
                   name="languagefile"
                   value={this.state.productInEdit.languagefile || ""}
-                  onChange={this.onDialogInputChange}
+                  onChange={this.handleLanguage}
                 />
               </label>
             </form>
           }
         </div>
-        <DialogActionsBar>
+        <DialogActionsBar args={this.core}>
           <button className="k-button" onClick={this.props.cancel}>
             Cancel
           </button>
-          <button className="k-button k-primary" onClick={this.props.save}>
+          <button className="k-button k-primary" onClick={this.submitData}>
             Save
           </button>
         </DialogActionsBar>

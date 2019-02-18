@@ -1,15 +1,8 @@
 import React, { Component } from "react";
-import osjs from "osjs";
-import ReactDOM from "react-dom";
 
 import "../App.css";
-import "./all.css";
-import { FaArrowLeft } from "react-icons/fa";
-
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-library.add(faPlusCircle);
+import "./kendo.css";
+import { FaArrowLeft, FaSyncAlt, FaPlusCircle } from "react-icons/fa";
 
 import {
   Grid,
@@ -30,28 +23,40 @@ class Org extends React.Component {
 
     this.state = {
       productInEdit: undefined,
-      sort: [{ field: "id", dir: "asc" }],
+      sort: [{ field: "id", dir: "desc" }],
       products: ""
     };
 
-    this.getAnnouncements().then(response => {
+    this.getOrganisationData().then(response => {
       this.setState({ products: response.data });
-      console.log(this.state.products);
     });
   }
 
-  async getAnnouncements() {
-    // call to api using wrapper
+  async getOrganisationData() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/organization", {}, "get");
-    return announ;
+    let OrgData = await helper.request("v1", "/organization", {}, "get");
+    return OrgData;
   }
 
   edit = dataItem => {
     this.setState({ productInEdit: this.cloneProduct(dataItem) });
   };
 
+  async deleteOrganisationData() {
+    let helper = this.core.make("oxzion/restClient");
+    let OrgData = await helper.request(
+      "v1",
+      "/organization",
+      { delId },
+      "delete"
+    );
+    return OrgData;
+  }
+
   remove = dataItem => {
+    var delId = 4;
+    this.deleteOrganisationData(delId);
+
     const products = this.state.products;
     const index = products.findIndex(p => p.id === dataItem.id);
     if (index !== -1) {
@@ -102,10 +107,14 @@ class Org extends React.Component {
             <center>
               <h3 className="mainHead">Manage Organisations</h3>
             </center>
+
+            <button className="btn btn-sq" style={{ marginLeft: "20%" }}>
+              <FaSyncAlt />
+            </button>
           </div>
 
           <Grid
-            style={{ height: "475px" }}
+            style={{ height: "400px" }}
             data={orderBy(this.state.products, this.state.sort)}
             sortable
             sort={this.state.sort}
@@ -123,10 +132,8 @@ class Org extends React.Component {
                   className="k-button"
                   style={{ position: "absolute", top: "8px", right: "16px" }}
                 >
-                  <FontAwesomeIcon
-                    icon="plus-circle"
-                    style={{ fontSize: "20px" }}
-                  />
+                  <FaPlusCircle style={{ fontSize: "20px" }} />
+
                   <p style={{ margin: "0px", paddingLeft: "10px" }}>
                     Add Organisation
                   </p>
@@ -147,6 +154,7 @@ class Org extends React.Component {
 
           {this.state.productInEdit && (
             <DialogContainer
+              args={this.core}
               dataItem={this.state.productInEdit}
               save={this.save}
               cancel={this.cancel}
@@ -162,6 +170,7 @@ class Org extends React.Component {
       this.state.productInEdit.id === undefined ? "Add" : "Edit"
     } product`;
   }
+
   cloneProduct(product) {
     return Object.assign({}, product);
   }

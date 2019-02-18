@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
 import "../App.css";
-import "./all.css";
+import "./kendo.css";
 import { FaArrowLeft } from "react-icons/fa";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
