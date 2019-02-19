@@ -1,38 +1,36 @@
 import React from 'react';
-import '../App.css';
+import '../public/scss/app.css';
+import '../public/scss/kendo.css';
 import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button } from 'reactstrap';
 import { FaBeer, FaArrowLeft, FaSearch } from 'react-icons/fa';
-import Sagar from './Sagar';   
 
-
-
-class Prj extends React.Component {
-  render() {
-    return (
-      <div>
-        <div className="container" id="project">
-          <div className="jumbotron" id="set1" >
-            <div style={{display:'flex'}}>
-
-                <button className="btn btn-sq" id="goBack3">  <FaArrowLeft /> </button>
-              <center>
-                <a href="#" className="previous round"></a>
-                <h3 className="mainHead text-center">Manage Projects</h3></center>
-            </div>
-            <div>
-              <Row>
-                <Col xl={12}>
-                  <Card>
-                    <CardHeader>
-                      <div style={{display:'inline-flex'}}>
-                        <h5>Projects List</h5>
-
-                      </div>
-                    </CardHeader>
-                    <CardBody style={{overflowY:'scroll',height:'350px'}}>
-
-                    <Sagar/>
-                    {/* <Table responsive hover>
+class Project extends React.Component {
+	render() {
+		return (
+			<div>
+				<div className="container" id="project">
+					<div className="jumbotron" id="set1">
+						<div style={{ display: 'flex' }}>
+							<button className="btn btn-sq" id="goBack3">
+								{' '}
+								<FaArrowLeft />{' '}
+							</button>
+							<center>
+								<a href="#" className="previous round" />
+								<h3 className="mainHead text-center">Manage Projects</h3>
+							</center>
+						</div>
+						<div>
+							<Row>
+								<Col xl={12}>
+									<Card>
+										<CardHeader>
+											<div style={{ display: 'inline-flex' }}>
+												<h5>Projects List</h5>
+											</div>
+										</CardHeader>
+										<CardBody style={{ overflowY: 'scroll', height: '350px' }}>
+											{/* <Table responsive hover>
 
                    
                       <thead>
@@ -111,19 +109,16 @@ class Prj extends React.Component {
 
                       </tbody>
                     </Table> */}
-
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-            </div>
-
-          </div>
-        </div>
-      </div >
-    )
-  }
+										</CardBody>
+									</Card>
+								</Col>
+							</Row>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 }
 
-
-export default Prj;
+export default Project;
