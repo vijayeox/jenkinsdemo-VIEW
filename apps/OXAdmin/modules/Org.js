@@ -42,21 +42,14 @@ class Org extends React.Component {
     this.setState({ productInEdit: this.cloneProduct(dataItem) });
   };
 
-  async deleteOrganisationData() {
+  deleteOrganisationData(dataItem) {
+    console.log(dataItem);
     let helper = this.core.make("oxzion/restClient");
-    let OrgData = await helper.request(
-      "v1",
-      "/organization",
-      { delId },
-      "delete"
-    );
-    return OrgData;
+    helper.request("v1", "/organization/" + dataItem, {}, "delete");
   }
 
   remove = dataItem => {
-    var delId = 4;
-    this.deleteOrganisationData(delId);
-
+    this.deleteOrganisationData(dataItem.id);
     const products = this.state.products;
     const index = products.findIndex(p => p.id === dataItem.id);
     if (index !== -1) {
@@ -148,7 +141,11 @@ class Org extends React.Component {
             <Column
               title="Edit"
               width="150px"
-              cell={cellWithEditing(this.edit, this.remove)}
+              cell={cellWithEditing(
+                this.edit,
+                this.remove,
+                this.deleteOrganisationData
+              )}
             />
           </Grid>
 
@@ -177,7 +174,7 @@ class Org extends React.Component {
 
   newProduct(source) {
     const newProduct = {
-      ProductID: this.generateId(),
+      id: "",
       name: "",
       address: "",
       city: "",
@@ -188,14 +185,6 @@ class Org extends React.Component {
     };
 
     return Object.assign(newProduct, source);
-  }
-
-  generateId() {
-    let id = 1;
-    this.state.products.forEach(p => {
-      id = Math.max((p.id || 0) + 1, id);
-    });
-    return id;
   }
 }
 
