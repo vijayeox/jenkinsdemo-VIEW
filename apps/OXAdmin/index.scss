@@ -1,5 +1,68 @@
-$background_color: red;
-
 .Window_OXAdmin {
-    background-color: $background_color;
+    background: #F06151;
+
+    .App-logo:hover {
+        transform: scale(1.25);
+    }
+
+    #adminHeader {
+        margin-bottom: 0px;
+        padding: 30px 0px 30px 0px;
+        background-color: #a39f9f;
+        font-weight: bolder;
+        font-size: 35px;
+        color: #183651;
+    }
+
+    #d1 {
+        margin: auto;
+        border: 3px solid #433e44b4;
+        padding: 20px;
+        border-radius: 25px;
+        margin: 20px;
+    }
+
+    #appRow {
+        max-width: 500px;
+    }
+
+    #goBack,
+    #goBack3,
+    #goBack2,
+    #goBack4 {
+        margin-right: 25%;
+    }
+
+    #userPage,
+    #groupPage,
+    #organisation,
+    #project {
+        padding: 10px;
+    }
+
+    #appRow p {
+        font-weight: bolder;
+        font-size: 20px;
+        color: #183651;
+    }
+
+    #pageTitle {
+        font-size: 25px;
+        color: #183651;
+        padding-top: 5px;
+    }
+
+    #organization {
+        padding: 5px 10px 5px 10px;
+    }
+
+    .k-dialog {
+        width: 60%;
+        height: 90%;
+    }
+
+    .k-tooltip-validation {
+        color: red;
+        display: none !important;
+    }
 }

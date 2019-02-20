@@ -1,6 +1,8 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
+import { Validator } from "@progress/kendo-validator-react-wrapper";
+import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -108,8 +110,7 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.pushData();
-    this.props.save();
+    this.submitData();
   };
 
   submitData = event => {
@@ -119,92 +120,148 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Dialog onClose={this.props.cancel}>
-        <div>
-          {
+      <Validator>
+        <Dialog onClose={this.props.cancel}>
+          <div className="row">
             <form
-              onSubmit={this.handleSubmit}
-              style={{
-                display: "table-caption",
-                width: "200px",
-                height: "300px"
-              }}
+              className="col s12"
+              onSubmit={this.submitData}
+              id="organizationForm"
             >
-              <label>
-                Name:
-                <input
-                  type="text"
-                  name="name"
-                  value={this.state.productInEdit.name || ""}
-                  onChange={this.handleName}
-                />
-              </label>
-              <label>
-                Address:
-                <input
-                  type="text"
-                  name="address"
-                  value={this.state.productInEdit.address || ""}
-                  onChange={this.handleAddress}
-                />
-              </label>
-              <label>
-                City:
-                <input
-                  type="text"
-                  name="city"
-                  value={this.state.productInEdit.city || ""}
-                  onChange={this.handleCity}
-                />
-              </label>{" "}
-              <label>
-                State:
-                <input
-                  type="text"
-                  name="state"
-                  value={this.state.productInEdit.state || ""}
-                  onChange={this.handleState}
-                />
-              </label>
-              <label>
-                Zip:
-                <input
-                  type="text"
-                  name="zip"
-                  value={this.state.productInEdit.zip || ""}
-                  onChange={this.handleZip}
-                />
-              </label>
-              <label>
-                Logo:
-                <input
-                  type="text"
-                  name="logo"
-                  value={this.state.productInEdit.logo || ""}
-                  onChange={this.handleLogo}
-                />
-              </label>
-              <label>
-                Language:
-                <input
-                  type="text"
-                  name="languagefile"
-                  value={this.state.productInEdit.languagefile || ""}
-                  onChange={this.handleLanguage}
-                />
-              </label>
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    disabled
+                    id="disabled"
+                    type="text"
+                    className="validate"
+                  />
+                  <label htmlFor="disabled">ID (Auto Generated)</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationName"
+                    type="text"
+                    className="validate"
+                    name="name"
+                    value={this.state.productInEdit.name || ""}
+                    onChange={this.handleName}
+                    required={true}
+                  />
+                  <label htmlFor="organizationName">Organization Name</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationAddress"
+                    type="text"
+                    className="validate"
+                    name="address"
+                    value={this.state.productInEdit.address || ""}
+                    onChange={this.handleAddress}
+                    required={true}
+                  />
+                  <label htmlFor="organizationAddress">Address</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s6">
+                  <input
+                    id="organizationCity"
+                    type="text"
+                    className="validate"
+                    name="city"
+                    value={this.state.productInEdit.city || ""}
+                    onChange={this.handleCity}
+                    required={true}
+                  />
+                  <label htmlFor="organizationCity">City</label>
+                </div>
+
+                <div className="input-field col s6">
+                  <input
+                    id="organizationState"
+                    type="text"
+                    className="validate"
+                    name="state"
+                    value={this.state.productInEdit.state || ""}
+                    onChange={this.handleState}
+                    required={true}
+                  />
+                  <label htmlFor="organizationState">State</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationZip"
+                    type="text"
+                    className="validate"
+                    name="zip"
+                    value={this.state.productInEdit.zip || ""}
+                    onChange={this.handleZip}
+                    required={true}
+                  />
+                  <label htmlFor="organizationZip">Zip Code</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationLogo"
+                    type="text"
+                    className="validate"
+                    name="logo"
+                    value={this.state.productInEdit.logo || ""}
+                    onChange={this.handleLogo}
+                    required={true}
+                  />
+                  <label htmlFor="organizationLogo">Logo</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationLang"
+                    type="text"
+                    className="validate"
+                    name="languagefile"
+                    value={this.state.productInEdit.languagefile || ""}
+                    onChange={this.handleLanguage}
+                    required={true}
+                  />
+                  <label htmlFor="organizationLang">Language</label>
+                </div>
+              </div>
+              {/* <button className="k-button k-primary" type="submit">
+                Save
+              </button> */}
             </form>
-          }
-        </div>
-        <DialogActionsBar args={this.core}>
-          <button className="k-button" onClick={this.props.cancel}>
-            Cancel
-          </button>
-          <button className="k-button k-primary" onClick={this.submitData}>
-            Save
-          </button>
-        </DialogActionsBar>
-      </Dialog>
+          </div>
+
+          <DialogActionsBar args={this.core}>
+            <button className="k-button" onClick={this.props.cancel}>
+              Cancel
+            </button>
+            <button
+              className="k-button k-primary"
+              type="submit"
+              form="organizationForm"
+            >
+              Save
+            </button>
+          </DialogActionsBar>
+        </Dialog>
+      </Validator>
     );
   }
 }

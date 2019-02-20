@@ -1,7 +1,7 @@
 import React from "react";
 import { GridCell } from "@progress/kendo-react-grid";
 
-export default function CellWithEditing(edit, remove, deleteOrganisationData) {
+export default function CellWithEditing(edit, remove) {
   return class extends GridCell {
     constructor(props) {
       super(props);
