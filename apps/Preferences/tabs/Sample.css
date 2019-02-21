@@ -1,7 +1,24 @@
-i {
+#iconi {
   margin-top: 20px;
   margin-right: 5px;
   margin-bottom: 20px;
+}
+
+.labelid{
+margin-left:0px;
+}
+
+.errorMsg {
+  color: #cc0000;
+  margin-bottom: 12px;
+}
+
+.contact{
+	padding-left:10px;
+}
+.sucessMsg {
+  color: #6B8E23;
+  margin-bottom: 10px;
 }
 
 #imgsave{
@@ -81,11 +98,9 @@ i {
 
 #card {
   margin-right: 10%;
-  background-image: url('/apps/Preferences/cardbg.jpeg');
   background-size: cover;
   margin-left: 10%;
-  margin-top:5%;
-  
+  margin-top:5%;  
 } 
 .dropdown-content{
 	height:200px;
@@ -142,7 +157,6 @@ i {
   background-color: #fff;
 }
 .react-html5-camera-photo {
-  /* position: relative; */
   text-align: center;
 }
 .react-html5-camera-photo > img,
@@ -161,35 +175,24 @@ i {
     width: 100%;
   }
 }
-/*# sourceMappingURL=index.css.map*/
 
 .react-phone-number-input__row
 {
-	/* This is done to stretch the contents of this component */
 	display     : flex;
 	align-items : center;
 }
 
 .react-phone-number-input__phone
 {
-	/* The phone number input stretches to fill all empty space */
 	flex : 1;
-
-	/* The phone number input should shrink
-	   to make room for the extension input */
 	min-width : 0;
 }
 
 .react-phone-number-input__icon
 {
-	/* The flag icon size is 4x3 hence the exact `width` and `height` values */
 	width      : 1.24em;
 	height     : 0.93em;
-
-	/* `1px` is still too much for a "retina" screen but there's no way in CSS to specify "hairline" border width. */
 	border     : 1px solid rgba(0, 0, 0, 0.5);
-
-	/* Makes sure `width`x`height` is exactly `4x3` and `border` width is not included in it */
 	box-sizing : content-box;
 }
 

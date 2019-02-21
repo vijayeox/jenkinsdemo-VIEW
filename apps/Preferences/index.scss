@@ -104,3 +104,93 @@
 // width:40%;
 	position: relative;
 }
+#click1{
+	display: contents;
+}
+
+$accent: #00BCD4;
+$primary: #212121;
+$secondary: #727272;
+
+$scoreRed: #F44336;
+$scoreYellow: #FFEB3B;
+$scoreGreen: #4CAF50;
+
+
+.password{
+	display: block;
+	position: relative;
+	//text-transform: uppercase;
+	//font-weight: 700;
+	font-size: 15px;
+	width: 100%;
+	color: $secondary;
+	
+	&__input{
+	  display: block;
+	  text-transform: none;
+	  width: 100%;
+	  height: 42px;
+	  border-width: 0 0 1px;
+	  border-style: solid;
+	  border-color: #B6B6B6;
+	  font-weight: 400;
+	  color: $primary;
+	  
+	  &:focus, &:active{
+		border-color: $accent;
+		outline: 0;
+	  }
+	}
+	
+	&__show{
+	  cursor: pointer;
+	  position: absolute;
+	  bottom: 11px;
+	  height: 16px;
+	  right: 0;
+	  background: $secondary;
+	  color: white;
+	  padding: 4px 8px;
+	  border-radius: 4px;
+	  font-weight: 700;
+	  font-size: .8em;
+	  margin-bottom: 10px;
+	}
+	
+	&__strength{
+	  position: absolute;
+	  width: 0%;
+	  height: 4px;
+	  bottom: -8px;
+	  left: 0;
+	  background: transparent;
+	  transition: all 300ms ease-in-out;
+	  
+	  &[data-score="null"]{
+		width: 0;
+		background: red;
+	  }
+	  
+	  &[data-score="0"]{
+		width: 5%;
+		background: $scoreRed;
+	  }
+	  &[data-score="1"]{
+		width: 25%;
+		background: $scoreRed;
+	  }
+	  &[data-score="2"]{
+		width: 50%;
+		background: $scoreYellow;
+	  }
+	  &[data-score="3"]{
+		width: 75%;
+		background: $scoreGreen;
+	  }
+	  &[data-score="4"]{
+		width: 100%;
+		background: $scoreGreen;
+	  }
+	}
+  }

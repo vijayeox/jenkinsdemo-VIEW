@@ -32,10 +32,26 @@ const register = (core, args, options, metadata) => {
     })
     .on('destroy', () => proc.destroy())
     .render($content => 
-        ReactDOM.render(<App args = {proc} />, $content));
+        ReactDOM.render(<App args = {core} />, $content));
     
+  //  console
+  //       const UserData = 
+  //       async () => {
+  //           let helper = core.make('oxzion/restClient');
+  //           let profile = await helper.request('v1','/user/1/type/a', {}, 'get' );
+  //           console.log(profile);
+  //           return profile;
+  //       };
+        
+  //       let profilecount=0 ;
+  //       UserData().then(response => {
+  //         console.log(response);
+  //         profilecount = response["data"];
+  //         console.log(profilecount);
+  
+  //       });
 
-   
+
   // Creates a new WebSocket connection (see server.js)
   //const sock = proc.socket('/socket');
   //sock.on('message', (...args) => console.log(args))

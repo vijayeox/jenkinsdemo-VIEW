@@ -134,7 +134,7 @@ class Preferences extends Component {
               >
                 {Timezones.map((timez, key) => (
                   <option key={key} value={timez.label}>
-                    {timez.name}
+                    {timez.name} (GMT {timez.offset})
                   </option>
                 ))}
               </select>
