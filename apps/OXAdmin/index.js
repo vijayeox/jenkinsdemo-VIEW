@@ -20,10 +20,10 @@ const register = (core, args, options, metadata) => {
       id: "OXAdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
-      dimension: { width: 600, height: 650 },
+      dimension: { width: 650, height: 550 },
       position: {
-        left: 200,
-        top: 100
+        left: 300,
+        top: 70
       }
     })
     .on("destroy", () => proc.destroy())

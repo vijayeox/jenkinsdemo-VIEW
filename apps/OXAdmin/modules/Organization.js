@@ -19,9 +19,10 @@ class Organization extends React.Component {
     this.core = this.props.args;
 
     this.state = {
-      productInEdit: undefined,
-      sort: [{ field: "id", dir: "desc" }],
-      products: ""
+      orgInEdit: undefined,
+      sort: [{ field: "name", dir: "asc" }],
+      products: [],
+      action: ""
     };
 
     this.getOrganizationData().then(response => {
@@ -36,7 +37,10 @@ class Organization extends React.Component {
   }
 
   edit = dataItem => {
-    this.setState({ productInEdit: this.cloneProduct(dataItem) });
+    this.setState({
+      orgInEdit: this.cloneProduct(dataItem),
+      action: "edit"
+    });
   };
 
   deleteOrganizationData(dataItem) {
@@ -58,7 +62,7 @@ class Organization extends React.Component {
   };
 
   save = () => {
-    const dataItem = this.state.productInEdit;
+    const dataItem = this.state.orgInEdit;
     const products = this.state.products.slice();
 
     if (dataItem.id === undefined) {
@@ -70,16 +74,16 @@ class Organization extends React.Component {
 
     this.setState({
       products: products,
-      productInEdit: undefined
+      orgInEdit: undefined
     });
   };
 
   cancel = () => {
-    this.setState({ productInEdit: undefined });
+    this.setState({ orgInEdit: undefined });
   };
 
   insert = () => {
-    this.setState({ productInEdit: {} });
+    this.setState({ orgInEdit: {}, action: "add" });
   };
 
   render() {
@@ -145,12 +149,13 @@ class Organization extends React.Component {
             />
           </Grid>
 
-          {this.state.productInEdit && (
+          {this.state.orgInEdit && (
             <DialogContainer
               args={this.core}
-              dataItem={this.state.productInEdit}
+              dataItem={this.state.orgInEdit}
               save={this.save}
               cancel={this.cancel}
+              formAction={this.state.action}
             />
           )}
         </div>
@@ -159,9 +164,7 @@ class Organization extends React.Component {
   }
 
   dialogTitle() {
-    return `${
-      this.state.productInEdit.id === undefined ? "Add" : "Edit"
-    } product`;
+    return `${this.state.orgInEdit.id === undefined ? "Add" : "Edit"} product`;
   }
 
   cloneProduct(product) {

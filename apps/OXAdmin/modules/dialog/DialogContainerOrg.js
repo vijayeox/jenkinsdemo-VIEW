@@ -2,109 +2,77 @@ import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
+import "../../public/materialize.js";
 import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-
+    this.prajwal = null;
     this.state = {
-      productInEdit: this.props.dataItem || null,
+      orgInEdit: this.props.dataItem || null,
       visibleDialog: false,
-      show: false,
-
-      name: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
-      logo: "",
-      languagefile: ""
+      show: false
     };
+  }
+
+  componentDidMount() {
+    M.updateTextFields();
+  }
+
+  componentWillUnmount() {
+    this.setState({ orgInEdit: { id: this.prajwal } });
+    console.log(this.prajwal);
   }
 
   async pushData() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request(
+    let orgAddData = await helper.request(
       "v1",
       "/organization",
       {
-        name: this.state.name,
-        address: this.state.address,
-        city: this.state.city,
-        state: this.state.state,
-        zip: this.state.zip,
-        logo: this.state.logo,
-        languagefile: this.state.languagefile
+        name: this.state.orgInEdit.name,
+        address: this.state.orgInEdit.address,
+        city: this.state.orgInEdit.city,
+        state: this.state.orgInEdit.state,
+        zip: this.state.orgInEdit.zip,
+        logo: this.state.orgInEdit.logo,
+        languagefile: this.state.orgInEdit.languagefile
       },
       "post"
     );
+    return orgAddData;
   }
 
-  handleName = event => {
-    this.onDialogInputChange(event);
-    this.setState({
-      name: event.target.value
-    });
-  };
-
-  handleAddress = event => {
-    this.onDialogInputChange(event);
-    this.setState({
-      address: event.target.value
-    });
-  };
-
-  handleCity = event => {
-    this.onDialogInputChange(event);
-
-    this.setState({
-      city: event.target.value
-    });
-  };
-
-  handleState = event => {
-    this.onDialogInputChange(event);
-
-    this.setState({
-      state: event.target.value
-    });
-  };
-
-  handleZip = event => {
-    this.onDialogInputChange(event);
-
-    this.setState({
-      zip: event.target.value
-    });
-  };
-  handleLogo = event => {
-    this.onDialogInputChange(event);
-
-    this.setState({
-      logo: event.target.value
-    });
-  };
-
-  handleLanguage = event => {
-    this.onDialogInputChange(event);
-
-    this.setState({
-      languagefile: event.target.value
-    });
-  };
+  async editOrganization() {
+    let helper = this.core.make("oxzion/restClient");
+    let orgEditData = await helper.request(
+      "v1",
+      "/organization/" + this.state.orgInEdit.id,
+      {
+        name: this.state.orgInEdit.name,
+        address: this.state.orgInEdit.address,
+        city: this.state.orgInEdit.city,
+        state: this.state.orgInEdit.state,
+        zip: this.state.orgInEdit.zip,
+        logo: this.state.orgInEdit.logo,
+        languagefile: this.state.orgInEdit.languagefile
+      },
+      "put"
+    );
+  }
 
   onDialogInputChange = event => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
 
-    const edited = this.state.productInEdit;
+    const edited = this.state.orgInEdit;
     edited[name] = value;
 
     this.setState({
-      productInEdit: edited
+      orgInEdit: edited
     });
   };
 
@@ -114,7 +82,15 @@ export default class DialogContainer extends React.Component {
   };
 
   submitData = event => {
-    this.pushData();
+    var self = this;
+    if (this.props.formAction == "edit") {
+      this.editOrganization();
+    } else {
+      this.pushData().then(response => {
+        var prajwal;
+        prajwal = response.data.id;
+      });
+    }
     this.props.save();
   };
 
@@ -131,24 +107,12 @@ export default class DialogContainer extends React.Component {
               <div className="row">
                 <div className="input-field col s12">
                   <input
-                    disabled
-                    id="disabled"
-                    type="text"
-                    className="validate"
-                  />
-                  <label htmlFor="disabled">ID (Auto Generated)</label>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
                     id="organizationName"
                     type="text"
                     className="validate"
                     name="name"
-                    value={this.state.productInEdit.name || ""}
-                    onChange={this.handleName}
+                    value={this.state.orgInEdit.name || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationName">Organization Name</label>
@@ -162,8 +126,8 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="address"
-                    value={this.state.productInEdit.address || ""}
-                    onChange={this.handleAddress}
+                    value={this.state.orgInEdit.address || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationAddress">Address</label>
@@ -177,8 +141,8 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="city"
-                    value={this.state.productInEdit.city || ""}
-                    onChange={this.handleCity}
+                    value={this.state.orgInEdit.city || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationCity">City</label>
@@ -190,8 +154,8 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="state"
-                    value={this.state.productInEdit.state || ""}
-                    onChange={this.handleState}
+                    value={this.state.orgInEdit.state || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationState">State</label>
@@ -205,8 +169,8 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="zip"
-                    value={this.state.productInEdit.zip || ""}
-                    onChange={this.handleZip}
+                    value={this.state.orgInEdit.zip || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationZip">Zip Code</label>
@@ -220,8 +184,8 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="logo"
-                    value={this.state.productInEdit.logo || ""}
-                    onChange={this.handleLogo}
+                    value={this.state.orgInEdit.logo || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationLogo">Logo</label>
@@ -235,16 +199,28 @@ export default class DialogContainer extends React.Component {
                     type="text"
                     className="validate"
                     name="languagefile"
-                    value={this.state.productInEdit.languagefile || ""}
-                    onChange={this.handleLanguage}
+                    value={this.state.orgInEdit.languagefile || ""}
+                    onChange={this.onDialogInputChange}
                     required={true}
                   />
                   <label htmlFor="organizationLang">Language</label>
                 </div>
               </div>
-              {/* <button className="k-button k-primary" type="submit">
-                Save
-              </button> */}
+
+              {/* <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="organizationId"
+                    type="text"
+                    className="validate"
+                    name="id"
+                    value={this.state.orgInEdit.id || ""}
+                    onChange={this.onDialogInputChange}
+                    required={true}
+                  />
+                  <label htmlFor="organizationId">id</label>
+                </div>
+              </div> */}
             </form>
           </div>
 
