@@ -28,40 +28,35 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+export const urlResolver = configuration => {
+  const {http, ws} = configuration;
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
-  }
+  return (endpoint = '/', options = {}, metadata = {}) => {
+    if (typeof endpoint !== 'string') {
+      return http.public;
+    } else if (endpoint.match(/^(http|ws|ftp)s?:/i)) {
+      return endpoint;
+    }
 
-  destroy() {
-    this.clear();
-  }
+    const {type, prefix} = Object.assign({}, {
+      type: null,
+      prefix: options.type === 'websocket'
+    }, options);
 
-  clear() {
-    this.value = Promise.resolve();
-  }
+    const str = type === 'websocket' ? ws.uri : http.uri;
 
-  set(v) {
-    this.value = v;
-  }
+    let url = endpoint.replace(/^\/+/, '');
+    if (metadata.type) {
+      const path = endpoint.replace(/^\/?/, '/');
+      const type = metadata.type === 'theme' ? 'themes' : (
+        metadata.type === 'icons' ? 'icons' : 'apps'
+      );
 
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
+      url = `${type}/${metadata.name}${path}`;
+    }
 
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
-  }
-}
+    return prefix
+      ? str.replace(/\/$/, '') + url.replace(/^\/?/, '/')
+      : http.public.replace(/^\/?/, '/') + url;
+  };
+};

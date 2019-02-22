@@ -509,10 +509,12 @@ export default class Window extends EventEmitter {
     this.$title = this.$element.querySelector('.osjs-window-title');
 
     // Transform percentages in dimension to pixels etc
-    const rect = this.core.make('osjs/desktop').getRect();
-    const {dimension, position} = transformVectors(rect, this.state.dimension, this.state.position);
-    this.state.dimension = dimension;
-    this.state.position = position;
+    if (this.core.has('osjs/desktop')) {
+      const rect = this.core.make('osjs/desktop').getRect();
+      const {dimension, position} = transformVectors(rect, this.state.dimension, this.state.position);
+      this.state.dimension = dimension;
+      this.state.position = position;
+    }
 
     // Behavior
     const behavior = this.core.make('osjs/window-behavior');
@@ -626,12 +628,14 @@ export default class Window extends EventEmitter {
    */
   close() {
     if (this.destroyed) {
-      return;
+      return false;
     }
 
     this.emit('close', this);
 
     this.destroy();
+
+    return true;
   }
 
   /**
@@ -677,10 +681,10 @@ export default class Window extends EventEmitter {
   minimize() {
     if (this.attributes.minimizable) {
       if (this._toggleState('minimized', true, 'minimize')) {
-        return this.blur();
-      }
+        this.blur();
 
-      return true;
+        return true;
+      }
     }
 
     return false;
@@ -735,8 +739,6 @@ export default class Window extends EventEmitter {
       return;
     }
 
-    const rect = this.core.make('osjs/desktop').getRect();
-
     const innerBox = (container.parentNode.classList.contains('osjs-gui')
       ? container.parentNode
       : container).getBoundingClientRect();
@@ -761,8 +763,14 @@ export default class Window extends EventEmitter {
       height = Math.min(height, max.height);
     }
 
-    width = Math.min(Math.max(width, container.offsetWidth), rect.width - left);
-    height = Math.min(Math.max(height, container.offsetHeight), rect.height - top);
+    width = Math.max(width, container.offsetWidth);
+    height = Math.max(height, container.offsetHeight);
+
+    if (this.core.has('osjs/desktop')) {
+      const rect = this.core.make('osjs/desktop').getRect();
+      width = Math.min(width, rect.width - left);
+      height = Math.min(height, rect.height - top);
+    }
 
     if (!isNaN(width) && !isNaN(height)) {
       this.setDimension({width, height});
@@ -774,6 +782,10 @@ export default class Window extends EventEmitter {
    * @param {boolean} [update=true] Update DOM
    */
   clampToViewport(update = true) {
+    if (!this.core.has('osjs/desktop')) {
+      return;
+    }
+
     const rect = this.core.make('osjs/desktop').getRect();
 
     this.state.position = Object.assign(

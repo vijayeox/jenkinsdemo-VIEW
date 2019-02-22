@@ -28,7 +28,7 @@
  * @licence Simplified BSD License
  */
 
-import Notification from '../notification';
+import Notifications from '../notifications';
 import {ServiceProvider} from '@osjs/common';
 
 /**
@@ -41,17 +41,13 @@ export default class NotificationServiceProvider extends ServiceProvider {
   constructor(core) {
     super(core);
 
-    this.$element = null;
+    this.notifications = new Notifications(core);
   }
 
   destroy() {
-    this.$element.remove();
-    this.$element = null;
+    this.notifications.destroy();
   }
 
-  /**
-   * Get a list of services this provider registers
-   */
   provides() {
     return [
       'osjs/notification'
@@ -59,22 +55,10 @@ export default class NotificationServiceProvider extends ServiceProvider {
   }
 
   init() {
-    this.$element = document.createElement('div');
+    this.notifications.init();
 
     this.core.instance('osjs/notification', (options) => {
-      if (!options) {
-        throw new Error('Notification options not given');
-      }
-
-      const notification = new Notification(this.core, this.$element, options);
-      notification.render();
-      return notification;
+      return this.notifications.create(options);
     });
   }
-
-  start() {
-    this.$element.classList.add('osjs-notifications');
-    this.core.$root.appendChild(this.$element);
-  }
-
 }

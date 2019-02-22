@@ -28,40 +28,8 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+const localStorageAuth = (core, options) => ({
+  login: (values) => Promise.resolve(values)
+});
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
-  }
-
-  destroy() {
-    this.clear();
-  }
-
-  clear() {
-    this.value = Promise.resolve();
-  }
-
-  set(v) {
-    this.value = v;
-  }
-
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
-
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
-  }
-}
+export default localStorageAuth;

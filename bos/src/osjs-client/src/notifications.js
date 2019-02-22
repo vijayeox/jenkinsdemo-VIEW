@@ -28,40 +28,49 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+import Notification from './notification';
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
+/**
+ * Handles Notifications
+ */
+export default class Notifications {
+
+  /**
+   * @param {Core} core OS.js Core instance reference
+   */
+  constructor(core) {
+    this.core = core;
   }
 
+  /**
+   * Destroy notification handler
+   */
   destroy() {
-    this.clear();
+    this.$element.remove();
+    this.$element = null;
   }
 
-  clear() {
-    this.value = Promise.resolve();
+  /**
+   * Initialize notification handler
+   */
+  init() {
+    this.$element = document.createElement('div');
+    this.$element.classList.add('osjs-notifications');
+    this.core.$root.appendChild(this.$element);
   }
 
-  set(v) {
-    this.value = v;
-  }
+  /**
+   * Create a new notification
+   * @param {Object} options See notification class for options
+   * @return {Notification}
+   */
+  create(options) {
+    if (!options) {
+      throw new Error('Notification options not given');
+    }
 
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
-
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
+    const notification = new Notification(this.core, this.$element, options);
+    notification.render();
+    return notification;
   }
 }

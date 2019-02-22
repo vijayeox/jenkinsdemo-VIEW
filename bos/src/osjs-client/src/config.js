@@ -45,7 +45,8 @@ export const defaultConfiguration = {
 
   ws: {
     connectInterval: 5000,
-    uri: uri.replace(/^http/, 'ws')
+    uri: uri.replace(/^http/, 'ws'),
+    disabled: false
   },
 
   languages: {
@@ -58,6 +59,11 @@ export const defaultConfiguration = {
     zh_CN: 'Chinese (simplified)'
   },
 
+  packages: {
+    manifest: '/metadata.json'
+  },
+
+  // FIXME: Move into packages above ?!
   application: {
     categories: {
       development: {

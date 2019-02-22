@@ -34,6 +34,7 @@ import Splash from './splash';
 import {CoreBase} from '@osjs/common';
 import {defaultConfiguration} from './config';
 import {fetch} from './utils/fetch';
+import {urlResolver} from './utils/url';
 import merge from 'deepmerge';
 import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 /**
@@ -51,7 +52,7 @@ export default class Core extends CoreBase {
    * @param {Element} [options.resourceRoot] The root DOM element for resources
    * @param {String[]} [options.classNames] List of class names to apply to root dom element
    */
-  constructor(config, options = {}) {
+  constructor(config = {}, options = {}) {
     options = Object.assign({}, {
       classNames: ['osjs-root'],
       root: document.body
@@ -66,11 +67,12 @@ export default class Core extends CoreBase {
     this.$root = options.root;
     this.$resourceRoot = options.resourceRoot || document.querySelector('head');
     this.requestOptions = {};
+    this.urlResolver = urlResolver(this.configuration);
 
     this.options.classNames.forEach(n => this.$root.classList.add(n));
 
     const {uri} = this.configuration.ws;
-    if (!this.configuration.ws.uri.match(/^wss?:/)) {
+    if (!uri.match(/^wss?:/)) {
       const {protocol, host} = window.location;
 
       this.configuration.ws.uri = protocol.replace(/^http/, 'ws') + '//' + host + uri.replace(/^\/+/, '/');
@@ -167,7 +169,7 @@ export default class Core extends CoreBase {
             }
           });
         } else {
-          console.warn('OS.js STARTED WITHOUT ANY AUTHENTICATION');
+          console.info('OS.js STARTED WITHOUT ANY AUTHENTICATION');
         }
 
         return done();
@@ -272,7 +274,7 @@ export default class Core extends CoreBase {
    * Creates the main connection to server
    */
   _createConnection(cb) {
-    if (this.configuration.standalone) {
+    if (this.configuration.standalone || this.configuration.ws.disabled) {
       return false;
     }
 
@@ -327,18 +329,25 @@ export default class Core extends CoreBase {
    * Creates event listeners*
    */
   _createListeners() {
+    const handle = data => {
+      const {pid, wid, args} = data;
+
+      const proc = Application.getApplications()
+        .find(p => p.pid === pid);
+
+      const win = proc
+        ? proc.windows.find(w => w.wid === wid)
+        : null;
+
+      if (win) {
+        win.emit('iframe:get', ...(args || []));
+      }
+    };
+
     window.addEventListener('message', ev => {
       const message = ev.data || {};
-      if (message) {
-        // FIXME: This might actually collide with something... need to check more.
-        if (message.pid >= 0) {
-          const proc = Application.getApplications().find(p => p.pid === message.pid);
-          if (proc) {
-            console.debug('Routing message', message);
-            proc.emit('message', ...message.args);
-            return;
-          }
-        }
+      if (message && message.name === 'osjs/iframe:message') {
+        handle(...(message.params || []));
       }
     });
   }
@@ -357,34 +366,7 @@ export default class Core extends CoreBase {
    * @return {String}
    */
   url(endpoint = '/', options = {}, metadata = {}) {
-    const {http, ws} = this.configuration;
-
-    if (typeof endpoint !== 'string') {
-      return http.public;
-    } else if (endpoint.match(/^(http|ws|ftp)s?:/i)) {
-      return endpoint;
-    }
-
-    const {type, prefix} = Object.assign({}, {
-      type: null,
-      prefix: options.type === 'websocket'
-    }, options);
-
-    const str = type === 'websocket' ? ws.uri : http.uri;
-
-    let url = endpoint.replace(/^\/+/, '');
-    if (metadata.type) {
-      const path = endpoint.replace(/^\/?/, '/');
-      const type = metadata.type === 'theme' ? 'themes' : (
-        metadata.type === 'icons' ? 'icons' : 'apps'
-      );
-
-      url = `${type}/${metadata.name}${path}`;
-    }
-
-    return prefix
-      ? str + url
-      : http.public.replace(/^\/?/, '/') + url;
+    return this.urlResolver(endpoint, options, metadata);
   }
 
 
@@ -414,6 +396,8 @@ export default class Core extends CoreBase {
     console.log(options);
     return fetch(url, options, type)
       .catch(error => {
+        console.warn(error);
+
         throw new Error(_('ERR_REQUEST_NOT_OK', error));
       });
   }
@@ -475,7 +459,7 @@ export default class Core extends CoreBase {
       return Promise.resolve(true);
     }
 
-    return Promise.reject(false);
+    return Promise.resolve(false);
   }
 
   /**

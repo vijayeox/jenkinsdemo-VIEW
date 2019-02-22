@@ -28,40 +28,16 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+const serverAuth = (core, options) => {
+  const request = (endpoint, params = {}) => core.request(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(params)
+  }, 'json');
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
-  }
+  return {
+    login: (values) => request('/login', values),
+    logout: () =>  request('/logout')
+  };
+};
 
-  destroy() {
-    this.clear();
-  }
-
-  clear() {
-    this.value = Promise.resolve();
-  }
-
-  set(v) {
-    this.value = v;
-  }
-
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
-
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
-  }
-}
+export default serverAuth;

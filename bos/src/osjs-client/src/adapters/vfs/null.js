@@ -28,40 +28,21 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+const nullAdapter = ({
+  readdir: (path, options) => Promise.resolve([]),
+  readfile: (path, type, options) => Promise.resolve({body: new ArrayBuffer(), mime: 'application/octet-stream'}),
+  writefile: (path, data, options) => Promise.resolve(-1),
+  copy: (from, to, options) => Promise.resolve(false),
+  rename: (from, to, options) => Promise.resolve(false),
+  mkdir: (path, options) => Promise.resolve(false),
+  unlink: (path, options) => Promise.resolve(false),
+  exists: (path, options) => Promise.resolve(false),
+  stat: (path, options) => Promise.resolve({}),
+  url: (path, options) => Promise.resolve(null),
+  mount: options => Promise.resolve(true),
+  unmount: options => Promise.resolve(true),
+  search: (root, pattern, options) => Promise.resolve([]),
+  touch: (path, options) => Promise.resolve(false)
+});
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
-  }
-
-  destroy() {
-    this.clear();
-  }
-
-  clear() {
-    this.value = Promise.resolve();
-  }
-
-  set(v) {
-    this.value = v;
-  }
-
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
-
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
-  }
-}
+export default nullAdapter;

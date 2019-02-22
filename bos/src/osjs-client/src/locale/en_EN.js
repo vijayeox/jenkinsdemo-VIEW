@@ -1,5 +1,5 @@
 /*
- * OX Zion - JavaScript Cloud/Web Desktop Platform
+ * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
@@ -144,10 +144,5 @@ export const en_EN = {
   LBL_BACK: 'Back',
   LBL_FORWARD: 'Forward',
   LBL_UPLOAD: 'Upload',
-  LBL_IMAGE: 'Image',
-
-  // File path
-  FILE_PATH_DESKTOP_BACKGROUND : './assets/images/OX_Background_Ontherocks.png',
-  FILE_PATH_DESKTOP_BACKGROUND : './assets/images/OX_Background_Ontherocks.png',
-  FILE_PATH_TITLE: './assets/images/OXZion.png'
+  LBL_IMAGE: 'Image'
 };

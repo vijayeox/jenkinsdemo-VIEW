@@ -28,40 +28,24 @@
  * @licence Simplified BSD License
  */
 
-export default class Clipboard {
+const adapter = (core) => {
+  const pkgs = core.make('osjs/packages');
 
-  constructor() {
-    this.value = undefined;
-    this.clear();
-  }
+  return {
+    readdir: ({path}, options) => {
+      return Promise.resolve(pkgs.getPackages())
+        .then(pkgs => pkgs.map(pkg => ({
+          isDirectory: false,
+          isFile: true,
+          filename: pkg.name,
+          mime: 'osjs/application',
+          path: `${path}/${pkg.name}`,
+          size: 0,
+          stat: {},
+          icon: pkg.icon ? core.url(pkg.icon, {}, pkg) : null
+        })));
+    }
+  };
+};
 
-  destroy() {
-    this.clear();
-  }
-
-  clear() {
-    this.value = Promise.resolve();
-  }
-
-  set(v) {
-    this.value = v;
-  }
-
-  get(clear) {
-    const v = typeof this.value === 'function'
-      ? this.value()
-      : this.value;
-
-    const done = ret => {
-      if (clear) {
-        this.clear();
-      }
-
-      return ret;
-    };
-
-    return Promise.resolve(v)
-      .then(done)
-      .catch(done);
-  }
-}
+export default adapter;

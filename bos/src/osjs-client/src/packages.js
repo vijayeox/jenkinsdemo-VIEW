@@ -29,7 +29,7 @@
  */
 
 import Application from './application';
-import {style, script} from './utils/dom';
+import Preloader from './utils/preloader';
 
 /**
  * A registered package reference
@@ -53,13 +53,6 @@ import {style, script} from './utils/dom';
  * @property {Map<String, String>} description A map of locales and titles
  * @typedef PackageMetadata
  */
-
-/*
- * Fetch package manifest
- */
-const fetchManifest = core => // FIXME: Use internal ?!
-  window.fetch(core.url('/metadata.json'))
-    .then(response => response.json());
 
 /**
  * Package Manager
@@ -93,17 +86,23 @@ export default class Packages {
     this.metadata = [];
 
     /**
-     * A list of cached preloads
-     * @type {String[]}
-     */
-    this.loaded = [];
-
-    /**
      * A list of running application names
      * @desc Mainly used for singleton awareness
      * @type {String[]}
      */
     this.running = [];
+
+    /**
+     * Preloader
+     * @type {Preloader}
+     */
+    this.preloader = new Preloader(core.$resourceRoot);
+
+    /**
+     * If inited
+     * @type {boolean}
+     */
+    this.inited = false;
   }
 
   /**
@@ -112,6 +111,8 @@ export default class Packages {
   destroy() {
     this.packages = [];
     this.metadata = [];
+
+    this.preloader.destroy();
   }
 
   /**
@@ -120,59 +121,19 @@ export default class Packages {
   init() {
     console.debug('Packages::init()');
 
-    this.core.on('osjs/core:started', () => {
-      this.metadata
-        .filter(pkg => pkg.autostart === true)
-        .forEach(pkg => this.launch(pkg.name));
-    });
+    if (!this.inited) {
+      this.core.on('osjs/core:started', () => this._autostart());
+    }
 
-    return fetchManifest(this.core)
-      .then(metadata => {
-        this.metadata = metadata.map(iter => Object.assign({type: 'application'}, iter));
-      });
-  }
+    this.inited = true;
 
-  /**
-   * Loads all resources required for a package
-   * @param {Array} list A list of resources
-   * @param {Boolean} [force=false] Force loading even though previously cached
-   * @return {String[]} A list of failed resources
-   */
-  preload(list, force = false) {
-    const root = this.core.$resourceRoot;
-    const cached = entry => force ? false : this.loaded.find(src => src === entry);
-    const entries = list.filter(entry => !cached(entry));
-    const promises = entries.map(entry => {
-      console.debug('Packages::preload()', entry);
+    const manifest = this.core.config('packages.manifest');
 
-      const p = entry.match(/\.js$/)
-        ? script(root, entry)
-        : style(root, entry);
-
-      return p
-        .then(el => ({success: true, entry, el}))
-        .catch(error => ({success: false, entry, error}));
-    });
-
-    return Promise.all(promises)
-      .then(results => {
-        const successes = results.filter(res => res.success);
-        successes.forEach(entry => {
-          if (!cached(entry)) {
-            this.loaded.push(entry);
-          }
-        });
-
-        const failed = results.filter(res => !res.success);
-        failed.forEach(failed => console.warn('Failed loading', failed.entry, failed.error));
-
-        return {
-          errors: failed.map(failed => failed.entry),
-          elements: successes.reduce((result, iter) => {
-            return Object.assign({}, result, {[iter.entry]: iter.el});
-          }, {})
-        };
-      });
+    return manifest
+      ? this.core.request(manifest, {}, 'json')
+        .then(metadata => this.addPackages(metadata))
+        .catch(error => console.error(error))
+      : Promise.resolve();
   }
 
   /**
@@ -269,7 +230,7 @@ export default class Packages {
     const preloads = (metadata.files || [])
       .map(f => this.core.url(f, {}, Object.assign({type}, metadata)));
 
-    return this.preload(preloads)
+    return this.preloader.load(preloads)
       .then(result => {
         return Object.assign(
           {elements: {}},
@@ -345,7 +306,7 @@ export default class Packages {
       return app;
     };
 
-    return this.preload(preloads, options.forcePreload === true)
+    return this.preloader.load(preloads, options.forcePreload === true)
       .then(({errors}) => {
         if (errors.length) {
           fail(_('ERR_PACKAGE_LOAD', name, errors.join(', ')));
@@ -358,6 +319,15 @@ export default class Packages {
 
         return create(found);
       });
+  }
+
+  /**
+   * Autostarts tagged packages
+   */
+  _autostart() {
+    this.metadata
+      .filter(pkg => pkg.autostart === true)
+      .forEach(pkg => this.launch(pkg.name));
   }
 
   /**
@@ -385,6 +355,21 @@ export default class Packages {
       metadata,
       callback
     });
+  }
+
+  /**
+   * Adds a set of packages
+   * @param {PackageMetadata[]} list Package list
+   */
+  addPackages(list) {
+    if (list instanceof Array) {
+      const append = list
+        .map(iter => Object.assign({
+          type: 'application'
+        }, iter));
+
+      this.metadata = [...this.metadata, ...append];
+    }
   }
 
   /**
