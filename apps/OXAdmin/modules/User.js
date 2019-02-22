@@ -26,7 +26,7 @@ class User extends React.Component {
 		this.state = {
 			productInEdit: undefined,
 			sort: [{ field: 'id', dir: 'desc' }],
-			products: '',
+			products: [],
 		};
 
 		this.getUserData().then(response => {
@@ -84,13 +84,13 @@ class User extends React.Component {
 	render() {
 		return (
 			<div id="userPage">
-				<div style={{ display: 'flex', marginBottom: '10px' }}>
+				<div style={{ display: 'flex' }}>
 					<button id="goBack4" className="btn btn-sq">
 						<FaArrowLeft />
 					</button>
-					<center>
+					<div className="mainHead">
 						<h3 className="mainHead">Manage Users</h3>
-					</center>
+					</div>
 				</div>
 
 				<Grid
@@ -106,7 +106,7 @@ class User extends React.Component {
 				>
 					<GridToolbar>
 						<div>
-							<h4>Users List</h4>
+							<span className="flow-text">Users List</span>
 							<button
 								onClick={this.insert}
 								className="k-button"
@@ -117,10 +117,10 @@ class User extends React.Component {
 							</button>
 						</div>
 					</GridToolbar>
-					<Column field="ProductID" title="User ID" width="90px" />
-					<Column field="Name" title="Name" />
-					<Column field="Contact" title="Contact No." />
-					<Column field="Designation" title="Designation" />
+					<Column field="id" title="User ID" width="90px" />
+					<Column field="name" title="Name" />
+					<Column field="firstname" title="First Name" />
+					<Column field="lastname" title="Last Name" />
 					<Column title="Edit" width="150px" cell={cellWithEditing(this.edit, this.remove)} />
 				</Grid>
 

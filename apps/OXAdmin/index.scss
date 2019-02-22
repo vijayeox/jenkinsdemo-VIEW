@@ -3,12 +3,14 @@
 
     .App-logo:hover {
         transform: scale(1.25);
+        transition: all ease-in-out 0.2s;
     }
 
     #adminHeader {
         margin-bottom: 0px;
-        padding: 30px 0px 30px 0px;
-        background-color: #a39f9f;
+        padding: 10px 0px 10px 0px;
+        border-bottom: 1px solid #433e44b4;
+        // background-color: #a39f9f;
         font-weight: bolder;
         font-size: 35px;
         color: #183651;
@@ -30,7 +32,7 @@
     #goBack3,
     #goBack2,
     #goBack4 {
-        margin-right: 25%;
+        margin-right: 5%;
     }
 
     #userPage,
@@ -62,7 +64,13 @@
     }
 
     .k-tooltip-validation {
-        color: red;
+        color: rgb(212, 206, 206);
         display: none !important;
+    }
+
+    .mainHead {
+        margin: 0px;
+        width: 100%;
+        text-align: center;
     }
 }

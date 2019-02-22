@@ -28,7 +28,7 @@
  * @licence Simplified BSD License
  */
 
- .osjs-panel {
+.osjs-panel {
   display: flex;
   min-height: 4em;
   align-items: center;
@@ -50,7 +50,7 @@
     bottom: 0;
   }
 
-  & > .osjs-panel-item {
+  &>.osjs-panel-item {
     min-height: 1em;
     position: relative;
     box-sizing: border-box;
@@ -61,7 +61,7 @@
     display: flex;
     align-items: center;
 
-    > img {
+    >img {
       height: $base-margin;
       margin-right: $base-margin / 2;
     }
@@ -69,12 +69,13 @@
 }
 
 .osjs-root[data-dir="rtl"] {
-  .osjs-panel > .osjs-panel-item:not(:last-child) {
+  .osjs-panel>.osjs-panel-item:not(:last-child) {
     margin-right: 0;
     margin-left: $base-margin;
   }
 }
-.appmenu {    
+
+.appmenu {
   height: calc(100% - 3.5em);
   box-sizing: border-box;
   display: flex;
@@ -87,11 +88,12 @@
   position: relative;
   margin-top: 3.5em;
   margin-bottom: 3.5em;
-  background-color: rgba(0,0,0,.85);
+  background-color: rgb(0, 0, 1);
   transition: 0.5s;
 }
-.appmenu-visible{
-  width:300px;
+
+.appmenu-visible {
+  width: 300px;
   z-index: 16777271;
 }
 
@@ -103,6 +105,7 @@
   font-size: 36px;
   margin-left: 50px;
 }
+
 .appmenu .app-bar {
   flex-grow: 1;
   order: 4;
@@ -114,6 +117,7 @@
   padding-left: 0;
   overflow: auto;
 }
+
 .appmenu .app-bar .category {
   box-sizing: border-box;
   order: 0;
@@ -124,54 +128,58 @@
   justify-content: center;
   padding: 0 10px;
 }
-.appmenu .app-bar .applist{
+
+.appmenu .app-bar .applist {
   display: flex;
   flex-direction: column;
 }
 
-.appmenu .app-bar .category .caption{
+.appmenu .app-bar .category .caption {
   box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 18px!important;
-  color: #fff!important;
-  font-weight: unset!important;
-  line-height: 48px;
+  font-size: 18px !important;
+  color: #fff !important;
+  font-weight: unset !important;
+  line-height: 20px;
   text-align: left;
-  padding-left: 12px;
+  padding-left: 0px;
   margin-bottom: 5px;
   margin-top: 5px;
   align-self: stretch;
-  background-color: rgba(0,0,0,.85);
- }
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
 .appmenu .app-bar .app {
-    margin: 5px 10px 0;
-    flex-direction: unset;
-    min-height: 36px;
-    max-width: unset;
-    display: flex;
+  margin: 5px 10px 0;
+  flex-direction: unset;
+  min-height: 36px;
+  max-width: unset;
+  display: flex;
 }
-.appmenu .app-bar .app .icon{
+
+.appmenu .app-bar .app .icon {
   box-sizing: border-box;
-    position: relative;
-    max-width: 48px;
-    min-width: 48px;
-    font-size: 25px;
-    height: 48px;
-    color: #fff !important;
-    height: 48px;
-    line-height: 48px !important;
-    text-align: center;
-    background-size: 30px;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    cursor: inherit!important
+  position: relative;
+  max-width: 48px;
+  min-width: 48px;
+  font-size: 25px;
+  height: 48px;
+  color: #fff !important;
+  height: 48px;
+  line-height: 48px !important;
+  text-align: center;
+  background-size: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: inherit !important
 }
-.appmenu .app-bar .app .appcaption{
+
+.appmenu .app-bar .app .appcaption {
   box-sizing: border-box;
   color: #fff;
   font-size: 16px;
@@ -181,6 +189,7 @@
   width: 100%;
   overflow: hidden;
 }
+
 .appmenu .app-search-div {
   box-sizing: border-box;
   display: flex;
@@ -193,38 +202,41 @@
   width: 100%;
   overflow: hidden;
 }
+
 .appmenu .app-search-bar-div {
   width: 100%;
-  transition: all .5s cubic-bezier(0,.105,.035,1.57);
+  transition: all .5s cubic-bezier(0, .105, .035, 1.57);
   overflow: hidden;
   background: 0 0;
   position: relative;
   transition: all .3s ease-in-out;
-  background: rgba(0,0,0,.5);
+  background: rgba(0, 0, 0, .5);
   display: flex;
 }
+
 .appmenu .app-search-div input {
   overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    box-shadow: none;
-    width: 100%;
-    height: 36px;
-    position: relative;
-    top: 0;
-    left: 0;
-    background: 0 0;
-    box-sizing: border-box;
-    border: 0;
-    outline: 0;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 20px;
-    color: #fff;
-    padding: 0 10px;
-    transition: all .3s cubic-bezier(.39,.58,.57,1),padding 0s;
-    transition-delay: .3s;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: none;
+  width: 100%;
+  height: 36px;
+  position: relative;
+  top: 0;
+  left: 0;
+  background: 0 0;
+  box-sizing: border-box;
+  border: 0;
+  outline: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #fff;
+  padding: 0 10px;
+  transition: all .3s cubic-bezier(.39, .58, .57, 1), padding 0s;
+  transition-delay: .3s;
 }
+
 .appmenu .app-bar .applist .app i {
   background-repeat: no-repeat;
   box-sizing: border-box;
@@ -232,10 +244,10 @@
   max-width: 36px;
   min-width: 36px;
   font-size: 25px;
-    display: flex;
-  color: #fff!important;
+  display: flex;
+  color: #fff !important;
   height: 36px;
-  line-height: 36px!important;
+  line-height: 36px !important;
   text-align: center;
   background-size: 30px;
   background-position: center;
@@ -243,28 +255,31 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  cursor: inherit!important;
+  cursor: inherit !important;
 }
+
 .appmenu .app-bar .app:hover {
   background: #ffffff4d;
   transition: all 200ms ease-in;
 }
-.appmenu .app-bar .app:hover > i{
+
+.appmenu .app-bar .app:hover>i {
   background: #ffffff4d;
   transition: all 200ms ease-in;
   transform: scale(1.1);
   background-size: cover !important;
   background-color: transparent !important;
 }
+
 .osjs-panel-logout img {
   max-width: 36px;
 }
 
 .osjs-panel-item[data-name=logout]:hover {
   background: #c75050;
-  margin: 0;
-  zoom: 1.2;
+  margin: 0px;
 }
+
 .osjs-panel-item[data-name=logout] {
- margin-right: 5px;
+  margin-right: 0px;
 }

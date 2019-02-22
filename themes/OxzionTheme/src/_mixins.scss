@@ -43,7 +43,7 @@
 }
 
 @mixin panel {
-  @include shadowed;
+  // @include shadowed;
   background: $panel-background;
   color: $panel-foreground;
 }
