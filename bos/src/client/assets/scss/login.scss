@@ -2,7 +2,27 @@
 * This is the login page stylesheet.
 * @author  Bharat Gogineni <bharat@vantageagora.com>
 */
-
+html{
+    height: 100%;
+    overflow: hidden;
+}
+body {
+    height: 100%;
+    background-image: url('../images/OX_Background_WallPaper.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.57;
+    color: #545456;
+    background-color: #fff;
+}
+.loginContainer {
+    height: 100%;
+    width: auto;
+    display: flex;
+}
 #login-container {
     position: fixed;
     padding: 0;
@@ -13,22 +33,54 @@
     height: 100%;
 }
 
-.loginContainer {
-    height: 100%;
-    background-image: url('../images/background.png');
-}
-
 #ox-container {
     height: 100%;
 }
 
 #ox-login-form {
-    height: 100%;
-    padding: 75px;
+    max-width: 515px;
+    min-height: 100vh;
+    right: 0;
+    position: absolute;
+    background: hsla(0,0%,100%,.8);
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
 }
-
-.row {
-    margin-bottom: 0;
+.form-wrapper {
+    max-width: 515px;
+    min-height: 100vh;
+    background: hsla(0,0%,100%,.8);
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+}
+.form-wrapper__inner {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin: 0 auto;
+    padding: 0 65px;
+    min-width: 100%;
+}
+.form-signin__footer{
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    display: flex;
+    align-items: center;
+}
+.form-signin {
+    width: 100%;
+}
+.footer-links{
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    display: flex;
+    align-items: center;
+    padding: 0 65px;
+    margin-bottom: 25px;
 }
 
 .ox-form {
@@ -37,6 +89,7 @@
 
 .ox-imgDiv {
     text-align: center;
+    margin-bottom: 90px;
 }
 
 .ox-content {
@@ -53,13 +106,11 @@
     color: white;
 }
 
-.footer-links {
-    float: right;
-}
-
-.footer-links>a {
-    padding: 7px;
-    color: white;
+.login-copyright {
+    font-size: 12px;
+    color: #b3b3b3;
+    text-align: center;
+    padding: 0 16px;
 }
 
 #footer {

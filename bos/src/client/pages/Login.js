@@ -35,30 +35,12 @@ export default class Login extends defaultLogin {
     // Add your HTML content
     const view = (state,actions) => 
     h("main",{id: 'login-container ', className: 'loginContainer row lighten-3 '},[
-      
-      h('div',{id:'ox-content', className: 'col s8 lighten-3 ' ,style: 'padding: 0px;'},[
-        h("br"),
-        h('div',{id:'content-container'}),
-        h("br"),
-        h('div',{id:'footer',className:'ox-content-footer footer'},[
-          h('span',{className:'footer-CR'},'Copyright © 2004-2019 Vantage Agora. All rights reserved.'),
-          h('span',{className:'footer-links'},[
-            h('a',{  href:'#'},'Terms and Conditions'),
-            h('a',{href:'#'},'Privacy'),
-            h('a',{href:'#'},'About Us'),
-            h('a',{href:'#'},'FAQ')
-          ])
-        ])
-      ]), // left panel content
-      
-      h('div',{id: 'ox-login-form', className: 'col s4 grey lighten-5 right-align'},[
-
-      h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
-          h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
-          ]),
-      h('div',{ className: ' grey lighten-5 right-align'},[
-        h("form",{action:"#",method: "post",onsubmit: actions.submit, className:'ox-form '},[
-          h("br"),
+      h('div',{id: 'ox-login-form', className: 'form-wrapper'},[
+      h('div',{ className: 'form-wrapper__inner'},[
+        h("form",{action:"#",className: 'form-signin form-row-layout',method: "post",onsubmit: actions.submit, className:'ox-form '},[
+          h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
+            h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
+            ]),
           h('div',{className: 'input-field'},[
             h("input",{type: "text",name:"username",className:'validate',id:'username'}),
             h('label',{for:'username'},'Username')
@@ -67,13 +49,19 @@ export default class Login extends defaultLogin {
             h("input",{type: "password",name:"password",className:'validate',id:'password'}),
             h('label',{for:'Password'},'Password')
           ]),
-          h("br"),
+          h('div',{className: 'form-signin__footer'},[
           h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
-          h("br"),
-          h('a',{href: '#'},'Forgot your password?')
+          h('a',{href: '#'},'Forgot your password?'),
         ]),
-        h('div',{id:'filler',className:'form-filler grey lighten-5'})
+        ]),
       ]),
+      h('div',{className:'footer-links'},[
+        h('a',{href:'#'},'Terms and Conditions'),
+        h('a',{href:'#'},'Privacy'),
+        h('a',{href:'#'},'About Us'),
+        h('a',{href:'#'},'FAQ')
+      ]),
+      h('div',{className:'login-copyright'},'Copyright © 2019 Vantage Agora. All rights reserved.'),
       ])
 
     ])
