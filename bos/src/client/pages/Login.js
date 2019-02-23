@@ -11,36 +11,35 @@ export default class Login extends defaultLogin {
     var container = this.$container;
     var root = container.parentElement;
     root.className = 'login';
-
-
     const login = this.core.config('auth.login', {});
-    
     const actions = {
       setLoading: loading => state => ({loading}),
       setError: error => state => ({error, hidden: false}),
       submit: ev => state => {
         ev.preventDefault();
-
         if (state.loading) {
           return;
         }
-
         const values = Array.from(ev.target.elements)
           .filter(el => el.type !== 'submit')
           .reduce((o, el) => Object.assign(o, {[el.name] : el.value}), {});
         this.emit('login:post', values);
       }
-    }	
+    }
 
     // Add your HTML content
     const view = (state,actions) => 
     h("main",{id: 'login-container ', className: 'loginContainer row lighten-3 '},[
       h('div',{id: 'ox-login-form', className: 'form-wrapper'},[
       h('div',{ className: 'form-wrapper__inner'},[
-        h("form",{action:"#",className: 'form-signin form-row-layout',method: "post",onsubmit: actions.submit, className:'ox-form '},[
+        h("form",{action:"#",className: 'form-signin form-row-layout',loading: false,method: "post",onsubmit: actions.submit, className:'ox-form '},[
           h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
             h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
             ]),
+            h('div', {
+              class: 'osjs-login-error',
+              style: {display: state.error ? 'block' : 'none'}
+            }, h('span', {}, "Your login was unsuccessful. Please check your e-mail address and password before trying again. If you have forgotten your password, follow 'Forgot your password?' link.")),
           h('div',{className: 'input-field'},[
             h("input",{type: "text",name:"username",className:'validate',id:'username'}),
             h('label',{for:'username'},'Username')
@@ -63,14 +62,12 @@ export default class Login extends defaultLogin {
       ]),
       h('div',{className:'login-copyright'},'Copyright © 2019 Vantage Agora. All rights reserved.'),
       ])
-
     ])
-
     const a = app(Object.assign({hidden: startHidden},login),actions,view,document.body);
-
-    // Bind the events
-     this.on('login:start', () => a.setLoading(true));
-    this.on('login:stop', () => a.setLoading(false));
+    this.on('login:start', () => a.setLoading(true));
+    this.on('login:stop', () => {
+      a.setLoading(false);
+    });
     this.on('login:error', err => a.setError(err));
    }
 }

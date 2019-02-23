@@ -40,7 +40,7 @@ body {
 #ox-login-form {
     max-width: 515px;
     min-height: 100vh;
-    right: 0;
+    right: 30px;
     position: absolute;
     background: hsla(0,0%,100%,.8);
     padding: 30px 0;
@@ -123,7 +123,16 @@ body {
 }
 
 .osjs-login-error {
-    color: red;
-    font-size: .8em;
-    text-align: left;
+    background: #fae1dc;
+    color: #6d1e0e;
+    border-color: #fae1dc;
+    min-height: 24px;
+    font-size: 13px;
+    line-height: 1.23;
+    text-shadow: none;
+    position: relative;
+    padding: 4px 24px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
 }
