@@ -13,12 +13,9 @@ const loginAdapter = (core, config) => ({
 
     const username = req.username;
     var lsHelper = new LocalStorageAdapter;
-
-
     var reqData = new FormData();
     reqData.append("username", username);
     reqData.append("password", req.password);
-
     // making request using the rest client
     var caller =  core.make('oxzion/restClient');
     return (async() => {
@@ -28,12 +25,10 @@ const loginAdapter = (core, config) => ({
           lsHelper.set('AUTH_token',res["data"]["jwt"]);
           lsHelper.set('User',username);
           return Promise.resolve({jwt:res["data"]["jwt"], username : username}); 
-        }
-        else {
+        } else {
           console.log('login failed.');
           return Promise.reject(new Error(res.message));
         }
-        
       } else {
         return Promise.reject(new Error(res.message));
       }
@@ -45,6 +40,8 @@ const loginAdapter = (core, config) => ({
     var lsHelper = new LocalStorageAdapter;
     if(lsHelper.supported() || lsHelper.cookieEnabled()){
       lsHelper.purge('AUTH_token');
+      lsHelper.purge('User');
+      lsHelper.purge('UserInfo');
       return Promise.resolve(true); 
     }
   }
