@@ -31,6 +31,7 @@ import Panel from './panel';
 import WindowsPanelItem from './items/windows';
 import TrayPanelItem from './items/tray';
 import LogoutPanelItem from './items/logout';
+import ProfilePanelItem from './items/profile';
 import MenuPanelItem from './items/menu';
 
 /**
@@ -48,6 +49,7 @@ export default class PanelServiceProvider {
       menu: MenuPanelItem,
       windows: WindowsPanelItem,
       tray: TrayPanelItem,
+      profile: ProfilePanelItem,
       logout: LogoutPanelItem
     }, args.registry || {});
     console.log(this.registry);
@@ -115,6 +117,7 @@ export default class PanelServiceProvider {
   start() {
     this.inited = true;
     this.panels.forEach(p => p.init());
+    core.make('oxzion/profile').set();
   }
 
 }

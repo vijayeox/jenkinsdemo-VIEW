@@ -61,6 +61,7 @@ import loginAdapter from './adapters/AuthAdapter.js';
 import Login from './pages/Login.js';
 import merge from 'deepmerge';
 import { RestClientServiceProvider } from './adapters/RestClient.js'
+import { ProfileServiceProvider } from './adapters/ProfileAdapter.js';
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -68,7 +69,6 @@ import customPanelItem from './customPanel.js'*/
 
 const init = () => {
   let mergedConfig = merge(config, localConfig);
-  console.log(mergedConfig);
   const osjs = new Core(mergedConfig, {});
   
   // Register your service providers  
@@ -85,28 +85,11 @@ const init = () => {
         login: (core,options) => new Login(core,options)
       }
   });
-  /*osjs.register(PanelServiceProvider,{
-    args: {
-    registry: {
-      'my-panel-item': customPanelItem
-    }
-  }
-  });*/
   osjs.register(PanelServiceProvider);
   osjs.register(DialogServiceProvider);
   osjs.register(GUIServiceProvider);
-  
-
   osjs.register(RestClientServiceProvider,{before: true});
-  /*osjs.register(MyApiServiceProvider);
-  osjs.register(WidgetServiceProvider,{
-     args: {
-    registry: {
-      'my-widget': announcementWidget
-    }
-  }
-  });*/
-
+  osjs.register(ProfileServiceProvider,{before: true});
   osjs.boot();
 };
 
