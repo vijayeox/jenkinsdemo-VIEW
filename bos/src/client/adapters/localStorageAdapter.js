@@ -55,20 +55,19 @@ export default class LocalStorageAdapter {
 		if(this.localStorageExists) {
 			try {
 					const value = window.localStorage.getItem(key) || null;
-					if(value === null) {
 						try {
 							var obj = { key:data,timestamp: new Date().getTime()}
 							window.localStorage.setItem(key,JSON.stringify(obj));
 							console.log('local storage set');
 							return true;
 						}
-						catch (e) {}
-					}
-					else {
-						console.log('localStorage key already in use');
-					}
+						catch (e) {
+							console.log(e);
+						}
 				}
-				catch (e) {}
+				catch (e) {
+					console.log(e)
+				}
 		}
 		else if(this.useCookies) {
 			console.log('cookie used');
