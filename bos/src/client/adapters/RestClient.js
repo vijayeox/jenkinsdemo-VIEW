@@ -21,7 +21,8 @@ export class RestClientServiceProvider extends ServiceProvider {
 	async init() {
 		this.core.instance('oxzion/restClient', () => ({
 			request: (version, action, params, method) => this.makeRequest(version, action, params, method),
-			authenticate: (params) => this.authenticate(params)
+			authenticate: (params) => this.authenticate(params),
+			profile:() => this.profile()
 		}));
 
 
@@ -39,6 +40,22 @@ export class RestClientServiceProvider extends ServiceProvider {
 				body: params
 			})
 			return resp.json();
+		}
+		catch (e) { }
+	}
+	// profile wrapper 
+	profile(jwt) {
+		let userData = this.core.getUser();
+		this.token = userData["jwt"];
+		try {
+			let url = this.baseUrl + 'user/me/m';
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.open("GET", url,false);
+			let auth = 'Bearer ' + this.token;
+			xmlHttp.setRequestHeader("content-type", "application/json");
+			xmlHttp.setRequestHeader("Authorization", auth);
+			xmlHttp.send(null);
+			return xmlHttp.responseText;
 		}
 		catch (e) { }
 	}
