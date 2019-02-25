@@ -32,6 +32,8 @@
     "node-waves": "^0.7.6",
     "popper.js": "^1.14.7",
     "react-icons": "^3.3.0",
+    "react-notifications": "^1.4.3",
+    "react-notifications-component": "^1.0.1",
     "react-router-dom": "^4.3.1",
     "reactstrap": "^7.1.0",
     "style-loader": "^0.23.1"

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import "../public/scss/kendo.css";
+import "./theme.css";
 import { FaArrowLeft, FaSyncAlt, FaPlusCircle } from "react-icons/fa";
 
 import {
@@ -8,6 +9,8 @@ import {
   GridColumn as Column,
   GridToolbar
 } from "@progress/kendo-react-grid";
+
+import ReactNotification from "react-notifications-component";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
 import cellWithEditing from "./cellWithEditing";
@@ -25,10 +28,48 @@ class Organization extends React.Component {
       action: ""
     };
 
+    this.addNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
+
     this.getOrganizationData().then(response => {
       this.setState({ products: response.data });
     });
   }
+
+  addDataNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "Operation Successful",
+      message: "Entry created with ID:" + serverResponse,
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "All Done!!!  👍",
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  handler = serverResponse => {
+    this.getOrganizationData().then(response => {
+      this.setState({ products: response.data });
+      this.addDataNotification(serverResponse);
+    });
+  };
 
   async getOrganizationData() {
     let helper = this.core.make("oxzion/restClient");
@@ -43,13 +84,21 @@ class Organization extends React.Component {
     });
   };
 
-  deleteOrganizationData(dataItem) {
+  async deleteOrganizationData(dataItem) {
     let helper = this.core.make("oxzion/restClient");
-    helper.request("v1", "/organization/" + dataItem, {}, "delete");
+    let delOrg = helper.request(
+      "v1",
+      "/organization/" + dataItem,
+      {},
+      "delete"
+    );
+    return delOrg;
   }
 
   remove = dataItem => {
-    this.deleteOrganizationData(dataItem.id);
+    this.deleteOrganizationData(dataItem.id).then(response => {
+      this.addNotification();
+    });
 
     const products = this.state.products;
     const index = products.findIndex(p => p.id === dataItem.id);
@@ -90,6 +139,7 @@ class Organization extends React.Component {
     return (
       <div>
         <div id="organization">
+          <ReactNotification ref={this.notificationDOMRef} />
           <div style={{ margin: "10px 0px 10px 0px" }} className="row">
             <div className="col s3">
               <a className="waves-effect waves-light btn" id="goBack5">
@@ -101,14 +151,6 @@ class Organization extends React.Component {
                 Manage Organizations
               </div>
             </center>
-            <div className="col s3">
-              <a
-                className="waves-effect waves-light btn "
-                style={{ float: "right" }}
-              >
-                <FaSyncAlt />
-              </a>
-            </div>
           </div>
 
           <Grid
@@ -156,6 +198,7 @@ class Organization extends React.Component {
               save={this.save}
               cancel={this.cancel}
               formAction={this.state.action}
+              action={this.handler}
             />
           )}
         </div>

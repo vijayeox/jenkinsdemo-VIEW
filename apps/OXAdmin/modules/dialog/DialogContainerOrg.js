@@ -9,7 +9,6 @@ export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    this.prajwal = null;
     this.state = {
       orgInEdit: this.props.dataItem || null,
       visibleDialog: false,
@@ -19,11 +18,6 @@ export default class DialogContainer extends React.Component {
 
   componentDidMount() {
     M.updateTextFields();
-  }
-
-  componentWillUnmount() {
-    this.setState({ orgInEdit: { id: this.prajwal } });
-    console.log(this.prajwal);
   }
 
   async pushData() {
@@ -87,8 +81,8 @@ export default class DialogContainer extends React.Component {
       this.editOrganization();
     } else {
       this.pushData().then(response => {
-        var prajwal;
-        prajwal = response.data.id;
+        var addResponse = response.data.id;
+        this.props.action(addResponse);
       });
     }
     this.props.save();
@@ -206,21 +200,6 @@ export default class DialogContainer extends React.Component {
                   <label htmlFor="organizationLang">Language</label>
                 </div>
               </div>
-
-              {/* <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="organizationId"
-                    type="text"
-                    className="validate"
-                    name="id"
-                    value={this.state.orgInEdit.id || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="organizationId">id</label>
-                </div>
-              </div> */}
             </form>
           </div>
 
