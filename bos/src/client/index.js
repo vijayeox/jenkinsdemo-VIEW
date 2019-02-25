@@ -62,6 +62,7 @@ import Login from './pages/Login.js';
 import merge from 'deepmerge';
 import { RestClientServiceProvider } from './adapters/RestClient.js'
 import { ProfileServiceProvider } from './adapters/ProfileAdapter.js';
+import { WebSocketAdapter } from './adapters/WebSocketAdapter.js';
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -90,6 +91,7 @@ const init = () => {
   osjs.register(GUIServiceProvider);
   osjs.register(RestClientServiceProvider,{before: true});
   osjs.register(ProfileServiceProvider,{before: true});
+  osjs.register(WebSocketAdapter);
   osjs.boot();
 };
 

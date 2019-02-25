@@ -17,6 +17,7 @@ class WebSocketServiceProvider {
      */
     this.core = core;
     this.options = options;
+    this.userSocketArray = {};
   }
 
   /**
@@ -42,20 +43,37 @@ class WebSocketServiceProvider {
    */
    start() {
     const {app, session, configuration} = this.core;
+    this.core.on("storeUserInfo", (ws,msg) => {
+      if(this.userSocketArray[msg['id']]){
+        this.userSocketArray[msg['id']].push(ws);
+      } else {
+        this.userSocketArray[msg['id']] = [];
+        this.userSocketArray[msg['id']].push(ws);
+      }
+      console.log(msg['id']);
+    });
     app.ws('/notification', (ws, req) => {
       ws.on('message', msg => {
-        try {
-          core.make('osjs/notification', {
-            message: msg,
-            icon: 'icon.src',
-            onclick: () => console.log('Clicked!')
-          });
-        } catch (e) {
-          console.warn(e);
+        var parsedMessage = JSON.parse(msg);
+        if(this.userSocketArray[parsedMessage['userid']]){
+          for (let i = 0; i < this.userSocketArray[parsedMessage['userid']].length; i++) {
+            const element = this.userSocketArray[parsedMessage['userid']][i];
+            var parameterArray = [];
+            Object.keys(parsedMessage).forEach(function(key) {
+              var obj = {};
+              obj[key] = parsedMessage[key];
+              parameterArray.push(obj);
+            });
+            var packet = {name:"notification",params:parameterArray};
+            try {
+              element.send(JSON.stringify(packet));
+            } catch (Exception){
+              console.log(Exception);
+            }
+          }
         }
       });
     });
-
   }
 
   /**
