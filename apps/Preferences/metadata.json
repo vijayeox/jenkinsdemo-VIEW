@@ -2,7 +2,10 @@
   "type": "application",
   "name": "Preferences",
   "category": null,
+  "autostart":false,
   "server": "server.js",
+  "icon": "icon.png",
+  "singleton": true,
   "title": {
     "en_EN": "Preferences"
   },

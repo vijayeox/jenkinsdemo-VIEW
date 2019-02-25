@@ -1,51 +1,60 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
-
-import "./Sample.css";
+import M from "materialize-css";
+// import "./Sample.css";
 
 class Preferences extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.core = this.props.args;
     this.state = {
       file: null,
       selectedOption1: "On",
       selectedOption2: "On",
-      timez: "Pacific/Niue"
+      timez: "",
+      fields: {},
+      errors: {}
 
     };
-    this.handleOptionChange1 = this.handleOptionChange1.bind(this);
-    this.handleOptionChange2 = this.handleOptionChange2.bind(this);
+    // this.handleOptionChange1 = this.handleOptionChange1.bind(this);
+    // this.handleOptionChange2 = this.handleOptionChange2.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.onSelection=this.onSelection.bind(this);
   }
-  handleOptionChange1(changeEvent) {
+
+  componentDidMount(){
+  var selectElems = document.querySelectorAll("select");
+  var instances = M.FormSelect.init(selectElems, { classes: "createSelect" });
+  }
+
+  // handleOptionChange1(changeEvent) {
+  //   this.setState({
+  //     selectedOption1: changeEvent.target.value
+  //   });
+  // }
+
+  // handleOptionChange2(changeEvent) {
+  //   this.setState({
+  //     selectedOption2: changeEvent.target.value
+  //   });
+  // }
+  
+  handleChange(e) {
+    let fields = this.state.fields;
+    fields[e.target.name] = e.target.value;
     this.setState({
-      selectedOption1: changeEvent.target.value
+      fields
     });
   }
 
-  handleOptionChange2(changeEvent) {
-    this.setState({
-      selectedOption2: changeEvent.target.value
-    });
-  }
-  onSelection(event) {
-    this.setState({
-      timez: event.target.value
-    });
-  }
 
   handleSubmit(event) {
     event.preventDefault();
+  
     const formData = {};
-    for (const field in this.refs) {
-      if (field == "SoundNotification") {
-        formData[field] = this.state.selectedOption1;
-      }
-      if (field == "EmailAlerts") {
-        formData[field] = this.state.selectedOption2;
-      }
-    }
+      Object.keys(this.state.fields).map(key => {
+        formData[key] = this.state.fields[key];
+      });
     console.log("-->", formData);
   }
   init() {}
@@ -56,7 +65,7 @@ class Preferences extends Component {
           <div className="row">
             <div className="col s12">
               <div className="input-field col s2">
-                <label id="name">Sound Notification</label>
+                <label id="name" style={{paddingTop:"6px"}}>Sound Notification</label>
               </div>
               <div className="input-field col s1">
                 <label id="name">
@@ -64,9 +73,10 @@ class Preferences extends Component {
                     type="radio"
                     name="group1"
                     value="On"
-                    onChange={this.handleOptionChange1}
+                    onChange={this.handleChange}
                     ref="SoundNotification"
-                    defaultChecked
+                    checked={this.state.fields.group1 == "On"}
+                    
                   />
                   <span className="m-2">On</span>
                 </label>
@@ -77,8 +87,9 @@ class Preferences extends Component {
                     type="radio"
                     name="group1"
                     value="Off"
-                    onChange={this.handleOptionChange1}
+                    onChange={this.handleChange}
                     ref="SoundNotification"
+                    checked={this.state.fields.group1 == "Off"}
                   />
                   <span>Off</span>
                 </label>
@@ -90,7 +101,7 @@ class Preferences extends Component {
             <div className="row">
               <div className="col s12">
                 <div className="input-field col s2">
-                  <label id="name">Email Alerts</label>
+                  <label id="name" style={{paddingTop:"6px"}}>Email Alerts</label>
                 </div>
                 <div className="input-field col s1">
                   <label id="name">
@@ -98,9 +109,9 @@ class Preferences extends Component {
                       type="radio"
                       name="group2"
                       value="On"
-                      onChange={this.handleOptionChange2}
+                      onChange={this.handleChange}
                       ref="EmailAlerts"
-                      defaultChecked
+                      checked={this.state.fields.group2 == "On"}
                     />
                     <span className="m-2">On</span>
                   </label>
@@ -111,8 +122,9 @@ class Preferences extends Component {
                       type="radio"
                       name="group2"
                       value="Off"
-                      onChange={this.handleOptionChange2}
+                      onChange={this.handleChange}
                       ref="EmailAlerts"
+                      checked={this.state.fields.group2 == "Off"}
                     />
                     <span>Off</span>
                   </label>
@@ -120,26 +132,56 @@ class Preferences extends Component {
               </div>
             </div>
           </div>
-          <div className="row">
+
+          <div className="row" id="row1" style={{paddingBottom:0}}>
             <div className="col s12">
             <div className="input-field col s2">
 
-              <label id="name">Local Time Zone*</label>
+              <label id="name" style={{paddingTop:"10px"}}>Local Time Zone</label>
               </div>
               <div className="input-field col s3">
               <select
-                value={this.state.timez}
-                onChange={this.onSelection}
+                value={this.state.fields.timez}
+                onChange={this.handleChange}
                 ref="timezone"
+                name="country"
               >
                 {Timezones.map((timez, key) => (
-                  <option key={key} value={timez.label}>
-                    {timez.name} (GMT {timez.offset})
+                  <option key={key} value={timez.offset}>
+                    {timez.name}
                   </option>
                 ))}
               </select>
             </div>
             </div>
+          </div>
+
+          <div className="row" id="row2" style={{paddingBottom:0}}>
+                <div className="col s12">
+                <div className="input-field col s2">
+
+                <label id="name" style={{paddingTop:"10px"}}>Date Format</label>
+                  </div>
+                <div className="input-field col s3">
+                <select 
+                ref="datef"
+                value={this.state.fields.datef}
+                onChange={this.handleChange}
+                name="datef">
+
+                <option value="dd/mm/yyyy" defaultValue>dd/mm/yyyy</option>
+                <option value="yyyy/mm/dd">yyyy/mm/dd</option>
+                <option value="mm/dd/yyyy">mm/dd/yyyy</option>
+                <option value="dd-mm-yyyy">dd-mm-yyyy</option>
+                <option value="yyyy-mm-dd">yyyy-mm-dd</option>
+                <option value="mm-dd-yyyy">mm-dd-yyyy</option>
+                <option value="dd-mmm-yyyy">dd-mmm-yyyy</option>
+                <option value="yyyy-mm-dd">yyyy-mm-dd</option>
+                <option value="mm-dd-yyyy">mm-dd-yyyy</option>
+
+                </select>
+                </div> 
+                </div>
           </div>
 
           <div className="row">

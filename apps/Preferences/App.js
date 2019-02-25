@@ -56,7 +56,7 @@ async changePassword(formData){
         "click",
         function() {
           document.getElementById("cardUi").style.display = "";
-          document.getElementById("componentsBox").style.display = "none";
+          document.getElementById("editProfileBox").style.display = "none";
           document.getElementById("imageBox").style.display = "none";
           document.getElementById("webcamcomponent").style.display = "none";
         },

@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import Countries from "./Countries";
 import M from "materialize-css";
-import "./Sample.css";
+// import "./Sample.css";
 import Codes from "./Codes";
-import ReactPhoneInput from "react-phone-input-2";
 import ErrorBoundary from "./ErrorBoundary";
-//import Calendar from "react-calendar";
-import { DateInput, Calendar, DatePicker, TimePicker, MultiViewCalendar, DateRangePicker } from '@progress/kendo-react-dateinputs';
 class EditProfile extends Component {
-  logs = [];
   constructor(props) {
     super(props);
+    
     this.core = this.props.args;
+    this.dob = null;
+    this.doj = null;
     this.state = {
       phone: "",
       heightSet: 0,
@@ -21,9 +20,7 @@ class EditProfile extends Component {
       errors: {},
       initialized: -1,
       phonenumber: {},
-      date: "1990-06-05",
-      value: new Date(),
-      events: this.logs
+     
     };
 
     this.getProfile().then(response => {
@@ -36,21 +33,15 @@ class EditProfile extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onSelect2 = this.onSelect2.bind(this);
-    //this.joinPhNo = this.joinPhNo.bind(this);
+    this.onSelect1 = this.onSelect1.bind(this);
+    //this.functinback=this.functinback.bind(this);
+      this.joinPhNo = this.joinPhNo.bind(this);
     //this.handleOnChange = this.handleOnChange.bind(this);
-    this.handleDateChange = this.handleDateChange.bind(this);
-    this.handleChange1 = this.handleChange1.bind(this);
+   // this.handleDateChange = this.handleDateChange.bind(this);
+   // this.handleChange1 = this.handleChange1.bind(this);
   }
 
-  handleChange1 = event => {
-    this.logs.unshift("change: " + event.target.value);
-
-    this.setState({
-      value: event.target.value,
-      events: this.logs.slice()
-    });
-  };
-
+  
   async getProfile() {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
@@ -63,6 +54,14 @@ class EditProfile extends Component {
     return profile;
   }
 
+
+  onSelect1(event) {
+    const field = {};
+    field[event.target.name] = event.target.value;
+    this.setState(field);
+  }
+
+
   splitPhoneNumber() {
     const phoneno = this.state.fields.phone;
     const phonenumber = phoneno.split("-");
@@ -72,19 +71,12 @@ class EditProfile extends Component {
     });
   }
 
-  // handleOnChange(value) {
-  //   const fields = this.state.fields;
-  //   fields.phone = value;
-  //   this.setState({
-  //     fields
-  //   });
-  // }
-
   onSelect2(event) {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
   }
+
 
   componentDidMount() {
     let elems = document.querySelectorAll(".datepicker");
@@ -92,18 +84,12 @@ class EditProfile extends Component {
       format: "dd-mm-yyyy",
       showClearBtn: true,
       yearRange: 100
-      // onSet:this.handleDateChange
     });
-    let instance=M.Datepicker.getInstance(elems[0]);
+     this.dob = M.Datepicker.getInstance(elems[0]);
+     this.doj = M.Datepicker.getInstance(elems[1]);
+    
   }
 
-  // handleDateChange(value){
-  //   const fields = this.state.fields;
-  //   fields.dob = value;
-  //   this.setState({
-  //     fields
-  //   });
-  // }
 
   handleDateChange(event) {
     console.log(event.timeStamp);
@@ -123,117 +109,148 @@ class EditProfile extends Component {
     this.setState({
       fields
     });
+//    this.validateForm();
   }
 
   joinPhNo() {
     const phoneno1 = this.state.dial_code + "-" + this.state.phoneno;
     this.state.fields.phone = phoneno1;
-    console.log(phoneno1);
+    console.log(this.state.fields.phone);
   }
+
+  getStandardDateString(date1){
+    if(!date1.date){
+      return '';
+    }      
+    return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
+ }
+
 
   handleSubmit(event) {
     event.preventDefault();
-    if (this.validateForm()) {
-      let elems = document.querySelectorAll(".datepicker");
+    let elems = document.querySelectorAll(".datepicker");
 
-      let instance=M.Datepicker.getInstance(elems[0]);
-      let instance1=M.Datepicker.getInstance(elems[1]);
-      console.log(instance);
-
-      this.joinPhNo();
+  // if (this.validateForm()) {
       const formData = {};
-      // for (const field in this.refs) {
-      //   if (this.refs[field].value) {
-      //     formData[field] = this.refs[field].value;
-      //   }
-      // }
+      this.joinPhNo();
 
+      formData.dob = this.getStandardDateString(this.dob);
+      formData.doj= this.getStandardDateString(this.doj);
+      
+      this.state.fields.dob=formData.dob;
+      this.state.fields.doj=formData.doj;
       Object.keys(this.state.fields).map(key => {
         formData[key] = this.state.fields[key];
       });
-
+    
       console.log(formData);
 
       let helper = this.core.make("oxzion/restClient");
 
-      let announ = helper.request(
+      let editresponse = helper.request(
         "v1",
-        "/user/me/" + this.state.fields.id,
-        JSON.stringify(formData),
-        "post"
+        "/user/" + this.state.fields.id,JSON.stringify(formData),
+        "put"
       );
       console.log("done");
-    }
-  }
+      if (editresponse.status == "error") {
+        alert(editresponse.message);
+      }else{
+        alert("Successfully Updated");
+        this.props.action();
 
-  validateForm() {
-    let fields = this.state.fields;
-    let errors = {};
-    let formIsValid = true;
-
-    if (!fields["firstname"]) {
-      formIsValid = false;
-      errors["firstname"] = "*Please enter your firstname.";
-    } else if (!fields["firstname"].match(/^[a-zA-Z ]*$/)) {
-      formIsValid = false;
-      errors["firstname"] = "*Please enter alphabets only.";
-    }
-
-    if (!fields["lastname"]) {
-      formIsValid = false;
-      errors["lastname"] = "*Please enter your lastname.";
-    }
-
-    if (typeof fields["lastname"] !== "undefined") {
-      if (!fields["lastname"].match(/^[a-zA-Z ]*$/)) {
-        formIsValid = false;
-        errors["lastname"] = "*Please enter alphabets only.";
       }
+
     }
+  // }
 
-    if (!fields["email"]) {
-      formIsValid = false;
-      errors["email"] = "*Please enter your email-ID.";
-    }
+  // validateForm() {
+  //   let fields = this.state.fields;
+  //   let errors = {};
+  //   let formIsValid = true;
 
-    if (typeof fields["email"] !== "undefined") {
-      //regular expression for email validation
-      var pattern = new RegExp(
-        /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-      );
-      if (!pattern.test(fields["email"])) {
-        formIsValid = false;
-        errors["email"] = "*Please enter valid email-ID.";
-      }
-    }
+  //   if (!fields["firstname"]) {
+  //     formIsValid = false;
+  //     errors["firstname"] = "*Please enter your firstname.";
+  //   } else if (!fields["firstname"].match(/^[a-zA-Z ]*$/)) {
+  //     formIsValid = false;
+  //     errors["firstname"] = "*Please enter alphabets only.";
+  //   }
 
-    // if (!fields["phoneno"]) {
-    //   formIsValid = false;
-    //   errors["phoneno"] = "*Please enter your mobile no.";
-    // }
+  //   if (!fields["lastname"]) {
+  //     formIsValid = false;
+  //     errors["lastname"] = "*Please enter your lastname.";
+  //   }
 
-    // if (typeof fields["phoneno"] !== "undefined") {
-    //   if (!fields["phoneno"].match(/^[0-9]{10}$/)) {
-    //     formIsValid = false;
-    //     errors["phoneno"] = "*Please enter valid mobile no.";
-    //   }
-    // }
+  //   if (typeof fields["lastname"] !== "undefined") {
+  //     if (!fields["lastname"].match(/^[a-zA-Z ]*$/)) {
+  //       formIsValid = false;
+  //       errors["lastname"] = "*Please enter alphabets only.";
+  //     }
+  //   }
 
-    if (!fields["address"]) {
-      formIsValid = false;
-      errors["address"] = "*Please enter your address";
-    }
+  //   if (!fields["email"]) {
+  //     formIsValid = false;
+  //     errors["email"] = "*Please enter your email-ID.";
+  //   }
 
-    if (!fields["interest"]) {
-      formIsValid = false;
-      errors["interest"] = "*Please enter your interest";
-    }
+  //   if (typeof fields["email"] !== "undefined") {
+  //     //regular expression for email validation
+  //     var pattern = new RegExp(
+  //       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+  //     );
+  //     if (!pattern.test(fields["email"])) {
+  //       formIsValid = false;
+  //       errors["email"] = "*Please enter valid email-ID.";
+  //     }
+  //   }
 
-    this.setState({
-      errors: errors
-    });
-    return formIsValid;
-  }
+  //   // if (!fields["phoneno"]) {
+  //   //   formIsValid = false;
+  //   //   errors["phoneno"] = "*Please enter your mobile no.";
+  //   // }
+
+  //   // if (typeof fields["phoneno"] !== "undefined") {
+  //   //   if (!fields["phoneno"].match(/^[0-9]{10}$/)) {
+  //   //     formIsValid = false;
+  //   //     errors["phoneno"] = "*Please enter valid mobile no.";
+  //   //   }
+  //   // }
+    
+  //   // if(!this.state.fields.doj) {
+  //   //   formIsValid = false;
+  //   //   errors["dob"] = "*Please enter your Date of Birth";
+  //   // }
+  //   // if(!this.doj) {
+  //   //   formIsValid = false;
+  //   //   errors["doj"] = "*Please enter your Date of Joining";
+  //   // }
+
+  //   // if(this.doj.date < this.dob.date){
+  //   //    formIsValid = false;
+  //   //    alert("*Date of Joining cannot be earlier than Date of Birth");
+  //   //  }
+
+  //   if (!fields["address"]) {
+  //     formIsValid = false;
+  //     errors["address"] = "*Please enter your address";
+  //   }
+
+  //   if (!fields["interest"]) {
+  //     formIsValid = false;
+  //     errors["interest"] = "*Please enter your interest";
+  //   }
+
+  //   this.setState({
+  //     errors: errors
+  //   });
+  //   return formIsValid;
+  // }
+
+  // functionreferesh(){
+  //   this.props.action()
+  // }
+
 
   init() {}
   render() {
@@ -264,9 +281,25 @@ class EditProfile extends Component {
                   type="text"
                   name="firstname"
                   ref="firstname"
+                  pattern={"[A-Za-z]+"}
                   value={this.state.fields.firstname}
                   onChange={this.handleChange}
+                  required
+                  
                 />
+
+ {/* <Input
+                                            name="firstname"
+                                            style={{ width: "100%" }}
+                                            label="First Name"
+                                            pattern={"[A-Za-z]+"}
+                                            minLength={2}
+                                            value={this.state.fields.firstname}
+                  onChange={this.handleChange}
+                  
+                                            required={true}
+                                        /> */}
+
 
                 <div className="errorMsg">{this.state.errors.firstname}</div>
               </div>
@@ -280,6 +313,7 @@ class EditProfile extends Component {
                   ref="lastname"
                   value={this.state.fields.lastname}
                   onChange={this.handleChange}
+                  
                 />
                 <div className="errorMsg">{this.state.errors.lastname}</div>
               </div>
@@ -310,11 +344,13 @@ class EditProfile extends Component {
                 <input
                   className="datepicker"
                   ref="dob"
-                 // readOnly={true}
+                  // readOnly={true}
                   name="dob"
-                 defaultValue={this.state.fields.dob}
-                 onChange={this.handleDateChange}
-                  />
+                  //value={this.state.fields.dob}
+                defaultValue={this.state.fields.dob}
+                //  onChange={this.handleDateChange}
+                />
+                <div className="errorMsg">{this.state.errors.dob}</div>
 
                 {/* <DatePicker
                   onChange={this.handleChange1}
@@ -368,8 +404,10 @@ class EditProfile extends Component {
               <div className="col s3">
                 <select
                   value={this.state.dial_code}
-                  onChange={this.onSelect2}
+                  onChange={this.onSelect1}
                   id="dial_code"
+                  name="dial_code"
+                  ref="dial_code"
                 >
                   {Codes.map((dial_code, key) => (
                     <option key={key} value={dial_code.dial_code}>
@@ -415,9 +453,12 @@ class EditProfile extends Component {
                   ref="doj"
                   readOnly={true}
                   name="doj"
+
                   defaultValue={this.state.fields.doj}
-                  onChange={this.handleDateChange}
+                 // onChange={this.handleDateChange}
                 />
+                <div className="errorMsg">{this.state.errors.doj}</div>
+
               </div>
             </div>
 
@@ -501,7 +542,7 @@ class EditProfile extends Component {
             </div>
             <div className="row">
               <div className="col s12 input-field">
-                <button className="btn waves-effect waves-light" type="submit">
+                <button className="btn waves-effect waves-light" type="submit" onClick={this.functionreferesh}>
                   Submit
                 </button>
               </div>

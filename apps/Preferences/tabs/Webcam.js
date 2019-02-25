@@ -52,7 +52,7 @@ class Webcam extends Component {
           
         ) : (
           <button type="button" id="imgsave" onClick={this.enableWebcam} className="waves-effect waves-light btn fa fa-camera"
-          >
+          > Enable Webcam
           </button>
           
         )}

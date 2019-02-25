@@ -33,6 +33,10 @@ const register = (core, args, options, metadata) => {
     .on('destroy', () => proc.destroy())
     .render($content => 
         ReactDOM.render(<App args = {core} />, $content));
+    if(win.$element.className.indexOf('Window_'+applicationName) == -1){
+      win.$element.className += " Window_"+applicationName;
+    }    
+    console.log(win.$element);    
     
   //  console
   //       const UserData = 

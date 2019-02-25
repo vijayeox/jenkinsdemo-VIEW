@@ -6,11 +6,28 @@ import { Button } from "@material-ui/core";
 import './Sample.css';
 
 var Img1 = createReactClass({
+//   constructor(props) {
+//     super(props);
+  
+
+//   this.getProfile().then(response => {
+//     this.setState({ fields: response.data });
+//     console.log(this.state.fields);
+//   })
+// },  
+
+// async getProfile() {
+//   // call to api using wrapper
+//   let helper = this.core.make("oxzion/restClient");
+//   let profile = await helper.request("v1", "/user/me/m", {}, "get");
+//   console.log(profile);
+// },
+
   getInitialState: function() {
     return {
       previewOpen: false,
       img: null,
-      savedImg: "http://www.placekitten.com/400/400"
+      savedImg: "./apps/Preferences/hicon.png"
     };
   },
   handleFileChange: function(dataURI) {
@@ -32,10 +49,36 @@ var Img1 = createReactClass({
     this.setState({
       previewOpen: false
     });
-  },
+  }, 
+  //  handleSubmit(event) {
+  //   event.preventDefault();
+  //     const formData = {};
+  //     Object.keys(this.state.fields).map(key => {
+  //       formData[key] = this.state.fields[key];
+  //     });
+    
+  //     console.log(formData);
+
+  //     let helper = this.core.make("oxzion/restClient");
+
+  //     let editresponse = helper.request(
+  //       "v1",
+  //       "/user/" + this.state.fields.id,JSON.stringify(formData),
+  //       "put"
+  //     );
+  //     if (editresponse.status == "error") {
+  //       alert(editresponse.message);
+  //     }else{
+  //       alert("Successfully Updated");
+   
+  //     }
+
+  //   },
+
   render () {
     return (
       <div>
+        {/* <form onSubmit={this.handleSubmit}> */}
         <div className="avatar-photo">
           <Button color="primary">Pick an Image</Button>
           <br/>
@@ -55,14 +98,14 @@ var Img1 = createReactClass({
         }
      
         <br/>
-        <button className="waves-effect waves-light btn" id="imgsave">
+        <button className="waves-effect waves-light btn" id="imgsave" type="submit">
           Save
         </button>
 
         <div>
         <a className="waves-effect waves-light btn" id="goBack1">Back</a>
         </div>
-      
+        {/* </form> */}
       </div>
     );
   }

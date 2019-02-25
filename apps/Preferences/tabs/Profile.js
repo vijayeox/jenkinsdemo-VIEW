@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import "./Sample.css";
+// import "./Sample.css";
 import EditProfile from "./EditProfile";
-import "jquery/dist/jquery.js";
-import $ from "jquery";
 import Img1 from "./Img1.js";
 import Webcam from "./Webcam.js";
+// import { relativeTimeRounding } from "moment";
 
 class Profile extends Component {
   constructor(props) {
@@ -17,7 +16,8 @@ class Profile extends Component {
      userprofile:"",
      file: "",
      dateString:"",
-     date1:""
+     date1:"",
+     refereshPage:false
    };
 
    this.getUserProfile().then(response => {
@@ -28,13 +28,25 @@ class Profile extends Component {
     
    this.handleFileChange = this.handleFileChange.bind(this);
    this.formatDate=this.formatDate.bind(this);
+   this.refereshandler=this.refereshandler.bind(this);
   }
 
 formatDate(string){
     var options = {  day: 'numeric', month: 'long' };
     return new Date(string).toLocaleDateString([],options);
 }
-    
+  
+refereshandler=()=>{
+  this.setState({
+      refereshPage:true
+  });
+  this.getUserProfile().then(response => {
+    this.setState({userprofile :response.data});
+
+  });
+
+
+}
  
 
   async getUserProfile() {
@@ -62,7 +74,7 @@ formatDate(string){
       }
     }
     ready(function() {
-      document.getElementById("componentsBox").style.display = "none";
+      document.getElementById("editProfileBox").style.display = "none";
       document.getElementById("imageBox").style.display = "none";
       document.getElementById("webcamcomponent").style.display = "none";
     });
@@ -72,7 +84,7 @@ formatDate(string){
       myEl.addEventListener(
         "click",
         function() {
-          document.getElementById("componentsBox").style.display = "";
+          document.getElementById("editProfileBox").style.display = "";
           document.getElementById("cardUi").style.display = "none";
         },
         false
@@ -83,12 +95,13 @@ formatDate(string){
       myEl1.addEventListener(
         "click",
         function() {
-          document.getElementById("componentsBox").style.display = "none";
+          document.getElementById("editProfileBox").style.display = "none";
           document.getElementById("cardUi").style.display = "";
         },
         false
       );
     }
+
 
     var myEl2 = document.getElementById("img1");
     if (myEl2) {
@@ -97,7 +110,7 @@ formatDate(string){
         function() {
           document.getElementById("cardUi").style.display = "none";
           document.getElementById("imageBox").style.display = "";
-          document.getElementById("componentsBox").style.display = "none";
+          document.getElementById("editProfileBox").style.display = "none";
         },
         false
       );
@@ -122,7 +135,7 @@ formatDate(string){
         function() {
           document.getElementById("cardUi").style.display = "none";
           document.getElementById("webcamcomponent").style.display = "";
-          document.getElementById("componentsBox").style.display = "none";
+          document.getElementById("editProfileBox").style.display = "none";
         },
         false
       );
@@ -156,14 +169,14 @@ formatDate(string){
   addDefaultSrc(ev) {
     ev.target.src = "./apps/Preferences/hicon.png";
   }
+
   init() {}
+
   render() {
 
+
    this.dateString = this.state.userprofile.dob;
-    // console.log(this.dateString);
     this.date1= this.formatDate(this.dateString);
-    // console.log(this.date1);
-    
 
     return (
       <div>
@@ -205,8 +218,8 @@ formatDate(string){
                 <br />
                 
                 <div id="add">
-                <i className="fa fa-location-arrow" id="iconi" />
-                <br></br><label id="label1">
+                <i className="fa fa-location-arrow"/>
+                <label id="label1">
                 {this.state.userprofile.address}
                   </label>
                 </div>
@@ -269,9 +282,9 @@ formatDate(string){
           </div>
         </div>
 
-        <div id="componentsBox">
+        <div id="editProfileBox">
 
-          <EditProfile args={this.core}/>
+          <EditProfile args={this.core} action={this.refereshandler}/>
 
         </div>
         <div className="file-field input-field img1" id="imageBox">
@@ -285,5 +298,7 @@ formatDate(string){
 </div>
     );
   }
+  
+
 }
 export default Profile;

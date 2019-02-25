@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./Sample.css";
+//import "./Sample.css";
 
 class ChangePassword extends Component {
   constructor() {
