@@ -48,7 +48,6 @@ export default class PanelServiceProvider {
       menu: MenuPanelItem,
       windows: WindowsPanelItem,
       tray: TrayPanelItem,
-      profile: ProfilePanelItem,
       logout: LogoutPanelItem
     }, args.registry || {});
     console.log(this.registry);
