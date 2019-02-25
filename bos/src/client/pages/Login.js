@@ -1,6 +1,5 @@
 import {Login as defaultLogin} from '../../osjs-client/index.js';
 import {h, app} from 'hyperapp';
-import '../../../node_modules/materialize-css/dist/css/materialize.min.css';
 import '../../../node_modules/materialize-css/dist/js/materialize.min.js';
 import '../assets/scss/login.scss';
 
