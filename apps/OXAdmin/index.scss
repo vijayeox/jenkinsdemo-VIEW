@@ -8,9 +8,8 @@
 
     #adminHeader {
         margin-bottom: 0px;
-        padding: 10px 0px 10px 0px;
-        border-bottom: 1px solid #433e44b4;
-        // background-color: #a39f9f;
+        padding: 25px 0px 25px 0px;
+        background-color: #a39f9f;
         font-weight: bolder;
         font-size: 35px;
         color: #183651;
@@ -26,6 +25,7 @@
 
     #appRow {
         max-width: 500px;
+        margin-bottom: 0px;
     }
 
     #goBack,
@@ -79,5 +79,24 @@
         margin: 0px;
         width: 100%;
         text-align: center;
+    }
+
+    .container {
+        width: 80%;
+        background: #eee;
+        margin: 10px auto;
+        position: relative;
+        text-align: center;
+    }
+
+    .block {
+        height: 100px;
+        width: 100px;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .dropdown-content {
+        height: 300px;
     }
 }

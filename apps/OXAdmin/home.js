@@ -126,7 +126,7 @@ class Home extends React.Component {
                     alt="Responsive image"
                   />
                 </div>
-                <p>Responsive Tiles</p>
+                <p>Tiles</p>
               </div>
             </div>
 

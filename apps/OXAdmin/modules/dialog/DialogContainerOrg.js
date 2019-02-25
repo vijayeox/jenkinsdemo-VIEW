@@ -17,6 +17,7 @@ export default class DialogContainer extends React.Component {
   }
 
   componentDidMount() {
+    M.AutoInit();
     M.updateTextFields();
   }
 
