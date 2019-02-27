@@ -1,8 +1,7 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
-import "../../public/materialize.js";
+import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
@@ -77,7 +76,6 @@ export default class DialogContainer extends React.Component {
   };
 
   submitData = event => {
-    var self = this;
     if (this.props.formAction == "edit") {
       this.editOrganization();
     } else {
@@ -116,10 +114,10 @@ export default class DialogContainer extends React.Component {
 
               <div className="row">
                 <div className="input-field col s12">
-                  <input
+                  <textarea
                     id="organizationAddress"
                     type="text"
-                    className="validate"
+                    className="materialize-textarea validate"
                     name="address"
                     value={this.state.orgInEdit.address || ""}
                     onChange={this.onDialogInputChange}

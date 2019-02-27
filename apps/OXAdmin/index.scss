@@ -1,6 +1,8 @@
 .Window_OXAdmin {
 
-    @import "./node_modules/materialize-css/sass/materialize.scss";
+    @import "./public/scss/materialize.css";
+    @import "./public/scss/notifTheme.css";
+    @import "./public/scss/kendo.css";
 
     background: #F06151;
 
@@ -55,6 +57,7 @@
         font-size: 25px;
         color: #183651;
         padding-top: 5px;
+        margin-bottom: 15px;
     }
 
     #organization {
@@ -70,12 +73,16 @@
 
     .k-grid-content {
 
-        height: 370px;
+        height: 360px;
     }
 
     .k-tooltip-validation {
         color: rgb(212, 206, 206);
         display: none !important;
+    }
+
+    a {
+        color: #656565 !important;
     }
 
     .mainHead {
@@ -100,6 +107,18 @@
     }
 
     .dropdown-content {
-        height: 300px;
+        height: "" !important;
     }
+
+    .row {
+        margin-bottom: 0px !important;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+
 }

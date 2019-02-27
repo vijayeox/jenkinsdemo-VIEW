@@ -1,161 +1,224 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
+import {
+  Grid,
+  GridColumn as Column,
+  GridToolbar
+} from "@progress/kendo-react-grid";
 
-import '../public/scss/app.css';
-import '../public/scss/kendo.css';
-import { FaArrowLeft } from 'react-icons/fa';
+import ReactNotification from "react-notifications-component";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-
-library.add(faPlusCircle);
-
-import { Grid, GridColumn as Column, GridToolbar } from '@progress/kendo-react-grid';
-
-import { userData } from './data/userData';
-
-import DialogContainer from './dialog/DialogContainerUser';
-import cellWithEditing from './cellWithEditing';
-import { orderBy } from '@progress/kendo-data-query';
+import DialogContainer from "./dialog/DialogContainerUser";
+import cellWithEditing from "./cellWithEditing";
+import { orderBy } from "@progress/kendo-data-query";
 
 class User extends React.Component {
-	constructor(props) {
-		super(props);
-		this.core = this.props.args;
+  constructor(props) {
+    super(props);
+    this.core = this.props.args;
 
-		this.state = {
-			productInEdit: undefined,
-			sort: [{ field: 'id', dir: 'desc' }],
-			products: [],
-		};
+    this.state = {
+      userInEdit: undefined,
+      sort: [],
+      products: [],
+      action: ""
+    };
 
-		this.getUserData().then(response => {
-			this.setState({ products: response.data });
-		});
-	}
+    this.addNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
 
-	async getUserData() {
-		console.log('inside  the user function');
-		let helper = this.core.make('oxzion/restClient');
-		let userData = await helper.request('v1', '/user', {}, 'get');
-		return userData;
-	}
+    this.getUserData().then(response => {
+      this.setState({ products: response.data });
+    });
+  }
 
-	edit = dataItem => {
-		this.setState({ productInEdit: this.cloneProduct(dataItem) });
-	};
+  addDataNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "Operation Successful",
+      message: "Entry created with ID:" + serverResponse,
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
 
-	remove = dataItem => {
-		const products = this.state.products;
-		const index = products.findIndex(p => p.ProductID === dataItem.ProductID);
-		if (index !== -1) {
-			products.splice(index, 1);
-			this.setState({
-				products: products,
-			});
-		}
-	};
+  addNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "All Done!!!  👍",
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
 
-	save = () => {
-		const dataItem = this.state.productInEdit;
-		const products = this.state.products.slice();
+  handler = serverResponse => {
+    this.getUserData().then(response => {
+      this.setState({ products: response.data });
+      this.addDataNotification(serverResponse);
+    });
+  };
 
-		if (dataItem.ProductID === undefined) {
-			products.unshift(this.newProduct(dataItem));
-		} else {
-			const index = products.findIndex(p => p.ProductID === dataItem.ProductID);
-			products.splice(index, 1, dataItem);
-		}
+  async getUserData() {
+    let helper = this.core.make("oxzion/restClient");
+    let userData = await helper.request("v1", "/user", {}, "get");
+    return userData;
+  }
 
-		this.setState({
-			products: products,
-			productInEdit: undefined,
-		});
-	};
+  async deleteUserData(dataItem) {
+    let helper = this.core.make("oxzion/restClient");
+    let delUser = helper.request("v1", "/user/" + dataItem, {}, "delete");
+    return delUser;
+  }
 
-	cancel = () => {
-		this.setState({ productInEdit: undefined });
-	};
+  edit = dataItem => {
+    this.setState({
+      userInEdit: this.cloneProduct(dataItem),
+      action: "edit"
+    });
+  };
 
-	insert = () => {
-		this.setState({ productInEdit: {} });
-	};
+  remove = dataItem => {
+    this.deleteUserData(dataItem.id).then(response => {});
+    this.handler();
 
-	render() {
-		return (
-			<div id="userPage">
-				<div style={{ display: 'flex' }}>
-					<button id="goBack4" className="btn btn-sq">
-						<FaArrowLeft />
-					</button>
-					<div className="mainHead">
-						<h3 className="mainHead">Manage Users</h3>
-					</div>
-				</div>
+    const products = this.state.products;
+    const index = products.findIndex(p => p.id === dataItem.id);
+    if (index !== -1) {
+      products.splice(index, 1);
+      this.setState({
+        products: products
+      });
+    }
+  };
 
-				<Grid
-					style={{ height: '475px' }}
-					data={orderBy(this.state.products, this.state.sort)}
-					sortable
-					sort={this.state.sort}
-					onSortChange={e => {
-						this.setState({
-							sort: e.sort,
-						});
-					}}
-				>
-					<GridToolbar>
-						<div>
-							<span className="flow-text">Users List</span>
-							<button
-								onClick={this.insert}
-								className="k-button"
-								style={{ position: 'absolute', top: '8px', right: '16px' }}
-							>
-								<FontAwesomeIcon icon="plus-circle" style={{ fontSize: '20px' }} />
-								<p style={{ margin: '0px', paddingLeft: '10px' }}>Add User</p>
-							</button>
-						</div>
-					</GridToolbar>
-					<Column field="id" title="User ID" width="90px" />
-					<Column field="name" title="Name" />
-					<Column field="firstname" title="First Name" />
-					<Column field="lastname" title="Last Name" />
-					<Column title="Edit" width="150px" cell={cellWithEditing(this.edit, this.remove)} />
-				</Grid>
+  save = () => {
+    const dataItem = this.state.userInEdit;
+    const products = this.state.products.slice();
 
-				{this.state.productInEdit && (
-					<DialogContainer dataItem={this.state.productInEdit} save={this.save} cancel={this.cancel} />
-				)}
-			</div>
-		);
-	}
+    if (dataItem.id === undefined) {
+      products.unshift(this.newProduct(dataItem));
+    } else {
+      const index = products.findIndex(p => p.id === dataItem.id);
+      products.splice(index, 1, dataItem);
+    }
 
-	dialogTitle() {
-		return `${this.state.productInEdit.ProductID === undefined ? 'Add' : 'Edit'} product`;
-	}
-	cloneProduct(product) {
-		return Object.assign({}, product);
-	}
+    this.setState({
+      products: products,
+      userInEdit: undefined
+    });
+  };
 
-	newProduct(source) {
-		const newProduct = {
-			ProductID: this.generateId(),
-			Name: '',
-			Contact: '',
-			Designation: '',
-		};
+  cancel = () => {
+    this.setState({ userInEdit: undefined });
+  };
 
-		return Object.assign(newProduct, source);
-	}
+  insert = () => {
+    this.setState({ userInEdit: {}, action: "add" });
+  };
 
-	generateId() {
-		let id = 1;
-		this.state.products.forEach(p => {
-			id = Math.max((p.ProductID || 0) + 1, id);
-		});
-		return id;
-	}
+  render() {
+    return (
+      <div id="userPage">
+        <ReactNotification ref={this.notificationDOMRef} />
+        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+          <div className="col s3">
+            <a className="waves-effect waves-light btn" id="goBack4">
+              <FaArrowLeft />
+            </a>
+          </div>
+          <center>
+            <div className="col s6" id="pageTitle">
+              Manage Users
+            </div>
+          </center>
+        </div>
+
+        <Grid
+          data={orderBy(this.state.products, this.state.sort)}
+          sortable
+          sort={this.state.sort}
+          onSortChange={e => {
+            this.setState({
+              sort: e.sort
+            });
+          }}
+        >
+          <GridToolbar>
+            <div>
+              <div style={{ fontSize: "20px" }}>Users List</div>
+              <button
+                onClick={this.insert}
+                className="k-button"
+                style={{ position: "absolute", top: "8px", right: "16px" }}
+              >
+                <FaPlusCircle style={{ fontSize: "20px" }} />
+                <p style={{ margin: "0px", paddingLeft: "10px" }}>Add User</p>
+              </button>
+            </div>
+          </GridToolbar>
+          <Column field="id" title="User ID" width="90px" />
+          <Column field="name" title="Name" />
+          <Column field="role" title="Role" />
+          <Column field="status" title="Status" />
+          <Column
+            title="Edit"
+            width="150px"
+            cell={cellWithEditing(this.edit, this.remove)}
+          />
+        </Grid>
+
+        {this.state.userInEdit && (
+          <DialogContainer
+            args={this.core}
+            dataItem={this.state.userInEdit}
+            save={this.save}
+            cancel={this.cancel}
+            formAction={this.state.action}
+            action={this.handler}
+          />
+        )}
+      </div>
+    );
+  }
+
+  dialogTitle() {
+    return `${this.state.userInEdit.id === undefined ? "Add" : "Edit"} product`;
+  }
+  cloneProduct(product) {
+    return Object.assign({}, product);
+  }
+
+  newProduct(source) {
+    const newProduct = {
+      id: "",
+      gamelevel: "",
+      username: "",
+      firstname: "",
+      lastname: "",
+      name: "",
+      role: "",
+      email: "",
+      dob: "",
+      designation: "",
+      sex: "",
+      managerid: "",
+      level: "",
+      doj: "",
+      listtoggle: "",
+      mission_link: ""
+    };
+
+    return Object.assign(newProduct, source);
+  }
 }
 
 export default User;

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
-import "../public/scss/kendo.css";
-import "./theme.css";
-import { FaArrowLeft, FaSyncAlt, FaPlusCircle } from "react-icons/fa";
+import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
 import {
   Grid,
@@ -135,76 +133,75 @@ class Organization extends React.Component {
     this.setState({ orgInEdit: {}, action: "add" });
   };
 
-  render() {
+  render = () => {
     return (
-      <div>
-        <div id="organization">
-          <ReactNotification ref={this.notificationDOMRef} />
-          <div style={{ margin: "10px 0px 10px 0px" }} className="row">
-            <div className="col s3">
-              <a className="waves-effect waves-light btn" id="goBack5">
-                <FaArrowLeft />
-              </a>
-            </div>
-            <center>
-              <div className="col s6" id="pageTitle">
-                Manage Organizations
-              </div>
-            </center>
+      <div id="organization">
+        <ReactNotification ref={this.notificationDOMRef} />
+        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+          <div className="col s3">
+            <a className="waves-effect waves-light btn" id="goBack5">
+              <FaArrowLeft />
+            </a>
           </div>
-
-          <Grid
-            data={orderBy(this.state.products, this.state.sort)}
-            sortable
-            sort={this.state.sort}
-            onSortChange={e => {
-              this.setState({
-                sort: e.sort
-              });
-            }}
-          >
-            <GridToolbar>
-              <div>
-                <div style={{ fontSize: "20px" }}>Organizations List</div>
-                <button
-                  onClick={this.insert}
-                  className="k-button"
-                  style={{ position: "absolute", top: "8px", right: "16px" }}
-                >
-                  <FaPlusCircle style={{ fontSize: "20px" }} />
-
-                  <p style={{ margin: "0px", paddingLeft: "10px" }}>
-                    Add Organization
-                  </p>
-                </button>
-              </div>
-            </GridToolbar>
-
-            <Column field="id" title="ID" width="70px" />
-            <Column field="name" title="Name" />
-            <Column field="state" title="State" />
-            <Column field="zip" title="Zip" />
-            <Column
-              title="Edit"
-              width="160px"
-              cell={cellWithEditing(this.edit, this.remove)}
-            />
-          </Grid>
-
-          {this.state.orgInEdit && (
-            <DialogContainer
-              args={this.core}
-              dataItem={this.state.orgInEdit}
-              save={this.save}
-              cancel={this.cancel}
-              formAction={this.state.action}
-              action={this.handler}
-            />
-          )}
+          <center>
+            <div className="col s6" id="pageTitle">
+              Manage Organizations
+            </div>
+          </center>
         </div>
+
+        <Grid
+          data={orderBy(this.state.products, this.state.sort)}
+          sortable
+          sort={this.state.sort}
+          onSortChange={e => {
+            this.setState({
+              sort: e.sort
+            });
+          }}
+        >
+          <GridToolbar>
+            <div>
+              <div style={{ fontSize: "20px" }}>Organizations List</div>
+              <button
+                onClick={this.insert}
+                className="k-button"
+                style={{ position: "absolute", top: "8px", right: "16px" }}
+              >
+                <FaPlusCircle style={{ fontSize: "20px" }} />
+
+                <p style={{ margin: "0px", paddingLeft: "10px" }}>
+                  Add Organization
+                </p>
+              </button>
+            </div>
+          </GridToolbar>
+
+          <Column field="id" title="ID" width="70px" />
+          <Column field="name" title="Name" />
+
+          <Column field="state" title="State" />
+          <Column field="zip" title="Zip" />
+          <Column
+            title="Edit"
+            width="160px"
+            cell={cellWithEditing(this.edit, this.remove)}
+          />
+        </Grid>
+
+        {this.state.orgInEdit && (
+          <DialogContainer
+            args={this.core}
+            dataItem={this.state.orgInEdit}
+            save={this.save}
+            cancel={this.cancel}
+            formAction={this.state.action}
+            action={this.handler}
+          />
+        )}
       </div>
     );
-  }
+  };
 
   dialogTitle() {
     return `${this.state.orgInEdit.id === undefined ? "Add" : "Edit"} product`;

@@ -1,5 +1,4 @@
 import React from "react";
-import "./public/scss/app.css";
 
 import "jquery/dist/jquery.js";
 import $ from "jquery";
@@ -140,7 +139,7 @@ class Home extends React.Component {
                     alt="Responsive image"
                   />
                 </div>
-                <p>User</p>
+                <p>Users</p>
               </div>
 
               <div className="col s4">

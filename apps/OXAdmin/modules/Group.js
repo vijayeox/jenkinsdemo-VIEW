@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import '../public/scss/app.css';
-import '../public/scss/kendo.css';
 import { FaArrowLeft } from 'react-icons/fa';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
