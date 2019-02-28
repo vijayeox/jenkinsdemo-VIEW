@@ -56,6 +56,15 @@ class WebSocketServiceProvider {
       ws.on('message', msg => {
         var parsedMessage = JSON.parse(msg);
         if(this.userSocketArray[parsedMessage['userid']]){
+
+          // to remove web sockets that are already closed.
+          for (let i = 0; i < this.userSocketArray[parsedMessage['userid']].length; i++) {
+            const element = this.userSocketArray[parsedMessage['userid']][i];
+            if(element.readyState == 3) {
+              this.userSocketArray[parsedMessage['userid']].splice(i,1);
+            }
+          }
+
           for (let i = 0; i < this.userSocketArray[parsedMessage['userid']].length; i++) {
             const element = this.userSocketArray[parsedMessage['userid']][i];
             var parameterArray = [];
@@ -81,6 +90,9 @@ class WebSocketServiceProvider {
    */
   destroy() {
   }
+
+
+
 
 }
 
