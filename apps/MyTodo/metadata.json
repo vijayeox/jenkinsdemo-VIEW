@@ -2,9 +2,9 @@
   "type": "application",
   "name": "MyTodo",
   "icon": "icon.png",
+  "hidden": true,
   "category": null,
   "server": "server.js",
-  "hidden": true,
   "title": {
     "en_EN": "MyTodo"
   },
