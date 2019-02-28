@@ -63,7 +63,7 @@ const createIframe = (bus, proc, win, cb) => {
 
 // Creates the internal callback function when OS.js launches an application
 // Note the first argument is the 'name' taken from your metadata.json file
-OSjs.make('osjs/packages').register('OXChat', (core, args, options, metadata) => {
+OSjs.make('osjs/packages').register('Chat', (core, args, options, metadata) => {
 
   // Create a new Application instance
   const proc = core.make('osjs/application', {
@@ -71,60 +71,81 @@ OSjs.make('osjs/packages').register('OXChat', (core, args, options, metadata) =>
     options,
     metadata 
   });
- 
+  let trayInitialized = false;
+  
   // Create  a new Window instance
-  proc.createWindow({
-    id: 'OXChatWindow',
-    icon: proc.resource(proc.metadata.icon),
-    title: metadata.title.en_EN,
-    dimension: {width: 400, height: 400},
-    position: {left: 200, top: 400}
-  })
-    .on('destroy', () => proc.destroy())
-    // .on('init', () => ref.maximize())
-    .render(($content, win) => {
-      win.maximize();
+  const createProcWindow = () => {
+    let win = proc.createWindow({
+      id: 'ChatWindow',
+      icon: proc.resource(proc.metadata.icon),
+      title: metadata.title.en_EN,
+      dimension: {width: 400, height: 500},
+      position: {left: 200, top: 400}
+    })
+    // To close the Chat app when the window is destructed
+      .on('close', () => {
+        console.log("close event");
+      })
       
-      // Create a new bus for our messaging
-      const bus = core.make('osjs/event-handler', 'OXChatWindow');
-      const user = core.make('osjs/auth').user();
-      // Get path to iframe content
-      const src = proc.resource(baseUrl + '/login?oxauth=' + user.jwt);
-
-      // Create DOM element
-      const iframe = createIframe(bus, proc, win, send => {
-        bus.on('yo', (send, args) => send({
-          method: 'yo',
-          args: ['OX Chat says hello']
-        }));
-
-        // Send the process ID to our iframe to establish communication
-        send({
-          method: 'init',
-          args: [proc.pid]
-        });
-      });
-
-      // Tray Icon
-      // if (core.has('osjs/tray')) {
-      //   const tray = core.make('osjs/tray').create({
-      //     icon: proc.resource(metadata.icon),
-      //   }, (ev) => {
-      //     core.make('osjs/contextmenu').show({
-      //       position: ev,
-      //       menu: [
-      //         {label: 'Show', onclick: () => win(proc)}
-      //       ]
-      //     });
-      //   });
-      // }
-
-      // Finally set the source and attach
-      iframe.src = src;
-
-      // Attach
-      $content.appendChild(iframe);
-    });
-
+      // .on('init', () => ref.maximize())
+      .render(($content, win) => {
+        // win.maximize();
+         
+         // Create a new bus for our messaging
+         const bus = core.make('osjs/event-handler', 'ChatWindow');
+         const user = core.make('osjs/auth').user();
+         // Get path to iframe content
+         const src = proc.resource(baseUrl + '/login?oxauth=' + user.jwt);
+    
+         // Create DOM element
+         const iframe = createIframe(bus, proc, win, send => {
+           bus.on('yo', (send, args) => send({
+             method: 'yo',
+             args: ['Chat says hello']
+           }));
+    
+           // Send the process ID to our iframe to establish communication
+           send({
+             method: 'init',
+             args: [proc.pid]
+           });
+         });
+    
+          // Finally set the source and attach
+         iframe.src = src;
+    
+              // Tray Icon
+         if (core.has('osjs/tray') && !trayInitialized) {
+           trayInitialized = true;
+           const tray = core.make('osjs/tray').create({
+             title: "Chat",
+             icon: proc.resource(metadata.icon),
+           }, (ev) => {
+             core.make('osjs/contextmenu').show({
+               position: ev,
+               menu: [
+                 {label: 'Open', 
+                  onclick: () => {
+                     console.log(proc);
+                     createProcWindow();
+                   }
+                 },
+                 {
+                  label: 'Quit', 
+                  onclick: () => {
+                  win.destroy();
+                   }
+                 }
+               ]
+             });
+           });
+         }
+    
+    
+         // Attach
+         $content.appendChild(iframe);
+       })
+    }
+  createProcWindow();  
   return proc;
 });

@@ -1,14 +1,17 @@
 {
     "type": "application",
-    "name": "OXChat",
+    "name": "Chat",
+    "autostart":true,
+    "singleton":true,
+    "hidden":false,
     "icon":"oxchat.png",
     "category": null,
     "server": "server.js",
     "title": {
-      "en_EN": "OXChat"
+      "en_EN": "Chat"
     },
     "description": {
-      "en_EN": "OXChat"
+      "en_EN": "Chat"
     },
     "files": [
       "main.js",
