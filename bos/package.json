@@ -32,7 +32,7 @@
     "Announcements": "file:../apps/Announcements",
     "MyTodo": "file:../apps/MyTodo",
     "OXMail": "file:../apps/OXMail",
-    "OXChat": "file:../apps/OXChat",
+    "Chat": "file:../apps/Chat",
     "OXAdmin": "file:../apps/OXAdmin",
     "OxzionTheme": "file:../themes/OxzionTheme",
     "oxzioniconpack": "file:../iconpacks/oxzioniconpack",
