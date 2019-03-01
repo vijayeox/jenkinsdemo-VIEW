@@ -95,11 +95,12 @@ class ChangePassword extends Component {
       errors["confirm_password"] = "*Password does not match";
     }
 
+    
+    
       if(fields["new_password"].length < 8) {
         formIsValid = false;
         errors["new_password"] = "Password must contain at least eight characters!";
       }
-
      var re = /[0-9]/;
       if(!re.test(fields["new_password"])) {
         formIsValid = false;

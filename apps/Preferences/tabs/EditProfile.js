@@ -120,22 +120,29 @@ class EditProfile extends Component {
 
   getStandardDateString(date1){
     if(!date1.date){
-      return '';
+      return this.state.fields.dob;
     }      
     return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
  }
 
 
+ getStandardDateString1(date1){
+  if(!date1.date){
+    return this.state.fields.doj;
+  }      
+  return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
+}
+
   handleSubmit(event) {
     event.preventDefault();
     let elems = document.querySelectorAll(".datepicker");
 
-  // if (this.validateForm()) {
+  if (this.validateForm()) {
       const formData = {};
       this.joinPhNo();
 
       formData.dob = this.getStandardDateString(this.dob);
-      formData.doj= this.getStandardDateString(this.doj);
+      formData.doj= this.getStandardDateString1(this.doj);
       
       this.state.fields.dob=formData.dob;
       this.state.fields.doj=formData.doj;
@@ -162,90 +169,90 @@ class EditProfile extends Component {
       }
 
     }
-  // }
+  }
 
-  // validateForm() {
-  //   let fields = this.state.fields;
-  //   let errors = {};
-  //   let formIsValid = true;
+  validateForm() {
+    let fields = this.state.fields;
+    let errors = {};
+    let formIsValid = true;
 
-  //   if (!fields["firstname"]) {
-  //     formIsValid = false;
-  //     errors["firstname"] = "*Please enter your firstname.";
-  //   } else if (!fields["firstname"].match(/^[a-zA-Z ]*$/)) {
-  //     formIsValid = false;
-  //     errors["firstname"] = "*Please enter alphabets only.";
-  //   }
+    if (!fields["firstname"]) {
+      formIsValid = false;
+      errors["firstname"] = "*Please enter your firstname.";
+    } else if (!fields["firstname"].match(/^[a-zA-Z ]*$/)) {
+      formIsValid = false;
+      errors["firstname"] = "*Please enter alphabets only.";
+    }
 
-  //   if (!fields["lastname"]) {
-  //     formIsValid = false;
-  //     errors["lastname"] = "*Please enter your lastname.";
-  //   }
+    if (!fields["lastname"]) {
+      formIsValid = false;
+      errors["lastname"] = "*Please enter your lastname.";
+    }
 
-  //   if (typeof fields["lastname"] !== "undefined") {
-  //     if (!fields["lastname"].match(/^[a-zA-Z ]*$/)) {
-  //       formIsValid = false;
-  //       errors["lastname"] = "*Please enter alphabets only.";
-  //     }
-  //   }
+    if (typeof fields["lastname"] !== "undefined") {
+      if (!fields["lastname"].match(/^[a-zA-Z ]*$/)) {
+        formIsValid = false;
+        errors["lastname"] = "*Please enter alphabets only.";
+      }
+    }
 
-  //   if (!fields["email"]) {
-  //     formIsValid = false;
-  //     errors["email"] = "*Please enter your email-ID.";
-  //   }
+    if (!fields["email"]) {
+      formIsValid = false;
+      errors["email"] = "*Please enter your email-ID.";
+    }
 
-  //   if (typeof fields["email"] !== "undefined") {
-  //     //regular expression for email validation
-  //     var pattern = new RegExp(
-  //       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-  //     );
-  //     if (!pattern.test(fields["email"])) {
-  //       formIsValid = false;
-  //       errors["email"] = "*Please enter valid email-ID.";
-  //     }
-  //   }
+    if (typeof fields["email"] !== "undefined") {
+      //regular expression for email validation
+      var pattern = new RegExp(
+        /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+      );
+      if (!pattern.test(fields["email"])) {
+        formIsValid = false;
+        errors["email"] = "*Please enter valid email-ID.";
+      }
+    }
 
-  //   // if (!fields["phoneno"]) {
-  //   //   formIsValid = false;
-  //   //   errors["phoneno"] = "*Please enter your mobile no.";
-  //   // }
+    // if (!fields["phoneno"]) {
+    //   formIsValid = false;
+    //   errors["phoneno"] = "*Please enter your mobile no.";
+    // }
 
-  //   // if (typeof fields["phoneno"] !== "undefined") {
-  //   //   if (!fields["phoneno"].match(/^[0-9]{10}$/)) {
-  //   //     formIsValid = false;
-  //   //     errors["phoneno"] = "*Please enter valid mobile no.";
-  //   //   }
-  //   // }
+    // if (typeof fields["phoneno"] !== "undefined") {
+    //   if (!fields["phoneno"].match(/^[0-9]{10}$/)) {
+    //     formIsValid = false;
+    //     errors["phoneno"] = "*Please enter valid mobile no.";
+    //   }
+    // }
     
-  //   // if(!this.state.fields.doj) {
-  //   //   formIsValid = false;
-  //   //   errors["dob"] = "*Please enter your Date of Birth";
-  //   // }
-  //   // if(!this.doj) {
-  //   //   formIsValid = false;
-  //   //   errors["doj"] = "*Please enter your Date of Joining";
-  //   // }
+    // if(!this.state.fields.doj) {
+    //   formIsValid = false;
+    //   errors["dob"] = "*Please enter your Date of Birth";
+    // }
+    // if(!this.doj) {
+    //   formIsValid = false;
+    //   errors["doj"] = "*Please enter your Date of Joining";
+    // }
 
-  //   // if(this.doj.date < this.dob.date){
-  //   //    formIsValid = false;
-  //   //    alert("*Date of Joining cannot be earlier than Date of Birth");
-  //   //  }
+    // if(this.doj.date < this.dob.date){
+    //    formIsValid = false;
+    //    alert("*Date of Joining cannot be earlier than Date of Birth");
+    //  }
 
-  //   if (!fields["address"]) {
-  //     formIsValid = false;
-  //     errors["address"] = "*Please enter your address";
-  //   }
+    if (!fields["address"]) {
+      formIsValid = false;
+      errors["address"] = "*Please enter your address";
+    }
 
-  //   if (!fields["interest"]) {
-  //     formIsValid = false;
-  //     errors["interest"] = "*Please enter your interest";
-  //   }
+    if (!fields["interest"]) {
+      formIsValid = false;
+      errors["interest"] = "*Please enter your interest";
+    }
 
-  //   this.setState({
-  //     errors: errors
-  //   });
-  //   return formIsValid;
-  // }
+    this.setState({
+      errors: errors
+    });
+    return formIsValid;
+  }
 
   // functionreferesh(){
   //   this.props.action()
