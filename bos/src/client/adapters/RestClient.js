@@ -20,7 +20,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 	async init() {
 		this.core.instance('oxzion/restClient', () => ({
-			request: (version, action, params, method) => this.makeRequest(version, action, params, method),
+			request: (version, action, params, method,raw) => this.makeRequest(version, action, params, method,raw),
 			authenticate: (params) => this.authenticate(params),
 			profile:() => this.profile()
 		}));
@@ -66,7 +66,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// action - string
 	// params - *
 	// method - string
-	async makeRequest(version, action, params, method) {
+	async makeRequest(version, action, params, method,raw = false) {
 		let userData = this.core.getUser();
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
@@ -86,7 +86,9 @@ export class RestClientServiceProvider extends ServiceProvider {
 					}
 
 				})
-
+				if(raw == true) {
+					return resp;
+				}
 				return resp.json();
 			}
 			else if (method == 'post') {
