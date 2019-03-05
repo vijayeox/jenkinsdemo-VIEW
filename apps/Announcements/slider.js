@@ -39,14 +39,18 @@ class Slider extends React.Component {
     }
 
     this.getAnnouncements().then(response => {
-      this.setState({announcements :response.data});
-      console.log(this.state.announcements);
-      //console.log(response);
-     
-    })
+      let data = response.data;
+      let baseUrl = this.core.config('wrapper.url');
       
-    console.log(this.state.announcements)
-    
+      for(let i=0; i<data.length;i++) {
+        if(data[i].media != null) {
+          data[i].media = baseUrl+'resource/'+data[i].media;  
+        }
+      }
+      this.setState({announcements :data});
+      
+    })
+
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
     this.goToNextSlide = this.goToNextSlide.bind(this);
   }
@@ -55,12 +59,12 @@ class Slider extends React.Component {
     console.log('init called');
   }
 
+ 
   async getAnnouncements() {
-    
-    // call to api using wrapper
+  
     let helper = this.core.make('oxzion/restClient');
     let announ = await helper.request('v1','/announcement', {}, 'get' );
-    console.log(announ);
+    // console.log(announ);
     return announ;
   }
 
@@ -126,8 +130,8 @@ class Slider extends React.Component {
 
 
 const Slide = ({ data }) => {
- const isImage = (data.mediatype == 'image');
-  console.log(isImage);
+ const isImage = (data.media_type == 'image');
+  // console.log(isImage);
   return (
     <div className="App row slide" style={{margin:0}}>
       <div className="Announcement-visuals col s6">
@@ -153,7 +157,7 @@ const Img = ( {data}) => {
 
 const Video = ({data}) => {
   return (
-    <video> 
+    <video controls="controls" id="video"> 
       <source src = {data.media} type='video/mp4'/>
       Video goes here
     </video>
@@ -179,3 +183,4 @@ const RightArrow = (props) => {
 }
 
 export default Slider;
+

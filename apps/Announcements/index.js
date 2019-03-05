@@ -10,8 +10,8 @@ import ReactDOM from 'react-dom';
 
 // Our launcher
 const register = (core, args, options, metadata) => {
-	// Create a new Application instance
-	const proc = core.make('osjs/application', { args, options, metadata });
+  // Create a new Application instance
+  const proc = core.make('osjs/application', { args, options, metadata });
 
   // Create  a new Window instance
     const win = (proc) => {
@@ -19,10 +19,12 @@ const register = (core, args, options, metadata) => {
         id: 'annoucementsWindow',
         title: metadata.title.en_EN,
         icon: proc.resource(icon),
-        dimension: {width: 700, height: 400},
+        dimension: {width: 800, height: 450},
         position: {left: 700, top: 200}, 
         attributes : {
-          visibility: 'restricted'
+          visibility: 'restricted',
+          resizable: false,
+          maximizable: false
         }
       }).render($content => ReactDOM.render(<Slider  args = {core} />, $content));
       if(window.$element.className.indexOf('Window_'+applicationName) == -1){
@@ -33,7 +35,7 @@ const register = (core, args, options, metadata) => {
     const getAnnouncements = async () => {
         let helper = core.make('oxzion/restClient');
         let announ = await helper.request('v1','/announcement', {}, 'get' );
-        console.log(announ);
+        // console.log(announ);
         return announ;
     };
     
@@ -58,22 +60,23 @@ const register = (core, args, options, metadata) => {
       }
     
     })
-	win(proc);
-	// Creates a new WebSocket connection (see server.js)
-	//const sock = proc.socket('/socket');
-	//sock.on('message', (...args) => console.log(args))
-	//sock.on('open', () => sock.send('Ping'));
+  win(proc);
+  // Creates a new WebSocket connection (see server.js)
+  //const sock = proc.socket('/socket');
+  //sock.on('message', (...args) => console.log(args))
+  //sock.on('open', () => sock.send('Ping'));
 
-	// Use the internally core bound websocket
-	//proc.on('ws:message', (...args) => console.log(args))
-	//proc.send('Ping')
+  // Use the internally core bound websocket
+  //proc.on('ws:message', (...args) => console.log(args))
+  //proc.send('Ping')
 
-	// Creates a HTTP call (see server.js)
-	//proc.request('/test', {method: 'post'})
-	//.then(response => console.log(response));
+  // Creates a HTTP call (see server.js)
+  //proc.request('/test', {method: 'post'})
+  //.then(response => console.log(response));
 
-	return proc;
+  return proc;
 };
 
 // Creates the internal callback function when OS.js launches an application
 osjs.register(applicationName, register);
+

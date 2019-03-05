@@ -57,7 +57,9 @@ html, body {
 }
 
 
-
+h6 {
+  white-space: normal;
+}
 
 .announcement-slider {
   position: relative;
@@ -101,12 +103,13 @@ p {
 }
 
 div.arrow:hover {
-	opacity: 1;
+  opacity: 1;
+  background-color: white;
 }
 
 .nextArrow {
   position: absolute;
-  top: 70%;
+  top: 85%;
   right: 30%;
   z-index: 999;
   color: #fff;
@@ -114,7 +117,7 @@ div.arrow:hover {
 
 .backArrow {
   position: absolute;
-  top: 70%;
+  top: 85%;
   left: 30%;
   z-index: 999;
   color: #fff;
@@ -125,3 +128,7 @@ div.arrow:hover {
 }
 
 
+#video{
+  max-width: 100%;
+  height: 80%;  
+}
