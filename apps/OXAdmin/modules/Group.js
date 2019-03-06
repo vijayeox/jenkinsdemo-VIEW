@@ -1,145 +1,230 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { FaArrowLeft } from 'react-icons/fa';
+import React, { Component } from "react";
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
-library.add(faPlusCircle);
+import {
+  Grid,
+  GridColumn as Column,
+  GridToolbar
+} from "@progress/kendo-react-grid";
 
-import { Grid, GridColumn as Column, GridToolbar } from '@progress/kendo-react-grid';
-import { orderBy } from '@progress/kendo-data-query';
+import ReactNotification from "react-notifications-component";
 
-import { groupData } from './data/groupData';
-
-import DialogContainer from './dialog/DialogContainerGroup';
-import cellWithEditing from './cellWithEditing';
+import DialogContainer from "./dialog/DialogContainerGroup";
+import cellWithEditing from "./cellWithEditing";
+import { orderBy } from "@progress/kendo-data-query";
 
 class Group extends React.Component {
-	state = {
-		products: groupData.slice(0, 20),
-		productInEdit: undefined,
-		sort: [{ field: 'ProductID', dir: 'asc' }],
-	};
-
-	edit = dataItem => {
-		this.setState({ productInEdit: this.cloneProduct(dataItem) });
-	};
-
-	remove = dataItem => {
-		const products = this.state.products.slice();
-		const index = products.findIndex(p => p.ProductID === dataItem.ProductID);
-		if (index !== -1) {
-			products.splice(index, 1);
-			this.setState({
-				products: products,
-			});
-		}
-	};
-
-	save = () => {
-		const dataItem = this.state.productInEdit;
-		const products = this.state.products.slice();
-
-		if (dataItem.ProductID === undefined) {
-			products.unshift(this.newProduct(dataItem));
-		} else {
-			const index = products.findIndex(p => p.ProductID === dataItem.ProductID);
-			products.splice(index, 1, dataItem);
-		}
-
-		this.setState({
-			products: products,
-			productInEdit: undefined,
+	constructor(props) {
+		super(props);
+		this.core = this.props.args;
+	
+		this.state = {
+		  groupInEdit: undefined,
+		  sort: [{ field: "name", dir: "asc" }],
+		  products: [],
+		  action: ""
+		};
+	
+		this.addNotification = this.addNotification.bind(this);
+		this.notificationDOMRef = React.createRef();
+	
+		this.getGroupData().then(response => {
+		  this.setState({ products: response.data });
 		});
-	};
+	  }
 
-	cancel = () => {
-		this.setState({ productInEdit: undefined });
-	};
-
-	insert = () => {
-		this.setState({ productInEdit: {} });
-	};
+	  addDataNotification(serverResponse) {
+		this.notificationDOMRef.current.addNotification({
+		  title: "Operation Successful",
+		  message: "Entry created with ID:" + serverResponse,
+		  type: "success",
+		  insert: "top",
+		  container: "bottom-right",
+		  animationIn: ["animated", "bounceIn"],
+		  animationOut: ["animated", "bounceOut"],
+		  dismiss: { duration: 5000 },
+		  dismissable: { click: true }
+		});
+	  }
+	
+	  addNotification(serverResponse) {
+		this.notificationDOMRef.current.addNotification({
+		  title: "All Done!!!  👍",
+		  message: "Operation succesfully completed.",
+		  type: "success",
+		  insert: "top",
+		  container: "bottom-right",
+		  animationIn: ["animated", "bounceIn"],
+		  animationOut: ["animated", "bounceOut"],
+		  dismiss: { duration: 5000 },
+		  dismissable: { click: true }
+		});
+	  }
+	
+	  handler = serverResponse => {
+		this.getGroupData().then(response => {
+		  this.setState({ products: response.data });
+		  this.addDataNotification(serverResponse);
+		});
+	  };
+	
+	  async getGroupData() {
+		let helper = this.core.make("oxzion/restClient");
+		let groupData = await helper.request("v1", "/group", {}, "get");
+		return groupData;
+	  }
+	
+	  edit = dataItem => {
+		this.setState({
+		  groupInEdit: this.cloneProduct(dataItem),
+		  action: "edit"
+		});
+	  };
+	
+	  async deleteGroupData(dataItem) {
+		let helper = this.core.make("oxzion/restClient");
+		let delGroup = helper.request(
+		  "v1",
+		  "/group/" + dataItem,
+		  {},
+		  "delete"
+		);
+		return delGroup;
+	  }
+	
+	  remove = dataItem => {
+		this.deleteGroupData(dataItem.id).then(response => {
+		  this.handler();
+		});
+	
+		const products = this.state.products;
+		const index = products.findIndex(p => p.id === dataItem.id);
+		if (index !== -1) {
+		  products.splice(index, 1);
+		  this.setState({
+			products: products
+		  });
+		}
+	  };
+	
+	  save = () => {
+		const dataItem = this.state.groupInEdit;
+		const products = this.state.products.slice();
+	
+		if (dataItem.id === undefined) {
+		  products.unshift(this.newProduct(dataItem));
+		} else {
+		  const index = products.findIndex(p => p.id === dataItem.id);
+		  products.splice(index, 1, dataItem);
+		}
+	
+		this.setState({
+		  products: products,
+		  groupInEdit: undefined
+		});
+	  };
+	
+	  cancel = () => {
+		this.setState({ groupInEdit: undefined });
+	  };
+	
+	  insert = () => {
+		this.setState({ groupInEdit: {}, action: "add" });
+	  };
 
 	render() {
 		return (
 			<div id="groupPage">
-				<div style={{ display: 'flex', marginBottom: '10px' }}>
-					<button id="goBack2" className="btn btn-sq">
-						<FaArrowLeft />
-					</button>
-					<center>
-						<h3 className="mainHead">Manage Groups</h3>
-					</center>
+			<ReactNotification ref={this.notificationDOMRef} />
+			<div style={{ margin: "10px 0px 10px 0px" }} className="row">
+			  <div className="col s3">
+				<a className="waves-effect waves-light btn" id="goBack2">
+				  <FaArrowLeft />
+				</a>
+			  </div>
+			  <center>
+				<div className="col s6" id="pageTitle">
+				  Manage Groups
 				</div>
-
-				<Grid
-					style={{ height: '475px' }}
-					data={orderBy(this.state.products, this.state.sort)}
-					sortable
-					resizable
-					sort={this.state.sort}
-					onSortChange={e => {
-						this.setState({
-							sort: e.sort,
-						});
-					}}
-				>
-					<GridToolbar>
-						<div>
-							<h4>Groups List</h4>
-							<button
-								onClick={this.insert}
-								className="k-button"
-								style={{ position: 'absolute', top: '8px', right: '16px' }}
-							>
-								<FontAwesomeIcon icon="plus-circle" style={{ fontSize: '20px' }} />
-								<p style={{ margin: '0px', paddingLeft: '10px' }}>Add User</p>
-							</button>
-						</div>
-					</GridToolbar>
-
-					<Column field="ProductID" title="ID" width="70px" />
-					<Column field="GroupName" title="Group Name" width="140px" />
-					<Column field="ManagerId" title="Manager ID" width="150px" />
-					<Column field="Organisation" title="Organisation" width="100px" />
-					<Column title="Edit" width="150px" cell={cellWithEditing(this.edit, this.remove)} />
-				</Grid>
-
-				{this.state.productInEdit && (
-					<DialogContainer dataItem={this.state.productInEdit} save={this.save} cancel={this.cancel} />
-				)}
+			  </center>
 			</div>
+	
+			<Grid
+			  data={orderBy(this.state.products, this.state.sort)}
+			  sortable
+			  sort={this.state.sort}
+			  onSortChange={e => {
+				this.setState({
+				  sort: e.sort
+				});
+			  }}
+			>
+			  <GridToolbar>
+				<div>
+				  <div style={{ fontSize: "20px" }}>Groups List</div>
+				  <button
+					onClick={this.insert}
+					className="k-button"
+					style={{ position: "absolute", top: "8px", right: "16px" }}
+				  >
+					<FaPlusCircle style={{ fontSize: "20px" }} />
+	
+					<p style={{ margin: "0px", paddingLeft: "10px" }}>
+					  Add Group
+					</p>
+				  </button>
+				</div>
+			  </GridToolbar>
+	
+			  <Column field="id" title="ID" width="70px" />
+			  <Column field="name" title="Name" />
+	
+			  <Column field="manager_id" title="Manager ID" />
+			  <Column field="description" title="Description" />
+			  <Column
+				title="Edit"
+				width="160px"
+				cell={cellWithEditing(this.edit, this.remove)}
+			  />
+			</Grid>
+	
+			{this.state.groupInEdit && (
+			  <DialogContainer
+				args={this.core}
+				dataItem={this.state.groupInEdit}
+				save={this.save}
+				cancel={this.cancel}
+				formAction={this.state.action}
+				action={this.handler}
+			  />
+			)}
+		  </div>
 		);
 	}
 
 	dialogTitle() {
-		return `${this.state.productInEdit.ProductID === undefined ? 'Add' : 'Edit'} product`;
-	}
-	cloneProduct(product) {
+		return `${this.state.groupInEdit.id === undefined ? "Add" : "Edit"} product`;
+	  }
+	
+	  cloneProduct(product) {
 		return Object.assign({}, product);
-	}
-
-	newProduct(source) {
+	  }
+	
+	  newProduct(source) {
 		const newProduct = {
-			ProductID: this.generateId(),
-			ProductName: '',
-			UnitsInStock: 0,
-			Discontinued: false,
+		  id: "",
+		  name: "",
+		  address: "",
+		  city: "",
+		  state: "",
+		  zip: "",
+		  logo: "",
+		  languagefile: ""
 		};
-
+	
 		return Object.assign(newProduct, source);
+	  }
 	}
-
-	generateId() {
-		let id = 1;
-		this.state.products.forEach(p => {
-			id = Math.max((p.ProductID || 0) + 1, id);
-		});
-		return id;
-	}
-}
 
 export default Group;

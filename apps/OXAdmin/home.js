@@ -170,7 +170,7 @@ class Home extends React.Component {
         <div id="componentsBox">
           <Organization args={this.core} />
           <Project />
-          <Group />
+          <Group args={this.core}/>
           <User args={this.core} />
         </div>
       </div>

@@ -6,10 +6,28 @@
 
     background: #F06151;
 
-    .App-logo:hover {
-        transform: scale(1.25);
+    #d1:hover {
+        animation: App-logo-spin 1 0.25s linear;
+
+        transform: scale(1);
         transition: all ease-in-out 0.2s;
+        .App-logo{
+            transform: scale(1.25);
+            transition: all ease-in-out 0.5s;
+        }
     }
+
+      
+      @keyframes App-logo-spin {
+        from {
+          transform: rotate(0deg);
+        }
+      
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
 
     #adminHeader {
         margin-bottom: 0px;
