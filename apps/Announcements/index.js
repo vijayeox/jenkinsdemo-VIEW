@@ -24,7 +24,8 @@ const register = (core, args, options, metadata) => {
         attributes : {
           visibility: 'restricted',
           resizable: false,
-          maximizable: false
+          maximizable: false,
+          minimizable: false
         }
       }).render($content => ReactDOM.render(<Slider  args = {core} />, $content));
       if(window.$element.className.indexOf('Window_'+applicationName) == -1){
