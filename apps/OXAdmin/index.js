@@ -20,7 +20,7 @@ const register = (core, args, options, metadata) => {
       id: "OXAdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
-      dimension: { width: 620, height: 555 },
+      dimension: { width: 620, height: 570 },
       position: {
         left: 300,
         top: 50

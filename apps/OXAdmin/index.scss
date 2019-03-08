@@ -1,142 +1,141 @@
 .Window_OXAdmin {
+  @import "./public/scss/materialize.css";
+  @import "./public/scss/notifTheme.css";
+  @import "./public/scss/kendo.css";
 
-    @import "./public/scss/materialize.css";
-    @import "./public/scss/notifTheme.css";
-    @import "./public/scss/kendo.css";
+  background: #f06151;
 
-    background: #F06151;
+  #d1:hover {
+    cursor: pointer;
+    animation: App-logo-spin 1 0.25s linear;
 
-    #d1:hover {
-        animation: App-logo-spin 1 0.25s linear;
+    transform: scale(1);
+    transition: all ease-in-out 0.2s;
 
-        transform: scale(1);
-        transition: all ease-in-out 0.2s;
-        .App-logo{
-            transform: scale(1.25);
-            transition: all ease-in-out 0.5s;
-        }
+    .App-logo {
+      transform: scale(1.25);
+      transition: all ease-in-out 0.5s;
+    }
+  }
+
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
     }
 
-      
-      @keyframes App-logo-spin {
-        from {
-          transform: rotate(0deg);
-        }
-      
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-
-    #adminHeader {
-        margin-bottom: 0px;
-        padding: 25px 0px 25px 0px;
-        background-color: #a39f9f;
-        font-weight: bolder;
-        font-size: 35px;
-        color: #183651;
+    to {
+      transform: rotate(360deg);
     }
+  }
 
-    #d1 {
-        margin: auto;
-        border: 3px solid #433e44b4;
-        padding: 20px;
-        border-radius: 25px;
-        margin: 20px;
-    }
+  #adminHeader {
+    margin: auto;
+    margin-bottom: 0px;
+    padding: 25px 0px 25px 0px;
+    background-color: #a39f9f;
+    font-weight: bolder;
+    font-size: 35px;
+    color: #183651;
+  }
 
-    #appRow {
-        max-width: 500px;
-        margin-bottom: 0px;
-    }
+  #d1 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border: 3px solid #433e44b4;
+    padding: 20px;
+    border-radius: 25px;
+  }
 
-    #goBack,
-    #goBack3,
-    #goBack2,
-    #goBack4 {
-        margin-right: 5%;
-    }
+  .titles {
+    font-size: 18px;
+    font-weight: 600;
+  }
 
-    #userPage,
-    #groupPage,
-    #organisation,
-    #project {
-        padding: 10px;
-    }
+  #appRow {
+    max-width: 500px;
+    margin-bottom: 0px;
+  }
 
-    #appRow p {
-        font-weight: bolder;
-        font-size: 20px;
-        color: #183651;
-    }
+  #goBack {
+    margin-right: 5%;
+  }
 
-    #pageTitle {
-        font-size: 25px;
-        color: #183651;
-        padding-top: 5px;
-        margin-bottom: 15px;
-    }
+  #userPage,
+  #groupPage,
+  #organisation,
+  #project {
+    padding: 10px;
+  }
 
-    #organization {
-        padding: 5px 10px 5px 10px;
-    }
+  #appRow p {
+    font-weight: bolder;
+    font-size: 20px;
+    color: #183651;
+  }
 
-    .k-dialog {
-        width: 70%;
-        height: 90%;
-        margin-top: 25px;
-    }
+  #pageTitle {
+    font-size: 25px;
+    color: #183651;
+    padding-top: 5px;
+    margin-bottom: 15px;
+  }
 
+  #organization {
+    padding: 5px 10px 5px 10px;
+  }
 
-    .k-grid-content {
+  .k-dialog {
+    width: 70%;
+    height: 90%;
+    margin-top: 25px;
+  }
 
-        height: 360px;
-    }
+  .k-grid-content {
+    height: 360px;
+  }
 
-    .k-tooltip-validation {
-        color: rgb(212, 206, 206);
-        display: none !important;
-    }
+  .k-tooltip-validation {
+    color: rgb(212, 206, 206);
+    display: none !important;
+  }
 
-    a {
-        color: #656565 !important;
-    }
+  a {
+    color: #656565 !important;
+  }
 
-    .mainHead {
-        margin: 0px;
-        width: 100%;
-        text-align: center;
-    }
+  .mainHead {
+    margin: 0px;
+    width: 100%;
+    text-align: center;
+  }
 
-    .container {
-        width: 80%;
-        background: #eee;
-        margin: 10px auto;
-        position: relative;
-        text-align: center;
-    }
+  .container {
+    width: 85%;
+    //  background: #eee;
+    margin: 10px auto;
+    position: relative;
+    text-align: center;
+  }
 
-    .block {
-        height: 100px;
-        width: 100px;
-        display: inline-block;
-        margin: 10px;
-    }
+  .block {
+    height: 115px;
+    width: 115px;
+    display: inline-block;
+    margin: 25px;
+    padding-bottom: 20px;
+  }
 
-    .dropdown-content {
-        height: "" !important;
-    }
+  .dropdown-content {
+    height: "" !important;
+  }
 
-    .row {
-        margin-bottom: 0px !important;
-    }
+  .row {
+    margin-bottom: 0px !important;
+  }
 
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }

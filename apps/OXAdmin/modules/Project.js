@@ -1,5 +1,18 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+
+import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
+
+import {
+  Grid,
+  GridColumn as Column,
+  GridToolbar
+} from "@progress/kendo-react-grid";
+
+import ReactNotification from "react-notifications-component";
+
+import DialogContainer from "./dialog/DialogContainerPrj";
+import cellWithEditing from "./cellWithEditing";
+import { orderBy } from "@progress/kendo-data-query";
 
 class Project extends React.Component {
   constructor(props) {
@@ -7,62 +20,184 @@ class Project extends React.Component {
     this.core = this.props.args;
 
     this.state = {
-      value: "1"
+      prjInEdit: undefined,
+      sort: [{ field: "name", dir: "asc" }],
+      products: [],
+      action: ""
     };
-    this.handleChange = this.handleChange.bind(this);
-  }
+    this.addNotification = this.addNotification.bind(this);
+    this.notificationDOMRef = React.createRef();
 
-  componentDidMount() {
-    M.AutoInit();
-  }
-
-  handleChange(event) {
-    this.setState({
-      value: event.target.value
+    this.getOrganizationData().then(response => {
+      this.setState({ products: response.data });
     });
   }
 
-  openComponent(event) {
-    this.setState({
-      value: event.target.value
+  addDataNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "Operation Successful",
+      message: "Entry created with ID:" + serverResponse,
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
     });
   }
 
-  createBlock = () => {
-    let table = [];
-    for (let i = 0; i < this.state.value; i++) {
-      table.push(
-        <div id="d1" className="block">
-          <img
-            src="apps/OXAdmin/group.svg"
-            className="App-logo"
-            onClick={this.openComponent}
-          />
-        </div>
-      );
+  addNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "All Done!!!  👍",
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  handler = serverResponse => {
+    this.getOrganizationData().then(response => {
+      this.setState({ products: response.data });
+      this.addDataNotification(serverResponse);
+    });
+  };
+
+  async getOrganizationData() {
+    let helper = this.core.make("oxzion/restClient");
+    let OrgData = await helper.request("v1", "/organization", {}, "get");
+    return OrgData;
+  }
+
+  edit = dataItem => {
+    this.setState({
+      prjInEdit: this.cloneProduct(dataItem),
+      action: "edit"
+    });
+  };
+
+  async deleteOrganizationData(dataItem) {
+    let helper = this.core.make("oxzion/restClient");
+    let delOrg = helper.request(
+      "v1",
+      "/organization/" + dataItem,
+      {},
+      "delete"
+    );
+    return delOrg;
+  }
+
+  remove = dataItem => {
+    this.deleteOrganizationData(dataItem.id).then(response => {
+      this.addNotification();
+    });
+
+    const products = this.state.products;
+    const index = products.findIndex(p => p.id === dataItem.id);
+    if (index !== -1) {
+      products.splice(index, 1);
+      this.setState({
+        products: products
+      });
     }
-    return table;
+  };
+
+  save = () => {
+    const dataItem = this.state.prjInEdit;
+    const products = this.state.products.slice();
+
+    if (dataItem.id === undefined) {
+      products.unshift(this.newProduct(dataItem));
+    } else {
+      const index = products.findIndex(p => p.id === dataItem.id);
+      products.splice(index, 1, dataItem);
+    }
+
+    this.setState({
+      products: products,
+      prjInEdit: undefined
+    });
+  };
+
+  cancel = () => {
+    this.setState({ prjInEdit: undefined });
+  };
+
+  insert = () => {
+    this.setState({ prjInEdit: {}, action: "add" });
   };
 
   render() {
     return (
       <div id="project">
-        <center>
-          <div className="input-field col s6">
-            <select defaultValue="1" id="dropdown" onChange={this.handleChange}>
-              <option value="" disabled>
-                Choose your option
-              </option>
-              <option value="2">Employee</option>
-              <option value="3">IT Support</option>
-              <option value="4">Manager</option>
-              <option value="6">Admin</option>
-              <option value="8">Super Admin</option>
-            </select>
-            <label>Select Role</label>
+        <ReactNotification ref={this.notificationDOMRef} />
+        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+          <div className="col s3">
+            <a className="waves-effect waves-light btn goBack">
+              <FaArrowLeft />
+            </a>
           </div>
-          <div className="container">{this.createBlock()}</div>
-        </center>
+          <center>
+            <div className="col s6" id="pageTitle">
+              Manage Projects
+            </div>
+          </center>
+        </div>
+
+        <Grid
+          data={orderBy(this.state.products, this.state.sort)}
+          sortable
+          sort={this.state.sort}
+          onSortChange={e => {
+            this.setState({
+              sort: e.sort
+            });
+          }}
+        >
+          <GridToolbar>
+            <div>
+              <div style={{ fontSize: "20px" }}>Projects List</div>
+              <button
+                onClick={this.insert}
+                className="k-button"
+                style={{ position: "absolute", top: "8px", right: "16px" }}
+              >
+                <FaPlusCircle style={{ fontSize: "20px" }} />
+
+                <p style={{ margin: "0px", paddingLeft: "10px" }}>
+                  Add Project
+                </p>
+              </button>
+            </div>
+          </GridToolbar>
+
+          <Column field="id" title="ID" width="70px" />
+          <Column field="name" title="Name" />
+
+          <Column field="state" title="State" />
+          <Column field="zip" title="Zip" />
+          <Column
+            title="Edit"
+            width="160px"
+            cell={cellWithEditing(this.edit, this.remove)}
+          />
+        </Grid>
+
+        {this.state.orgInEdit && (
+          <DialogContainer
+            args={this.core}
+            dataItem={this.state.orgInEdit}
+            save={this.save}
+            cancel={this.cancel}
+            formAction={this.state.action}
+            action={this.handler}
+          />
+        )}
       </div>
     );
   }

@@ -131,7 +131,7 @@ class User extends React.Component {
         <ReactNotification ref={this.notificationDOMRef} />
         <div style={{ margin: "10px 0px 10px 0px" }} className="row">
           <div className="col s3">
-            <a className="waves-effect waves-light btn" id="goBack4">
+            <a className="waves-effect waves-light btn goBack">
               <FaArrowLeft />
             </a>
           </div>
