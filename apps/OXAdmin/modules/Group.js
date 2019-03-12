@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
@@ -16,14 +17,15 @@ import cellWithEditing from "./cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
 
 const sports = [
-  "Baseball",
-  "Basketball",
-  "Cricket",
-  "Field Hockey",
-  "Football",
-  "Table Tennis",
-  "Tennis",
-  "Volleyball"
+  "Rajesh",
+  "Prajwal",
+  "Bharat",
+  "Neha",
+  "Brian",
+  "Karan",
+  "Danish",
+  "Sagar",
+  "Harsha"
 ];
 
 class Group extends React.Component {
@@ -56,14 +58,7 @@ class Group extends React.Component {
     return userData;
   }
 
-  listOnChange = event => {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      this.setState({
-        data: this.filterData(value),
-        loading: false
-      });
-    }, delay);
+  listOnChange = (event) => {
     this.setState({
       value: [...event.target.value]
     });
@@ -193,14 +188,18 @@ class Group extends React.Component {
           </button>
 
           {this.state.visible && (
-            <Dialog title={"Add users to Group A"} onClose={this.toggleDialog}>
+            <Dialog title={"Add users to Testing Group "} onClose={this.toggleDialog}>
               <div>
                 <div>Select Users:</div>
                 <MultiSelect
-                  data={this.sports}
+                  data={sports}
                   onChange={this.listOnChange}
                   value={this.state.value}
-                />
+                  style={{height:'auto'}}
+                /><p><h6>
+                Participants: 
+                {this.state.value+" "}
+                </h6> </p>
               </div>
               <DialogActionsBar>
                 <button className="k-button" onClick={this.toggleDialog}>
