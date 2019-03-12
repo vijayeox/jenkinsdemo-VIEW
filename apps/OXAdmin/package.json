@@ -14,6 +14,7 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@material-ui/core": "^3.9.2",
     "@progress/kendo-data-query": "^1.5.0",
+    "@progress/kendo-popups-react-wrapper": "^2018.3.1017",
     "@progress/kendo-react-dateinputs": "^2.6.1",
     "@progress/kendo-react-dialogs": "^2.6.1",
     "@progress/kendo-react-dropdowns": "^2.6.1",

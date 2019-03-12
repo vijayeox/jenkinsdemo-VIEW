@@ -5,28 +5,26 @@
 
   background: #f06151;
 
-  #d1:hover {
-    cursor: pointer;
-    animation: App-logo-spin 1 0.25s linear;
+  // .d1:hover {
 
-    transform: scale(1);
-    transition: all ease-in-out 0.2s;
+  //   transform: scale(1);
+  //   transition: all ease-in-out 0.2s;
 
-    .App-logo {
-      transform: scale(1.25);
-      transition: all ease-in-out 0.5s;
-    }
-  }
+  //   .App-logo {
+  //     transform: scale(1.25);
+  //     transition: all ease-in-out 0.5s;
+  //   }
+  // }
 
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
+  // @keyframes App-logo-spin {
+  //   from {
+  //     transform: rotate(0deg);
+  //   }
 
-    to {
-      transform: rotate(360deg);
-    }
-  }
+  //   to {
+  //     transform: rotate(360deg);
+  //   }
+  // }
 
   #adminHeader {
     margin: auto;
@@ -38,12 +36,15 @@
     color: #183651;
   }
 
-  #d1 {
-    margin-top: 30px;
-    margin-bottom: 15px;
-    border: 3px solid #433e44b4;
+  .d1 {
+    cursor: pointer;
+    // border: 3px solid #433e44b4;
     padding: 20px;
-    border-radius: 25px;
+    // border-radius: 25px;
+  }
+
+  .d2 {
+    cursor: not-allowed;
   }
 
   .titles {
@@ -111,7 +112,6 @@
 
   .container {
     width: 85%;
-    //  background: #eee;
     margin: 10px auto;
     position: relative;
     text-align: center;
@@ -121,7 +121,7 @@
     height: 115px;
     width: 115px;
     display: inline-block;
-    margin: 25px;
+    margin: 20px;
     padding-bottom: 20px;
   }
 

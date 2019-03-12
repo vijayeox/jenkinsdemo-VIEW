@@ -167,8 +167,8 @@ class User extends React.Component {
           </GridToolbar>
           <Column field="id" title="User ID" width="90px" />
           <Column field="name" title="Name" />
-          <Column field="role" title="Role" />
-          <Column field="status" title="Status" />
+          <Column field="designation" title="Designation" />
+          <Column field="country" title="Country" />
           <Column
             title="Edit"
             width="150px"
@@ -200,21 +200,24 @@ class User extends React.Component {
   newProduct(source) {
     const newProduct = {
       id: "",
-      gamelevel: "",
       username: "",
+      password: "",
       firstname: "",
       lastname: "",
       name: "",
-      role: "",
       email: "",
-      dob: "",
+      date_of_birth: "",
       designation: "",
-      sex: "",
+      gender: "",
       managerid: "",
-      level: "",
-      doj: "",
-      listtoggle: "",
-      mission_link: ""
+      date_of_join: "",
+      hobbies: "",
+      phone: "",
+      country: "",
+      address: "",
+      about: "",
+      interest: "",
+      signature: ""
     };
 
     return Object.assign(newProduct, source);
