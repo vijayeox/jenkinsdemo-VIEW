@@ -95,6 +95,10 @@
     height: 360px;
   }
 
+  .k-grid{
+    margin: 15px;
+  }
+
   .k-tooltip-validation {
     color: rgb(212, 206, 206);
     display: none !important;
@@ -139,7 +143,15 @@
     margin: 0;
   }
 
-  .k-multiselect-wrap .k-searchbar .k-input{
+  .k-multiselect-wrap .k-searchbar .k-input {
     height: auto;
+  }
+
+  .filepond--wrapper {
+    width: 50%;
+  }
+
+  .filepond--root {
+    width: 300px;
   }
 }

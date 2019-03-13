@@ -9,13 +9,14 @@ import Project from "./modules/Project";
 import User from "./modules/User";
 import Group from "./modules/Group";
 import Role from "./modules/Roles";
+import Announcement from "./modules/Announcement";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
     this.state = {
-      value: "5"
+      value: "6"
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -75,6 +76,17 @@ class Home extends React.Component {
           $("#groupPage").hide(),
           $("#userPage").hide();
         $("#rolePage").show();
+      });
+
+       $(document).on("click", ".announButton", function () {
+        $(".DashBG").fadeOut(),
+          $("#componentsBox").show(),
+          $("#project").hide(),
+          $("#organization").hide(),
+          $("#groupPage").hide(),
+          $("#userPage").hide(),
+        $("#rolePage").hide(),
+        $("#announcement").show();
       });
 
       $(document).on("click", ".goBack", function () {
@@ -263,10 +275,12 @@ class Home extends React.Component {
           </div>
 
           <div style={{ display: "inline-grid" }}>
-            <div className="block d1 d2">
-              <img src="apps/OXAdmin/056-development-1.svg" />
+            <div className="block d1" onClick={this.announClick}>
+              <img src="apps/OXAdmin/131-laptop.svg"
+                className="announButton App-logo"
+               />
             </div>
-            <div className="titles">App Builder</div>
+            <div className="titles">Announcements</div>
           </div>
         </div>
       );
@@ -295,6 +309,11 @@ class Home extends React.Component {
   roleClick = (e) => {
     ReactDOM.render(<Role args={this.core} />,document.getElementById('componentsBox'));
   }
+
+  announClick = (e) => {
+    ReactDOM.render(<Announcement args={this.core} />,document.getElementById('componentsBox'));
+  }
+
 
   render() {
     return (
