@@ -45,23 +45,7 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.roleInEdit.name,
         description: this.state.roleInEdit.description,
-        show:false,
-      ReadG: false,
-      WriteG:false,
-      CreateG:false,
-      DeleteG:false,
-      ReadO: false,
-      WriteO:false,
-      CreateO:false,
-      DeleteO:false,
-      ReadR: false,
-      WriteR:false,
-      CreateR:false,
-      DeleteR:false,
-      ReadU: false,
-      WriteU:false,
-      CreateU:false,
-      DeleteU:false,
+        show:false
       },
       "post"
     );
@@ -76,23 +60,7 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.roleInEdit.name,
         description: this.state.roleInEdit.description,
-        show:false,
-      ReadG: false,
-      WriteG:false,
-      CreateG:false,
-      DeleteG:false,
-      ReadO: false,
-      WriteO:false,
-      CreateO:false,
-      DeleteO:false,
-      ReadR: false,
-      WriteR:false,
-      CreateR:false,
-      DeleteR:false,
-      ReadU: false,
-      WriteU:false,
-      CreateU:false,
-      DeleteU:false,
+        show:false
       },
       "put"
     );

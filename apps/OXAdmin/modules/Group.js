@@ -16,7 +16,7 @@ import DialogContainer from "./dialog/DialogContainerGroup";
 import cellWithEditing from "./cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
 
-const sports = [
+const usersList = [
   "Rajesh",
   "Prajwal",
   "Bharat",
@@ -192,7 +192,7 @@ class Group extends React.Component {
               <div>
                 <div>Select Users:</div>
                 <MultiSelect
-                  data={sports}
+                  data={usersList}
                   onChange={this.listOnChange}
                   value={this.state.value}
                   style={{height:'auto'}}
