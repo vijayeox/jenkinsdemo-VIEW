@@ -139,11 +139,56 @@ export default class Core extends CoreBase {
 
         // to check if local storage present in browser
         lsHelper.supported();
-        const autoLogin = lsHelper.get('AUTH_token');
-        //console.log(autoLogin);
+        const token = lsHelper.get('AUTH_token');
+        let jwt = null;
+        let autoLogin = false;
+
+        //validate token for auto login
+        if(token){
+          jwt = token["key"];
+          let formData = new FormData();
+          formData.append('jwt', jwt);
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', 'http://localhost:8080/validatetoken', false);
+          xhr.onload = function () {
+              
+              let data = JSON.parse(this.responseText);
+              if(data["status"] == "success" && data["message"] == "Token Valid"){
+                // console.log('token validated');
+                autoLogin = true;
+              
+              } else if(data["status"] == "error" && data["message"] == "Token Expired") {
+                
+                //console.log('token has expired. make request to get new');
+                const rtoken = lsHelper.get('REFRESH_token');
+                let formData = new FormData();
+                formData.append('jwt', jwt);
+                formData.append('refresh_token',rtoken["key"])
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://localhost:8080/refreshtoken', false);
+                xhr.onload = function () {
+                  let data = JSON.parse(this.responseText);
+                  if(data["status"] == "success") {
+                      console.log('refresh api called and token reset');
+                      autoLogin = true;
+                      jwt = data["data"]["jwt"];
+                      let refresh = data["data"]["refresh_token"];
+
+                      lsHelper.set('AUTH_token',jwt);
+                      lsHelper.set('REFRESH_token',refresh);
+                  }    
+                }
+                xhr.send(formData);  
+              }
+
+          };
+          xhr.send(formData);
+        }
+        
         if(autoLogin) {
           // reset the user details on refresh
-          this.user = {jwt: autoLogin["key"],username: lsHelper.get('User')["key"]};
+          this.user = {jwt: jwt,username: lsHelper.get('User')["key"]};
           //console.log(this.user);
           this.emit('osjs/core:logged-in');
           if (this.has('osjs/settings')) {
@@ -488,6 +533,14 @@ export default class Core extends CoreBase {
    */
   getUser() {
     return Object.assign({}, this.user);
+  }
+
+  /**
+   * Updates the current user data
+   */
+  setUser(user) {
+    console.log('user details updated');
+    this.user = user;
   }
 
 }
