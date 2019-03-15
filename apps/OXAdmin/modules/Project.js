@@ -28,7 +28,7 @@ class Project extends React.Component {
     this.addNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
 
-    this.getOrganizationData().then(response => {
+    this.getProjectData().then(response => {
       this.setState({ products: response.data });
     });
   }
@@ -62,16 +62,16 @@ class Project extends React.Component {
   }
 
   handler = serverResponse => {
-    this.getOrganizationData().then(response => {
+    this.getProjectData().then(response => {
       this.setState({ products: response.data });
       this.addDataNotification(serverResponse);
     });
   };
 
-  async getOrganizationData() {
+  async getProjectData() {
     let helper = this.core.make("oxzion/restClient");
-    let OrgData = await helper.request("v1", "/organization", {}, "get");
-    return OrgData;
+    let PrjData = await helper.request("v1", "/project", {}, "get");
+    return PrjData;
   }
 
   edit = dataItem => {
@@ -81,11 +81,11 @@ class Project extends React.Component {
     });
   };
 
-  async deleteOrganizationData(dataItem) {
+  async deleteProjectData(dataItem) {
     let helper = this.core.make("oxzion/restClient");
     let delOrg = helper.request(
       "v1",
-      "/organization/" + dataItem,
+      "/project/" + dataItem,
       {},
       "delete"
     );
@@ -93,7 +93,7 @@ class Project extends React.Component {
   }
 
   remove = dataItem => {
-    this.deleteOrganizationData(dataItem.id).then(response => {
+    this.deleteProjectData(dataItem.id).then(response => {
       this.addNotification();
     });
 

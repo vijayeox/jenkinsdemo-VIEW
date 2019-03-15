@@ -27,66 +27,9 @@ class Home extends React.Component {
     $(document).ready(function () {
       $("#componentsBox").hide();
 
-      $(document).on("click", ".orgButton", function () {
+      $(document).on("click", ".moduleBtn", function () {
         $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#organization").fadeIn(),
-          $("#groupPage").hide(),
-          $("#project").hide(),
-          $("#userPage").hide();
-        $("#rolePage").hide();
-      });
-
-      $(document).on("click", ".groupButton", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#organization").hide(),
-          $("#groupPage").fadeIn(),
-          $("#project").hide(),
-          $("#userPage").hide();
-        $("#rolePage").hide();
-      });
-
-      $(document).on("click", ".prjButton", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#project").show(),
-          $("#userPage").hide(),
-          $("#organization").hide(),
-          $("#userPage").hide();
-        $("#rolePage").hide();
-        $("#groupPage").hide();
-      });
-
-      $(document).on("click", ".userButton", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#project").hide(),
-          $("#organization").hide(),
-          $("#groupPage").hide(),
-          $("#userPage").show();
-        $("#rolePage").hide();
-      });
-
-      $(document).on("click", ".roleButton", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#project").hide(),
-          $("#organization").hide(),
-          $("#groupPage").hide(),
-          $("#userPage").hide();
-        $("#rolePage").show();
-      });
-
-       $(document).on("click", ".announButton", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show(),
-          $("#project").hide(),
-          $("#organization").hide(),
-          $("#groupPage").hide(),
-          $("#userPage").hide(),
-        $("#rolePage").hide(),
-        $("#announcement").show();
+          $("#componentsBox").show();
       });
 
       $(document).on("click", ".goBack", function () {
@@ -108,7 +51,7 @@ class Home extends React.Component {
       table.push(
         <div key="1" style={{ display: "inline-grid" }}>
           <div className="block d1" onClick={this.orgClick}>
-            <img src="apps/OXAdmin/org.svg" className="orgButton App-logo" />
+            <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
           </div>
           <div className="titles">Organization</div>
         </div>
@@ -118,7 +61,7 @@ class Home extends React.Component {
         <div key="2">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="orgButton App-logo" />
+              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -127,7 +70,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.groupClick}>
               <img
                 src="apps/OXAdmin/group.svg"
-                className="groupButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Groups</div>
@@ -139,7 +82,7 @@ class Home extends React.Component {
         <div key="4" >
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="orgButton App-logo" />
+              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -148,7 +91,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.groupClick}>
               <img
                 src="apps/OXAdmin/group.svg"
-                className="groupButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Groups</div>
@@ -158,7 +101,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.prjClick} >
               <img
                 src="apps/OXAdmin/101-project.svg"
-                className="prjButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Projects</div>
@@ -168,7 +111,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.userClick}>
               <img
                 src="apps/OXAdmin/115-manager.svg"
-                className="userButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Users</div>
@@ -180,7 +123,7 @@ class Home extends React.Component {
         <div key="5">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="orgButton App-logo" />
+              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -189,7 +132,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.groupClick}>
               <img
                 src="apps/OXAdmin/group.svg"
-                className="groupButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Groups</div>
@@ -199,7 +142,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.prjClick}>
               <img
                 src="apps/OXAdmin/101-project.svg"
-                className="prjButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Projects</div>
@@ -209,7 +152,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.userClick}>
               <img
                 src="apps/OXAdmin/115-manager.svg"
-                className="userButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Users</div>
@@ -218,7 +161,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.roleClick}>
               <img
                 src="apps/OXAdmin/005-workflow.svg"
-                className="roleButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Roles</div>
@@ -230,7 +173,7 @@ class Home extends React.Component {
         <div key="6">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="orgButton App-logo" />
+              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -239,7 +182,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.groupClick}>
               <img
                 src="apps/OXAdmin/group.svg"
-                className="groupButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Groups</div>
@@ -249,7 +192,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.prjClick}>
               <img
                 src="apps/OXAdmin/101-project.svg"
-                className="prjButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Projects</div>
@@ -259,7 +202,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.userClick}>
               <img
                 src="apps/OXAdmin/115-manager.svg"
-                className="userButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Users</div>
@@ -268,7 +211,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.roleClick}>
               <img
                 src="apps/OXAdmin/005-workflow.svg"
-                className="roleButton App-logo"
+                className="moduleBtn App-logo"
               />
             </div>
             <div className="titles">Roles</div>
@@ -277,10 +220,19 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.announClick}>
               <img src="apps/OXAdmin/131-laptop.svg"
-                className="announButton App-logo"
+                className="moduleBtn App-logo"
                />
             </div>
             <div className="titles">Announcements</div>
+          </div>
+
+          <div style={{ display: "inline-grid" }}>
+            <div className="block d1" onClick={this.announClick}>
+              <img src="apps/OXAdmin/102-production.svg"
+                className="moduleBtn App-logo"
+               />
+            </div>
+            <div className="titles">Apps</div>
           </div>
         </div>
       );
@@ -346,7 +298,7 @@ class Home extends React.Component {
                 <option value="6">Super Admin</option>
               </select>
             </div>
-            <div className="container">
+            <div className="container" style={{height: '-webkit-fill-available', overflowY : 'auto'}}>
             {this.createBlock()}
             </div>
           </center>
