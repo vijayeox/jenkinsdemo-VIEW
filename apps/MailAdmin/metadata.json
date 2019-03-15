@@ -1,0 +1,17 @@
+{
+  "type": "application",
+  "name": "MailAdmin",
+  "category": null,
+  "server": "server.js",
+  "title": {
+    "en_EN": "MailAdmin"
+  },
+  "description": {
+    "en_EN": "MailAdmin"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ],
+  "mailServer": "http://localhost:8080/rainloop"
+}
