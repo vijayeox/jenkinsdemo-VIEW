@@ -11,7 +11,6 @@ import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
 import "../../public/js/materialize.js";
-import "../../public/js/filepond.js";
 import "@progress/kendo-ui";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
