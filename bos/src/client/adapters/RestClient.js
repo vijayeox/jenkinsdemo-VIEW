@@ -78,7 +78,7 @@ export class RestClientServiceProvider extends ServiceProvider {
             formData.append('refresh_token',rtoken["key"])
             
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost:8080/refreshtoken', false);
+            xhr.open('POST', this.baseUrl+'/refreshtoken', false);
             xhr.onload = function () {
               let data = JSON.parse(this.responseText);
               if(data["status"] == "success") {
