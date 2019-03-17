@@ -10,6 +10,7 @@ import User from "./modules/User";
 import Group from "./modules/Group";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
+import Application from "./modules/Application";
 
 class Home extends React.Component {
   constructor(props) {
@@ -227,7 +228,7 @@ class Home extends React.Component {
           </div>
 
           <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.announClick}>
+            <div className="block d1" onClick={this.appClick}>
               <img src="apps/OXAdmin/102-production.svg"
                 className="moduleBtn App-logo"
                />
@@ -264,6 +265,11 @@ class Home extends React.Component {
 
   announClick = (e) => {
     ReactDOM.render(<Announcement args={this.core} />,document.getElementById('componentsBox'));
+  }
+
+  
+  appClick = (e) => {
+    ReactDOM.render(<Application args={this.core} />,document.getElementById('componentsBox'));
   }
 
 
