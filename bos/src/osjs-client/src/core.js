@@ -137,6 +137,7 @@ export default class Core extends CoreBase {
         // to check if local storage present in browser
         lsHelper.supported();
         const token = lsHelper.get('AUTH_token');
+        console.log(lsHelper);
         let jwt = null;
         let autoLogin = false;
         //validate token for auto login
@@ -145,11 +146,11 @@ export default class Core extends CoreBase {
           let formData = new FormData();
           formData.append('jwt', jwt);
           let xhr = new XMLHttpRequest();
-          xhr.open('POST', this.config['wrapper.url'] + 'validatetoken', false);
+          xhr.open('POST', this.config('wrapper.url') + 'validatetoken', false);
           xhr.onload = function() {
             let data = JSON.parse(this.responseText);
             if(data['status'] === 'success' && data['message'] === 'Token Valid') {
-              // console.log('token validated');
+              console.log('token validated');
               autoLogin = true;
             } else if(data['status'] === 'error' && data['message'] === 'Token Expired') {
               //console.log('token has expired. make request to get new');
@@ -158,7 +159,7 @@ export default class Core extends CoreBase {
               formData.append('jwt', jwt);
               formData.append('refresh_token', rtoken['key']);
               let xhr = new XMLHttpRequest();
-              xhr.open('POST', this.config['wrapper.url'] + 'refreshtoken', false);
+              xhr.open('POST', this.config('wrapper.url')+ 'refreshtoken', false);
               xhr.onload = function() {
                 let data = JSON.parse(this.responseText);
                 if(data['status'] === 'success') {
