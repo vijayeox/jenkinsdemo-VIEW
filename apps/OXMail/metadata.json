@@ -13,5 +13,5 @@
     "main.js",
     "main.css"
   ],
-  "mailServer": "http://localhost/rainloop"
+  "mailServer": "https://bos.oxzion.com:8075/rainloop"
 }
