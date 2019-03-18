@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
+
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
 import {
@@ -12,65 +10,27 @@ import {
 
 import ReactNotification from "react-notifications-component";
 
-import DialogContainer from "./dialog/DialogContainerGroup";
-import cellWithEditing from "./cellWithEditingGroup";
+import DialogContainer from "./dialog/DialogContainerApp";
+import cellWithEditing from "./cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
 
-const usersList = [
-  "Rajesh",
-  "Prajwal",
-  "Bharat",
-  "Neha",
-  "Brian",
-  "Karan",
-  "Danish",
-  "Sagar",
-  "Harsha"
-];
-
-class Group extends React.Component {
+class Application extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
 
     this.state = {
-      value: [],
-      visible: false,
-
-      groupInEdit: undefined,
+      appInEdit: undefined,
       sort: [{ field: "name", dir: "asc" }],
       products: [],
       action: ""
     };
 
-    this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
 
-    this.getGroupData().then(response => {
+    this.getAppData().then(response => {
       this.setState({ products: response.data });
-    });
-  }
-
-  async getUserData() {
-    let helper = this.core.make("oxzion/restClient");
-    let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
-  }
-
-  listOnChange = (event) => {
-    this.setState({
-      value: [...event.target.value]
-    });
-  };
-
-  componentWillMount() {
-    this.setState({ items: this.state.initialItems });
-  }
-
-  toggleDialog() {
-    this.setState({
-      visible: !this.state.visible
     });
   }
 
@@ -91,7 +51,7 @@ class Group extends React.Component {
   addNotification(serverResponse) {
     this.notificationDOMRef.current.addNotification({
       title: "All Done!!!  👍",
-      message: "Operation successfully completed.",
+      message: "Operation succesfully completed.",
       type: "success",
       insert: "top",
       container: "bottom-right",
@@ -103,34 +63,39 @@ class Group extends React.Component {
   }
 
   handler = serverResponse => {
-    this.getGroupData().then(response => {
+    this.getAppData().then(response => {
       this.setState({ products: response.data });
       this.addDataNotification(serverResponse);
     });
   };
 
-  async getGroupData() {
+  async getAppData() {
     let helper = this.core.make("oxzion/restClient");
-    let groupData = await helper.request("v1", "/group", {}, "get");
-    return groupData;
+    let OrgData = await helper.request("v1", "/app", {}, "get");
+    return OrgData;
   }
 
   edit = dataItem => {
     this.setState({
-      groupInEdit: this.cloneProduct(dataItem),
+      appInEdit: this.cloneProduct(dataItem),
       action: "edit"
     });
   };
 
-  async deleteGroupData(dataItem) {
+  async deleteApplicationData(dataItem) {
     let helper = this.core.make("oxzion/restClient");
-    let delGroup = helper.request("v1", "/group/" + dataItem, {}, "delete");
-    return delGroup;
+    let delApp = helper.request(
+      "v1",
+      "/app/" + dataItem,
+      {},
+      "delete"
+    );
+    return delApp;
   }
 
   remove = dataItem => {
-    this.deleteGroupData(dataItem.id).then(response => {
-      this.handler();
+    this.deleteApplicationData(dataItem.id).then(response => {
+      this.addNotification();
     });
 
     const products = this.state.products;
@@ -144,7 +109,7 @@ class Group extends React.Component {
   };
 
   save = () => {
-    const dataItem = this.state.groupInEdit;
+    const dataItem = this.state.appInEdit;
     const products = this.state.products.slice();
 
     if (dataItem.id === undefined) {
@@ -156,21 +121,21 @@ class Group extends React.Component {
 
     this.setState({
       products: products,
-      groupInEdit: undefined
+      appInEdit: undefined
     });
   };
 
   cancel = () => {
-    this.setState({ groupInEdit: undefined });
+    this.setState({ appInEdit: undefined });
   };
 
   insert = () => {
-    this.setState({ groupInEdit: {}, action: "add" });
+    this.setState({ appInEdit: {}, action: "add" });
   };
 
-  render() {
+  render = () => {
     return (
-      <div id="groupPage">
+      <div>
         <ReactNotification ref={this.notificationDOMRef} />
         <div style={{ margin: "10px 0px 10px 0px" }} className="row">
           <div className="col s3">
@@ -180,34 +145,9 @@ class Group extends React.Component {
           </div>
           <center>
             <div className="col s6" id="pageTitle">
-              Manage Groups
+              Manage Applications
             </div>
           </center>
-          <button className="k-button" onClick={this.toggleDialog}>
-            Add Users
-          </button>
-
-          {this.state.visible && (
-            <Dialog title={"Add users to Testing Group "} onClose={this.toggleDialog}>
-              <div>
-                <div>Select Users:</div>
-                <MultiSelect
-                  data={usersList}
-                  onChange={this.listOnChange}
-                  value={this.state.value}
-                  style={{height:'auto'}}
-                /><p><h6>
-                Participants: 
-                {this.state.value+" "}
-                </h6> </p>
-              </div>
-              <DialogActionsBar>
-                <button className="k-button" onClick={this.toggleDialog}>
-                  Done
-                </button>
-              </DialogActionsBar>
-            </Dialog>
-          )}
         </div>
 
         <Grid
@@ -222,7 +162,7 @@ class Group extends React.Component {
         >
           <GridToolbar>
             <div>
-              <div style={{ fontSize: "20px" }}>Groups List</div>
+              <div style={{ fontSize: "20px" }}>Apps List</div>
               <button
                 onClick={this.insert}
                 className="k-button"
@@ -230,27 +170,29 @@ class Group extends React.Component {
               >
                 <FaPlusCircle style={{ fontSize: "20px" }} />
 
-                <p style={{ margin: "0px", paddingLeft: "10px" }}>Add Group</p>
+                <p style={{ margin: "0px", paddingLeft: "10px" }}>
+                  Add Application
+                </p>
               </button>
             </div>
           </GridToolbar>
 
-          <Column field="id" title="ID" width="70px" />
+          <Column field="uuid" title="UUID" width="70px" />
           <Column field="name" title="Name" />
 
-          <Column field="manager_id" title="Manager ID" />
           <Column field="description" title="Description" />
+          <Column field="category" title="Category" />
           <Column
             title="Edit"
-            width="240px"
+            width="160px"
             cell={cellWithEditing(this.edit, this.remove)}
           />
         </Grid>
 
-        {this.state.groupInEdit && (
+        {this.state.appInEdit && (
           <DialogContainer
             args={this.core}
-            dataItem={this.state.groupInEdit}
+            dataItem={this.state.appInEdit}
             save={this.save}
             cancel={this.cancel}
             formAction={this.state.action}
@@ -259,12 +201,10 @@ class Group extends React.Component {
         )}
       </div>
     );
-  }
+  };
 
   dialogTitle() {
-    return `${
-      this.state.groupInEdit.id === undefined ? "Add" : "Edit"
-    } product`;
+    return `${this.state.appInEdit.id === undefined ? "Add" : "Edit"} product`;
   }
 
   cloneProduct(product) {
@@ -273,30 +213,14 @@ class Group extends React.Component {
 
   newProduct(source) {
     const newProduct = {
-      id: "",
+      uuid: "",
       name: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
-      logo: "",
-      languagefile: ""
+      type: "",
+      category: ""
     };
 
     return Object.assign(newProduct, source);
   }
 }
 
-class List extends React.Component {
-  render() {
-    return (
-      <ul>
-        {this.props.items.map(function(item) {
-          return <li key={item}>{item}</li>;
-        })}
-      </ul>
-    );
-  }
-}
-
-export default Group;
+export default Application;
