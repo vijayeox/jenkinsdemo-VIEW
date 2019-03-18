@@ -119,23 +119,35 @@ export class RestClientServiceProvider extends ServiceProvider {
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
 		let urlString = this.baseUrl + action;
-		console.log(urlString);
+		// console.log(urlString);
 		this.token = userData["jwt"];
 		let resp = 'null';
-		if(headers != null) {
+		let reqHeaders = {}
+		// console.log(headers);
 
+		// adding custom headers if any along with auth
+		if(headers != null) {
+			let auth = 'Bearer ' + this.token;
+			headers['Authorization'] = auth;
+			reqHeaders = headers;
+			// console.log('here');
+		}
+		else if(headers == null) {
+			let auth = 'Bearer ' + this.token;
+			reqHeaders['Authorization'] = auth;
+			if(method == 'get' || method == 'put') {
+				if(!(reqHeaders['Content-Type'])) {
+					reqHeaders['Content-Type'] = 'application/json';
+				}
+			}
+ 
 		}
 		try {
-
 			if (method == 'get') {
-				let auth = 'Bearer ' + this.token;
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
-					headers: {
-						'Authorization': auth,
-						'Content-Type': 'application/json'
-					}
+					headers: reqHeaders
 
 				})
 				
@@ -149,7 +161,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 				}
 			}
 			else if (method == 'post') {
-				let auth = 'Bearer ' + this.token;
 				let parameters = params;
 				if (typeof parameters === 'string') {
 					parameters = JSON.parse(parameters)
@@ -161,9 +172,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
-					headers: {
-						'Authorization': auth
-					},
+					headers: reqHeaders,
 					body: formData
 				})
 
@@ -178,14 +187,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 				if (typeof parameters === 'string') {
 					parameters = JSON.parse(parameters)
 				}
-				let auth = 'Bearer ' + this.token;
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
-					headers: new Headers({
-						'Authorization': auth,
-						'Content-type': 'application/json'
-					}),
+					headers: reqHeaders,
 					body: JSON.stringify(parameters)
 				})
 
@@ -196,13 +201,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 				}
 			}
 			else if (method == 'delete') {
-				let auth = 'Bearer ' + this.token;
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
-					headers: new Headers({
-						'Authorization': auth,
-					}),
+					headers: reqHeaders,
 
 				})
 
