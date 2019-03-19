@@ -25,15 +25,15 @@ class Home extends React.Component {
   componentDidMount() {
     M.AutoInit();
 
-    $(document).ready(function () {
+    $(document).ready(function() {
       $("#componentsBox").hide();
 
-      $(document).on("click", ".moduleBtn", function () {
+      $(document).on("click", ".moduleBtn", function() {
         $(".DashBG").fadeOut(),
           $("#componentsBox").show();
       });
 
-      $(document).on("click", ".goBack", function () {
+      $(document).on("click", ".goBack", function() {
         $("#componentsBox").hide(), $(".DashBG").show();
       });
     });
@@ -244,34 +244,32 @@ class Home extends React.Component {
 
 
   orgClick = (e) => {
-    ReactDOM.render(<Organization args={this.core}  unmountMe={this.handleChildUnmount}/>,document.getElementById('componentsBox'));
+    ReactDOM.render(<Organization args={this.core}  unmountMe={this.handleChildUnmount}/>, document.getElementById('componentsBox'));
   }
 
   groupClick = (e) => {
-    ReactDOM.render(<Group args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<Group args={this.core} />, document.getElementById('componentsBox'));
   }
 
   prjClick = (e) => {
-    ReactDOM.render(<Project args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<Project args={this.core} />, document.getElementById('componentsBox'));
   }
 
   userClick = (e) => {
-    ReactDOM.render(<User args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<User args={this.core} />, document.getElementById('componentsBox'));
   }
 
   roleClick = (e) => {
-    ReactDOM.render(<Role args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<Role args={this.core} />, document.getElementById('componentsBox'));
   }
 
   announClick = (e) => {
-    ReactDOM.render(<Announcement args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<Announcement args={this.core} />, document.getElementById('componentsBox'));
   }
 
-  
   appClick = (e) => {
     ReactDOM.render(<Application args={this.core} />,document.getElementById('componentsBox'));
   }
-
 
   render() {
     return (

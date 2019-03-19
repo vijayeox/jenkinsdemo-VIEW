@@ -1,8 +1,12 @@
 import osjs from "osjs";
-import { name as applicationName } from "./metadata.json";
+import {
+  name as applicationName
+} from "./metadata.json";
 import React from "react";
 import ReactDOM from "react-dom";
-import { icon } from "./metadata.json";
+import {
+  icon
+} from "./metadata.json";
 import Home from "./home";
 
 // Our launcher
@@ -20,9 +24,12 @@ const register = (core, args, options, metadata) => {
       id: "OXAdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
-      dimension: { width: 620, height: 600 },
+      dimension: {
+        width: 780,
+        height: 530
+      },
       position: {
-        left: 300,
+        left: 250,
         top: 50
       }
     })

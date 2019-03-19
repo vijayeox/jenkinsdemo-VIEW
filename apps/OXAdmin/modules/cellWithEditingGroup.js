@@ -1,5 +1,7 @@
 import React from "react";
-import { GridCell } from "@progress/kendo-react-grid";
+import {
+  GridCell
+} from "@progress/kendo-react-grid";
 
 export default function CellWithEditing(edit, remove, addUsers) {
   return class extends GridCell {
@@ -27,9 +29,12 @@ export default function CellWithEditing(edit, remove, addUsers) {
             }}
           >
             Remove
-          </button> 
+          </button>
           <button
-            className="k-button"
+            className="k-button k-primary"
+            onClick={() => {
+              addUsers(this.props.dataItem.usersList);
+            }}
           >
             Add Users
           </button>

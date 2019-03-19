@@ -1,24 +1,31 @@
-import React, { Component } from "react";
+import React, {
+  Component
+} from "react";
 import ReactDOM from "react-dom";
 
-import { FilePond, File, registerPlugin } from "react-filepond";
+import * as FilePond from 'filepond';
 import "filepond/dist/filepond.min.css";
 
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Validator } from "@progress/kendo-validator-react-wrapper";
+import {
+  Dialog,
+  DialogActionsBar
+} from "@progress/kendo-react-dialogs";
+import {
+  Validator
+} from "@progress/kendo-validator-react-wrapper";
 import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
 
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    console.log(this.core.user.jwt);
     this.state = {
       ancInEdit: this.props.dataItem || null,
       visibleDialog: false,
@@ -35,8 +42,7 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
-      "/announcement",
-      {
+      "/announcement", {
         id: this.state.ancInEdit.id,
         name: this.state.ancInEdit.name,
         media: this.state.ancInEdit.media,
@@ -51,15 +57,13 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancFile = await helper.request(
       "v1",
-      "/attachment",
-      {
+      "/attachmentsss", {
         type: "ANNOUNCEMENT",
         files: 'C:\\Users\\VA_User\\Downloads\\batman__dark-wallpaper-1920x1080.jpg'
       },
-      "post",
-      {
+      "post", {
         contentType: false,
- mimeType: "multipart/form-data",
+        mimeType: "multipart/form-data",
       }
     );
     return ancFile;
@@ -70,8 +74,7 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let orgEditData = await helper.request(
       "v1",
-      "/announcement/" + this.state.ancInEdit.id,
-      {
+      "/announcement/" + this.state.ancInEdit.id, {
         id: this.state.ancInEdit.id,
         name: this.state.ancInEdit.name,
         media: this.state.ancInEdit.media,
@@ -111,8 +114,13 @@ export default class DialogContainer extends React.Component {
     this.props.save();
   };
 
-  render() {
+  // const inputElement = document.querySelector('input[type="file"]');
+  // const pond = FilePond.create(inputElement);
+  // FilePond.setOptions({
+  //   server: 'api/'
+  // });
 
+  render() {
     return (
       <Validator>
         <Dialog onClose={this.props.cancel}>
@@ -165,31 +173,6 @@ export default class DialogContainer extends React.Component {
                     required={true}
                   />
                   <label htmlFor="ancStatus">Status</label>
-                </div>
-              </div>
-
-
-              <div className="row">
-                <div className="col s12">
-                  <FilePond
-                    server={
-                      {
-                        url:'http://jenkins.oxzion.com:8080/attachment',
-                        process:{
-                          ondata: (fd) => {
-                            fd.append('type', 'ANNOUNCEMENT');
-                            fd.append('files', 'C:\\Users\\VA_User\\Downloads\\batman__dark-wallpaper-1920x1080.jpg');
-                            return fd;
-                          },
-                          method:'POST',
-                          headers: {Authorization:'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1NTI3NjMwODEsImp0aSI6InlzTnNhSHZ1bGdCT093QkE2a2dTMGtkWlZtcWhWVXRXV3FEb0FuNGsxMlk9IiwibmJmIjoxNTUyNzYzMDgxLCJleHAiOjE1NTI4MzUwODEsImRhdGEiOnsidXNlcm5hbWUiOiJiaGFyYXRnIiwib3JnaWQiOiIxIn19.bHD3vbtHs5ZvL1mE7zmY8_Tr6c36wywAOdZhvr4JGCHivqkH7Oe1QroiaVfYybm4936gnZuIEFrZRSo2aLxOTA'}
-                        }
-                      }
-                    }
-                    allowMultiple={true}
-                    labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-                    oninit={() => this.handleInit() }
-                  />
                 </div>
               </div>
             </form>

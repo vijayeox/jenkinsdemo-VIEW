@@ -52,26 +52,9 @@
     font-weight: 600;
   }
 
-  #appRow {
-    max-width: 500px;
-    margin-bottom: 0px;
-  }
 
   #goBack {
     margin-right: 5%;
-  }
-
-  #userPage,
-  #groupPage,
-  #organisation,
-  #project {
-    padding: 10px;
-  }
-
-  #appRow p {
-    font-weight: bolder;
-    font-size: 20px;
-    color: #183651;
   }
 
   #pageTitle {
@@ -79,10 +62,6 @@
     color: #183651;
     padding-top: 5px;
     margin-bottom: 15px;
-  }
-
-  #organization {
-    padding: 5px 10px 5px 10px;
   }
 
   .k-dialog {
@@ -122,7 +101,7 @@
   }
 
   .block {
-    height: 115px;
+    height: 95px;
     width: 115px;
     display: inline-block;
     margin: 20px;
