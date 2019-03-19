@@ -8,7 +8,6 @@ class ChangePassword extends Component {
       type: 'password',
       type1: 'password',
       type2: 'password',
-
       fields: {},
       errors: {}
     };

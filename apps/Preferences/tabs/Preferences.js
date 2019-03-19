@@ -7,24 +7,50 @@ class Preferences extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.userprofile = this.core.make('oxzion/profile').get();
     this.state = {
       file: null,
-      selectedOption1: "On",
-      selectedOption2: "On",
       timez: "",
       fields: {},
-      errors: {}
+      errors: {},
+      initialized: -1
 
     };
+
+
+    this.getPreferences().then(response => {
+      console.log(response);
+      this.setState({fields :response.key.preferences});
+      console.log(this.state.fields);
+  
+   });
+
     // this.handleOptionChange1 = this.handleOptionChange1.bind(this);
     // this.handleOptionChange2 = this.handleOptionChange2.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+async getPreferences() {
+    // call to api using wrapper
+    let userpreferences = await this.core.make("oxzion/profile").get();
+    // let userpreferences = await helper.request("v1", "/user/me/m", {}, "get");
+    // console.log(userpreferences);
+
+    if (this.state.initialized < 0) {
+      this.setState({ initialized: this.state.initialized + 1 });
+    }
+    return userpreferences;
+  }
+
   componentDidMount(){
   var selectElems = document.querySelectorAll("select");
   var instances = M.FormSelect.init(selectElems, { classes: "createSelect" });
+
+  
+  var selectElems1 = document.querySelectorAll(".tooltipped");
+  var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
+
   }
 
   // handleOptionChange1(changeEvent) {
@@ -47,7 +73,6 @@ class Preferences extends Component {
     });
   }
 
-
   handleSubmit(event) {
     event.preventDefault();
   
@@ -56,12 +81,46 @@ class Preferences extends Component {
         formData[key] = this.state.fields[key];
       });
     console.log("-->", formData);
+
+    let preferencedata={"preferences":JSON.stringify(formData)};
+    console.log(preferencedata);
+
+
+    let helper = this.core.make("oxzion/restClient");
+
+      let pref = helper.request(
+        "v1",
+        "/user/" + this.userprofile.key.id,preferencedata,
+        "put"
+      );
+      console.log("done");
+      if (pref.status == "error") {
+        alert(pref.message);
+      }else{
+        alert("Successfully Updated");
+        
+
+      }
+
   }
+
+
   init() {}
   render() {
+    const self = this;
+    window.setTimeout(function() {
+      if (self.state.initialized === 0) {
+        var selectTime = document.querySelectorAll("select");
+        var instances = M.FormSelect.init(selectTime, {
+          classes: "createSelect"
+        });
+
+        self.setState({ initialized: 1 });
+      }
+    }, 0);
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit}>
           <div className="row">
             <div className="col s12">
               <div className="input-field col s2">
@@ -71,11 +130,11 @@ class Preferences extends Component {
                 <label id="name">
                   <input
                     type="radio"
-                    name="group1"
-                    value="On"
+                    name="soundnotification"
+                    value="true"
                     onChange={this.handleChange}
-                    ref="SoundNotification"
-                    checked={this.state.fields.group1 == "On"}
+                    ref="soundnotification"
+                    checked={this.state.fields['soundnotification'] == "true"}
                     
                   />
                   <span className="m-2">On</span>
@@ -85,11 +144,11 @@ class Preferences extends Component {
                 <label id="name">
                   <input
                     type="radio"
-                    name="group1"
-                    value="Off"
+                    name="soundnotification"
+                    value="false"
                     onChange={this.handleChange}
-                    ref="SoundNotification"
-                    checked={this.state.fields.group1 == "Off"}
+                    ref="soundnotification"
+                    checked={this.state.fields['soundnotification'] == "false"}
                   />
                   <span>Off</span>
                 </label>
@@ -107,11 +166,11 @@ class Preferences extends Component {
                   <label id="name">
                     <input
                       type="radio"
-                      name="group2"
-                      value="On"
+                      name="emailalerts"
+                      value="true"
                       onChange={this.handleChange}
-                      ref="EmailAlerts"
-                      checked={this.state.fields.group2 == "On"}
+                      ref="emailalerts"
+                      checked={this.state.fields['emailalerts'] == "true"}
                     />
                     <span className="m-2">On</span>
                   </label>
@@ -120,11 +179,11 @@ class Preferences extends Component {
                   <label id="name">
                     <input
                       type="radio"
-                      name="group2"
-                      value="Off"
+                      name="emailalerts"
+                      value="false"
                       onChange={this.handleChange}
-                      ref="EmailAlerts"
-                      checked={this.state.fields.group2 == "Off"}
+                      ref="emailalerts"
+                      checked={this.state.fields['emailalerts'] == "fasle"}
                     />
                     <span>Off</span>
                   </label>
@@ -141,14 +200,15 @@ class Preferences extends Component {
               </div>
               <div className="input-field col s3">
               <select
-                value={this.state.fields.timez}
+                value={this.state.fields['timezone']}
                 onChange={this.handleChange}
                 ref="timezone"
-                name="country"
+                name="timezone"
+                className="timezone"
               >
-                {Timezones.map((timez, key) => (
-                  <option key={key} value={timez.offset}>
-                    {timez.name}
+                {Timezones.map((timezone, key) => (
+                  <option key={key} value={timezone.name}>
+                    {timezone.name}
                   </option>
                 ))}
               </select>
@@ -163,23 +223,23 @@ class Preferences extends Component {
                 <label id="name" style={{paddingTop:"10px"}}>Date Format</label>
                   </div>
                 <div className="input-field col s3">
-                <select 
-                ref="datef"
-                value={this.state.fields.datef}
-                onChange={this.handleChange}
-                name="datef">
+                <input
+                  type="text"
+                  name="dateformat"
+                  ref="dateformat"
+                  pattern={"['d','m','y']{1,4}"+"['/','-']"+"['d','m','y']{1,4}"+"['/','-']"+"['d','m','y']{1,4}"}
+                  value={this.state.fields['dateformat']}
+                  onChange={this.handleChange}
+                  className="validate"
+                />               
 
-                <option value="dd/mm/yyyy" defaultValue>dd/mm/yyyy</option>
-                <option value="yyyy/mm/dd">yyyy/mm/dd</option>
-                <option value="mm/dd/yyyy">mm/dd/yyyy</option>
-                <option value="dd-mm-yyyy">dd-mm-yyyy</option>
-                <option value="yyyy-mm-dd">yyyy-mm-dd</option>
-                <option value="mm-dd-yyyy">mm-dd-yyyy</option>
-                <option value="dd-mmm-yyyy">dd-mmm-yyyy</option>
-                <option value="yyyy-mm-dd">yyyy-mm-dd</option>
-                <option value="mm-dd-yyyy">mm-dd-yyyy</option>
-
-                </select>
+                </div>
+                <div className="input-field col s2">
+                <a className="btn-floating waves-effect waves-light tooltipped" data-html="true" data-position="right" data-tooltip="dd-mm-yyyy - 01-02-2012<br/>
+                                                                                                  d-mmm-yyyy - 1-Feb-2012<br/>
+                                                                                                  yy-m-dd - 12-2-01<br/>
+                                                                                                  dd/mmmm/yyyy - 01/Febraury/2012<br/>
+                                                                                                  Use either / or -"><i className="material-icons">info_outline</i></a>
                 </div> 
                 </div>
           </div>

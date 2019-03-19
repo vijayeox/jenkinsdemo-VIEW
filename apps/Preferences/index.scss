@@ -1,5 +1,10 @@
+.Window_Preferences.osjs-window{
+    position : fixed;
+  } 
+  
 .Window_Preferences {
-  @import "./node_modules/materialize-css/sass/materialize";
+@import "./node_modules/materialize-css/sass/materialize";
+
 
   .rwt__tabs[data-rwt-vertical="true"] {
     display: flex;
@@ -74,7 +79,7 @@
   .rwt__tabpanel {
     width: 100%;
     overflow-y: auto;
-    height: calc(100% - 92px);
+    height: calc(100% - 99px);
   }
   .form {
     padding: 15px;

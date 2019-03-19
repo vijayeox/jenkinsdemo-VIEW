@@ -8,22 +8,23 @@ import Webcam from "./Webcam.js";
 class Profile extends Component {
   constructor(props) {
     super(props);
-   this.core = this.props.args;
-     
+    this.core = this.props.args;
    
-   this.state = {
+    this.state = {
      
-     userprofile:"",
-     file: "",
-     dateString:"",
-     date1:"",
-     refereshPage:false
-   };
+       userprofile:{},
+       file: "",
+       dateString:"",
+       date1:"",
+       refereshPage:false,
+       
+     };
 
-   this.getUserProfile().then(response => {
-    this.setState({userprofile :response.data});
+    this.getUserProfile().then(response => {
+    if(response.data){
+      this.setState({userprofile :response.data});
+    }
     console.log(this.state.userprofile);
-
   });
     
    this.handleFileChange = this.handleFileChange.bind(this);
@@ -51,11 +52,13 @@ refereshandler=()=>{
 
   async getUserProfile() {
     
+    // let helper = this.core.make("oxzion/restClient");
+    // let userprofile = await helper.request("v1", "/user/me/m", {}, "get");
+    
     // call to api using wrapper
-    let helper = this.core.make('oxzion/restClient');
-    let userprofile = await helper.request('v1','/user/me/m', {}, 'get' );
+    let userprofile = this.core.make('oxzion/profile').get();
+    // console.log(userprofile);
     console.log(userprofile);
-
     return userprofile;
   }
 
@@ -166,17 +169,17 @@ refereshandler=()=>{
       file: url
     });
   };
-  addDefaultSrc(ev) {
-    ev.target.src = "./apps/Preferences/hicon.png";
-  }
+  // addDefaultSrc(ev) {
+  //   ev.target.src = "./apps/Preferences/hicon.png";
+  // }
 
   init() {}
 
   render() {
 
 
-   this.dateString = this.state.userprofile.dob;
-    this.date1= this.formatDate(this.dateString);
+   // this.dateString = this.state.userprofile.dob;
+   //  this.date1= this.formatDate(this.dateString);
 
     return (
       <div>
@@ -192,8 +195,7 @@ refereshandler=()=>{
                   <center>
                     <img
                       id="imgcrop"
-                      src={this.state.file}
-                      onError={this.addDefaultSrc}
+                      src={this.state.userprofile.icon}
                       height="150"
                       width="150"
                       className="circle responsive-img"
@@ -232,7 +234,8 @@ refereshandler=()=>{
                 <br/>
 
                 <i className="fa fa-birthday-cake" id="iconi" />
-                <label id="label1">{this.date1}</label> 
+                // <label id="label1">{this.date1}</label>
+                <label id="label1">{this.state.userprofile.dob}</label> 
                 <br/>
 
                 <i className="fa fa-heart" id="iconi" />
@@ -288,10 +291,10 @@ refereshandler=()=>{
 
         </div>
         <div className="file-field input-field img1" id="imageBox">
-          <Img1 />
+          <Img1 args={this.core} />
         </div>
         <div className="file-field input-field webcam" id="webcamcomponent">
-          <Webcam />
+          <Webcam args={this.core}/>
         </div>
       </div>
 

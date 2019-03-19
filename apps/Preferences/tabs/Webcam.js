@@ -1,41 +1,82 @@
 import React, { Component } from "react";
-import Camera from "react-html5-camera-photo";
+import Camera,{IMAGE_TYPES} from "react-html5-camera-photo";
 import "./Sample.css";
 class Webcam extends Component {
   enableWebcam = () => this.setState({ webcamEnabled: true });
   disableWebcam = () => this.setState({ webcamEnabled: false });
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+        this.core = this.props.args;
+        this.userprofile = this.core.make('oxzion/profile').get();
+
     this.state = {
       img: "",
-      webcamEnabled: false
+      webcamEnabled: false,
+      // profileImage:{}
+      fields:{}
     };
     this.onTakePhoto = this.onTakePhoto.bind(this);
-  }
-  onTakePhoto(dataUri) {
-    this.setState({
+    this.addDefaultSrc=this.addDefaultSrc.bind(this);
+            this.handleSubmit=this.handleSubmit.bind(this);
+
+      }
+
+    onTakePhoto(dataUri) {
+      this.setState({
       img: dataUri
-    });
-  }
-  addDefaultSrc(ev) {
-    ev.target.src = "./apps/Preferences/hicon.png";
-  }
+     });
+   }
+
+   addDefaultSrc(ev) {
+    ev.target.src = this.userprofile.key.icon
+    }
+
+    handleSubmit(event) {
+       event.preventDefault();
+       const formData = {};
+
+     formData.file=this.state.img;
+     this.state.fields.file=formData.file;
+      Object.keys(this.state.fields).map(key => {
+        formData[key] = this.state.fields[key];
+      });
+
+      console.log(formData);
+     let helper = this.core.make("oxzion/restClient");
+
+      let uploadresponse = helper.request(
+        "v1",
+        "/user/profile",
+        formData,
+        "post"
+      );
+      if (uploadresponse.status == "error") {
+        alert(uploadresponse.message);
+      }else{
+        alert("Successfully Updated");
+   
+   }
+
+     
+   }
 
 
-  render() {
+   render() {
     return (
       <div>
+            <form onSubmit={this.handleSubmit}>
+
       <div className="row">
-      <div className="col s3"><img id="imgcrop" src={this.state.img} height="150" width="150"  onError={this.addDefaultSrc}
- />  
-</div> 
-<div className="col s1">
-        <button className="waves-effect waves-light btn">
+      <div className="col s3"><img id="imgcrop" name="file" src={this.state.img} height="150" width="150"  onError={this.addDefaultSrc}
+      />  
+    </div> 
+    <div className="col s1">
+        <button className="waves-effect waves-light btn" type="submit">
           Save
         </button>
         </div>
-</div>
+    </div>
 <br/>
 <br/>     
 
@@ -47,6 +88,8 @@ class Webcam extends Component {
               this.onTakePhoto(dataUri);
             }}
             idealResolution = {{width: 640, height: 480}}
+            imageType = {IMAGE_TYPES.PNG}
+
   
           />
           
@@ -69,6 +112,8 @@ class Webcam extends Component {
           </a>
        
            </div>
+                   </form>
+
       </div>
     );
   }

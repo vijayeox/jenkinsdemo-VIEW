@@ -37,6 +37,7 @@ const loginAdapter = (core, config) => ({
   },
 
   logout: (req, res) => {
+    console.log(req);
     var lsHelper = new LocalStorageAdapter;
     if(lsHelper.supported() || lsHelper.cookieEnabled()){
       lsHelper.purge('AUTH_token');

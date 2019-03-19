@@ -31,7 +31,10 @@
 import PanelItem from './panel-item';
 import * as languages from './locales';
 import { EventEmitter } from '@osjs/event-emitter';
-
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'materialize-css/dist/css/materialize.min.css';
+import LocalStorageAdapter from './../../../adapters/localStorageAdapter.js';
 /**
  * Panel
  *
@@ -58,6 +61,8 @@ export default class Panel extends EventEmitter {
 			options
 		);
 
+		this.dateString="";
+		this.date1="";
 		this.items = [];
 		this.inited = false;
 		this.destroyed = false;
@@ -67,6 +72,7 @@ export default class Panel extends EventEmitter {
 			const c = core.make('osjs/panels').get(name);
 			this.addItem(new c(this.core, this, options || {}));
 		});
+		this.formatDate=this.formatDate.bind(this);
 	}
 
 	/**
@@ -93,6 +99,12 @@ export default class Panel extends EventEmitter {
 
 		this.$element.remove();
 		this.$element = null;
+	}
+
+
+	formatDate(string){
+	    var options = {  day: 'numeric', month: 'long' };
+    	return new Date(string).toLocaleDateString([],options);
 	}
 
 	/**
@@ -149,6 +161,98 @@ export default class Panel extends EventEmitter {
 			appmenuElement.style['margin-top'] = '3.5em';
 		} else {
 			appmenuElement.style['margin-top'] = '0';
+		}
+
+
+		let profileElement = document.createElement('div');
+		profileElement.classList.add('profile');
+		let profileDetails = this.core.make('oxzion/profile').get();
+		// let profileInfo = { 
+		// 	icon: "gdhgh",
+		// 	firstname:"bharat",
+		// 	lastname:"g",
+		// 	email:"sfdg",
+		// 	address:"jkgj",
+		// 	date_of_birth:"",
+		// 	interest:""
+		// }
+		 let profileInfo = profileDetails['key'];
+
+		this.dateString = profileInfo['date_of_birth'];
+		this.date1= this.formatDate(this.dateString);
+
+		let profileCard = document.createElement('div');
+		profileCard.innerHTML = 
+								'<br/> <a '
+										+'class="btn-floating btn-small red" '
+										+'onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
+										+'id="editbutton">'
+										+'<i class="material-icons">edit</i>'
+										+'style="transition-delay:10s;"'
+										+'</a>'+
+									
+									'<img id="imgprofile" '
+										+'src='+profileInfo['icon']+" "
+										+'height="130" '
+										+'width="130" '
+										+'className="circle img-responsive"'
+										+'style="border-radius:50%;cursor:pointer;"'
+										+'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; />'+
+
+									'<label '
+										+'className="name" '
+										+'style="position: absolute;padding-top: 58px;padding-left: 25px;">'+profileInfo['firstname']+' '+profileInfo['lastname']+'</label>'+
+										
+									'<label '
+										+'className="name" '
+										+'style="position: absolute;padding-top: 82px;padding-left: 26px;">'+profileInfo['designation']+'</label> ';
+										
+		profileElement.appendChild(profileCard);
+
+		let emailElement = document.createElement('div');
+		emailElement.innerHTML = '<i class="fa-lg fa fa-envelope" id="iconi1" />'
+								+' <label id="info">'+profileInfo['email']+'</label> <br/>';
+		profileElement.appendChild(emailElement);
+
+
+		let phoneElement = document.createElement('div');
+		phoneElement.innerHTML = '<i class="fa-lg fa fa-phone" id="iconi" />'
+								+' <label id="info">'+profileInfo['phone']+'</label> <br/>';
+		profileElement.appendChild(phoneElement);
+
+
+		let addressElement = document.createElement('div');
+		addressElement.innerHTML = '<i class="fa-lg fa fa-location-arrow" id="iconi" />'
+								+' <label id="addresic">'+profileInfo['address']+'</label> <br/>';
+		profileElement.appendChild(addressElement);
+
+
+		let countryElement = document.createElement('div');
+		countryElement.innerHTML = '<i class="fa-lg fa fa-map-marker" id="iconi" />'
+								+' <label id="info">'+profileInfo['country']+'</label> <br/>';
+		profileElement.appendChild(countryElement);
+
+
+		let dobElement = document.createElement('div');
+		dobElement.innerHTML = '<i class="fa-lg fa fa-birthday-cake" id="iconi" />'
+								+' <label id="info">'+profileInfo['date_of_birth']+'</label> <br/>';
+		profileElement.appendChild(dobElement);
+
+
+		let interestElement = document.createElement('div');
+		interestElement.innerHTML = '<i class="fa-lg fa fa-heart" id="iconi" />'
+								+' <label id="info">'+profileInfo['interest']+'</label> <br/>';
+		profileElement.appendChild(interestElement);
+		
+		
+		
+		profileElement.id = 'profile';
+		this.core.$root.appendChild(profileElement);
+		
+		if (this.options.position === 'top') {
+			profileElement.style['margin-top'] = '3.5em';
+		} else {
+			profileElement.style['margin-top'] = '0';
 		}
 		this.items.forEach(item => item.init());
 		this.emit('create');

@@ -90,7 +90,7 @@ module.exports = {
               minimize,
               sourceMap: true
             }
-          }
+          },
         ]
       }
     ]

@@ -4,6 +4,9 @@ import M from "materialize-css";
 // import "./Sample.css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
+import Img1 from "./Img1.js";
+import Webcam from "./Webcam.js";
+
 class EditProfile extends Component {
   constructor(props) {
     super(props);
@@ -14,8 +17,8 @@ class EditProfile extends Component {
     this.state = {
       phone: "",
       heightSet: 0,
-      country: " ",
-      dial_code: "Afganistan +93-",
+      country: "India",
+      dial_code: "India +91",
       fields: {},
       errors: {},
       initialized: -1,
@@ -24,7 +27,7 @@ class EditProfile extends Component {
     };
 
     this.getProfile().then(response => {
-      this.setState({ fields: response.data });
+      this.setState({ fields: response.key });
       console.log(this.state.fields);
       this.splitPhoneNumber();
     });
@@ -44,10 +47,8 @@ class EditProfile extends Component {
   
   async getProfile() {
     // call to api using wrapper
-    let helper = this.core.make("oxzion/restClient");
-    let profile = await helper.request("v1", "/user/me/m", {}, "get");
-    console.log(profile);
-
+    let profile = await this.core.make("oxzion/profile").get();
+    
     if (this.state.initialized < 0) {
       this.setState({ initialized: this.state.initialized + 1 });
     }
@@ -79,6 +80,85 @@ class EditProfile extends Component {
 
 
   componentDidMount() {
+
+// function ready(fn) {
+//       if (
+//         document.attachEvent
+//           ? document.readyState === "complete"
+//           : document.readyState !== "loading"
+//       ) {
+//         fn();
+//       } else {
+//         document.addEventListener("DOMContentLoaded", fn);
+//       }
+//     }
+//     ready(function() {
+//           document.getElementById("imageBox").style.display = "none";
+//       document.getElementById("webcamcomponent").style.display = "none";
+//     });
+
+
+//     var myEl2 = document.getElementById("img1");
+//     if (myEl2) {
+//       myEl2.addEventListener(
+//         "click",
+//         function() {
+//           document.getElementById("profileform").style.display = "none";
+//           document.getElementById("imageBox").style.display = "";
+//           document.getElementById("webcamcomponent").style.display = "none";
+//           document.getElementById("modalbutton").style.display = "none";
+//         },
+//         false
+//       );
+//     }
+
+//     var myEl3 = document.getElementById("goBack1");
+//     if (myEl3) {
+//       myEl3.addEventListener(
+//         "click",
+//         function() {
+//           document.getElementById("imageBox").style.display = "none";
+//           document.getElementById("profileform").style.display = "";
+//           document.getElementById("modalbutton").style.display = "";
+//         },
+//         false
+//       );
+//     }
+
+//     var myEl4 = document.getElementById("webcam");
+//     if (myEl4) {
+//       myEl4.addEventListener(
+//         "click",
+//         function() {
+//           document.getElementById("profileform").style.display = "none";
+//           document.getElementById("webcamcomponent").style.display = "";
+//           document.getElementById("imageBox").style.display = "none";
+//           document.getElementById("modalbutton").style.display = "none";
+//         },
+//         false
+//       );
+//     }
+
+//     var myEl5 = document.getElementById("goBack2");
+//     if (myEl5) {
+//       myEl5.addEventListener(
+//         "click",
+//         function() {
+//           document.getElementById("webcamcomponent").style.display = "none";
+//           document.getElementById("profileform").style.display = "";
+//           document.getElementById("modalbutton").style.display = "";
+//         },
+//         false
+//       );
+//     }
+
+//     var modalelems = document.querySelectorAll(".modal");
+//     var instances = M.Modal.init(modalelems, { inDuration: 250 });
+
+//     var tooltipElems = document.querySelectorAll(".tooltipped");
+//     var instances1 = M.Tooltip.init(tooltipElems, { position: 'left' });
+
+
     let elems = document.querySelectorAll(".datepicker");
     M.Datepicker.init(elems, {
       format: "dd-mm-yyyy",
@@ -135,9 +215,8 @@ class EditProfile extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    let elems = document.querySelectorAll(".datepicker");
-
-  if (this.validateForm()) {
+    
+    if (this.validateForm()) {
       const formData = {};
       this.joinPhNo();
 
@@ -272,17 +351,21 @@ class EditProfile extends Component {
         self.setState({ initialized: 1 });
       }
     }, 0);
+
+    // <button className="waves-effect waves-light btn" id="goBack">
+          //   Back
+          // </button>
+
     return (
       <ErrorBoundary>
         <div>
-          <button className="waves-effect waves-light btn" id="goBack">
-            Back
-          </button>
 
+        <div></div>
+          
           <form onSubmit={this.handleSubmit}>
-            <div className="row">
+            <div className="row" style={{marginTop:"20px"}}>
               <div className="col s6">
-                <label style={{ fontSize: "15px" }}>First Name*</label>
+                <label style={{ fontSize: "15px"}}>First Name*</label>
 
                 <input
                   type="text"
@@ -295,24 +378,11 @@ class EditProfile extends Component {
                   
                 />
 
- {/* <Input
-                                            name="firstname"
-                                            style={{ width: "100%" }}
-                                            label="First Name"
-                                            pattern={"[A-Za-z]+"}
-                                            minLength={2}
-                                            value={this.state.fields.firstname}
-                  onChange={this.handleChange}
-                  
-                                            required={true}
-                                        /> */}
-
-
                 <div className="errorMsg">{this.state.errors.firstname}</div>
               </div>
 
               <div className="col s6" margin-right="200px">
-                <label style={{ fontSize: "15px" }}>Last Name*</label>
+                <label style={{ fontSize: "15px"}}>Last Name*</label>
 
                 <input
                   type="text"
@@ -341,29 +411,20 @@ class EditProfile extends Component {
               </div>
             </div>
 
-            {/* <Calendar
-          onChange={this.handleDateChange}
-          value={this.state.fields.dob}
-        /> */}
             <div className="row">
               <div className="col s12">
                 <label style={{ fontSize: "15px" }}>Date of Birth *</label>
                 <input
                   className="datepicker"
-                  ref="dob"
+                  ref="date_of_birth"
                   // readOnly={true}
-                  name="dob"
-                  //value={this.state.fields.dob}
-                defaultValue={this.state.fields.dob}
-                //  onChange={this.handleDateChange}
+                  name="date_of_birth"
+                  // value={this.state.fields.date_of_birth}
+                 defaultValue={this.state.fields.date_of_birth}
+                onChange={this.handleDateChange}
                 />
-                <div className="errorMsg">{this.state.errors.dob}</div>
-
-                {/* <DatePicker
-                  onChange={this.handleChange1}
-                  value={this.state.value}
-                /> */}
-              </div>
+                <div className="errorMsg">{this.state.errors.date_of_birth}</div>
+             </div>
             </div>
 
             <div className="row">
@@ -384,23 +445,7 @@ class EditProfile extends Component {
               </div>
             </div>
 
-            {/* <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Contact *</label>
-
-                <ReactPhoneInput
-                  defaultCountry={"us"}
-                  inputExtraProps={{
-                    name: "phone",
-                    required: true,
-                    autoFocus: true
-                  }}
-                  onChange={this.handleOnChange}
-                  value={this.state.fields.phone}
-                />
-              </div>
-            </div> */}
-
+          
             <div className="row">
               <label style={{ fontSize: "15px" }} className="contact">
                 {" "}
@@ -434,7 +479,6 @@ class EditProfile extends Component {
                 />
               </div>
             </div>
-            {console.log(this.state.dial_code)}
             <label type="hidden" id="joint" ref="phone" name="phone" />
 
             <div className="row">
@@ -457,14 +501,14 @@ class EditProfile extends Component {
                 <label style={{ fontSize: "15px" }}>Date of Joining *</label>
                 <input
                   className="datepicker"
-                  ref="doj"
+                  ref="date_of_join"
                   readOnly={true}
-                  name="doj"
+                  name="date_of_join"
 
-                  defaultValue={this.state.fields.doj}
-                 // onChange={this.handleDateChange}
+                  defaultValue={this.state.fields.date_of_join}
+                  onChange={this.handleDateChange}
                 />
-                <div className="errorMsg">{this.state.errors.doj}</div>
+                <div className="errorMsg">{this.state.errors.date_of_join}</div>
 
               </div>
             </div>
@@ -472,7 +516,6 @@ class EditProfile extends Component {
             <div className="row">
               <div className="col s12">
                 <label style={{ fontSize: "15px" }}>Website</label>
-
                 <input
                   id="website"
                   type="text"
@@ -490,11 +533,11 @@ class EditProfile extends Component {
                 <label>
                   <input
                     type="radio"
-                    name="sex"
+                    name="gender"
                     value="Male"
                     onChange={this.handleChange}
-                    ref="sex"
-                    checked={this.state.fields.sex == "Male"}
+                    ref="gender"
+                    checked={this.state.fields.gender == "Male"}
                   />
                   <span className="m-2">Male</span>
                 </label>
@@ -502,11 +545,11 @@ class EditProfile extends Component {
                 <label>
                   <input
                     type="radio"
-                    name="sex"
+                    name="gender"
                     value="Female"
                     onChange={this.handleChange}
-                    ref="sex"
-                    checked={this.state.fields.sex == "Female"}
+                    ref="gender"
+                    checked={this.state.fields.gender == "Female"}
                   />
                   <span>Female</span>
                 </label>
@@ -516,12 +559,10 @@ class EditProfile extends Component {
             <div className="row">
               <div className="col s12">
                 <label style={{ fontSize: "15px" }}>About Me</label>
-
                 <textarea
                   id="textarea1"
                   className="materialize-textarea"
                   data-length="200"
-                  // required
                   ref="about"
                   name="about"
                   value={this.state.fields.about}
@@ -533,7 +574,6 @@ class EditProfile extends Component {
             <div className="row">
               <div className="col s12">
                 <label style={{ fontSize: "15px" }}>Interest *</label>
-
                 <input
                   id="interest"
                   type="text"
@@ -555,7 +595,7 @@ class EditProfile extends Component {
               </div>
             </div>
           </form>
-        </div>
+          </div>
       </ErrorBoundary>
     );
   }

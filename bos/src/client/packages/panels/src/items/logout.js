@@ -52,7 +52,7 @@ export default class LogoutPanelItem extends PanelItem {
 
   render(state, actions) {
     const logout = async () => {
-      console.log('test');
+      // console.log('test');
       await this.core.make('osjs/session').save();
       this.core.make('osjs/auth').logout();
     };
