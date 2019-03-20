@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
 import M from "materialize-css";
-// import "./Sample.css";
 
 class Preferences extends Component {
   constructor(props) {
@@ -25,8 +24,6 @@ class Preferences extends Component {
   
    });
 
-    // this.handleOptionChange1 = this.handleOptionChange1.bind(this);
-    // this.handleOptionChange2 = this.handleOptionChange2.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -34,8 +31,6 @@ class Preferences extends Component {
 async getPreferences() {
     // call to api using wrapper
     let userpreferences = await this.core.make("oxzion/profile").get();
-    // let userpreferences = await helper.request("v1", "/user/me/m", {}, "get");
-    // console.log(userpreferences);
 
     if (this.state.initialized < 0) {
       this.setState({ initialized: this.state.initialized + 1 });
@@ -53,17 +48,6 @@ async getPreferences() {
 
   }
 
-  // handleOptionChange1(changeEvent) {
-  //   this.setState({
-  //     selectedOption1: changeEvent.target.value
-  //   });
-  // }
-
-  // handleOptionChange2(changeEvent) {
-  //   this.setState({
-  //     selectedOption2: changeEvent.target.value
-  //   });
-  // }
   
   handleChange(e) {
     let fields = this.state.fields;
@@ -123,8 +107,8 @@ async getPreferences() {
           <form onSubmit={this.handleSubmit}>
           <div className="row">
             <div className="col s12">
-              <div className="input-field col s2">
-                <label id="name" style={{paddingTop:"6px"}}>Sound Notification</label>
+              <div className="input-field col s3">
+                <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Sound Notification</b></label>
               </div>
               <div className="input-field col s1">
                 <label id="name">
@@ -159,8 +143,8 @@ async getPreferences() {
           <div>
             <div className="row">
               <div className="col s12">
-                <div className="input-field col s2">
-                  <label id="name" style={{paddingTop:"6px"}}>Email Alerts</label>
+                <div className="input-field col s3">
+                  <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Email Alerts</b></label>
                 </div>
                 <div className="input-field col s1">
                   <label id="name">
@@ -194,9 +178,9 @@ async getPreferences() {
 
           <div className="row" id="row1" style={{paddingBottom:0}}>
             <div className="col s12">
-            <div className="input-field col s2">
+            <div className="input-field col s3">
 
-              <label id="name" style={{paddingTop:"10px"}}>Local Time Zone</label>
+              <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Local Time Zone</b></label>
               </div>
               <div className="input-field col s3">
               <select
@@ -218,9 +202,9 @@ async getPreferences() {
 
           <div className="row" id="row2" style={{paddingBottom:0}}>
                 <div className="col s12">
-                <div className="input-field col s2">
+                <div className="input-field col s3">
 
-                <label id="name" style={{paddingTop:"10px"}}>Date Format</label>
+                <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date Format</b></label>
                   </div>
                 <div className="input-field col s3">
                 <input
@@ -246,7 +230,7 @@ async getPreferences() {
 
           <div className="row">
             <div className="col s12 input-field">
-              <button className="btn waves-effect waves-light" type="submit">
+              <button className="btn waves-effect waves-light waves-effect black" type="submit">
                 Save
               </button>
             </div>

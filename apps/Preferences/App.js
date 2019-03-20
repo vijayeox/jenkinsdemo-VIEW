@@ -4,7 +4,7 @@ import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
 import Profile from "./tabs/Profile.js";
-import "./tabs/Sample.css";
+import "./tabs/Preferences.css";
 
 class App extends Component {
   constructor(props) {
@@ -38,54 +38,32 @@ async changePassword(formData){
 
   init() {}
 
-  componentDidMount() {
-    //   var self=this;
-    //   if(this.props.args){
-    //     this.props.args.windows[0].$content.addEventListener('windowResized', function (e) {
-    //       self.setState({height:e.detail.dimensions.height})
-    //     }, false)
-    //   }
-    // var El = document.getElementById("click1");
-    // if (El) {
-    //   El.addEventListener(
-    //     "click",
-    //     function() {
-    //       document.getElementById("profileform").style.display = "";
-    //       // document.getElementById("editProfileBox").style.display = "none";
-    //       document.getElementById("imageBox").style.display = "none";
-    //       document.getElementById("webcamcomponent").style.display = "none";
-    //     },
-    //     false
-    //   );
-    // }
-  }
-
   render() {
     return (
       <Tabs defaultTab="vertical-tab-one">
-        <TabList>
+        <TabList style={{width:"100%",backgroundImage:"url(./apps/Preferences/bg3.jpg)"}}>
           <div id="click1">
-            <Tab tabFor="vertical-tab-one">
+            <Tab tabFor="vertical-tab-one" style={{color:"white"}}>
               <i className="fa fa-user-circle" id="iconj" />
               <span className="tabHeader">EditProfile</span>
             </Tab>
           </div>
-          <Tab tabFor="vertical-tab-two">
+          <Tab tabFor="vertical-tab-two" style={{color:"white"}}>
             <i className="fa fa-key" id="iconj" />
             <span className="tabHeader">Change Password</span>
           </Tab>
-          <Tab tabFor="vertical-tab-three">
+          <Tab tabFor="vertical-tab-three" style={{color:"white"}}>
             <i className="fa fa-cogs" id="iconj" />
             <span className="tabHeader">Preferences</span>
           </Tab>
         </TabList>
-        <TabPanel tabId="vertical-tab-one" className="tab1">
+        <TabPanel tabId="vertical-tab-one" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}}>
           <EditProfile args={this.core} />
         </TabPanel>
-        <TabPanel tabId="vertical-tab-two" className="tab1">
+        <TabPanel tabId="vertical-tab-two" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}}>
         <ChangePassword changePassword={this.changePassword} />
         </TabPanel>
-        <TabPanel tabId="vertical-tab-three" className="tab1">
+        <TabPanel tabId="vertical-tab-three" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}} >
           <Preferences args={this.core}/>
         </TabPanel>
       </Tabs>

@@ -1,0 +1,19 @@
+{
+  "type": "application",
+  "name": "ImageUploader",
+  "category": null,
+  "autostart":false,
+  "server": "server.js",
+  "hidden": true,
+  "singleton":"true",
+  "title": {
+    "en_EN": "ImageUploader"
+  },
+  "description": {
+    "en_EN": "ImageUploader"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

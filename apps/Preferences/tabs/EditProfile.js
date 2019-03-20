@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Countries from "./Countries";
 import M from "materialize-css";
-// import "./Sample.css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
 import Img1 from "./Img1.js";
@@ -32,16 +31,11 @@ class EditProfile extends Component {
       this.splitPhoneNumber();
     });
 
-    // this.onSelect = this.onSelect.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onSelect2 = this.onSelect2.bind(this);
     this.onSelect1 = this.onSelect1.bind(this);
-    //this.functinback=this.functinback.bind(this);
       this.joinPhNo = this.joinPhNo.bind(this);
-    //this.handleOnChange = this.handleOnChange.bind(this);
-   // this.handleDateChange = this.handleDateChange.bind(this);
-   // this.handleChange1 = this.handleChange1.bind(this);
   }
 
   
@@ -80,84 +74,6 @@ class EditProfile extends Component {
 
 
   componentDidMount() {
-
-// function ready(fn) {
-//       if (
-//         document.attachEvent
-//           ? document.readyState === "complete"
-//           : document.readyState !== "loading"
-//       ) {
-//         fn();
-//       } else {
-//         document.addEventListener("DOMContentLoaded", fn);
-//       }
-//     }
-//     ready(function() {
-//           document.getElementById("imageBox").style.display = "none";
-//       document.getElementById("webcamcomponent").style.display = "none";
-//     });
-
-
-//     var myEl2 = document.getElementById("img1");
-//     if (myEl2) {
-//       myEl2.addEventListener(
-//         "click",
-//         function() {
-//           document.getElementById("profileform").style.display = "none";
-//           document.getElementById("imageBox").style.display = "";
-//           document.getElementById("webcamcomponent").style.display = "none";
-//           document.getElementById("modalbutton").style.display = "none";
-//         },
-//         false
-//       );
-//     }
-
-//     var myEl3 = document.getElementById("goBack1");
-//     if (myEl3) {
-//       myEl3.addEventListener(
-//         "click",
-//         function() {
-//           document.getElementById("imageBox").style.display = "none";
-//           document.getElementById("profileform").style.display = "";
-//           document.getElementById("modalbutton").style.display = "";
-//         },
-//         false
-//       );
-//     }
-
-//     var myEl4 = document.getElementById("webcam");
-//     if (myEl4) {
-//       myEl4.addEventListener(
-//         "click",
-//         function() {
-//           document.getElementById("profileform").style.display = "none";
-//           document.getElementById("webcamcomponent").style.display = "";
-//           document.getElementById("imageBox").style.display = "none";
-//           document.getElementById("modalbutton").style.display = "none";
-//         },
-//         false
-//       );
-//     }
-
-//     var myEl5 = document.getElementById("goBack2");
-//     if (myEl5) {
-//       myEl5.addEventListener(
-//         "click",
-//         function() {
-//           document.getElementById("webcamcomponent").style.display = "none";
-//           document.getElementById("profileform").style.display = "";
-//           document.getElementById("modalbutton").style.display = "";
-//         },
-//         false
-//       );
-//     }
-
-//     var modalelems = document.querySelectorAll(".modal");
-//     var instances = M.Modal.init(modalelems, { inDuration: 250 });
-
-//     var tooltipElems = document.querySelectorAll(".tooltipped");
-//     var instances1 = M.Tooltip.init(tooltipElems, { position: 'left' });
-
 
     let elems = document.querySelectorAll(".datepicker");
     M.Datepicker.init(elems, {
@@ -291,31 +207,10 @@ class EditProfile extends Component {
       }
     }
 
-    // if (!fields["phoneno"]) {
-    //   formIsValid = false;
-    //   errors["phoneno"] = "*Please enter your mobile no.";
-    // }
-
-    // if (typeof fields["phoneno"] !== "undefined") {
-    //   if (!fields["phoneno"].match(/^[0-9]{10}$/)) {
-    //     formIsValid = false;
-    //     errors["phoneno"] = "*Please enter valid mobile no.";
-    //   }
-    // }
-    
-    // if(!this.state.fields.doj) {
-    //   formIsValid = false;
-    //   errors["dob"] = "*Please enter your Date of Birth";
-    // }
-    // if(!this.doj) {
-    //   formIsValid = false;
-    //   errors["doj"] = "*Please enter your Date of Joining";
-    // }
-
-    // if(this.doj.date < this.dob.date){
-    //    formIsValid = false;
-    //    alert("*Date of Joining cannot be earlier than Date of Birth");
-    //  }
+    if(this.doj.date < this.dob.date){
+       formIsValid = false;
+       alert("*Date of Joining cannot be earlier than Date of Birth");
+     }
 
     if (!fields["address"]) {
       formIsValid = false;
@@ -333,11 +228,6 @@ class EditProfile extends Component {
     return formIsValid;
   }
 
-  // functionreferesh(){
-  //   this.props.action()
-  // }
-
-
   init() {}
   render() {
     const self = this;
@@ -351,12 +241,7 @@ class EditProfile extends Component {
         self.setState({ initialized: 1 });
       }
     }, 0);
-
-    // <button className="waves-effect waves-light btn" id="goBack">
-          //   Back
-          // </button>
-
-    return (
+   return (
       <ErrorBoundary>
         <div>
 
@@ -365,7 +250,7 @@ class EditProfile extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className="row" style={{marginTop:"20px"}}>
               <div className="col s6">
-                <label style={{ fontSize: "15px"}}>First Name*</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>First Name *</b></label>
 
                 <input
                   type="text"
@@ -382,7 +267,7 @@ class EditProfile extends Component {
               </div>
 
               <div className="col s6" margin-right="200px">
-                <label style={{ fontSize: "15px"}}>Last Name*</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Last Name *</b></label>
 
                 <input
                   type="text"
@@ -390,7 +275,7 @@ class EditProfile extends Component {
                   ref="lastname"
                   value={this.state.fields.lastname}
                   onChange={this.handleChange}
-                  
+                  required
                 />
                 <div className="errorMsg">{this.state.errors.lastname}</div>
               </div>
@@ -398,7 +283,7 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Email *</label>
+                <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"trajan"}}><b>Email *</b></label>
 
                 <input
                   name="email"
@@ -406,6 +291,7 @@ class EditProfile extends Component {
                   value={this.state.fields.email}
                   onChange={this.handleChange}
                   ref="email"
+                  required
                 />
                 <div className="errorMsg">{this.state.errors.email}</div>
               </div>
@@ -413,13 +299,12 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Date of Birth *</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date of Birth *</b></label>
                 <input
                   className="datepicker"
                   ref="date_of_birth"
-                  // readOnly={true}
                   name="date_of_birth"
-                  // value={this.state.fields.date_of_birth}
+                  required
                  defaultValue={this.state.fields.date_of_birth}
                 onChange={this.handleDateChange}
                 />
@@ -429,7 +314,7 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Country *</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Country *</b></label>
                 <select
                   value={this.state.fields.country}
                   onChange={this.handleChange}
@@ -447,9 +332,9 @@ class EditProfile extends Component {
 
           
             <div className="row">
-              <label style={{ fontSize: "15px" }} className="contact">
-                {" "}
-                Contact*
+              <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}} className="contact">
+               
+                <b>Contact *</b>
               </label>
               <br />
 
@@ -483,7 +368,7 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Address *</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan" }}><b>Address *</b></label>
                 <textarea
                   className="materialize-textarea"
                   data-length="200"
@@ -498,13 +383,12 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Date of Joining *</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date of Joining *</b></label>
                 <input
                   className="datepicker"
                   ref="date_of_join"
-                  readOnly={true}
                   name="date_of_join"
-
+                  required
                   defaultValue={this.state.fields.date_of_join}
                   onChange={this.handleDateChange}
                 />
@@ -515,7 +399,7 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Website</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Website</b></label>
                 <input
                   id="website"
                   type="text"
@@ -529,8 +413,8 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Sex *</label>
-                <label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Sex *</b></label>
+                <label style={{color:"#000000"}}><b>
                   <input
                     type="radio"
                     name="gender"
@@ -539,10 +423,10 @@ class EditProfile extends Component {
                     ref="gender"
                     checked={this.state.fields.gender == "Male"}
                   />
-                  <span className="m-2">Male</span>
+                  <span className="m-2">Male</span></b>
                 </label>
 
-                <label>
+                <label style={{color:"#000000"}}><b>
                   <input
                     type="radio"
                     name="gender"
@@ -551,14 +435,14 @@ class EditProfile extends Component {
                     ref="gender"
                     checked={this.state.fields.gender == "Female"}
                   />
-                  <span>Female</span>
+                  <span>Female</span></b>
                 </label>
               </div>
             </div>
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>About Me</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>About Me</b></label>
                 <textarea
                   id="textarea1"
                   className="materialize-textarea"
@@ -573,12 +457,12 @@ class EditProfile extends Component {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px" }}>Interest *</label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan" }}><b>Interest *</b></label>
                 <input
                   id="interest"
                   type="text"
                   className="validate"
-                  // required
+                  required
                   ref="interest"
                   name="interest"
                   value={this.state.fields.interest}
@@ -589,7 +473,7 @@ class EditProfile extends Component {
             </div>
             <div className="row">
               <div className="col s12 input-field">
-                <button className="btn waves-effect waves-light" type="submit" onClick={this.functionreferesh}>
+                <button className="btn waves-effect waves-light black" type="submit" onClick={this.functionreferesh}>
                   Submit
                 </button>
               </div>

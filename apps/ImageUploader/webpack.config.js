@@ -15,6 +15,7 @@ if (mode === 'production') {
   }));
 }
 
+
 module.exports = {
   mode,
   devtool: 'source-map',
@@ -29,8 +30,8 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin([
-      'Images/'
+  new CopyWebpackPlugin([
+      'images/'
     ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -39,7 +40,8 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.(sa|sc|c)ss$/,
         exclude: /(node_modules|bower_components)/,
         use: [
