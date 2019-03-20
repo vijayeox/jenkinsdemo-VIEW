@@ -3,8 +3,6 @@ import Countries from "./Countries";
 import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
-import Img1 from "./Img1.js";
-import Webcam from "./Webcam.js";
 
 class EditProfile extends Component {
   constructor(props) {
