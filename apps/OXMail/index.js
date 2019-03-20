@@ -28,9 +28,12 @@
   * @licence Simplified BSD License
   */
   import {
-    name as applicationName,
-    mailServer as baseUrl
+    name as applicationName 
   } from "./metadata.json";
+  let baseUrl = "";
+  import('./config/' + (process.env.NODE_ENV || 'development') + '.json').then(function(config){
+    baseUrl = config["mailServer"];
+  });
   const trayOptions = {};
   let mailCount = 0;
   let tray = null;

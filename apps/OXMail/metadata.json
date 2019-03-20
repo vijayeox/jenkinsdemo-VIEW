@@ -2,6 +2,7 @@
   "type": "application",
   "name": "OXMail",
   "category": null,
+  "singleton":true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "OX Mail"
@@ -12,6 +13,6 @@
   "files": [
     "main.js",
     "main.css"
-  ],
-  "mailServer": "https://bos.oxzion.com/rainloop"
+  ]
+  
 }
