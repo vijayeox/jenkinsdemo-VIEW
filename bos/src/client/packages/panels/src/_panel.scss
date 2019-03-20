@@ -94,16 +94,18 @@
   transition: 0.5s;
   #editbutton{
     display: none;
-    transition-delay: 30s;
+    transition: 3s;
+  
   }
 }
 .profile-visible {
   width: 300px;
   z-index: 16777271;
   padding-left: 7px;
-  #editbutton,#logoutbutton{
+  #editbutton{
     display: block;
-        transition-delay: 30s;
+    transition: 3s;
+    
   }
 }
 
@@ -318,13 +320,7 @@
   margin-right: 0px;
 }
 
-
 #editbutton{
-  position: absolute;
-  right: 40px;
-}
-
-#logoutbutton{
   position: absolute;
   right: 0;
 }

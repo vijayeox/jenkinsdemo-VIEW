@@ -59,7 +59,7 @@ export default class Panel extends EventEmitter {
     );
 
     this.dateString = '';
-    this.date1 = '';
+    this.dob= '';
     this.items = [];
     this.inited = false;
     this.destroyed = false;
@@ -166,59 +166,77 @@ export default class Panel extends EventEmitter {
     let profileDetails = this.core.make('oxzion/profile').get();
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
-    this.date1 = this.formatDate(this.dateString);
+    this.dob= this.formatDate(this.dateString);
 
-    let profileCard = document.createElement('div');
-    profileCard.innerHTML = '<br/> <a '
-                     + 'class="btn-floating btn-small red" '
-                     + 'onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
-                     + 'id="editbutton">'
-                     + '<i class="material-icons">edit</i>'
-                     + 'style="transition-delay:10s;"'
-                     + '</a>' + '<img id="imgprofile" '
-                     + 'src=' + profileInfo['icon'] + ' '
-                     + 'height="130" '
-                     + 'width="130" '
-                     + 'className="circle img-responsive"'
-                     + 'style="border-radius:50%;cursor:pointer;"'
-                     + 'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; />' + '<label '
-                     + 'className="name" '
-                     + 'style="position: absolute;padding-top: 58px;padding-left: 25px;">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</label>' + '<label '
-                    + 'className="name" '
-                    + 'style="position: absolute;padding-top: 82px;padding-left: 26px;">' + profileInfo['designation'] + '</label>';
-    profileElement.appendChild(profileCard);
-    let emailElement = document.createElement('div');
-    emailElement.innerHTML = '<i class="fa-lg fa fa-envelope" id="iconi1" />'
-                + ' label id="info">' + profileInfo['email'] + '</lbel> <br/>';
-    profileElement.appendChild(emailElement);
+   let profileCard = document.createElement('div');
+		profileCard.innerHTML = 
+								'<br/> <a '
+										+'class="btn-floating btn-small waves-effect waves-light red" '
+										+'onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
+										+'id="editbutton">'
+										+'<i class="material-icons">edit</i>'
+										+'style="transition-delay:10s;"'
+										+'</a>'+
 
+									
+									'<img id="imgprofile" '
+										+'src='+profileInfo['icon']+" "
+										+'height="130" '
+										+'width="130" '
+										+'className="circle img-responsive"'
+										+'style="border-radius:50%;cursor:pointer;"'
+										+'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; />'+
 
-    let phoneElement = document.createElement('div');
-    phoneElement.innerHTML = '<i class="fa-lg fa fa-phone" id="iconi" />'
-                + ' label id="info">' + profileInfo['phone'] + '</lbel> <br/>';
-    profileElement.appendChild(phoneElement);
+									'<label '
+										+'className="name" '
+										+'style="position: absolute;padding-top: 58px;padding-left: 25px;">'+profileInfo['firstname']+' '+profileInfo['lastname']+'</label>'+
+										
+									'<label '
+										+'className="name" '
+										+'style="position: absolute;padding-top: 82px;padding-left: 26px;">'+profileInfo['designation']+'</label> ';
+										
+		profileElement.appendChild(profileCard);
 
-
-    let addressElement = document.createElement('div');
-    addressElement.innerHTML = '<i class="fa-lg fa fa-location-arrow" id="iconi" />'
-                + ' label id="addresic">' + profileInfo['address'] + '</lbel> <br/>';
-    profileElement.appendChild(addressElement);
-    let countryElement = document.createElement('div');
-    countryElement.innerHTML = '<i class="fa-lg fa fa-map-marker" id="iconi" />'
-                + ' label id="info">' + profileInfo['country'] + '</lbel> <br/>';
-    profileElement.appendChild(countryElement);
-    let dobElement = document.createElement('div');
-    dobElement.innerHTML = '<i class="fa-lg fa fa-birthday-cake" id="iconi" />'
-                + ' label id="info">' + profileInfo['date_of_birth'] + '</lbel> <br/>';
-    profileElement.appendChild(dobElement);
+		let emailElement = document.createElement('div');
+		emailElement.innerHTML = '<i class="fa-lg fa fa-envelope" id="iconi1" />'
+								+' <label id="info">'+profileInfo['email']+'</label> <br/>';
+		profileElement.appendChild(emailElement);
 
 
-    let interestElement = document.createElement('div');
-    interestElement.innerHTML = '<i class="fa-lg fa fa-heart" id="iconi" />'
-                + ' label id="info">' + profileInfo['interest'] + '</lbel> <br/>';
-    profileElement.appendChild(interestElement);
-    profileElement.id = 'profile';
-    this.core.$root.appendChild(profileElement);
+		let phoneElement = document.createElement('div');
+		phoneElement.innerHTML = '<i class="fa-lg fa fa-phone" id="iconi" />'
+								+' <label id="info">'+profileInfo['phone']+'</label> <br/>';
+		profileElement.appendChild(phoneElement);
+
+
+		let addressElement = document.createElement('div');
+		addressElement.innerHTML = '<i class="fa-lg fa fa-location-arrow" id="iconi" />'
+								+' <label id="addresic">'+profileInfo['address']+'</label> <br/>';
+		profileElement.appendChild(addressElement);
+
+
+		let countryElement = document.createElement('div');
+		countryElement.innerHTML = '<i class="fa-lg fa fa-map-marker" id="iconi" />'
+								+' <label id="info">'+profileInfo['country']+'</label> <br/>';
+		profileElement.appendChild(countryElement);
+
+
+		let dobElement = document.createElement('div');
+		dobElement.innerHTML = '<i class="fa-lg fa fa-birthday-cake" id="iconi" />'
+								+' <label id="info">'+this.dob+'</label> <br/>';
+		profileElement.appendChild(dobElement);
+
+
+		let interestElement = document.createElement('div');
+		interestElement.innerHTML = '<i class="fa-lg fa fa-heart" id="iconi" />'
+								+' <label id="info">'+profileInfo['interest']+'</label> <br/>';
+		profileElement.appendChild(interestElement);
+		
+		
+		
+		profileElement.id = 'profile';
+		this.core.$root.appendChild(profileElement);
+
     if (this.options.position === 'top') {
       profileElement.style['margin-top'] = '3.5em';
     } else {
@@ -260,4 +278,5 @@ export default class Panel extends EventEmitter {
         return desktop.applySettings();
       });
   }
+
 }
