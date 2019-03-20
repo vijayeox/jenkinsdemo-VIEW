@@ -10,25 +10,35 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
   "dependencies": {
-    "copy-webpack-plugin": "^4.6.0"
+    "config": "^3.0.1",
+    "copy-webpack-plugin": "^4.6.0",
+    "file-system": "^2.2.2",
+    "save": "^2.3.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-rc.1",
-    "@babel/plugin-transform-runtime": "^7.0.0-rc.1",
-    "@babel/preset-env": "^7.0.0-rc.1",
-    "@babel/runtime": "^7.0.0-rc.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.0",
     "babel-loader": "^8.0.0-beta.4",
+    "babel-plugin-dynamic-import-node-babel-7": "^2.0.7",
     "css-loader": "^1.0.0",
-    "eslint": "^5.4.0",
+    "eslint": "^5.15.3",
     "mini-css-extract-plugin": "^0.4.1",
     "node-sass": "^4.9.3",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
     "sass-loader": "^7.1.0",
     "stylelint": "^9.4.0",
     "stylelint-config-standard": "^18.2.0",
-    "stylelint-scss": "^3.3.0",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
+    "stylelint-scss": "^3.5.4",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   },
   "osjs": {
     "type": "package"

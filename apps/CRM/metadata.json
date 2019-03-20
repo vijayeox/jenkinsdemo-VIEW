@@ -2,6 +2,7 @@
   "type": "application",
   "name": "CRM",
   "category": null,
+  "singleton":true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "CRM"

@@ -27,8 +27,13 @@
  * @author  Anders Evenrud <andersevenrud@gCRM.com>
  * @licence Simplified BSD License
  */
-import { name as applicationName } from "./metadata.json";
-
+import {
+  name as applicationName 
+} from "./metadata.json";
+let baseUrl = "";
+import('./config/' + (process.env.NODE_ENV || 'development') + '.json').then(function(config){
+  baseUrl = config["mailServer"];
+});
 const createIframe = (bus, proc, win, cb) => {
   const baseUrl = "http://localhost/orocrm/";
   const iframe = document.createElement("iframe");
