@@ -39,6 +39,7 @@
     "OXMail": "file:../apps/OXMail",
     "OxzionTheme": "file:../themes/OxzionTheme",
     "Preferences": "file:../apps/Preferences",
+    "CRM": "file:../apps/CRM",
     "ImageUploader": "file:../apps/ImageUploader",
     "babel-loader": "^8.0.5",
     "copy-webpack-plugin": "^4.6.0",
