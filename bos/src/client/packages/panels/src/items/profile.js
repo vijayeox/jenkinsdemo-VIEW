@@ -30,7 +30,6 @@
 
 import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
-import React from 'react';
 
 // const profileIcon = require('../../../../assets/images/profile_pic.png');
 
