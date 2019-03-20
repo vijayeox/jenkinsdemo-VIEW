@@ -148,15 +148,6 @@ export const defaultConfiguration = {
       sounds: 'FreedesktopSounds',
       icons: 'GnomeIcons',
       animations: false,
-      panels: [{
-        position: 'top',
-        items: [
-          {name: 'menu'},
-          {name: 'windows'},
-          {name: 'tray'},
-          {name: 'logout'}
-        ]
-      }],
       widgets: [],
       keybindings: [],
       background: {

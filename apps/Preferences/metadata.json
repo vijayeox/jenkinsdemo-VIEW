@@ -5,6 +5,7 @@
   "autostart":false,
   "server": "server.js",
   "icon": "icon.png",
+  "hidden": true,
   "singleton": true,
   "title": {
     "en_EN": "Preferences"
