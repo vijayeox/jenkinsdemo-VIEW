@@ -3,7 +3,6 @@ import { Tabs, Tab, TabPanel, TabList } from "react-web-tabs";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
-import Profile from "./tabs/Profile.js";
 import "./tabs/Preferences.css";
 
 class App extends Component {
@@ -14,7 +13,6 @@ class App extends Component {
     this.state = {
   
       fields:{}
-      //  height : this.core.args.windows[0].$content.scrollHeight
     };
     this.profile={};
 
