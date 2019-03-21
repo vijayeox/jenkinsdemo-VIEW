@@ -25,15 +25,15 @@ class Home extends React.Component {
   componentDidMount() {
     M.AutoInit();
 
-    $(document).ready(function() {
+    $(document).ready(function () {
       $("#componentsBox").hide();
 
-      $(document).on("click", ".moduleBtn", function() {
+      $(document).on("click", ".moduleBtn", function () {
         $(".DashBG").fadeOut(),
           $("#componentsBox").show();
       });
 
-      $(document).on("click", ".goBack", function() {
+      $(document).on("click", ".goBack", function () {
         $("#componentsBox").hide(), $(".DashBG").show();
       });
     });
@@ -222,7 +222,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.announClick}>
               <img src="apps/OXAdmin/131-laptop.svg"
                 className="moduleBtn App-logo"
-               />
+              />
             </div>
             <div className="titles">Announcements</div>
           </div>
@@ -231,7 +231,7 @@ class Home extends React.Component {
             <div className="block d1" onClick={this.appClick}>
               <img src="apps/OXAdmin/102-production.svg"
                 className="moduleBtn App-logo"
-               />
+              />
             </div>
             <div className="titles">Apps</div>
           </div>
@@ -244,7 +244,7 @@ class Home extends React.Component {
 
 
   orgClick = (e) => {
-    ReactDOM.render(<Organization args={this.core}  unmountMe={this.handleChildUnmount}/>, document.getElementById('componentsBox'));
+    ReactDOM.render(<Organization args={this.core} unmountMe={this.handleChildUnmount} />, document.getElementById('componentsBox'));
   }
 
   groupClick = (e) => {
@@ -268,7 +268,7 @@ class Home extends React.Component {
   }
 
   appClick = (e) => {
-    ReactDOM.render(<Application args={this.core} />,document.getElementById('componentsBox'));
+    ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
   }
 
   render() {
@@ -283,8 +283,9 @@ class Home extends React.Component {
           }}
         >
           <center>
-            <div>
-              <div id="adminHeader">Admin Control Center</div>
+            <div style={{ backgroundColor: "#a39f9f" }} >
+              <img className="responsive-img headerImage" src="https://www.oxzion.com/public/assets/img/OXZion.png"></img>
+              {/* <div >Vantage Agora</div> */}
             </div>
             <div className="container">
               <select
@@ -302,8 +303,8 @@ class Home extends React.Component {
                 <option value="6">Super Admin</option>
               </select>
             </div>
-            <div className="container" style={{height: '-webkit-fill-available', overflowY : 'auto'}}>
-            {this.createBlock()}
+            <div className="container" style={{ height: '-webkit-fill-available', overflowY: 'auto' }}>
+              {this.createBlock()}
             </div>
           </center>
         </div>

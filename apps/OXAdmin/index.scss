@@ -36,6 +36,11 @@
     color: #183651;
   }
 
+  .headerImage {
+    max-width: 35%;
+    max-height: 35%;
+  }
+
   .d1 {
     cursor: pointer;
     // border: 3px solid #433e44b4;
@@ -74,7 +79,7 @@
     height: 360px;
   }
 
-  .k-grid{
+  .k-grid {
     margin: 15px;
   }
 
