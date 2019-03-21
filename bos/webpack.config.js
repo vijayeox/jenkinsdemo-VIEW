@@ -4,7 +4,9 @@ const minimize = mode === 'production';
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const {DefinePlugin} = webpack;
+const {
+  DefinePlugin
+} = webpack;
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const npm = require('./package.json');
 const plugins = [];
@@ -21,7 +23,7 @@ if (mode === 'production') {
 }
 
 module.exports = {
-  mode,
+  mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
   entry: {
     osjs: [
@@ -54,25 +56,22 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [
-          {
-            loader: 'file-loader'
-          }
-        ]
+        use: [{
+          loader: 'file-loader'
+        }]
       },
       {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
           loader: 'file-loader',
-          
+
         }
       },
-      { 
+      {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff" 
+        loader: "url-loader?limit=10000&mimetype=application/font-woff"
       },
       {
         test: /\.(sa|sc|c)ss$/,

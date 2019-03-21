@@ -16,7 +16,7 @@ if (mode === 'production') {
 }
 
 module.exports = {
-  mode,
+  mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
   entry: [
     path.resolve(__dirname, 'index.js'),

@@ -15,7 +15,7 @@ if (mode === 'production') {
 }
 
 module.exports = {
-  mode,
+  mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
   entry: [
     path.resolve(__dirname, 'index.js'),
@@ -35,25 +35,22 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [
-          {
-            loader: 'file-loader'
-          }
-        ]
+        use: [{
+          loader: 'file-loader'
+        }]
       },
       {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
           loader: 'file-loader',
-          
+
         }
       },
-      { 
+      {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff" 
+        loader: "url-loader?limit=10000&mimetype=application/font-woff"
       },
       {
         test: /\.(sa|sc|c)ss$/,

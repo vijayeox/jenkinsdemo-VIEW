@@ -16,7 +16,7 @@ if (mode === 'production') {
 }
 
 module.exports = {
-  mode,
+  mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
   entry: [
     path.resolve(__dirname, 'index.js'),
@@ -29,7 +29,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-  new CopyWebpackPlugin(['oxchat.png']),
+    new CopyWebpackPlugin(['oxchat.png']),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -37,8 +37,7 @@ module.exports = {
     ...plugins
   ],
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.(sa|sc|c)ss$/,
         exclude: /(node_modules|bower_components)/,
         use: [

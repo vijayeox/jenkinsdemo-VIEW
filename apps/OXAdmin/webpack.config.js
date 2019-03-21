@@ -18,7 +18,7 @@ if (mode === "production") {
 }
 
 module.exports = {
-  mode,
+  mode: (mode !== 'development' ? 'production' : mode),
   devtool: "source-map",
   entry: [
     path.resolve(__dirname, "index.js"),
@@ -31,7 +31,7 @@ module.exports = {
     minimize
   },
   plugins: [
-    new CopyWebpackPlugin(["icon.png","images/"]),
+    new CopyWebpackPlugin(["icon.png", "images/"]),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"
