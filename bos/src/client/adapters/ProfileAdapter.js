@@ -18,7 +18,8 @@ export class ProfileServiceProvider extends ServiceProvider {
 	init() {
 		this.core.instance('oxzion/profile', () => ({
 			get: () => this.get(),
-			set: () => this.set()
+			set: () => this.set(),
+			update: () => this.update()
 		}));
 	}
 	get() {
@@ -38,6 +39,14 @@ export class ProfileServiceProvider extends ServiceProvider {
 				this.getProfile()
 			}
 		}
+	}
+	update(){
+		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
+			if(this.lsHelper.get("UserInfo")){
+				this.lsHelper.purge("UserInfo");
+			}
+		}
+		this.set();
 	}
 	getProfile(){
     	let helper = this.core.make("oxzion/restClient");
