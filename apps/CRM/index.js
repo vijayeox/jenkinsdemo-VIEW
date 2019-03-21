@@ -28,14 +28,11 @@
  * @licence Simplified BSD License
  */
 import {
-  name as applicationName 
+  name as applicationName
 } from "./metadata.json";
-let baseUrl = "";
-import('./config/' + (process.env.NODE_ENV || 'development') + '.json').then(function(config){
-  baseUrl = config["mailServer"];
-});
+const baseUrl = process.env.SERVER;
+
 const createIframe = (bus, proc, win, cb) => {
-  const baseUrl = "http://localhost/orocrm/";
   const iframe = document.createElement("iframe");
   iframe.style.width = "100%";
   iframe.style.height = "100%";
@@ -63,7 +60,7 @@ const createIframe = (bus, proc, win, cb) => {
 
   return iframe;
 };
-const makeApiCall = function(core, params) {
+const makeApiCall = function (core, params) {
   return (async () => {
     var caller = core.make("oxzion/restClient");
     // console.log(params.data)
@@ -101,7 +98,11 @@ OSjs.make("osjs/packages").register(
         id: "CRMApplicationWindow",
         icon: proc.resource(proc.metadata.icon),
         title: metadata.title.en_EN,
-        attributes: { state: { maximized: true } }
+        attributes: {
+          state: {
+            maximized: true
+          }
+        }
         // dimension: {width: 400, height: 400},
         // position: {left: 200, top: 0}
       })
@@ -115,11 +116,11 @@ OSjs.make("osjs/packages").register(
         const user = core.make("oxzion/profile").get();
         // Get path to iframe content
         const ret = [];
-        for (let d in user['key']){
-          if(typeof(user['key'][d])=='object'){
-            if(user['key'][d] && user['key'][d][0] && user['key'][d][0]['id'] && user['key'][d][0]['name']){
-              ret.push(encodeURIComponent(d)+'_id' + '=' + encodeURIComponent(user['key'][d][0]['id']));
-              ret.push(encodeURIComponent(d)+'_name' + '=' + encodeURIComponent(user['key'][d][0]['name']));
+        for (let d in user['key']) {
+          if (typeof (user['key'][d]) == 'object') {
+            if (user['key'][d] && user['key'][d][0] && user['key'][d][0]['id'] && user['key'][d][0]['name']) {
+              ret.push(encodeURIComponent(d) + '_id' + '=' + encodeURIComponent(user['key'][d][0]['id']));
+              ret.push(encodeURIComponent(d) + '_name' + '=' + encodeURIComponent(user['key'][d][0]['name']));
             }
           } else {
             ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(user['key'][d]));
