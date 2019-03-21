@@ -1,2 +1,1 @@
-To setup the environment Set the environment in the bashrc file as indicated below. 
-export NODE_ENV=development|qa|staging|productio 
+To override the properties specific for the environment update the .env file

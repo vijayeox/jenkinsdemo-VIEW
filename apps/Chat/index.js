@@ -28,11 +28,8 @@
   * @licence Simplified BSD License
   */
   import {name as applicationName} from './metadata.json';
-  let baseUrl = "";
   
-  import('./config/' + (process.env.NODE_ENV || 'development') + '.json').then(function(config){
-    baseUrl = config["chatServer"];
-  });
+  const baseUrl = process.env.SERVER;
 
   const trayOptions = {};
   let chatCount = 0;
