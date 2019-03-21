@@ -477,7 +477,7 @@ export default class WindowBehavior {
       }, {
         label: _('LBL_CLOSE'),
         disabled: !closeable,
-        onclick: () => win.close()
+        onclick: () => !closeable ? win.minimize() : win.close()
       }]
     });
   }
