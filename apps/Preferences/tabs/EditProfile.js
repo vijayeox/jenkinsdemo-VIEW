@@ -9,6 +9,7 @@ class EditProfile extends Component {
     super(props);
     
     this.core = this.props.args;
+    this.userprofile = this.core.make('oxzion/profile').get();
     this.dob = null;
     this.doj = null;
     this.state = {
@@ -20,12 +21,12 @@ class EditProfile extends Component {
       errors: {},
       initialized: -1,
       phonenumber: {},
+      dateformat:this.userprofile.key.preferences['dateformat']
      
     };
 
     this.getProfile().then(response => {
       this.setState({ fields: response.key });
-      console.log(this.state.fields);
       this.splitPhoneNumber();
     });
 
@@ -75,7 +76,7 @@ class EditProfile extends Component {
 
     let elems = document.querySelectorAll(".datepicker");
     M.Datepicker.init(elems, {
-      format: "dd-mm-yyyy",
+      format: this.state.dateformat,
       showClearBtn: true,
       yearRange: 100
     });
@@ -103,7 +104,6 @@ class EditProfile extends Component {
     this.setState({
       fields
     });
-//    this.validateForm();
   }
 
   joinPhNo() {
@@ -114,31 +114,28 @@ class EditProfile extends Component {
 
   getStandardDateString(date1){
     if(!date1.date){
-      return this.state.fields.dob;
+      return null;
     }      
     return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
- }
+  }
 
 
- getStandardDateString1(date1){
-  if(!date1.date){
-    return this.state.fields.doj;
-  }      
-  return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
-}
 
-  handleSubmit(event) {
+async handleSubmit(event) {
     event.preventDefault();
     
     if (this.validateForm()) {
       const formData = {};
       this.joinPhNo();
 
-      formData.dob = this.getStandardDateString(this.dob);
-      formData.doj= this.getStandardDateString1(this.doj);
-      
-      this.state.fields.dob=formData.dob;
-      this.state.fields.doj=formData.doj;
+      let date_of_birth = this.getStandardDateString(this.dob);
+      let date_of_join= this.getStandardDateString(this.doj);
+      if(date_of_birth){
+        this.state.fields.date_of_birth=date_of_birth;
+      }
+      if(date_of_join){
+        this.state.fields.date_of_join=date_of_join;
+      }
       Object.keys(this.state.fields).map(key => {
         formData[key] = this.state.fields[key];
       });
@@ -147,7 +144,7 @@ class EditProfile extends Component {
 
       let helper = this.core.make("oxzion/restClient");
 
-      let editresponse = helper.request(
+      let editresponse = await helper.request(
         "v1",
         "/user/" + this.state.fields.id,JSON.stringify(formData),
         "put"
@@ -156,11 +153,10 @@ class EditProfile extends Component {
       if (editresponse.status == "error") {
         alert(editresponse.message);
       }else{
-        alert("Successfully Updated");
-        this.props.action();
-
+        alert("Success");
+         this.core.make("oxzion/profile").update();
       }
-
+       
     }
   }
 
@@ -469,6 +465,7 @@ class EditProfile extends Component {
                 <div className="errorMsg">{this.state.errors.interest}</div>
               </div>
             </div>
+           
             <div className="row">
               <div className="col s12 input-field">
                 <button className="btn waves-effect waves-light black" type="submit" onClick={this.functionreferesh}>

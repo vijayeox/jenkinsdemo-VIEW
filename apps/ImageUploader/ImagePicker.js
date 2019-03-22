@@ -44,18 +44,18 @@ class ImagePicker extends Component {
       previewOpen: false
     });
   }
-  handleSubmit(event) {
+  async handleSubmit(event) {
    event.preventDefault();
    var str=this.state.savedImg;
    if(str.startsWith("data:image/")) {
      const formData = {};
      formData.file=this.state.savedImg;
      this.state.fields.file=formData.file;
-       Object.keys(this.state.fields).map(key => {
-        formData[key] = this.state.fields[key];
-      });
+     Object.keys(this.state.fields).map(key => {
+      formData[key] = this.state.fields[key];
+    });
      let helper = this.core.make("oxzion/restClient");
-     let uploadresponse = helper.request(
+     let uploadresponse = await helper.request(
       "v1",
       "/user/profile",
       formData,
@@ -63,52 +63,58 @@ class ImagePicker extends Component {
       );
      if (uploadresponse.status == "error") {
       alert(uploadresponse.message);
-      }
-      else{
+    }
+    else{
       alert("Successfully Updated");
+      this.core.make('oxzion/profile').update();
     }
   } 
 }
 
 render () {
-  return (
-    <div className="bgimg" style={{height:"100%",width:"100%",backgroundImage:"url(./apps/ImageUploader/bg1.png)"}}>
+    const dataImg = this.state.savedImg.indexOf('data') != -1 ? {} : {"display" : "none"};
+    const urlImg = this.state.savedImg.indexOf('data') != -1 ? {"display" : "none"} : {};  
+    return (
+      <div className="bgimg">
 
-    <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
 
-    <center> <div className="avatar-photo">
-    <Button color="primary disabled">Pick an Image</Button>
-    <br/>
+      <center> <div className="avatar-photo">
+      <Button color="primary disabled">Pick an Image</Button>
+      <br/>
 
-    <FileUpload handleFileChange={this.handleFileChange}/>
+      <FileUpload handleFileChange={this.handleFileChange}/>
+      <img src={this.state.savedImg + '?' + (new Date()).getTime()} style={urlImg}
+        name="file" height="200" width="200" className="imgupload"/> 
+      
+      <img src={this.state.savedImg} style={dataImg}
+        name="file" height="200" width="200" className="imgupload"/> 
+      
+      <div style={{paddingTop:'10px'}}>
+      <button className="waves-effect waves-light black btn imgsave2" type="submit">
+      Save
+      </button>
 
-    <img src={this.state.savedImg} name="file" height="200" width="200" className="imgupload"/> 
-    
-    <div style={{paddingTop:'10px'}}>
-        <button className="waves-effect waves-light black btn imgsave2" type="submit">
-        Save
-        </button>
+      <a className="waves-effect waves-light black btn" id="goBack1" style={{paddingLeft:'10px'}}>Back</a>
+      </div>
 
-        <a className="waves-effect waves-light black btn" id="goBack1" style={{paddingLeft:'10px'}}>Back</a>
-    </div>
-
-    </div>
-        {this.state.previewOpen &&
-          <AvatarPicker
-               onRequestHide={this.handleRequestHide}
-               previewOpen={this.state.previewOpen}
-               onSave={this.handleSave}
-               image={this.state.img}
-               width={300}
-               height={300}
-          />          
-        }
-   </center>
-   <br/>
-   </form>
-   </div>
-   );
-}
+      </div>
+      {this.state.previewOpen &&
+        <AvatarPicker
+        onRequestHide={this.handleRequestHide}
+        previewOpen={this.state.previewOpen}
+        onSave={this.handleSave}
+        image={this.state.img}
+        width={300}
+        height={300}
+        />          
+      }
+      </center>
+      <br/>
+      </form>
+      </div>
+      );
+  }
 }
 
 export default ImagePicker;

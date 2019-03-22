@@ -58,10 +58,6 @@ export default class ProfilePanelItem extends PanelItem {
     const profile = () => {
       let profileElement = document.getElementById('profile');
       profileElement.classList.toggle('profile-visible');
-      
-      // console.log('test');
-      // await this.core.make('osjs/session').save();
-      // this.core.make('osjs/auth').profile();
     };
     return super.render('profile', [
       h('div', {
@@ -70,7 +66,7 @@ export default class ProfilePanelItem extends PanelItem {
       }, [
         h('img', {
           className:'profileicon',
-          src: profileIcon['icon'],
+          src: profileIcon['icon'] + '?' + (new Date()).getTime(),
           alt: 'Log Out'
         })])
     ]);

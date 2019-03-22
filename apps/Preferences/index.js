@@ -10,16 +10,17 @@ const register = (core, args, options, metadata) => {
     const proc = core.make('osjs/application', {args, options, metadata});
     // Create  a new Window instance
     //
-   
     const win = proc.createWindow({
       id: 'PreferencesWindow',
       title: metadata.title.en_EN,
       dimension: {width: 690, height: 510},
       position: {left: 700, top: 200},
-      attributes:{
-        maximizable:true,
-        focusable:true
-      }
+      attributes:{  
+      visibility: 'restricted',
+          resizable: false,
+          maximizable: false,   
+          minimizable: false
+ 	 }
     })
     .on('resized', (dimension, win) => {
       var resizedEvent=new CustomEvent("windowResized", {
@@ -35,26 +36,7 @@ const register = (core, args, options, metadata) => {
         ReactDOM.render(<App args = {core} />, $content));
     if(win.$element.className.indexOf('Window_'+applicationName) == -1){
       win.$element.className += " Window_"+applicationName;
-    }    
-    console.log(win.$element);    
-    
-  //  console
-  //       const UserData = 
-  //       async () => {
-  //           let helper = core.make('oxzion/restClient');
-  //           let profile = await helper.request('v1','/user/1/type/a', {}, 'get' );
-  //           console.log(profile);
-  //           return profile;
-  //       };
-        
-  //       let profilecount=0 ;
-  //       UserData().then(response => {
-  //         console.log(response);
-  //         profilecount = response["data"];
-  //         console.log(profilecount);
-  
-  //       });
-
+    } 
 
   // Creates a new WebSocket connection (see server.js)
   //const sock = proc.socket('/socket');

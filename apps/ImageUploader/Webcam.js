@@ -29,12 +29,7 @@ class Webcam extends Component {
 		this.disableWebcam();
 	}
 
-	
-	// addDefaultSrc(ev) {
-	// 	ev.target.src = this.userprofile.key.icon
-	// }
-
-	handleSubmit(event) {
+	async handleSubmit(event) {
 		event.preventDefault();
 		var str=this.state.img;
 		if(str.startsWith("data:image/")) {
@@ -50,7 +45,7 @@ class Webcam extends Component {
 			console.log(formData);
 			let helper = this.core.make("oxzion/restClient");
 
-			let uploadresponse = helper.request(
+			let uploadresponse = await helper.request(
 				"v1",
 				"/user/profile",
 				formData,
@@ -60,23 +55,24 @@ class Webcam extends Component {
 				alert(uploadresponse.message);
 			}else{
 				alert("Successfully Updated");
-				
+			    this.core.make("oxzion/profile").update();
 			}
-
 		}     
 	}
-
- // onError={this.addDefaultSrc}
-
 	render() {
+	  const dataImg = this.state.img.indexOf('data') != -1 ? {} : {"display" : "none"};
+	    		const urlImg = this.state.img.indexOf('data') != -1 ? {"display" : "none"} : {};
 		return (
 			<div className="divscroll">
 			
 			<form onSubmit={this.handleSubmit}>
 			<div className="row webdiv">
 			<div className="col s7">
-			<img id="imgcrop" className="webimg" name="file" src={this.state.img} height="200" width="200"/>  
-			
+			<img src={this.state.img} style={dataImg}  
+			 name="file" height="200" width="200" className="imgupload"/>  
+			<img src={this.state.img + '?' + (new Date()).getTime()} style={urlImg}
+             name="file" height="200" width="200" className="imgupload"/> 
+      
 			<button className="waves-effect waves-light black btn websave" type="submit" onClick={this.disableWebcam}>
 			Save
 			</button>
@@ -97,11 +93,8 @@ class Webcam extends Component {
 				}}
 				idealResolution = {{width: 400, height:480}}
 				isFullscreen={true}
-				imageType = {IMAGE_TYPES.PNG}
-
-				
-				/>
-				
+				imageType = {IMAGE_TYPES.PNG}				
+				/>				
 				) : (
 				<div id="webcam1">
 				<button type="button" onClick={this.enableWebcam} className="waves-effect waves-light black btn fa fa-camera"
@@ -109,7 +102,7 @@ class Webcam extends Component {
 				</button>
 				</div>
 				)}
-</div></div>
+				</div></div>
 				</form>
 
 				</div>
@@ -117,4 +110,4 @@ class Webcam extends Component {
 			}
 		}
 
-		export default Webcam;
+export default Webcam;

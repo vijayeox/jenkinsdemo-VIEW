@@ -16,7 +16,6 @@ class Preferences extends Component {
 
     };
 
-
     this.getPreferences().then(response => {
       console.log(response);
       this.setState({fields :response.key.preferences});
@@ -57,7 +56,7 @@ async getPreferences() {
     });
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
   
     const formData = {};
@@ -72,7 +71,7 @@ async getPreferences() {
 
     let helper = this.core.make("oxzion/restClient");
 
-      let pref = helper.request(
+      let pref = await helper.request(
         "v1",
         "/user/" + this.userprofile.key.id,preferencedata,
         "put"
@@ -82,8 +81,7 @@ async getPreferences() {
         alert(pref.message);
       }else{
         alert("Successfully Updated");
-        
-
+         this.core.make("oxzion/profile").update();
       }
 
   }
@@ -167,7 +165,7 @@ async getPreferences() {
                       value="false"
                       onChange={this.handleChange}
                       ref="emailalerts"
-                      checked={this.state.fields['emailalerts'] == "fasle"}
+                      checked={this.state.fields['emailalerts'] == "false"}
                     />
                     <span>Off</span>
                   </label>

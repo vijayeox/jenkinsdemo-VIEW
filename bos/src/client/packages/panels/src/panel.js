@@ -69,6 +69,14 @@ export default class Panel extends EventEmitter {
       const c = core.make('osjs/panels').get(name);
       this.addItem(new c(this.core, this, options || {}));
     });
+    const self=this;
+    this.core.on("oxzion/profile:updated",function(){
+     if(self.inited){
+        self.destroy();
+        self.init();
+        self.setPosition();
+      }
+    })
     this.formatDate = this.formatDate.bind(this);
   }
 
@@ -89,6 +97,10 @@ export default class Panel extends EventEmitter {
       return false;
     });
 
+    let element = this.core.$root.querySelector("#profile");
+    this.core.$root.removeChild(element);
+    element =  this.core.$root.querySelector("#appmenu");    
+    this.core.$root.removeChild(element);
     this.destroyed = true;
     this.inited = false;
     this.emit('destroy');
@@ -169,18 +181,19 @@ export default class Panel extends EventEmitter {
     this.dob= this.formatDate(this.dateString);
 
    let profileCard = document.createElement('div');
+    let cacheBurster = (new Date()).getTime();
+    console.log(cacheBurster);
 		profileCard.innerHTML = 
 								'<br/> <a '
 										+'class="btn-floating btn-small waves-effect waves-light red" '
 										+'onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
 										+'id="editbutton">'
 										+'<i class="material-icons">edit</i>'
-										+'style="transition-delay:10s;"'
 										+'</a>'+
 
 									
 									'<img id="imgprofile" '
-										+'src='+profileInfo['icon']+" "
+										+'src="'+profileInfo['icon']+"?"+cacheBurster+'"'
 										+'height="130" '
 										+'width="130" '
 										+'className="circle img-responsive"'
@@ -244,7 +257,7 @@ export default class Panel extends EventEmitter {
     }
     this.items.forEach(item => item.init());
     this.emit('create');
-  }
+}
 
   /**
    * Add an item to the panel
