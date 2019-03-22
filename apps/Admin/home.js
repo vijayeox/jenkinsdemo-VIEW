@@ -277,40 +277,21 @@ class Home extends React.Component {
         <div
           className="DashBG"
           style={{
-            paddingBottom: "200px",
             backgroundImage: "url(apps/Admin/wait.jpg)",
             backgroundSize: "cover"
           }}
         >
           <center>
-            <div style={{ backgroundColor: "#a39f9f" }} >
-              <img className="responsive-img headerImage" src="https://www.oxzion.com/public/assets/img/OXZion.png"></img>
-              {/* <div >Vantage Agora</div> */}
-            </div>
-            {/*<div className="container">
-              <select
-                defaultValue="0"
-                id="dropdown"
-                onChange={this.handleChange}
-              >
-                <option value="0" disabled>
-                  Choose your role in the company
-                </option>
-                <option value="1">Employee</option>
-                <option value="2">IT Support</option>
-                <option value="4">Manager</option>
-                <option value="5">Admin</option>
-                <option value="6">Super Admin</option>
-              </select>
-            </div>*/}
-            <div className="container" style={{ height: '-webkit-fill-available', overflowY: 'auto' }}>
-              {this.createBlock()}
+            <div style={{ height: '-webkit-fill-available', display: 'flex' }} >
+              <div className="container">
+                {this.createBlock()}
+              </div>
             </div>
           </center>
         </div>
         <div id="componentsBox">
         </div>
-      </div>
+      </div >
     );
   }
 }

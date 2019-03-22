@@ -31,7 +31,6 @@ class User extends React.Component {
       this.setState({ products: response.data });
     });
   }
-
   addDataNotification(serverResponse) {
     this.notificationDOMRef.current.addNotification({
       title: "Operation Successful",
@@ -143,7 +142,7 @@ class User extends React.Component {
         </div>
 
         <Grid
-          data={orderBy(this.state.products, this.state.sort)}
+           data={orderBy(this.state.products, this.state.sort)}
           sortable
           sort={this.state.sort}
           onSortChange={e => {
@@ -175,6 +174,7 @@ class User extends React.Component {
             cell={cellWithEditing(this.edit, this.remove)}
           />
         </Grid>
+
 
         {this.state.userInEdit && (
           <DialogContainer

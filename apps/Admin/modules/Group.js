@@ -21,7 +21,6 @@ class Group extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      prajwal: ["test"],
       useridList: [],
       usersList: [],
       value: [],

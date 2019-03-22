@@ -25,12 +25,12 @@ const register = (core, args, options, metadata) => {
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
       dimension: {
-        width: 780,
-        height: 570
+        width: 800,
+        height: 520
       },
       position: {
-        left: 250,
-        top: 50
+        left: 150,
+        top: 80
       }
     })
     .on("destroy", () => proc.destroy())
