@@ -3,7 +3,7 @@ import {
   GridCell
 } from "@progress/kendo-react-grid";
 
-export default function CellWithEditing(edit, remove, addUsers) {
+export default function CellWithEditing(edit, remove, addGroupUsers) {
   return class extends GridCell {
     constructor(props) {
       super(props);
@@ -33,7 +33,7 @@ export default function CellWithEditing(edit, remove, addUsers) {
           <button
             className="k-button k-primary"
             onClick={() => {
-              addUsers(this.props.dataItem.usersList);
+              addGroupUsers(this.props.dataItem);
             }}
           >
             Add Users

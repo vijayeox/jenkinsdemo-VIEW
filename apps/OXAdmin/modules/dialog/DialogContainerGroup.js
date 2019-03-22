@@ -29,6 +29,7 @@ export default class DialogContainer extends React.Component {
         name: this.state.groupInEdit.name,
         parent_id: this.state.groupInEdit.parent_id,
         manager_id: this.state.groupInEdit.manager_id,
+        org_id: this.state.groupInEdit.org_id,
         description: this.state.groupInEdit.description,
         type: this.state.groupInEdit.type
       },
@@ -46,6 +47,7 @@ export default class DialogContainer extends React.Component {
         name: this.state.groupInEdit.name,
         parent_id: this.state.groupInEdit.parent_id,
         manager_id: this.state.groupInEdit.manager_id,
+        org_id: this.state.groupInEdit.org_id,
         description: this.state.groupInEdit.description,
         type: this.state.groupInEdit.type
       },
@@ -88,7 +90,7 @@ export default class DialogContainer extends React.Component {
       <Validator>
         <Dialog onClose={this.props.cancel}>
           <div className="row">
-            <form className="col s12" onSubmit={this.submitData} id="groupForm" style={{backgroundColor:'#F1F1F1'}}>
+            <form className="col s12" onSubmit={this.submitData} id="groupForm" style={{ backgroundColor: '#F1F1F1' }}>
               <div className="row">
                 <div className="input-field col s12">
                   <input
@@ -146,6 +148,21 @@ export default class DialogContainer extends React.Component {
                     required={true}
                   />
                   <label htmlFor="organizationManager_id">Manager ID</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s6">
+                  <input
+                    id="organizationOrgId"
+                    type="number"
+                    className="validate"
+                    name="org_id"
+                    value={this.state.groupInEdit.org_id || ""}
+                    onChange={this.onDialogInputChange}
+                    required={true}
+                  />
+                  <label htmlFor="organizationOrgIdorganizationManager_id">Organization ID</label>
                 </div>
               </div>
 
