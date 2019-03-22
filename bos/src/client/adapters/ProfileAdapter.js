@@ -44,16 +44,23 @@ export class ProfileServiceProvider extends ServiceProvider {
 		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
 			if(this.lsHelper.get("UserInfo")){
 				this.lsHelper.purge("UserInfo");
+				const settings = this.core.make('osjs/settings');
+				settings.clear("UserInfo");        	       	
 			}
 		}
 		this.set();
+		this.core.emit("oxzion/profile:updated");
 	}
 	getProfile(){
     	let helper = this.core.make("oxzion/restClient");
 		let profileInformation = JSON.parse(helper.profile());
         if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
 			this.lsHelper.set("UserInfo",profileInformation["data"]);
+			const data = this.lsHelper.get("UserInfo");
+			const settings = this.core.make('osjs/settings');
+			settings.set("UserInfo","key",data.key);
+		    settings.set("UserInfo","timestamp",data.timestamp);
+				
 		}
 	}
-	
 }
