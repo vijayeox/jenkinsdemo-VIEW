@@ -92,7 +92,7 @@
   // Creates the internal callback function when OS.js launches an application
   // Note the first argument is the 'name' taken from your metadata.json file
   OSjs.make("osjs/packages").register(
-    "OXMail",
+    "Mail",
     (core, args, options, metadata) => {
       // Create a new Application instance
       const proc = core.make("osjs/application", {
@@ -106,7 +106,7 @@
       const createProcWindow = () => {
         const win = proc
           .createWindow({
-            id: "OXMailApplicationWindow",
+            id: "MailApplicationWindow",
             icon: proc.resource(proc.metadata.icon),
             title: metadata.title.en_EN,
             attributes: {

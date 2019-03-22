@@ -24,6 +24,8 @@
     "stylelint": "^9.10.1",
     "stylelint-config-standard": "^18.2.0",
     "stylelint-scss": "^3.5.1",
+    "copy-webpack-plugin": "^4.6.0",
+    "dotenv-webpack": "^1.7.0",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },

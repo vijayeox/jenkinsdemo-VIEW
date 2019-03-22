@@ -1,5 +1,5 @@
 {
-  "name": "OXMail",
+  "name": "Mail",
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,8 +9,7 @@
     "stylelint": "stylelint index.scss src/**/*.scss",
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
@@ -31,7 +30,7 @@
     "stylelint-config-standard": "^18.2.0",
     "stylelint-scss": "^3.5.4",
     "copy-webpack-plugin": "^4.6.0",
-  	"dotenv-webpack": "^1.7.0",
+    "dotenv-webpack": "^1.7.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   },

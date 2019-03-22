@@ -28,10 +28,11 @@
   * @licence Simplified BSD License
   */
   import {
-    name as applicationName,
-    mailServer as baseUrl
+    name as applicationName
   } from "./metadata.json";
 
+  const baseUrl = process.env.SERVER;
+  
   const createIframe = (proc, win) => {
     const iframe = document.createElement("iframe");
     iframe.style.width = "100%";

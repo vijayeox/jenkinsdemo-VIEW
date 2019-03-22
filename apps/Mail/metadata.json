@@ -1,14 +1,15 @@
 {
   "type": "application",
-  "name": "OXMail",
+  "name": "Mail",
   "category": null,
   "singleton":true,
+  "autostart":false,
   "icon": "OXZion.png",
   "title": {
-    "en_EN": "OX Mail"
+    "en_EN": "Mail"
   },
   "description": {
-    "en_EN": "OX Mail"
+    "en_EN": "Mail"
   },
   "files": [
     "main.js",
