@@ -32,6 +32,7 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.3.1",
+    "Calendar": "file:../apps/Calendar",
     "Announcements": "file:../apps/Announcements",
     "Chat": "file:../apps/Chat",
     "MyTodo": "file:../apps/MyTodo",
