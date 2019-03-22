@@ -21,7 +21,7 @@ const register = (core, args, options, metadata) => {
   // Create  a new Window instance
   proc
     .createWindow({
-      id: "OXAdminWindow",
+      id: "AdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
       dimension: {

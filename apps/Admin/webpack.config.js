@@ -44,7 +44,7 @@ module.exports = {
         use: [{
           loader: "file-loader",
           options: {
-            publicPath: "/apps/OXAdmin"
+            publicPath: "/apps/Admin"
           }
         }]
       },
@@ -55,7 +55,7 @@ module.exports = {
           loader: "file-loader",
           options: {
             name: "fonts/[name].[ext]",
-            publicPath: "apps/OXAdmin"
+            publicPath: "apps/Admin"
           }
         }
       },

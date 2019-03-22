@@ -52,7 +52,7 @@ class Home extends React.Component {
       table.push(
         <div key="1" style={{ display: "inline-grid" }}>
           <div className="block d1" onClick={this.orgClick}>
-            <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
+            <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
           </div>
           <div className="titles">Organization</div>
         </div>
@@ -62,7 +62,7 @@ class Home extends React.Component {
         <div key="2">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
+              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -70,7 +70,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.groupClick}>
               <img
-                src="apps/OXAdmin/group.svg"
+                src="apps/Admin/group.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -83,7 +83,7 @@ class Home extends React.Component {
         <div key="4" >
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
+              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -91,7 +91,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.groupClick}>
               <img
-                src="apps/OXAdmin/group.svg"
+                src="apps/Admin/group.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -101,7 +101,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.prjClick} >
               <img
-                src="apps/OXAdmin/101-project.svg"
+                src="apps/Admin/101-project.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -111,7 +111,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.userClick}>
               <img
-                src="apps/OXAdmin/115-manager.svg"
+                src="apps/Admin/115-manager.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -124,7 +124,7 @@ class Home extends React.Component {
         <div key="5">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
+              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -132,7 +132,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.groupClick}>
               <img
-                src="apps/OXAdmin/group.svg"
+                src="apps/Admin/group.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -142,7 +142,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.prjClick}>
               <img
-                src="apps/OXAdmin/101-project.svg"
+                src="apps/Admin/101-project.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -152,7 +152,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.userClick}>
               <img
-                src="apps/OXAdmin/115-manager.svg"
+                src="apps/Admin/115-manager.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -161,7 +161,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.roleClick}>
               <img
-                src="apps/OXAdmin/005-workflow.svg"
+                src="apps/Admin/005-workflow.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -174,7 +174,7 @@ class Home extends React.Component {
         <div key="6">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/OXAdmin/org.svg" className="moduleBtn App-logo" />
+              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Organization</div>
           </div>
@@ -182,7 +182,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.groupClick}>
               <img
-                src="apps/OXAdmin/group.svg"
+                src="apps/Admin/group.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -192,7 +192,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.prjClick}>
               <img
-                src="apps/OXAdmin/101-project.svg"
+                src="apps/Admin/101-project.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -202,7 +202,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.userClick}>
               <img
-                src="apps/OXAdmin/115-manager.svg"
+                src="apps/Admin/115-manager.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -211,7 +211,7 @@ class Home extends React.Component {
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.roleClick}>
               <img
-                src="apps/OXAdmin/005-workflow.svg"
+                src="apps/Admin/005-workflow.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -220,7 +220,7 @@ class Home extends React.Component {
 
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.announClick}>
-              <img src="apps/OXAdmin/131-laptop.svg"
+              <img src="apps/Admin/131-laptop.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -229,7 +229,7 @@ class Home extends React.Component {
 
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.appClick}>
-              <img src="apps/OXAdmin/102-production.svg"
+              <img src="apps/Admin/102-production.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -278,7 +278,7 @@ class Home extends React.Component {
           className="DashBG"
           style={{
             paddingBottom: "200px",
-            backgroundImage: "url(apps/OXAdmin/wait.jpg)",
+            backgroundImage: "url(apps/Admin/wait.jpg)",
             backgroundSize: "cover"
           }}
         >
@@ -287,7 +287,7 @@ class Home extends React.Component {
               <img className="responsive-img headerImage" src="https://www.oxzion.com/public/assets/img/OXZion.png"></img>
               {/* <div >Vantage Agora</div> */}
             </div>
-            <div className="container">
+            {/*<div className="container">
               <select
                 defaultValue="0"
                 id="dropdown"
@@ -302,7 +302,7 @@ class Home extends React.Component {
                 <option value="5">Admin</option>
                 <option value="6">Super Admin</option>
               </select>
-            </div>
+            </div>*/}
             <div className="container" style={{ height: '-webkit-fill-available', overflowY: 'auto' }}>
               {this.createBlock()}
             </div>

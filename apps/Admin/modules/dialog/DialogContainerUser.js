@@ -79,7 +79,6 @@ export default class DialogContainer extends React.Component {
       "/user/" + this.state.userInEdit.id,
       {
         username: this.state.userInEdit.username,
-        password: this.state.userInEdit.password,
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
         name:
@@ -140,6 +139,7 @@ export default class DialogContainer extends React.Component {
   };
 
   render() {
+    const style = this.props.formAction === "edit" ? {"display" : "none"} : {}
     return (
       <Dialog onClose={this.props.cancel}>
         <div className="row">
@@ -205,8 +205,7 @@ export default class DialogContainer extends React.Component {
                 <label htmlFor="UserEmail">Email</label>
               </div>
             </div>
-
-            <div className="row">
+            <div className="row" style={style}>
               <div className="input-field col s12">
                 <input
                   id="UserPassword"
@@ -220,7 +219,6 @@ export default class DialogContainer extends React.Component {
                 <label htmlFor="UserPassword">Password</label>
               </div>
             </div>
-
             <div className="row">
               <div className="input-field col s12">
                 <input

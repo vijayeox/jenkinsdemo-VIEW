@@ -1,16 +1,16 @@
 {
   "type": "application",
-  "name": "OXAdmin",
+  "name": "Admin",
   "category": null,
   "autostart": false,
   "server": "server.js",
   "icon": "icon.png",
   "singleton": true,
   "title": {
-    "en_EN": "OXAdmin"
+    "en_EN": "Admin"
   },
   "description": {
-    "en_EN": "OXAdmin"
+    "en_EN": "Admin"
   },
   "files": [
     "main.js",

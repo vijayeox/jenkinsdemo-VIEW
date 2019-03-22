@@ -76,7 +76,7 @@
     "Announcements": "file:../apps/Announcements",
     "Chat": "file:../apps/Chat",
     "MyTodo": "file:../apps/MyTodo",
-    "OXAdmin": "file:../apps/OXAdmin",
+    "Admin": "file:../apps/Admin",
     "Mail": "file:../apps/Mail",
     "OxzionTheme": "file:../themes/OxzionTheme",
     "Preferences": "file:../apps/Preferences",
