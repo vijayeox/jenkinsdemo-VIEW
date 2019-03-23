@@ -28,6 +28,7 @@
  * @licence Simplified BSD License
  */
 import {name as applicationName} from './metadata.json';
+const baseUrl = process.env.SERVER;
 //import {icon} from './metadata.json';
 const createIframe = (bus, proc, win, cb) => {
   const iframe = document.createElement('iframe');
@@ -122,7 +123,7 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
         const bus = core.make('osjs/event-handler', 'CalendarApplicationWindow');
         const user = core.make('osjs/auth').user();
         // Get path to iframe content
-        const src = proc.resource('http://localhost/eventcalendar/?userdata='+JSON.stringify(data));
+        const src = proc.resource(baseUrl+'?userdata='+JSON.stringify(data));
 
         // Create DOM element
         const iframe = createIframe(bus, proc, win, send => {
