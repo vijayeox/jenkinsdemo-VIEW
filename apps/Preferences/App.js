@@ -55,13 +55,13 @@ async changePassword(formData){
             <span className="tabHeader">Preferences</span>
           </Tab>
         </TabList>
-        <TabPanel tabId="vertical-tab-one" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}}>
+        <TabPanel tabId="vertical-tab-one" className="tab1">
           <EditProfile args={this.core} />
         </TabPanel>
-        <TabPanel tabId="vertical-tab-two" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}}>
+        <TabPanel tabId="vertical-tab-two" className="tab1">
         <ChangePassword changePassword={this.changePassword} />
         </TabPanel>
-        <TabPanel tabId="vertical-tab-three" className="tab1" style={{width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}} >
+        <TabPanel tabId="vertical-tab-three" className="tab1">
           <Preferences args={this.core}/>
         </TabPanel>
       </Tabs>

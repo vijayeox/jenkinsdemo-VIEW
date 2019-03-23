@@ -3,7 +3,7 @@ import Countries from "./Countries";
 import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
-
+ 
 class EditProfile extends Component {
   constructor(props) {
     super(props);
@@ -241,7 +241,7 @@ async handleSubmit(event) {
 
         <div></div>
           
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmit} className="formmargin">
             <div className="row" style={{marginTop:"20px"}}>
               <div className="col s6">
                 <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>First Name *</b></label>
@@ -306,7 +306,7 @@ async handleSubmit(event) {
              </div>
             </div>
 
-            <div className="row">
+            <div className="row marginsize">
               <div className="col s12">
                 <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Country *</b></label>
                 <select
@@ -325,7 +325,7 @@ async handleSubmit(event) {
             </div>
 
           
-            <div className="row">
+            <div className="row marginsize">
               <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}} className="contact">
                
                 <b>Contact *</b>
@@ -362,10 +362,10 @@ async handleSubmit(event) {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan" }}><b>Address *</b></label>
-                <textarea
-                  className="materialize-textarea"
-                  data-length="200"
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic" }}><b>Address *</b></label>
+                <input
+                  id="address"
+                  type="text"
                   ref="address"
                   name="address"
                   value={this.state.fields.address}
@@ -377,7 +377,7 @@ async handleSubmit(event) {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date of Joining *</b></label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Date of Joining *</b></label>
                 <input
                   className="datepicker"
                   ref="date_of_join"
@@ -391,9 +391,9 @@ async handleSubmit(event) {
               </div>
             </div>
 
-            <div className="row">
+            <div className="row marginsize">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Website</b></label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Website</b></label>
                 <input
                   id="website"
                   type="text"
@@ -405,9 +405,9 @@ async handleSubmit(event) {
               </div>
             </div>
 
-            <div className="row">
+            <div className="row marginsize">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Sex *</b></label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Sex *</b></label>
                 <label style={{color:"#000000"}}><b>
                   <input
                     type="radio"
@@ -434,15 +434,15 @@ async handleSubmit(event) {
               </div>
             </div>
 
-            <div className="row">
+            <div className="row marginsize">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>About Me</b></label>
-                <textarea
-                  id="textarea1"
-                  className="materialize-textarea"
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>About Me</b></label>
+                <input
+                  id="about"
                   data-length="200"
                   ref="about"
                   name="about"
+                  type="text"
                   value={this.state.fields.about}
                   onChange={this.handleChange}
                 />
@@ -451,7 +451,7 @@ async handleSubmit(event) {
 
             <div className="row">
               <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan" }}><b>Interest *</b></label>
+                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic" }}><b>Interest *</b></label>
                 <input
                   id="interest"
                   type="text"

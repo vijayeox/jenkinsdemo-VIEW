@@ -135,7 +135,7 @@ render() {
         <div className="row">
             <div className="col s12">
               <div className="password">     
-                <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"trajan" }}><b>Old Password *</b></label>
+                <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"Century Gothic" }}><b>Old Password *</b></label>
                 <input
                   type={this.state.type}
                   className="password_input"
@@ -154,7 +154,7 @@ render() {
         <div className="row">
             <div className="col s12">
                 <div className="password">     
-                  <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>New Password *</b></label>
+                  <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>New Password *</b></label>
                   <input
                       id="new"
                       type={this.state.type1}
@@ -173,7 +173,7 @@ render() {
         <div className="row">
           <div className="col s12">
             <div className="password">     
-              <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"trajan" }}><b>Confirm Password *</b></label>
+              <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"Century Gothic" }}><b>Confirm Password *</b></label>
               <input
                 id="confirm"
                 type={this.state.type2}

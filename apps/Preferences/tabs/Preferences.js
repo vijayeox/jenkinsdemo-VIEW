@@ -103,10 +103,10 @@ async getPreferences() {
     return (
       <div>
           <form onSubmit={this.handleSubmit}>
-          <div className="row">
+          <div className="row marginsize">
             <div className="col s12">
               <div className="input-field col s3">
-                <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Sound Notification</b></label>
+                <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Sound Notification</b></label>
               </div>
               <div className="input-field col s1">
                 <label id="name">
@@ -142,7 +142,7 @@ async getPreferences() {
             <div className="row">
               <div className="col s12">
                 <div className="input-field col s3">
-                  <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Email Alerts</b></label>
+                  <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Email Alerts</b></label>
                 </div>
                 <div className="input-field col s1">
                   <label id="name">
@@ -174,13 +174,13 @@ async getPreferences() {
             </div>
           </div>
 
-          <div className="row" id="row1" style={{paddingBottom:0}}>
+          <div className="row" id="row1" style={{paddingTop:"5px"}}>
             <div className="col s12">
             <div className="input-field col s3">
 
-              <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Local Time Zone</b></label>
+              <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Local Time Zone</b></label>
               </div>
-              <div className="input-field col s3">
+              <div className="input-field col s3 marginsize1">
               <select
                 value={this.state.fields['timezone']}
                 onChange={this.handleChange}
@@ -202,7 +202,7 @@ async getPreferences() {
                 <div className="col s12">
                 <div className="input-field col s3">
 
-                <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date Format</b></label>
+                <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Date Format</b></label>
                   </div>
                 <div className="input-field col s3">
                 <input
@@ -226,7 +226,7 @@ async getPreferences() {
                 </div>
           </div>
 
-          <div className="row">
+          <div className="row savebutton">
             <div className="col s12 input-field">
               <button className="btn waves-effect waves-light waves-effect black" type="submit">
                 Save
