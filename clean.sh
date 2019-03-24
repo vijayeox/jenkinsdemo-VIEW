@@ -10,6 +10,7 @@ clean_project() {
     echo "Cleaning $1 ...";
     cd $1
     rm -Rf dist
+    rm package-lock.json
     mkdir dist
     cd ..
 }
