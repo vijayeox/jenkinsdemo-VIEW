@@ -326,6 +326,8 @@ async handleSubmit(event) {
 
           
             <div className="row marginsize input-field">
+            <div class="col s12" style={{color: "#b3b3b3"}}>Contact Number *</div>
+              <div className="row">
               <div className="col s3">
                 <select
                   value={this.state.dial_code}
@@ -353,6 +355,7 @@ async handleSubmit(event) {
                   value={this.state.phoneno}
                   onChange={this.onSelect2}
                 />
+              </div>
               </div>
             </div>
             <label type="hidden" id="joint" ref="phone" name="phone" />
@@ -403,9 +406,9 @@ async handleSubmit(event) {
               </div>
             </div>
 
-            <div className="row marginsize">
+            <div className="row">
               <div className="col s2">
-              <h6>Gender *</h6>
+              <label id="name">Gender *</label>
                 </div>
               <div className="col s10">
                 <div className="row">
