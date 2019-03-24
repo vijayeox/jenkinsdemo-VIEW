@@ -134,14 +134,14 @@ const Slide = ({ data }) => {
   // console.log(isImage);
   return (
     <div className="App row slide" style={{margin:0}}>
-      <div className="Announcement-visuals col s6">
+      <div className="Announcement-visuals col s8">
         {isImage? (
             <Img data= {data} />
           ):(
             <Video data= {data}/>
         )}
       </div>
-      <div className= "Announcement-content col s6">
+      <div className= "Announcement-content col s4">
         <h6> {data.name} </h6>
         <p> {data.description} </p>
       </div>
