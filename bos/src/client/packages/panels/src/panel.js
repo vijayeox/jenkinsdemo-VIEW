@@ -57,9 +57,8 @@ export default class Panel extends EventEmitter {
       },
       options
     );
-
     this.dateString = '';
-    this.dob= '';
+    this.dob = '';
     this.items = [];
     this.inited = false;
     this.destroyed = false;
@@ -69,14 +68,14 @@ export default class Panel extends EventEmitter {
       const c = core.make('osjs/panels').get(name);
       this.addItem(new c(this.core, this, options || {}));
     });
-    const self=this;
-    this.core.on("oxzion/profile:updated",function(){
-     if(self.inited){
+    const self = this;
+    this.core.on('oxzion/profile:updated', () => {
+      if(self.inited) {
         self.destroy();
         self.init();
         self.setPosition();
       }
-    })
+    });
     this.formatDate = this.formatDate.bind(this);
   }
 
@@ -97,9 +96,9 @@ export default class Panel extends EventEmitter {
       return false;
     });
 
-    let element = this.core.$root.querySelector("#profile");
+    let element = this.core.$root.querySelector('#profile');
     this.core.$root.removeChild(element);
-    element =  this.core.$root.querySelector("#appmenu");    
+    element =  this.core.$root.querySelector('#appmenu');
     this.core.$root.removeChild(element);
     this.destroyed = true;
     this.inited = false;
@@ -178,78 +177,51 @@ export default class Panel extends EventEmitter {
     let profileDetails = this.core.make('oxzion/profile').get();
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
-    this.dob= this.formatDate(this.dateString);
-
-   let profileCard = document.createElement('div');
+    this.dob = this.formatDate(this.dateString);
+    let profileCard = document.createElement('div');
+    profileCard.classList.add('profileCard');
     let cacheBurster = (new Date()).getTime();
-    console.log(cacheBurster);
-		profileCard.innerHTML = 
-								'<br/> <a '
-										+'class="btn-floating btn-small waves-effect waves-light red" '
-										+'onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
-										+'id="editbutton">'
-										+'<i class="material-icons">edit</i>'
-										+'</a>'+
-
-									
-									'<img id="imgprofile" '
-										+'src="'+profileInfo['icon']+"?"+cacheBurster+'"'
-										+'height="130" '
-										+'width="130" '
-										+'className="circle img-responsive"'
-										+'style="border-radius:50%;cursor:pointer;"'
-										+'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; />'+
-
-									'<label '
-										+'className="name" '
-										+'style="position: absolute;padding-top: 58px;padding-left: 25px;">'+profileInfo['firstname']+' '+profileInfo['lastname']+'</label>'+
-										
-									'<label '
-										+'className="name" '
-										+'style="position: absolute;padding-top: 82px;padding-left: 26px;">'+profileInfo['designation']+'</label> ';
-										
-		profileElement.appendChild(profileCard);
-
-		let emailElement = document.createElement('div');
-		emailElement.innerHTML = '<i class="fa-lg fa fa-envelope" id="iconi1" />'
-								+' <label id="info">'+profileInfo['email']+'</label> <br/>';
-		profileElement.appendChild(emailElement);
-
-
-		let phoneElement = document.createElement('div');
-		phoneElement.innerHTML = '<i class="fa-lg fa fa-phone" id="iconi" />'
-								+' <label id="info">'+profileInfo['phone']+'</label> <br/>';
-		profileElement.appendChild(phoneElement);
-
-
-		let addressElement = document.createElement('div');
-		addressElement.innerHTML = '<i class="fa-lg fa fa-location-arrow" id="iconi" />'
-								+' <label id="addresic">'+profileInfo['address']+'</label> <br/>';
-		profileElement.appendChild(addressElement);
-
-
-		let countryElement = document.createElement('div');
-		countryElement.innerHTML = '<i class="fa-lg fa fa-map-marker" id="iconi" />'
-								+' <label id="info">'+profileInfo['country']+'</label> <br/>';
-		profileElement.appendChild(countryElement);
-
-
-		let dobElement = document.createElement('div');
-		dobElement.innerHTML = '<i class="fa-lg fa fa-birthday-cake" id="iconi" />'
-								+' <label id="info">'+this.dob+'</label> <br/>';
-		profileElement.appendChild(dobElement);
-
-
-		let interestElement = document.createElement('div');
-		interestElement.innerHTML = '<i class="fa-lg fa fa-heart" id="iconi" />'
-								+' <label id="info">'+profileInfo['interest']+'</label> <br/>';
-		profileElement.appendChild(interestElement);
-		
-		
-		
-		profileElement.id = 'profile';
-		this.core.$root.appendChild(profileElement);
-
+    profileCard.innerHTML =  '<div class="profileImage"><img id="imgprofile" '
+         + 'src="' + profileInfo['icon'] + '?' + cacheBurster + '"'
+         + 'height="200" '
+         + 'width="200" '
+         + 'className="circle img-responsive"'
+         + 'style="border-radius:50%;cursor:pointer;"'
+         + 'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; /><label '
+         + 'className="name" '
+         + '></div><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
+         + 'className="designation" '
+         + '">' + profileInfo['designation'] + '</div> <div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
+         + 'id="editbutton">'
+         + '<i class="material-icons">edit</i>'
+         + '</a></div></div> ';
+    profileElement.appendChild(profileCard);
+    let emailElement = document.createElement('div');
+    emailElement.classList.add('profileDiv');
+    emailElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-envelope" id="icon"> </i> </div><div class="info">' + profileInfo['email'] + '</div> <br/>';
+    profileElement.appendChild(emailElement);
+    let phoneElement = document.createElement('div');
+    phoneElement.classList.add('profileDiv');
+    phoneElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-phone" id="icon" > </i> </div><div class="info">' + profileInfo['phone'] + '</div> <br/>';
+    profileElement.appendChild(phoneElement);
+    let addressElement = document.createElement('div');
+    addressElement.classList.add('profileDiv');
+    addressElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-location-arrow" id="icon" > </i></div> <div class="info">' + profileInfo['address'] + '</div> <br/>';
+    profileElement.appendChild(addressElement);
+    let countryElement = document.createElement('div');
+    countryElement.classList.add('profileDiv');
+    countryElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-map-marker" id="icon" > </i> </div><div class="info">' + profileInfo['country'] + '</div> <br/>';
+    profileElement.appendChild(countryElement);
+    let dobElement = document.createElement('div');
+    dobElement.classList.add('profileDiv');
+    dobElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-birthday-cake" id="icon" > </i> </div><div class="info">' + this.dob + '</div> <br/>';
+    profileElement.appendChild(dobElement);
+    let interestElement = document.createElement('div');
+    interestElement.classList.add('profileDiv');
+    interestElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-heart" id="icon" > </i> </div><div class="info">' + profileInfo['interest'] + '</div> <br/>';
+    profileElement.appendChild(interestElement);
+    profileElement.id = 'profile';
+    this.core.$root.appendChild(profileElement);
     if (this.options.position === 'top') {
       profileElement.style['margin-top'] = '3.5em';
     } else {
@@ -257,7 +229,7 @@ export default class Panel extends EventEmitter {
     }
     this.items.forEach(item => item.init());
     this.emit('create');
-}
+  }
 
   /**
    * Add an item to the panel

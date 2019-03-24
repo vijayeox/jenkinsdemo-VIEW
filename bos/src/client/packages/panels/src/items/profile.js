@@ -27,19 +27,15 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
-
 import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
-
 // const profileIcon = require('../../../../assets/images/profile_pic.png');
-
 /**
  * Profile
  *
  * @desc Profile Panel Item
  */
 export default class ProfilePanelItem extends PanelItem {    
- 
   init() {
     if (this.inited) {
       return;
@@ -50,11 +46,9 @@ export default class ProfilePanelItem extends PanelItem {
     this.interval = clearInterval(this.interval);
     super.destroy();
   }
-
   render(state, actions) {
     let profileDetails = this.core.make('oxzion/profile').get();
     let profileIcon = profileDetails['key'];
-
     const profile = () => {
       let profileElement = document.getElementById('profile');
       profileElement.classList.toggle('profile-visible');
@@ -67,7 +61,7 @@ export default class ProfilePanelItem extends PanelItem {
         h('img', {
           className:'profileicon',
           src: profileIcon['icon'] + '?' + (new Date()).getTime(),
-          alt: 'Log Out'
+          alt: profileIcon['firstname']
         })])
     ]);
   }

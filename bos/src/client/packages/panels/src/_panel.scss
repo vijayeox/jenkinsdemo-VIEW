@@ -54,7 +54,7 @@
     min-height: 1em;
     position: relative;
     box-sizing: border-box;
-    padding: 0.1em;
+    padding: $base-margin / 1.5;
   }
 
   .osjs-panel-item--icon {
@@ -92,24 +92,12 @@
   margin-bottom: 3.5em;
   background-color: rgb(0, 0, 1);
   transition: 0.5s;
-  #editbutton{
-    display: none;
-    transition: 3s;
-  
-  }
 }
 .profile-visible {
   width: 300px;
   z-index: 16777271;
   padding-left: 7px;
-  #editbutton{
-    display: block;
-    transition: 3s;
-    
-  }
 }
-
-
 
 .appmenu {
   height: calc(100% - 3.5em);
@@ -294,11 +282,6 @@
   cursor: inherit !important;
 }
 
-.appmenu .app-bar .app:hover {
-  background: #ffffff4d;
-  transition: all 200ms ease-in;
-}
-
 .appmenu .app-bar .app:hover>i {
   background: #ffffff4d;
   transition: all 200ms ease-in;
@@ -320,11 +303,6 @@
   margin-right: 0px;
 }
 
-#editbutton{
-  position: absolute;
-  right: 0;
-}
-
 #iconi {
   margin-top: 20px;
   margin-right: 5px;
@@ -343,12 +321,41 @@
 
 #info{
   font-size: 17px;
-  font-family: cursive;
+  font-family: "Century Gothic";
 }
 
 #addresic{
   font-size: 17px;
-  font-family: cursive;
+  font-family: "Century Gothic";
   display: inline-block;
   word-break: break-word;
+}
+.profileDiv {
+  display: flex;
+  flex-direction: row;
+  line-height: 40px;
+}
+.profileDiv .icon {
+  width: 25%;
+  line-height: 35px;
+  color: white;
+  text-align: center;
+}
+.profileDiv .info {
+  font-size: 17px;
+  width: 75%;
+  font-family: "Century Gothic";
+  color: white;
+  text-align: left;
+}
+.profileCard{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: white;
+  padding: 30px;
+  line-height: 30px;
+}
+.profileName {
+  font-size: 18px;
 }
