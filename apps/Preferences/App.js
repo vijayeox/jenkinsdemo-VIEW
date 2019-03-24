@@ -43,7 +43,7 @@ async changePassword(formData){
           <div id="click1">
             <Tab tabFor="vertical-tab-one" style={{color:"white"}}>
               <i className="fa fa-user-circle" id="iconj" />
-              <span className="tabHeader">EditProfile</span>
+              <span className="tabHeader">Edit Profile</span>
             </Tab>
           </div>
           <Tab tabFor="vertical-tab-two" style={{color:"white"}}>

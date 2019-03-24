@@ -102,13 +102,13 @@ async getPreferences() {
     }, 0);
     return (
       <div>
-          <form onSubmit={this.handleSubmit}>
+          <form style={{padding:"20px"}} onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col s12">
-              <div className="input-field col s3">
-                <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Sound Notification</b></label>
+              <div className="col s3">
+                <label id="name">Sound Notification</label>
               </div>
-              <div className="input-field col s1">
+              <div class="col s9">
+              <div className="row">
                 <label id="name">
                   <input
                     type="radio"
@@ -117,12 +117,11 @@ async getPreferences() {
                     onChange={this.handleChange}
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "true"}
-                    
                   />
                   <span className="m-2">On</span>
                 </label>
               </div>
-              <div className="input-field col s1">
+              <div className="row">
                 <label id="name">
                   <input
                     type="radio"
@@ -135,16 +134,16 @@ async getPreferences() {
                   <span>Off</span>
                 </label>
               </div>
-            </div>
+              </div>
           </div>
 
           <div>
             <div className="row">
-              <div className="col s12">
-                <div className="input-field col s3">
-                  <label id="name" style={{paddingTop:"6px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Email Alerts</b></label>
+                <div className="col s3">
+                  <label id="name">Email Alerts</label>
                 </div>
-                <div className="input-field col s1">
+              <div class="col s9">
+              <div className="row">
                   <label id="name">
                     <input
                       type="radio"
@@ -157,7 +156,7 @@ async getPreferences() {
                     <span className="m-2">On</span>
                   </label>
                 </div>
-                <div className="input-field col s1">
+                <div className="row">
                   <label id="name">
                     <input
                       type="radio"
@@ -175,12 +174,10 @@ async getPreferences() {
           </div>
 
           <div className="row" id="row1" style={{paddingTop:"5px"}}>
-            <div className="col s12">
-            <div className="input-field col s3">
-
-              <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Local Time Zone</b></label>
+            <div className="col s3">
+              <label id="name">Local Time Zone</label>
               </div>
-              <div className="input-field col s3 marginsize1">
+              <div className="col s9">
               <select
                 value={this.state.fields['timezone']}
                 onChange={this.handleChange}
@@ -195,14 +192,11 @@ async getPreferences() {
                 ))}
               </select>
             </div>
-            </div>
           </div>
 
           <div className="row" id="row2" style={{paddingBottom:0}}>
-                <div className="col s12">
                 <div className="input-field col s3">
-
-                <label id="name" style={{paddingTop:"10px", fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Date Format</b></label>
+                <label id="name">Date Format</label>
                   </div>
                 <div className="input-field col s3">
                 <input
@@ -222,7 +216,6 @@ async getPreferences() {
                                                                                                   yy-m-dd - 12-2-01<br/>
                                                                                                   dd/mmmm/yyyy - 01/Febraury/2012<br/>
                                                                                                   Use either / or -"><i className="material-icons">info_outline</i></a>
-                </div> 
                 </div>
           </div>
 

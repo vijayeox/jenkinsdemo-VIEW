@@ -134,8 +134,7 @@ render() {
       <div className="form">
         <div className="row">
             <div className="col s12">
-              <div className="password">     
-                <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"Century Gothic" }}><b>Old Password *</b></label>
+              <div className="password input-field">     
                 <input
                   type={this.state.type}
                   className="password_input"
@@ -143,6 +142,7 @@ render() {
                   ref="old_password"
                   onChange={this.handleChange}
                 />
+                <label>Old Password *</label>
                 <span style={{ height: "25px" }}
                   className="password__show"
                   onClick={this.showHide}>{this.state.type === 'text' ? 'Hide' : 'Show'}
@@ -153,8 +153,7 @@ render() {
         </div>
         <div className="row">
             <div className="col s12">
-                <div className="password">     
-                  <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>New Password *</b></label>
+                <div className="password input-field">     
                   <input
                       id="new"
                       type={this.state.type1}
@@ -162,6 +161,7 @@ render() {
                       ref="new_password"
                       onChange={this.handleChange}
                   />
+                  <label>New Password *</label>
                   <span style={{ height: "25px" }}
                       className="password__show"
                       onClick={this.showHide1}>{this.state.type1 === 'text' ? 'Hide' : 'Show'}
@@ -172,8 +172,7 @@ render() {
             </div>
         <div className="row">
           <div className="col s12">
-            <div className="password">     
-              <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"Century Gothic" }}><b>Confirm Password *</b></label>
+            <div className="password input-field">     
               <input
                 id="confirm"
                 type={this.state.type2}
@@ -181,6 +180,8 @@ render() {
                 ref="confirm_password"
                 onChange={this.handleChange}
               />
+              
+              <label>Confirm Password *</label>
               <span style={{ height: "25px" }}
                 className="password__show"
                 onClick={this.showHide2}>{this.state.type2 === 'text' ? 'Hide' : 'Show'}

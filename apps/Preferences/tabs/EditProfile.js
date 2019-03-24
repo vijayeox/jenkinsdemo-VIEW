@@ -73,7 +73,6 @@ class EditProfile extends Component {
 
 
   componentDidMount() {
-
     let elems = document.querySelectorAll(".datepicker");
     M.Datepicker.init(elems, {
       format: this.state.dateformat,
@@ -82,7 +81,7 @@ class EditProfile extends Component {
     });
      this.dob = M.Datepicker.getInstance(elems[0]);
      this.doj = M.Datepicker.getInstance(elems[1]);
-    
+     M.updateTextFields();
   }
 
 
@@ -226,6 +225,7 @@ async handleSubmit(event) {
   render() {
     const self = this;
     window.setTimeout(function() {
+      M.updateTextFields();
       if (self.state.initialized === 0) {
         var selectElems = document.querySelectorAll("select");
         var instances = M.FormSelect.init(selectElems, {
@@ -243,76 +243,75 @@ async handleSubmit(event) {
           
           <form onSubmit={this.handleSubmit} className="formmargin">
             <div className="row" style={{marginTop:"20px"}}>
-              <div className="col s6">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>First Name *</b></label>
-
+              <div className="col s6 input-field">
                 <input
                   type="text"
                   name="firstname"
                   ref="firstname"
+                  id="firstname"
                   pattern={"[A-Za-z]+"}
                   value={this.state.fields.firstname}
                   onChange={this.handleChange}
                   required
                   
                 />
-
+                <label for="firstname">First Name *</label>
                 <div className="errorMsg">{this.state.errors.firstname}</div>
               </div>
 
-              <div className="col s6" margin-right="200px">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Last Name *</b></label>
-
+              <div className="col s6 input-field">
                 <input
                   type="text"
                   name="lastname"
                   ref="lastname"
+                  id="lastname"
                   value={this.state.fields.lastname}
                   onChange={this.handleChange}
                   required
                 />
+                <label for="lastname">Last Name *</label>
                 <div className="errorMsg">{this.state.errors.lastname}</div>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px",color:"#00004d", fontFamily:"trajan"}}><b>Email *</b></label>
-
+              <div className="col s12 input-field">
                 <input
                   name="email"
                   type="text"
                   value={this.state.fields.email}
                   onChange={this.handleChange}
                   ref="email"
+                  id="email"
                   required
                 />
+                <label for="email">Email *</label>
                 <div className="errorMsg">{this.state.errors.email}</div>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Date of Birth *</b></label>
+              <div className="col s12 input-field">
                 <input
                   className="datepicker"
                   ref="date_of_birth"
+                  id="date_of_birth"
                   name="date_of_birth"
                   required
                  defaultValue={this.state.fields.date_of_birth}
                 onChange={this.handleDateChange}
                 />
+                <label for="date_of_birth" class="active">Date of Birth *</label>
                 <div className="errorMsg">{this.state.errors.date_of_birth}</div>
              </div>
             </div>
 
             <div className="row marginsize">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}}><b>Country *</b></label>
+              <div className="col s12 input-field">
                 <select
                   value={this.state.fields.country}
                   onChange={this.handleChange}
-                  ref="country"
+                  ref="country" id="country"
                   name="country"
                 >
                   {Codes.map((country, key) => (
@@ -321,17 +320,12 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
+                <label id="country">Country *</label>
               </div>
             </div>
 
           
-            <div className="row marginsize">
-              <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"trajan"}} className="contact">
-               
-                <b>Contact *</b>
-              </label>
-              <br />
-
+            <div className="row marginsize input-field">
               <div className="col s3">
                 <select
                   value={this.state.dial_code}
@@ -346,6 +340,9 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
+              <label for="dial_code" className="contact">
+               Contact Number *
+             </label>
               </div>
               <div className="col s9">
                 <input
@@ -361,39 +358,39 @@ async handleSubmit(event) {
             <label type="hidden" id="joint" ref="phone" name="phone" />
 
             <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic" }}><b>Address *</b></label>
-                <input
+              <div className="col s12 input-field ">
+                <textarea
                   id="address"
-                  type="text"
+                  type="text"  class="materialize-textarea"
                   ref="address"
                   name="address"
                   value={this.state.fields.address}
                   onChange={this.handleChange}
                 />
+                <label for="address">Address *</label>
                 <div className="errorMsg">{this.state.errors.address}</div>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Date of Joining *</b></label>
+              <div className="col s12 input-field">
                 <input
                   className="datepicker"
                   ref="date_of_join"
+                  id="date_of_join"
                   name="date_of_join"
                   required
                   defaultValue={this.state.fields.date_of_join}
                   onChange={this.handleDateChange}
                 />
+                <label for="date_of_join" class="active">Date of Joining *</label>
                 <div className="errorMsg">{this.state.errors.date_of_join}</div>
 
               </div>
             </div>
 
             <div className="row marginsize">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Website</b></label>
+              <div className="col s12 input-field">
                 <input
                   id="website"
                   type="text"
@@ -402,13 +399,18 @@ async handleSubmit(event) {
                   value={this.state.fields.website}
                   onChange={this.handleChange}
                 />
+                <label for="website">Website</label>
               </div>
             </div>
 
             <div className="row marginsize">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>Sex *</b></label>
-                <label style={{color:"#000000"}}><b>
+              <div className="col s2">
+              <h6>Gender *</h6>
+                </div>
+              <div className="col s10">
+                <div className="row">
+                <p>
+                <label>
                   <input
                     type="radio"
                     name="gender"
@@ -417,10 +419,11 @@ async handleSubmit(event) {
                     ref="gender"
                     checked={this.state.fields.gender == "Male"}
                   />
-                  <span className="m-2">Male</span></b>
+                  <span>Male</span>
                 </label>
-
-                <label style={{color:"#000000"}}><b>
+                </p>
+                <p>
+                <label>
                   <input
                     type="radio"
                     name="gender"
@@ -429,15 +432,16 @@ async handleSubmit(event) {
                     ref="gender"
                     checked={this.state.fields.gender == "Female"}
                   />
-                  <span>Female</span></b>
+                  <span>Female</span>
                 </label>
+                </p>
+                </div>
               </div>
             </div>
 
             <div className="row marginsize">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic"}}><b>About Me</b></label>
-                <input
+              <div className="col s12 input-field">
+                <textarea class="materialize-textarea"
                   id="about"
                   data-length="200"
                   ref="about"
@@ -446,12 +450,12 @@ async handleSubmit(event) {
                   value={this.state.fields.about}
                   onChange={this.handleChange}
                 />
+                <label for="about">About Me</label>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12">
-                <label style={{ fontSize: "15px", color:"#00004d", fontFamily:"Century Gothic" }}><b>Interest *</b></label>
+              <div className="col s12 input-field">
                 <input
                   id="interest"
                   type="text"
@@ -462,6 +466,7 @@ async handleSubmit(event) {
                   value={this.state.fields.interest}
                   onChange={this.handleChange}
                 />
+                <label for="interest">Interest *</label>
                 <div className="errorMsg">{this.state.errors.interest}</div>
               </div>
             </div>
