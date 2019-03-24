@@ -58,11 +58,11 @@ class EditProfile extends Component {
 
   splitPhoneNumber() {
     const phoneno = this.state.fields.phone;
-    const phonenumber = phoneno.split("-");
+    const phone1=phoneno.indexOf("-");
     this.setState({
-      dial_code: phonenumber[0],
-      phoneno: phonenumber[1]
-    });
+      dial_code:phoneno.substring(0,phone1),
+      phoneno:phoneno.substring(phone1+1)
+    })
   }
 
   onSelect2(event) {
