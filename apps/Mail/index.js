@@ -193,27 +193,34 @@
               trayInitialized = true;
               trayOptions.title = "Mail";
               trayOptions.icon = proc.resource(metadata.icon);
-
+              trayOptions.onclick = () => {
+                console.log("check");
+                win.raise();
+                win.focus();
+                resetBadge();
+              }
+             
               tray = core.make("osjs/tray").create(trayOptions, ev => {
                 core.make("osjs/contextmenu").show({
+                  
                   position: ev,
-                  menu: [{
-                      label: "Open",
-                      onclick: () => {
-                        console.log(proc);
-                        win.raise();
-                        win.focus();
-                        resetBadge();
-                      }
-                    },
-                    {
-                      label: "Quit",
-                      onclick: () => {
-                        proc.destroy();
-                        tray.destroy();
-                      }
-                    }
-                  ]
+                  // menu: [{
+                  //     label: "Open",
+                  //     onclick: () => {
+                  //       console.log(proc);
+                  //       win.raise();
+                  //       win.focus();
+                  //       resetBadge();
+                  //     }
+                  //   },
+                  //   {
+                  //     label: "Quit",
+                  //     onclick: () => {
+                  //       proc.destroy();
+                  //       tray.destroy();
+                  //     }
+                  //   }
+                  // ]
                 });
               });
             }
