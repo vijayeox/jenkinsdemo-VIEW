@@ -35,7 +35,8 @@ class Slider extends React.Component {
     this.state = {
       announcements : data,
       currentIndex: 0,
-      translateValue: 0
+      translateValue: 0,
+      indexCount : 0
     }
 
     this.getAnnouncements().then(response => {
@@ -47,7 +48,10 @@ class Slider extends React.Component {
           data[i].media = baseUrl+'resource/'+data[i].media;  
         }
       }
-      this.setState({announcements :data});
+      this.setState({
+        announcements :data,
+        indexCount : data.length - 1
+      });
       
     })
 
@@ -69,8 +73,12 @@ class Slider extends React.Component {
   }
 
   goToPrevSlide(){
-    if(this.state.currentIndex === 0)
-      return;
+    if(this.state.currentIndex === 0) {
+     return this.setState(prevState => ({
+      currentIndex: prevState.indexCount,
+      translateValue: prevState.translateValue + -(this.slideWidth())*prevState.indexCount
+    }));
+    }
     
     this.setState(prevState => ({
       currentIndex: prevState.currentIndex - 1,
@@ -88,11 +96,10 @@ class Slider extends React.Component {
         translateValue: 0
       })
     }
-    
     // This will not run if we met the if condition above
     this.setState(prevState => ({
-      currentIndex: prevState.currentIndex + 1,
-      translateValue: prevState.translateValue + -(this.slideWidth())
+      currentIndex: prevState.currentIndex+1,
+      translateValue: prevState.translateValue + -(this.slideWidth()) 
     }));
   }
 
