@@ -183,18 +183,18 @@ export default class Panel extends EventEmitter {
     let cacheBurster = (new Date()).getTime();
     profileCard.innerHTML =  '<div class="profileImage"><img id="imgprofile" '
          + 'src="' + profileInfo['icon'] + '?' + cacheBurster + '"'
-         + 'height="200" '
-         + 'width="200" '
+         + 'height="135" '
+         + 'width="135" '
          + 'className="circle img-responsive"'
          + 'style="border-radius:50%;cursor:pointer;"'
          + 'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; /><label '
          + 'className="name" '
-         + '></div><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
-         + 'className="designation" '
-         + '">' + profileInfo['designation'] + '</div> <div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
+         + '></div><div class="profileMasterInfoDiv"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
          + 'id="editbutton">'
          + '<i class="material-icons">edit</i>'
-         + '</a></div></div> ';
+         + '</a></div><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
+         + 'className="designation" '
+         + '">' + profileInfo['designation'] + '</div></div></div>  ';
     profileElement.appendChild(profileCard);
     let emailElement = document.createElement('div');
     emailElement.classList.add('profileDiv');
