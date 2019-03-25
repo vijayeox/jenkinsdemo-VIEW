@@ -174,10 +174,26 @@ export default class Panel extends EventEmitter {
 
     let profileElement = document.createElement('div');
     profileElement.classList.add('profile');
+    profileElement.id = 'profileMenu';
     let profileDetails = this.core.make('oxzion/profile').get();
     Object.keys(profileDetails.key).map(key => {
-        profileDetails.key[key] = profileDetails.key[key] && profileDetails.key[key] !== "null" ? profileDetails.key[key] : "";
+      profileDetails.key[key] = profileDetails.key[key] && profileDetails.key[key] !== 'null' ? profileDetails.key[key] : '';
     });
+    document.onclick = (ev) => {
+      if (ev.target.closest('.appmenu') || ev.target.closest('.osjs-panel-item[data-name="menu"]') || ev.target.closest('.profile') || ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
+        if (ev.target.closest('.osjs-panel-item[data-name="menu"]')) {
+          document.getElementById('appmenu').classList.toggle('appmenu-visible');
+        } else if (ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
+          document.getElementById('profileMenu').classList.toggle('profile-visible');
+        } else {
+          console.log(ev.target);
+          return;
+        }
+      } else {
+        document.getElementById('appmenu').classList.remove('appmenu-visible');
+        document.getElementById('profileMenu').classList.remove('profile-visible');
+      }
+    };
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
     this.dob = this.formatDate(this.dateString);

@@ -208,7 +208,7 @@ export default class MenuPanelItem extends PanelItem {
       searchDiv.appendChild(searchBarDiv);
       appmenuElement.appendChild(searchDiv);
 
-      appmenuElement.classList.toggle('appmenu-visible');
+      // appmenuElement.classList.toggle('appmenu-visible');
       console.log(packages);
       for (let category = 0; category < appArray.length; category++) {
         appBarDiv.appendChild(makeCategory(appArray[category], this.core));
