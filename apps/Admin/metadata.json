@@ -1,7 +1,7 @@
 {
   "type": "application",
   "name": "Admin",
-  "category": null,
+  "category": "utilities",
   "autostart": false,
   "server": "server.js",
   "icon": "icon.png",

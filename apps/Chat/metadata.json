@@ -5,7 +5,7 @@
     "singleton":true,
     "hidden":false,
     "icon":"oxchat.png",
-    "category": null,
+    "category": "collaboration",
     "server": "server.js",
     "title": {
       "en_EN": "Chat"

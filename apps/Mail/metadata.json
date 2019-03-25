@@ -1,7 +1,7 @@
 {
   "type": "application",
   "name": "Mail",
-  "category": null,
+  "category": "collaboration",
   "singleton":true,
   "autostart":false,
   "icon": "OXZion.png",

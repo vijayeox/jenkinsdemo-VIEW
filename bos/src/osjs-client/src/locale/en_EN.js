@@ -62,6 +62,8 @@ export const en_EN = {
   LBL_APP_CAT_SYSTEM: 'System',
   LBL_APP_CAT_UTILITIES: 'Utilities',
   LBL_APP_CAT_OTHER: 'Other',
+  LBL_APP_CAT_ORGANIZATION: 'Organization',
+  LBL_APP_CAT_COLLABORATION: 'Collaboration',
 
   // UI
   LBL_LAUNCH_SELECT: 'Select application',

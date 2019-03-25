@@ -54,10 +54,7 @@ export default class Login extends defaultLogin {
         ]),
       ]),
       h('div',{className:'footer-links'},[
-        h('a',{href:'#'},'Terms and Conditions'),
-        h('a',{href:'#'},'Privacy'),
         h('a',{href:'#'},'About Us'),
-        h('a',{href:'#'},'FAQ')
       ]),
       h('div',{className:'login-copyright'},'Copyright © 2019 Vantage Agora. All rights reserved.'),
       ])

@@ -34,6 +34,10 @@
 //
 
 module.exports = {
+  development:"production",
+  search:{
+    enabled:false
+  },
   auth: {
     ui: {
       title: 'Welcome to OX Zion',
@@ -69,19 +73,23 @@ module.exports = {
     }
   },
   vfs: {
-    mountpoints: [{
-      name: 'temp',
-      label: 'Temporary Files',
-      adapter: 'system', // You can leave this out as 'system' is default
-      attributes: {}
-     }]
+    defaultPath: '/vfs',
+    mountpoints: []
    },
   application: {
     categories: {
       development: {
         label: 'LBL_APP_CAT_DEVELOPMENT',
         icon: 'applications-development'
-      }
+      },
+      collaboration:{
+        label: 'LBL_APP_CAT_COLLABORATION',
+        icon: 'applications-development'
+      },
+      organization:{
+        label: 'LBL_APP_CAT_ORGANIZATION',
+        icon: 'applications-development'
+      },
     }
   }
 };
