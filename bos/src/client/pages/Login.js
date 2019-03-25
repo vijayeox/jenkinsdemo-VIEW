@@ -35,18 +35,18 @@ export default class Login extends defaultLogin {
           h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
             h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
             ]),
-            h('div', {
-              class: 'osjs-login-error',
-              style: {display: state.error ? 'block' : 'none'}
-            }, h('span', {}, "Your login was unsuccessful. Please check your e-mail address and password before trying again. If you have forgotten your password, follow 'Forgot your password?' link.")),
-          h('div',{className: 'input-field'},[
+            h('div',{className: 'input-field'},[
             h("input",{type: "text",name:"username",className:'validate',id:'username'}),
             h('label',{for:'username'},'Username')
           ]),
           h('div',{className: 'input-field'},[
             h("input",{type: "password",name:"password",className:'validate',id:'password'}),
-            h('label',{for:'Password'},'Password')
+            h('label',{for:'password'},'Password')
           ]),
+          h('div', {
+            class: 'osjs-login-error',
+            style: {display: state.error ? 'block' : 'none'}
+          }, h('span', {}, "The email address or password that you have entered does not match any OX Zion account.")),
           h('div',{className: 'form-signin__footer'},[
           h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
           h('a',{href: '#'},'Forgot your password?'),

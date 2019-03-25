@@ -38,7 +38,7 @@ body {
 }
 
 #ox-login-form {
-    max-width: 515px;
+    width: 31%;
     min-height: 100vh;
     right: 30px;
     position: absolute;
@@ -105,6 +105,9 @@ body {
 .footer-CR {
     color: white;
 }
+.login .input-field > label {
+    user-select: none;  
+}
 
 .login-copyright {
     font-size: 12px;
@@ -123,16 +126,16 @@ body {
 }
 
 .osjs-login-error {
-    background: #fae1dc;
-    color: #6d1e0e;
-    border-color: #fae1dc;
+    //background: #fae1dc;
+    color: #ff2b00;
+    //border-color: #fae1dc;
     min-height: 24px;
     font-size: 13px;
     line-height: 1.23;
     text-shadow: none;
     position: relative;
-    padding: 4px 24px;
+    padding: 4px;
     margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: 2px;
+    //border: 1px solid transparent;
+    //border-radius: 2px;
 }
