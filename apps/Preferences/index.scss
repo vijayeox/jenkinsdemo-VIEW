@@ -4,6 +4,7 @@
   } 
   
 .Window_Preferences {
+@import "./public/scss/notifTheme.css";
 @import "./node_modules/materialize-css/sass/materialize";
  .input-field > label{
    font-size:16px;

@@ -16,7 +16,8 @@
     "font-awesome": "^4.7.0",
     "material-ui-avatar-picker": "^1.0.3",
     "materialize-css": "^1.0.0-rc.2",
-    "react-html5-camera-photo": "^1.2.9"
+    "react-html5-camera-photo": "^1.2.9",
+    "react-notifications-component": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

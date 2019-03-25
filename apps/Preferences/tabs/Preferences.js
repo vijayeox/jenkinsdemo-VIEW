@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
 import M from "materialize-css";
+import ReactNotification from "react-notifications-component";
 
 class Preferences extends Component {
   constructor(props) {
@@ -25,9 +26,39 @@ class Preferences extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.addNotification = this.addNotification.bind(this);
+    this.addNotificationFail = this.addNotificationFail.bind(this);
+    this.notificationDOMRef = React.createRef();
   }
 
-async getPreferences() {
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotificationFail(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation Unsuccessfull" + serverResponse,
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+
+  async getPreferences() {
     // call to api using wrapper
     let userpreferences = await this.core.make("oxzion/profile").get();
 
@@ -78,9 +109,9 @@ async getPreferences() {
       );
       console.log("done");
       if (pref.status == "error") {
-        // alert(pref.message);
+         this.addNotificationFail(pref.message);
       }else{
-        // alert("Successfully Updated");
+         this.addNotification();
          this.core.make("oxzion/profile").update();
       }
 
@@ -96,12 +127,13 @@ async getPreferences() {
         var instances = M.FormSelect.init(selectTime, {
           classes: "createSelect"
         });
-
         self.setState({ initialized: 1 });
       }
     }, 0);
     return (
       <div>
+      <ReactNotification ref={this.notificationDOMRef}/>
+        
           <form style={{padding:"20px"}} onSubmit={this.handleSubmit}>
           <div className="row marginsize">
               <div className="col s3">

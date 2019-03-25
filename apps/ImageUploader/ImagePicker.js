@@ -5,7 +5,7 @@ import createReactClass from "create-react-class";
 import { Button } from "@material-ui/core";
 import './Imageuploader.css';
 import FileUpload from './FileUpload';
-
+import ReactNotification from "react-notifications-component";
 
 class ImagePicker extends Component {
   constructor(props) {
@@ -19,11 +19,47 @@ class ImagePicker extends Component {
       img: null,
       fields:{} 
     };
+    this.core.on("oxzion/profile:updated",function(){
+      this.setState({
+         savedImg:this.userprofile.key.icon
+      })
+    })
     this.handleFileChange = this.handleFileChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleRequestHide=this.handleRequestHide.bind(this);
     this.handleSubmit=this.handleSubmit.bind(this);
+    this.addNotification = this.addNotification.bind(this);
+    this.addNotificationFail = this.addNotificationFail.bind(this);
+    this.notificationDOMRef = React.createRef();
   } 
+
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      message: "Uploaded Successfully",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotificationFail(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation Unsuccessfull" + serverResponse,
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+
   handleFileChange(dataURI) {
     this.setState({
       img: dataURI,
@@ -62,21 +98,25 @@ class ImagePicker extends Component {
       "post"
       );
      if (uploadresponse.status == "error") {
-      alert(uploadresponse.message);
+         this.addNotificationFail(uploadresponse.message);
     }
     else{
-      alert("Successfully Updated");
+         this.addNotification();
       this.core.make('oxzion/profile').update();
     }
   } 
 }
 
 render () {
+  const style=!this.props.visible?{
+      "display":"none"}:{};
+
     const dataImg = this.state.savedImg.indexOf('data') != -1 ? {} : {"display" : "none"};
     const urlImg = this.state.savedImg.indexOf('data') != -1 ? {"display" : "none"} : {};  
     return (
-      <div className="bgimg">
-
+      <div className="bgimg" style={style}>
+      <ReactNotification ref={this.notificationDOMRef}/>
+      
       <form onSubmit={this.handleSubmit}>
 
       <center> <div className="avatar-photo">

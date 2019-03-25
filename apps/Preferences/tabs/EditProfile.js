@@ -3,7 +3,7 @@ import Countries from "./Countries";
 import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
-// import ReactNotification from "react-notifications-component";
+import ReactNotification from "react-notifications-component";
 
  
 class EditProfile extends Component {
@@ -37,8 +37,9 @@ class EditProfile extends Component {
     this.onSelect2 = this.onSelect2.bind(this);
     this.onSelect1 = this.onSelect1.bind(this);
     this.joinPhNo = this.joinPhNo.bind(this);
-    // this.addNotification = this.addNotification.bind(this);
-    // this.notificationDOMRef = React.createRef();
+    this.addNotification = this.addNotification.bind(this);
+    this.addNotificationFail = this.addNotificationFail.bind(this);
+    this.notificationDOMRef = React.createRef();
   }
 
   
@@ -52,20 +53,31 @@ class EditProfile extends Component {
     return profile;
   }
 
-  // addNotification() {
-  //   this.notificationDOMRef.current.addNotification({
-  //     title: "All Done!!!  👍",
-  //     message: "Operation succesfully completed.",
-  //     type: "success",
-  //     insert: "top",
-  //     container: "bottom-right",
-  //     animationIn: ["animated", "bounceIn"],
-  //     animationOut: ["animated", "bounceOut"],
-  //     dismiss: { duration: 5000 },
-  //     dismissable: { click: true }
-  //   });
-  // }
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
 
+  addNotificationFail(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation Unsuccessfull" + serverResponse,
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
 
   onSelect1(event) {
     const field = {};
@@ -166,11 +178,10 @@ async handleSubmit(event) {
         "/user/" + this.state.fields.id,JSON.stringify(formData),
         "put"
       );
-      console.log("done");
       if (editresponse.status == "error") {
-        // alert(editresponse.message);
+         this.addNotificationFail(editresponse.message);
       }else{
-         // this.addNotification();
+         this.addNotification();
          this.core.make("oxzion/profile").update();
       }       
     }
@@ -227,10 +238,10 @@ async handleSubmit(event) {
       errors["address"] = "*Please enter your address";
     }
 
-    // if (!fields["interest"]) {
-    //   formIsValid = false;
-    //   errors["interest"] = "*Please enter your interest";
-    // }
+    if (!fields["interest"]) {
+      formIsValid = false;
+      errors["interest"] = "*Please enter your interest";
+    }
 
     this.setState({
       errors: errors
@@ -256,7 +267,7 @@ async handleSubmit(event) {
    return (
       <ErrorBoundary>
         <div>
-
+        <ReactNotification ref={this.notificationDOMRef}/>
         <div></div>
           
           <form onSubmit={this.handleSubmit} className="formmargin">
@@ -271,7 +282,7 @@ async handleSubmit(event) {
                   value={this.state.fields.firstname}
                   onChange={this.handleChange}
                   required
-                  
+                  className="validate"
                 />
                 <label for="firstname">First Name *</label>
                 <div className="errorMsg">{this.state.errors.firstname}</div>
@@ -283,9 +294,11 @@ async handleSubmit(event) {
                   name="lastname"
                   ref="lastname"
                   id="lastname"
+                  pattern={"[A-Za-z]+"}
                   value={this.state.fields.lastname}
                   onChange={this.handleChange}
                   required
+                  className="validate"
                 />
                 <label for="lastname">Last Name *</label>
                 <div className="errorMsg">{this.state.errors.lastname}</div>
@@ -302,6 +315,7 @@ async handleSubmit(event) {
                   ref="email"
                   id="email"
                   required
+                  className="validate"
                 />
                 <label for="email">Email *</label>
                 <div className="errorMsg">{this.state.errors.email}</div>
@@ -397,6 +411,7 @@ async handleSubmit(event) {
                   type="text"
                   ref="phoneno"
                   name="phoneno"
+                  required
                   value={this.state.phoneno}
                   onChange={this.onSelect2}
                 />
@@ -412,6 +427,7 @@ async handleSubmit(event) {
                   type="text"
                   ref="address"
                   name="address"
+                  required
                   value={this.state.fields.address}
                   onChange={this.handleChange}
                 />

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ReactNotification from "react-notifications-component";
 
 class ChangePassword extends Component {
   constructor() {
@@ -15,9 +16,38 @@ class ChangePassword extends Component {
     this.showHide = this.showHide.bind(this);
     this.showHide1 = this.showHide1.bind(this);
     this.showHide2 = this.showHide2.bind(this);
-
     this.handleChange = this.handleChange.bind(this);
+    this.addNotification = this.addNotification.bind(this);
+    this.addNotificationFail = this.addNotificationFail.bind(this);
+    this.notificationDOMRef = React.createRef();
   }
+
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      message: "Password Update Successfull",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotificationFail(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      message: serverResponse,
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -38,9 +68,9 @@ class ChangePassword extends Component {
       console.log(formData);
       this.props.changePassword(formData).then((response) => {
         if (response.status == "error") {
-          // alert(response.message);
+         this.addNotificationFail(response.message);
         }else{
-          // alert("Successfully Updated");
+         this.addNotification();
         }
       });
     }
@@ -130,6 +160,7 @@ init() {}
 render() {
   return (
     <form onSubmit={this.handleSubmit}>
+      <ReactNotification ref={this.notificationDOMRef}/>         
       <div className="form">
         <div className="row">
             <div className="col s12">

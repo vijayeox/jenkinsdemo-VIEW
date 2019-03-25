@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Camera,{IMAGE_TYPES} from "react-html5-camera-photo";
 import "./Imageuploader.css";
+import ReactNotification from "react-notifications-component";
+
 class Webcam extends Component {
 	enableWebcam = () => this.setState({ webcamEnabled: true });
 	disableWebcam = () => this.setState({ webcamEnabled: false });
@@ -14,10 +16,43 @@ class Webcam extends Component {
 			webcamEnabled: false,
 			fields:{}
 		};
+		this.core.on("oxzion/profile:updated",function(){
+			this.setState({
+				img:this.userprofile.key.icon
+			})
+		})
 		this.onTakePhoto = this.onTakePhoto.bind(this);
 		this.handleSubmit=this.handleSubmit.bind(this);
-
+		 this.addNotification = this.addNotification.bind(this);
+	    this.addNotificationFail = this.addNotificationFail.bind(this);
+	    this.notificationDOMRef = React.createRef();
 	}
+
+	addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      message: "Uploaded Successfully",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotificationFail(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      message: "Operation Unsuccessfull" + serverResponse,
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
 
 	onTakePhoto(dataUri) {
 		this.setState({
@@ -52,62 +87,66 @@ class Webcam extends Component {
 				"post"
 				);
 			if (uploadresponse.status == "error") {
-				alert(uploadresponse.message);
+                this.addNotificationFail(uploadresponse.message);
 			}else{
-				alert("Successfully Updated");
-			    this.core.make("oxzion/profile").update();
+       		    this.addNotification();
+				this.core.make("oxzion/profile").update();
 			}
 		}     
 	}
 	render() {
-	  const dataImg = this.state.img.indexOf('data') != -1 ? {} : {"display" : "none"};
-	    		const urlImg = this.state.img.indexOf('data') != -1 ? {"display" : "none"} : {};
-		return (
-			<div className="divscroll">
-			
-			<form onSubmit={this.handleSubmit}>
-			<div className="row webdiv">
-			<div className="col s7">
-			<img src={this.state.img} style={dataImg}  
-			 name="file" height="200" width="200" className="imgupload"/>  
-			<img src={this.state.img + '?' + (new Date()).getTime()} style={urlImg}
-             name="file" height="200" width="200" className="imgupload"/> 
+		const style=!this.props.visible?{
+			"display":"none"}:{};
+
+			const dataImg = this.state.img.indexOf('data') != -1 ? {} : {"display" : "none"};
+			const urlImg = this.state.img.indexOf('data') != -1 ? {"display" : "none"} : {};
+			return (
+				<div className="divscroll" style={style}>
+				<ReactNotification ref={this.notificationDOMRef}/>
       
-			<button className="waves-effect waves-light black btn websave" type="submit" onClick={this.disableWebcam}>
-			Save
-			</button>
-			<button
+				<form onSubmit={this.handleSubmit}>
+				<div className="row webdiv">
+				<div className="col s7">
+				<img src={this.state.img} style={dataImg}  
+				name="file" height="200" width="200" className="imgupload"/>  
+				<img src={this.state.img + '?' + (new Date()).getTime()} style={urlImg}
+				name="file" height="200" width="200" className="imgupload"/> 
+
+				<button className="waves-effect waves-light black btn websave" type="submit" onClick={this.disableWebcam}>
+				Save
+				</button>
+				<button
 				className="waves-effect waves-light btn black websave" type="button"
 				id="goBack2" onClick={this.disableWebcam}
 				>
 				Back
 				</button>
-			
-			</div>
-			<div className="col s5">
-			{this.state.webcamEnabled ? (
-				
-				<Camera className="camerac"
-				onTakePhoto={dataUri => {
-					this.onTakePhoto(dataUri);
-				}}
-				idealResolution = {{width: 400, height:480}}
-				isFullscreen={true}
-				imageType = {IMAGE_TYPES.PNG}				
-				/>				
-				) : (
-				<div id="webcam1">
-				<button type="button" onClick={this.enableWebcam} className="waves-effect waves-light black btn fa fa-camera"
-				> Enable Webcam
-				</button>
-				</div>
-				)}
-				</div></div>
-				</form>
 
 				</div>
-				);
-			}
+				<div className="col s5">
+				{this.state.webcamEnabled ? (
+
+					<Camera className="camerac"
+					onTakePhoto={dataUri => {
+						this.onTakePhoto(dataUri);
+					}}
+					idealResolution = {{width: 400, height:480}}
+					isFullscreen={true}
+					imageType = {IMAGE_TYPES.PNG}				
+					/>				
+					) : (
+					<div id="webcam1">
+					<button type="button" onClick={this.enableWebcam} className="waves-effect waves-light black btn fa fa-camera"
+					> Enable Webcam
+					</button>
+					</div>
+					)}
+					</div></div>
+					</form>
+
+					</div>
+					);
 		}
+	}
 
-export default Webcam;
+	export default Webcam;

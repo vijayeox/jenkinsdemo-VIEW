@@ -8,7 +8,12 @@ class Imagewindow extends Component {
     super(props);
     this.core=this.props.args;
     this.userprofile = this.core.make('oxzion/profile').get();
+    this.state={
+      imageBox:false,
+      webcamcomponent:false,
+      imageWindowWrapper:true
     }
+ }
 
   componentDidMount() {
 
@@ -27,8 +32,12 @@ class Imagewindow extends Component {
     self=this;
 
     ready(function() {
-        document.getElementById("imageBox").style.display = "none";
-        document.getElementById("webcamcomponent").style.display = "none";
+       self.setState({
+           imageBox:false,
+           webcamcomponent:false
+       })
+        // document.getElementById("imageBox").style.display = "none";
+        // document.getElementById("webcamcomponent").style.display = "none";
     });
 
 
@@ -37,8 +46,13 @@ class Imagewindow extends Component {
       myEl2.addEventListener(
         "click",
         function() {
-          document.getElementById("imageBox").style.display = "";
-          document.getElementById("webcamcomponent").style.display = "none";
+           self.setState({
+           imageBox:true,
+           webcamcomponent:false,
+           // imageWindowWrapper:false
+         })
+          // document.getElementById("imageBox").style.display = "";
+          // document.getElementById("webcamcomponent").style.display = "none";
           document.getElementById("imageWindowWrapper").style.display = "none";
         },
         false
@@ -50,7 +64,12 @@ class Imagewindow extends Component {
       myEl3.addEventListener(
         "click",
         function() {
-          document.getElementById("imageBox").style.display = "none";
+          self.setState({
+           imageBox:false,
+           webcamcomponent:false,
+           // imageWindowWrapper:true
+         })
+          // document.getElementById("imageBox").style.display = "none";
           document.getElementById("imageWindowWrapper").style.display = "";
         },
         false
@@ -62,8 +81,13 @@ class Imagewindow extends Component {
       myEl4.addEventListener(
         "click",
         function() {
-          document.getElementById("webcamcomponent").style.display = "";
-          document.getElementById("imageBox").style.display = "none";
+          self.setState({
+           imageBox:false,
+           webcamcomponent:true,
+           // imageWindowWrapper:false
+         })
+          // document.getElementById("webcamcomponent").style.display = "";
+          // document.getElementById("imageBox").style.display = "none";
           document.getElementById("imageWindowWrapper").style.display = "none";
         },
         false
@@ -75,7 +99,12 @@ class Imagewindow extends Component {
       myEl5.addEventListener(
         "click",
         function() {
-          document.getElementById("webcamcomponent").style.display = "none";
+          self.setState({
+           imageBox:false,
+           webcamcomponent:false,
+           // imageWindowWrapper:true
+         })
+          // document.getElementById("webcamcomponent").style.display = "none";
           document.getElementById("imageWindowWrapper").style.display = "";
         },
         false
@@ -84,7 +113,10 @@ class Imagewindow extends Component {
 }
 
 render() {
+    // const style=!this.state.visible?{"display":"none"}:{};
+
   return (
+
    <div className="bgimg" style={{height:"100%"}}>    
    <div id="imageWindowWrapper" style={{height:"100%",width:"100%",backgroundImage:"url(./apps/ImageUploader/bg.png)"}} onClick={this.refresh}>
    <center><div id="img1" style={{float:"left",width:"50%"}}>
@@ -107,10 +139,10 @@ render() {
    </center>
    </div>
    <div className="file-field input-field img1" id="imageBox">
-   <ImagePicker args={this.core}/>
+   <ImagePicker args={this.core} visible={this.state.imageBox}/>
    </div>
    <div className="file-field input-field webcam" id="webcamcomponent">
-   <Webcam args={this.core}/>
+   <Webcam args={this.core} visible={this.state.webcamcomponent}/>
    </div>
    </div>
    );
