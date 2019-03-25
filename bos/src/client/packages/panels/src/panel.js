@@ -175,6 +175,9 @@ export default class Panel extends EventEmitter {
     let profileElement = document.createElement('div');
     profileElement.classList.add('profile');
     let profileDetails = this.core.make('oxzion/profile').get();
+    Object.keys(profileDetails.key).map(key => {
+        profileDetails.key[key] = profileDetails.key[key] && profileDetails.key[key] !== "null" ? profileDetails.key[key] : "";
+    });
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
     this.dob = this.formatDate(this.dateString);

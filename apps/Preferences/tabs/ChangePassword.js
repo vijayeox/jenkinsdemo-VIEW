@@ -38,12 +38,11 @@ class ChangePassword extends Component {
       console.log(formData);
       this.props.changePassword(formData).then((response) => {
         if (response.status == "error") {
-          alert(response.message);
+          // alert(response.message);
         }else{
-          alert("Successfully Updated");
+          // alert("Successfully Updated");
         }
       });
-      console.log("password updated");
     }
   }
   showHide(e) {

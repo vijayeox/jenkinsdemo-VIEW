@@ -24,12 +24,12 @@ margin-left:0px;
 
 #name {
   font-size: 15px;
-  color: black;  
+  color: #333 !important;  
 }
 
 .name {
   font-size: 15px;
-  color: black;
+  color: #333 !important;
 }
 
 #cardwidth {
@@ -83,7 +83,9 @@ margin-left:0px;
   padding-top: 0% !important;
   margin-bottom:10px !important;
 }
-
+.tabHeader{
+  font-size: 16px;
+}
 
 
 .buttons {
@@ -127,4 +129,20 @@ margin-left:0px;
 .formmargin{
   margin-right:2% !important;
   margin-left:2% !important;
+}
+
+.gender2{
+  margin-bottom: 0px !important;
+  margin-top:0px !important;
+}
+
+.gender1{
+  margin-bottom: 0px !important;
+  margin-top:0px !important;
+  padding-left: 0px !important;
+
+}
+
+.timezonediv{
+  width:31% !important;
 }

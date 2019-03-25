@@ -907,7 +907,7 @@ export default [{
     dial_code: "+44",
     code: "GB"
 }, {
-    name: "United States",
+    name: "United States of America",
     dial_code: "+1",
     code: "US"
 }, {

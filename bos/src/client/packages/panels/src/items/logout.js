@@ -63,7 +63,8 @@ export default class LogoutPanelItem extends PanelItem {
       }, [
         h('img', {
           src: logoutIcon,
-          alt: 'Log Out'
+          alt: 'Log Out',
+          title:'Logout'
         })])
     ]);
   }

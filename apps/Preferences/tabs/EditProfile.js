@@ -3,6 +3,8 @@ import Countries from "./Countries";
 import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
+// import ReactNotification from "react-notifications-component";
+
  
 class EditProfile extends Component {
   constructor(props) {
@@ -34,7 +36,9 @@ class EditProfile extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.onSelect2 = this.onSelect2.bind(this);
     this.onSelect1 = this.onSelect1.bind(this);
-      this.joinPhNo = this.joinPhNo.bind(this);
+    this.joinPhNo = this.joinPhNo.bind(this);
+    // this.addNotification = this.addNotification.bind(this);
+    // this.notificationDOMRef = React.createRef();
   }
 
   
@@ -47,6 +51,20 @@ class EditProfile extends Component {
     }
     return profile;
   }
+
+  // addNotification() {
+  //   this.notificationDOMRef.current.addNotification({
+  //     title: "All Done!!!  👍",
+  //     message: "Operation succesfully completed.",
+  //     type: "success",
+  //     insert: "top",
+  //     container: "bottom-right",
+  //     animationIn: ["animated", "bounceIn"],
+  //     animationOut: ["animated", "bounceOut"],
+  //     dismiss: { duration: 5000 },
+  //     dismissable: { click: true }
+  //   });
+  // }
 
 
   onSelect1(event) {
@@ -150,12 +168,11 @@ async handleSubmit(event) {
       );
       console.log("done");
       if (editresponse.status == "error") {
-        alert(editresponse.message);
+        // alert(editresponse.message);
       }else{
-        alert("Success");
+         // this.addNotification();
          this.core.make("oxzion/profile").update();
-      }
-       
+      }       
     }
   }
 
@@ -210,10 +227,10 @@ async handleSubmit(event) {
       errors["address"] = "*Please enter your address";
     }
 
-    if (!fields["interest"]) {
-      formIsValid = false;
-      errors["interest"] = "*Please enter your interest";
-    }
+    // if (!fields["interest"]) {
+    //   formIsValid = false;
+    //   errors["interest"] = "*Please enter your interest";
+    // }
 
     this.setState({
       errors: errors
@@ -227,6 +244,7 @@ async handleSubmit(event) {
     window.setTimeout(function() {
       M.updateTextFields();
       if (self.state.initialized === 0) {
+        //M.textareaAutoResize(document.getElementsByTagName("textarea"));
         var selectElems = document.querySelectorAll("select");
         var instances = M.FormSelect.init(selectElems, {
           classes: "createSelect"
@@ -291,7 +309,7 @@ async handleSubmit(event) {
             </div>
 
             <div className="row">
-              <div className="col s12 input-field">
+              <div className="col s6 input-field">
                 <input
                   className="datepicker"
                   ref="date_of_birth"
@@ -301,11 +319,41 @@ async handleSubmit(event) {
                  defaultValue={this.state.fields.date_of_birth}
                 onChange={this.handleDateChange}
                 />
-                <label for="date_of_birth" class="active">Date of Birth *</label>
+                <label for="date_of_birth" className="active">Date of Birth *</label>
                 <div className="errorMsg">{this.state.errors.date_of_birth}</div>
              </div>
-            </div>
+             <div className="col s6 input-field">
+             <label id="name" for="gender" className="active">Gender *</label>
+                <div className="col s3 input-field gender1">
+                <label>
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Male"
+                    onChange={this.handleChange}
+                    ref="gender"
+                    checked={this.state.fields.gender == "Male"}
+                  />
+                  <span id="name">Male</span>
+                </label>
+              </div>
+              <div className="col s3 input-field gender2">
 
+                <label>
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Female"
+                    onChange={this.handleChange}
+                    ref="gender"
+                    checked={this.state.fields.gender == "Female"}
+                  />
+                  <span id="name">Female</span>
+                </label>
+                </div>
+               </div>
+               </div>
+              
             <div className="row marginsize">
               <div className="col s12 input-field">
                 <select
@@ -320,13 +368,13 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
-                <label id="country">Country *</label>
+                <label id="country" style={{fontSize:"14px"}}>Country *</label>
               </div>
             </div>
 
           
             <div className="row marginsize input-field">
-            <div class="col s12" style={{color: "#b3b3b3"}}>Contact Number *</div>
+            <div className="col s12" style={{fontSize:"14px"}}>Contact Number *</div>
               <div className="row">
               <div className="col s3">
                 <select
@@ -342,9 +390,6 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
-              <label for="dial_code" className="contact">
-               Contact Number *
-             </label>
               </div>
               <div className="col s9">
                 <input
@@ -362,9 +407,9 @@ async handleSubmit(event) {
 
             <div className="row">
               <div className="col s12 input-field ">
-                <textarea
+                <textarea className="materialize-textarea"
                   id="address"
-                  type="text"  class="materialize-textarea"
+                  type="text"
                   ref="address"
                   name="address"
                   value={this.state.fields.address}
@@ -386,7 +431,7 @@ async handleSubmit(event) {
                   defaultValue={this.state.fields.date_of_join}
                   onChange={this.handleDateChange}
                 />
-                <label for="date_of_join" class="active">Date of Joining *</label>
+                <label for="date_of_join" className="active">Date of Joining *</label>
                 <div className="errorMsg">{this.state.errors.date_of_join}</div>
 
               </div>
@@ -405,48 +450,10 @@ async handleSubmit(event) {
                 <label for="website">Website</label>
               </div>
             </div>
-
-            <div className="row">
-              <div className="col s2">
-              <label id="name">Gender *</label>
-                </div>
-              <div className="col s10">
-                <div className="row">
-                <p>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Male"
-                    onChange={this.handleChange}
-                    ref="gender"
-                    checked={this.state.fields.gender == "Male"}
-                  />
-                  <span>Male</span>
-                </label>
-                </p>
-                <p>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Female"
-                    onChange={this.handleChange}
-                    ref="gender"
-                    checked={this.state.fields.gender == "Female"}
-                  />
-                  <span>Female</span>
-                </label>
-                </p>
-                </div>
-              </div>
-            </div>
-
             <div className="row marginsize">
               <div className="col s12 input-field">
-                <textarea class="materialize-textarea"
+                <textarea className="materialize-textarea" 
                   id="about"
-                  data-length="200"
                   ref="about"
                   name="about"
                   type="text"
@@ -462,9 +469,9 @@ async handleSubmit(event) {
                 <input
                   id="interest"
                   type="text"
-                  className="validate"
-                  required
                   ref="interest"
+                  required
+                  className="validate"
                   name="interest"
                   value={this.state.fields.interest}
                   onChange={this.handleChange}

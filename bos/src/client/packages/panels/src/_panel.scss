@@ -79,7 +79,6 @@
   height: calc(100% - 3.5em);
   box-sizing: border-box;
   display: flex;
-  overflow: auto;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-content: stretch;
@@ -355,6 +354,8 @@
     color: white;
     padding-top: 10px;
     line-height: 30px;
+    padding-bottom:5px;
+
 }
 .profileName {
   font-size: 18px;
@@ -364,4 +365,9 @@
 }
 .profileButton{
   text-align: end;
+  padding-left:120px;
+}
+.profileicon{
+  border-radius:50%;
+  cursor:pointer;
 }

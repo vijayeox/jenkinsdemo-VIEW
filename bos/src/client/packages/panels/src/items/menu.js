@@ -238,7 +238,8 @@ export default class MenuPanelItem extends PanelItem {
       }, [
         h('img', {
           src: menuIcon,
-          alt: _('LBL_MENU')
+          alt: _('LBL_MENU'),
+          title:'Applications'
         })])
     ]);
   }

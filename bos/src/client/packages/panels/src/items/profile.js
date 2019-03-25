@@ -61,7 +61,8 @@ export default class ProfilePanelItem extends PanelItem {
         h('img', {
           className:'profileicon',
           src: profileIcon['icon'] + '?' + (new Date()).getTime(),
-          alt: profileIcon['firstname']
+          alt: profileIcon['firstname'],
+          title:'My Profile'
         })])
     ]);
   }

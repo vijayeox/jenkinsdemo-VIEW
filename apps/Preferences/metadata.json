@@ -8,10 +8,10 @@
   "hidden": true,
   "singleton": true,
   "title": {
-    "en_EN": "Preferences"
+    "en_EN": "User Settings"
   },
   "description": {
-    "en_EN": "Preferences"
+    "en_EN": "User Settings"
   },
   "files": [
     "main.js",

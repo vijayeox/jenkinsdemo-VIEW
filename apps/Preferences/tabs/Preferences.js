@@ -78,9 +78,9 @@ async getPreferences() {
       );
       console.log("done");
       if (pref.status == "error") {
-        alert(pref.message);
+        // alert(pref.message);
       }else{
-        alert("Successfully Updated");
+        // alert("Successfully Updated");
          this.core.make("oxzion/profile").update();
       }
 
@@ -107,7 +107,7 @@ async getPreferences() {
               <div className="col s3">
                 <label id="name">Sound Notification</label>
               </div>
-              <div class="col s9">
+              <div className="col s9">
               <div className="row">
                 <label id="name">
                   <input
@@ -142,7 +142,7 @@ async getPreferences() {
                 <div className="col s3">
                   <label id="name">Email Alerts</label>
                 </div>
-              <div class="col s9">
+              <div className="col s9">
               <div className="row">
                   <label id="name">
                     <input
@@ -177,7 +177,7 @@ async getPreferences() {
             <div className="col s3">
               <label id="name">Local Time Zone</label>
               </div>
-              <div className="col s9">
+              <div className="col s9 timezonediv">
               <select
                 value={this.state.fields['timezone']}
                 onChange={this.handleChange}
