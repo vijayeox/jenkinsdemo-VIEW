@@ -32,7 +32,7 @@ const register = (core, args, options, metadata) => {
         window.$element.className += " Window_"+applicationName;
       }
     }
-    
+    // win.minimize();
     const getAnnouncements = async () => {
         let helper = core.make('oxzion/restClient');
         let announ = await helper.request('v1','/announcement', {}, 'get' );
@@ -49,14 +49,10 @@ const register = (core, args, options, metadata) => {
         const tray = core.make('osjs/tray').create({
           icon: proc.resource(metadata.icon),
           badge: 'badgeCheck',
-          count: announcementsCount
-        }, (ev) => {
-          core.make('osjs/contextmenu').show({
-            position: ev,
-            menu: [
-              {label: 'Show', onclick: () => win(proc)}
-            ]
-          });
+          count: announcementsCount,
+          onclick: () => {
+              win(proc);
+            },
         });
       }
     
