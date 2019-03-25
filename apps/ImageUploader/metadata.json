@@ -7,10 +7,10 @@
   "hidden": true,
   "singleton":"true",
   "title": {
-    "en_EN": "ImageUploader"
+    "en_EN": "Upload Profile Picture"
   },
   "description": {
-    "en_EN": "ImageUploader"
+    "en_EN": "Upload Profile Picture"
   },
   "files": [
     "main.js",
