@@ -154,7 +154,7 @@
         
         // .on('init', () => ref.maximize())
         .render(($content, win) => {
-          // win.maximize();
+         win.minimize();
   
           const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
           
@@ -189,28 +189,40 @@
             trayInitialized = true;
             trayOptions.title = "Chat";
             trayOptions.icon = proc.resource(metadata.icon);
-            
-            tray = core.make('osjs/tray').create(trayOptions, (ev) => {
-              core.make('osjs/contextmenu').show({
-                position: ev,
-                menu: [
-                  {
-                    label: 'Open', 
-                    onclick: () => {
-                      console.log(proc);
+            trayOptions.onclick = () => {
+              console.log(proc);
                       win.raise();
                       win.focus();
                       resetBadge();
-                    }
-                  },
-                  {
-                    label: 'Quit', 
-                    onclick: () => {
-                      proc.destroy();
-                      tray.destroy();
-                    }
-                  }
-                ]
+            }
+            tray = core.make('osjs/tray').create(trayOptions, (ev) => {
+              core.make('osjs/contextmenu').show({
+                position: ev,
+                
+                //   console.log("Tray..");
+                //   console.log(proc);
+                //         win.raise();
+                //         win.focus();
+                //         resetBadge();
+                // }
+                // menu: [
+                //   {
+                //     label: 'Open', 
+                //     onclick: () => {
+                //       console.log(proc);
+                //       win.raise();
+                //       win.focus();
+                //       resetBadge();
+                //     }
+                //   },
+                //   {
+                //     label: 'Quit', 
+                //     onclick: () => {
+                //       proc.destroy();
+                //       tray.destroy();
+                //     }
+                //   }
+                // ]
               });
             });
           }
