@@ -49,12 +49,12 @@ export default class Login extends defaultLogin {
           }, h('span', {}, "The email address or password that you have entered does not match any OX Zion account.")),
           h('div',{className: 'form-signin__footer'},[
           h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
-          h('a',{href: '#'},'Forgot your password?'),
+          //h('a',{href: '#'},'Forgot your password?'),
         ]),
         ]),
       ]),
       h('div',{className:'footer-links'},[
-        h('a',{href:'#'},'About Us'),
+        h('a',{href:'https://www.vantageagora.com'},'About Us'),
       ]),
       h('div',{className:'login-copyright'},'Copyright © 2019 Vantage Agora. All rights reserved.'),
       ])
