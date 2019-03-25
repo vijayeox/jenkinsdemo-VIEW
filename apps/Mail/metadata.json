@@ -3,7 +3,8 @@
   "name": "Mail",
   "category": "collaboration",
   "singleton":true,
-  "autostart":false,
+  "hidden" : true,
+  "autostart":true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "Mail"

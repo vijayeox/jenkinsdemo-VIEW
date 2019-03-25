@@ -109,10 +109,8 @@
             id: "MailApplicationWindow",
             icon: proc.resource(proc.metadata.icon),
             title: metadata.title.en_EN,
-            attributes: {
-              state: {
-                maximized: true
-              }
+            state: {
+              maximized : true
             },
             attributes: {
               visibility: "restricted",
@@ -130,7 +128,8 @@
           })
           .on("destroy", () => proc.destroy())
           .render(($content, win) => {
-            win.maximize();
+            // win.maximize();
+            win.minimize();
             win.attributes.maximizable = false;
             // Create a new bus for our messaging
             const profile = core.make("oxzion/profile");
@@ -194,8 +193,9 @@
               trayOptions.title = "Mail";
               trayOptions.icon = proc.resource(metadata.icon);
               trayOptions.onclick = () => {
-                console.log("check");
+                
                 win.raise();
+                win.maximize();
                 win.focus();
                 resetBadge();
               }
