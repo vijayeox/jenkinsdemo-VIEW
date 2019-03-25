@@ -31,7 +31,8 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'OXZion.png'
+      'OXZion.png',
+      'close.png'
     ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -61,8 +62,14 @@ module.exports = {
               minimize,
               sourceMap: true
             }
-          }
+          },
         ]
+      },
+      {
+        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        use: [{
+          loader: 'file-loader'
+        }]
       },
       {
         test: /\.js$/,

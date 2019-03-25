@@ -1,3 +1,13 @@
-.Window_Mail {
-    
+.osjs-window[data-id=MailApplicationWindow] {
+    .osjs-window-button[data-action=minimize] > div {
+        background-position: 50% 50%;
+        background-color: #c75050;
+        background-image: url('./close.png');
+    }
+    .osjs-window-button[data-action=minimize] {
+        min-width: 3em;
+    } 
+    //  &:hover>div {
+    //         background-color: lighten(#c75050, 10%);
+    //     }
 }
