@@ -15,6 +15,7 @@
     "create-react-class": "^15.6.3",
     "cross-env": "^5.2.0",
     "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1",
     "material-ui-avatar-picker": "^1.0.3",
     "materialize-css": "^1.0.0-rc.2",
     "rc-datepicker": "^5.0.13",

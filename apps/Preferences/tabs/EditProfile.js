@@ -4,7 +4,7 @@ import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
 import ReactNotification from "react-notifications-component";
-
+import $ from "jquery";
  
 class EditProfile extends Component {
   constructor(props) {
@@ -112,6 +112,8 @@ class EditProfile extends Component {
      this.dob = M.Datepicker.getInstance(elems[0]);
      this.doj = M.Datepicker.getInstance(elems[1]);
      M.updateTextFields();
+     M.textareaAutoResize($("#address"));
+     M.textareaAutoResize($("#about"));
   }
 
 
@@ -255,7 +257,8 @@ async handleSubmit(event) {
     window.setTimeout(function() {
       M.updateTextFields();
       if (self.state.initialized === 0) {
-        //M.textareaAutoResize(document.getElementsByTagName("textarea"));
+        M.textareaAutoResize($("#address"));
+        M.textareaAutoResize($("#about"));
         var selectElems = document.querySelectorAll("select");
         var instances = M.FormSelect.init(selectElems, {
           classes: "createSelect"
