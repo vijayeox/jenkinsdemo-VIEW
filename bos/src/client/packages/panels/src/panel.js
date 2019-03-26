@@ -73,7 +73,7 @@ export default class Panel extends EventEmitter {
       if(self.inited) {
         self.destroy();
         self.init();
-        self.setPosition();
+        self.setPosition(this.options.position);      
       }
     });
     this.formatDate = this.formatDate.bind(this);
