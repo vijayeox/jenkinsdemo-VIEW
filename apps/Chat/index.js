@@ -28,7 +28,7 @@
   * @licence Simplified BSD License
   */
   import {name as applicationName} from './metadata.json';
-  
+    
   const baseUrl = process.env.SERVER;
 
   const trayOptions = {};
@@ -133,7 +133,7 @@
         metadata 
       });
       let trayInitialized = false;
-      
+            
       // Create  a new Window instance
       const createProcWindow = () => {
         let win = proc.createWindow({
@@ -151,11 +151,27 @@
         .on('close', () => {
           console.log("close event");
         })
-        
+       
         // .on('init', () => ref.maximize())
         .render(($content, win) => {
-         win.minimize();
-  
+          // Chat Header Icons are interchanged purposefully. Do not change this.
+          let parent = document.getElementsByClassName('osjs-window-header')[0];
+          let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+
+          // Context menu is hidden
+          win.$icon.addEventListener('click', (ev) => {
+            console.log("AM here..");
+            ev.stopPropagation();
+            ev.preventDefault();
+            core.make('osjs/contextmenu').hide();
+          });
+          win.$icon.addEventListener('dblclick', (ev) =>{
+            ev.stopPropagation();
+            ev.preventDefault();
+          });
+         
+          // console.log(maximize);
+           win.minimize();
           const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
           
           const user = core.make('osjs/auth').user();
@@ -166,6 +182,7 @@
           const iframe = createIframe(core, proc, win, send => {
           });
           
+          console.log(core);
           // Finally set the source and attach
           iframe.src = src;
           
@@ -190,39 +207,14 @@
             trayOptions.title = "Chat";
             trayOptions.icon = proc.resource(metadata.icon);
             trayOptions.onclick = () => {
-              console.log(proc);
+                      console.log(proc);
                       win.raise();
                       win.focus();
                       resetBadge();
             }
             tray = core.make('osjs/tray').create(trayOptions, (ev) => {
               core.make('osjs/contextmenu').show({
-                position: ev,
-                
-                //   console.log("Tray..");
-                //   console.log(proc);
-                //         win.raise();
-                //         win.focus();
-                //         resetBadge();
-                // }
-                // menu: [
-                //   {
-                //     label: 'Open', 
-                //     onclick: () => {
-                //       console.log(proc);
-                //       win.raise();
-                //       win.focus();
-                //       resetBadge();
-                //     }
-                //   },
-                //   {
-                //     label: 'Quit', 
-                //     onclick: () => {
-                //       proc.destroy();
-                //       tray.destroy();
-                //     }
-                //   }
-                // ]
+                position: ev
               });
             });
           }

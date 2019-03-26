@@ -451,7 +451,9 @@ export default class WindowBehavior {
    * @param {Window} win Window reference
    */
   iconDblclick(ev, win) {
-    win.close();
+    if(win.attributes.closable){
+      win.close();
+    }
   }
 
   /**
@@ -477,7 +479,7 @@ export default class WindowBehavior {
       }, {
         label: _('LBL_CLOSE'),
         disabled: !closeable,
-        onclick: () => !closeable ? win.focus() : win.close()
+        onclick: () => !closeable ? win.minimize() : win.close()
       }]
     });
   }

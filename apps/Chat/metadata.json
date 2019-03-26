@@ -1,9 +1,9 @@
 {
     "type": "application",
     "name": "Chat",
-    "autostart":false,
+    "autostart":true,
     "singleton":true,
-    "hidden":false,
+    "hidden":true,
     "icon":"oxchat.png",
     "category": "collaboration",
     "server": "server.js",
