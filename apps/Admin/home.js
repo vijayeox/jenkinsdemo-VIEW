@@ -17,14 +17,11 @@ class Home extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      value: "6"
+      value: "1"
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    M.AutoInit();
-
     $(document).ready(function () {
       $("#componentsBox").hide();
 
@@ -39,89 +36,12 @@ class Home extends React.Component {
     });
   }
 
-  handleChange(event) {
-    this.setState({
-      value: event.target.value
-    });
-  }
-
   createBlock = () => {
     let table = [];
 
     if (this.state.value == 1) {
       table.push(
-        <div key="1" style={{ display: "inline-grid" }}>
-          <div className="block d1" onClick={this.orgClick}>
-            <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
-          </div>
-          <div className="titles">Organization</div>
-        </div>
-      );
-    } else if (this.state.value == 2) {
-      table.push(
-        <div key="2">
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
-            </div>
-            <div className="titles">Organization</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.groupClick}>
-              <img
-                src="apps/Admin/group.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Groups</div>
-          </div>
-        </div>
-      );
-    } else if (this.state.value == 4) {
-      table.push(
-        <div key="4" >
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
-            </div>
-            <div className="titles">Organization</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.groupClick}>
-              <img
-                src="apps/Admin/group.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Groups</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.prjClick} >
-              <img
-                src="apps/Admin/101-project.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Projects</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.userClick}>
-              <img
-                src="apps/Admin/115-manager.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Users</div>
-          </div>
-        </div>
-      );
-    } else if (this.state.value == 5) {
-      table.push(
-        <div key="5">
+        <div key="1">
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.orgClick}>
               <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
@@ -167,55 +87,14 @@ class Home extends React.Component {
             </div>
             <div className="titles">Roles</div>
           </div>
-        </div>
-      );
-    } else if (this.state.value == 6) {
-      table.push(
-        <div key="6">
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.orgClick}>
-              <img src="apps/Admin/org.svg" className="moduleBtn App-logo" />
-            </div>
-            <div className="titles">Organization</div>
-          </div>
 
           <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.groupClick}>
-              <img
-                src="apps/Admin/group.svg"
-                className="moduleBtn App-logo"
+            <div className="block d1" onClick={this.mailAdminClick}>
+              <img src="apps/Admin/091-email-1.svg"
+                className="App-logo"
               />
             </div>
-            <div className="titles">Groups</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.prjClick}>
-              <img
-                src="apps/Admin/101-project.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Projects</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.userClick}>
-              <img
-                src="apps/Admin/115-manager.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Users</div>
-          </div>
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.roleClick}>
-              <img
-                src="apps/Admin/005-workflow.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Roles</div>
+            <div className="titles">Mail Admin</div>
           </div>
 
           <div style={{ display: "inline-grid" }}>
@@ -271,15 +150,18 @@ class Home extends React.Component {
     ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
   }
 
+  mailAdminClick = (e) => {
+    OSjs.run("MailAdmin");
+  }
+
   render() {
     return (
-      <div>
+      <div style={{
+        backgroundImage: "url(apps/Admin/wait.jpg)",
+        backgroundSize: "cover"
+      }}>
         <div
           className="DashBG"
-          style={{
-            backgroundImage: "url(apps/Admin/wait.jpg)",
-            backgroundSize: "cover"
-          }}
         >
           <center>
             <div style={{ height: '-webkit-fill-available', display: 'flex' }} >
@@ -289,7 +171,7 @@ class Home extends React.Component {
             </div>
           </center>
         </div>
-        <div id="componentsBox">
+        <div id="componentsBox" style={{ paddingBottom: '100px' }}>
         </div>
       </div >
     );

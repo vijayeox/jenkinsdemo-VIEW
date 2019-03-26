@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
@@ -11,6 +11,7 @@ import {
 } from "@progress/kendo-react-grid";
 
 import ReactNotification from "react-notifications-component";
+import { Button } from '@progress/kendo-react-buttons';
 
 import DialogContainer from "./dialog/DialogContainerGroup";
 import cellWithEditing from "./cellWithEditingGroup";
@@ -287,11 +288,11 @@ class Group extends React.Component {
           </Dialog>
         )}
         <ReactNotification ref={this.notificationDOMRef} />
-        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+        <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
-            <a className="waves-effect waves-light btn goBack">
+            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
               <FaArrowLeft />
-            </a>
+            </Button>
           </div>
           <center>
             <div className="col s6" id="pageTitle">
@@ -328,7 +329,7 @@ class Group extends React.Component {
           <Column field="id" title="ID" width="70px" />
           <Column field="name" title="Name" />
 
-          <Column field="manager_id" title="Manager ID" />
+          <Column field="manager_id" title="Manager ID" width="120px" />
           <Column field="description" title="Description" />
           <Column
             title="Edit"

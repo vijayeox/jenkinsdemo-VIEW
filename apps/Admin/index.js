@@ -26,11 +26,11 @@ const register = (core, args, options, metadata) => {
       icon: proc.resource(icon),
       dimension: {
         width: 800,
-        height: 520
+        height: 570
       },
       position: {
         left: 150,
-        top: 80
+        top: 60
       }
     })
     .on("destroy", () => proc.destroy())

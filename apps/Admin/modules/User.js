@@ -1,25 +1,29 @@
-import React, { Component } from "react";
+import React from "react";
+
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 import {
   Grid,
-  GridColumn as Column,
+  GridColumn,
   GridToolbar
 } from "@progress/kendo-react-grid";
+import { Button } from '@progress/kendo-react-buttons';
 
 import ReactNotification from "react-notifications-component";
+import "jquery/dist/jquery.js";
+import $ from "jquery";
 
 import DialogContainer from "./dialog/DialogContainerUser";
 import cellWithEditing from "./cellWithEditing";
-import { orderBy } from "@progress/kendo-data-query";
+import { withState } from './with-state';
+
+const StatefulGrid = withState(Grid);
 
 class User extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-
     this.state = {
       userInEdit: undefined,
-      sort: [],
       products: [],
       action: ""
     };
@@ -31,6 +35,13 @@ class User extends React.Component {
       this.setState({ products: response.data });
     });
   }
+
+  componentDidMount() {
+    $(document).ready(function () {
+      $(".k-textbox").attr("placeholder", "Search");
+    });
+  }
+
   addDataNotification(serverResponse) {
     this.notificationDOMRef.current.addNotification({
       title: "Operation Successful",
@@ -86,8 +97,9 @@ class User extends React.Component {
   };
 
   remove = dataItem => {
-    this.deleteUserData(dataItem.id).then(response => {});
-    this.handler();
+    this.deleteUserData(dataItem.id).then(response => {
+      addNotification();
+    });
 
     const products = this.state.products;
     const index = products.findIndex(p => p.id === dataItem.id);
@@ -124,15 +136,21 @@ class User extends React.Component {
     this.setState({ userInEdit: {}, action: "add" });
   };
 
+  searchUnavailable() {
+    return (
+      <div></div>
+    );
+  }
+
   render() {
     return (
       <div id="userPage">
         <ReactNotification ref={this.notificationDOMRef} />
-        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+        <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
-            <a className="waves-effect waves-light btn goBack">
+            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
               <FaArrowLeft />
-            </a>
+            </Button>
           </div>
           <center>
             <div className="col s6" id="pageTitle">
@@ -141,16 +159,7 @@ class User extends React.Component {
           </center>
         </div>
 
-        <Grid
-           data={orderBy(this.state.products, this.state.sort)}
-          sortable
-          sort={this.state.sort}
-          onSortChange={e => {
-            this.setState({
-              sort: e.sort
-            });
-          }}
-        >
+        <StatefulGrid data={this.state.products}>
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Users List</div>
@@ -164,17 +173,17 @@ class User extends React.Component {
               </button>
             </div>
           </GridToolbar>
-          <Column field="id" title="User ID" width="90px" />
-          <Column field="name" title="Name" />
-          <Column field="designation" title="Designation" />
-          <Column field="country" title="Country" />
-          <Column
+          <GridColumn field="id" title="User ID" width="110px" />
+          <GridColumn field="name" title="Name" />
+          <GridColumn field="designation" title="Designation" />
+          <GridColumn field="country" title="Country" />
+          <GridColumn
             title="Edit"
             width="150px"
             cell={cellWithEditing(this.edit, this.remove)}
+            filterCell={this.searchUnavailable}
           />
-        </Grid>
-
+        </StatefulGrid>
 
         {this.state.userInEdit && (
           <DialogContainer

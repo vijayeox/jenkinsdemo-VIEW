@@ -9,7 +9,7 @@ import {
 } from "@progress/kendo-react-grid";
 
 import ReactNotification from "react-notifications-component";
-
+import { Button } from '@progress/kendo-react-buttons';
 import DialogContainer from "./dialog/DialogContainerRole";
 import cellWithEditing from "./cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
@@ -135,11 +135,11 @@ class Role extends React.Component {
       <div>
         <div id="rolePage">
           <ReactNotification ref={this.notificationDOMRef} />
-          <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+          <div style={{ paddingTop: '12px' }} className="row">
             <div className="col s3">
-              <a className="goBack waves-effect waves-light btn">
+              <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
                 <FaArrowLeft />
-              </a>
+              </Button>
             </div>
             <center>
               <div className="col s6" id="pageTitle">

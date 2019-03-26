@@ -136,9 +136,9 @@ export default class DialogContainer extends React.Component {
                   <label htmlFor="appCategory">Category</label>
                 </div>
               </div>
-             
 
-            
+
+
             </form>
           </div>
 

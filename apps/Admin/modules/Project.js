@@ -14,7 +14,7 @@ import {
 } from "@progress/kendo-react-grid";
 
 import ReactNotification from "react-notifications-component";
-
+import { Button } from '@progress/kendo-react-buttons';
 import DialogContainer from "./dialog/DialogContainerPrj";
 import cellWithEditing from "./cellWithEditing";
 import {
@@ -164,14 +164,12 @@ class Project extends React.Component {
 
   render() {
     return (<div id="project">
-      <ReactNotification ref={this.notificationDOMRef}/>
-      <div style={{
-          margin: "10px 0px 10px 0px"
-        }} className="row">
+      <ReactNotification ref={this.notificationDOMRef} />
+      <div style={{ paddingTop: '12px' }} className="row">
         <div className="col s3">
-          <a className="waves-effect waves-light btn goBack">
-            <FaArrowLeft/>
-          </a>
+          <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
+            <FaArrowLeft />
+          </Button>
         </div>
         <center>
           <div className="col s6" id="pageTitle">
@@ -181,46 +179,46 @@ class Project extends React.Component {
       </div>
 
       <Grid data={orderBy(this.state.products, this.state.sort)} sortable sort={this.state.sort} onSortChange={e => {
-          this.setState({sort: e.sort});
-        }}>
+        this.setState({ sort: e.sort });
+      }}>
         <GridToolbar>
           <div>
             <div style={{
-                fontSize: "20px"
-              }}>Projects List</div>
+              fontSize: "20px"
+            }}>Projects List</div>
             <button onClick={this.insert} className="k-button" style={{
-                position: "absolute",
-                top: "8px",
-                right: "16px"
-              }}>
+              position: "absolute",
+              top: "8px",
+              right: "16px"
+            }}>
               <FaPlusCircle style={{
-                  fontSize: "20px"
-                }}/>
+                fontSize: "20px"
+              }} />
 
               <p style={{
-                  margin: "0px",
-                  paddingLeft: "10px"
-                }}>
+                margin: "0px",
+                paddingLeft: "10px"
+              }}>
                 Add Project
               </p>
             </button>
           </div>
         </GridToolbar>
 
-        <Column field="id" title="ID" width="70px"/>
-        <Column field="name" title="Name"/>
+        <Column field="id" title="ID" width="70px" />
+        <Column field="name" title="Name" />
 
-        <Column field="description" title="Description"/>
-        <Column field="org_id" title="Organization ID"/>
-        <Column title="Edit" width="160px" cell={cellWithEditing(this.edit, this.remove)}/>
+        <Column field="description" title="Description" />
+        <Column field="org_id" title="Organization ID" />
+        <Column title="Edit" width="160px" cell={cellWithEditing(this.edit, this.remove)} />
       </Grid>
 
       {
         this.state.prjInEdit && (<DialogContainer
           args={this.core} dataItem={this.state.prjInEdit}
           save={this.save} cancel={this.cancel}
-          formAction={this.state.action} action={this.handler}/>
-      )}
+          formAction={this.state.action} action={this.handler} />
+        )}
     </div>);
   }
 

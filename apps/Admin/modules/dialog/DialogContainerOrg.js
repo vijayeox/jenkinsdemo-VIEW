@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
+import { Button } from '@progress/kendo-react-buttons';
 import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
 
@@ -55,6 +56,7 @@ export default class DialogContainer extends React.Component {
       },
       "put"
     );
+    return orgEditData;
   }
 
   onDialogInputChange = event => {
@@ -77,7 +79,10 @@ export default class DialogContainer extends React.Component {
 
   submitData = event => {
     if (this.props.formAction == "edit") {
-      this.editOrganization();
+      this.editOrganization().then(response => {
+        var addResponse = response.status;
+        this.props.action(addResponse);
+      });
     } else {
       this.pushData().then(response => {
         var addResponse = response.data.id;
@@ -136,7 +141,6 @@ export default class DialogContainer extends React.Component {
                     name="city"
                     value={this.state.orgInEdit.city || ""}
                     onChange={this.onDialogInputChange}
-                    required={true}
                   />
                   <label htmlFor="organizationCity">City</label>
                 </div>
@@ -149,7 +153,6 @@ export default class DialogContainer extends React.Component {
                     name="state"
                     value={this.state.orgInEdit.state || ""}
                     onChange={this.onDialogInputChange}
-                    required={true}
                   />
                   <label htmlFor="organizationState">State</label>
                 </div>
@@ -164,7 +167,6 @@ export default class DialogContainer extends React.Component {
                     name="zip"
                     value={this.state.orgInEdit.zip || ""}
                     onChange={this.onDialogInputChange}
-                    required={true}
                   />
                   <label htmlFor="organizationZip">Zip Code</label>
                 </div>
@@ -179,7 +181,6 @@ export default class DialogContainer extends React.Component {
                     name="logo"
                     value={this.state.orgInEdit.logo || ""}
                     onChange={this.onDialogInputChange}
-                    required={true}
                   />
                   <label htmlFor="organizationLogo">Logo</label>
                 </div>
@@ -194,7 +195,6 @@ export default class DialogContainer extends React.Component {
                     name="languagefile"
                     value={this.state.orgInEdit.languagefile || ""}
                     onChange={this.onDialogInputChange}
-                    required={true}
                   />
                   <label htmlFor="organizationLang">Language</label>
                 </div>
@@ -203,16 +203,12 @@ export default class DialogContainer extends React.Component {
           </div>
 
           <DialogActionsBar args={this.core}>
-            <button className="k-button" onClick={this.props.cancel}>
+            <Button onClick={this.props.cancel}>
               Cancel
-            </button>
-            <button
-              className="k-button k-primary"
-              type="submit"
-              form="organizationForm"
-            >
-              Save
-            </button>
+            </Button>
+            <Button primary={true} type="submit" form="organizationForm">
+              Submit
+            </Button>
           </DialogActionsBar>
         </Dialog>
       </Validator>

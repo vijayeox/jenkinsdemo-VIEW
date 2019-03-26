@@ -5,6 +5,14 @@
 
   background: #f06151;
 
+  .k-filtercell>.k-filtercell-wrapper>input::placeholder {
+    font-size: 1em;
+  }
+
+  .k-filtercell>.k-filtercell-wrapper>input {
+    font-size: 1em;
+  }
+
   #adminHeader {
     margin: auto;
     margin-bottom: 0px;
@@ -41,8 +49,9 @@
   }
 
 
-  #goBack {
+  .goBack {
     margin-right: 5%;
+    cursor: pointer;
   }
 
   .k-dialog {
@@ -51,12 +60,22 @@
     margin-top: 25px;
   }
 
-  .k-grid-content {
-    height: 360px;
+  .k-filtercell-operator {
+    display: none;
   }
 
   .k-grid {
     margin: 15px;
+    max-height: 30rem;
+    height: -webkit-fill-available;
+  }
+
+  .k-filtercell-wrapper>.k-textbox {
+    height: 25px;
+  }
+
+  .k-filtercell {
+    height: 25px;
   }
 
   .k-tooltip-validation {
@@ -86,9 +105,7 @@
     font-size: 25px;
     color: #183651;
     padding-top: 5px;
-    margin-bottom: 15px;
   }
-
 
   .block {
     height: 105px;

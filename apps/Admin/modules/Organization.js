@@ -1,36 +1,44 @@
-import React, { Component } from "react";
+import React from "react";
 
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
-
 import {
   Grid,
   GridColumn as Column,
   GridToolbar
 } from "@progress/kendo-react-grid";
+import { Button } from '@progress/kendo-react-buttons';
 
 import ReactNotification from "react-notifications-component";
+import "jquery/dist/jquery.js";
+import $ from "jquery";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
 import cellWithEditing from "./cellWithEditing";
-import { orderBy } from "@progress/kendo-data-query";
+import { withState } from './with-state';
+
+const StatefulGrid = withState(Grid);
 
 class Organization extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-
     this.state = {
       orgInEdit: undefined,
-      sort: [{ field: "name", dir: "asc" }],
       products: [],
       action: ""
     };
-
     this.addNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
 
     this.getOrganizationData().then(response => {
       this.setState({ products: response.data });
+    });
+
+  }
+
+  componentDidMount() {
+    $(document).ready(function () {
+      $(".k-textbox").attr("placeholder", "Search");
     });
   }
 
@@ -48,7 +56,7 @@ class Organization extends React.Component {
     });
   }
 
-  addNotification(serverResponse) {
+  addNotification() {
     this.notificationDOMRef.current.addNotification({
       title: "All Done!!!  👍",
       message: "Operation succesfully completed.",
@@ -63,10 +71,14 @@ class Organization extends React.Component {
   }
 
   handler = serverResponse => {
-    this.getOrganizationData().then(response => {
-      this.setState({ products: response.data });
-      this.addDataNotification(serverResponse);
-    });
+    if (serverResponse == "success") {
+      this.addNotification();
+    } else {
+      this.getOrganizationData().then(response => {
+        this.setState({ products: response.data });
+        this.addDataNotification(serverResponse);
+      });
+    }
   };
 
   async getOrganizationData() {
@@ -133,15 +145,21 @@ class Organization extends React.Component {
     this.setState({ orgInEdit: {}, action: "add" });
   };
 
+  searchUnavailable() {
+    return (
+      <div></div>
+    );
+  }
+
   render = () => {
     return (
       <div id="organization">
         <ReactNotification ref={this.notificationDOMRef} />
-        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+        <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
-            <a className="waves-effect waves-light btn goBack">
+            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
               <FaArrowLeft />
-            </a>
+            </Button>
           </div>
           <center>
             <div className="col s6" id="pageTitle">
@@ -150,16 +168,7 @@ class Organization extends React.Component {
           </center>
         </div>
 
-        <Grid
-          data={orderBy(this.state.products, this.state.sort)}
-          sortable
-          sort={this.state.sort}
-          onSortChange={e => {
-            this.setState({
-              sort: e.sort
-            });
-          }}
-        >
+        <StatefulGrid data={this.state.products}>
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Organizations List</div>
@@ -186,8 +195,9 @@ class Organization extends React.Component {
             title="Edit"
             width="160px"
             cell={cellWithEditing(this.edit, this.remove)}
+            filterCell={this.searchUnavailable}
           />
-        </Grid>
+        </StatefulGrid>
 
         {this.state.orgInEdit && (
           <DialogContainer
@@ -202,10 +212,6 @@ class Organization extends React.Component {
       </div>
     );
   };
-
-  dialogTitle() {
-    return `${this.state.orgInEdit.id === undefined ? "Add" : "Edit"} product`;
-  }
 
   cloneProduct(product) {
     return Object.assign({}, product);

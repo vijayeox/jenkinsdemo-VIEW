@@ -9,7 +9,7 @@ import {
 } from "@progress/kendo-react-grid";
 
 import ReactNotification from "react-notifications-component";
-
+import { Button } from '@progress/kendo-react-buttons';
 import DialogContainer from "./dialog/DialogContainerAnnounc";
 import cellWithEditing from "./cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
@@ -19,14 +19,14 @@ class Announcement extends React.Component {
     super(props);
     this.core = this.props.args;
 
-   this.state = {
+    this.state = {
       ancInEdit: undefined,
       sort: [{ field: "name", dir: "asc" }],
       products: [],
       action: ""
     };
 
-      this.addNotification = this.addNotification.bind(this);
+    this.addNotification = this.addNotification.bind(this);
     this.notificationDOMRef = React.createRef();
 
     this.getAnnouncementData().then(response => {
@@ -138,11 +138,11 @@ class Announcement extends React.Component {
   render = () => {
     return (
       <div id="announcement">
-        <div style={{ margin: "10px 0px 10px 0px" }} className="row">
+        <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
-            <a className="waves-effect waves-light btn goBack">
+            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
               <FaArrowLeft />
-            </a>
+            </Button>
           </div>
           <center>
             <div className="col s6" id="pageTitle">
@@ -206,7 +206,7 @@ class Announcement extends React.Component {
     );
   };
 
-    dialogTitle() {
+  dialogTitle() {
     return `${this.state.ancInEdit.id === undefined ? "Add" : "Edit"} product`;
   }
 
@@ -214,7 +214,7 @@ class Announcement extends React.Component {
     return Object.assign({}, product);
   }
 
-    newProduct(source) {
+  newProduct(source) {
     const newProduct = {
       id: "",
       name: "",
