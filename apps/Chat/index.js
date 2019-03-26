@@ -42,6 +42,14 @@
       tray.update(trayOptions);
     }
   };
+
+  // Chat Header Icons are interchanged purposefully. Do not change this.
+  const HeaderIcon = () => {
+    let parent = document.getElementsByClassName('osjs-window-header')[0];
+  if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
+    let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+    }
+  }
   
   const createIframe = (core, proc, win, cb) => {
     const iframe = document.createElement('iframe');
@@ -154,13 +162,11 @@
        
         // .on('init', () => ref.maximize())
         .render(($content, win) => {
-          // Chat Header Icons are interchanged purposefully. Do not change this.
-          let parent = document.getElementsByClassName('osjs-window-header')[0];
-          let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+
+          HeaderIcon();
 
           // Context menu is hidden
           win.$icon.addEventListener('click', (ev) => {
-            console.log("AM here..");
             ev.stopPropagation();
             ev.preventDefault();
             core.make('osjs/contextmenu').hide();
@@ -209,6 +215,7 @@
             trayOptions.onclick = () => {
                       console.log(proc);
                       win.raise();
+                      HeaderIcon();
                       win.focus();
                       resetBadge();
             }
