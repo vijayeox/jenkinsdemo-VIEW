@@ -52,13 +52,33 @@ export default class LogoutPanelItem extends PanelItem {
 
   render(state, actions) {
     const logout = async () => {
-      // console.log('test');
       await this.core.make('osjs/session').save();
       this.core.make('osjs/auth').logout();
     };
+    const confirm = () => {
+     const callbackValue = dialog => 'My value';
+    const options = {
+    buttons: ['ok', 'cancel'],
+    window: {
+      title: 'My Dialog',
+      dimension: {width: 200, height: 200}
+    },
+    atttributes:{
+      modal:true
+    }};
+    const proc = this.core.make('osjs/dialog', 'confirm', {
+      title: "Confirm Log out",
+      message: "Are you sure you want to logout ?",
+      choices: ['ok', 'cancel']
+    }, (btn, value) => {
+      if (btn === 'yes') {
+        logout();
+      }
+    });
+  }
     return super.render('logout', [
       h('div', {
-        onclick: logout,
+        onclick: confirm,
         className: 'osjs-panel-logout'
       }, [
         h('img', {
