@@ -75,10 +75,11 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999999999;
-  background-color: #000;
-  color: #fff;
-  font-size: 120%;
-  font-family: 'Century Gothic';
+  background-color:rgba(0, 0, 0,0.4);
+  background-size:contain;
+  height:100%;
+  width:100%;
   padding: $base-margin;
   text-align: center;
+
 }

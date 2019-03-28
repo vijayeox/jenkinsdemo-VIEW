@@ -30,7 +30,6 @@
 
 import Application from './application';
 import Websocket from './websocket';
-import Splash from './splash';
 import {CoreBase} from '@osjs/common';
 import {defaultConfiguration} from './config';
 import {fetch} from './utils/fetch';
@@ -63,7 +62,6 @@ export default class Core extends CoreBase {
     this.user = null;
     this.ws = null;
     this.ping = null;
-    this.splash = new Splash(this);
     this.$root = options.root;
     this.$resourceRoot = options.resourceRoot || document.querySelector('head');
     this.requestOptions = {};
@@ -447,7 +445,13 @@ export default class Core extends CoreBase {
    */
   run(name, args = {}, options = {}) {
     console.log('Core::run()', name, args, options);
-
+    //OXZION CHANGE START
+    const splash = this.make('oxzion/splash');
+    splash.show();
+    this.on(`osjs/application:launched`, (app) => {
+      splash.destroy();
+    });
+    //OXZION CHANGE END
     return this.make('osjs/packages').launch(name, args, options);
   }
 

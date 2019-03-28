@@ -10,7 +10,11 @@ import LocalStorageAdapter from './localStorageAdapter.js';
 
 const loginAdapter = (core, config) => ({
   login: (req, res) => {
-
+    const splash = core.make('oxzion/splash');
+    core.on('osjs/core:boot', () => splash.show());
+    core.on('osjs/core:booted', () => splash.destroy());
+    core.on('osjs/core:logged-in', () => splash.show());
+    core.on('osjs/core:started', () => splash.destroy());
     const username = req.username;
     var lsHelper = new LocalStorageAdapter;
     var reqData = new FormData();

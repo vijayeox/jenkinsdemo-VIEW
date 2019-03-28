@@ -4,6 +4,7 @@ const minimize = mode === 'production';
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {
   DefinePlugin
 } = webpack;
@@ -45,6 +46,9 @@ module.exports = {
     new DefinePlugin({
       OSJS_VERSION: npm.version
     }),
+    new CopyWebpackPlugin([
+      'src/client/assets/images/load.gif'
+    ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
       favicon: path.resolve(__dirname, 'src/client/favicon.ico'),
