@@ -7,9 +7,24 @@
 @import "./public/scss/notifTheme.css";
 @import "./node_modules/materialize-css/sass/materialize";
  .input-field > label{
-   font-size:16px;
-   color:#333 !important;
+    font-size:16px;
+    color:#333 !important;
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
  }
+ .row .col.s12{
+   margin-bottom: 10px !important;
+   margin-top: 10px !important;
+ }
+ .row .col.s6{
+  margin-bottom: 10px !important;
+  margin-top: 10px !important;
+}
+.password{
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
 
   .rwt__tabs[data-rwt-vertical="true"] {
     display: flex;
@@ -254,9 +269,7 @@
   #goBack1 {
     margin-left: 10px;
   }
-  .row {
-    padding-bottom: 2%;
-  }
+  
 
   .buttons {
     margin-right: 3%;
@@ -358,4 +371,17 @@
       width: 100%;
     }
   }
+
+  [type="radio"]:checked+span:after{
+    background-color: #000000 !important;
+    border-color: #000 !important;
+  }
+  [type="radio"]:checked+span:before{
+  border-color: #000000 !important;
+  }
+
+  .password__show{
+    background: #000;
+  }
+
 }

@@ -136,7 +136,7 @@ class Preferences extends Component {
         
           <form style={{padding:"20px"}} onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-              <div className="col s3">
+              <div className="col s3" id="sound" style={{marginTop:"5px"}}>
                 <label id="name">Sound Notification</label>
               </div>
               <div className="col s9">
@@ -149,6 +149,7 @@ class Preferences extends Component {
                     onChange={this.handleChange}
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "true"}
+                    // checked
                   />
                   <span className="m-2">On</span>
                 </label>
@@ -162,7 +163,8 @@ class Preferences extends Component {
                     onChange={this.handleChange}
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "false"}
-                  />
+                    
+                    />
                   <span>Off</span>
                 </label>
               </div>
@@ -171,7 +173,7 @@ class Preferences extends Component {
 
           <div>
             <div className="row">
-                <div className="col s3">
+                <div className="col s3" id="emailalert" style={{marginTop:"7px"}}>
                   <label id="name">Email Alerts</label>
                 </div>
               <div className="col s9">
@@ -197,6 +199,7 @@ class Preferences extends Component {
                       onChange={this.handleChange}
                       ref="emailalerts"
                       checked={this.state.fields['emailalerts'] == "false"}
+                      // checked
                     />
                     <span>Off</span>
                   </label>
@@ -206,12 +209,13 @@ class Preferences extends Component {
           </div>
 
           <div className="row" id="row1" style={{paddingTop:"5px"}}>
-            <div className="col s3">
+            <div className="col s3" id="localtimezone" style={{marginTop:"18px"}}>
               <label id="name">Local Time Zone</label>
               </div>
               <div className="col s9 timezonediv">
               <select
                 value={this.state.fields['timezone']}
+                // value="Asia/Calcutta"
                 onChange={this.handleChange}
                 ref="timezone"
                 name="timezone"
@@ -227,7 +231,7 @@ class Preferences extends Component {
           </div>
 
           <div className="row" id="row2" style={{paddingBottom:0}}>
-                <div className="input-field col s3">
+                <div className="input-field col s3" id="datef" style={{marginTop:"16px"}}>
                 <label id="name">Date Format</label>
                   </div>
                 <div className="input-field col s3">
@@ -237,13 +241,14 @@ class Preferences extends Component {
                   ref="dateformat"
                   pattern={"['d','m','y']{1,4}"+"['/','-']"+"['d','m','y']{1,4}"+"['/','-']"+"['d','m','y']{1,4}"}
                   value={this.state.fields['dateformat']}
+                  // value="dd/mm/yyyy"
                   onChange={this.handleChange}
                   className="validate"
                 />               
 
                 </div>
                 <div className="input-field col s2">
-                <a className="btn-floating waves-effect waves-light tooltipped" data-html="true" data-position="right" data-tooltip="dd-mm-yyyy - 01-02-2012<br/>
+                <a className="btn-floating black waves-effect waves-light tooltipped" data-html="true" data-position="right" data-tooltip="dd-mm-yyyy - 01-02-2012<br/>
                                                                                                   d-mmm-yyyy - 1-Feb-2012<br/>
                                                                                                   yy-m-dd - 12-2-01<br/>
                                                                                                   dd/mmmm/yyyy - 01/Febraury/2012<br/>

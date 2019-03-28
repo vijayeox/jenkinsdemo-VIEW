@@ -5,6 +5,7 @@ import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
 import ReactNotification from "react-notifications-component";
 import $ from "jquery";
+import Moment from "moment";
  
 class EditProfile extends Component {
   constructor(props) {
@@ -12,6 +13,9 @@ class EditProfile extends Component {
     
     this.core = this.props.args;
     this.userprofile = this.core.make('oxzion/profile').get();
+    this.userprofile.key.preferences['dateformat'] = 
+    this.userprofile.key.preferences['dateformat'] && this.userprofile.key.preferences['dateformat'] != '' ? 
+    this.userprofile.key.preferences['dateformat'] : "yyyy/m/dd"
     this.dob = null;
     this.doj = null;
     this.state = {
@@ -23,7 +27,7 @@ class EditProfile extends Component {
       errors: {},
       initialized: -1,
       phonenumber: {},
-      dateformat:this.userprofile.key.preferences['dateformat']
+     dateformat:this.userprofile.key.preferences['dateformat']
      
     };
 
@@ -41,8 +45,9 @@ class EditProfile extends Component {
     this.addNotificationFail = this.addNotificationFail.bind(this);
     this.notificationDOMRef = React.createRef();
   }
-
   
+
+
   async getProfile() {
     // call to api using wrapper
     let profile = await this.core.make("oxzion/profile").get();
@@ -55,7 +60,7 @@ class EditProfile extends Component {
 
   addNotification() {
     this.notificationDOMRef.current.addNotification({
-      message: "Operation succesfully completed.",
+      message: "Profile has been successfully updated.",
       type: "success",
       insert: "top",
       container: "bottom-right",
@@ -68,7 +73,7 @@ class EditProfile extends Component {
 
   addNotificationFail(serverResponse) {
     this.notificationDOMRef.current.addNotification({
-      message: "Operation Unsuccessfull" + serverResponse,
+      message: "Updation Failed: " + serverResponse,
       type: "danger",
       insert: "top",
       container: "bottom-right",
@@ -78,6 +83,8 @@ class EditProfile extends Component {
       dismissable: { click: true }
     });
   }
+
+
 
   onSelect1(event) {
     const field = {};
@@ -103,14 +110,28 @@ class EditProfile extends Component {
 
 
   componentDidMount() {
-    let elems = document.querySelectorAll(".datepicker");
-    M.Datepicker.init(elems, {
+    let dobElem = document.getElementById("date_of_birth")
+    M.Datepicker.init(dobElem, {
       format: this.state.dateformat,
+      // format: 'yyyy/mm/dd',
       showClearBtn: true,
-      yearRange: 100
+      yearRange: 100,
+      maxDate: new Date(),
+      defaultDate:this.dateobj(this.state.fields.date_of_birth),
+      setDefaultDate:false
     });
-     this.dob = M.Datepicker.getInstance(elems[0]);
-     this.doj = M.Datepicker.getInstance(elems[1]);
+    let dojElem = document.getElementById("date_of_join");
+    M.Datepicker.init(dojElem, {
+      format: this.state.dateformat,
+      // format: 'dd/mm/yyyy',
+      showClearBtn: true,
+      yearRange: 100,
+      maxDate: new Date(),
+      defaultDate:this.dateobj(this.state.fields.date_of_join),
+      setDefaultDate:false
+    });
+     this.dob = M.Datepicker.getInstance(dobElem);
+     this.doj = M.Datepicker.getInstance(dojElem);
      M.updateTextFields();
      M.textareaAutoResize($("#address"));
      M.textareaAutoResize($("#about"));
@@ -150,6 +171,14 @@ class EditProfile extends Component {
     return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
   }
 
+  dateobj(date2){
+    if(!date2 || date2 === ''){
+      return null
+    }
+    var momentObj = Moment(date2, 'YYYY-MM-DD');
+    var momentString = momentObj.format((this.state.dateformat).toUpperCase());
+    return momentString;
+  }
 
 
 async handleSubmit(event) {
@@ -263,10 +292,11 @@ async handleSubmit(event) {
         var instances = M.FormSelect.init(selectElems, {
           classes: "createSelect"
         });
-
         self.setState({ initialized: 1 });
       }
     }, 0);
+
+    
    return (
       <ErrorBoundary>
         <div>
@@ -286,8 +316,9 @@ async handleSubmit(event) {
                   onChange={this.handleChange}
                   required
                   className="validate"
+                  
                 />
-                <label for="firstname">First Name *</label>
+                <label htmlFor="firstname">First Name *</label>
                 <div className="errorMsg">{this.state.errors.firstname}</div>
               </div>
 
@@ -302,8 +333,9 @@ async handleSubmit(event) {
                   onChange={this.handleChange}
                   required
                   className="validate"
+                  
                 />
-                <label for="lastname">Last Name *</label>
+                <label htmlFor="lastname">Last Name *</label>
                 <div className="errorMsg">{this.state.errors.lastname}</div>
               </div>
             </div>
@@ -319,8 +351,9 @@ async handleSubmit(event) {
                   id="email"
                   required
                   className="validate"
+                  
                 />
-                <label for="email">Email *</label>
+                <label htmlFor="email">Email *</label>
                 <div className="errorMsg">{this.state.errors.email}</div>
               </div>
             </div>
@@ -333,14 +366,15 @@ async handleSubmit(event) {
                   id="date_of_birth"
                   name="date_of_birth"
                   required
-                 defaultValue={this.state.fields.date_of_birth}
+                 defaultValue={this.dateobj(this.state.fields.date_of_birth)}
                 onChange={this.handleDateChange}
                 />
-                <label for="date_of_birth" className="active">Date of Birth *</label>
+                <label htmlFor="date_of_birth" className="active">Date of Birth *</label>
                 <div className="errorMsg">{this.state.errors.date_of_birth}</div>
              </div>
+
              <div className="col s6 input-field">
-             <label id="name" for="gender" className="active">Gender *</label>
+             <label id="name" htmlFor="gender" className="active">Gender *</label>
                 <div className="col s3 input-field gender1">
                 <label>
                   <input
@@ -378,6 +412,7 @@ async handleSubmit(event) {
                   onChange={this.handleChange}
                   ref="country" id="country"
                   name="country"
+                  
                 >
                   {Codes.map((country, key) => (
                     <option key={key} value={country.name}>
@@ -400,6 +435,7 @@ async handleSubmit(event) {
                   id="dial_code"
                   name="dial_code"
                   ref="dial_code"
+                  
                 >
                   {Codes.map((dial_code, key) => (
                     <option key={key} value={dial_code.dial_code}>
@@ -417,6 +453,7 @@ async handleSubmit(event) {
                   required
                   value={this.state.phoneno}
                   onChange={this.onSelect2}
+                  
                 />
               </div>
               </div>
@@ -434,7 +471,7 @@ async handleSubmit(event) {
                   value={this.state.fields.address}
                   onChange={this.handleChange}
                 />
-                <label for="address">Address *</label>
+                <label htmlFor="address">Address *</label>
                 <div className="errorMsg">{this.state.errors.address}</div>
               </div>
             </div>
@@ -447,10 +484,11 @@ async handleSubmit(event) {
                   id="date_of_join"
                   name="date_of_join"
                   required
-                  defaultValue={this.state.fields.date_of_join}
+                  defaultValue={this.dateobj(this.state.fields.date_of_join)}
                   onChange={this.handleDateChange}
+                  
                 />
-                <label for="date_of_join" className="active">Date of Joining *</label>
+                <label htmlFor="date_of_join" className="active">Date of Joining *</label>
                 <div className="errorMsg">{this.state.errors.date_of_join}</div>
 
               </div>
@@ -465,8 +503,9 @@ async handleSubmit(event) {
                   name="website"
                   value={this.state.fields.website}
                   onChange={this.handleChange}
+                  
                 />
-                <label for="website">Website</label>
+                <label htmlFor="website">Website</label>
               </div>
             </div>
             <div className="row marginsize">
@@ -478,8 +517,9 @@ async handleSubmit(event) {
                   type="text"
                   value={this.state.fields.about}
                   onChange={this.handleChange}
+                  
                 />
-                <label for="about">About Me</label>
+                <label htmlFor="about">About Me</label>
               </div>
             </div>
 
@@ -494,8 +534,9 @@ async handleSubmit(event) {
                   name="interest"
                   value={this.state.fields.interest}
                   onChange={this.handleChange}
+                  
                 />
-                <label for="interest">Interest *</label>
+                <label htmlFor="interest">Interest *</label>
                 <div className="errorMsg">{this.state.errors.interest}</div>
               </div>
             </div>

@@ -48,6 +48,10 @@ class ChangePassword extends Component {
     });
   }
 
+  componentDidMount(){
+    var selectElems1 = document.querySelectorAll(".tooltipped");
+    var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
+    }
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -220,12 +224,20 @@ render() {
             </div>
           </div>
         </div>
-      <div className="row">
-      <div className="col s12 input-field">
+      <div className="row" id="info">
+      <div className="col s2 input-field">
          <button className="btn waves-effect waves-light waves-effect black" type="submit">
           Submit
          </button>
         </div>
+        <div className="input-field col s2">
+                <a className="btn-floating black waves-effect waves-light tooltipped" data-html="true" data-position="right" data-tooltip="Password must contain:<br/>
+                                                                                                  at least 8 characters<br/>
+                                                                                                  at least one number (0-9)<br/>
+                                                                                                  at least one lowercase letter (a-z)<br/>
+                                                                                                  at least one uppercase letter (A-Z)<br/>
+                                                                                                  at least one Special Character($&+,:;=?@#|'<>.-^*()%!)"><i className="material-icons">info_outline</i></a>
+                </div>
       </div>
       </div>
      </form>

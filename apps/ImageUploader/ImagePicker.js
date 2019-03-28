@@ -120,7 +120,7 @@ render () {
       <form onSubmit={this.handleSubmit}>
 
       <center> <div className="avatar-photo">
-      <Button color="primary disabled">Pick an Image</Button>
+      <Button color="white disabled">Pick an Image</Button>
       <br/>
 
       <FileUpload handleFileChange={this.handleFileChange}/>

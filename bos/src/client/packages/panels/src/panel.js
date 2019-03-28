@@ -179,6 +179,7 @@ export default class Panel extends EventEmitter {
     Object.keys(profileDetails.key).map(key => {
       profileDetails.key[key] = profileDetails.key[key] && profileDetails.key[key] !== 'null' ? profileDetails.key[key] : '';
     });
+
     document.onclick = (ev) => {
       if (ev.target.closest('.appmenu') || ev.target.closest('.osjs-panel-item[data-name="menu"]') || ev.target.closest('.profile') || ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
         if (ev.target.closest('.osjs-panel-item[data-name="menu"]')) {
@@ -193,7 +194,10 @@ export default class Panel extends EventEmitter {
         document.getElementById('appmenu').classList.remove('appmenu-visible');
         document.getElementById('profileMenu').classList.remove('profile-visible');
       }
-    };
+    }; 
+
+
+
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
     this.dob = this.formatDate(this.dateString);
@@ -206,9 +210,9 @@ export default class Panel extends EventEmitter {
          + 'width="135" '
          + 'className="circle img-responsive"'
          + 'style="border-radius:50%;cursor:pointer;"'
-         + 'onclick={OSjs.run("ImageUploader");document.getElementById("profile").classList.remove("profile-visible");}; /><label '
+         + 'onclick={OSjs.run("ImageUploader");document.getElementById("profileMenu").classList.remove("profile-visible");}; /><label '
          + 'className="name" '
-         + '></div><div class="profileMasterInfoDiv"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profile").classList.remove("profile-visible");}; '
+         + '></div><div class="profileMasterInfoDiv"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profileMenu").classList.remove("profile-visible");}; '
          + 'id="editbutton">'
          + '<i class="material-icons">edit</i>'
          + '</a></div><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
@@ -239,7 +243,8 @@ export default class Panel extends EventEmitter {
     interestElement.classList.add('profileDiv');
     interestElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-heart" id="icon" > </i> </div><div class="info">' + profileInfo['interest'] + '</div> <br/>';
     profileElement.appendChild(interestElement);
-    profileElement.id = 'profile';
+
+
     this.core.$root.appendChild(profileElement);
     if (this.options.position === 'top') {
       profileElement.style['margin-top'] = '3.5em';
