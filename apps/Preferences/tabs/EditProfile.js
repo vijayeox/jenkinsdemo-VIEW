@@ -3,7 +3,7 @@ import Countries from "./Countries";
 import M from "materialize-css";
 import Codes from "./Codes";
 import ErrorBoundary from "./ErrorBoundary";
-import ReactNotification from "react-notifications-component";
+import ReactNotification from "react-notifications";
 import $ from "jquery";
 import Moment from "moment";
  

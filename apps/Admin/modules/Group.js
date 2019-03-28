@@ -10,7 +10,7 @@ import {
   GridToolbar
 } from "@progress/kendo-react-grid";
 
-import ReactNotification from "react-notifications-component";
+import ReactNotification from "react-notifications";
 import { Button } from '@progress/kendo-react-buttons';
 
 import DialogContainer from "./dialog/DialogContainerGroup";
