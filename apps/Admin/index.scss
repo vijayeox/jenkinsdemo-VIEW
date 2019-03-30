@@ -13,6 +13,7 @@
     font-size: 1em;
   }
 
+
   #adminHeader {
     margin: auto;
     margin-bottom: 0px;
@@ -66,7 +67,7 @@
 
   .k-grid {
     margin: 15px;
-    max-height: 30rem;
+    max-height: 32rem;
     height: -webkit-fill-available;
   }
 
@@ -116,7 +117,7 @@
   }
 
   .dropdown-content {
-    height: "" !important;
+    position: fixed;
   }
 
   .row {

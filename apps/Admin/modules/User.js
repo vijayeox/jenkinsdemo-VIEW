@@ -40,6 +40,7 @@ class User extends React.Component {
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
+    M.AutoInit();
   }
 
   addDataNotification(serverResponse) {
@@ -213,20 +214,13 @@ class User extends React.Component {
       password: "",
       firstname: "",
       lastname: "",
-      name: "",
       email: "",
       date_of_birth: "",
       designation: "",
       gender: "",
       managerid: "",
       date_of_join: "",
-      hobbies: "",
-      phone: "",
-      country: "",
-      address: "",
-      about: "",
-      interest: "",
-      signature: ""
+      country: ""
     };
 
     return Object.assign(newProduct, source);

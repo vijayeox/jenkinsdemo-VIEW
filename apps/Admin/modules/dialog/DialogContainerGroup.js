@@ -1,7 +1,6 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
-import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
@@ -132,7 +131,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     required={true}
                   />
-                  <label htmlFor="organizationParent_id">Parent ID</label>
+                  <label htmlFor="organizationParent_id">Parent Group</label>
                 </div>
               </div>
 

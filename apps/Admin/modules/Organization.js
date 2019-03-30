@@ -8,7 +8,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Button } from '@progress/kendo-react-buttons';
 
-import ReactNotification from "react-notifications";
+
+import ReactNotification from "react-notifications-component";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
 
@@ -22,6 +23,7 @@ class Organization extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+
     this.state = {
       orgInEdit: undefined,
       products: [],
@@ -39,6 +41,8 @@ class Organization extends React.Component {
   componentDidMount() {
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
+
+      M.AutoInit();
     });
   }
 

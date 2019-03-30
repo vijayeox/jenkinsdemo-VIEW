@@ -69,8 +69,9 @@ export default class DialogContainer extends React.Component {
 
   submitData = event => {
     if (this.props.formAction == "edit") {
-      this.editProject().then(response => {});
-      this.props.action();
+      this.editProject().then(response => {
+        this.props.action();
+      });
     } else {
       this.pushData().then(response => {
         var addResponse = response.data.id;
@@ -101,7 +102,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     required={true}
                   />
-                <label htmlFor="projectName">Organization Name</label>
+                  <label htmlFor="projectName">Project Name</label>
                 </div>
               </div>
 

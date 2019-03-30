@@ -219,7 +219,8 @@ class Announcement extends React.Component {
       id: "",
       name: "",
       media: "",
-      status: ""
+      status: "",
+      description: ""
     };
 
     return Object.assign(newProduct, source);

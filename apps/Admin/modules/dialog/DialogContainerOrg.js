@@ -2,7 +2,6 @@ import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
 import { Button } from '@progress/kendo-react-buttons';
-import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {

@@ -1,31 +1,17 @@
-import React, {
-  Component
-} from "react";
-import ReactDOM from "react-dom";
-
-import * as FilePond from 'filepond';
-import "filepond/dist/filepond.min.css";
-
-import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-
+import React from "react";
 import {
   Dialog,
   DialogActionsBar
 } from "@progress/kendo-react-dialogs";
-import {
-  Validator
-} from "@progress/kendo-validator-react-wrapper";
-import "../../public/js/materialize.js";
 import "@progress/kendo-ui";
+import "jquery/dist/jquery.js";
+import $ from "jquery";
 
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    console.log(this.core.user.jwt);
     this.state = {
       ancInEdit: this.props.dataItem || null,
       visibleDialog: false,
@@ -45,8 +31,9 @@ export default class DialogContainer extends React.Component {
       "/announcement", {
         id: this.state.ancInEdit.id,
         name: this.state.ancInEdit.name,
-        media: this.state.ancInEdit.media,
-        status: this.state.ancInEdit.status
+        media: "5c9dc73a439d5",
+        status: "1",
+        description: this.state.ancInEdit.description
       },
       "post"
     );
@@ -57,7 +44,7 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancFile = await helper.request(
       "v1",
-      "/attachmentsss", {
+      "/attachment", {
         type: "ANNOUNCEMENT",
         files: 'C:\\Users\\VA_User\\Downloads\\batman__dark-wallpaper-1920x1080.jpg'
       },
@@ -78,7 +65,8 @@ export default class DialogContainer extends React.Component {
         id: this.state.ancInEdit.id,
         name: this.state.ancInEdit.name,
         media: this.state.ancInEdit.media,
-        status: this.state.ancInEdit.status
+        status: this.state.ancInEdit.status,
+        description: this.state.ancInEdit.description
       },
       "put"
     );
@@ -100,13 +88,36 @@ export default class DialogContainer extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     this.submitData();
+
+    // var form = document.getElementById('file-form');
+    // var fileSelect = document.getElementById('file-select');
+    // var uploadButton = document.getElementById('upload-button');
+
+    // uploadButton.innerHTML = 'Uploading...';
+
+    // var files = fileSelect.files;
+
+    // var formData = new FormData();
+
+    // for (var i = 0; i < files.length; i++) {
+    //   var file = files[i];
+
+    //   // Add the file to the request.
+    //   formData.append('files', file, file.name);
+    // }
+    // var xhr = new XMLHttpRequest();
+    // xhr.withCredentials = true;
+    // xhr.open('POST', 'http://jenkins.oxzion.com:8080/attachment', true);
+    // xhr.setRequestHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1NTM4NDMxODUsImp0aSI6IjVQQzlHYTQ5VlJrc1dzMDlZMXcxMkhVdHI5WUI0QnRLUU1sakpLOFhrdHM9IiwibmJmIjoxNTUzODQzMTg1LCJleHAiOjE1NTM5MTUxODUsImRhdGEiOnsidXNlcm5hbWUiOiJiaGFyYXRnIiwib3JnaWQiOiIxIn19.nBdYojwKTIsGqh4SfYQpRgIVKkir7AD6DTVZ8zITmwIjxN1xnA5OB2VcSPeZfTJd7293kaIDAc7TyVuKDqCTSQ");
+    // xhr.send(formData);
+
   };
 
   submitData = event => {
     if (this.props.formAction == "edit") {
       this.editAnnouncements();
     } else {
-      this.pushFile().then(response => {
+      this.pushData().then(response => {
         var addResponse = response.data.id;
         this.props.action(addResponse);
       });
@@ -114,85 +125,82 @@ export default class DialogContainer extends React.Component {
     this.props.save();
   };
 
-  // const inputElement = document.querySelector('input[type="file"]');
-  // const pond = FilePond.create(inputElement);
-  // FilePond.setOptions({
-  //   server: 'api/'
-  // });
-
   render() {
     return (
-      <Validator>
-        <Dialog onClose={this.props.cancel}>
-          <div className="row">
-            <form
-              className="col s12"
-              onSubmit={this.submitData}
-              id="announcementForm"
-            >
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="ancID"
-                    type="text"
-                    className="validate"
-                    name="id"
-                    value={this.state.ancInEdit.id || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="ancID">ID</label>
-                </div>
+      <Dialog onClose={this.props.cancel}>
+        <div className="row">
+          <form
+            className="col s12"
+            onSubmit={this.submitData}
+            id="announcementForm"
+          >
+            <div className="row">
+              <div className="input-field col s12">
+                <input
+                  id="ancID"
+                  type="text"
+                  className="validate"
+                  name="id"
+                  value={this.state.ancInEdit.id || ""}
+                  onChange={this.onDialogInputChange}
+                  required={true}
+                />
+                <label htmlFor="ancID">ID</label>
               </div>
+            </div>
 
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="AncName"
-                    type="text"
-                    className="validate"
-                    name="name"
-                    value={this.state.ancInEdit.name || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="AncName">Announcement Title</label>
-                </div>
+            <div className="row">
+              <div className="input-field col s12">
+                <input
+                  id="AncName"
+                  type="text"
+                  className="validate"
+                  name="name"
+                  value={this.state.ancInEdit.name || ""}
+                  onChange={this.onDialogInputChange}
+                  required={true}
+                />
+                <label htmlFor="AncName">Announcement Title</label>
               </div>
+            </div>
 
 
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="ancStatus"
-                    type="text"
-                    className="validate"
-                    name="status"
-                    value={this.state.ancInEdit.status || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="ancStatus">Status</label>
-                </div>
+            <div className="row">
+              <div className="input-field col s12">
+                <input
+                  id="ancStatus"
+                  type="text"
+                  className="validate"
+                  name="status"
+                  value={this.state.ancInEdit.status || ""}
+                  onChange={this.onDialogInputChange}
+                  required={true}
+                />
+                <label htmlFor="ancStatus">Status</label>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
+
+          {/* <form id="file-form" action="http://jenkins.oxzion.com:8080/attachment" method="POST">
+            <input type="file" id="file-select" name="files" />
+            <button type="submit" form="file-form" id="upload-button">Upload</button>
+          </form> */}
+        </div>
 
 
-          <DialogActionsBar args={this.core}>
-            <button className="k-button" onClick={this.props.cancel}>
-              Cancel
+        <DialogActionsBar args={this.core}>
+          <button className="k-button" onClick={this.props.cancel}>
+            Cancel
             </button>
-            <button
-              className="k-button k-primary"
-              type="submit"
-              form="announcementForm"
-            >
-              Save
+          <button
+            className="k-button k-primary"
+            type="submit"
+            form="announcementForm"
+          >
+            Save
             </button>
-          </DialogActionsBar>
-        </Dialog>
-      </Validator>
+        </DialogActionsBar>
+      </Dialog>
     );
   }
 }
