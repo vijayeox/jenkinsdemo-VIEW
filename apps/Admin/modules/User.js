@@ -8,7 +8,8 @@ import {
 } from "@progress/kendo-react-grid";
 import { Button } from '@progress/kendo-react-buttons';
 
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
+
 import "jquery/dist/jquery.js";
 import $ from "jquery";
 

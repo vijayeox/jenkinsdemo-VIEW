@@ -8,7 +8,7 @@ import {
   GridToolbar
 } from "@progress/kendo-react-grid";
 
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
 import { Button } from '@progress/kendo-react-buttons';
 import DialogContainer from "./dialog/DialogContainerRole";
 import cellWithEditing from "./cellWithEditing";
