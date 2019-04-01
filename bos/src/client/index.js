@@ -64,6 +64,7 @@ import { RestClientServiceProvider } from './adapters/RestClient.js'
 import { ProfileServiceProvider } from './adapters/ProfileAdapter.js';
 import { WebSocketAdapter } from './adapters/WebSocketAdapter.js';
 import { SplashServiceProvider } from './adapters/SplashAdapter.js';
+import {UserSessionServiceProvider} from './adapters/UserSessionAdapter.js';
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -93,6 +94,7 @@ const init = () => {
   osjs.register(RestClientServiceProvider,{before: true});
   osjs.register(ProfileServiceProvider,{before: true});
   osjs.register(SplashServiceProvider, {before: true});
+  osjs.register(UserSessionServiceProvider, {before: true});
   osjs.register(WebSocketAdapter);
   osjs.boot();
 };

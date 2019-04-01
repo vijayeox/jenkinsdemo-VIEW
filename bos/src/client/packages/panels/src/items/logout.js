@@ -53,6 +53,7 @@ export default class LogoutPanelItem extends PanelItem {
   render(state, actions) {
     const logout = async () => {
       await this.core.make('osjs/session').save();
+      await this.core.make('oxzion/usersession').set();
       this.core.make('osjs/auth').logout();
     };
     const confirm = () => {
