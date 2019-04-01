@@ -194,9 +194,7 @@ export default class Panel extends EventEmitter {
         document.getElementById('appmenu').classList.remove('appmenu-visible');
         document.getElementById('profileMenu').classList.remove('profile-visible');
       }
-    }; 
-
-
+    };
 
     let profileInfo = profileDetails['key'];
     this.dateString = profileInfo['date_of_birth'];
@@ -204,20 +202,20 @@ export default class Panel extends EventEmitter {
     let profileCard = document.createElement('div');
     profileCard.classList.add('profileCard');
     let cacheBurster = (new Date()).getTime();
-    profileCard.innerHTML =  '<div class="profileImage"><img id="imgprofile" '
+    profileCard.innerHTML =  '<div class="profileImage"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profileMenu").classList.remove("profile-visible");}; '
+    + 'id="editbutton">'
+    + '<i class="material-icons">edit</i>'
+    + '</a></div><img id="imgprofile" '
          + 'src="' + profileInfo['icon'] + '?' + cacheBurster + '"'
          + 'height="135" '
          + 'width="135" '
          + 'className="circle img-responsive"'
          + 'style="border-radius:50%;cursor:pointer;"'
-         + 'onclick={OSjs.run("ImageUploader");document.getElementById("profileMenu").classList.remove("profile-visible");}; /><label '
-         + 'className="name" '
-         + '></div><div class="profileMasterInfoDiv"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profileMenu").classList.remove("profile-visible");}; '
-         + 'id="editbutton">'
-         + '<i class="material-icons">edit</i>'
-         + '</a></div><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
+         + 'onclick={OSjs.run("ImageUploader");document.getElementById("profileMenu").classList.remove("profile-visible");}; /><div class="profileName">' + profileInfo['firstname'] + ' ' + profileInfo['lastname'] + '</div><div '
          + 'className="designation" '
-         + '">' + profileInfo['designation'] + '</div></div></div>  ';
+         + '">' + profileInfo['designation'] + '</div><label '
+         + 'className="name" '
+         + '></div></div>  ';
     profileElement.appendChild(profileCard);
     let emailElement = document.createElement('div');
     emailElement.classList.add('profileDiv');

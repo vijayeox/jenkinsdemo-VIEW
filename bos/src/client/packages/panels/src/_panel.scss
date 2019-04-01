@@ -86,13 +86,14 @@
   flex-direction: column;
   width: 0;
   position: absolute;
-  right:0;
-  top:0;
+  right: 0;
+  top: 0;
   margin-top: 3.5em;
   margin-bottom: 3.5em;
   background-color: rgb(0, 0, 1);
   transition: 0.5s;
 }
+
 .profile-visible {
   width: 300px;
   z-index: 16777271;
@@ -307,67 +308,78 @@
   margin-top: 20px;
   margin-right: 5px;
   margin-bottom: 20px;
-  margin-left:10px;
-  color:white;
+  margin-left: 10px;
+  color: white;
 }
 
 #iconi1 {
   margin-top: 25px;
   margin-right: 5px;
   margin-bottom: 20px;
-  margin-left:10px;
-  color:white;
+  margin-left: 10px;
+  color: white;
 }
 
-#info{
+#info {
   font-size: 17px;
-  font-family: "Century Gothic";
 }
 
-#addresic{
+#addresic {
   font-size: 17px;
-  font-family: "Century Gothic";
   display: inline-block;
   word-break: break-word;
 }
+
 .profileDiv {
   display: flex;
   flex-direction: row;
   line-height: 40px;
+  border-bottom: 1px solid;
 }
+
 .profileDiv .icon {
   width: 25%;
   line-height: 35px;
   color: white;
   text-align: center;
 }
+
 .profileDiv .info {
   font-size: 17px;
-  width: 75%;
-  font-family: "Century Gothic";
+  width: 100%;
   color: white;
   text-align: left;
+  line-height: 23px;
 }
-.profileCard{
-  display: flex;
-    flex-direction: row;
-    color: white;
-    padding-top: 10px;
-    line-height: 30px;
-    padding-bottom:5px;
+
+.profileCard {
+  flex-direction: row;
+  color: white;
+  padding-top: 10px;
+  line-height: 30px;
+  padding-bottom: 5px;
 
 }
+
+.profileCard .profileImage {
+  text-align: center;
+  margin-top: -10px;
+}
+
 .profileName {
   font-size: 18px;
 }
-.profileMasterInfoDiv{
-  padding:5px;
-}
-.profileButton{
+
+.profileButton {
+  padding: 5px;
+  float: right;
+  position: absolute;
+  width: 95%;
   text-align: end;
-  padding-left:120px;
+  padding-left: 120px;
 }
-.profileicon{
-  border-radius:50%;
-  cursor:pointer;
+
+.profileicon {
+  border-radius: 50%;
+  cursor: pointer;
 }
