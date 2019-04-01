@@ -5,7 +5,7 @@ import createReactClass from "create-react-class";
 import { Button } from "@material-ui/core";
 import './Imageuploader.css';
 import FileUpload from './FileUpload';
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
 
 class ImagePicker extends Component {
   constructor(props) {

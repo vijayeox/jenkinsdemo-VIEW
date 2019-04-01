@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Camera,{IMAGE_TYPES} from "react-html5-camera-photo";
 import "./Imageuploader.css";
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
 
 class Webcam extends Component {
 	enableWebcam = () => this.setState({ webcamEnabled: true });

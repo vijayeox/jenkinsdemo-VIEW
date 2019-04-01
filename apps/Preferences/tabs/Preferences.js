@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
 import M from "materialize-css";
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
 
 class Preferences extends Component {
   constructor(props) {

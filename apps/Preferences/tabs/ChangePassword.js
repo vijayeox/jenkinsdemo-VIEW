@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ReactNotification from "react-notifications";
+import ReactNotification from "react-notifications-component";
 
 class ChangePassword extends Component {
   constructor() {
