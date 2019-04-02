@@ -3,7 +3,6 @@ import { Tabs, Tab, TabPanel, TabList } from "react-web-tabs";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
-import "./tabs/Preferences.css";
 
 class App extends Component {
   constructor(props) {

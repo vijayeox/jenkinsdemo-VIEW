@@ -405,8 +405,8 @@ async handleSubmit(event) {
                </div>
                </div>
               
-            <div className="row marginsize">
-              <div className="col s12 input-field">
+            <div className="row marginsize1">
+              <div className="col s12 input-field marginsize1">
                 <select
                   value={this.state.fields.country}
                   onChange={this.handleChange}
@@ -420,13 +420,13 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
-                <label id="country" style={{fontSize:"14px"}}>Country *</label>
+                <label id="country" style={{fontSize:"13px"}}>Country *</label>
               </div>
             </div>
 
           
             <div className="row marginsize input-field">
-            <div className="col s12" style={{fontSize:"14px"}}>Contact Number *</div>
+            <div className="col s12" style={{fontSize:"13px"}}>Contact Number *</div>
               <div className="row">
               <div className="col s3">
                 <select
@@ -494,7 +494,7 @@ async handleSubmit(event) {
               </div>
             </div>
 
-            <div className="row marginsize">
+            <div className="row marginsize2">
               <div className="col s12 input-field">
                 <input
                   id="website"
@@ -508,7 +508,7 @@ async handleSubmit(event) {
                 <label htmlFor="website">Website</label>
               </div>
             </div>
-            <div className="row marginsize">
+            <div className="row marginsize2">
               <div className="col s12 input-field">
                 <textarea className="materialize-textarea" 
                   id="about"
