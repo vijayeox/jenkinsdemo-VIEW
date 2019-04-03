@@ -96,7 +96,7 @@ export default class Panel extends EventEmitter {
       return false;
     });
 
-    let element = this.core.$root.querySelector('#profile');
+    let element = this.core.$root.querySelector('#profileMenu');
     this.core.$root.removeChild(element);
     element =  this.core.$root.querySelector('#appmenu');
     this.core.$root.removeChild(element);

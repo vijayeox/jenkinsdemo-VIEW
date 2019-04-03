@@ -19,11 +19,6 @@ class ImagePicker extends Component {
       img: null,
       fields:{} 
     };
-    this.core.on("oxzion/profile:updated",function(){
-      this.setState({
-         savedImg:this.userprofile.key.icon
-      })
-    })
     this.handleFileChange = this.handleFileChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleRequestHide=this.handleRequestHide.bind(this);
@@ -41,7 +36,7 @@ class ImagePicker extends Component {
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
+      dismiss: { duration: 1000 },
       dismissable: { click: true }
     });
   }
@@ -54,7 +49,7 @@ class ImagePicker extends Component {
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
+      dismiss: { duration: 1000 },
       dismissable: { click: true }
     });
   }
@@ -101,8 +96,8 @@ class ImagePicker extends Component {
          this.addNotificationFail(uploadresponse.message);
     }
     else{
-         this.addNotification();
       this.core.make('oxzion/profile').update();
+      this.addNotification();    
     }
   } 
 }

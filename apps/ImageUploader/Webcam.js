@@ -16,11 +16,6 @@ class Webcam extends Component {
 			webcamEnabled: false,
 			fields:{}
 		};
-		this.core.on("oxzion/profile:updated",function(){
-			this.setState({
-				img:this.userprofile.key.icon
-			})
-		})
 		this.onTakePhoto = this.onTakePhoto.bind(this);
 		this.handleSubmit=this.handleSubmit.bind(this);
 		 this.addNotification = this.addNotification.bind(this);
@@ -36,7 +31,7 @@ class Webcam extends Component {
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
+      dismiss: { duration: 1000 },
       dismissable: { click: true }
     });
   }
@@ -49,7 +44,7 @@ class Webcam extends Component {
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
+      dismiss: { duration: 1000 },
       dismissable: { click: true }
     });
   }
@@ -89,8 +84,8 @@ class Webcam extends Component {
 			if (uploadresponse.status == "error") {
                 this.addNotificationFail(uploadresponse.message);
 			}else{
-       		    this.addNotification();
 				this.core.make("oxzion/profile").update();
+       		    this.addNotification();
 			}
 		}     
 	}
