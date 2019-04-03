@@ -113,22 +113,11 @@ OSjs.make("osjs/packages").register(
         win.attributes.maximizable = false;
         // Create a new bus for our messaging
         const bus = core.make("osjs/event-handler", "CRMApplicationWindow");
-        const user = core.make("oxzion/profile").get();
-        // Get path to iframe content
-        const ret = [];
-        for (let d in user['key']) {
-          if (typeof (user['key'][d]) == 'object') {
-            if (user['key'][d] && user['key'][d][0] && user['key'][d][0]['id'] && user['key'][d][0]['name']) {
-              ret.push(encodeURIComponent(d) + '_id' + '=' + encodeURIComponent(user['key'][d][0]['id']));
-              ret.push(encodeURIComponent(d) + '_name' + '=' + encodeURIComponent(user['key'][d][0]['name']));
-            }
-          } else {
-            ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(user['key'][d]));
-          }
-        }
-        const src = proc.resource(
-          baseUrl + "/public/index.php/user/login?" + ret.join('&')
-        );
+
+        const user = core.make('osjs/auth').user();
+        const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
+          // Get path to iframe content
+        const src = proc.resource( baseUrl + "/public/index.php/user/login" + suffix + "&oxauth=" + user.jwt);
         console.log(src)
         // Create DOM element
         const iframe = createIframe(bus, proc, win, send => {
