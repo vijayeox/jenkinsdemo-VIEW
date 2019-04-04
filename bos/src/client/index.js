@@ -38,7 +38,7 @@
 // https://manual.os-js.org/v3/resource/official/
 //
 
-import 'font-awesome/css/font-awesome.min.css'; 
+import 'font-awesome/css/font-awesome.min.css';
 
 import {
   Core,
@@ -65,6 +65,7 @@ import { ProfileServiceProvider } from './adapters/ProfileAdapter.js';
 import { WebSocketAdapter } from './adapters/WebSocketAdapter.js';
 import { SplashServiceProvider } from './adapters/SplashAdapter.js';
 import {UserSessionServiceProvider} from './adapters/UserSessionAdapter.js';
+import { CoreAdapter } from './adapters/CoreAdapter.js';
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -73,8 +74,8 @@ import customPanelItem from './customPanel.js'*/
 const init = () => {
   let mergedConfig = merge(config, localConfig);
   const osjs = new Core(mergedConfig, {});
-  
-  // Register your service providers  
+
+  // Register your service providers
   osjs.register(CoreServiceProvider);
   osjs.register(DesktopServiceProvider);
   osjs.register(VFSServiceProvider);
@@ -82,8 +83,8 @@ const init = () => {
   osjs.register(SettingsServiceProvider, {before: true});
   osjs.register(AuthServiceProvider, {
     before: true,
-    args: 
-      { 
+    args:
+      {
         adapter:  loginAdapter,
         login: (core,options) => new Login(core,options)
       }
@@ -96,6 +97,7 @@ const init = () => {
   osjs.register(SplashServiceProvider, {before: true});
   osjs.register(UserSessionServiceProvider, {before: true});
   osjs.register(WebSocketAdapter);
+  osjs.register(CoreAdapter);
   osjs.boot();
 };
 
