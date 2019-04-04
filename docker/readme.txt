@@ -4,7 +4,11 @@ For docker build setup +
 
 TO BUILD THE DOCKERFILE IMAGE
 
-$ docker build -t view . ; cd ../
+$ docker build -t view .
+
+THEN GO BACK TO VIEW FOLDER
+
+$ cd ..
 
 TO RUN THE IMAGE CONTAINER
 
