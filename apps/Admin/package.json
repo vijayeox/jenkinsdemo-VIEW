@@ -30,6 +30,7 @@
     "babel-upgrade": "0.0.24",
     "bootstrap": "^4.2.1",
     "file-loader": "^3.0.1",
+    "file-upload-with-preview": "^3.4.3",
     "filepond": "^4.2.0",
     "filepond-plugin-image-exif-orientation": "^1.0.4",
     "filepond-plugin-image-preview": "^4.0.3",

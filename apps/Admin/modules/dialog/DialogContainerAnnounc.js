@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import {
   Dialog,
   DialogActionsBar
@@ -6,32 +7,38 @@ import {
 import "@progress/kendo-ui";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
-
+import FileUploadWithPreview from 'file-upload-with-preview';
+import 'file-upload-with-preview/dist/file-upload-with-preview.min.css'
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.firstUpload = null;
     this.state = {
       ancInEdit: this.props.dataItem || null,
       visibleDialog: false,
       show: false
     };
+    this.pushFile = this.pushFile.bind(this);
   }
 
   componentDidMount() {
     M.AutoInit();
+    $('.materialize-textarea').trigger('autoresize');
     M.updateTextFields();
+    M.textareaAutoResize($("#ancDescription"));
+
+    this.firstUpload = new FileUploadWithPreview('myFirstImage');
   }
 
-  async pushData() {
+  async pushData(fileCode) {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
       "/announcement", {
-        id: this.state.ancInEdit.id,
         name: this.state.ancInEdit.name,
-        media: "5c9dc73a439d5",
+        media: fileCode,
         status: "1",
         description: this.state.ancInEdit.description
       },
@@ -40,24 +47,22 @@ export default class DialogContainer extends React.Component {
     return ancAddData;
   }
 
-  async pushFile() {
+  async pushFile(event) {
+    var files = this.firstUpload.cachedFileArray[0];
     let helper = this.core.make("oxzion/restClient");
     let ancFile = await helper.request(
       "v1",
       "/attachment", {
         type: "ANNOUNCEMENT",
-        files: 'C:\\Users\\VA_User\\Downloads\\batman__dark-wallpaper-1920x1080.jpg'
+        files: files
       },
-      "post", {
-        contentType: false,
-        mimeType: "multipart/form-data",
-      }
+      "filepost"
     );
     return ancFile;
   }
 
 
-  async editAnnouncements() {
+  async editAnnouncements(fileCode) {
     let helper = this.core.make("oxzion/restClient");
     let orgEditData = await helper.request(
       "v1",
@@ -66,7 +71,13 @@ export default class DialogContainer extends React.Component {
         name: this.state.ancInEdit.name,
         media: this.state.ancInEdit.media,
         status: this.state.ancInEdit.status,
+        description: this.state.ancInEdit.description,
+
+        name: this.state.ancInEdit.name,
+        media: fileCode,
+        status: "1",
         description: this.state.ancInEdit.description
+
       },
       "put"
     );
@@ -87,39 +98,15 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.submitData();
-
-    // var form = document.getElementById('file-form');
-    // var fileSelect = document.getElementById('file-select');
-    // var uploadButton = document.getElementById('upload-button');
-
-    // uploadButton.innerHTML = 'Uploading...';
-
-    // var files = fileSelect.files;
-
-    // var formData = new FormData();
-
-    // for (var i = 0; i < files.length; i++) {
-    //   var file = files[i];
-
-    //   // Add the file to the request.
-    //   formData.append('files', file, file.name);
-    // }
-    // var xhr = new XMLHttpRequest();
-    // xhr.withCredentials = true;
-    // xhr.open('POST', 'http://jenkins.oxzion.com:8080/attachment', true);
-    // xhr.setRequestHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1NTM4NDMxODUsImp0aSI6IjVQQzlHYTQ5VlJrc1dzMDlZMXcxMkhVdHI5WUI0QnRLUU1sakpLOFhrdHM9IiwibmJmIjoxNTUzODQzMTg1LCJleHAiOjE1NTM5MTUxODUsImRhdGEiOnsidXNlcm5hbWUiOiJiaGFyYXRnIiwib3JnaWQiOiIxIn19.nBdYojwKTIsGqh4SfYQpRgIVKkir7AD6DTVZ8zITmwIjxN1xnA5OB2VcSPeZfTJd7293kaIDAc7TyVuKDqCTSQ");
-    // xhr.send(formData);
-
-  };
-
-  submitData = event => {
     if (this.props.formAction == "edit") {
-      this.editAnnouncements();
+      this.pushFile().then(response => {
+        var addResponse = response.data.filename[0];
+        this.editAnnouncements(addResponse);
+      });
     } else {
-      this.pushData().then(response => {
-        var addResponse = response.data.id;
-        this.props.action(addResponse);
+      this.pushFile().then(response => {
+        var addResponse = response.data.filename[0];
+        this.pushData(addResponse);
       });
     }
     this.props.save();
@@ -131,24 +118,9 @@ export default class DialogContainer extends React.Component {
         <div className="row">
           <form
             className="col s12"
-            onSubmit={this.submitData}
+            onSubmit={this.handleSubmit}
             id="announcementForm"
           >
-            <div className="row">
-              <div className="input-field col s12">
-                <input
-                  id="ancID"
-                  type="text"
-                  className="validate"
-                  name="id"
-                  value={this.state.ancInEdit.id || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="ancID">ID</label>
-              </div>
-            </div>
-
             <div className="row">
               <div className="input-field col s12">
                 <input
@@ -167,24 +139,38 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <input
-                  id="ancStatus"
+                <textarea
+                  id="ancDescription"
                   type="text"
-                  className="validate"
-                  name="status"
-                  value={this.state.ancInEdit.status || ""}
+                  className="materialize-textarea validate"
+                  name="description"
+                  value={this.state.ancInEdit.description || ""}
                   onChange={this.onDialogInputChange}
                   required={true}
                 />
-                <label htmlFor="ancStatus">Status</label>
+                <label htmlFor="ancDescription">Description</label>
               </div>
             </div>
           </form>
+      
+          <div className="row">
+            <div className="col s12">
+              <div className="custom-file-container" data-upload-id="myFirstImage">
+                <label><p>Upload Announcement Image
+                  <a href="javascript:void(0)" className="custom-file-container__image-clear" 
+                  style={{float:"right"}} title="Clear Image">
+                  <img style={{width:"30px"}} src="https://img.icons8.com/color/64/000000/cancel.png"/></a>
+                  </p></label>
+                <label className="custom-file-container__custom-file">
+                  <input type="file" className="custom-file-container__custom-file__custom-file-input" 
+                  id="customFile" accept="image/*" aria-label="Choose File" />
+                  <span className="custom-file-container__custom-file__custom-file-control"></span>
+                </label>
+                <div className="custom-file-container__image-preview"></div>
+              </div>
+            </div>
+          </div>
 
-          {/* <form id="file-form" action="http://jenkins.oxzion.com:8080/attachment" method="POST">
-            <input type="file" id="file-select" name="files" />
-            <button type="submit" form="file-form" id="upload-button">Upload</button>
-          </form> */}
         </div>
 
 

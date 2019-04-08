@@ -8,7 +8,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 		this.core = core;
 		this.token = null;
 		this.baseUrl = this.core.config('wrapper.url');
-		//console.log(this.baseUrl);
 	}
 
 
@@ -20,10 +19,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 	async init() {
 		this.core.instance('oxzion/restClient', () => ({
-			request: (version, action, params, method,headers,raw) => this.makeRequest(version, action, params, method,headers,raw),
+			request: (version, action, params, method, headers, raw) => this.makeRequest(version, action, params, method, headers, raw),
 			authenticate: (params) => this.authenticate(params),
-			profile:() => this.profile(),
-			handleRefresh:() => this.handleRefresh(),
+			profile: () => this.profile(),
+			handleRefresh: () => this.handleRefresh(),
 		}));
 
 
@@ -51,7 +50,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 		try {
 			let url = this.baseUrl + 'user/me/a';
 			var xmlHttp = new XMLHttpRequest();
-			xmlHttp.open("GET", url,false);
+			xmlHttp.open("GET", url, false);
 			let auth = 'Bearer ' + this.token;
 			xmlHttp.setRequestHeader("content-type", "application/json");
 			xmlHttp.setRequestHeader("Authorization", auth);
@@ -60,7 +59,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 		}
 		catch (e) { }
 	}
-	
+
 	handleRefresh() {
 		let user = this.core.getUser();
 		let core = this.core;
@@ -68,39 +67,39 @@ export class RestClientServiceProvider extends ServiceProvider {
 		var lsHelper = new LocalStorageAdapter;
 		// console.log(user);
 		lsHelper.supported();
-		if(user["jwt"] != null) {
+		if (user["jwt"] != null) {
 			// console.log('refresh token to be called now...');
 			const rtoken = lsHelper.get('REFRESH_token');
 			// console.log(rtoken);
 			let jwt = user["jwt"];
-            let formData = new FormData();
-            formData.append('jwt', jwt);
-            formData.append('refresh_token',rtoken["key"])
-            
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', this.baseUrl+'/refreshtoken', false);
-            xhr.onload = function () {
-              let data = JSON.parse(this.responseText);
-              if(data["status"] == "success") {
-                  // console.log('refresh api called and token reset');
-                  jwt = data["data"]["jwt"];
-                  let refresh = data["data"]["refresh_token"];
+			let formData = new FormData();
+			formData.append('jwt', jwt);
+			formData.append('refresh_token', rtoken["key"])
 
-                  // console.log("user before update");
-                  // console.log(user);
-                  user["jwt"] = jwt;
-                  // console.log(user);
-                  core.setUser(user)
-                  lsHelper.set('AUTH_token',jwt);
-                  lsHelper.set('REFRESH_token',refresh);
-                  // console.log('true return now');
-                  refreshflag = true;
-              } else {
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', this.baseUrl + '/refreshtoken', false);
+			xhr.onload = function () {
+				let data = JSON.parse(this.responseText);
+				if (data["status"] == "success") {
+					// console.log('refresh api called and token reset');
+					jwt = data["data"]["jwt"];
+					let refresh = data["data"]["refresh_token"];
+
+					// console.log("user before update");
+					// console.log(user);
+					user["jwt"] = jwt;
+					// console.log(user);
+					core.setUser(user)
+					lsHelper.set('AUTH_token', jwt);
+					lsHelper.set('REFRESH_token', refresh);
+					// console.log('true return now');
+					refreshflag = true;
+				} else {
 					alert('Session Expired. Redirecting to Login');
 					this.core.make('osjs/auth').logout();
-				}  
-            }
-            xhr.send(formData);  
+				}
+			}
+			xhr.send(formData);
 
 		} else {
 			alert('Session Expired. Redirecting to Login');
@@ -114,33 +113,30 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// action - string
 	// params - *
 	// method - string
-	async makeRequest(version, action, params, method,headers = null,raw = false) {
+	async makeRequest(version, action, params, method, headers = null, raw = false) {
 		let userData = this.core.getUser();
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
 		let urlString = this.baseUrl + action;
-		// console.log(urlString);
 		this.token = userData["jwt"];
 		let resp = 'null';
 		let reqHeaders = {}
-		// console.log(headers);
 
 		// adding custom headers if any along with auth
-		if(headers != null) {
+		if (headers != null) {
 			let auth = 'Bearer ' + this.token;
 			headers['Authorization'] = auth;
 			reqHeaders = headers;
-			// console.log('here');
 		}
-		else if(headers == null) {
+		else if (headers == null) {
 			let auth = 'Bearer ' + this.token;
 			reqHeaders['Authorization'] = auth;
-			if(method == 'get' || method == 'put') {
-				if(!(reqHeaders['Content-Type'])) {
+			if (method == 'get' || method == 'put') {
+				if (!(reqHeaders['Content-Type'])) {
 					reqHeaders['Content-Type'] = 'application/json';
 				}
 			}
- 
+
 		}
 		try {
 			if (method == 'get') {
@@ -150,14 +146,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 					headers: reqHeaders
 
 				})
-				
-				if(resp.status == 400 && resp.statusText == 'Bad Request') {
+
+				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					if(raw == true) {
+					if (raw == true) {
 						return resp;
 					}
-					return resp.json();	
+					return resp.json();
 				}
 			}
 			else if (method == 'post') {
@@ -176,11 +172,28 @@ export class RestClientServiceProvider extends ServiceProvider {
 					body: formData
 				})
 
-				if(resp.status == 400 && resp.statusText == 'Bad Request') {
+				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					return resp.json();	
+					return resp.json();
 				}
+			}
+			else if (method == 'filepost') {
+				let parameters = params;
+				let formData = new FormData();
+				for (var k in parameters) {
+					formData.append(k, parameters[k]);
+				}
+				return fetch(urlString,
+					{
+						body: formData,
+						method: "post",
+						credentials: 'include',
+						headers: { "Authorization": "Bearer " + this.token }
+					}).then(function (response) {
+						var serverResponse = response.json()
+						return serverResponse
+					})
 			}
 			else if (method == 'put') {
 				let parameters = params;
@@ -194,10 +207,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 					body: JSON.stringify(parameters)
 				})
 
-				if(resp.status == 400 && resp.statusText == 'Bad Request') {
+				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					return resp.json();	
+					return resp.json();
 				}
 			}
 			else if (method == 'delete') {
@@ -208,10 +221,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 				})
 
-				if(resp.status == 400 && resp.statusText == 'Bad Request') {
+				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					return resp.json();	
+					return resp.json();
 				}
 			}
 			else {
@@ -222,18 +235,18 @@ export class RestClientServiceProvider extends ServiceProvider {
 			let fooRes = 'Something went wrong...';
 			try {
 				let refresh = this;
-				let foo = async function() {
-					let res1 = await resp.json().then(function(res) {
+				let foo = async function () {
+					let res1 = await resp.json().then(function (res) {
 						// console.log(res);
-						if(res["status"] == "error" && res["message"] == "Token Invalid.") {
+						if (res["status"] == "error" && res["message"] == "Token Invalid.") {
 							// console.log("error worked");
-							if(refresh.handleRefresh()) {
+							if (refresh.handleRefresh()) {
 								// console.log("refresh worked!");
 								return new Promise((resolve, reject) => {
-									refresh.makeRequest(version, action, params, method,headers,raw)
-									.then((res) => resolve(res))
-									.catch((res) => reject(res));
-									
+									refresh.makeRequest(version, action, params, method, headers, raw)
+										.then((res) => resolve(res))
+										.catch((res) => reject(res));
+
 								});
 							} else {
 								console.log("refresh failed..");
@@ -250,9 +263,9 @@ export class RestClientServiceProvider extends ServiceProvider {
 				}
 				fooRes = await foo();
 
-				
-			} 
-			catch(e) {
+
+			}
+			catch (e) {
 				return null;
 			}
 			// console.log('refresh comes here....?');

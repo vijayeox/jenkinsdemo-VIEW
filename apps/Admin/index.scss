@@ -13,6 +13,54 @@
     font-size: 1em;
   }
 
+  .fileUpload-area{
+    margin: 20px;
+    padding: 10px;
+    padding-bottom: 35px;
+    border-style: solid;
+    border-color: #c5c5c5;
+    border-width: 5px;
+    border-radius: 15px;
+  }
+
+  [type="file"] {
+    border: 0;
+    clip-path: rect(0, 0, 0, 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    white-space: nowrap;
+    width: 1px;  
+  }
+
+  [type="file"] + .btn-upload {
+    background-color: #000;
+    border-radius: 4rem;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    height: 4rem;
+    line-height: 4rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    transition: background-color 0.3s;
+  }
+   
+  [type="file"]:focus + .btn-upload,
+  [type="file"] + label:hover {
+      background-color: #f06151;
+  }
+   
+  [type="file"]:focus + .btn-upload {
+    outline: 0;
+    outline-style: none;
+    -moz-outline-style: none;
+  }
+
 
   #adminHeader {
     margin: auto;

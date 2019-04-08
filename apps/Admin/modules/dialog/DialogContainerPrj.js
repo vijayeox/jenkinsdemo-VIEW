@@ -30,7 +30,8 @@ export default class DialogContainer extends React.Component {
     let prjAddData = await helper.request(
       "v1",
       "/project", {
-        name: this.state.prjInEdit.name
+        name: this.state.prjInEdit.name,
+        description: this.state.prjInEdit.description
       },
       "post"
     );
@@ -42,7 +43,8 @@ export default class DialogContainer extends React.Component {
     let prjEditData = await helper.request(
       "v1",
       "/project/" + this.state.prjInEdit.id, {
-        name: this.state.prjInEdit.name
+        name: this.state.prjInEdit.name,
+        description: this.state.prjInEdit.description
       },
       "put"
     );
@@ -103,6 +105,21 @@ export default class DialogContainer extends React.Component {
                     required={true}
                   />
                   <label htmlFor="projectName">Project Name</label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <input
+                    id="projectDescription"
+                    type="text"
+                    className="validate"
+                    name="description"
+                    value={this.state.prjInEdit.description || ""}
+                    onChange={this.onDialogInputChange}
+                    required={true}
+                  />
+                  <label htmlFor="projectDescription">Project Description</label>
                 </div>
               </div>
 
