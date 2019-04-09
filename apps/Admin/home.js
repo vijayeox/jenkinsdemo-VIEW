@@ -165,14 +165,14 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
-            <div style={{ height: '-webkit-fill-available', display: 'flex' }} >
+            <div style={{ height: '-webkit-fill-available', height:'37em', display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}
               </div>
             </div>
           </center>
         </div>
-        <div id="componentsBox" style={{ paddingBottom: '100px' }}>
+        <div id="componentsBox" style={{ paddingBottom: '100px', height:"37em" }}>
         </div>
       </div >
     );

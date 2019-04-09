@@ -32,6 +32,7 @@ class Project extends React.Component {
     this.core = this.props.args;
     this.state = {
       userList: [],
+      selectedUsers: [],
       prjInEdit: undefined,
       products: [],
       action: "",
@@ -180,6 +181,9 @@ class Project extends React.Component {
       visible: !this.state.visible
     });
   }
+  testValueSelected(){
+    console.log(this.state.selectedUsers);
+  }
 
   render() {
     return (<div id="project">
@@ -194,6 +198,8 @@ class Project extends React.Component {
               <div id="multigroup" className="control-styles">
                 <MultiSelectComponent id="checkbox"
                   dataSource={this.state.userList}
+                  value={this.state.selectedUsers}
+                  change={this.testValueSelected}
                   fields={this.checkFields}
                   mode="CheckBox"
                   showDropDownIcon={true}
