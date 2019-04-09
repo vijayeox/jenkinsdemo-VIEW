@@ -244,16 +244,11 @@ class Group extends React.Component {
   };
 
   cancel = () => {
-    this.setState({
-      groupInEdit: undefined
-    });
+    this.setState({ groupInEdit: undefined });
   };
 
   insert = () => {
-    this.setState({
-      groupInEdit: {},
-      action: "add"
-    });
+    this.setState({ groupInEdit: {}, action: "add" });
   };
 
   render() {
