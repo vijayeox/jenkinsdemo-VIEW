@@ -187,7 +187,6 @@ export default class Panel extends EventEmitter {
         } else if (ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
           document.getElementById('profileMenu').classList.toggle('profile-visible');
         } else {
-          console.log(ev.target);
           return;
         }
       } else {
