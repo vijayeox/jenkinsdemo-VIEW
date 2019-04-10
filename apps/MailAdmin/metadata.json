@@ -3,6 +3,7 @@
   "name": "MailAdmin",
   "category": "utilities",
   "server": "server.js",
+  "customization": true,
   "title": {
     "en_EN": "MailAdmin"
   },

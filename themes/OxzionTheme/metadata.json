@@ -1,6 +1,7 @@
 {
   "type": "theme",
   "name": "OxzionTheme",
+  "customization": false,
   "category": null,
   "title": {
     "en_EN": "OxzionTheme"

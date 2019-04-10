@@ -6,6 +6,7 @@
   "server": "server.js",
   "icon": "icon.png",
   "singleton": true,
+  "customization": false,
   "title": {
     "en_EN": "Admin"
   },

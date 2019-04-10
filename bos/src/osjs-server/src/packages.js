@@ -176,10 +176,25 @@ class Packages {
       this.handleMessage(ws, params);
     });
 
-    return load(metadata => {
+    const apps = [];
+    for(var i=0;i<manifest.length;i++){
+      if(manifest[i].customization){
+        apps.push({name : manifest[i].name,
+                   category : manifest[i].category,
+                   options : {autostart : manifest[i].autostart ? true : false,
+                              hidden : manifest[i].hidden ? true : false}})
+      }
+    }
+    this.core.logger.info('AppsLIst',apps);
+
+
+    
+      
+    return load(metadata => {     
       clearTimeout(this.hotReloading[metadata.name]);
       this.hotReloading[metadata.name] = setTimeout(() => {
         signale.info('Reloading', metadata.name);
+
         this.core.broadcast('osjs/packages:package:changed', [metadata.name]);
       }, 500);
     }).then(({result, watches}) => {
@@ -193,6 +208,7 @@ class Packages {
    */
   start() {
     this.packages.forEach(({script, metadata}) => {
+
       try {
         if (typeof script.start === 'function') {
           script.start();

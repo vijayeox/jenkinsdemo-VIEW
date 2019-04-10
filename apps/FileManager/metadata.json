@@ -2,6 +2,7 @@
   "name": "FileManager",
   "category": "office",
   "icon": "icon.png",
+  "customization": true,
   "title": {
     "en_EN": "File Manager",
     "nb_NO": "Filbehandler",

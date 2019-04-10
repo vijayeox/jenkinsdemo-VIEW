@@ -3,6 +3,7 @@
   "name": "Settings",
   "category": "utilities",
   "singleton": true,
+  "customization": false,
   "server": null,
   "title": {
     "en_EN": "Settings",

@@ -2,6 +2,7 @@
   "name": "Textpad",
   "category": "office",
   "icon": "icon.png",
+  "customization": true,
   "title": {
     "en_EN": "Textpad",
     "nb_NO": "Tekstblokk",

@@ -5,6 +5,7 @@
   "singleton":true,
   "hidden" : true,
   "autostart":true,
+  "customization": true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "Mail"

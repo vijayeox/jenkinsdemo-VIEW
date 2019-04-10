@@ -6,6 +6,7 @@
   "server": "server.js",
   "icon": "icon.png",
   "hidden": true,
+  "customization": false,
   "singleton": true,
   "title": {
     "en_EN": "User Settings"

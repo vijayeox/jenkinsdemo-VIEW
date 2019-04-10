@@ -7,6 +7,7 @@
   "autostart": true,
   "singleton": true,
   "hidden": true,
+  "customization": false,
   "title": {
     "en_EN": "Announcements"
   },
