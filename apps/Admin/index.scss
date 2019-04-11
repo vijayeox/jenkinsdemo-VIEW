@@ -13,6 +13,12 @@
     font-size: 1em;
   }
 
+  [type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+ opacity: 100!important;
+  pointer-events: visible !important;
+}
+
   .fileUpload-area{
     margin: 20px;
     padding: 10px;
@@ -198,4 +204,20 @@
   .filepond--root {
     width: 300px;
   }
+}
+.gender1,.gender2{
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+.gendersel{
+  padding-bottom: 33px !important;
+  margin-top: 0px !important;
+}
+#datecol{
+  margin-top: 8px !important;
+  margin-bottom: 11px !important;
+}
+#label1{
+  padding-left: 10.5px !important;
+  font-size: 11.2px !important;
 }

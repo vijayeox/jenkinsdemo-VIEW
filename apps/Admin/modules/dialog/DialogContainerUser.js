@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
+import { Input } from '@progress/kendo-react-inputs';
+import { DropDownList } from '@progress/kendo-react-dropdowns';
 import "@progress/kendo-ui";
 import Codes from "../data/Codes";
 import ReactTooltip from 'react-tooltip';
@@ -17,32 +19,59 @@ export default class DialogContainer extends React.Component {
       DOJInEdit: undefined,
       userInEdit: this.props.dataItem || null,
       visibleDialog: false,
-      show: false
-    };
-  }
+      show: false,
+      date1: null,
+      date2: null,
+      usersList: undefined,
+      value: null,
+      value1: null,
+      countries: Codes
 
+    };
+    this.getUserData().then(response => {
+      this.setState({ usersList: response.data });
+    });
+  }
   componentWillMount() {
     if (this.props.formAction === "add") {
     } else {
-      const DOBDate = this.state.userInEdit.date_of_birth;
-      const DOJDate = this.state.userInEdit.date_of_join;
-      const DOBiso = new Moment(DOBDate, 'YYYY-MM-DD').format();
-      const DOJiso = new Moment(DOJDate, 'YYYY-MM_DD').format();
-      const DOBkendo = new Date(DOBiso);
-      const DOJkendo = new Date(DOJiso);
+      if (this.state.userInEdit.date_of_birth == "0000-00-00" || this.state.userInEdit.date_of_join == "0000-00-00") {
+        if (this.state.userInEdit.date_of_birth == "0000-00-00") {
+          let userInEdit = { ...this.state.userInEdit };
+          userInEdit.date_of_birth = "";
+          this.setState({ userInEdit: userInEdit });
 
-      let userInEdit = { ...this.state.userInEdit };
-      userInEdit.date_of_birth = DOBkendo;
-      userInEdit.date_of_join = DOJkendo;
-      this.setState({ userInEdit: userInEdit });
+          this.setState({ DOBInEdit: "" });
+        }
+        if (this.state.userInEdit.date_of_join == "0000-00-00") {
+          let userInEdit = { ...this.state.userInEdit };
+          userInEdit.date_of_join = null;
+          this.setState({ userInEdit: userInEdit });
 
-      this.setState({ DOBInEdit: DOBiso });
-      this.setState({ DOJInEdit: DOJiso });
+          this.setState({ DOJInEdit: null });
+        }
+      }
+      else {
+        const DOBDate = this.state.userInEdit.date_of_birth;
+        const DOJDate = this.state.userInEdit.date_of_join;
+        const DOBiso = new Moment(DOBDate, 'YYYY-MM-DD').format();
+        const DOJiso = new Moment(DOJDate, 'YYYY-MM_DD').format();
+        const DOBkendo = new Date(DOBiso);
+        const DOJkendo = new Date(DOJiso);
+
+        let userInEdit = { ...this.state.userInEdit };
+        userInEdit.date_of_birth = DOBkendo;
+        userInEdit.date_of_join = DOJkendo;
+        this.setState({ userInEdit: userInEdit });
+
+        this.setState({ DOBInEdit: DOBiso });
+        this.setState({ DOJInEdit: DOJiso });
+      }
     }
   }
 
   componentDidMount() {
-    M.AutoInit();
+    //  M.AutoInit();
     M.updateTextFields();
 
     if (this.props.formAction === "edit") {
@@ -52,6 +81,11 @@ export default class DialogContainer extends React.Component {
         html={true}
       />, document.getElementById('tooltip'));
     };
+
+    // var selectElems = document.querySelectorAll("select");
+    //     var instances = M.FormSelect.init(selectElems, {
+    //       classes: "createSelect"
+    //     });
   }
 
   handleDOJChange = (event) => {
@@ -72,16 +106,31 @@ export default class DialogContainer extends React.Component {
     this.setState({ DOBInEdit: DOBiso });
   }
 
-  countryChange = (event) => {
+  managerOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
-    userInEdit.country = event.target.value;
+    userInEdit.managerid = event.target.value;
+    this.setState({ userInEdit: userInEdit })
+  };
+
+  countryOnChange = event => {
+    console.log(event.target.value.name);
+    console.log(this.state.userInEdit.country);
+    let userInEdit = { ...this.state.userInEdit };
+    userInEdit.country = event.target.value.name;
+    this.setState({ userInEdit: userInEdit })
+  };
+
+  genderChange = (event) => {
+    console.log(event);
+    let userInEdit = { ...this.state.userInEdit };
+    userInEdit.gender = event.value;
     this.setState({ userInEdit: userInEdit })
   }
 
-  genderChange = (event) => {
-    let userInEdit = { ...this.state.userInEdit };
-    userInEdit.gender = event.target.value;
-    this.setState({ userInEdit: userInEdit })
+  async getUserData() {
+    let helper = this.core.make("oxzion/restClient");
+    let userData = await helper.request("v1", "/user", {}, "get");
+    return userData;
   }
 
   async pushData() {
@@ -165,6 +214,7 @@ export default class DialogContainer extends React.Component {
 
   render() {
     const style = this.props.formAction === "edit" ? { "display": "none" } : {};
+
     return (
       <Dialog onClose={this.props.cancel}>
         <div id="tooltip"></div>
@@ -172,7 +222,7 @@ export default class DialogContainer extends React.Component {
           <form className="col s12" onSubmit={this.submitData} id="userForm">
             <div className="row">
               <div className="input-field col s12">
-                <input
+                <Input
                   id="UserFName"
                   type="text"
                   className="validate"
@@ -187,7 +237,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <input
+                <Input
                   id="UserLName"
                   type="text"
                   className="validate"
@@ -202,7 +252,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <input
+                <Input
                   id="UserUsername"
                   type="text"
                   className="validate"
@@ -218,7 +268,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <input
+                <Input
                   id="UserEmail"
                   type="email"
                   className="validate"
@@ -232,9 +282,9 @@ export default class DialogContainer extends React.Component {
             </div>
             <div className="row" style={style}>
               <div className="input-field col s12">
-                <input
+                <Input
                   id="UserPassword"
-                  type="text"
+                  type="password"
                   className="validate"
                   name="password"
                   value={this.state.userInEdit.password || ""}
@@ -246,8 +296,8 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <div className="col s12 example-col">
-                <p>Date Of Birth</p>
+              <label id="label1">Date Of Birth</label>
+              <div className="col s12 example-col" id="datecol">
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_birth}
@@ -258,8 +308,8 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <div className="input-field col s12">
-                <input
+              <div className="input-field col s12" style={{ marginBottom: "7px" }}>
+                <Input
                   id="UserDesignation"
                   type="text"
                   className="validate"
@@ -273,43 +323,56 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <div className="input-field col s12">
-                <select
-                  id="UserGender"
-                  type="text"
-                  className="validate"
-                  name="gender"
-                  value={this.state.userInEdit.gender || ""}
-                  defaultValue={'0'}
-                  onChange={this.genderChange}
-                  required={true}
-                >
-                  <option value="0" disabled>Choose your option</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-                <label htmlFor="UserGender">Gender</label>
+              <label htmlFor="UserGender" id="label1">Gender</label>
+              <div className="input-field col s12 gendersel">
+                <div className="col s3 input-field gender1">
+                  <label>
+                    <Input
+                      id="UserGender"
+                      className="validate"
+                      type="radio"
+                      name="gender"
+                      value="male"
+                      onChange={this.genderChange}
+                      checked={this.state.userInEdit.gender == "male"}
+                    />
+                    <span id="name">Male</span>
+                  </label>
+                </div>
+                <div className="col s3 input-field gender2">
+
+                  <label>
+                    <Input
+                      id="UserGender"
+                      className="validate"
+                      type="radio"
+                      name="gender"
+                      value="female"
+                      onChange={this.genderChange}
+                      checked={this.state.userInEdit.gender == "female"}
+                    />
+                    <span id="name">Female</span>
+                  </label>
+                </div>
               </div>
             </div>
 
             <div className="row">
+              <label htmlFor="Manager" id="label1">Manager</label>
               <div className="input-field col s12">
-                <input
-                  id="UserManagerid"
-                  type="number"
-                  className="validate"
-                  name="managerid"
-                  value={this.state.userInEdit.managerid || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
+                <DropDownList
+                  data={this.state.usersList}
+                  onChange={this.managerOnChange}
+                  style={{ height: "auto" }}
+                  textField="name"
+                  dataItemKey="id"
                 />
-                <label htmlFor="UserManagerid">Manager ID</label>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12 example-col">
-                <p>Date Of Join</p>
+              <label id="label1">Date Of Join</label>
+              <div className="col s12 example-col" id="datecol">
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_join}
@@ -320,22 +383,15 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
+              <label htmlFor="UserCountry" id="label1">Country</label>
               <div className="input-field col s12">
-                <select
-                  id="UserCountry"
+                <DropDownList
+                  data={this.state.countries}
+                  onChange={this.countryOnChange}
+                  style={{ height: "auto" }}
                   value={this.state.userInEdit.country}
-                  defaultValue={'0'}
-                  onChange={this.countryChange}
-                  required={true}
-                >
-                  <option value="0" disabled>Choose your option</option>
-                  {Codes.map((country, key) => (
-                    <option key={key} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-                <label htmlFor="UserCountry">Country</label>
+                />
+
               </div>
             </div>
           </form>
