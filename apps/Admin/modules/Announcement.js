@@ -71,7 +71,7 @@ class Announcement extends React.Component {
 
   async getAnnouncementData() {
     let helper = this.core.make("oxzion/restClient");
-    let AncData = await helper.request("v1", "/announcement", {}, "get");
+    let AncData = await helper.request("v1", "/announcement/a", {}, "get");
     return AncData;
   }
 

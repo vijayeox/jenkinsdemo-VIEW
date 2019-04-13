@@ -71,7 +71,6 @@ export default class DialogContainer extends React.Component {
   }
 
   componentDidMount() {
-    //  M.AutoInit();
     M.updateTextFields();
 
     if (this.props.formAction === "edit") {
@@ -81,11 +80,6 @@ export default class DialogContainer extends React.Component {
         html={true}
       />, document.getElementById('tooltip'));
     };
-
-    // var selectElems = document.querySelectorAll("select");
-    //     var instances = M.FormSelect.init(selectElems, {
-    //       classes: "createSelect"
-    //     });
   }
 
   handleDOJChange = (event) => {
@@ -113,15 +107,12 @@ export default class DialogContainer extends React.Component {
   };
 
   countryOnChange = event => {
-    console.log(event.target.value.name);
-    console.log(this.state.userInEdit.country);
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.country = event.target.value.name;
     this.setState({ userInEdit: userInEdit })
   };
 
   genderChange = (event) => {
-    console.log(event);
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.gender = event.value;
     this.setState({ userInEdit: userInEdit })

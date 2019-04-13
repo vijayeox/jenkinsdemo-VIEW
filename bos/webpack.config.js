@@ -47,7 +47,7 @@ module.exports = {
       OSJS_VERSION: npm.version
     }),
     new CopyWebpackPlugin([
-      'src/client/assets/images/load.gif'
+      'src/client/assets/images/load.svg'
     ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),

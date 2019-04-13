@@ -44,6 +44,8 @@ class Group extends React.Component {
       this.setState({
         products: response.data
       });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   }
 
@@ -98,14 +100,13 @@ class Group extends React.Component {
     });
   };
 
-  sendTheData = () => {
+  sendTheData = () => { 
     var temp1 = this.state.value;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
       var uid = { "id": temp1[i].userid };
       temp2.push(uid);
     }
-    console.log(JSON.stringify(temp2));
 
     this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
 
@@ -128,6 +129,8 @@ class Group extends React.Component {
   }
 
   async getGroupData() {
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
     let helper = this.core.make("oxzion/restClient");
     let groupData = await helper.request("v1", "/group", {}, "get");
     return groupData;
@@ -184,10 +187,14 @@ class Group extends React.Component {
       this.setState({
         usersList: tempUsers
       });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   };
 
   addGroupUsers = dataItem => {
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
     this.addUsers(dataItem);
     this.getGroupUsers(dataItem.id).then(response => {
       var tempGroupUsers = [];
@@ -204,13 +211,7 @@ class Group extends React.Component {
       visible: !this.state.visible
     });
   };
-
-  saveGroupUsers = dataItem => {
-    this.pushGroupUsers(dataItem.id).then(response => {
-      this.handler();
-    })
-  }
-
+  
   remove = dataItem => {
     this.deleteGroupData(dataItem.id).then(response => {
       this.handler();
@@ -323,12 +324,10 @@ class Group extends React.Component {
 
           <Column field="id" title="ID" width="70px" />
           <Column field="name" title="Name" />
-
-          <Column field="manager_id" title="Manager ID" width="120px" />
           <Column field="description" title="Description" />
           <Column
             title="Edit"
-            width="240px"
+            width="160px"
             cell={cellWithEditing(this.edit, this.remove, this.addGroupUsers)}
           />
         </Grid>
@@ -336,6 +335,7 @@ class Group extends React.Component {
         {this.state.groupInEdit && (
           <DialogContainer
             args={this.core}
+            groupsList={this.state.products}
             dataItem={this.state.groupInEdit}
             save={this.save}
             cancel={this.cancel}
@@ -364,8 +364,7 @@ class Group extends React.Component {
       org_id: "",
       manager_id: "",
       parent_id: "",
-      description: "",
-      type: ""
+      description: ""
     };
     return Object.assign(newProduct, source);
   }

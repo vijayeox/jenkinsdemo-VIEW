@@ -36,13 +36,11 @@ const register = (core, args, options, metadata) => {
     const getAnnouncements = async () => {
         let helper = core.make('oxzion/restClient');
         let announ = await helper.request('v1','/announcement', {}, 'get' );
-        // console.log(announ);
         return announ;
     };
     
     let announcementsCount=0 ;
     getAnnouncements().then(response => {
-      console.log(response);
       announcementsCount = response["data"].length;
       
       if (core.has('osjs/tray')) {

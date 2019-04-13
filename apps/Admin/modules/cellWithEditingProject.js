@@ -13,34 +13,33 @@ export default function CellWithEditing(edit, remove, addProjectUsers) {
         render() {
             return (
                 <td>
-                    <abbr title="Edit Project Details"><button
-                        className=" k-button k-grid-edit-command"
-                        onClick={() => {
-                            edit(this.props.dataItem);
-                        }}
-                    >
-                    <FaPencilAlt className="manageIcons"/>
-                        {/* <img className="manageIcons" src="apps/Admin/pencil.png" /> */}
-                    </button></abbr>
+                    <abbr title="Edit Project Details">
+                        <button className=" k-button k-grid-edit-command"
+                            onClick={() => {
+                                edit(this.props.dataItem);
+                            }}
+                        >
+                            <FaPencilAlt className="manageIcons" />
+                        </button></abbr>
                     &nbsp;
-                    <abbr title="Add Users to Project"><button
-                        className="k-button"
-                        onClick={() => {
-                            addProjectUsers(this.props.dataItem);
-                        }}
-                    >
-                    <FaUserPlus className="manageIcons"/>
-                    </button></abbr>
+                    <abbr title="Add Users to Project">
+                        <button className="k-button"
+                            onClick={() => {
+                                addProjectUsers(this.props.dataItem);
+                            }}
+                        >
+                            <FaUserPlus className="manageIcons" />
+                        </button></abbr>
                     &nbsp;
-                    <abbr title="Delete Project"><button
-                        className="k-button k-grid-remove-command"
-                        onClick={() => {
-                            confirm("Confirm deleting: " + this.props.dataItem.name) &&
-                                remove(this.props.dataItem);
-                        }}
-                    >
-                    <FaTrashAlt className="manageIcons"/>                       
-                    </button></abbr>
+                    <abbr title="Delete Project">
+                        <button className="k-button k-grid-remove-command"
+                            onClick={() => {
+                                confirm("Confirm deleting: " + this.props.dataItem.name) &&
+                                    remove(this.props.dataItem);
+                            }}
+                        >
+                            <FaTrashAlt className="manageIcons" />
+                        </button></abbr>
                 </td>
             );
         }

@@ -1,22 +1,51 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
+import { DropDownList } from '@progress/kendo-react-dropdowns';
+import { filterBy } from '@progress/kendo-data-query';
 import "@progress/kendo-ui";
+
+import withValueField from './withValueField.js';
+const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.masterUserList = [];
     this.state = {
+      usersList: [],
+      groupsList: this.props.groupsList,
       groupInEdit: this.props.dataItem || null,
       visibleDialog: false,
       show: false
     };
+    this.getUserData().then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userName = response.data[i].name;
+        var userid = response.data[i].id;
+        tempUsers.push({ id: userid, name: userName });
+      }
+      this.setState({
+        usersList: tempUsers
+      });
+      this.masterUserList = tempUsers;
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
+    });
   }
 
   componentDidMount() {
-    M.AutoInit();
     M.updateTextFields();
+  }
+
+  async getUserData() {
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
+    let helper = this.core.make("oxzion/restClient");
+    let userData = await helper.request("v1", "/user", {}, "get");
+    return userData;
   }
 
   async pushData() {
@@ -29,8 +58,7 @@ export default class DialogContainer extends React.Component {
         parent_id: this.state.groupInEdit.parent_id,
         manager_id: this.state.groupInEdit.manager_id,
         org_id: this.state.groupInEdit.org_id,
-        description: this.state.groupInEdit.description,
-        type: this.state.groupInEdit.type
+        description: this.state.groupInEdit.description
       },
       "post"
     );
@@ -47,12 +75,30 @@ export default class DialogContainer extends React.Component {
         parent_id: this.state.groupInEdit.parent_id,
         manager_id: this.state.groupInEdit.manager_id,
         org_id: this.state.groupInEdit.org_id,
-        description: this.state.groupInEdit.description,
-        type: this.state.groupInEdit.type
+        description: this.state.groupInEdit.description
       },
       "put"
     );
   }
+
+  managerOnChange = event => {
+    const edited = this.state.groupInEdit;
+    edited["manager_id"] = event.target.value;
+
+    this.setState({
+      groupInEdit: edited
+    });
+  }
+
+  parentGroupOnChange = event => {
+    const edited = this.state.groupInEdit;
+    edited["parent_id"] = event.target.value;
+
+    this.setState({
+      groupInEdit: edited
+    });
+  }
+
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -74,7 +120,10 @@ export default class DialogContainer extends React.Component {
 
   submitData = event => {
     if (this.props.formAction == "edit") {
-      this.editGroup();
+      this.editGroup().then(response => {
+        var addResponse = response.data.id;
+        this.props.action(addResponse);
+      });
     } else {
       this.pushData().then(response => {
         var addResponse = response.data.id;
@@ -84,12 +133,24 @@ export default class DialogContainer extends React.Component {
     this.props.save();
   };
 
+  filterChange = (event) => {
+    this.setState({
+      usersList: this.filterData(event.filter)
+    });
+  }
+
+  filterData(filter) {
+    const data = this.masterUserList.slice();
+    return filterBy(data, filter);
+  }
+
   render() {
     return (
       <Validator>
         <Dialog onClose={this.props.cancel}>
           <div className="row">
-            <form className="col s12" onSubmit={this.submitData} id="groupForm" style={{ backgroundColor: '#F1F1F1' }}>
+            <form className="col s12" onSubmit={this.submitData} id="groupForm">
+
               <div className="row">
                 <div className="input-field col s12">
                   <input
@@ -121,17 +182,35 @@ export default class DialogContainer extends React.Component {
               </div>
 
               <div className="row">
-                <div className="input-field col s6">
-                  <input
-                    id="organizationParent_id"
-                    type="number"
-                    className="validate"
-                    name="parent_id"
-                    value={this.state.groupInEdit.parent_id || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
+                <div className="input-field col s12">
+                  <p style={{ marginTop: "0px" }}><label>Group Manager</label> </p>
+                  <DropDownListWithValueField
+                    data={this.state.usersList}
+                    textField="name"
+                    value={this.state.groupInEdit.manager_id}
+                    valueField="id"
+                    onChange={this.managerOnChange}
+                    filterable={true}
+                    onFilterChange={this.filterChange}
+                    style={{ width: "200px" }}
+                    popupSettings={{ height: "170px" }}
                   />
-                  <label htmlFor="organizationParent_id">Parent Group</label>
+                </div>
+              </div>
+
+
+              <div className="row">
+                <div className="input-field col s12">
+                  <p style={{ marginTop: "0px" }}><label>Parent Group</label> </p>
+                  <DropDownListWithValueField
+                    data={this.state.groupsList}
+                    textField="name"
+                    onChange={this.parentGroupOnChange}
+                    style={{ width: "200px" }}
+                    value={this.state.groupInEdit.parent_id}
+                    valueField="id"
+                    popupSettings={{ height: "170px" }}
+                  />
                 </div>
               </div>
 
@@ -141,45 +220,14 @@ export default class DialogContainer extends React.Component {
                     id="organizationManager_id"
                     type="number"
                     className="validate"
-                    name="manager_id"
-                    value={this.state.groupInEdit.manager_id || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="organizationManager_id">Manager ID</label>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="input-field col s6">
-                  <input
-                    id="organizationOrgId"
-                    type="number"
-                    className="validate"
                     name="org_id"
                     value={this.state.groupInEdit.org_id || ""}
                     onChange={this.onDialogInputChange}
                     required={true}
                   />
-                  <label htmlFor="organizationOrgIdorganizationManager_id">Organization ID</label>
+                  <label htmlFor="organizationManager_id">Organization ID</label>
                 </div>
               </div>
-
-              <div className="row">
-                <div className="input-field col s6">
-                  <input
-                    id="organizationType"
-                    type="text"
-                    className="validate"
-                    name="type"
-                    value={this.state.groupInEdit.type || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="organizationType">Type</label>
-                </div>
-              </div>
-
             </form>
           </div>
 

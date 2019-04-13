@@ -34,6 +34,8 @@ class User extends React.Component {
 
     this.getUserData().then(response => {
       this.setState({ products: response.data });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   }
 
@@ -81,6 +83,8 @@ class User extends React.Component {
 
   async getUserData() {
     let helper = this.core.make("oxzion/restClient");
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
     let userData = await helper.request("v1", "/user", {}, "get");
     return userData;
   }

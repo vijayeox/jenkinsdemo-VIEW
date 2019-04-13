@@ -33,6 +33,7 @@ class Project extends React.Component {
     this.state = {
       userList: [],
       selectedUsers: [],
+      projectToBeEdited:[],
       prjInEdit: undefined,
       products: [],
       action: "",
@@ -40,12 +41,15 @@ class Project extends React.Component {
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);
+    this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
     this.notificationDOMRef = React.createRef();
     this.checkFields = { text: 'userName', value: 'userid' };
 
     this.getProjectData().then(response => {
       this.setState({ products: response.data });
     });
+    let loader = this.core.make("oxzion/splash");
+    loader.destroy();
   }
 
   componentDidMount() {
@@ -53,6 +57,131 @@ class Project extends React.Component {
       $(".k-textbox").attr("placeholder", "Search");
       M.AutoInit();
     });
+  }
+
+  handler = serverResponse => {
+    this.getProjectData().then(response => {
+      this.setState({
+        products: response.data
+      });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
+      this.addDataNotification(serverResponse);
+    });
+  };
+
+  async getProjectData() {
+    let helper = this.core.make("oxzion/restClient");
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
+    let PrjData = await helper.request("v1", "/project", {}, "get");
+    return PrjData;
+  }
+
+  async getUserData() {
+    let helper = this.core.make("oxzion/restClient");
+    let userData = await helper.request("v1", "/user", {}, "get");
+    return userData;
+  }
+
+  async getProjectUsers(dataItem) {
+    let helper = this.core.make("oxzion/restClient");
+    let groupUsers = await helper.request(
+      "v1", "/project/" + dataItem + "/users", {}, "get");
+    return groupUsers;
+  }
+
+  async pushProjectUsers(dataItem, dataObject) {
+    let helper = this.core.make("oxzion/restClient");
+    let addProjectUsers = await helper.request("v1", "/project/" + dataItem + "/save",
+      {
+        userid: dataObject
+      },
+      "post"
+    );
+    return addProjectUsers;
+  }
+
+  async deleteProjectData(dataItem) {
+    let helper = this.core.make("oxzion/restClient");
+    let delOrg = helper.request("v1", "/project/" + dataItem, {}, "delete");
+    return delOrg;
+  }
+
+  addProjectUsers = (dataItem) => {
+    this.setState({
+      projectToBeEdited: dataItem.id
+    })
+
+    this.setState({
+      visible: !this.state.visible
+    });
+
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
+
+
+    this.getProjectUsers(dataItem.id).then(response => {
+      var tempProjectUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userid = response.data[i].id;
+        tempProjectUsers.push(userid);
+      }
+      this.setState({
+        selectedUsers: tempProjectUsers
+      });
+    })
+
+    this.getUserData().then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userName = response.data[i].firstname + " " + response.data[i].lastname;
+        var userid = response.data[i].id;
+        tempUsers.push({ userid: userid, userName: userName });
+      }
+      this.setState({
+        userList: tempUsers
+      });
+
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
+    });
+  }
+
+  captureSelectedUsers(e) {
+    this.setState({
+      selectedUsers: e.value
+    })
+  }
+
+  saveAndSend = () => {
+    this.sendTheData();
+    this.toggleDialog();
+  }
+
+  sendTheData = () => {
+    var temp1 = this.state.selectedUsers;
+    var temp2 = [];
+    for (var i = 0; i <= temp1.length - 1; i++) {
+      var uid = { "id": temp1[i] };
+      temp2.push(uid);
+    }
+    this.pushProjectUsers(this.state.projectToBeEdited, JSON.stringify(temp2));
+
+    this.setState({
+      visible: !this.state.visible,
+      usersList: [],
+      value: [],
+      groupToBeEdited: [],
+      pushProjectUsers:[]
+    });
+  }
+
+  toggleDialog() {
+    this.setState({
+      visible: !this.state.visible,
+      selectedUsers: []
+    })
   }
 
   addDataNotification(serverResponse) {
@@ -83,39 +212,12 @@ class Project extends React.Component {
     });
   }
 
-  toggleDialog() {
-    this.setState({
-      visible: !this.state.visible
-    })
-  }
-
-  handler = serverResponse => {
-    this.getProjectData().then(response => {
-      this.setState({
-        products: response.data
-      });
-      this.addDataNotification(serverResponse);
-    });
-  };
-
-  async getProjectData() {
-    let helper = this.core.make("oxzion/restClient");
-    let PrjData = await helper.request("v1", "/project", {}, "get");
-    return PrjData;
-  }
-
   edit = dataItem => {
     this.setState({
       prjInEdit: this.cloneProduct(dataItem),
       action: "edit"
     });
   };
-
-  async deleteProjectData(dataItem) {
-    let helper = this.core.make("oxzion/restClient");
-    let delOrg = helper.request("v1", "/project/" + dataItem, {}, "delete");
-    return delOrg;
-  }
 
   remove = dataItem => {
     this.deleteProjectData(dataItem.id).then(response => {
@@ -158,51 +260,31 @@ class Project extends React.Component {
     this.setState({ prjInEdit: {}, action: "add" });
   };
 
-  async getUserData() {
-    let helper = this.core.make("oxzion/restClient");
-    let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
-  }
-
-  addProjectUsers = (dataItem) => {
-    this.getUserData().then(response => {
-      var tempUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName = response.data[i].firstname + " " + response.data[i].lastname;
-        var userid = response.data[i].id;
-        tempUsers.push({ userid: userid, userName: userName });
-      }
-      console.log(tempUsers);
-      this.setState({
-        userList: tempUsers
-      });
-    });
-    this.setState({
-      visible: !this.state.visible
-    });
-  }
-  testValueSelected(){
-    console.log(this.state.selectedUsers);
+  searchUnavailable() {
+    return (
+      <div></div>
+    );
   }
 
   render() {
     return (<div id="project">
       {this.state.visible && (
         <Dialog
-          title={"Add users to the Project"}
+          title={"Add Users to the Project"}
           onClose={this.toggleDialog}
         >
           <div>
-            <h6>Select Users:</h6>
             <div className='control-section col-lg-8'>
-              <div id="multigroup" className="control-styles">
+              <div id="multigroup">
                 <MultiSelectComponent id="checkbox"
                   dataSource={this.state.userList}
                   value={this.state.selectedUsers}
-                  change={this.testValueSelected}
+                  change={this.captureSelectedUsers}
                   fields={this.checkFields}
                   mode="CheckBox"
+                  placeholder="Click to add Users"
                   showDropDownIcon={true}
+                  openOnClick="false"
                   filterBarPlaceholder="Search Users"
                   popupHeight="350px">
                   <Inject services={[CheckBoxSelection]} />
@@ -211,7 +293,9 @@ class Project extends React.Component {
             </div>
           </div>
           <DialogActionsBar>
-
+            <button className="k-button" onClick={this.saveAndSend}>
+              Save
+              </button>
             <button className="k-button" onClick={this.toggleDialog}>
               Cancel
               </button>
@@ -255,8 +339,9 @@ class Project extends React.Component {
         <Column field="name" title="Name" width="200px" />
 
         <Column field="description" title="Description" />
-        {/* <Column field="org_id" title="Organization ID" width="100px" /> */}
-        <Column title="Manage" width="180px" cell={cellWithEditing(this.edit, this.remove, this.addProjectUsers)} />
+        <Column title="Manage" width="180px"
+          cell={cellWithEditing(this.edit, this.remove, this.addProjectUsers)}
+          filterCell={this.searchUnavailable} />
       </StatefulGrid>
 
       {

@@ -33,6 +33,7 @@ class Home extends React.Component {
 
       $(document).on("click", ".goBack", function () {
         $("#componentsBox").hide(), $(".DashBG").show();
+        ReactDOM.render(<div></div>, document.getElementById('componentsBox'));
       });
     });
   }
@@ -124,7 +125,7 @@ class Home extends React.Component {
 
 
   orgClick = (e) => {
-    ReactDOM.render(<Organization args={this.core} unmountMe={this.handleChildUnmount} />, document.getElementById('componentsBox'));
+    ReactDOM.render(<Organization args={this.core} />, document.getElementById('componentsBox'));
   }
 
   groupClick = (e) => {
@@ -165,14 +166,18 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
-            <div style={{ height: '-webkit-fill-available', height:'37em', display: 'flex' }} >
+            <div style={{ height: '-webkit-fill-available', height: '38em', display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}
               </div>
+              <a href="https://telegra.ph/OX-Zion-Mobile-Apps-04-12" target="_blank">
+                {/* OXZion Chat */}
+                <img id="downloadApp" src="apps/Admin/downloadApp.png" />
+              </a>
             </div>
           </center>
         </div>
-        <div id="componentsBox" style={{ paddingBottom: '100px', height:"37em" }}>
+        <div id="componentsBox" style={{ paddingBottom: '100px', height: "37em" }}>
         </div>
       </div >
     );
