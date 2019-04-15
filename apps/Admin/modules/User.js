@@ -76,6 +76,8 @@ class User extends React.Component {
 
   handler = serverResponse => {
     this.getUserData().then(response => {
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
       this.setState({ products: response.data });
       this.addDataNotification(serverResponse);
     });
@@ -195,6 +197,7 @@ class User extends React.Component {
           <DialogContainer
             args={this.core}
             dataItem={this.state.userInEdit}
+            usersList={this.state.products}
             save={this.save}
             cancel={this.cancel}
             formAction={this.state.action}

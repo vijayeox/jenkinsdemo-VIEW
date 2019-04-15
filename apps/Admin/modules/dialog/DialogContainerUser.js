@@ -4,16 +4,21 @@ import ReactDOM from "react-dom";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input } from '@progress/kendo-react-inputs';
 import { DropDownList } from '@progress/kendo-react-dropdowns';
+import { filterBy } from '@progress/kendo-data-query';
 import "@progress/kendo-ui";
 import Codes from "../data/Codes";
 import ReactTooltip from 'react-tooltip';
 import { DatePicker } from '@progress/kendo-react-dateinputs';
 import Moment from "moment";
 
+import withValueField from './withValueField.js';
+const DropDownListWithValueField = withValueField(DropDownList);
+
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.masterUserList = this.props.usersList;
     this.state = {
       DOBInEdit: undefined,
       DOJInEdit: undefined,
@@ -22,33 +27,53 @@ export default class DialogContainer extends React.Component {
       show: false,
       date1: null,
       date2: null,
-      usersList: undefined,
+      usersList: this.props.usersList,
       value: null,
       value1: null,
       countries: Codes
 
     };
-    this.getUserData().then(response => {
-      this.setState({ usersList: response.data });
-    });
   }
   componentWillMount() {
     if (this.props.formAction === "add") {
     } else {
-      if (this.state.userInEdit.date_of_birth == "0000-00-00" || this.state.userInEdit.date_of_join == "0000-00-00") {
-        if (this.state.userInEdit.date_of_birth == "0000-00-00") {
-          let userInEdit = { ...this.state.userInEdit };
-          userInEdit.date_of_birth = "";
-          this.setState({ userInEdit: userInEdit });
+      let userInEditTemp = { ...this.state.userInEdit };
+      if (this.state.userInEdit.date_of_birth == "0000-00-00" ||
+        this.state.userInEdit.date_of_birth == null ||
+        this.state.userInEdit.date_of_join == "0000-00-00" ||
+        this.state.userInEdit.date_of_join == null
 
+      ) {
+        if (this.state.userInEdit.date_of_birth == "0000-00-00" ||
+          this.state.userInEdit.date_of_birth == null) {
+          userInEditTemp.date_of_birth = "";
+          this.setState({ userInEdit: userInEditTemp });
           this.setState({ DOBInEdit: "" });
+        } else {
+          const DOBDate = this.state.userInEdit.date_of_birth;
+          const DOBiso = new Moment(DOBDate, 'YYYY-MM-DD').format();
+          const DOBkendo = new Date(DOBiso);
+
+          userInEditTemp.date_of_birth = DOBkendo;
+          this.setState({ userInEdit: userInEditTemp });
+
+          this.setState({ DOBInEdit: DOBiso });
         }
-        if (this.state.userInEdit.date_of_join == "0000-00-00") {
-          let userInEdit = { ...this.state.userInEdit };
-          userInEdit.date_of_join = null;
-          this.setState({ userInEdit: userInEdit });
+        if (this.state.userInEdit.date_of_join == "0000-00-00" ||
+          this.state.userInEdit.date_of_join == null) {
+          userInEditTemp.date_of_join = null;
+          this.setState({ userInEdit: userInEditTemp });
 
           this.setState({ DOJInEdit: null });
+        } else {
+          const DOJDate = this.state.userInEdit.date_of_join;
+          const DOJiso = new Moment(DOJDate, 'YYYY-MM_DD').format();
+          const DOJkendo = new Date(DOJiso);
+
+          userInEditTemp.date_of_join = DOJkendo;
+          this.setState({ userInEdit: userInEditTemp });
+
+          this.setState({ DOJInEdit: DOJiso });
         }
       }
       else {
@@ -108,7 +133,7 @@ export default class DialogContainer extends React.Component {
 
   countryOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
-    userInEdit.country = event.target.value.name;
+    userInEdit.country = event.target.value[0];
     this.setState({ userInEdit: userInEdit })
   };
 
@@ -183,6 +208,18 @@ export default class DialogContainer extends React.Component {
       userInEdit: edited
     });
   };
+
+  filterChange = (event) => {
+    this.setState({
+      usersList: this.filterData(event.filter)
+    });
+  }
+
+  filterData(filter) {
+    const data = this.masterUserList.slice();
+    return filterBy(data, filter);
+  }
+
 
   handleSubmit = event => {
     event.preventDefault();
@@ -349,14 +386,18 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label htmlFor="Manager" id="label1">Manager</label>
               <div className="input-field col s12">
-                <DropDownList
+                <p style={{ marginTop: "0px" }}><label>Group Manager</label> </p>
+                <DropDownListWithValueField
                   data={this.state.usersList}
-                  onChange={this.managerOnChange}
-                  style={{ height: "auto" }}
                   textField="name"
-                  dataItemKey="id"
+                  value={this.state.userInEdit.managerid}
+                  valueField="id"
+                  onChange={this.managerOnChange}
+                  filterable={true}
+                  onFilterChange={this.filterChange}
+                  style={{ width: "200px" }}
+                  popupSettings={{ height: "170px" }}
                 />
               </div>
             </div>

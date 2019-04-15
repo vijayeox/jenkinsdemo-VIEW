@@ -171,7 +171,6 @@ class Home extends React.Component {
                 {this.createBlock()}
               </div>
               <a href="https://telegra.ph/OX-Zion-Mobile-Apps-04-12" target="_blank">
-                {/* OXZion Chat */}
                 <img id="downloadApp" src="apps/Admin/downloadApp.png" />
               </a>
             </div>
