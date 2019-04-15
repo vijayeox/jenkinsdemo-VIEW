@@ -177,20 +177,19 @@ class Packages {
     });
 
     const apps = [];
-    for(var i=0;i<manifest.length;i++){
-      if(manifest[i].customization){
+    for(let i = 0; i < manifest.length;i++) {
+      if(manifest[i].customization) {
         apps.push({name : manifest[i].name,
-                   category : manifest[i].category,
-                   options : {autostart : manifest[i].autostart ? true : false,
-                              hidden : manifest[i].hidden ? true : false}})
+          category : manifest[i].category,
+          options : {
+            autostart : manifest[i].autostart ? true : false,
+            hidden : manifest[i].hidden ? true : false
+          }
+        });
       }
     }
-    this.core.logger.info('AppsLIst',apps);
-
-
-    
-      
-    return load(metadata => {     
+    this.core.logger.info('AppsLIst', apps);
+    return load(metadata => {
       clearTimeout(this.hotReloading[metadata.name]);
       this.hotReloading[metadata.name] = setTimeout(() => {
         signale.info('Reloading', metadata.name);
