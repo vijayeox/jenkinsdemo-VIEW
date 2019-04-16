@@ -2,7 +2,6 @@
   "name": "Calculator",
   "category": "office",
   "icon": "icon.png",
-  "customization": true,
   "title": {
     "en_EN": "Calculator",
     "nb_NO": "Kalkulator",

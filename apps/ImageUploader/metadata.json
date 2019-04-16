@@ -4,7 +4,7 @@
   "category": null,
   "autostart":false,
   "server": "server.js",
-  "customization": false,
+  "internal": true,
   "hidden": true,
   "singleton":"true",
   "title": {

@@ -4,7 +4,6 @@
   "icon": "icon.png",
   "hidden": true,
   "category": null,
-  "customization": true,
   "server": "server.js",
   "title": {
     "en_EN": "MyTodo"

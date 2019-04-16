@@ -2,7 +2,6 @@
   "type": "application",
   "name": "Calendar",
   "category": "collaboration",
-  "customization": true,
   "icon": "icon.png",
   "server": "server.js",
   "title": {

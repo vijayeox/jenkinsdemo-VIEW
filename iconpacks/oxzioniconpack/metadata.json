@@ -2,7 +2,7 @@
   "type": "icons",
   "name": "oxzioniconpack",
   "category": null,
-  "customization": false,
+  "internal": true,
   "title": {
     "en_EN": "OX Zion Icons"
   },

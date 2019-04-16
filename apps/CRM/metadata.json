@@ -3,7 +3,6 @@
   "name": "CRM",
   "category": "organization",
   "singleton":true,
-  "customization": true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "CRM"

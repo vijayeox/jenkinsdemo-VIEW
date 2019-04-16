@@ -7,7 +7,6 @@
     "icon":"oxchat.png",
     "category": "collaboration",
     "server": "server.js",
-    "customization": true,
     "title": {
       "en_EN": "Chat"
     },
