@@ -14,8 +14,8 @@ import "jquery/dist/jquery.js";
 import $ from "jquery";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
-import cellWithEditing from "./cellWithEditing";
-import { withState } from './with-state';
+import cellWithEditing from "./manage/cellWithEditing";
+import { withState } from '../public/js/gridFilter';
 
 const StatefulGrid = withState(Grid);
 

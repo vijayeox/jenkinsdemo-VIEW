@@ -91,15 +91,6 @@ class Home extends React.Component {
           </div>
 
           <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.mailAdminClick}>
-              <img src="apps/Admin/091-email-1.svg"
-                className="App-logo"
-              />
-            </div>
-            <div className="titles">Mail Admin</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.announClick}>
               <img src="apps/Admin/131-laptop.svg"
                 className="moduleBtn App-logo"
@@ -150,10 +141,6 @@ class Home extends React.Component {
 
   appClick = (e) => {
     ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
-  }
-
-  mailAdminClick = (e) => {
-    OSjs.run("MailAdmin");
   }
 
   render() {

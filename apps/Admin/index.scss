@@ -11,6 +11,8 @@
 
   .k-filtercell>.k-filtercell-wrapper>input {
     font-size: 1em;
+    margin-bottom: 0px;
+    height: 25px;
   }
 
   [type="checkbox"]:not(:checked),
@@ -132,6 +134,16 @@
     display: none !important;
   }
 
+  //items per page for kendo grid
+
+  .k-pager-wrap .k-pager-info{
+    text-align: center;
+  }
+  
+  .select-wrapper{
+    width: 80px
+  }
+
   //Not working request test
 
   .k-dropdown-wrap>.k-input{
@@ -220,6 +232,12 @@
     height: 12%;
     bottom: 3%;
     right: 4%;
+  }
+
+  #clearAncImage{
+    margin-top: -7px;
+    margin-right: 15px;
+    float: right;
   }
 }
 

@@ -106,7 +106,6 @@ export default class DialogContainer extends React.Component {
                   <input
                     id="organizationName"
                     type="text"
-                    className="validate"
                     name="name"
                     value={this.state.orgInEdit.name || ""}
                     onChange={this.onDialogInputChange}
@@ -121,7 +120,7 @@ export default class DialogContainer extends React.Component {
                   <textarea
                     id="organizationAddress"
                     type="text"
-                    className="materialize-textarea validate"
+                    className="materialize-textarea"
                     name="address"
                     value={this.state.orgInEdit.address || ""}
                     onChange={this.onDialogInputChange}
@@ -136,10 +135,10 @@ export default class DialogContainer extends React.Component {
                   <input
                     id="organizationCity"
                     type="text"
-                    className="validate"
                     name="city"
                     value={this.state.orgInEdit.city || ""}
                     onChange={this.onDialogInputChange}
+                    required={true}
                   />
                   <label htmlFor="organizationCity">City</label>
                 </div>
@@ -148,10 +147,10 @@ export default class DialogContainer extends React.Component {
                   <input
                     id="organizationState"
                     type="text"
-                    className="validate"
                     name="state"
                     value={this.state.orgInEdit.state || ""}
                     onChange={this.onDialogInputChange}
+                    required={true}
                   />
                   <label htmlFor="organizationState">State</label>
                 </div>
@@ -161,11 +160,11 @@ export default class DialogContainer extends React.Component {
                 <div className="input-field col s12">
                   <input
                     id="organizationZip"
-                    type="text"
-                    className="validate"
+                    type="number"
                     name="zip"
                     value={this.state.orgInEdit.zip || ""}
                     onChange={this.onDialogInputChange}
+                    required={true}
                   />
                   <label htmlFor="organizationZip">Zip Code</label>
                 </div>
@@ -176,10 +175,10 @@ export default class DialogContainer extends React.Component {
                   <input
                     id="organizationLogo"
                     type="text"
-                    className="validate"
                     name="logo"
                     value={this.state.orgInEdit.logo || ""}
                     onChange={this.onDialogInputChange}
+                    required={true}
                   />
                   <label htmlFor="organizationLogo">Logo</label>
                 </div>
@@ -190,10 +189,10 @@ export default class DialogContainer extends React.Component {
                   <input
                     id="organizationLang"
                     type="text"
-                    className="validate"
                     name="languagefile"
                     value={this.state.orgInEdit.languagefile || ""}
                     onChange={this.onDialogInputChange}
+                    required={true}
                   />
                   <label htmlFor="organizationLang">Language</label>
                 </div>

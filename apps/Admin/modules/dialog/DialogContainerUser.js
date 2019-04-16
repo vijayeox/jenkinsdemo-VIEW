@@ -329,7 +329,6 @@ export default class DialogContainer extends React.Component {
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_birth}
-                  required={true}
                   onChange={this.handleDOBChange}
                 />
               </div>
@@ -387,7 +386,8 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <p style={{ marginTop: "0px" }}><label>Group Manager</label> </p>
+                <p style={{ marginTop: "0px"}}>
+                <label style={{ fontSize: "12px"}}>Manager Assigned</label> </p>
                 <DropDownListWithValueField
                   data={this.state.usersList}
                   textField="name"
@@ -408,6 +408,7 @@ export default class DialogContainer extends React.Component {
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_join}
+                  defaultValue={new Date()}
                   onChange={this.handleDOJChange}
                   required={true}
                 />
@@ -420,7 +421,7 @@ export default class DialogContainer extends React.Component {
                 <DropDownList
                   data={this.state.countries}
                   onChange={this.countryOnChange}
-                  style={{ height: "auto" }}
+                  style={{ width: "200px" }}
                   value={this.state.userInEdit.country}
                 />
 

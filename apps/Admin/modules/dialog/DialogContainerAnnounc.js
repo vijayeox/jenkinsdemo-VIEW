@@ -157,8 +157,8 @@ export default class DialogContainer extends React.Component {
             <div className="col s12">
               <div className="custom-file-container" data-upload-id="myFirstImage">
                 <label><p>Upload Announcement Image
-                  <a href="javascript:void(0)" className="custom-file-container__image-clear" 
-                  style={{float:"right"}} title="Clear Image">
+                  <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear" 
+                   title="Clear Image">
                   <img style={{width:"30px"}} src="https://img.icons8.com/color/64/000000/cancel.png"/></a>
                   </p></label>
                 <label className="custom-file-container__custom-file">

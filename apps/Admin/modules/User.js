@@ -14,8 +14,9 @@ import "jquery/dist/jquery.js";
 import $ from "jquery";
 
 import DialogContainer from "./dialog/DialogContainerUser";
-import cellWithEditing from "./cellWithEditing";
-import { withState } from './with-state';
+import cellWithEditing from "./manage/cellWithEditingUser";
+import { withState } from '../public/js/gridFilter';
+
 
 const StatefulGrid = withState(Grid);
 
@@ -187,7 +188,7 @@ class User extends React.Component {
           <GridColumn field="country" title="Country" />
           <GridColumn
             title="Edit"
-            width="150px"
+            width="110px"
             cell={cellWithEditing(this.edit, this.remove)}
             filterCell={this.searchUnavailable}
           />

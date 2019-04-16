@@ -11,7 +11,7 @@ import {
 import ReactNotification from "react-notifications-component";
 import { Button } from '@progress/kendo-react-buttons';
 import DialogContainer from "./dialog/DialogContainerAnnounc";
-import cellWithEditing from "./cellWithEditing";
+import cellWithEditing from "./manage/cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
 
 class Announcement extends React.Component {

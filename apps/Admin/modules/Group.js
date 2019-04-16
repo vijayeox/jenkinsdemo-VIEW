@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
@@ -14,8 +14,14 @@ import ReactNotification from "react-notifications-component";
 import { Button } from '@progress/kendo-react-buttons';
 
 import DialogContainer from "./dialog/DialogContainerGroup";
-import cellWithEditing from "./cellWithEditingGroup";
-import { orderBy } from "@progress/kendo-data-query";
+import cellWithEditing from "./manage/cellWithEditingGroup";
+
+import "jquery/dist/jquery.js";
+import $ from "jquery";
+import { withState } from '../public/js/gridFilter';
+
+
+const StatefulGrid = withState(Grid);
 
 class Group extends React.Component {
   constructor(props) {
@@ -46,6 +52,12 @@ class Group extends React.Component {
       });
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
+    });
+  }
+
+  componentDidMount() {
+    $(document).ready(function () {
+      $(".k-textbox").attr("placeholder", "Search");
     });
   }
 
@@ -91,6 +103,8 @@ class Group extends React.Component {
         products: response.data
       });
       this.addDataNotification(serverResponse);
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   };
 
@@ -297,16 +311,7 @@ class Group extends React.Component {
           </center>
         </div>
 
-        <Grid
-          data={orderBy(this.state.products, this.state.sort)}
-          sortable
-          sort={this.state.sort}
-          onSortChange={e => {
-            this.setState({
-              sort: e.sort
-            });
-          }}
-        >
+        <StatefulGrid data={this.state.products}>
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Groups List</div>
@@ -330,7 +335,7 @@ class Group extends React.Component {
             width="160px"
             cell={cellWithEditing(this.edit, this.remove, this.addGroupUsers)}
           />
-        </Grid>
+        </StatefulGrid>
 
         {this.state.groupInEdit && (
           <DialogContainer

@@ -12,10 +12,11 @@ import ReactNotification from "react-notifications-component";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
 
-import { withState } from './with-state';
+import { withState } from '../public/js/gridFilter';
+
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import DialogContainer from "./dialog/DialogContainerPrj";
-import cellWithEditing from "./cellWithEditingProject";
+import cellWithEditing from "./manage/cellWithEditingProject";
 
 
 import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
