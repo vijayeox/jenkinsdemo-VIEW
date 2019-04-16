@@ -14,6 +14,31 @@ import DialogContainer from "./dialog/DialogContainerAnnounc";
 import cellWithEditing from "./manage/cellWithEditing";
 import { orderBy } from "@progress/kendo-data-query";
 
+class Permissionallowed extends React.Component {
+  render() {
+    if(this.props.perm == 7 || this.props.perm == 15){
+      return (
+        <button
+        onClick={this.props.args}
+        className="k-button"
+        style={{ position: "absolute", top: "8px", right: "16px" }}
+      >
+        <FaPlusCircle style={{ fontSize: "20px" }} />
+
+        <p style={{ margin: "0px", paddingLeft: "10px" }}>
+          Add Organization
+        </p>
+      </button>
+      );
+    }
+    else{
+     return(
+       <div></div>
+     )
+    }
+  }
+}
+
 class Announcement extends React.Component {
   constructor(props) {
     super(props);
@@ -23,7 +48,8 @@ class Announcement extends React.Component {
       ancInEdit: undefined,
       sort: [{ field: "name", dir: "asc" }],
       products: [],
-      action: ""
+      action: "",
+      permission:"15"
     };
 
     this.addNotification = this.addNotification.bind(this);
@@ -133,7 +159,24 @@ class Announcement extends React.Component {
     this.setState({ ancInEdit: {}, action: "add" });
   };
 
-
+  disp(){
+    console.log(this.state.permission)
+    if(this.state.permission!=1){
+      console.log(this.state.permission);
+      return(
+    <Column
+    title="Edit"
+    width="160px"
+    cell={cellWithEditing(this.edit, this.remove, this.state.permission)}
+    filterCell={this.searchUnavailable}
+  />
+      );
+    } else {
+      console.log(
+        "No Permissions"
+      )
+    }
+  }
 
   render = () => {
     return (
@@ -164,17 +207,10 @@ class Announcement extends React.Component {
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Announcements List</div>
-              <button
-                onClick={this.insert}
-                className="k-button"
-                style={{ position: "absolute", top: "8px", right: "16px" }}
-              >
-                <FaPlusCircle style={{ fontSize: "20px" }} />
-
-                <p style={{ margin: "0px", paddingLeft: "10px" }}>
-                  New Announcement
-                </p>
-              </button>
+              <Permissionallowed
+               args={this.insert}
+               perm={this.state.permission}
+               />
             </div>
           </GridToolbar>
 
@@ -183,11 +219,7 @@ class Announcement extends React.Component {
 
           <Column field="status" title="Status" />
           <Column field="description" title="Description" />
-          <Column
-            title="Edit"
-            width="160px"
-            cell={cellWithEditing(this.edit, this.remove)}
-          />
+         {this.disp()}
         </Grid>
 
         {this.state.ancInEdit && (

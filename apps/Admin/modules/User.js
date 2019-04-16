@@ -14,11 +14,36 @@ import "jquery/dist/jquery.js";
 import $ from "jquery";
 
 import DialogContainer from "./dialog/DialogContainerUser";
-import cellWithEditing from "./manage/cellWithEditingUser";
+import cellWithEditing from "./manage/cellWithEditing";
 import { withState } from '../public/js/gridFilter';
 
 
 const StatefulGrid = withState(Grid);
+
+class Permissionallowed extends React.Component {
+  render() {
+    if(this.props.perm == 7 || this.props.perm == 15){
+      return (
+        <button
+        onClick={this.props.args}
+        className="k-button"
+        style={{ position: "absolute", top: "8px", right: "16px" }}
+      >
+        <FaPlusCircle style={{ fontSize: "20px" }} />
+
+        <p style={{ margin: "0px", paddingLeft: "10px" }}>
+          Add Organization
+        </p>
+      </button>
+      );
+    }
+    else{
+     return(
+       <div></div>
+     )
+    }
+  }
+}
 
 class User extends React.Component {
   constructor(props) {
@@ -27,7 +52,8 @@ class User extends React.Component {
     this.state = {
       userInEdit: undefined,
       products: [],
-      action: ""
+      action: "",
+      permission:"15"
     };
 
     this.addNotification = this.addNotification.bind(this);
@@ -77,8 +103,6 @@ class User extends React.Component {
 
   handler = serverResponse => {
     this.getUserData().then(response => {
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
       this.setState({ products: response.data });
       this.addDataNotification(serverResponse);
     });
@@ -151,6 +175,25 @@ class User extends React.Component {
     );
   }
 
+  disp(){
+    console.log(this.state.permission)
+    if(this.state.permission!=1){
+      console.log(this.state.permission);
+      return(
+    <GridColumn
+    title="Edit"
+    width="160px"
+    cell={cellWithEditing(this.edit, this.remove, this.state.permission)}
+    filterCell={this.searchUnavailable}
+  />
+      );
+    } else {
+      console.log(
+        "No Permissions"
+      )
+    }
+  }
+
   render() {
     return (
       <div id="userPage">
@@ -172,33 +215,23 @@ class User extends React.Component {
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Users List</div>
-              <button
-                onClick={this.insert}
-                className="k-button"
-                style={{ position: "absolute", top: "8px", right: "16px" }}
-              >
-                <FaPlusCircle style={{ fontSize: "20px" }} />
-                <p style={{ margin: "0px", paddingLeft: "10px" }}>Add User</p>
-              </button>
+              <Permissionallowed
+               args={this.insert}
+               perm={this.state.permission}
+               />
             </div>
           </GridToolbar>
           <GridColumn field="id" title="User ID" width="110px" />
           <GridColumn field="name" title="Name" />
           <GridColumn field="designation" title="Designation" />
           <GridColumn field="country" title="Country" />
-          <GridColumn
-            title="Edit"
-            width="110px"
-            cell={cellWithEditing(this.edit, this.remove)}
-            filterCell={this.searchUnavailable}
-          />
+          {this.disp()}
         </StatefulGrid>
 
         {this.state.userInEdit && (
           <DialogContainer
             args={this.core}
             dataItem={this.state.userInEdit}
-            usersList={this.state.products}
             save={this.save}
             cancel={this.cancel}
             formAction={this.state.action}

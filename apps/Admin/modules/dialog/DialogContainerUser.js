@@ -359,9 +359,9 @@ export default class DialogContainer extends React.Component {
                       className="validate"
                       type="radio"
                       name="gender"
-                      value="male"
+                      value="Male"
                       onChange={this.genderChange}
-                      checked={this.state.userInEdit.gender == "male"}
+                      checked={this.state.userInEdit.gender == "Male"}
                     />
                     <span id="name">Male</span>
                   </label>
@@ -374,9 +374,9 @@ export default class DialogContainer extends React.Component {
                       className="validate"
                       type="radio"
                       name="gender"
-                      value="female"
+                      value="Female"
                       onChange={this.genderChange}
-                      checked={this.state.userInEdit.gender == "female"}
+                      checked={this.state.userInEdit.gender == "Female"}
                     />
                     <span id="name">Female</span>
                   </label>

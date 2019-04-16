@@ -38,7 +38,8 @@ class Project extends React.Component {
       prjInEdit: undefined,
       products: [],
       action: "",
-      visible: false
+      visible: false,
+      permission:"3"
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);

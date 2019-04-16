@@ -2,8 +2,24 @@ import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
+import { Tooltip } from '@progress/kendo-react-tooltip';
+import { Grid, GridColumn as Column } from '@progress/kendo-react-grid';
+import { orderBy } from '@progress/kendo-data-query';
 import "../../public/scss/kendo.css";
 import "@progress/kendo-ui";
+
+import "jquery/dist/jquery.js";
+import $ from "jquery";
+
+class ProductNameHeader extends React.Component {
+  render() {
+      return (
+          <a className="k-link" onClick={this.props.onClick}>
+          <span title={this.props.field}>{this.props.title}</span>
+          </a>
+      );
+  }
+}
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -12,31 +28,58 @@ export default class DialogContainer extends React.Component {
     this.state = {
       roleInEdit: this.props.dataItem || null,
       visibleDialog: false,
-      show:false,
-      ReadG: false,
-      WriteG:false,
-      CreateG:false,
-      DeleteG:false,
-      ReadO: false,
-      WriteO:false,
-      CreateO:false,
-      DeleteO:false,
-      ReadR: false,
-      WriteR:false,
-      CreateR:false,
-      DeleteR:false,
-      ReadU: false,
-      WriteU:false,
-      CreateU:false,
-      DeleteU:false,
+      products2: [],
+      privilegeInEdit: [],
 
     };
+    this.getPrivilegeData().then(response => {
+      this.setState({ products2: response.data });
+    });
+    this.handleChange = this.handleChange.bind(this);
+    this.testdata = this.testdata.bind(this);
+
+  }
+  async getPrivilegeData() {
+    let helper2 = this.core.make("oxzion/restClient");
+    let privilegedata = await helper2.request("v1", "/privilege", {}, "get");
+    return privilegedata;
   }
 
   componentDidMount() {
+    M.AutoInit();
     M.updateTextFields();
+    if (this.props.formAction == "edit") {
+      this.handleFunction();
+    } else {
+      this.getPrivilegeData().then(response => {
+        this.setState({ products2: response.data });
+      });
+    }
   }
 
+  handleFunction() {
+    this.getPrivilegeData().then(response => {
+      console.log(response.data);
+      this.setState({ products2: response.data });
+      for (var i = 0; i < this.state.products2.length; i++) {
+
+        var number = this.state.products2[i].permission_allowed;
+        if (number & 1) {
+          $('#' + this.state.products2[i].name + '1').attr('checked', true);
+        }
+        if (number & 2) {
+          $('#' + this.state.products2[i].name + '2').attr('checked', true);
+        }
+        if (number & 4) {
+          $('#' + this.state.products2[i].name + '3').attr('checked', true);
+        }
+        if (number & 8) {
+          $('#' + this.state.products2[i].name + '4').attr('checked', true);
+        }
+      }
+
+    });
+  }
   async pushData() {
     let helper = this.core.make("oxzion/restClient");
     let roleAddData = await helper.request(
@@ -45,7 +88,7 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.roleInEdit.name,
         description: this.state.roleInEdit.description,
-        show:false
+        show: false
       },
       "post"
     );
@@ -60,10 +103,139 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.roleInEdit.name,
         description: this.state.roleInEdit.description,
-        show:false
+        show: false
       },
       "put"
     );
+  }
+
+  handleChange = event => {
+    console.log(event.target.id);
+    let name1 = event.target.id;
+    let name2 = document.getElementById(event.target.id);
+    let num = name1.slice(-1);
+    let manage = name1.slice(0, -1);
+    let manage1 = document.getElementById(manage + '1');
+    let manage2 = document.getElementById(manage + '2');
+    let manage3 = document.getElementById(manage + '3');
+    let clickValue = '';
+    if (num == 1) {
+      if (name2.checked == true) {
+        name2.checked = true;
+        let event1 = parseInt(name2.value);
+        clickValue = event1;
+      } else {
+        name2.checked = false;
+        let event1 = 0;
+        clickValue = event1;
+      }
+    }
+    if (num == 2) {
+      if (name2.checked == true) {
+        name2.checked = true;
+        manage1.checked = true;
+        manage1.disabled = true;
+        let event2 = parseInt(name2.value) + parseInt(manage1.value);
+        clickValue = event2;
+      } else {
+        name2.checked = false;
+        manage1.checked = false;
+        manage1.disabled = false;
+        let event2 = 0;
+        clickValue = event2;
+      }
+    }
+    if (num == 3) {
+      if (name2.checked == true) {
+        name2.checked = true;
+        manage1.checked = true;
+        manage1.disabled = true;
+        manage2.checked = true;
+        manage2.disabled = true;
+        let event3 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value);
+        clickValue = event3;
+      } else {
+        name2.checked = false;
+        manage1.checked = false;
+        manage1.disabled = false;
+        manage2.checked = false;
+        manage2.disabled = false;
+        let event3 = 0;
+        clickValue = event3;
+      }
+    }
+    if (num == 4) {
+      if (name2.checked == true) {
+        name2.checked = true;
+        manage1.checked = true;
+        manage1.disabled = true;
+        manage2.checked = true;
+        manage2.disabled = true;
+        manage3.checked = true;
+        manage3.disabled = true;
+        let event4 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value) + parseInt(manage3.value);
+        clickValue = event4;
+      } else {
+        name2.checked = false;
+        manage1.checked = false;
+        manage1.disabled = false;
+        manage2.checked = false;
+        manage2.disabled = false;
+        manage3.checked = false;
+        manage3.disabled = false;
+        let event4 = 0;
+        clickValue = event4;
+      }
+    }
+
+    // this.newMethod(manage,clickValue);
+  }
+
+  // newMethod(manage,clickValue) {
+
+  //   let tempData = { ...this.state.privilegeInEdit };
+  //   tempData[manage] = clickValue  ;
+  //   this.setState({ privilegeInEdit: tempData });
+  //   console.log(manage);
+  //   console.log(tempData);
+
+  // }
+
+  testdata = () => {
+
+    const edited = this.state.privilegeInEdit; 
+
+    for (var i = 0; i < this.state.products2.length; i++) {
+      let test = this.state.products2[i].name;
+      var clk = 0;
+      let test1 = document.getElementById(this.state.products2[i].name + '1')
+      let test2 = document.getElementById(this.state.products2[i].name + '2')
+      let test3 = document.getElementById(this.state.products2[i].name + '3')
+      let test4 = document.getElementById(this.state.products2[i].name + '4')
+      if (test1.checked == true) {
+        clk = parseInt(test1.value);
+      }
+      if (test2.checked == true) {
+        clk = clk + parseInt(test2.value);
+      }
+      if (test3.checked == true) {
+        clk = clk + parseInt(test3.value);
+      }
+      if (test4.checked == true) {
+        clk = clk + parseInt(test4.value);
+      }
+
+    edited[test] = clk;
+
+    }
+
+    this.setState({
+      privilegeInEdit: edited
+    });
+
+    console.log(edited);
+    console.log(this.state.privilegeInEdit);
+
   }
 
   onDialogInputChange = event => {
@@ -88,6 +260,7 @@ export default class DialogContainer extends React.Component {
     var self = this;
     if (this.props.formAction == "edit") {
       this.editRole();
+      this.handleFunction();
     } else {
       this.pushData().then(response => {
         var addResponse = response.data.id;
@@ -114,6 +287,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     required={true}
                   />
+
                   <label htmlFor="roleName">Role Name</label>
                 </div>
               </div>
@@ -132,220 +306,59 @@ export default class DialogContainer extends React.Component {
                   <label htmlFor="roleDescription">Description</label>
                 </div>
               </div>
-               
-                <div> PRIVILEGES</div>
 
-              
-               <label> Manage Groups </label>
-               
-            
-             <div id="group">
-             
-              
-              
-          <label>
-            <input type="checkbox"
-             name="ReadG"
-             checked={this.state.roleInEdit.ReadG || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">R</span>
-            </label>
-              
-              
-          <label>
-            <input type="checkbox"
-             name="WriteG"
-             checked={this.state.roleInEdit.WriteG || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">W</span>
-            </label>
-              
-            
-              
-          <label>
-            <input type="checkbox"
-             name="CreateG"
-             checked={this.state.roleInEdit.CreateG || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">C</span>
-            </label>
-              
-          
-              
-          <label>
-            <input type="checkbox"
-             name="DeleteG"
-             checked={this.state.roleInEdit.DeleteG || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">D</span>
-            </label>
-              
-            
-
+              <div> 
+                <label>
+                  Privileges    
+                  </label>
               </div>
- 
- 
-              <label> Manage Roles </label>
-             
-             <div id="roles">
-             
-              
-              
-          <label>
-            <input type="checkbox"
-             name="ReadR"
-             checked={this.state.roleInEdit.ReadR || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">R</span>
-            </label>
-              
-              
-          <label>
-            <input type="checkbox"
-             name="WriteR"
-             checked={this.state.roleInEdit.WriteR || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">W</span>
-            </label>
-              
-            
-              
-          <label>
-            <input type="checkbox"
-             name="CreateR"
-             checked={this.state.roleInEdit.CreateR || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">C</span>
-            </label>
-              
-          
-              
-          <label>
-            <input type="checkbox"
-             name="DeleteR"
-             checked={this.state.roleInEdit.DeleteR || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">D</span>
-            </label>
-              
-            
-
-              </div>
- 
-              <label> Manage Organisation </label>
-             
-             <div id="abc">
-             
-              
-              
-          <label>
-            <input type="checkbox"
-             name="ReadO"
-             checked={this.state.roleInEdit.ReadO || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">R</span>
-            </label>
-              
-              
-          <label>
-            <input type="checkbox"
-             name="WriteO"
-             checked={this.state.roleInEdit.WriteO || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span id="def">W</span>
-            </label>
-              
-            
-              
-          <label>
-            <input type="checkbox"
-             name="CreateO"
-             checked={this.state.roleInEdit.CreateO || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">C</span>
-            </label>
-              
-          
-              
-          <label>
-            <input type="checkbox"
-             name="DeleteO"
-             checked={this.state.roleInEdit.DeleteO || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">D</span>
-            </label>
-              
-            
-
-              </div>
- 
-              <label> Manage Users </label>
-             
-             <div id="user">
-             
-              
-              
-          <label>
-            <input type="checkbox"
-             name="ReadU"
-             checked={this.state.roleInEdit.ReadU || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">R</span>
-            </label>
-              
-              
-          <label>
-            <input type="checkbox"
-             name="WriteU"
-             checked={this.state.roleInEdit.WriteU || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">W</span>
-            </label>
-              
-            
-              
-          <label>
-            <input type="checkbox"
-             name="CreateU"
-             checked={this.state.roleInEdit.CreateU || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">C</span>
-            </label>
-              
-          
-              
-          <label>
-            <input type="checkbox"
-             name="DeleteU"
-             checked={this.state.roleInEdit.DeleteU || false}
-             onChange={this.onDialogInputChange}
-             />
-             <span  id="def">D</span>
-            </label>
-              
-            
-
-              </div>
- 
- 
- 
-
-             
+              <Tooltip openDelay={100} position="top" anchorElement="element">
+              <Grid
+                style={{ height: '225px', width: '373px' }}
+                data={this.state.products2}
+              >
+                <Column field="id" title="ID" width="40px" />
+                <Column field="name" title="Name" width="150px"
+                  cell={(props) => (
+                    <td>
+                      <label>{props.dataItem.name.slice(7)}</label>
+                    </td>
+                  )}
+                />
+                <Column field="Read" title="R" width="40px" headerCell={ProductNameHeader}
+                  cell={(props) => (
+                    <td>
+                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "1"} className={props.dataItem.name + "1"}
+                        //  checked={this.state[props.dataItem.name] & 1 ? true : false}
+                        value="1" />
+                    </td>
+                  )} />
+                <Column field="Write" title="W" width="40px" headerCell={ProductNameHeader}
+                  cell={(props) => (
+                    <td>
+                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "2"} className={props.dataItem.name + "2"}
+                        //  checked={this.state[props.dataItem.name] & 2 ? true : false} 
+                        value="2" />
+                    </td>
+                  )} />
+                <Column field="Create" title="C" width="40px" headerCell={ProductNameHeader}
+                  cell={(props) => (
+                    <td>
+                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "3"} className={props.dataItem.name + "3"}
+                        //  checked={this.state[props.dataItem.name] & 4 ? true : false} 
+                        value="4" />
+                    </td>
+                  )} />
+                <Column field="Delete" title="D" width="40px" headerCell={ProductNameHeader}
+                  cell={(props) => (
+                    <td>
+                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "4"} className={props.dataItem.name + "4"}
+                        // checked={this.state[props.dataItem.name] & 8 ? true : false}
+                        value="8" />
+                    </td>
+                  )} />
+              </Grid>
+            </Tooltip>
             </form>
           </div>
 
@@ -359,6 +372,9 @@ export default class DialogContainer extends React.Component {
               form="roleForm"
             >
               Save
+            </button>
+            <button className="k-button" onClick={this.testdata}>
+              Test
             </button>
           </DialogActionsBar>
         </Dialog>

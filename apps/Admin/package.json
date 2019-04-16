@@ -22,7 +22,7 @@
     "@progress/kendo-react-grid": "^2.6.1",
     "@progress/kendo-react-inputs": "^2.6.1",
     "@progress/kendo-react-intl": "^2.8.0",
-    "@progress/kendo-react-tooltip": "^2.8.0",
+    "@progress/kendo-react-tooltip": "^2.9.1",
     "@progress/kendo-ui": "^2019.1.220",
     "@progress/kendo-validator-react-wrapper": "^2018.3.1017",
     "@syncfusion/ej2-react-buttons": "^17.1.38",
