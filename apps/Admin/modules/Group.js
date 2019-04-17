@@ -20,6 +20,37 @@ import "jquery/dist/jquery.js";
 import $ from "jquery";
 import { withState } from '../public/js/gridFilter';
 
+import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
+import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+import "../node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
+import "../node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
+import "../node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
+
+
+class Permissionallowed extends React.Component {
+  render() {
+    if(this.props.perm == 7 || this.props.perm == 15){
+      return (
+        <button
+        onClick={this.props.args}
+        className="k-button"
+        style={{ position: "absolute", top: "8px", right: "16px" }}
+      >
+        <FaPlusCircle style={{ fontSize: "20px" }} />
+
+        <p style={{ margin: "0px", paddingLeft: "10px" }}>
+          Add Group
+        </p>
+      </button>
+      );
+    }
+    else{
+     return(
+       <div></div>
+     )
+    }
+  }
+}
 
 const StatefulGrid = withState(Grid);
 
@@ -30,9 +61,11 @@ class Group extends React.Component {
     this.state = {
       useridList: [],
       usersList: [],
+      selectedUsers:[],
       value: [],
       visible: false,
       groupInEdit: undefined,
+      permission:"15",
       sort: [
         {
           field: "name",
@@ -44,7 +77,9 @@ class Group extends React.Component {
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);
+    this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
     this.notificationDOMRef = React.createRef();
+    this.checkFields = { text: 'userName', value: 'userid' };
 
     this.getGroupData().then(response => {
       this.setState({
@@ -108,39 +143,6 @@ class Group extends React.Component {
     });
   };
 
-  listOnChange = event => {
-    this.setState({
-      value: [...event.target.value]
-    });
-  };
-
-  sendTheData = () => { 
-    var temp1 = this.state.value;
-    var temp2 = [];
-    for (var i = 0; i <= temp1.length - 1; i++) {
-      var uid = { "id": temp1[i].userid };
-      temp2.push(uid);
-    }
-
-    this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
-
-
-    this.setState({
-      visible: !this.state.visible,
-      usersList: [],
-      value: [],
-      groupToBeEdited: []
-    });
-  }
-
-  toggleDialog() {
-    this.setState({
-      visible: !this.state.visible,
-      usersList: [],
-      value: [],
-      groupToBeEdited: []
-    })
-  }
 
   async getGroupData() {
     let loader = this.core.make("oxzion/splash");
@@ -187,11 +189,31 @@ class Group extends React.Component {
     });
   };
 
-  addUsers = dataItem => {
+  addGroupUsers = (dataItem) => {
     this.setState({
       groupToBeEdited: dataItem.id
     })
-    this.getUserData(dataItem.id).then(response => {
+
+    this.setState({
+      visible: !this.state.visible
+    });
+
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
+
+
+    this.getGroupUsers(dataItem.id).then(response => {
+      var tempGroupUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userid = response.data[i].id;
+        tempGroupUsers.push(userid);
+      }
+      this.setState({
+        selectedUsers: tempGroupUsers
+      });
+    })
+
+    this.getUserData().then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].firstname + " " + response.data[i].lastname;
@@ -199,32 +221,87 @@ class Group extends React.Component {
         tempUsers.push({ userid: userid, userName: userName });
       }
       this.setState({
-        usersList: tempUsers
+        userList: tempUsers
       });
+
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
-  };
+  }
 
-  addGroupUsers = dataItem => {
-    let loader = this.core.make("oxzion/splash");
-    loader.show();
-    this.addUsers(dataItem);
-    this.getGroupUsers(dataItem.id).then(response => {
-      var tempGroupUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName = response.data[i].name;
-        var userid = response.data[i].id;
-        tempGroupUsers.push({ userid: userid, userName: userName });
-      }
-      this.setState({
-        value: tempGroupUsers
-      });
-    });
+  captureSelectedUsers(e) {
     this.setState({
-      visible: !this.state.visible
+      selectedUsers: e.value
+    })
+  }
+
+  saveAndSend = () => {
+    this.sendTheData();
+    this.toggleDialog();
+  }
+
+  sendTheData = () => {
+    var temp1 = this.state.selectedUsers;
+    var temp2 = [];
+    for (var i = 0; i <= temp1.length - 1; i++) {
+      var uid = { "id": temp1[i] };
+      temp2.push(uid);
+    }
+    this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
+
+    this.setState({
+      visible: !this.state.visible,
+      usersList: [],
+      value: [],
+      pushGroupUsers:[]
     });
-  };
+  }
+
+  toggleDialog() {
+    this.setState({
+      visible: !this.state.visible,
+      selectedUsers: []
+    })
+  }
+
+  // addUsers = dataItem => {
+  //   this.setState({
+  //     groupToBeEdited: dataItem.id
+  //   })
+  //   this.getUserData(dataItem.id).then(response => {
+  //     var tempUsers = [];
+  //     for (var i = 0; i <= response.data.length - 1; i++) {
+  //       var userName = response.data[i].firstname + " " + response.data[i].lastname;
+  //       var userid = response.data[i].id;
+  //       tempUsers.push({ userid: userid, userName: userName });
+  //     }
+  //     this.setState({
+  //       usersList: tempUsers
+  //     });
+  //     let loader = this.core.make("oxzion/splash");
+  //     loader.destroy();
+  //   });
+  // };
+
+  // addGroupUsers = dataItem => {
+  //   let loader = this.core.make("oxzion/splash");
+  //   loader.show();
+  //   this.addUsers(dataItem);
+  //   this.getGroupUsers(dataItem.id).then(response => {
+  //     var tempGroupUsers = [];
+  //     for (var i = 0; i <= response.data.length - 1; i++) {
+  //       var userName = response.data[i].name;
+  //       var userid = response.data[i].id;
+  //       tempGroupUsers.push({ userid: userid, userName: userName });
+  //     }
+  //     this.setState({
+  //       value: tempGroupUsers
+  //     });
+  //   });
+  //   this.setState({
+  //     visible: !this.state.visible
+  //   });
+  // };
   
   remove = dataItem => {
     this.deleteGroupData(dataItem.id).then(response => {
@@ -266,6 +343,19 @@ class Group extends React.Component {
     this.setState({ groupInEdit: {}, action: "add" });
   };
 
+  disp(){
+    if(this.state.permission!=1){
+      return(
+    <Column
+    title="Edit"
+    width="160px"
+    cell={cellWithEditing(this.edit, this.remove, this.addGroupUsers, this.state.permission)}
+    filterCell={this.searchUnavailable}
+  />
+      );
+    } 
+  }
+
   render() {
     return (
       <div id="groupPage">
@@ -275,21 +365,29 @@ class Group extends React.Component {
             onClose={this.toggleDialog}
           >
             <div>
+              <div className='control-section col-lg-8'>
+              <div id="multigroup">
               <h6>Select Users:</h6>
-              <MultiSelect
-                data={this.state.usersList}
-                onChange={this.listOnChange}
-                value={this.state.value}
-                style={{ height: "auto" }}
-                textField="userName"
-                dataItemKey="userid"
-              />
-
-              <button className="k-button" onClick={this.sendTheData}>
-                Save
-              </button>
+                <MultiSelectComponent id="checkbox"
+                  dataSource={this.state.userList}
+                  value={this.state.selectedUsers}
+                  change={this.captureSelectedUsers}
+                  fields={this.checkFields}
+                  mode="CheckBox"
+                  placeholder="Click to add Users"
+                  showDropDownIcon={true}
+                  openOnClick="false"
+                  filterBarPlaceholder="Search Users"
+                  popupHeight="350px">
+                  <Inject services={[CheckBoxSelection]} />
+                </MultiSelectComponent>
+              </div>
+            </div>
             </div>
             <DialogActionsBar>
+              <button className="k-button" onClick={this.saveAndSend}>
+                Save
+              </button>
 
               <button className="k-button" onClick={this.toggleDialog}>
                 Cancel
@@ -315,26 +413,17 @@ class Group extends React.Component {
           <GridToolbar>
             <div>
               <div style={{ fontSize: "20px" }}>Groups List</div>
-              <button
-                onClick={this.insert}
-                className="k-button"
-                style={{ position: "absolute", top: "8px", right: "16px" }}
-              >
-                <FaPlusCircle style={{ fontSize: "20px" }} />
-
-                <p style={{ margin: "0px", paddingLeft: "10px" }}>Add Group</p>
-              </button>
+              <Permissionallowed
+               args={this.insert}
+               perm={this.state.permission}
+               />
             </div>
           </GridToolbar>
 
           <Column field="id" title="ID" width="70px" />
           <Column field="name" title="Name" />
           <Column field="description" title="Description" />
-          <Column
-            title="Edit"
-            width="160px"
-            cell={cellWithEditing(this.edit, this.remove, this.addGroupUsers)}
-          />
+          {this.disp()}
         </StatefulGrid>
 
         {this.state.groupInEdit && (

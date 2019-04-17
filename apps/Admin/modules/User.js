@@ -32,7 +32,7 @@ class Permissionallowed extends React.Component {
         <FaPlusCircle style={{ fontSize: "20px" }} />
 
         <p style={{ margin: "0px", paddingLeft: "10px" }}>
-          Add Organization
+          Add User
         </p>
       </button>
       );
@@ -176,9 +176,7 @@ class User extends React.Component {
   }
 
   disp(){
-    console.log(this.state.permission)
     if(this.state.permission!=1){
-      console.log(this.state.permission);
       return(
     <GridColumn
     title="Edit"
@@ -187,11 +185,7 @@ class User extends React.Component {
     filterCell={this.searchUnavailable}
   />
       );
-    } else {
-      console.log(
-        "No Permissions"
-      )
-    }
+    } 
   }
 
   render() {

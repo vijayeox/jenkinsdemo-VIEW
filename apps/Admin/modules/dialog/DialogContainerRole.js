@@ -59,7 +59,6 @@ export default class DialogContainer extends React.Component {
 
   handleFunction() {
     this.getPrivilegeData().then(response => {
-      console.log(response.data);
       this.setState({ products2: response.data });
       for (var i = 0; i < this.state.products2.length; i++) {
 
@@ -110,7 +109,6 @@ export default class DialogContainer extends React.Component {
   }
 
   handleChange = event => {
-    console.log(event.target.id);
     let name1 = event.target.id;
     let name2 = document.getElementById(event.target.id);
     let num = name1.slice(-1);
@@ -196,8 +194,6 @@ export default class DialogContainer extends React.Component {
   //   let tempData = { ...this.state.privilegeInEdit };
   //   tempData[manage] = clickValue  ;
   //   this.setState({ privilegeInEdit: tempData });
-  //   console.log(manage);
-  //   console.log(tempData);
 
   // }
 
@@ -232,10 +228,6 @@ export default class DialogContainer extends React.Component {
     this.setState({
       privilegeInEdit: edited
     });
-
-    console.log(edited);
-    console.log(this.state.privilegeInEdit);
-
   }
 
   onDialogInputChange = event => {

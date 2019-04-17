@@ -20,6 +20,31 @@ import cellWithEditing from "./manage/cellWithEditingProject";
 
 const StatefulGrid = withState(Grid);
 
+class Permissionallowed extends React.Component {
+  render() {
+    if (this.props.perm == 7 || this.props.perm == 15) {
+      return (
+        <button
+          onClick={this.props.args}
+          className="k-button"
+          style={{ position: "absolute", top: "8px", right: "16px" }}
+        >
+          <FaPlusCircle style={{ fontSize: "20px" }} />
+
+          <p style={{ margin: "0px", paddingLeft: "10px" }}>
+            Add Project
+        </p>
+        </button>
+      );
+    }
+    else {
+      return (
+        <div></div>
+      )
+    }
+  }
+}
+
 class Project extends React.Component {
   constructor(props) {
     super(props);
@@ -29,10 +54,10 @@ class Project extends React.Component {
       prjInEdit: undefined,
       userList: [],
       selectedUsers: [],
-      projectToBeEdited:[],
+      projectToBeEdited: [],
       action: "",
       visible: false,
-      permission:"3"
+      permission: "3"
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);
@@ -256,6 +281,20 @@ class Project extends React.Component {
     );
   }
 
+  disp() {
+    if (this.state.permission != 1) {
+      return (
+        <Column
+          title="Edit"
+          width="160px"
+          cell={cellWithEditing(this.edit, this.remove, this.addProjectUsers, this.state.permission)}
+          filterCell={this.searchUnavailable}
+        />
+      );
+    }
+  }
+
+
   render() {
     return (<div id="project">
       {this.state.visible && (
@@ -310,18 +349,10 @@ class Project extends React.Component {
         <GridToolbar>
           <div>
             <div style={{ fontSize: "20px" }}>Projects List</div>
-            <button onClick={this.insert} className="k-button" style={{
-              position: "absolute", top: "8px", right: "16px"
-            }}>
-              <FaPlusCircle style={{
-                fontSize: "20px",
-                color: "#002C3E"
-              }} />
-
-              <p style={{ margin: "0px", paddingLeft: "10px" }}>
-                Add Project
-              </p>
-            </button>
+            <Permissionallowed
+              args={this.insert}
+              perm={this.state.permission}
+            />
           </div>
         </GridToolbar>
 
@@ -329,9 +360,8 @@ class Project extends React.Component {
         <Column field="name" title="Name" width="200px" />
 
         <Column field="description" title="Description" />
-        <Column title="Manage" width="180px"
-          cell={cellWithEditing(this.edit, this.remove, this.addProjectUsers)}
-          filterCell={this.searchUnavailable} />
+        {this.disp()}
+
       </StatefulGrid>
 
       {
