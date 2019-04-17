@@ -6,24 +6,17 @@ import {
   GridColumn as Column,
   GridToolbar
 } from "@progress/kendo-react-grid";
+import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Button } from '@progress/kendo-react-buttons';
+import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
 
 import ReactNotification from "react-notifications-component";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
-
 import { withState } from '../public/js/gridFilter';
 
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import DialogContainer from "./dialog/DialogContainerPrj";
 import cellWithEditing from "./manage/cellWithEditingProject";
-
-
-import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
-import "../node_modules/@syncfusion/ej2-base/styles/material.css";
-import "../node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
-import "../node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
-import "../node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
 
 const StatefulGrid = withState(Grid);
 
@@ -32,11 +25,11 @@ class Project extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
+      products: [],
+      prjInEdit: undefined,
       userList: [],
       selectedUsers: [],
       projectToBeEdited:[],
-      prjInEdit: undefined,
-      products: [],
       action: "",
       visible: false,
       permission:"3"
@@ -61,14 +54,42 @@ class Project extends React.Component {
     });
   }
 
+  addDataNotification(serverResponse) {
+    this.notificationDOMRef.current.addNotification({
+      title: "Operation Successful",
+      message: "Entry created with ID:" + serverResponse,
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  addNotification() {
+    this.notificationDOMRef.current.addNotification({
+      title: "All Done!!!  👍",
+      message: "Operation succesfully completed.",
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
   handler = serverResponse => {
     this.getProjectData().then(response => {
       this.setState({
         products: response.data
       });
+      this.addDataNotification(serverResponse);
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
-      this.addDataNotification(serverResponse);
     });
   };
 
@@ -111,17 +132,13 @@ class Project extends React.Component {
   }
 
   addProjectUsers = (dataItem) => {
-    this.setState({
-      projectToBeEdited: dataItem.id
-    })
-
-    this.setState({
-      visible: !this.state.visible
-    });
-
     let loader = this.core.make("oxzion/splash");
     loader.show();
 
+    this.setState({
+      projectToBeEdited: dataItem.id,
+      visible: !this.state.visible
+    })
 
     this.getProjectUsers(dataItem.id).then(response => {
       var tempProjectUsers = [];
@@ -174,8 +191,7 @@ class Project extends React.Component {
       visible: !this.state.visible,
       usersList: [],
       value: [],
-      groupToBeEdited: [],
-      pushProjectUsers:[]
+      groupToBeEdited: []
     });
   }
 
@@ -184,34 +200,6 @@ class Project extends React.Component {
       visible: !this.state.visible,
       selectedUsers: []
     })
-  }
-
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
   }
 
   edit = dataItem => {

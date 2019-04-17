@@ -31,6 +31,7 @@ export default class DialogContainer extends React.Component {
         city: this.state.orgInEdit.city,
         state: this.state.orgInEdit.state,
         zip: this.state.orgInEdit.zip,
+        permission_allowed: "15",
         logo: this.state.orgInEdit.logo,
         languagefile: this.state.orgInEdit.languagefile
       },
