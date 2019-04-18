@@ -1,4 +1,4 @@
-/**
+/*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,65 +28,25 @@
  * @licence Simplified BSD License
  */
 
+const fs = require('fs-extra');
 const path = require('path');
 const morgan = require('morgan');
 const express = require('express');
-const express_session = require('express-session');
-const express_ws = require('express-ws');
 const minimist = require('minimist');
 const deepmerge = require('deepmerge');
-const chokidar = require('chokidar');
-const signale = require('signale').scope('core');
-
+const consola = require('consola');
 const {CoreBase} = require('@osjs/common');
+const {argvToConfig, createSession, createWebsocket, parseJson} = require('./utils/core.js');
 const {defaultConfiguration} = require('./config.js');
+const logger = consola.withTag('Core');
 
-/*
- * Converts an input argument to configuration entry
- * Overrides the user-created configuration file
- */
-const argvToConfig = {
-  'logging': logging => ({logging}),
-  'development': development => ({development}),
-  'port': port => ({port}),
-  'ws-port': port => ({ws: {port}}),
-  'secret': secret => ({session: {options: {secret}}}),
-  'morgan': morgan => ({morgan}),
-  'discovery': discovery => ({packages: {discovery}}),
-  'manifest': manifest => ({packages: {manifest}})
-};
-
-/*
- * Create session parser
- */
-const createSession = (app, configuration) => {
-  const Store = require(configuration.session.store.module)(express_session);
-  const store = new Store(configuration.session.store.options);
-
-  return express_session(Object.assign({
-    store
-  }, configuration.session.options));
-};
-
-/*
- * Create WebSocket server
- */
-const createWebsocket = (app, configuration, session) => express_ws(app, null, {
-  wsOptions: Object.assign({}, configuration.ws, {
-    verifyClient: (info, done) => {
-      session(info.req, {}, () => {
-        done(true);
-      });
-    }
-  })
-});
+let _instance;
 
 /**
- * Server Core
- *
- * @desc Provides the OS.js Server Core
+ * OS.js Server Core
  */
 class Core extends CoreBase {
+
   /**
    * Creates a new instance
    * @param {Object} cfg Configuration tree
@@ -94,15 +54,16 @@ class Core extends CoreBase {
    */
   constructor(cfg, options = {}) {
     options = Object.assign({}, {
+      kill: true,
       argv: process.argv.splice(2),
       root: process.cwd()
     }, options);
 
     const argv = minimist(options.argv);
-    const val = k => argvToConfig[k](JSON.parse(argv[k]));
+    const val = k => argvToConfig[k](parseJson(argv[k]));
     const keys = Object.keys(argvToConfig).filter(k => argv.hasOwnProperty(k));
     const argvConfig = keys.reduce((o, k) => {
-      signale.fav(`CLI argument '--${k}' overrides`, val(k));
+      logger.info(`CLI argument '--${k}' overrides`, val(k));
 
       return Object.assign(o, deepmerge(o, val(k)));
     }, {});
@@ -110,75 +71,91 @@ class Core extends CoreBase {
     super(defaultConfiguration, deepmerge(cfg, argvConfig), options);
 
     this.httpServer = null;
-    this.logger = signale;
+    this.logger = consola.withTag('Internal');
     this.app = express();
     this.session = createSession(this.app, this.configuration);
     this.ws = createWebsocket(this.app, this.configuration, this.session);
+    this.wss = this.ws.getWss();
 
     if (!this.configuration.public) {
       throw new Error('The public option is required');
     }
+
+    _instance = this;
   }
 
   /**
    * Destroys the instance
    */
   destroy() {
-    if (this.destroying) {
+    if (this.destroyed) {
       return;
     }
 
+    const done = this.options.kill
+      ? () => process.exit(0)
+      : () => {};
+
     this.emit('osjs/core:destroy');
 
-    signale.pause('Shutting down server');
+    logger.info('Shutting down...');
+
+    if (this.wss) {
+      this.wss.close();
+    }
 
     super.destroy();
 
-    process.exit(0);
+    if (this.httpServer) {
+      this.httpServer.close(done);
+    } else {
+      done();
+    }
   }
 
   /**
    * Starts the server
+   * @return {Promise<boolean>}
    */
   async start() {
-    if (this.started) {
-      return;
+    if (!this.started) {
+      logger.info('Starting services...');
+
+      await super.start();
+
+      logger.success('Initialized!');
+
+      try {
+        this.listen();
+      } catch (e) {
+        logger.fatal(e);
+
+        if (this.options.kill) {
+          process.exit(1);
+        }
+
+        return false;
+      }
     }
 
-    signale.start('Starting server');
-
-    await super.start();
-
-    try {
-      this.httpServer = this.app.listen(this.configuration.port, () => {
-        const wsp = this.configuration.ws.port ? this.configuration.ws.port : this.configuration.port;
-        const sess = path.basename(path.dirname(this.configuration.session.store.module));
-        signale.success('Using session store', sess);
-        signale.success('Using directory', this.configuration.public.replace(process.cwd(), ''));
-        signale.watch(`WebSocket Listening at ${this.configuration.hostname}:${wsp}`);
-        signale.watch(`HTTP Listening at ${this.configuration.hostname}:${this.configuration.port}`);
-      });
-    } catch (e) {
-      signale.fatal(new Error(e));
-      process.exit(1);
-    }
+    return true;
   }
 
   /**
    * Initializes the server
+   * @return {Promise<boolean>}
    */
   async boot() {
-    signale.await('Initializing core');
+    if (this.booted) {
+      return true;
+    }
 
     this.emit('osjs/core:start');
 
     if (this.configuration.logging) {
-      const wss = this.ws.getWss();
-
-      wss.on('connection', (c) => {
-        signale.start('WS Connection opened');
-
-        c.on('close', () => signale.pause('WS Connection closed'));
+      this.wss.on('connection', (c) => {
+        logger.log('WebSocket connection opened');
+        c.on('close', () => logger.log('WebSocket connection closed'));
       });
 
       if (this.configuration.morgan) {
@@ -186,38 +163,38 @@ class Core extends CoreBase {
       }
     }
 
-    signale.await('Initializing providers');
+
+    logger.info('Initializing services...');
 
     await super.boot();
-
     this.emit('init');
-
-    if (this.configuration.development) {
-      try {
-        const watchdir = path.resolve(this.configuration.public);
-        const watcher = chokidar.watch(watchdir);
-
-        watcher.on('change', filename => {
-          // NOTE: 'ignored' does not work as expected with callback
-          // ignored: str => str.match(/\.(js|css)$/) === null
-          // for unknown reasons
-          if (!filename.match(/\.(js|css)$/)) {
-            return;
-          }
-
-          const relative = filename.replace(watchdir, '');
-          this.broadcast('osjs/dist:changed', [relative]);
-        });
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
     await this.start();
-
     this.emit('osjs/core:started');
 
-    signale.success('Initialized');
+    return true;
+  }
+
+  /**
+   * Opens HTTP server
+   */
+  listen() {
+    const wsp = this.configuration.ws.port ? this.configuration.ws.port : this.configuration.port;
+    const session = path.basename(path.dirname(this.configuration.session.store.module));
+    const dist = this.configuration.public.replace(process.cwd(), '');
+
+    logger.info('Creating HTTP server');
+
+    const checkFile = path.join(this.configuration.public, this.configuration.index);
+    if (!fs.existsSync(checkFile)) {
+      logger.warn('Missing files in "dist/" directory. Did you forget to run "npm run build" ?');
+    }
+
+    this.httpServer = this.app.listen(this.configuration.port, () => {
+      logger.success(`Server was started on ${this.configuration.hostname}:${this.configuration.port}`);
+      logger.success(`WebSocket is running on ${this.configuration.hostname}:${wsp}`);
+      logger.success(`Using ${session} sessions`);
+      logger.success(`Serving content from ${dist}`);
+    });
   }
 
   /**
@@ -230,7 +207,7 @@ class Core extends CoreBase {
     filter = filter || (() => true);
 
     if (this.ws) {
-      this.ws.getWss('/').clients // This is a Set
+      this.wss.clients // This is a Set
         .forEach(client => {
           if (!client._osjs_client) {
             return;
@@ -265,6 +242,14 @@ class Core extends CoreBase {
     return this.broadcast(name, params, client => {
       return client._osjs_client.username === username;
     });
+  }
+
+  /**
+   * Gets the server instance
+   * @return {Core}
+   */
+  static getInstance() {
+    return _instance;
   }
 }
 

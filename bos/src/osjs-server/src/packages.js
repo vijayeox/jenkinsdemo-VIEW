@@ -27,53 +27,77 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
+
 const fs = require('fs-extra');
 const fg = require('fast-glob');
 const path = require('path');
-const signale = require('signale').scope('pkg');
-const chokidar = require('chokidar');
+const Package = require('./package.js');
+const consola = require('consola');
+const logger = consola.withTag('Packages');
 
-/*
- * Loads all packages as a stream
+const relative = filename => filename.replace(process.cwd(), '');
+
+const readOrDefault = filename => fs.existsSync(filename)
+  ? fs.readJsonSync(filename)
+  : [];
+
+/**
+ * OS.js Package Management
  */
-const loader = (core, manifest, discovered) => {
-  const {configuration} = core;
-  const sources = discovered.map(d => path.join(d, 'metadata.json'));
-  const metadataInManifest = metadata => !!manifest.find(iter => iter.name === metadata.name);
-  const validateMetadata = metadata => !!metadata.server && metadataInManifest(metadata);
-  const validateScript = script => script && typeof script.init === 'function';
+class Packages {
 
-  const createWatch = (metadata, cb) => {
-    const dist = path.join(configuration.public, 'apps', metadata.name);
-    const watcher = chokidar.watch(dist);
-    watcher.on('change', () => cb(metadata));
-    signale.watch(dist);
-    return watcher;
-  };
+  /**
+   * Create new instance
+   * @param {Core} core Core reference
+   * @param {object} [options] Instance options
+   */
+  constructor(core, options = {}) {
+    this.core = core;
+    this.packages = [];
+    this.hotReloading = {};
+    this.options = Object.assign({
+      manifestFile: null,
+      discoveredFile: null
+    }, options);
+  }
 
-  const createInstance = (filename, metadata) => {
-    try {
-      const server = path.resolve(path.dirname(filename), metadata.server);
-      signale.await(`Loading ${server}`);
+  /**
+   * Initializes packages
+   */
+  init() {
+    this.core.on('osjs/application:socket:message', (ws, ...params) => {
+      this.handleMessage(ws, params);
+    });
 
-      return require(server)(core, {
-        filename,
-        metadata,
-        resource: (path) => {
-          if (path.substr(0, 1) !== '/') {
-            path = '/' + path;
-          }
-          return `/apps/${metadata.name}${path}`;
-        }
+    return this.load();
+  }
+
+  /**
+   * Loads package manager
+   */
+  load() {
+    return this.createLoader()
+      .then(packages => {
+        this.packages = this.packages.concat(packages);
+
+        return true;
       });
-    } catch (e) {
-      signale.warn(e);
-    }
+  }
 
-    return null;
-  };
+  /**
+   * Loads all packages
+   * @return {Promise<Package[]>}
+   */
+  createLoader() {
+    let result = [];
+    const {discoveredFile, manifestFile} = this.options;
+    const discovered = readOrDefault(discoveredFile);
+    const manifest = readOrDefault(manifestFile);
+    const sources = discovered.map(d => path.join(d, 'metadata.json'));
 
-  return cb => new Promise((resolve, reject) => {
+    logger.info('Using package discovery file', relative(discoveredFile));
+    logger.info('Using package manifest file', relative(manifestFile));
+
     const stream = fg.stream(sources, {
       extension: false,
       brace: false,
@@ -81,160 +105,99 @@ const loader = (core, manifest, discovered) => {
       case: false
     });
 
-    let result = [];
-    let watches = [];
-
+    stream.on('error', error => logger.error(error));
     stream.on('data', filename => {
-      const promise = fs.readJson(filename)
-        .then(metadata => {
-          let script;
-
-          const done = error => {
-            if (error) {
-              signale.warn(error);
-            }
-
-            return Promise.resolve({filename, metadata, script});
-          };
-
-          if (configuration.development) {
-            watches.push(createWatch(metadata, cb));
-          }
-
-          if (validateMetadata(metadata)) {
-            script = createInstance(filename, metadata);
-          }
-
-          if (validateScript(script)) {
-            try {
-              return script.init()
-                .then(() => done())
-                .catch(done);
-            } catch (e) {
-              return done(e);
-            }
-          }
-
-          return done();
-        });
-
-      result.push(promise);
+      result.push(this.loadPackage(filename, manifest));
     });
 
-    stream.on('error', error => {
-      signale.warn(error);
+    return new Promise((resolve, reject) => {
+      stream.once('end', () => {
+        Promise.all(result)
+          .then(result => result.filter(iter => !!iter.handler))
+          .then(resolve)
+          .catch(reject);
+      });
     });
-
-    stream.once('end', () => {
-      Promise.all(result)
-        .then(result => result.filter(iter => !!iter.script))
-        .then(result => ({result, watches}))
-        .then(resolve)
-        .catch(reject);
-    });
-  });
-};
-
-/**
- * OS.js Package Management
- */
-class Packages {
-
-  constructor(core, options) {
-    this.core = core;
-    this.options = options;
-    this.packages = [];
-    this.watches = [];
-    this.hotReloading = {};
   }
 
   /**
-   * Initializes packages
+   * When a package dist has changed
+   * @param {Package} pkg Package instance
    */
-  init(manifestFile, discoveredFile) {
-    if (this.core.config('development')) {
-      if (fs.existsSync(manifestFile)) {
-        const watcher = chokidar.watch(manifestFile);
-        watcher.on('change', () => {
-          this.core.broadcast('osjs/packages:metadata:changed');
+  onPackageChanged(pkg) {
+    clearTimeout(this.hotReloading[pkg.metadata.name]);
+
+    this.hotReloading[pkg.metadata.name] = setTimeout(() => {
+      logger.debug('Sending reload signal for', pkg.metadata.name);
+      this.core.broadcast('osjs/packages:package:changed', [pkg.metadata.name]);
+    }, 500);
+  }
+
+  /**
+   * Loads package data
+   * @param {string} filename Filename
+   * @param {object} manifest Manifest
+   * @return {Promise<Package>}
+   */
+  loadPackage(filename, manifest) {
+    const done = (pkg, error) => {
+      if (error) {
+        logger.warn(error);
+      }
+
+      return Promise.resolve(pkg);
+    };
+
+    return fs.readJson(filename)
+      .then(metadata => {
+        const pkg = new Package(this.core, {
+          filename,
+          metadata
         });
-        this.watches.push(watcher);
+
+        return this.initializePackage(pkg, manifest, done);
+      });
+  }
+
+  /**
+   * Initializes a package
+   * @return {Promise<Package>}
+   */
+  initializePackage(pkg, manifest, done) {
+    if (pkg.validate(manifest)) {
+      logger.info(`Loading ${relative(pkg.script)}`);
+
+      try {
+        if (this.core.configuration.development) {
+          pkg.watch(() => {
+            this.onPackageChanged(pkg);
+          });
+        }
+
+        return pkg.init()
+          .then(() => done(pkg))
+          .catch(e => done(pkg, e));
+      } catch (e) {
+        return done(pkg, e);
       }
     }
 
-    const manifest = fs.existsSync(manifestFile)
-      ? fs.readJsonSync(manifestFile)
-      : [];
-
-    const discovered = fs.existsSync(discoveredFile)
-      ? fs.readJsonSync(discoveredFile)
-      : [];
-
-    const load = loader(this.core, manifest, discovered);
-
-    this.core.on('osjs/application:socket:message', (ws, ...params) => {
-      this.handleMessage(ws, params);
-    });
-
-    const apps = [];
-    //The apps whose internal parameter is set true in metadata.json are not allowed for editing 
-    for(var i=0;i<manifest.length;i++){
-      if(!manifest[i].internal){
-        apps.push({name : manifest[i].name,
-                   category : manifest[i].category ? manifest[i].category : "null",
-                   options : {autostart : manifest[i].autostart ? "true" : "false",
-                              hidden : manifest[i].hidden ? "true" : "false"}})
-      }
-    }
-    this.core.logger.info('AppsLIst',JSON.stringify(apps));
-      
-    return load(metadata => {     
-      clearTimeout(this.hotReloading[metadata.name]);
-      this.hotReloading[metadata.name] = setTimeout(() => {
-        signale.info('Reloading', metadata.name);
-
-        this.core.broadcast('osjs/packages:package:changed', [metadata.name]);
-      }, 500);
-    }).then(({result, watches}) => {
-      this.watches = watches;
-      this.packages = this.packages.concat(result);
-    });
+    return done(pkg);
   }
 
   /**
    * Starts packages
    */
   start() {
-    this.packages.forEach(({script, metadata}) => {
-
-      try {
-        if (typeof script.start === 'function') {
-          script.start();
-        }
-      } catch (e) {
-        signale.fatal(e);
-      }
-    });
+    this.packages.forEach(pkg => pkg.start());
   }
 
   /**
    * Destroys packages
    */
   destroy() {
-    this.packages.forEach(({script, metadata}) => {
-      try {
-        if (typeof script.destroy === 'function') {
-          script.destroy();
-        }
-      } catch (e) {
-        console.warn(e);
-      }
-    });
-
-    this.watches.forEach(watch => watch.close());
-
+    this.packages.forEach(pkg => pkg.destroy());
     this.packages = [];
-    this.watches = [];
   }
 
   /**
@@ -248,8 +211,8 @@ class Packages {
     const found = this.packages.findIndex(({metadata}) => metadata.name === name);
 
     if (found !== -1) {
-      const {script} = this.packages[found];
-      if (script && typeof script.onmessage === 'function') {
+      const {handler} = this.packages[found];
+      if (handler && typeof handler.onmessage === 'function') {
         const respond = (...respondParams) => ws.send(JSON.stringify({
           name: 'osjs/application:socket:message',
           params: [{
@@ -258,7 +221,7 @@ class Packages {
           }]
         }));
 
-        script.onmessage(ws, respond, args);
+        handler.onmessage(ws, respond, args);
       }
     }
   }

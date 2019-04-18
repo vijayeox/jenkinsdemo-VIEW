@@ -28,81 +28,20 @@
  * @licence Simplified BSD License
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const {Readable} = require('stream');
-
-const nullAdapter = (core, options) => ({
-  save: (req, res) => Promise.resolve(true),
-  load: (req, res) => Promise.resolve({})
-});
-
-const fsAdapter = (core, options) => {
-  const fsOptions = Object.assign({
-    system: false,
-    path: 'home:/.osjs',
-    filename: 'settings.json'
-  }, options || {});
-
-  const request = (method, req, res, fields = {}, files = {}) => core
-    .make('osjs/vfs').request(method, {req, res, fields, files});
-
-  const createStream = json => {
-    const s = new Readable();
-    s.push(json);
-    s.push(null);
-    return s;
-  };
-
-  const dest = fsOptions.system
-    ? path.join(fsOptions.path, fsOptions.filename)
-    : `${fsOptions.path}/${fsOptions.filename}`;
-
-  const mkdir = (req, res) => fsOptions.system
-    ? fs.ensureDir(fsOptions.path)
-    : request('mkdir', req, res, {
-      path: fsOptions.path,
-      options: {}
-    }).catch(() => true);
-
-  const write = (req, res) => fsOptions.system
-    ? fs.writeJson(dest, req.body)
-    : request('writefile', req, res, {
-      path: dest,
-      options: {}
-    },  {
-      upload: createStream(JSON.stringify(req.body))
-    });
-
-  const read = (req, res) => fsOptions.system
-    ? fs.readJson(dest)
-    : request('readfile', req, res, {
-      path: dest,
-      options: {}
-    }).then(stream => new Promise((resolve, reject) => {
-      const chunks = [];
-      stream.on('data', buf => chunks.push(buf));
-      stream.on('error', err => reject(err));
-      stream.on('end', () => {
-        resolve(JSON.parse(chunks.join('')));
-      });
-    }));
-
-  const save = (req, res) => mkdir(req, res)
-    .then(() => write(req, res));
-
-  const load = (req, res) => mkdir(req, res)
-    .then(() => read(req, res));
-
-  return {save, load};
-};
+const nullAdapter = require('./adapters/settings/null');
+const fsAdapter = require('./adapters/settings/fs');
 
 /**
  * OS.js Settings Manager
  */
 class Settings {
 
-  constructor(core, options) {
+  /**
+   * Create new instance
+   * @param {Core} core Core reference
+   * @param {object} [options] Instance options
+   */
+  constructor(core, options = {}) {
     this.core = core;
     this.options = Object.assign({
       adapter: nullAdapter
@@ -115,11 +54,14 @@ class Settings {
     try {
       this.adapter = this.options.adapter(core, this.options.config);
     } catch (e) {
-      console.warn(e);
+      this.core.logger.warn(e);
       this.adapter = nullAdapter(core, this.options.config);
     }
   }
 
+  /**
+   * Destroy instance
+   */
   destroy() {
     if (this.adapter.destroy) {
       this.adapter.destroy();
@@ -131,12 +73,16 @@ class Settings {
    */
   async init() {
     if (this.adapter.init) {
-      await this.adapter.init();
+      return this.adapter.init();
     }
+
+    return true;
   }
 
   /**
    * Sends save request to adapter
+   * @param {Request} req Express request
+   * @param {Response} res Express response
    */
   async save(req, res) {
     const result = await this.adapter.save(req, res);
@@ -145,6 +91,8 @@ class Settings {
 
   /**
    * Sends load request to adapter
+   * @param {Request} req Express request
+   * @param {Response} res Express response
    */
   async load(req, res) {
     const result = await this.adapter.load(req, res);

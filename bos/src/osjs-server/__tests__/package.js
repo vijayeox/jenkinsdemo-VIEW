@@ -1,4 +1,4 @@
-/**
+/*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,72 +28,75 @@
  * @licence Simplified BSD License
  */
 
-const fs = require('fs-extra');
+const osjs = require('osjs');
 const path = require('path');
-const chokidar = require('chokidar');
-const {ServiceProvider} = require('@osjs/common');
-const Packages = require('../packages');
+const Package = require('../src/package.js');
 
-/**
- * OS.js Package Service Provider
- *
- * @desc Provides package services
- */
-class PackageServiceProvider extends ServiceProvider {
-  constructor(core) {
-    super(core);
+describe('Package', () => {
+  let core;
+  let pkg;
 
-    const {configuration} = this.core;
-    const manifestFile = path.join(configuration.public, configuration.packages.metadata);
-    const discoveredFile = path.resolve(configuration.root, configuration.packages.discovery);
+  beforeAll(() => osjs().then(c => (core = c)));
+  afterAll(() => core.destroy());
 
-    this.watches = [];
-    this.packages = new Packages(core, {
-      manifestFile,
-      discoveredFile
+  test('#constructor', () => {
+    const filename = path.resolve(core.configuration.root, 'packages/JestTest/metadata.json');
+    const metadata = require(filename);
+
+    pkg = new Package(core, {
+      filename,
+      metadata
     });
-  }
+  });
 
-  provides() {
-    return [
-      'osjs/packages'
-    ];
-  }
+  test('#init', () => {
+    return expect(pkg.init())
+      .resolves
+      .toBe(undefined);
+  });
 
-  init() {
-    this.core.singleton('osjs/packages', () => this.packages);
+  test('#validate', () => {
+    const manifest = require(
+      path.resolve(core.configuration.public, 'metadata.json')
+    );
 
-    return this.packages.init();
-  }
+    expect(pkg.validate(manifest))
+      .toBe(true);
 
-  start() {
-    this.packages.start();
+    expect(pkg.validate([]))
+      .toBe(false);
+  });
 
-    if (this.core.configuration.development) {
-      this.initDeveloperTools();
-    }
-  }
+  test('#start', () => {
+    expect(pkg.start())
+      .toBe(true);
+  });
 
-  destroy() {
-    this.watches.forEach(w => w.close());
-    this.packages.destroy();
-    super.destroy();
-  }
+  test('#action', () => {
+    expect(pkg.action('init'))
+      .toBe(true);
 
-  /**
-   * Initializes some developer features
-   */
-  initDeveloperTools() {
-    const {manifestFile} = this.packages.options;
+    expect(pkg.action('invalid'))
+      .toBe(false);
 
-    if (fs.existsSync(manifestFile)) {
-      const watcher = chokidar.watch(manifestFile);
-      watcher.on('change', () => {
-        this.core.broadcast('osjs/packages:metadata:changed');
-      });
-      this.watches.push(watcher);
-    }
-  }
-}
+    expect(pkg.action('test'))
+      .toBe(false);
+  });
 
-module.exports = PackageServiceProvider;
+  test('#resource', () => {
+    expect(pkg.resource('test'))
+      .toBe('/apps/JestTest/test');
+
+    expect(pkg.resource('/test'))
+      .toBe('/apps/JestTest/test');
+  });
+
+  test('#watch', () => {
+    expect(pkg.watch(jest.fn()))
+      .toBe(path.resolve(core.configuration.public, 'apps/JestTest'));
+  });
+
+  test('#destroy', () => {
+    pkg.destroy();
+  });
+});

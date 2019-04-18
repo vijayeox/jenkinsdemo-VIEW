@@ -28,42 +28,53 @@
  * @licence Simplified BSD License
  */
 
-const systemAdapter = require('./vfs/system');
-const signale = require('signale').scope('vfs');
-const {request, parseFields} = require('./utils/vfs');
+const {methodArguments} = require('./utils/vfs');
+const systemAdapter = require('./adapters/vfs/system');
 const uuid = require('uuid/v1');
-const fs = require('fs-extra');
-const sanitizeFilename = require('sanitize-filename');
-
-// FS error code map
-const errorCodes = {
-  ENOENT: 404,
-  EACCES: 401
-};
-
-// Sanitizes a file path
-const sanitize = filename => {
-  const [name, str] = (filename.replace(/\/+/g, '/').match(/^(\w+):(.*)/) || []).slice(1);
-  const sane = str.split('/').map(s => sanitizeFilename(s)).join('/').replace(/\/+/g, '/');
-  return name + ':' + sane;
-};
+const mime = require('mime');
+const path = require('path');
+const vfs = require('./vfs');
+const consola = require('consola');
+const logger = consola.withTag('Filesystem');
 
 /**
  * OS.js Virtual Filesystem
  */
 class Filesystem {
-  constructor(core, options) {
+
+  /**
+   * Create new instance
+   * @param {Core} core Core reference
+   * @param {object} [options] Instance options
+   */
+  constructor(core, options = {}) {
     this.core = core;
     this.mountpoints = [];
-    this.adapters = [];
+    this.adapters = {};
     this.watches = [];
+    this.router = null;
+    this.methods = {};
     this.options = Object.assign({
       adapters: {}
     }, options);
   }
 
   /**
+   * Destroys instance
+   */
+  destroy() {
+    this.watches.forEach(({watch}) => {
+      if (watch && typeof watch.close === 'function') {
+        watch.close();
+      }
+    });
+
+    this.watches = [];
+  }
+
+  /**
    * Initializes Filesystem
+   * @return {Promise<boolean>}
    */
   async init() {
     const adapters = Object.assign({
@@ -76,80 +87,101 @@ class Filesystem {
       }, result);
     }, {});
 
+    // Routes
+    const {router, methods} = vfs(this.core);
+    this.router = router;
+    this.methods = methods;
+
+    // Mimes
+    const {define} = this.core.config('mime', {define: {}, filenames: {}});
+    mime.define(define, {force: true});
+
     // Mountpoints
     this.core.config('vfs.mountpoints')
       .forEach(mount => this.mount(mount));
+
+    return true;
   }
 
   /**
-   * Creates a HTTP route
+   * Gets MIME
+   * @param {string} filename Input filename or path
+   * @return {string}
    */
-  route(method, ro) {
-    return (req, res) => parseFields(this.core, req)
-      .then(({fields, files}) => {
-        try {
-          ['path', 'from', 'to', 'root'].forEach(key => {
-            if (typeof fields[key] !== 'undefined') {
-              fields[key] = sanitize(fields[key]);
-            }
-          });
+  mime(filename) {
+    const {filenames} = this.core.config('mime', {
+      define: {},
+      filenames: {}
+    });
 
-          return this.request(method, ro, {req, res, fields, files});
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      })
-      .catch(error => res.status(500).json({error: error.message}));
-  }
-
-  routeInternal(method, ro) {
-    return (req, res, dummy = false) => parseFields(this.core, req, dummy)
-      .then(({fields, files}) => {
-        try {
-          ['path', 'from', 'to', 'root'].forEach(key => {
-            if (typeof fields[key] !== 'undefined') {
-              fields[key] = sanitize(fields[key]);
-            }
-          });
-
-          return request(this)(method, ro)({req, res, fields, files});
-        } catch (e) {
-          return Promise.reject(e);
-        }
-      });
+    return filenames[path.basename(filename)]
+      ? filenames[path.basename(filename)]
+      : mime.getType(filename) || 'application/octet-stream';
   }
 
   /**
-   * Creates a VFS HTTP request
+   * Crates a VFS request
+   * @param {Request|object} req HTTP Request object
+   * @param {Response|object} [res] HTTP Response object
+   * @return {Promise<*>}
    */
-  request(method, ro, {req, res, fields, files}) {
-    return request(this)(method, ro)({req, res, fields, files})
-      .then(result => {
-        if (method === 'writefile') {
-          for (let fieldname in files) {
-            fs.unlink(files[fieldname].path, () => ({/* noop */}));
-          }
+  request(name, req, res = {}) {
+    return this.methods[name](req, res);
+  }
+
+  /**
+   * Performs a VFS request with simulated HTTP request
+   * @param {object} options Request options
+   * @param {string} options.method VFS Method name
+   * @param {object} [options.user] User session data
+   * @param {*} ...args Arguments to pass to VFS method
+   * @return {Promise<*>}
+   */
+  call(options, ...args) {
+    const {method, user} = Object.assign({
+      user: {}
+    }, options);
+
+    const req = methodArguments[method]
+      .reduce(({fields, files}, key, index) => {
+        const arg = args[index];
+        if (typeof key === 'function') {
+          files = Object.assign(key(arg), files);
+        } else {
+          fields = Object.assign({
+            [key]: arg
+          }, fields);
         }
 
-        if (method === 'readfile') {
-          return result.pipe(res);
-        }
+        return {fields, files};
+      }, {fields: {}, files: {}});
 
-        return res.json(result);
-      })
-      .catch(error => {
-        signale.fatal(error);
+    req.session = {user};
 
-        const code = typeof error.code === 'number'
-          ? error.code
-          : (errorCodes[error.code] || 400);
+    return this.request(method, req);
+  }
 
-        res.status(code).json({error: error.toString()});
-      });
+  /**
+   * Creates realpath VFS request
+   * @param {string} filename The path
+   * @param {object} [user] User session object
+   * @return {Promise<string>}
+   */
+  realpath(filename, user = {}) {
+    return this.methods.realpath({
+      session: {
+        user
+      },
+      fields: {
+        path: filename
+      }
+    });
   }
 
   /**
    * Mounts given mountpoint
+   * @param {object} mount Mountpoint
+   * @return {object} the mountpoint
    */
   mount(mount) {
     const mountpoint = Object.assign({
@@ -160,18 +192,22 @@ class Filesystem {
 
     this.mountpoints.push(mountpoint);
 
-    signale.success('Mounted', mountpoint.name, mountpoint.attributes);
+    logger.success('Mounted', mountpoint.name);
 
     this.watch(mountpoint);
+
+    return mountpoint;
   }
 
   /**
    * Unmounts given mountpoint
+   * @param {object} mount Mountpoint
+   * @return {boolean}
    */
   unmount(mountpoint) {
     const found = this.watches.find(w => w.id === mountpoint.id);
 
-    if (found) {
+    if (found && found.watch) {
       found.watch.close();
     }
 
@@ -179,22 +215,23 @@ class Filesystem {
 
     if (index !== -1) {
       this.mountpoints.splice(index, 1);
+
+      return true;
     }
+
+    return false;
   }
 
   /**
    * Set up a watch for given mountpoint
+   * @param {object} mountpoint The mountpoint
    */
   watch(mountpoint) {
-    if (mountpoint.attributes.watch === false) {
-      return;
-    }
-
-    if (this.core.config('vfs.watch') === false) {
-      return;
-    }
-
-    if (!mountpoint.attributes.root) {
+    if (
+      !mountpoint.attributes.watch ||
+      this.core.config('vfs.watch') === false ||
+      !mountpoint.attributes.root
+    ) {
       return;
     }
 
@@ -203,25 +240,41 @@ class Filesystem {
       : this.adapters.system;
 
     if (typeof adapter.watch === 'function') {
-      const watch = adapter.watch(mountpoint, (args, dir) => {
-        const target = mountpoint.name + ':/' + dir;
-        const keys = Object.keys(args);
-        const filter = keys.length === 0
-          ? () => true
-          : ws => keys.every(k => ws._osjs_client[k] === args[k]);
-
-        this.core.broadcast('osjs/vfs:watch:change', [{
-          path: target
-        }, args], filter);
-      });
-
-      this.watches.push({
-        id: mountpoint.id,
-        watch
-      });
-
-      signale.watch('Watching mountpoint', mountpoint.name);
+      this._watch(mountpoint, adapter);
     }
+  }
+
+  /**
+   * Internal method for setting up watch for given mountpoint adapter
+   * @param {object} mountpoint The mountpoint
+   * @param {object} adapter The adapter
+   */
+  _watch(mountpoint, adapter) {
+    const watch = adapter.watch(mountpoint, (args, dir, type) => {
+      const target = mountpoint.name + ':/' + dir;
+      const keys = Object.keys(args);
+      const filter = keys.length === 0
+        ? () => true
+        : ws => keys.every(k => ws._osjs_client[k] === args[k]);
+
+      this.core.emit('osjs/vfs:watch:change', {
+        mountpoint,
+        target,
+        type
+      });
+
+      this.core.broadcast('osjs/vfs:watch:change', [{
+        path: target,
+        type
+      }, args], filter);
+    });
+
+    this.watches.push({
+      id: mountpoint.id,
+      watch
+    });
+
+    logger.info('Watching mountpoint', mountpoint.name);
   }
 }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -57,7 +57,10 @@ const defaultConfiguration = {
     */
   ],
   auth: {
-    defaultGroups: []
+    defaultGroups: [],
+    requiredGroups: [],
+    requireAllGroups: false,
+    denyUsers: []
   },
   mime: {
     filenames: {
@@ -76,13 +79,14 @@ const defaultConfiguration = {
     store: {
       module: require.resolve('connect-loki'),
       options: {
-        autosave: true,
-        ttl: maxAge
+        autosave: true
+        //ttl: maxAge
       }
     },
     options: {
       name: 'osjs.sid',
       secret: 'osjs',
+      rolling: true,
       resave: false,
       saveUninitialized: false,
       cookie: {

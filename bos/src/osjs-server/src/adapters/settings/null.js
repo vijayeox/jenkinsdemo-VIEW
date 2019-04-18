@@ -1,4 +1,4 @@
-/**
+/*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *
  * Copyright (c) 2011-2019, Anders Evenrud <andersevenrud@gmail.com>
@@ -28,72 +28,15 @@
  * @licence Simplified BSD License
  */
 
-const fs = require('fs-extra');
-const path = require('path');
-const chokidar = require('chokidar');
-const {ServiceProvider} = require('@osjs/common');
-const Packages = require('../packages');
-
 /**
- * OS.js Package Service Provider
- *
- * @desc Provides package services
+ * Null Settings adapter
+ * @param {Core} core Core reference
+ * @param {object} [options] Adapter options
  */
-class PackageServiceProvider extends ServiceProvider {
-  constructor(core) {
-    super(core);
+module.exports = (core, options) => ({
+  init: async () => true,
+  destroy: async () => true,
+  save: async () => true,
+  load: async () => ({})
+});
 
-    const {configuration} = this.core;
-    const manifestFile = path.join(configuration.public, configuration.packages.metadata);
-    const discoveredFile = path.resolve(configuration.root, configuration.packages.discovery);
-
-    this.watches = [];
-    this.packages = new Packages(core, {
-      manifestFile,
-      discoveredFile
-    });
-  }
-
-  provides() {
-    return [
-      'osjs/packages'
-    ];
-  }
-
-  init() {
-    this.core.singleton('osjs/packages', () => this.packages);
-
-    return this.packages.init();
-  }
-
-  start() {
-    this.packages.start();
-
-    if (this.core.configuration.development) {
-      this.initDeveloperTools();
-    }
-  }
-
-  destroy() {
-    this.watches.forEach(w => w.close());
-    this.packages.destroy();
-    super.destroy();
-  }
-
-  /**
-   * Initializes some developer features
-   */
-  initDeveloperTools() {
-    const {manifestFile} = this.packages.options;
-
-    if (fs.existsSync(manifestFile)) {
-      const watcher = chokidar.watch(manifestFile);
-      watcher.on('change', () => {
-        this.core.broadcast('osjs/packages:metadata:changed');
-      });
-      this.watches.push(watcher);
-    }
-  }
-}
-
-module.exports = PackageServiceProvider;

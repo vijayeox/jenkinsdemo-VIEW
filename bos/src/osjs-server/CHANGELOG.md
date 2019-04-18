@@ -1,5 +1,134 @@
 ## Changelog for osjs-server
 
+## 3.0.41
+
+* Updated dependencies
+
+## 3.0.40
+
+* Added Filesystem#call for abstracted calls
+
+## 3.0.39
+
+* Added Auth#register and adapter support
+
+## 3.0.38
+
+* Updated Filesystem#realpath signature
+
+## 3.0.37
+
+* Updated dependencies
+
+## 3.0.36
+
+* Add rolling session updates (fixes #6)
+
+## 3.0.35
+
+* Added 'routeAuthenticated' group behavior option (closes #13)
+
+## 3.0.34
+
+* Added denyUsers and requiredGroups to authenticator
+
+## 3.0.33
+
+* Emit warning when files missing in dist (closes #11)
+* Updated consola logging pause in tests
+* Added some abstraction to system VFS adapter
+* Updated auth.js comment header
+* Updated esdoc
+
+## 3.0.32
+
+* Send VFS watch trigger type in broadcast call
+* Updated unit tests
+* Updated chokidar dependency
+* Updated system vfs adapter watcher
+* Added 'osjs/fs' service
+* Updated watch handling in Filesystem class
+* Added missing return in VFS watch for system adapter
+* Updated providers
+* Updated logging
+* Changed from 'signale' to 'consola' logger
+* Minor cleanup in Core
+* Refactored package loading procedure
+
+## 3.0.30
+
+* Added files section to package.json
+
+## 3.0.29
+
+* Added back killswitch to Core
+
+## 3.0.28
+
+* Updated README
+* Split out and cleaned up some core from CoreServiceProvider
+* Some cleanups in src/utils/vfs.js
+* Some cleanups for Package class integrations
+* Minor cleanup in src/providers/core.js
+* Minor cleanup in src/vfs.fs
+* Fixed typo in package.json
+* Added 'test' script to package.json
+* Added unit tests
+* Updated package.json scripts
+* Split up some functions used in Core
+* Updated gitignore
+* Updated eslintrc
+* Updated some checks and returns in Core#boot process
+* Added JSON parse check in argv override for Core options
+* Fixed spelling error in Core#destroy check
+* Added wss property to Core
+* Moved some developer stuff from Core to provider
+* Minor fixes in Filesystem class
+* Run 'httpServer.close()' on Core#destroy
+* Updated Settings init
+* Make Settings#init return result from adapter
+* Minor cleanup in Auth class
+* Updated default adapters
+* Properly close watches on Core#destroy
+* Don't use process.exit in Core
+
+## 3.0.27
+
+* Hotfix for some VFS methods
+
+## 3.0.26
+
+* Added 'osjs/core:ping' event
+* Refactored VFS implementation
+* Cleaned up some methods in Filesystem class
+* Simplified some VFS method abstraction
+* Refactored VFS methods interface signatures
+* Split up adapters from Settings class
+* Split up package loading from Packages class
+* Moved some VFS files
+* Cleaned up core provider init
+* Split out Auth from AuthProvider
+
+## 3.0.25
+
+* Fixed 'fs' Settings adapter (fixes #14)
+
+## 3.0.24
+
+* Added Core.getInstance
+
+## 3.0.23
+
+* Added 'realpath' method to VFS (for internal usage)
+
+## 3.0.22
+
+* Updated routeAuthenticated group gating (#13)
+
+## 3.0.21
+
+* Update websocket message handling
+
 ## 3.0.20
 
 * Addded 'call' method to expres service
