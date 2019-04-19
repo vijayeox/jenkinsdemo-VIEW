@@ -113,7 +113,6 @@ class EditProfile extends Component {
     let dobElem = document.getElementById("date_of_birth")
     M.Datepicker.init(dobElem, {
       format: this.state.dateformat,
-      // format: 'yyyy/mm/dd',
       showClearBtn: true,
       yearRange: 100,
       maxDate: new Date(),
@@ -222,46 +221,11 @@ async handleSubmit(event) {
     let errors = {};
     let formIsValid = true;
 
-    // if (!fields["firstname"]) {
-    //   formIsValid = false;
-    //   errors["firstname"] = "*Please enter your firstname.";
-    // } else if (!fields["firstname"].match(/^[a-zA-Z ]\s*$/)) {
-    //   formIsValid = false;
-    //   errors["firstname"] = "*Please enter alphabets only.";
-    // }
-
-    // if (!fields["lastname"]) {
-    //   formIsValid = false;
-    //   errors["lastname"] = "*Please enter your lastname.";
-    // }
-
-    // if (typeof fields["lastname"] !== "undefined") {
-    //   if (!fields["lastname"].match(/^[a-zA-Z ]\s*$/)) {
-    //     formIsValid = false;
-    //     errors["lastname"] = "*Please enter alphabets only.";
-    //   }
-    // }
-
+  
     if (!fields["email"]) {
       formIsValid = false;
       errors["email"] = "*Please enter your email-ID.";
     }
-
-    // if(!document.getElementByName("gender").checked){
-    //   formIsValid = false;
-    //   errors["email"] = "*Please enter your gender";
-    // }
-
-    // if (typeof fields["email"] !== "undefined") {
-    //   //regular expression for email validation
-    //   var pattern = new RegExp(
-    //     /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    //   );
-    //   if (!pattern.test(fields["email"])) {
-    //     formIsValid = false;
-    //     errors["email"] = "*Please enter valid email-ID.";
-    //   }
-    // }
 
     if(this.doj.date < this.dob.date){
        formIsValid = false;
