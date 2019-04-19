@@ -27,7 +27,7 @@ const loginAdapter = (core, config) => ({
       if (res["status"] == "success") {
         if(lsHelper.supported() || lsHelper.cookieEnabled()){
           lsHelper.set('AUTH_token',res["data"]["jwt"]);
-          lsHelper.set('REFRESH_token',res["data"]["jwt"]);
+          lsHelper.set('REFRESH_token',res["data"]["refresh_token"]);
           lsHelper.set('User',username);
           return Promise.resolve({jwt:res["data"]["jwt"], username : username}); 
         } else {
