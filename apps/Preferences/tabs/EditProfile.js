@@ -222,30 +222,35 @@ async handleSubmit(event) {
     let errors = {};
     let formIsValid = true;
 
-    if (!fields["firstname"]) {
-      formIsValid = false;
-      errors["firstname"] = "*Please enter your firstname.";
-    } else if (!fields["firstname"].match(/^[a-zA-Z ]*$/)) {
-      formIsValid = false;
-      errors["firstname"] = "*Please enter alphabets only.";
-    }
+    // if (!fields["firstname"]) {
+    //   formIsValid = false;
+    //   errors["firstname"] = "*Please enter your firstname.";
+    // } else if (!fields["firstname"].match(/^[a-zA-Z ]\s*$/)) {
+    //   formIsValid = false;
+    //   errors["firstname"] = "*Please enter alphabets only.";
+    // }
 
-    if (!fields["lastname"]) {
-      formIsValid = false;
-      errors["lastname"] = "*Please enter your lastname.";
-    }
+    // if (!fields["lastname"]) {
+    //   formIsValid = false;
+    //   errors["lastname"] = "*Please enter your lastname.";
+    // }
 
-    if (typeof fields["lastname"] !== "undefined") {
-      if (!fields["lastname"].match(/^[a-zA-Z ]*$/)) {
-        formIsValid = false;
-        errors["lastname"] = "*Please enter alphabets only.";
-      }
-    }
+    // if (typeof fields["lastname"] !== "undefined") {
+    //   if (!fields["lastname"].match(/^[a-zA-Z ]\s*$/)) {
+    //     formIsValid = false;
+    //     errors["lastname"] = "*Please enter alphabets only.";
+    //   }
+    // }
 
     if (!fields["email"]) {
       formIsValid = false;
       errors["email"] = "*Please enter your email-ID.";
     }
+
+    // if(!document.getElementByName("gender").checked){
+    //   formIsValid = false;
+    //   errors["email"] = "*Please enter your gender";
+    // }
 
     // if (typeof fields["email"] !== "undefined") {
     //   //regular expression for email validation
@@ -310,7 +315,7 @@ async handleSubmit(event) {
                   name="firstname"
                   ref="firstname"
                   id="firstname"
-                  pattern={"[A-Za-z]+"}
+                  pattern={"[A-Za-z ]+"}
                   value={this.state.fields.firstname}
                   onChange={this.handleChange}
                   required
@@ -327,7 +332,7 @@ async handleSubmit(event) {
                   name="lastname"
                   ref="lastname"
                   id="lastname"
-                  pattern={"[A-Za-z]+"}
+                  pattern={"[A-Za-z ]+"}
                   value={this.state.fields.lastname}
                   onChange={this.handleChange}
                   required
@@ -379,6 +384,8 @@ async handleSubmit(event) {
                     onChange={this.handleChange}
                     ref="gender"
                     checked={this.state.fields.gender == "Male"}
+                    className="validate"
+                    required
                   />
                   <span id="name">Male</span>
                 </label>
@@ -393,9 +400,12 @@ async handleSubmit(event) {
                     onChange={this.handleChange}
                     ref="gender"
                     checked={this.state.fields.gender == "Female"}
+                    className="validate"
+                    required
                   />
                   <span id="name">Female</span>
                 </label>
+                <div className="errorMsg">{this.state.errors.gender}</div>            
                 </div>
                </div>
                </div>
