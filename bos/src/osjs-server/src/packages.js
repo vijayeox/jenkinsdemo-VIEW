@@ -34,6 +34,11 @@ const path = require('path');
 const Package = require('./package.js');
 const consola = require('consola');
 const logger = consola.withTag('Packages');
+const http = require('http');
+http.post = require('http-post');
+const dotenv = require('dotenv');
+
+const URL = dotenv.config({path : path.resolve(__dirname,'./../.env')});
 
 const relative = filename => filename.replace(process.cwd(), '');
 
@@ -108,6 +113,21 @@ class Packages {
     stream.on('error', error => logger.error(error));
     stream.on('data', filename => {
       result.push(this.loadPackage(filename, manifest));
+    });
+
+    const apps = [];
+    //The apps whose internal parameter is set true in metadata.json are not allowed for editing 
+    for(var i=0;i<manifest.length;i++){
+      if(!manifest[i].internal){
+        apps.push({name : manifest[i].name,
+                   category : manifest[i].category ? manifest[i].category : "null",
+                   options : {autostart : manifest[i].autostart ? "true" : "false",
+                              hidden : manifest[i].hidden ? "true" : "false"}})
+      }
+    }
+    const baseUrl = URL['parsed']['SERVER'];
+    http.post(baseUrl+'/app/register', { applist : JSON.stringify(apps) }, function(res){
+      res.setEncoding('utf8');
     });
 
     return new Promise((resolve, reject) => {

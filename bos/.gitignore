@@ -4,7 +4,7 @@ node_modules
 dist
 /packages.json
 /sessions
-/.env*
+/.env
 /session-store.db
 /local.js
 npm-debug.log
