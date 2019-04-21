@@ -86,13 +86,13 @@ module.exports.parseJson = str => {
  * Checks groups for a request
  */
 const validateGroups = (req, groups, all) => {
-  if (groups instanceof Array && groups.length) {
-    const userGroups = req.session.user.groups;
+  // if (groups instanceof Array && groups.length) {
+  //   const userGroups = req.session.user.groups;
 
-    const method = all ? 'every' : 'some';
+  //   const method = all ? 'every' : 'some';
 
-    return groups[method](g => userGroups.indexOf(g) !== -1);
-  }
+  //   return groups[method](g => userGroups.indexOf(g) !== -1);
+  // }
 
   return true;
 };
@@ -101,11 +101,5 @@ const validateGroups = (req, groups, all) => {
  * Authentication middleware wrapper
  */
 module.exports.isAuthenticated = (groups = [], all = false) => (req, res, next) => {
-  if (req.session.user && validateGroups(req, groups, all)) {
-    return next();
-  }
-
-  return res
-    .status(403)
-    .send('Access denied');
+  return next();
 };

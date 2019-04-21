@@ -48,13 +48,18 @@ const {
 } = require('./../osjs-server');
 
 const WebSocketProvider = require('./providers/WebSocketProvider');
+const AuthAdapter = require('./auth/AuthAdapter.js');
 const config = require('./config.js');
 const osjs = new Core(config, {});
 
 osjs.register(CoreServiceProvider, {before: true});
 osjs.register(PackageServiceProvider);
 osjs.register(VFSServiceProvider);
-osjs.register(AuthServiceProvider);
+osjs.register(AuthServiceProvider,{
+	args:{
+		adapter: AuthAdapter
+	}
+});
 osjs.register(SettingsServiceProvider);
 osjs.register(WebSocketProvider);
 

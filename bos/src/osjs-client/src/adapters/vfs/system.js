@@ -38,6 +38,8 @@ const requester = core => (fn, body, type) =>
     .then(response => {
       if (type === 'json') {
         return {mime: 'application/json', body: response};
+      } else if (fn === 'writefile') {
+        return response.json();
       }
 
       const contentType = response.headers.get('content-type') || 'application/octet-stream';
@@ -63,12 +65,13 @@ const methods = (core, request) => {
       request('readfile', {path, options}),
 
     writefile: ({path}, data, options) => {
+      console.log(data);
       const formData = new FormData();
       formData.append('upload', data);
       formData.append('path', path);
       formData.append('options', options);
 
-      return request('writefile', formData).then(({body}) => body);
+      return request('writefile', formData);
     },
 
     copy: (from, to, options) =>
@@ -104,6 +107,11 @@ const methods = (core, request) => {
   };
 };
 
+/**
+ * System VFS adapter
+ * @param {Core} core Core reference
+ * @param {object} [options] Adapter options
+ */
 const adapter = (core) => {
   const request = requester(core);
 

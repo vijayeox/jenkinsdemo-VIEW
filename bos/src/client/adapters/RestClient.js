@@ -27,22 +27,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 
 	}
-
-	// auth wrapper 
-	async authenticate(params) {
-		try {
-			var respData;
-			let url = this.baseUrl + 'auth';
-			//console.log(url);
-			const testURL = this.core.config('auth.url');
-			const resp = await fetch(url, {
-				method: 'post',
-				body: params
-			})
-			return resp.json();
-		}
-		catch (e) { }
-	}
 	// profile wrapper 
 	profile(jwt) {
 		let userData = this.core.getUser();

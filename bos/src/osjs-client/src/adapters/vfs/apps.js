@@ -28,6 +28,11 @@
  * @licence Simplified BSD License
  */
 
+/**
+ * Application VFS adapter
+ * @param {Core} core Core reference
+ * @param {object} [options] Adapter options
+ */
 const adapter = (core) => {
   const pkgs = core.make('osjs/packages');
 
@@ -39,7 +44,7 @@ const adapter = (core) => {
           isFile: true,
           filename: pkg.name,
           mime: 'osjs/application',
-          path: `${path}/${pkg.name}`,
+          path: `${path.replace(/(\/+)?$/, '/')}${pkg.name}`,
           size: 0,
           stat: {},
           icon: pkg.icon ? core.url(pkg.icon, {}, pkg) : null

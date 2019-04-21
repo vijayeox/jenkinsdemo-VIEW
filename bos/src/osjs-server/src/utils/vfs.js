@@ -118,7 +118,7 @@ const validateGroups = (userGroups, method, mountpoint) => {
  * Checks permissions for given mountpoint
  */
 const checkMountpointPermission = (req, res, method, readOnly) => {
-  const userGroups = req.session.user.groups;
+  // const userGroups = req.session.user.groups;
 
   return ({mount}) => {
     if (readOnly) {
@@ -135,9 +135,9 @@ const checkMountpointPermission = (req, res, method, readOnly) => {
       }
     }
 
-    if (validateGroups(userGroups, method, mount)) {
+    // if (validateGroups(userGroups, method, mount)) {
       return Promise.resolve(true);
-    }
+    // }
 
     return Promise.reject(createError(403, `Permission was denied for '${method}' in '${mount.name}'`));
   };

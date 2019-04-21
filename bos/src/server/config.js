@@ -39,5 +39,23 @@ const root = path.resolve(__dirname, '../../');
 module.exports = {
   root,
   port: 8081,
-  public: path.resolve(root, 'dist')
+  public: path.resolve(root, 'dist'),
+  wrapper: {
+    url: "http://localhost:8080/",
+  },
+  vfs: {
+    watch: false,
+    root: path.join(process.cwd(), 'vfs'),
+    mountpoints: [{
+      name: 'bos',
+      attributes: {
+        root: path.join(process.cwd(), 'common')
+      }
+    }, {
+      name: 'home',
+      attributes: {
+        root: '{vfs}/{username}'
+      }
+    }]
+  }
 }

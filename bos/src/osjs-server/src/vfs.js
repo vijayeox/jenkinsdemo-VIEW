@@ -104,7 +104,7 @@ const createMiddleware = core => {
 const createRequestFactory = findMountpoint => (getter, method, readOnly, respond) => async (req, res) => {
   const options = req.fields.options || {};
   const args = [...getter(req, res), options];
-
+console.log(method);
   const found = await findMountpoint(args[0]);
   if (method === 'search') {
     if (found.mount.attributes && found.mount.attributes.searchable === false) {

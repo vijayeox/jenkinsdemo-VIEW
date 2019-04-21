@@ -194,8 +194,8 @@ export const defaultConfiguration = {
         readOnly: true
       }
     }, {
-      name: 'osjs',
-      label: 'OS.js',
+      name: 'bos',
+      label: 'bOS',
       adapter: 'system',
       icon: {name: 'folder-publicshare'}
     }, {

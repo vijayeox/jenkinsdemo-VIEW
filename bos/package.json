@@ -37,7 +37,7 @@
     "eslint": "^5.15.1",
     "file-loader": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
-    "mini-css-extract-plugin": "^0.5.0",
+    "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "react": "^16.8.4",
@@ -45,11 +45,12 @@
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "stylelint": "^9.10.1",
-    "stylelint-config-standard": "^18.2.0",
+    "dotenv-webpack": "^1.7.0",
+    "stylelint": "^10.0.1",
+    "stylelint-config-standard": "^18.3.0",
     "stylelint-scss": "^3.5.4",
     "typeface-roboto": "0.0.54",
-    "webpack": "~4.28.0",
+    "webpack": "^4.30.0",
     "webpack-cli": "^3.2.3"
   },
   "dependencies": {
@@ -92,7 +93,9 @@
     "minimist": "^1.2.0",
     "nocache": "^2.0.0",
     "sanitize-filename": "^1.6.1",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "node-fetch": "^2.3.0",
+    "form-data": "^2.3.3"
   },
   "repository": {
     "type": "git",

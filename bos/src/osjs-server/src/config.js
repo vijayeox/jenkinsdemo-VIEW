@@ -108,9 +108,9 @@ const defaultConfiguration = {
     root: path.join(process.cwd(), 'vfs'),
 
     mountpoints: [{
-      name: 'osjs',
+      name: 'bos',
       attributes: {
-        root: '{root}/dist',
+        root: path.join(process.cwd(), 'common'),
         readOnly: true
       }
     }, {
