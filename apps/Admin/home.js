@@ -12,6 +12,7 @@ import Group from "./modules/Group";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
 import Application from "./modules/Application";
+import Development from "./devModules/Development";
 
 class Home extends React.Component {
   constructor(props) {
@@ -107,6 +108,16 @@ class Home extends React.Component {
             </div>
             <div className="titles">Apps</div>
           </div>
+
+          <div style={{ display: "inline-grid" }}>
+            <div className="block d1" onClick={this.devClick}>
+              <img src="apps/Admin/008-development-2.svg"
+                className="moduleBtn App-logo"
+              />
+            </div>
+            <div className="titles">Work In Progress</div>
+          </div>
+
         </div>
       );
     }
@@ -143,6 +154,10 @@ class Home extends React.Component {
     ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
   }
 
+  devClick = (e) => {
+    ReactDOM.render(<Development args={this.core} />, document.getElementById('componentsBox'));
+  }
+
   render() {
     return (
       <div style={{
@@ -153,6 +168,7 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
+            hi danish
             <div style={{ height: '-webkit-fill-available', height: '38em', display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}

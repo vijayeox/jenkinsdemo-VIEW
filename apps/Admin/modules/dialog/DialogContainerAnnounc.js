@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import {
+  Window,
   Dialog,
   DialogActionsBar
 } from "@progress/kendo-react-dialogs";
@@ -32,14 +33,14 @@ export default class DialogContainer extends React.Component {
       selectedGroups: [],
       visibleDialog: false,
       show: false,
-     
+
     };
     this.pushFile = this.pushFile.bind(this);
     this.captureSelectedGroups = this.captureSelectedGroups.bind(this);
     this.checkFields = { text: 'groupName', value: 'groupid' };
 
   }
-  
+
 
   componentWillMount() {
     if (this.props.formAction === "add") {
@@ -51,13 +52,13 @@ export default class DialogContainer extends React.Component {
           this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ DOAInEdit: "" });
         }
-        else{
+        else {
           const DOADate = this.state.ancInEdit.start_date;
           const DOAiso = new Moment(DOADate, 'YYYY-MM-DD').format();
           const DOAkendo = new Date(DOAiso);
-  
+
           ancInEdittemp.start_date = DOAkendo;
-          this.setState({ ancInEdit: ancInEdittemp });          
+          this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ ancInEdit: DOAiso });
         }
         if (this.state.ancInEdit.end_date == "0000-00-00 00:00:00") {
@@ -65,14 +66,14 @@ export default class DialogContainer extends React.Component {
           this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ DOEInEdit: null });
         }
-        else{
+        else {
           const DOEDate = this.state.ancInEdit.end_date;
           const DOEiso = new Moment(DOEDate, 'YYYY-MM-DD').format();
           const DOEkendo = new Date(DOEiso);
-  
+
           ancInEdittemp.end_date = DOEkendo;
-          this.setState({ ancInEdit: ancInEdittemp });          
-          this.setState({ ancInEdit: DOEiso }); 
+          this.setState({ ancInEdit: ancInEdittemp });
+          this.setState({ ancInEdit: DOEiso });
         }
       }
       else {
@@ -103,9 +104,9 @@ export default class DialogContainer extends React.Component {
 
     this.firstUpload = new FileUploadWithPreview('myFirstImage');
     if (this.props.formAction == "edit") {
-    this.addGroups();
+      this.addGroups();
     }
-    else{
+    else {
       this.getGroupData().then(response => {
         var tempUsers = [];
         for (var i = 0; i <= response.data.length - 1; i++) {
@@ -214,7 +215,7 @@ export default class DialogContainer extends React.Component {
   }
 
   addGroups = () => {
-     
+
     this.getAnnouncementGroups(this.state.ancInEdit.id).then(response => {
       var tempAnnouncementGroups = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
@@ -225,43 +226,43 @@ export default class DialogContainer extends React.Component {
         selectedGroups: tempAnnouncementGroups
       });
     })
-  
-  this.getGroupData().then(response => {
-    var tempUsers = [];
-    for (var i = 0; i <= response.data.length - 1; i++) {
-      var groupName = response.data[i].name;
-      var groupid = response.data[i].id;
-      tempUsers.push({ groupid: groupid, groupName: groupName });
-    }
-    this.setState({
-      groupsList: tempUsers
+
+    this.getGroupData().then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var groupName = response.data[i].name;
+        var groupid = response.data[i].id;
+        tempUsers.push({ groupid: groupid, groupName: groupName });
+      }
+      this.setState({
+        groupsList: tempUsers
+      });
     });
-  });
-}
-
-captureSelectedGroups(e) {
-  this.setState({
-    selectedGroups: e.value
-  })
-}
-
-
-sendTheData = () => {
-  var temp1 = this.state.selectedGroups;
-  var temp2 = [];
-  for (var i = 0; i <= temp1.length - 1; i++) {
-    var gid = { "id": temp1[i] };
-    temp2.push(gid);
   }
-  this.pushAnnouncementGroups(this.state.ancInEdit.id, JSON.stringify(temp2));
 
-  this.setState({
-    visible: !this.state.visible,
-    groupsList: [],
-    value: [],
-    pushAnnouncementGroups:[]
-  });
-}
+  captureSelectedGroups(e) {
+    this.setState({
+      selectedGroups: e.value
+    })
+  }
+
+
+  sendTheData = () => {
+    var temp1 = this.state.selectedGroups;
+    var temp2 = [];
+    for (var i = 0; i <= temp1.length - 1; i++) {
+      var gid = { "id": temp1[i] };
+      temp2.push(gid);
+    }
+    this.pushAnnouncementGroups(this.state.ancInEdit.id, JSON.stringify(temp2));
+
+    this.setState({
+      visible: !this.state.visible,
+      groupsList: [],
+      value: [],
+      pushAnnouncementGroups: []
+    });
+  }
 
 
   onDialogInputChange = event => {
@@ -295,10 +296,28 @@ sendTheData = () => {
 
   render() {
     return (
-      <Dialog onClose={this.props.cancel}>
+      <Window onClose={this.props.cancel}
+        draggable={false} stage={"FULLSCREEN"} style={{ width: "53rem" }}>
         <div className="row">
+          <div className="col s5">
+            <div className="custom-file-container" data-upload-id="myFirstImage">
+              <label><p>Upload Announcement Image
+                  <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear"
+                  title="Clear Image">
+                  <img style={{ width: "30px" }} src="https://img.icons8.com/color/64/000000/cancel.png" /></a>
+              </p></label>
+              <div className="custom-file-container__image-preview"></div>
+              <label className="custom-file-container__custom-file">
+                <input type="file" className="custom-file-container__custom-file__custom-file-input"
+                  id="customFile" accept="image/*" aria-label="Choose File" />
+                <span className="custom-file-container__custom-file__custom-file-control"></span>
+              </label>
+
+            </div>
+          </div>
+
           <form
-            className="col s12"
+            className="col s"
             onSubmit={this.handleSubmit}
             id="announcementForm"
           >
@@ -323,7 +342,7 @@ sendTheData = () => {
                 <textarea
                   id="ancDescription"
                   type="text"
-                  className="materialize-textarea validate"
+                  className="k-textarea validate"
                   name="description"
                   value={this.state.ancInEdit.description || ""}
                   onChange={this.onDialogInputChange}
@@ -358,61 +377,41 @@ sendTheData = () => {
             </div>
 
             <div className="row">
-            <label id="label1">Groups</label>
-            <div className='control-section col-lg-8' style={{paddingLeft:"10px"}}>
-              <div id="multigroup">
-                <MultiSelectComponent id="checkbox"
-                  dataSource={this.state.groupsList}
-                  value={this.state.selectedGroups}
-                  change={this.captureSelectedGroups}
-                  fields={this.checkFields}
-                  mode="CheckBox"
-                  placeholder="Click to add Groups"
-                  showDropDownIcon={true}
-                  openOnClick="false"
-                  filterBarPlaceholder="Search Groups"
-                  popupHeight="350px">
-                  <Inject services={[CheckBoxSelection]} />
-                </MultiSelectComponent>
+              <label id="label1">Groups</label>
+              <div className='control-section col-lg-8' style={{ paddingLeft: "10px" }}>
+                <div id="multigroup">
+                  <MultiSelectComponent id="checkbox"
+                    dataSource={this.state.groupsList}
+                    value={this.state.selectedGroups}
+                    change={this.captureSelectedGroups}
+                    fields={this.checkFields}
+                    mode="CheckBox"
+                    placeholder="Click to add Groups"
+                    showDropDownIcon={true}
+                    openOnClick="false"
+                    filterBarPlaceholder="Search Groups"
+                    popupHeight="350px">
+                    <Inject services={[CheckBoxSelection]} />
+                  </MultiSelectComponent>
+                </div>
               </div>
             </div>
-          </div>
           </form>
-      
-          <div className="row">
-            <div className="col s12">
-              <div className="custom-file-container" data-upload-id="myFirstImage">
-                <label><p>Upload Announcement Image
-                  <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear" 
-                   title="Clear Image">
-                  <img style={{width:"30px"}} src="https://img.icons8.com/color/64/000000/cancel.png"/></a>
-                  </p></label>
-                <label className="custom-file-container__custom-file">
-                  <input type="file" className="custom-file-container__custom-file__custom-file-input" 
-                  id="customFile" accept="image/*" aria-label="Choose File" />
-                  <span className="custom-file-container__custom-file__custom-file-control"></span>
-                </label>
-                <div className="custom-file-container__image-preview"></div>
-              </div>
-            </div>
+          <div style={{ float: "right", marginTop: "20px", marginRight: "8%" }}>
+            <button className="btn waves-effect red" onClick={this.props.cancel}>
+              Cancel
+            </button>
+            <button
+              className="btn waves-effect green"
+              type="submit"
+              form="announcementForm"
+              style={{ marginLeft: "10px", width: "85px" }}
+            >
+              Save
+            </button>
           </div>
-
         </div>
-
-
-        <DialogActionsBar args={this.core}>
-          <button className="k-button" onClick={this.props.cancel}>
-            Cancel
-            </button>
-          <button
-            className="k-button k-primary"
-            type="submit"
-            form="announcementForm"
-          >
-            Save
-            </button>
-        </DialogActionsBar>
-      </Dialog>
+      </Window>
     );
   }
 }

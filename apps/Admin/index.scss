@@ -9,6 +9,10 @@
 
   background: #f06151;
 
+  .k-window-titlebar{
+    display: none;
+  }
+
   .k-filtercell>.k-filtercell-wrapper>input::placeholder {
     font-size: 1em;
   }

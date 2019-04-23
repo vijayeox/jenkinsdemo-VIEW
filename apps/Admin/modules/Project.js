@@ -57,7 +57,7 @@ class Project extends React.Component {
       projectToBeEdited: [],
       action: "",
       visible: false,
-      permission: "3"
+      permission: "15"
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.addNotification = this.addNotification.bind(this);

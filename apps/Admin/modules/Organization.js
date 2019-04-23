@@ -68,7 +68,7 @@ class Organization extends React.Component {
     this.checkFields = { text: 'userName', value: 'userid' };
 
     this.getOrganizationData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ products: response.data.data });
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
@@ -77,7 +77,6 @@ class Organization extends React.Component {
   componentDidMount() {
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
-      M.AutoInit();
     });
   }
 
@@ -114,7 +113,7 @@ class Organization extends React.Component {
       this.addNotification();
     } else {
       this.getOrganizationData().then(response => {
-        this.setState({ products: response.data });
+        this.setState({ products: response.data.data });
         this.addDataNotification(serverResponse);
         let loader = this.core.make("oxzion/splash");
         loader.destroy();
@@ -294,7 +293,6 @@ class Organization extends React.Component {
                     mode="CheckBox"
                     placeholder="Click to add Users"
                     showDropDownIcon={true}
-                    openOnClick="false"
                     filterBarPlaceholder="Search Users"
                     popupHeight="350px">
                     <Inject services={[CheckBoxSelection]} />
