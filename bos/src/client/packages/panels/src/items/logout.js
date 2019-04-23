@@ -28,9 +28,10 @@
  * @licence Simplified BSD License
  */
 
-import {h} from 'hyperapp';
+import { h } from 'hyperapp';
 import PanelItem from '../panel-item';
 const logoutIcon = require('../../../../assets/images/logout.png');
+import Swal from 'sweetalert2';
 
 /**
  * Logout
@@ -57,36 +58,32 @@ export default class LogoutPanelItem extends PanelItem {
       this.core.make('osjs/auth').logout();
     };
     const confirm = () => {
-     const callbackValue = dialog => 'My value';
-    const options = {
-    buttons: ['ok', 'cancel'],
-    window: {
-      title: 'My Dialog',
-      dimension: {width: 200, height: 200}
-    },
-    atttributes:{
-      modal:true
-    }};
-    const proc = this.core.make('osjs/dialog', 'confirm', {
-      title: "Confirm Log out",
-      message: "Are you sure you want to logout ?",
-      choices: ['ok', 'cancel']
-    }, (btn, value) => {
-      if (btn === 'yes') {
-        logout();
-      }
-    });
-  }
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to logout now?',
+        imageUrl: "https://image.flaticon.com/icons/svg/529/529873.svg",
+        imageWidth: 75,
+        imageHeight: 75,
+        confirmButtonText: 'Logout',
+        confirmButtonColor: '#d33',
+        showCancelButton: true,
+        cancelButtonColor: '#66bb6a'
+      }).then((result) => {
+        if (result.value) {
+          logout();
+        }
+      })  
+    }
     return super.render('logout', [
       h('div', {
         onclick: confirm,
         className: 'osjs-panel-logout'
       }, [
-        h('img', {
-          src: logoutIcon,
-          alt: 'Log Out',
-          title:'Logout'
-        })])
+          h('img', {
+            src: logoutIcon,
+            alt: 'Log Out',
+            title: 'Logout'
+          })])
     ]);
   }
 }

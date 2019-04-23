@@ -32,7 +32,8 @@
   "author": "Anders Evenrud <andersevenrud@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@osjs/gui": "^4.0.8"
+    "@osjs/gui": "^4.0.8",
+    "sweetalert2": "^8.8.7"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
