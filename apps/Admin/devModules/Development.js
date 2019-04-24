@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import { Button } from '@progress/kendo-react-buttons';
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
@@ -24,7 +23,7 @@ export default class DialogContainer extends React.Component {
             $(".DashBG1").show();
 
             $(document).on("click", ".moduleBtn", function () {
-                $(".DashBG1").fadeOut(),
+                $(".DashBG1").hide(),
                     $("#componentsBox1").show();
             });
 
@@ -42,10 +41,13 @@ export default class DialogContainer extends React.Component {
     }
 
     empty = (e) => {
-        console.log(e);
+        if (e == "organization") {
+            var column = ["id", "name", "state", "zip"]
+        } else if(e=="user"){
+            var column = ["id", "name", "designation", "country"]
+        }
         ReactDOM.render(<App args={this.core} type={e}
-            config={{ "title": "Organization" }} 
-            column/>,
+            config={{ "title": e, "column": column }} />,
             document.getElementById('componentsBox1'));
     }
 
@@ -74,10 +76,8 @@ export default class DialogContainer extends React.Component {
                         </div>
                         <center>
                             <div style={{ display: "inline-grid" }}>
-                                <Button className="moduleBtn" onClick={() => this.empty(0)}>Empty Grid</Button>
                                 <Button className="moduleBtn" onClick={() => this.empty("organization")}>Organization</Button>
-                                <Button className="moduleBtn" onClick={() => this.empty("group")}>Groups</Button>
-                                <Button className="moduleBtn" onClick={() => this.empty("roles")}>Roles</Button>
+                                <Button className="moduleBtn" onClick={() => this.empty("user")}>User</Button>
                             </div>
                         </center>
                     </div>

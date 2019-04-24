@@ -168,7 +168,6 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
-            hi danish
             <div style={{ height: '-webkit-fill-available', height: '38em', display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}

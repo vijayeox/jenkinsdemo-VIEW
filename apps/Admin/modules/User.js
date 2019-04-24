@@ -60,7 +60,7 @@ class User extends React.Component {
     this.notificationDOMRef = React.createRef();
 
     this.getUserData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ products: response.data.data });
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
