@@ -11,7 +11,7 @@ build_project() {
     echo "Building $1 ...";
     cd $1
     npm install
-    npm run audit fix
+    npm audit fix
     npm run build
     cd ..
 }
