@@ -155,7 +155,7 @@ class Group extends React.Component {
   async getUserData() {
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
+    return userData.data;
   }
 
   async getGroupUsers(dataItem) {
@@ -263,46 +263,6 @@ class Group extends React.Component {
       selectedUsers: []
     })
   }
-
-  // addUsers = dataItem => {
-  //   this.setState({
-  //     groupToBeEdited: dataItem.id
-  //   })
-  //   this.getUserData(dataItem.id).then(response => {
-  //     var tempUsers = [];
-  //     for (var i = 0; i <= response.data.length - 1; i++) {
-  //       var userName = response.data[i].firstname + " " + response.data[i].lastname;
-  //       var userid = response.data[i].id;
-  //       tempUsers.push({ userid: userid, userName: userName });
-  //     }
-  //     this.setState({
-  //       usersList: tempUsers
-  //     });
-  //     let loader = this.core.make("oxzion/splash");
-  //     loader.destroy();
-  //   });
-  // };
-
-  // addGroupUsers = dataItem => {
-  //   let loader = this.core.make("oxzion/splash");
-  //   loader.show();
-  //   this.addUsers(dataItem);
-  //   this.getGroupUsers(dataItem.id).then(response => {
-  //     var tempGroupUsers = [];
-  //     for (var i = 0; i <= response.data.length - 1; i++) {
-  //       var userName = response.data[i].name;
-  //       var userid = response.data[i].id;
-  //       tempGroupUsers.push({ userid: userid, userName: userName });
-  //     }
-  //     this.setState({
-  //       value: tempGroupUsers
-  //     });
-  //   });
-  //   this.setState({
-  //     visible: !this.state.visible
-  //   });
-  // };
-  
   remove = dataItem => {
     this.deleteGroupData(dataItem.id).then(response => {
       this.handler();

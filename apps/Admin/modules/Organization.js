@@ -1,49 +1,12 @@
 import React from "react";
-
-import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
-import {
-  Grid,
-  GridColumn as Column,
-  GridToolbar
-} from "@progress/kendo-react-grid";
+import { FaArrowLeft } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Button } from '@progress/kendo-react-buttons';
 import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
-
+import { GridTemplate } from "@oxzion/gui";
 import ReactNotification from "react-notifications-component";
-import "jquery/dist/jquery.js";
-import $ from "jquery";
-import { withState } from '../public/js/gridFilter';
 
 import DialogContainer from "./dialog/DialogContainerOrg";
-import cellWithEditing from "./manage/cellWithEditingOrg";
-
-const StatefulGrid = withState(Grid);
-
-class Permissionallowed extends React.Component {
-  render() {
-    if (this.props.perm == 7 || this.props.perm == 15) {
-      return (
-        <button
-          onClick={this.props.args}
-          className="k-button"
-          style={{ position: "absolute", top: "8px", right: "16px" }}
-        >
-          <FaPlusCircle style={{ fontSize: "20px" }} />
-
-          <p style={{ margin: "0px", paddingLeft: "10px" }}>
-            Add Organization
-        </p>
-        </button>
-      );
-    }
-    else {
-      return (
-        <div></div>
-      )
-    }
-  }
-}
 
 class Organization extends React.Component {
   constructor(props) {
@@ -66,18 +29,6 @@ class Organization extends React.Component {
     this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
     this.notificationDOMRef = React.createRef();
     this.checkFields = { text: 'userName', value: 'userid' };
-
-    this.getOrganizationData().then(response => {
-      this.setState({ products: response.data.data });
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
-    });
-  }
-
-  componentDidMount() {
-    $(document).ready(function () {
-      $(".k-textbox").attr("placeholder", "Search");
-    });
   }
 
   addDataNotification(serverResponse) {
@@ -121,18 +72,10 @@ class Organization extends React.Component {
     }
   };
 
-  async getOrganizationData() {
-    let helper = this.core.make("oxzion/restClient");
-    let loader = this.core.make("oxzion/splash");
-    loader.show();
-    let OrgData = await helper.request("v1", "/organization", {}, "get");
-    return OrgData;
-  }
-
   async getUserData() {
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
+    return userData.data;
   }
 
   async pushOrgUsers(dataItem, dataObject) {
@@ -206,7 +149,7 @@ class Organization extends React.Component {
       orgToBeEdited: []
     })
   }
-  
+
   edit = dataItem => {
     this.setState({
       orgInEdit: this.cloneProduct(dataItem),
@@ -253,26 +196,6 @@ class Organization extends React.Component {
   insert = () => {
     this.setState({ orgInEdit: {}, action: "add" });
   };
-
-  searchUnavailable() {
-    return (
-      <div></div>
-    );
-  }
-
-  disp() {
-    if (this.state.permission != 1) {
-      return (
-        <Column
-          title="Edit"
-          width="160px"
-          cell={cellWithEditing(this.edit, this.remove, this.addOrgUsers, this.state.permission)}
-          filterCell={this.searchUnavailable}
-        />
-      );
-    }
-  }
-
 
   render = () => {
     return (
@@ -324,26 +247,13 @@ class Organization extends React.Component {
           </center>
         </div>
 
-        <StatefulGrid data={this.state.products}>
-          <GridToolbar>
-            <div>
-              <div style={{ fontSize: "20px" }}>Organizations List</div>
-
-              <Permissionallowed
-                args={this.insert}
-                perm={this.state.permission}
-              />
-
-            </div>
-          </GridToolbar>
-
-          <Column field="id" title="ID" width="70px" />
-          <Column field="name" title="Name" />
-
-          <Column field="state" title="State" />
-          <Column field="zip" title="Zip" />
-          {this.disp()}
-        </StatefulGrid>
+        <GridTemplate args={this.core}
+          config={{ "title": "organization", "column": ["id", "name", "state", "zip"] }}
+          manageGrid={{
+            "add": this.insert, "edit": this.edit,
+            "remove": this.remove, "addUsers": this.addOrgUsers
+          }}
+          permission={this.state.permission} />
 
         {this.state.orgInEdit && (
           <DialogContainer

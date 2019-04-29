@@ -28,6 +28,10 @@ const register = (core, args, options, metadata) => {
         width: 800,
         height: 570
       },
+      minDimension: {
+        width: 800,
+        height: 570
+      },
       position: {
         left: 150,
         top: 60

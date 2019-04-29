@@ -66,7 +66,7 @@ class Project extends React.Component {
     this.checkFields = { text: 'userName', value: 'userid' };
 
     this.getProjectData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ products: response.data.data });
     });
     let loader = this.core.make("oxzion/splash");
     loader.destroy();
@@ -110,7 +110,7 @@ class Project extends React.Component {
   handler = serverResponse => {
     this.getProjectData().then(response => {
       this.setState({
-        products: response.data
+        products: response.data.data
       });
       this.addDataNotification(serverResponse);
       let loader = this.core.make("oxzion/splash");

@@ -1,24 +1,13 @@
 import React from "react";
-import ReactDOM from 'react-dom';
-import {
-  Window,
-  Dialog,
-  DialogActionsBar
-} from "@progress/kendo-react-dialogs";
-import "@progress/kendo-ui";
+import { Window } from "@progress/kendo-react-dialogs";
 import { DatePicker } from '@progress/kendo-react-dateinputs';
 import Moment from "moment";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
 import FileUploadWithPreview from 'file-upload-with-preview';
-import 'file-upload-with-preview/dist/file-upload-with-preview.min.css'
+import TextareaAutosize from 'react-textarea-autosize';
 
 import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
-import "../../node_modules/@syncfusion/ej2-base/styles/material.css";
-import "../../node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
-import "../../node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
-import "../../node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
-
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -98,9 +87,7 @@ export default class DialogContainer extends React.Component {
 
   componentDidMount() {
     M.AutoInit();
-    $('.materialize-textarea').trigger('autoresize');
     M.updateTextFields();
-    M.textareaAutoResize($("#ancDescription"));
 
     this.firstUpload = new FileUploadWithPreview('myFirstImage');
     if (this.props.formAction == "edit") {
@@ -294,35 +281,42 @@ export default class DialogContainer extends React.Component {
     this.props.save();
   };
 
+  clearFileButton = () => {
+    if (this.firstUpload && this.firstUpload.cachedFileArray.length > 0) {
+      return (
+        <img style={{ width: "30px" }} src="https://img.icons8.com/color/64/000000/cancel.png" />
+      )
+    }
+  }
+
   render() {
     return (
-      <Window onClose={this.props.cancel}
-        draggable={false} stage={"FULLSCREEN"} style={{ width: "53rem" }}>
+      <Window onClose={this.props.cancel}>
         <div className="row">
-          <div className="col s5">
+          <div className="col s6">
             <div className="custom-file-container" data-upload-id="myFirstImage">
               <label><p>Upload Announcement Image
-                  <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear"
+                <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear"
                   title="Clear Image">
-                  <img style={{ width: "30px" }} src="https://img.icons8.com/color/64/000000/cancel.png" /></a>
+                  {this.clearFileButton()}
+                </a>
               </p></label>
-              <div className="custom-file-container__image-preview"></div>
+              <div className="custom-file-container__image-preview"></div><center>
               <label className="custom-file-container__custom-file">
                 <input type="file" className="custom-file-container__custom-file__custom-file-input"
                   id="customFile" accept="image/*" aria-label="Choose File" />
                 <span className="custom-file-container__custom-file__custom-file-control"></span>
-              </label>
-
+              </label></center>
             </div>
           </div>
 
           <form
-            className="col s"
+            className="col s6"
             onSubmit={this.handleSubmit}
             id="announcementForm"
           >
             <div className="row">
-              <div className="input-field col s12">
+              <div className="input-field col s8">
                 <input
                   id="AncName"
                   type="text"
@@ -339,10 +333,11 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <textarea
+                <TextareaAutosize
+                  style={{ minHeight: "100px" }}
                   id="ancDescription"
                   type="text"
-                  className="k-textarea validate"
+                  className="k-textarea validate col s12"
                   name="description"
                   value={this.state.ancInEdit.description || ""}
                   onChange={this.onDialogInputChange}
@@ -353,32 +348,8 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label id="label1">Date Of Announcement</label>
-              <div className="col s12 example-col" id="datecol">
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.ancInEdit.start_date}
-                  required={true}
-                  onChange={this.handleDOAChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <label id="label1">Date Of Expire</label>
-              <div className="col s12 example-col" id="datecol">
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.ancInEdit.end_date}
-                  onChange={this.handleDOEChange}
-                  required={true}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <label id="label1">Groups</label>
               <div className='control-section col-lg-8' style={{ paddingLeft: "10px" }}>
+              <label id="label1">Groups</label>
                 <div id="multigroup">
                   <MultiSelectComponent id="checkbox"
                     dataSource={this.state.groupsList}
@@ -396,8 +367,31 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
             </div>
+
+            <div className="row" style={{paddingTop:"40px"}}>
+              <div className="col s6" id="datecol">
+                <label id="label1">Date Of Announcement</label><br/>
+                <DatePicker
+                  format={"dd-MMM-yyyy"}
+                  value={this.state.ancInEdit.start_date}
+                  required={true}
+                  onChange={this.handleDOAChange}
+                />
+              </div>
+              <div className="col s6" id="datecol">
+                <label id="label1">Date Of Expire</label><br/>
+                <DatePicker
+                  format={"dd-MMM-yyyy"}
+                  value={this.state.ancInEdit.end_date}
+                  onChange={this.handleDOEChange}
+                  required={true}
+                />
+              </div>
+            </div>
+
+
           </form>
-          <div style={{ float: "right", marginTop: "20px", marginRight: "8%" }}>
+          <div style={{ float: "right", marginTop: "20px", marginRight: "4%" }}>
             <button className="btn waves-effect red" onClick={this.props.cancel}>
               Cancel
             </button>

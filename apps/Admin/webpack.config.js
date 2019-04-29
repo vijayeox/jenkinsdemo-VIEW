@@ -43,55 +43,65 @@ module.exports = {
   ],
   module: {
     rules: [{
-        test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [{
-          loader: "file-loader",
-          options: {
-            publicPath: "/apps/Admin"
-          }
-        }]
-      },
-      {
-        test: /\.(eot|ttf|woff|woff2)$/,
-        include: /typeface/,
-        use: {
-          loader: "file-loader",
-          options: {
-            name: "fonts/[name].[ext]",
-            publicPath: "apps/Admin"
-          }
+      test: /\.(svg|png|jpe?g|gif|webp)$/,
+      use: [{
+        loader: "file-loader",
+        options: {
+          publicPath: "/apps/Admin"
         }
-      },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              minimize,
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: "babel-loader"
+      }]
+    },
+    {
+      test: /\.(eot|ttf|woff|woff2)$/,
+      include: /typeface/,
+      use: {
+        loader: "file-loader",
+        options: {
+          name: "fonts/[name].[ext]",
+          publicPath: "apps/Admin"
         }
-      },
-      {
-        test: /\.html$/,
-        loader: "html-loader"
       }
+    },
+    {
+      test: /\.(sa|sc|c)ss$/,
+      use: [
+        MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true
+          }
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            minimize,
+            sourceMap: true
+          }
+        }
+      ]
+    },
+    {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      use: {
+        loader: "babel-loader",
+        options: {
+          presets: [
+            require.resolve("@babel/preset-react"),
+            require.resolve("@babel/preset-env")
+          ],
+          plugins:[
+            require.resolve("@babel/plugin-transform-runtime"),
+            [require.resolve("@babel/plugin-proposal-class-properties"), { "loose": false }]
+          ]
+        }
+      }
+    },
+    {
+      test: /\.html$/,
+      loader: "html-loader"
+    }
     ]
   }
 };
