@@ -13,14 +13,14 @@ async function validateLogin (username,password,core) {
   reqData.append("username", username);
   reqData.append("password", password);
   var info = await makeRequest(reqData,core)
-    if (info["status"] == "success") {
-      core.make('osjs/vfs')
-      .realpath('home:/', {username: username})
-      .then(realpath => fs.ensureDir(realpath))
-      return Promise.resolve({jwt:info["data"]["jwt"], username : username,refresh_token:info["data"]["refresh_token"],id:username}); 
-    } else {
-      return Promise.reject(false);
-    }
+  if (info["status"] == "success") {
+    core.make('osjs/vfs')
+    .realpath('home:/', {username: username})
+    .then(realpath => fs.ensureDir(realpath))
+    return Promise.resolve({jwt:info["data"]["jwt"], username : username,refresh_token:info["data"]["refresh_token"],id:username}); 
+  } else {
+    return Promise.resolve(false);
+  }
 };
 async function makeRequest(params,core) {
   try {
@@ -29,10 +29,11 @@ async function makeRequest(params,core) {
     const resp = await fetch(url, {
       method: 'post',
       body: params
-    })
+    });
     return resp.json();
   } catch (e) { 
     console.log(e);
+    return false;
   }
 }
 module.exports = (core, config) => ({

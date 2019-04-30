@@ -8,6 +8,7 @@ html{
 }
 body {
     height: 100%;
+    margin: 0;
     background-image: url('../images/OX_Background_WallPaper.jpg');
     background-repeat: no-repeat;
     background-size: cover;
@@ -21,7 +22,8 @@ body {
 .loginContainer {
     height: 100%;
     width: auto;
-    display: flex;
+    display: flex !important;
+    flex-direction: row-reverse;
 }
 #login-container {
     position: fixed;
@@ -39,29 +41,23 @@ body {
 
 #ox-login-form {
     width: 31%;
-    min-height: 100vh;
-    right: 30px;
-    position: absolute;
-    background: hsla(0,0%,100%,.8);
-    padding: 30px 0;
-    display: flex;
-    flex-direction: column;
+    min-height: 100%;
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    flex-flow: column;
+    flex-grow: 3;
 }
+
+
 .form-wrapper {
     max-width: 515px;
-    min-height: 100vh;
-    background: hsla(0,0%,100%,.8);
+    background: rgba(255, 255, 255, 0.8);
     padding: 30px 0;
     display: flex;
-    flex-direction: column;
 }
 .form-wrapper__inner {
-    display: flex;
     align-items: center;
-    flex-grow: 1;
-    margin: 0 auto;
-    padding: 0 65px;
-    min-width: 100%;
+    padding: 65px;
 }
 .form-signin__footer{
     justify-content: space-between;
@@ -75,12 +71,9 @@ body {
 }
 .footer-links{
     justify-content: space-between;
-    flex-wrap: wrap;
-    flex-direction: row-reverse;
-    display: flex;
     align-items: center;
-    padding: 0 65px;
     margin-bottom: 25px;
+    text-align: center;
 }
 
 .ox-form {
@@ -138,4 +131,20 @@ body {
     margin-bottom: 1rem;
     //border: 1px solid transparent;
     //border-radius: 2px;
+}
+
+@media screen and (max-width: 768px) {
+  #ox-login-form {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    margin: 30px;
+    overflow: auto;
+  }
+  .form-wrapper__inner{
+    padding:30px;
+  }
+  .ox-imgDiv{
+    margin-bottom: 30px;
+  }
 }

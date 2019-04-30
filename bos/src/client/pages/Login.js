@@ -32,7 +32,7 @@ export default class Login extends defaultLogin {
       h('div',{id: 'ox-login-form', className: 'form-wrapper'},[
       h('div',{ className: 'form-wrapper__inner'},[
         h("form",{action:"#",className: 'form-signin form-row-layout',loading: false,method: "post",onsubmit: actions.submit, className:'ox-form '},[
-          h('div',{id: 'ox-img', className: 'ox-imgDiv row'},[
+          h('div',{id: 'ox-img', className: 'ox-imgDiv'},[
             h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
             ]),
             h('div',{className: 'input-field'},[
