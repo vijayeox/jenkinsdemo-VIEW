@@ -19,7 +19,10 @@ APPS="apps"
 BOS="bos"
 ICON_PACKS="iconpacks"
 THEMES="themes"
+GUI="gui"
 
+
+build_project $GUI
 build_projects $APPS
 build_projects $ICON_PACKS
 build_projects $THEMES
@@ -30,3 +33,29 @@ cd ..
 
 
 
+{
+	"comments": {
+		"lineComment": "#"
+	},
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"]
+	],
+	"autoClosingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["\"", "\""],
+		["'", "'"],
+		["`", "`"]
+	],
+	"surroundingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["\"", "\""],
+		["'", "'"],
+		["`", "`"]
+	]
+}
