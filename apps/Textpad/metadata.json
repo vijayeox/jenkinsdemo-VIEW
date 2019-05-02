@@ -1,6 +1,7 @@
 {
   "name": "Textpad",
   "category": "office",
+  "defaultAppforOrgs" : true,
   "icon": "icon.png",
   "title": {
     "en_EN": "Textpad",

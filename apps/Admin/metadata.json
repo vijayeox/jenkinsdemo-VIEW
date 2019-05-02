@@ -5,8 +5,8 @@
   "autostart": false,
   "server": "server.js",
   "icon": "icon.png",
+  "defaultAppforOrgs" : true,
   "singleton": true,
-  "internal": true,
   "title": {
     "en_EN": "Admin"
   },

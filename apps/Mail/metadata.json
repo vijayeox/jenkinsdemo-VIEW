@@ -5,6 +5,7 @@
   "singleton":true,
   "hidden" : true,
   "autostart":true,
+  "defaultAppforOrgs" : true,
   "icon": "OXZion.png",
   "title": {
     "en_EN": "Mail"

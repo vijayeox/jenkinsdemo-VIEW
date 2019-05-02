@@ -4,6 +4,7 @@
     "autostart":true,
     "singleton":true,
     "hidden":true,
+    "defaultAppforOrgs" : true,
     "icon":"oxchat.png",
     "category": "collaboration",
     "server": "server.js",

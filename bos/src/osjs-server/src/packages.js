@@ -121,6 +121,7 @@ class Packages {
       if(!manifest[i].internal){
         apps.push({name : manifest[i].name,
                    category : manifest[i].category ? manifest[i].category : "null",
+                   isdefault : manifest[i].defaultAppforOrgs ? 1 : 0,
                    options : {autostart : manifest[i].autostart ? "true" : "false",
                               hidden : manifest[i].hidden ? "true" : "false"}})
       }
