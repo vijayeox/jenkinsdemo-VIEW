@@ -144,6 +144,7 @@ class Home extends React.Component {
   }
 
   render() {
+    var screen = document.querySelector('.Window_Admin').querySelector('.osjs-window-content').clientHeight;
     return (
       <div style={{
         backgroundImage: "url(apps/Admin/wait.jpg)",
@@ -153,7 +154,7 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
-            <div style={{ height: '-webkit-fill-available', height: '38em', display: 'flex' }} >
+            <div style={{ height: screen, display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}
               </div>
@@ -163,7 +164,7 @@ class Home extends React.Component {
             </div>
           </center>
         </div>
-        <div id="componentsBox" style={{ paddingBottom: '100px', height: "37em" }}>
+        <div id="componentsBox" style={{ height: screen }}>
         </div>
       </div >
     );
