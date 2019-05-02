@@ -98,7 +98,7 @@ class Application extends React.Component {
   async getAppData() {
     let helper = this.core.make("oxzion/restClient");
     let OrgData = await helper.request("v1", "/app/a", {}, "get");
-    return OrgData;
+    return OrgData.data;
   }
 
   edit = dataItem => {

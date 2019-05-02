@@ -4,7 +4,8 @@ import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Button } from '@progress/kendo-react-buttons';
 import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
 import { GridTemplate } from "@oxzion/gui";
-import ReactNotification from "react-notifications-component";
+import { Notification } from "@oxzion/gui";
+import { GetData, DeleteEntry } from "./components/apiCalls";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
 
@@ -25,57 +26,21 @@ class Organization extends React.Component {
     };
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.addNotification = this.addNotification.bind(this);
     this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
-    this.notificationDOMRef = React.createRef();
+    
+    this.notif = React.createRef();
+    this.child = React.createRef();
     this.checkFields = { text: 'userName', value: 'userid' };
-  }
-
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
   }
 
   handler = serverResponse => {
     if (serverResponse == "success") {
-      this.addNotification();
-    } else {
-      this.getOrganizationData().then(response => {
-        this.setState({ products: response.data.data });
-        this.addDataNotification(serverResponse);
-        let loader = this.core.make("oxzion/splash");
-        loader.destroy();
-      });
+      this.notif.current.successNotification();
+    } else {      
+      this.notif.current.failNotification();      
     }
-  };
+    this.child.current.child.current.refresh();
 
-  async getUserData() {
-    let helper = this.core.make("oxzion/restClient");
-    let userData = await helper.request("v1", "/user", {}, "get");
-    return userData.data;
   }
 
   async pushOrgUsers(dataItem, dataObject) {
@@ -87,17 +52,6 @@ class Organization extends React.Component {
     return addProjectUsers;
   }
 
-  async deleteOrganizationData(dataItem) {
-    let helper = this.core.make("oxzion/restClient");
-    let delOrg = helper.request(
-      "v1",
-      "/organization/" + dataItem,
-      {},
-      "delete"
-    );
-    return delOrg;
-  }
-
   addOrgUsers = (dataItem) => {
     let loader = this.core.make("oxzion/splash");
     loader.show();
@@ -107,7 +61,7 @@ class Organization extends React.Component {
       visible: !this.state.visible
     })
 
-    this.getUserData().then(response => {
+    GetData("user").then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].firstname + " " + response.data[i].lastname;
@@ -158,8 +112,8 @@ class Organization extends React.Component {
   };
 
   remove = dataItem => {
-    this.deleteOrganizationData(dataItem.id).then(response => {
-      this.addNotification();
+    DeleteEntry("organization", dataItem.id).then(response => {
+      this.handler(response.status);
     });
 
     const products = this.state.products;
@@ -233,7 +187,7 @@ class Organization extends React.Component {
             </DialogActionsBar>
           </Dialog>
         )}
-        <ReactNotification ref={this.notificationDOMRef} />
+        <Notification ref={this.notif} />
         <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
             <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
@@ -247,8 +201,11 @@ class Organization extends React.Component {
           </center>
         </div>
 
-        <GridTemplate args={this.core}
-          config={{ "title": "organization", "column": ["id", "name", "state", "zip"] }}
+        <GridTemplate args={this.core} ref={this.child}
+          config={{
+            "title": "organization",
+            "column": ["id", "name", "state", "zip"]
+          }}
           manageGrid={{
             "add": this.insert, "edit": this.edit,
             "remove": this.remove, "addUsers": this.addOrgUsers

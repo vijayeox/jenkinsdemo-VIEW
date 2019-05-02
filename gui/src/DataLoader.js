@@ -7,14 +7,23 @@ export class DataLoader extends React.Component {
         super(props);
         this.core = this.props.args;
         this.url = this.props.url;
+        this.refresh = this.refresh.bind(this);
     }
+
     async getData(url) {
         let helper = this.core.make("oxzion/restClient");
-        let data = await helper.request("v1", "/"+this.url, {}, "get");
+        let data = await helper.request("v1", "/" + this.url, {}, "get");
         return data;
     }
+
+    refresh = () => {
+        this.getData(this.url).then(response => {
+            this.props.onDataRecieved(response.data.data)
+        })
+    }
+
     requestDataIfNeeded = () => {
-        if (this.pending || toODataString(this.props.dataState) === this.lastSuccess) {
+        if ((this.pending || toODataString(this.props.dataState) === this.lastSuccess)) {
             return;
         }
         this.pending = toODataString(this.props.dataState);
@@ -24,7 +33,7 @@ export class DataLoader extends React.Component {
             if (toODataString(this.props.dataState) === this.lastSuccess) {
                 this.props.onDataRecieved.call(undefined, {
                     data: response.data.data,
-                    total:response.data.length
+                    total: response.data.length
                 });
             } else {
                 this.requestDataIfNeeded();

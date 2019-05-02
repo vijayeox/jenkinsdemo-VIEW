@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
 import {
@@ -91,32 +90,15 @@ class Group extends React.Component {
   }
 
   componentDidMount() {
+    M.AutoInit();
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
 
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: {
-        duration: 5000
-      },
-      dismissable: {
-        click: true
-      }
-    });
-  }
-
   addNotification(serverResponse) {
     this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
+      // title: "All Done!!!  👍",
       message: "Operation successfully completed.",
       type: "success",
       insert: "top",
@@ -137,7 +119,7 @@ class Group extends React.Component {
       this.setState({
         products: response.data
       });
-      this.addDataNotification(serverResponse);
+      this.addNotification(serverResponse);
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
@@ -162,7 +144,7 @@ class Group extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let groupUsers = await helper.request(
       "v1", "/group/" + dataItem + "/users", {}, "get");
-    return groupUsers;
+    return groupUsers.data;
   }
 
   async deleteGroupData(dataItem) {

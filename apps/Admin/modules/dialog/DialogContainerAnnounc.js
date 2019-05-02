@@ -1,13 +1,18 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { DatePicker } from '@progress/kendo-react-dateinputs';
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
 import "jquery/dist/jquery.js";
 import $ from "jquery";
-import FileUploadWithPreview from 'file-upload-with-preview';
-import TextareaAutosize from 'react-textarea-autosize';
+import FileUploadWithPreview from "file-upload-with-preview";
+import TextareaAutosize from "react-textarea-autosize";
 
-import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
+import {
+  MultiSelectComponent,
+  CheckBoxSelection,
+  Inject
+} from "@syncfusion/ej2-react-dropdowns";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -21,29 +26,28 @@ export default class DialogContainer extends React.Component {
       groupsList: [],
       selectedGroups: [],
       visibleDialog: false,
-      show: false,
-
+      show: false
     };
     this.pushFile = this.pushFile.bind(this);
     this.captureSelectedGroups = this.captureSelectedGroups.bind(this);
-    this.checkFields = { text: 'groupName', value: 'groupid' };
-
+    this.checkFields = { text: "groupName", value: "groupid" };
   }
-
 
   componentWillMount() {
     if (this.props.formAction === "add") {
     } else {
       let ancInEdittemp = { ...this.state.ancInEdit };
-      if (this.state.ancInEdit.start_date == "0000-00-00 00:00:00" || this.state.ancInEdit.end_date == "0000-00-00 00:00:00") {
+      if (
+        this.state.ancInEdit.start_date == "0000-00-00 00:00:00" ||
+        this.state.ancInEdit.end_date == "0000-00-00 00:00:00"
+      ) {
         if (this.state.ancInEdit.start_date == "0000-00-00 00:00:00") {
           ancInEdittemp.start_date = "";
           this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ DOAInEdit: "" });
-        }
-        else {
+        } else {
           const DOADate = this.state.ancInEdit.start_date;
-          const DOAiso = new Moment(DOADate, 'YYYY-MM-DD').format();
+          const DOAiso = new Moment(DOADate, "YYYY-MM-DD").format();
           const DOAkendo = new Date(DOAiso);
 
           ancInEdittemp.start_date = DOAkendo;
@@ -54,22 +58,20 @@ export default class DialogContainer extends React.Component {
           ancInEdittemp.end_date = null;
           this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ DOEInEdit: null });
-        }
-        else {
+        } else {
           const DOEDate = this.state.ancInEdit.end_date;
-          const DOEiso = new Moment(DOEDate, 'YYYY-MM-DD').format();
+          const DOEiso = new Moment(DOEDate, "YYYY-MM-DD").format();
           const DOEkendo = new Date(DOEiso);
 
           ancInEdittemp.end_date = DOEkendo;
           this.setState({ ancInEdit: ancInEdittemp });
           this.setState({ ancInEdit: DOEiso });
         }
-      }
-      else {
+      } else {
         const DOADate = this.state.ancInEdit.start_date;
         const DOEDate = this.state.ancInEdit.end_date;
-        const DOAiso = new Moment(DOADate, 'YYYY-MM-DD').format();
-        const DOEiso = new Moment(DOEDate, 'YYYY-MM_DD').format();
+        const DOAiso = new Moment(DOADate, "YYYY-MM-DD").format();
+        const DOEiso = new Moment(DOEDate, "YYYY-MM_DD").format();
         const DOAkendo = new Date(DOAiso);
         const DOEkendo = new Date(DOEiso);
 
@@ -84,16 +86,13 @@ export default class DialogContainer extends React.Component {
     }
   }
 
-
   componentDidMount() {
-    M.AutoInit();
     M.updateTextFields();
 
-    this.firstUpload = new FileUploadWithPreview('myFirstImage');
+    this.firstUpload = new FileUploadWithPreview("myFirstImage");
     if (this.props.formAction == "edit") {
       this.addGroups();
-    }
-    else {
+    } else {
       this.getGroupData().then(response => {
         var tempUsers = [];
         for (var i = 0; i <= response.data.length - 1; i++) {
@@ -106,25 +105,29 @@ export default class DialogContainer extends React.Component {
         });
       });
     }
+
+    document.onKeyPress = (ev) => {
+      console.log(ev);
+    }
   }
 
-  handleDOEChange = (event) => {
+  handleDOEChange = event => {
     let ancInEdit = { ...this.state.ancInEdit };
     ancInEdit.end_date = event.target.value;
-    this.setState({ ancInEdit: ancInEdit })
+    this.setState({ ancInEdit: ancInEdit });
 
     var DOEiso = new Moment(event.target.value).format();
     this.setState({ DOEInEdit: DOEiso });
-  }
+  };
 
-  handleDOAChange = (event) => {
+  handleDOAChange = event => {
     let ancInEdit = { ...this.state.ancInEdit };
     ancInEdit.start_date = event.target.value;
-    this.setState({ ancInEdit: ancInEdit })
+    this.setState({ ancInEdit: ancInEdit });
 
     var DOAiso = new Moment(event.target.value).format();
     this.setState({ DOAInEdit: DOAiso });
-  }
+  };
 
   async getGroupData() {
     let helper = this.core.make("oxzion/restClient");
@@ -135,13 +138,19 @@ export default class DialogContainer extends React.Component {
   async getAnnouncementGroups(dataItem) {
     let helper = this.core.make("oxzion/restClient");
     let groupUsers = await helper.request(
-      "v1", "/announcement/" + dataItem + "/group", {}, "get");
+      "v1",
+      "/announcement/" + dataItem + "/group",
+      {},
+      "get"
+    );
     return groupUsers;
   }
 
   async pushAnnouncementGroups(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
-    let addGroups = await helper.request("v1", "/announcement/" + dataItem + "/save",
+    let addGroups = await helper.request(
+      "v1",
+      "/announcement/" + dataItem + "/save",
       {
         userid: dataObject
       },
@@ -154,11 +163,13 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
-      "/announcement", {
+      "/announcement",
+      {
         name: this.state.ancInEdit.name,
         media: fileCode,
         status: "1",
-        description: this.state.ancInEdit.description
+        description: this.state.ancInEdit.description,
+        media_type: this.state.ancInEdit.media_type
       },
       "post"
     );
@@ -170,7 +181,8 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancFile = await helper.request(
       "v1",
-      "/attachment", {
+      "/attachment",
+      {
         type: "ANNOUNCEMENT",
         files: files
       },
@@ -179,30 +191,23 @@ export default class DialogContainer extends React.Component {
     return ancFile;
   }
 
-
   async editAnnouncements(fileCode) {
     let helper = this.core.make("oxzion/restClient");
     let orgEditData = await helper.request(
       "v1",
-      "/announcement/" + this.state.ancInEdit.id, {
-        id: this.state.ancInEdit.id,
-        name: this.state.ancInEdit.name,
-        media: this.state.ancInEdit.media,
-        status: this.state.ancInEdit.status,
-        description: this.state.ancInEdit.description,
-
+      "/announcement/" + this.state.ancInEdit.id,
+      {
         name: this.state.ancInEdit.name,
         media: fileCode,
         status: "1",
-        description: this.state.ancInEdit.description
-
+        description: this.state.ancInEdit.description,
+        media_type: this.state.ancInEdit.media_type
       },
       "put"
     );
   }
 
   addGroups = () => {
-
     this.getAnnouncementGroups(this.state.ancInEdit.id).then(response => {
       var tempAnnouncementGroups = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
@@ -212,7 +217,7 @@ export default class DialogContainer extends React.Component {
       this.setState({
         selectedGroups: tempAnnouncementGroups
       });
-    })
+    });
 
     this.getGroupData().then(response => {
       var tempUsers = [];
@@ -225,20 +230,19 @@ export default class DialogContainer extends React.Component {
         groupsList: tempUsers
       });
     });
-  }
+  };
 
   captureSelectedGroups(e) {
     this.setState({
       selectedGroups: e.value
-    })
+    });
   }
-
 
   sendTheData = () => {
     var temp1 = this.state.selectedGroups;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
-      var gid = { "id": temp1[i] };
+      var gid = { id: temp1[i] };
       temp2.push(gid);
     }
     this.pushAnnouncementGroups(this.state.ancInEdit.id, JSON.stringify(temp2));
@@ -249,8 +253,13 @@ export default class DialogContainer extends React.Component {
       value: [],
       pushAnnouncementGroups: []
     });
-  }
+  };
 
+  media_typeChange = event => {
+    let ancInEdit = { ...this.state.ancInEdit };
+    ancInEdit.media_type = event.target.value;
+    this.setState({ ancInEdit: ancInEdit });
+  };
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -282,31 +291,52 @@ export default class DialogContainer extends React.Component {
   };
 
   clearFileButton = () => {
-    if (this.firstUpload && this.firstUpload.cachedFileArray.length > 0) {
-      return (
-        <img style={{ width: "30px" }} src="https://img.icons8.com/color/64/000000/cancel.png" />
+    return (
+      // this.firstUpload &&
+      // this.firstUpload.cachedFileArray.length > 0 && (
+        <img
+          style={{ width: "30px" }}
+          src="https://img.icons8.com/color/64/000000/cancel.png"
+        />
       )
-    }
-  }
+    // );
+  };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
         <div className="row">
           <div className="col s6">
-            <div className="custom-file-container" data-upload-id="myFirstImage">
-              <label><p>Upload Announcement Image
-                <a href="javascript:void(0)" id="clearAncImage" className="custom-file-container__image-clear"
-                  title="Clear Image">
-                  {this.clearFileButton()}
-                </a>
-              </p></label>
-              <div className="custom-file-container__image-preview"></div><center>
-              <label className="custom-file-container__custom-file">
-                <input type="file" className="custom-file-container__custom-file__custom-file-input"
-                  id="customFile" accept="image/*" aria-label="Choose File" />
-                <span className="custom-file-container__custom-file__custom-file-control"></span>
-              </label></center>
+            <div
+              className="custom-file-container"
+              data-upload-id="myFirstImage"
+            >
+              <label>
+                <p>
+                  Upload Announcement Image
+                  <a
+                    href="javascript:void(0)"
+                    id="clearAncImage"
+                    className="custom-file-container__image-clear"
+                    title="Clear Image"
+                  >
+                    {this.clearFileButton()}
+                  </a>
+                </p>
+              </label>
+              <div className="custom-file-container__image-preview" />
+              <center>
+                <label className="custom-file-container__custom-file">
+                  <input
+                    type="file"
+                    className="custom-file-container__custom-file__custom-file-input"
+                    id="customFile"
+                    accept="image/*"
+                    aria-label="Choose File"
+                  />
+                  <span className="custom-file-container__custom-file__custom-file-control" />
+                </label>
+              </center>
             </div>
           </div>
 
@@ -330,7 +360,6 @@ export default class DialogContainer extends React.Component {
               </div>
             </div>
 
-
             <div className="row">
               <div className="input-field col s12">
                 <TextareaAutosize
@@ -348,10 +377,29 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <div className='control-section col-lg-8' style={{ paddingLeft: "10px" }}>
-              <label id="label1">Groups</label>
+              <div className="input-field col s12">
+                <div>
+                  {" "}
+                  <label id="label1">Media Type</label>
+                </div>
+                <DropDownList
+                  data={["image","video"]}
+                  onChange={this.media_typeChange}
+                  style={{ width: "200px" }}
+                  value={this.state.ancInEdit.media_type}
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div
+                className="control-section col-lg-8"
+                style={{ paddingLeft: "10px" }}
+              >
+                <label id="label1">Groups</label>
                 <div id="multigroup">
-                  <MultiSelectComponent id="checkbox"
+                  <MultiSelectComponent
+                    id="checkbox"
                     dataSource={this.state.groupsList}
                     value={this.state.selectedGroups}
                     change={this.captureSelectedGroups}
@@ -361,16 +409,18 @@ export default class DialogContainer extends React.Component {
                     showDropDownIcon={true}
                     openOnClick="false"
                     filterBarPlaceholder="Search Groups"
-                    popupHeight="350px">
+                    popupHeight="350px"
+                  >
                     <Inject services={[CheckBoxSelection]} />
                   </MultiSelectComponent>
                 </div>
               </div>
             </div>
 
-            <div className="row" style={{paddingTop:"40px"}}>
+            <div className="row" style={{ paddingTop: "40px" }}>
               <div className="col s6" id="datecol">
-                <label id="label1">Date Of Announcement</label><br/>
+                <label id="label1">Date Of Announcement</label>
+                <br />
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.ancInEdit.start_date}
@@ -379,7 +429,8 @@ export default class DialogContainer extends React.Component {
                 />
               </div>
               <div className="col s6" id="datecol">
-                <label id="label1">Date Of Expire</label><br/>
+                <label id="label1">Date Of Expire</label>
+                <br />
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.ancInEdit.end_date}
@@ -388,11 +439,12 @@ export default class DialogContainer extends React.Component {
                 />
               </div>
             </div>
-
-
           </form>
           <div style={{ float: "right", marginTop: "20px", marginRight: "4%" }}>
-            <button className="btn waves-effect red" onClick={this.props.cancel}>
+            <button
+              className="btn waves-effect red"
+              onClick={this.props.cancel}
+            >
               Cancel
             </button>
             <button

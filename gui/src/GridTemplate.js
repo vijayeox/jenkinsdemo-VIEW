@@ -1,26 +1,32 @@
-import React from 'react';
-import { Grid, GridColumn, GridToolbar } from '@progress/kendo-react-grid';
-import { FaPlusCircle, FaPencilAlt, FaUserPlus, FaTrashAlt } from "react-icons/fa";
+import React from "react";
+import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
+import {
+    FaPlusCircle,
+    FaPencilAlt,
+    FaUserPlus,
+    FaTrashAlt
+} from "react-icons/fa";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 class GridTemplate extends React.Component {
     constructor(props) {
         super(props);
+        this.child = React.createRef();
         this.core = this.props.args;
         this.state = {
             dataState: { take: 10, skip: 0 },
-            gridData: undefined,
-        }
-        this.title = this.capitalizeFirstLetter(this.props.config.title)
+            gridData: undefined
+        };
+        this.title = this.capitalizeFirstLetter(this.props.config.title);
     }
 
-    dataRecieved = (data) => {
+    dataRecieved = data => {
         this.setState({
-            gridData: data,
+            gridData: data
         });
-    }
+    };
 
     capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,24 +36,33 @@ class GridTemplate extends React.Component {
         let table = [];
         for (var i = 0; i < this.props.config.column.length; i++) {
             if (this.props.config.column[i] == "id") {
-                table.push(<GridColumn
-                    field={this.props.config.column[i]}
-                    key={i} width="70px" title="ID" />)
+                table.push(
+                    <GridColumn
+                        field={this.props.config.column[i]}
+                        key={i}
+                        width="70px"
+                        title="ID"
+                    />
+                );
             } else {
-                table.push(<GridColumn
-                    field={this.props.config.column[i]}
-                    key={i} title={this.capitalizeFirstLetter(this.props.config.column[i])} />)
+                table.push(
+                    <GridColumn
+                        field={this.props.config.column[i]}
+                        key={i}
+                        title={this.capitalizeFirstLetter(this.props.config.column[i])}
+                    />
+                );
             }
         }
         table.push(manageButton);
-        return table
+        return table;
     }
-
 
     render() {
         return (
             <div>
                 <DataLoader
+                    ref={this.child}
                     args={this.core}
                     url={this.props.config.title}
                     dataState={this.state.dataState}
@@ -56,8 +71,7 @@ class GridTemplate extends React.Component {
                 <Grid data={this.state.gridData}>
                     <GridToolbar>
                         <div>
-                            <div style={{ fontSize: "20px" }}>
-                                {this.title + "'s"} List</div>
+                            <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>
                             <AddButton
                                 args={this.props.manageGrid.add}
                                 permission={this.props.permission}
@@ -66,19 +80,20 @@ class GridTemplate extends React.Component {
                         </div>
                     </GridToolbar>
                     {this.createColumns()}
-
-                    <GridColumn
-                        title="Edit"
-                        width="160px"
-                        cell={CellWithEditing(
-                            this.title,
-                            this.props.manageGrid.edit,
-                            this.props.manageGrid.remove,
-                            this.props.manageGrid.addUsers,
-                            this.props.permission)}
-                        filterCell={<div></div>}
-                    />
-
+                    {this.props.permission != 1 && (
+                        <GridColumn
+                            title="Edit"
+                            width="160px"
+                            cell={CellWithEditing(
+                                this.title,
+                                this.props.manageGrid.edit,
+                                this.props.manageGrid.remove,
+                                this.props.manageGrid.addUsers,
+                                this.props.permission
+                            )}
+                            filterCell={<div />}
+                        />
+                    )}
                 </Grid>
             </div>
         );
@@ -101,11 +116,8 @@ class AddButton extends React.Component {
                     </p>
                 </button>
             );
-        }
-        else {
-            return (
-                <div></div>
-            )
+        } else {
+            return <div />;
         }
     }
 }
@@ -117,33 +129,37 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
             this.core = this.props.args;
         }
 
-
         deleteButton() {
             if (perm == 15) {
                 return (
                     <abbr title={"Delete " + title}>
-                        <button className="k-button k-grid-remove-command"
+                        <button
+                            className="k-button k-grid-remove-command"
                             onClick={() => {
                                 Swal.fire({
-                                    title: 'Are you sure?',
-                                    text: 'Do you really want to delete the record? This cannot be undone.',
-                                    imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+                                    title: "Are you sure?",
+                                    text:
+                                        "Do you really want to delete the record? This cannot be undone.",
+                                    imageUrl:
+                                        "https://image.flaticon.com/icons/svg/1632/1632714.svg",
                                     imageWidth: 75,
                                     imageHeight: 75,
-                                    confirmButtonText: 'Delete',
-                                    confirmButtonColor: '#d33',
+                                    confirmButtonText: "Delete",
+                                    confirmButtonColor: "#d33",
                                     showCancelButton: true,
-                                    cancelButtonColor: '#3085d6',
+                                    cancelButtonColor: "#3085d6",
                                     target: ".Window_Admin"
-                                }).then((result) => {
+                                }).then(result => {
                                     if (result.value) {
                                         remove(this.props.dataItem);
                                     }
-                                })
+                                });
                             }}
                         >
                             <FaTrashAlt className="manageIcons" />
-                        </button></abbr>)
+                        </button>
+                    </abbr>
+                );
             }
         }
 
@@ -152,7 +168,8 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
                 <td>
                     <center>
                         <abbr title={"Edit " + title + " Details"}>
-                            <button className=" k-button k-grid-edit-command"
+                            <button
+                                className=" k-button k-grid-edit-command"
                                 onClick={() => {
                                     edit(this.props.dataItem);
                                 }}
@@ -161,26 +178,25 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
                             </button>
                         </abbr>
                         &nbsp; &nbsp;
-                        {addUsers && (
+            {addUsers && (
                             <abbr title={"Add Users to " + title}>
-                                <button className="k-button"
+                                <button
+                                    className="k-button"
                                     onClick={() => {
                                         addUsers(this.props.dataItem);
                                     }}
                                 >
                                     <FaUserPlus className="manageIcons" />
                                 </button>
-                            </abbr>)}
+                            </abbr>
+                        )}
                         &nbsp; &nbsp;
-                    {this.deleteButton()}
+            {this.deleteButton()}
                     </center>
                 </td>
-            )
+            );
         }
     };
 }
 
-
 export default GridTemplate;
-
-
