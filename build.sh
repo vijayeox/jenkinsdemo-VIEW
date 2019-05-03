@@ -30,32 +30,3 @@ build_project $BOS
 cd $BOS
     npm run package:discover
 cd ..
-
-
-
-{
-	"comments": {
-		"lineComment": "#"
-	},
-	"brackets": [
-		["{", "}"],
-		["[", "]"],
-		["(", ")"]
-	],
-	"autoClosingPairs": [
-		["{", "}"],
-		["[", "]"],
-		["(", ")"],
-		["\"", "\""],
-		["'", "'"],
-		["`", "`"]
-	],
-	"surroundingPairs": [
-		["{", "}"],
-		["[", "]"],
-		["(", ")"],
-		["\"", "\""],
-		["'", "'"],
-		["`", "`"]
-	]
-}
