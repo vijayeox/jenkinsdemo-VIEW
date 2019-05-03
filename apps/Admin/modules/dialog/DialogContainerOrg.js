@@ -88,7 +88,7 @@ export default class DialogContainer extends React.Component {
         this.props.action(response.status);
       });
     }
-    this.props.save();
+    this.props.cancel();
   };
 
   render() {

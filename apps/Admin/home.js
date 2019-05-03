@@ -18,24 +18,39 @@ class Home extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      value: "1"
+      value: "1",
+      windowSize: undefined
     };
+    this.resizeEvent = this.resizeEvent.bind(this);
+    document
+      .getElementsByClassName("Window_Admin")[0]
+      .addEventListener("windowResize", this.resizeEvent, false);
   }
 
+  resizeEvent = e => {
+    let that = this;
+    window.setTimeout(() => {
+      var screen = document
+        .querySelector(".Window_Admin")
+        .querySelector(".osjs-window-content").clientHeight;
+      that.setState({ windowSize: screen });
+    }, 100);
+  };
+
   componentDidMount() {
-    $(document).ready(function () {
+    $(document).ready(function() {
       $("#componentsBox").hide();
 
-      $(document).on("click", ".moduleBtn", function () {
-        $(".DashBG").fadeOut(),
-          $("#componentsBox").show();
+      $(document).on("click", ".moduleBtn", function() {
+        $(".DashBG").fadeOut(), $("#componentsBox").show();
       });
 
-      $(document).on("click", ".goBack", function () {
+      $(document).on("click", ".goBack", function() {
         $("#componentsBox").hide(), $(".DashBG").show();
-        ReactDOM.render(<div></div>, document.getElementById('componentsBox'));
+        ReactDOM.render(<div />, document.getElementById("componentsBox"));
       });
     });
+    this.resizeEvent();
   }
 
   createBlock = () => {
@@ -53,10 +68,7 @@ class Home extends React.Component {
 
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.groupClick}>
-              <img
-                src="apps/Admin/group.svg"
-                className="moduleBtn App-logo"
-              />
+              <img src="apps/Admin/group.svg" className="moduleBtn App-logo" />
             </div>
             <div className="titles">Groups</div>
           </div>
@@ -92,7 +104,8 @@ class Home extends React.Component {
 
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.announClick}>
-              <img src="apps/Admin/131-laptop.svg"
+              <img
+                src="apps/Admin/131-laptop.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -101,7 +114,8 @@ class Home extends React.Component {
 
           <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.appClick}>
-              <img src="apps/Admin/102-production.svg"
+              <img
+                src="apps/Admin/102-production.svg"
                 className="moduleBtn App-logo"
               />
             </div>
@@ -114,59 +128,73 @@ class Home extends React.Component {
     return table;
   };
 
+  orgClick = e => {
+    ReactDOM.render(
+      <Organization args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  orgClick = (e) => {
-    ReactDOM.render(<Organization args={this.core} />, document.getElementById('componentsBox'));
-  }
+  groupClick = e => {
+    ReactDOM.render(
+      <Group args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  groupClick = (e) => {
-    ReactDOM.render(<Group args={this.core} />, document.getElementById('componentsBox'));
-  }
+  prjClick = e => {
+    ReactDOM.render(
+      <Project args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  prjClick = (e) => {
-    ReactDOM.render(<Project args={this.core} />, document.getElementById('componentsBox'));
-  }
+  userClick = e => {
+    ReactDOM.render(
+      <User args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  userClick = (e) => {
-    ReactDOM.render(<User args={this.core} />, document.getElementById('componentsBox'));
-  }
+  roleClick = e => {
+    ReactDOM.render(
+      <Role args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  roleClick = (e) => {
-    ReactDOM.render(<Role args={this.core} />, document.getElementById('componentsBox'));
-  }
+  announClick = e => {
+    ReactDOM.render(
+      <Announcement args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
-  announClick = (e) => {
-    ReactDOM.render(<Announcement args={this.core} />, document.getElementById('componentsBox'));
-  }
-
-  appClick = (e) => {
-    ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
-  }
+  appClick = e => {
+    ReactDOM.render(
+      <Application args={this.core} />,
+      document.getElementById("componentsBox")
+    );
+  };
 
   render() {
-    var screen = document.querySelector('.Window_Admin').querySelector('.osjs-window-content').clientHeight;
     return (
-      <div style={{
-        backgroundImage: "url(apps/Admin/wait.jpg)",
-        backgroundSize: "cover"
-      }}>
-        <div
-          className="DashBG"
-        >
-          <center>
-            <div style={{ height: screen, display: 'flex' }} >
-              <div className="container">
-                {this.createBlock()}
-              </div>
-              <a href="https://telegra.ph/OX-Zion-Mobile-Apps-04-12" target="_blank">
-                <img id="downloadApp" src="apps/Admin/downloadApp.png" />
-              </a>
-            </div>
-          </center>
+      <div
+        style={{
+          backgroundImage: "url(apps/Admin/wait.jpg)",
+          backgroundSize: "cover",
+          height: this.state.windowSize || "32rem"
+        }}
+      >
+        <div className="DashBG" style={{ height: "100%" }}>
+          <div
+            style={{ height: "100%", display: "flex", alignItems: "center" }}
+          >
+            <div className="container">{this.createBlock()}</div>
+          </div>
         </div>
-        <div id="componentsBox" style={{ height: screen }}>
-        </div>
-      </div >
+        <div id="componentsBox" style={{ height: screen }} />
+      </div>
     );
   }
 }

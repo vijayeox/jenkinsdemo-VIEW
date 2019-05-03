@@ -1,13 +1,12 @@
 .Window_Admin {
   @import "./public/scss/notifTheme.css";
   @import "./public/scss/kendo.css";
-  @import url('https://fonts.googleapis.com/css?family=Didact+Gothic');
+  @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/@syncfusion/ej2-base/styles/material.css";
   @import "./node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
   @import "./node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
   @import "./node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
   @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
-
 
   background: #f06151;
 
@@ -22,11 +21,11 @@
     width: 100% !important;
   }
 
-  .k-filtercell>.k-filtercell-wrapper>input::placeholder {
+  .k-filtercell > .k-filtercell-wrapper > input::placeholder {
     font-size: 1em;
   }
 
-  .k-filtercell>.k-filtercell-wrapper>input {
+  .k-filtercell > .k-filtercell-wrapper > input {
     font-size: 1em;
     margin-bottom: 0px;
     height: 25px;
@@ -38,7 +37,7 @@
     pointer-events: visible !important;
   }
 
-  .custom-file-container__custom-file{
+  .custom-file-container__custom-file {
     width: 85% !important;
   }
 
@@ -63,13 +62,13 @@
     width: 1px;
   }
 
-  [type="file"]+.btn-upload {
+  [type="file"] + .btn-upload {
     background-color: #000;
     border-radius: 4rem;
     color: #fff;
     cursor: pointer;
     display: inline-block;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 1rem;
     font-weight: 700;
     height: 4rem;
@@ -79,17 +78,16 @@
     transition: background-color 0.3s;
   }
 
-  [type="file"]:focus+.btn-upload,
-  [type="file"]+label:hover {
+  [type="file"]:focus + .btn-upload,
+  [type="file"] + label:hover {
     background-color: #f06151;
   }
 
-  [type="file"]:focus+.btn-upload {
+  [type="file"]:focus + .btn-upload {
     outline: 0;
     outline-style: none;
     -moz-outline-style: none;
   }
-
 
   #adminHeader {
     margin: auto;
@@ -116,14 +114,10 @@
   }
 
   .titles {
-    font-family: 'Century Gothic',
-      'Futura',
-      'Didact Gothic',
-      san-serif;
+    font-family: "Century Gothic", "Futura", "Didact Gothic", san-serif;
     font-size: 22px;
     font-weight: 600;
   }
-
 
   .goBack {
     margin-right: 5%;
@@ -162,20 +156,20 @@
   }
 
   .select-wrapper {
-    width: 80px
+    width: 80px;
   }
 
   //Not working request test
 
-  .k-dropdown-wrap>.k-input {
+  .k-dropdown-wrap > .k-input {
     margin: auto;
   }
 
-  .k-list>li {
+  .k-list > li {
     font-size: 2.13em !important;
   }
 
-  .k-list-filter>.k-icon {
+  .k-list-filter > .k-icon {
     top: 43% !important;
   }
 
@@ -183,7 +177,7 @@
     padding: 0px !important;
   }
 
-  .k-list-filter>.k-textbox {
+  .k-list-filter > .k-textbox {
     height: 27px;
     margin: 0px;
   }
@@ -196,7 +190,7 @@
 
   .manageIcons {
     font-size: 1.3em;
-    color: #002C3E;
+    color: #002c3e;
     display: block;
   }
 
@@ -207,13 +201,10 @@
   }
 
   .container {
-    width: 95%;
+    width: 90%;
     margin: auto;
     position: relative;
     text-align: center;
-    // padding-bottom: 10%;
-    margin-top: 7%;
-    display: flex;
   }
 
   #pageTitle {
@@ -261,7 +252,7 @@
     float: right;
   }
 
-  .k-widget.k-state-invalid > .k-picker-wrap{
+  .k-widget.k-state-invalid > .k-picker-wrap {
     border-color: #949494;
     color: #9e9e9e;
   }

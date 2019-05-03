@@ -1,10 +1,13 @@
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Button } from '@progress/kendo-react-buttons';
-import { MultiSelectComponent, CheckBoxSelection, Inject } from '@syncfusion/ej2-react-dropdowns';
-import { GridTemplate } from "@oxzion/gui";
-import { Notification } from "@oxzion/gui";
+import { Button } from "@progress/kendo-react-buttons";
+import {
+  MultiSelectComponent,
+  CheckBoxSelection,
+  Inject
+} from "@syncfusion/ej2-react-dropdowns";
+import { GridTemplate, Notification } from "@oxzion/gui";
 import { GetData, DeleteEntry } from "./components/apiCalls";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
@@ -13,9 +16,7 @@ class Organization extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-
     this.state = {
-      products: [],
       orgInEdit: undefined,
       userList: [],
       selectedUsers: [],
@@ -27,44 +28,45 @@ class Organization extends React.Component {
 
     this.toggleDialog = this.toggleDialog.bind(this);
     this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
-    
     this.notif = React.createRef();
     this.child = React.createRef();
-    this.checkFields = { text: 'userName', value: 'userid' };
+    this.checkFields = { text: "userName", value: "userid" };
   }
 
   handler = serverResponse => {
     if (serverResponse == "success") {
       this.notif.current.successNotification();
-    } else {      
-      this.notif.current.failNotification();      
+    } else {
+      this.notif.current.failNotification();
     }
     this.child.current.child.current.refresh();
-
-  }
+  };
 
   async pushOrgUsers(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
-    let addProjectUsers = await helper.request("v1", "/organization/" + dataItem + "/adduser/" + dataObject,
+    let addProjectUsers = await helper.request(
+      "v1",
+      "/organization/" + dataItem + "/adduser/" + dataObject,
       {},
       "get"
     );
     return addProjectUsers;
   }
 
-  addOrgUsers = (dataItem) => {
+  addOrgUsers = dataItem => {
     let loader = this.core.make("oxzion/splash");
     loader.show();
 
     this.setState({
       orgToBeEdited: dataItem.id,
       visible: !this.state.visible
-    })
+    });
 
     GetData("user").then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName = response.data[i].firstname + " " + response.data[i].lastname;
+        var userName =
+          response.data[i].firstname + " " + response.data[i].lastname;
         var userid = response.data[i].id;
         tempUsers.push({ userid: userid, userName: userName });
       }
@@ -75,33 +77,32 @@ class Organization extends React.Component {
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
-
-  }
+  };
 
   captureSelectedUsers(e) {
     this.setState({
       selectedUsers: e.value
-    })
+    });
   }
 
   saveAndSend = () => {
     this.sendTheData();
     this.toggleDialog();
-  }
+  };
 
   sendTheData = () => {
     var temp1 = this.state.selectedUsers;
     for (var i = 0; i <= temp1.length - 1; i++) {
       this.pushOrgUsers(this.state.orgToBeEdited, temp1[i]);
     }
-  }
+  };
 
   toggleDialog() {
     this.setState({
       visible: !this.state.visible,
       selectedUsers: [],
       orgToBeEdited: []
-    })
+    });
   }
 
   edit = dataItem => {
@@ -111,35 +112,13 @@ class Organization extends React.Component {
     });
   };
 
+  cloneProduct(product) {
+    return Object.assign({}, product);
+  }
+
   remove = dataItem => {
     DeleteEntry("organization", dataItem.id).then(response => {
       this.handler(response.status);
-    });
-
-    const products = this.state.products;
-    const index = products.findIndex(p => p.id === dataItem.id);
-    if (index !== -1) {
-      products.splice(index, 1);
-      this.setState({
-        products: products
-      });
-    }
-  };
-
-  save = () => {
-    const dataItem = this.state.orgInEdit;
-    const products = this.state.products.slice();
-
-    if (dataItem.id === undefined) {
-      products.unshift(this.newProduct(dataItem));
-    } else {
-      const index = products.findIndex(p => p.id === dataItem.id);
-      products.splice(index, 1, dataItem);
-    }
-
-    this.setState({
-      products: products,
-      orgInEdit: undefined
     });
   };
 
@@ -160,9 +139,10 @@ class Organization extends React.Component {
             onClose={this.toggleDialog}
           >
             <div>
-              <div className='control-section col-lg-8'>
+              <div className="control-section col-lg-8">
                 <div id="multigroup">
-                  <MultiSelectComponent id="checkbox"
+                  <MultiSelectComponent
+                    id="checkbox"
                     dataSource={this.state.userList}
                     value={this.state.selectedUsers}
                     change={this.captureSelectedUsers}
@@ -171,7 +151,8 @@ class Organization extends React.Component {
                     placeholder="Click to add Users"
                     showDropDownIcon={true}
                     filterBarPlaceholder="Search Users"
-                    popupHeight="350px">
+                    popupHeight="350px"
+                  >
                     <Inject services={[CheckBoxSelection]} />
                   </MultiSelectComponent>
                 </div>
@@ -188,9 +169,13 @@ class Organization extends React.Component {
           </Dialog>
         )}
         <Notification ref={this.notif} />
-        <div style={{ paddingTop: '12px' }} className="row">
+        <div style={{ paddingTop: "12px" }} className="row">
           <div className="col s3">
-            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
+            <Button
+              className="goBack"
+              primary={true}
+              style={{ width: "45px", height: "45px" }}
+            >
               <FaArrowLeft />
             </Button>
           </div>
@@ -200,23 +185,26 @@ class Organization extends React.Component {
             </div>
           </center>
         </div>
-
-        <GridTemplate args={this.core} ref={this.child}
+        <GridTemplate
+          args={this.core}
+          ref={this.child}
           config={{
-            "title": "organization",
-            "column": ["id", "name", "state", "zip"]
+            title: "organization",
+            column: ["id", "name", "state", "zip"]
           }}
           manageGrid={{
-            "add": this.insert, "edit": this.edit,
-            "remove": this.remove, "addUsers": this.addOrgUsers
+            add: this.insert,
+            edit: this.edit,
+            remove: this.remove,
+            addUsers: this.addOrgUsers
           }}
-          permission={this.state.permission} />
+          permission={this.state.permission}
+        />
 
         {this.state.orgInEdit && (
           <DialogContainer
             args={this.core}
             dataItem={this.state.orgInEdit}
-            save={this.save}
             cancel={this.cancel}
             formAction={this.state.action}
             action={this.handler}
@@ -225,25 +213,6 @@ class Organization extends React.Component {
       </div>
     );
   };
-
-  cloneProduct(product) {
-    return Object.assign({}, product);
-  }
-
-  newProduct(source) {
-    const newProduct = {
-      id: "",
-      name: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
-      logo: "",
-      languagefile: ""
-    };
-
-    return Object.assign(newProduct, source);
-  }
 }
 
 export default Organization;
