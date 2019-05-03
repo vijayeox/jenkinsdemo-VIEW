@@ -4,6 +4,7 @@
   "category": "collaboration",
   "icon": "icon.png",
   "server": "server.js",
+  "defaultAppforOrgs" : true,
   "title": {
     "en_EN": "Calendar"
   },

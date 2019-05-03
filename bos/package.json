@@ -92,6 +92,7 @@
     "mime": "^2.4.2",
     "minimist": "^1.2.0",
     "nocache": "^2.0.0",
+    "react-notifications-component": "^1.1.1",
     "sanitize-filename": "^1.6.1",
     "uuid": "^3.3.2",
     "node-fetch": "^2.3.0",

@@ -45,7 +45,7 @@ export default class DialogContainer extends React.Component {
     loader.show();
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
+    return userData.data;
   }
 
   async pushData() {

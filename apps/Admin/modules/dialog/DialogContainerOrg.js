@@ -85,8 +85,7 @@ export default class DialogContainer extends React.Component {
       });
     } else {
       this.pushData().then(response => {
-        var addResponse = response.data.id;
-        this.props.action(addResponse);
+        this.props.action(response.status);
       });
     }
     this.props.save();

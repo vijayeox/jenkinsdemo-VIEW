@@ -1,49 +1,11 @@
 import React from "react";
-
-import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
-import {
-  Grid,
-  GridColumn,
-  GridToolbar
-} from "@progress/kendo-react-grid";
+import { FaArrowLeft } from "react-icons/fa";
 import { Button } from '@progress/kendo-react-buttons';
-
-import ReactNotification from "react-notifications-component";
-
-import "jquery/dist/jquery.js";
-import $ from "jquery";
+import { GridTemplate } from "@oxzion/gui";
+import { Notification } from "@oxzion/gui";
+import { DeleteEntry } from "./components/apiCalls";
 
 import DialogContainer from "./dialog/DialogContainerUser";
-import cellWithEditing from "./manage/cellWithEditing";
-import { withState } from '../public/js/gridFilter';
-
-
-const StatefulGrid = withState(Grid);
-
-class Permissionallowed extends React.Component {
-  render() {
-    if(this.props.perm == 7 || this.props.perm == 15){
-      return (
-        <button
-        onClick={this.props.args}
-        className="k-button"
-        style={{ position: "absolute", top: "8px", right: "16px" }}
-      >
-        <FaPlusCircle style={{ fontSize: "20px" }} />
-
-        <p style={{ margin: "0px", paddingLeft: "10px" }}>
-          Add User
-        </p>
-      </button>
-      );
-    }
-    else{
-     return(
-       <div></div>
-     )
-    }
-  }
-}
 
 class User extends React.Component {
   constructor(props) {
@@ -55,65 +17,18 @@ class User extends React.Component {
       action: "",
       permission:"15"
     };
-
-    this.addNotification = this.addNotification.bind(this);
-    this.notificationDOMRef = React.createRef();
-
-    this.getUserData().then(response => {
-      this.setState({ products: response.data.data });
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
-    });
-  }
-
-  componentDidMount() {
-    $(document).ready(function () {
-      $(".k-textbox").attr("placeholder", "Search");
-    });
-    M.AutoInit();
-  }
-
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
+    this.notif = React.createRef();
+    this.child = React.createRef();
   }
 
   handler = serverResponse => {
-    this.getUserData().then(response => {
-      this.setState({ products: response.data });
-      this.addDataNotification(serverResponse);
-    });
-  };
+    if (serverResponse == "success") {
+      this.notif.current.successNotification();
+    } else {      
+      this.notif.current.failNotification();      
+    }
+    this.child.current.child.current.refresh();
 
-  async getUserData() {
-    let helper = this.core.make("oxzion/restClient");
-    let loader = this.core.make("oxzion/splash");
-    loader.show();
-    let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
   }
 
   async deleteUserData(dataItem) {
@@ -130,8 +45,8 @@ class User extends React.Component {
   };
 
   remove = dataItem => {
-    this.deleteUserData(dataItem.id).then(response => {
-      addNotification();
+    DeleteEntry("user", dataItem.id).then(response => {
+      this.handler(response.status);
     });
 
     const products = this.state.products;
@@ -169,29 +84,10 @@ class User extends React.Component {
     this.setState({ userInEdit: {}, action: "add" });
   };
 
-  searchUnavailable() {
-    return (
-      <div></div>
-    );
-  }
-
-  disp(){
-    if(this.state.permission!=1){
-      return(
-    <GridColumn
-    title="Edit"
-    width="160px"
-    cell={cellWithEditing(this.edit, this.remove, this.state.permission)}
-    filterCell={this.searchUnavailable}
-  />
-      );
-    } 
-  }
-
   render() {
     return (
       <div id="userPage">
-        <ReactNotification ref={this.notificationDOMRef} />
+        <Notification ref={this.notif} />
         <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">
             <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
@@ -205,22 +101,13 @@ class User extends React.Component {
           </center>
         </div>
 
-        <StatefulGrid data={this.state.products}>
-          <GridToolbar>
-            <div>
-              <div style={{ fontSize: "20px" }}>Users List</div>
-              <Permissionallowed
-               args={this.insert}
-               perm={this.state.permission}
-               />
-            </div>
-          </GridToolbar>
-          <GridColumn field="id" title="User ID" width="110px" />
-          <GridColumn field="name" title="Name" />
-          <GridColumn field="designation" title="Designation" />
-          <GridColumn field="country" title="Country" />
-          {this.disp()}
-        </StatefulGrid>
+        <GridTemplate args={this.core} ref={this.child}
+          config={{ "title": "user", "column": ["id", "name", "designation", "country"] }}
+          manageGrid={{
+            "add": this.insert, "edit": this.edit,
+            "remove": this.remove
+          }}
+          permission={this.state.permission} />
 
         {this.state.userInEdit && (
           <DialogContainer
@@ -236,9 +123,6 @@ class User extends React.Component {
     );
   }
 
-  dialogTitle() {
-    return `${this.state.userInEdit.id === undefined ? "Add" : "Edit"} product`;
-  }
   cloneProduct(product) {
     return Object.assign({}, product);
   }

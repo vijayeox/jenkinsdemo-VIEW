@@ -100,7 +100,7 @@ class Role extends React.Component {
     let RoleData = await helper.request("v1", "/role", {}, "get");
     let helper2 = this.core.make("oxzion/restClient");
     await helper2.request("v1", "/privilege", {}, "get");
-    return RoleData;
+    return RoleData.data;
   }
 
   edit = dataItem => {

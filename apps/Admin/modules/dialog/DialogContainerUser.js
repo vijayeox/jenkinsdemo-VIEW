@@ -2,16 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Input } from '@progress/kendo-react-inputs';
-import { DropDownList } from '@progress/kendo-react-dropdowns';
-import { filterBy } from '@progress/kendo-data-query';
+import { Input } from "@progress/kendo-react-inputs";
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { filterBy } from "@progress/kendo-data-query";
 import "@progress/kendo-ui";
 import Codes from "../data/Codes";
-import ReactTooltip from 'react-tooltip';
-import { DatePicker } from '@progress/kendo-react-dateinputs';
+import ReactTooltip from "react-tooltip";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
 
-import withValueField from './withValueField.js';
+import withValueField from "./withValueField.js";
 const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DialogContainer extends React.Component {
@@ -31,27 +31,31 @@ export default class DialogContainer extends React.Component {
       value: null,
       value1: null,
       countries: Codes
-
     };
+    this.getUserData().then(response => {
+      this.setState({ usersList: response.data });
+    });
   }
   componentWillMount() {
     if (this.props.formAction === "add") {
     } else {
       let userInEditTemp = { ...this.state.userInEdit };
-      if (this.state.userInEdit.date_of_birth == "0000-00-00" ||
+      if (
+        this.state.userInEdit.date_of_birth == "0000-00-00" ||
         this.state.userInEdit.date_of_birth == null ||
         this.state.userInEdit.date_of_join == "0000-00-00" ||
         this.state.userInEdit.date_of_join == null
-
       ) {
-        if (this.state.userInEdit.date_of_birth == "0000-00-00" ||
-          this.state.userInEdit.date_of_birth == null) {
+        if (
+          this.state.userInEdit.date_of_birth == "0000-00-00" ||
+          this.state.userInEdit.date_of_birth == null
+        ) {
           userInEditTemp.date_of_birth = "";
           this.setState({ userInEdit: userInEditTemp });
           this.setState({ DOBInEdit: "" });
         } else {
           const DOBDate = this.state.userInEdit.date_of_birth;
-          const DOBiso = new Moment(DOBDate, 'YYYY-MM-DD').format();
+          const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
           const DOBkendo = new Date(DOBiso);
 
           userInEditTemp.date_of_birth = DOBkendo;
@@ -59,15 +63,17 @@ export default class DialogContainer extends React.Component {
 
           this.setState({ DOBInEdit: DOBiso });
         }
-        if (this.state.userInEdit.date_of_join == "0000-00-00" ||
-          this.state.userInEdit.date_of_join == null) {
+        if (
+          this.state.userInEdit.date_of_join == "0000-00-00" ||
+          this.state.userInEdit.date_of_join == null
+        ) {
           userInEditTemp.date_of_join = null;
           this.setState({ userInEdit: userInEditTemp });
 
           this.setState({ DOJInEdit: null });
         } else {
           const DOJDate = this.state.userInEdit.date_of_join;
-          const DOJiso = new Moment(DOJDate, 'YYYY-MM_DD').format();
+          const DOJiso = new Moment(DOJDate, "YYYY-MM_DD").format();
           const DOJkendo = new Date(DOJiso);
 
           userInEditTemp.date_of_join = DOJkendo;
@@ -75,12 +81,11 @@ export default class DialogContainer extends React.Component {
 
           this.setState({ DOJInEdit: DOJiso });
         }
-      }
-      else {
+      } else {
         const DOBDate = this.state.userInEdit.date_of_birth;
         const DOJDate = this.state.userInEdit.date_of_join;
-        const DOBiso = new Moment(DOBDate, 'YYYY-MM-DD').format();
-        const DOJiso = new Moment(DOJDate, 'YYYY-MM_DD').format();
+        const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
+        const DOJiso = new Moment(DOJDate, "YYYY-MM_DD").format();
         const DOBkendo = new Date(DOBiso);
         const DOJkendo = new Date(DOJiso);
 
@@ -99,54 +104,60 @@ export default class DialogContainer extends React.Component {
     M.updateTextFields();
 
     if (this.props.formAction === "edit") {
-      ReactDOM.render(<ReactTooltip
-        place="bottom" type="error" effect="solid"
-        delayHide={100} delayShow={100}
-        html={true}
-      />, document.getElementById('tooltip'));
-    };
+      ReactDOM.render(
+        <ReactTooltip
+          place="bottom"
+          type="error"
+          effect="solid"
+          delayHide={100}
+          delayShow={100}
+          html={true}
+        />,
+        document.getElementById("tooltip")
+      );
+    }
   }
 
-  handleDOJChange = (event) => {
+  handleDOJChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.date_of_join = event.target.value;
-    this.setState({ userInEdit: userInEdit })
+    this.setState({ userInEdit: userInEdit });
 
     var DOJiso = new Moment(event.target.value).format();
     this.setState({ DOJInEdit: DOJiso });
-  }
+  };
 
-  handleDOBChange = (event) => {
+  handleDOBChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.date_of_birth = event.target.value;
-    this.setState({ userInEdit: userInEdit })
+    this.setState({ userInEdit: userInEdit });
 
     var DOBiso = new Moment(event.target.value).format();
     this.setState({ DOBInEdit: DOBiso });
-  }
+  };
 
   managerOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.managerid = event.target.value;
-    this.setState({ userInEdit: userInEdit })
+    this.setState({ userInEdit: userInEdit });
   };
 
   countryOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.country = event.target.value[0];
-    this.setState({ userInEdit: userInEdit })
+    this.setState({ userInEdit: userInEdit });
   };
 
-  genderChange = (event) => {
+  genderChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.gender = event.value;
-    this.setState({ userInEdit: userInEdit })
-  }
+    this.setState({ userInEdit: userInEdit });
+  };
 
   async getUserData() {
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
+    return userData.data;
   }
 
   async pushData() {
@@ -209,17 +220,16 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  filterChange = (event) => {
+  filterChange = event => {
     this.setState({
       usersList: this.filterData(event.filter)
     });
-  }
+  };
 
   filterData(filter) {
     const data = this.masterUserList.slice();
     return filterBy(data, filter);
   }
-
 
   handleSubmit = event => {
     event.preventDefault();
@@ -241,11 +251,11 @@ export default class DialogContainer extends React.Component {
   };
 
   render() {
-    const style = this.props.formAction === "edit" ? { "display": "none" } : {};
+    const style = this.props.formAction === "edit" ? { display: "none" } : {};
 
     return (
       <Dialog onClose={this.props.cancel}>
-        <div id="tooltip"></div>
+        <div id="tooltip" />
         <div className="row">
           <form className="col s12" onSubmit={this.submitData} id="userForm">
             <div className="row">
@@ -324,8 +334,10 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label id="label1">Date Of Birth</label>
               <div className="col s12 example-col" id="datecol">
+                <div>
+                  <label id="label1">Date Of Birth</label>
+                </div>
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_birth}
@@ -335,7 +347,10 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <div className="input-field col s12" style={{ marginBottom: "7px" }}>
+              <div
+                className="input-field col s12"
+                style={{ marginBottom: "7px" }}
+              >
                 <Input
                   id="UserDesignation"
                   type="text"
@@ -350,8 +365,12 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label htmlFor="UserGender" id="label1">Gender</label>
               <div className="input-field col s12 gendersel">
+                <div>
+                  <label htmlFor="UserGender" id="label1">
+                    Gender
+                  </label>
+                </div>
                 <div className="col s3 input-field gender1">
                   <label>
                     <Input
@@ -367,7 +386,6 @@ export default class DialogContainer extends React.Component {
                   </label>
                 </div>
                 <div className="col s3 input-field gender2">
-
                   <label>
                     <Input
                       id="UserGender"
@@ -386,8 +404,9 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <p style={{ marginTop: "0px"}}>
-                <label style={{ fontSize: "12px"}}>Manager Assigned</label> </p>
+                <p style={{ marginTop: "0px" }}>
+                  <label style={{ fontSize: "12px" }}>Manager Assigned</label>{" "}
+                </p>
                 <DropDownListWithValueField
                   data={this.state.usersList}
                   textField="name"
@@ -403,8 +422,10 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label id="label1">Date Of Join</label>
               <div className="col s12 example-col" id="datecol">
+                <div>
+                  <label id="label1">Date Of Join</label>
+                </div>
                 <DatePicker
                   format={"dd-MMM-yyyy"}
                   value={this.state.userInEdit.date_of_join}
@@ -416,15 +437,16 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="row">
-              <label htmlFor="UserCountry" id="label1">Country</label>
               <div className="input-field col s12">
+                <div>
+                  <label id="label1">Country</label>
+                </div>
                 <DropDownList
                   data={this.state.countries}
                   onChange={this.countryOnChange}
                   style={{ width: "200px" }}
                   value={this.state.userInEdit.country}
                 />
-
               </div>
             </div>
           </form>

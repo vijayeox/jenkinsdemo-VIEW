@@ -1,39 +1,12 @@
-// Check out my free youtube video on how to build a thumbnail gallery in react
-// https://www.youtube.com/watch?v=GZ4d3HEn9zg
 import React, { Component } from 'react';
-
 
 class Slider extends React.Component {
   
   constructor(props) {
     super(props)
     this.core = this.props.args;
-    //console.log(this.core);
-
-    var data = [
-     /*{
-        media: null,
-        mediatype: 'video',
-        name: 'Announcement 1',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam commodo, eros nec aliquam vestibulum, odio ante pretium lorem, id tristique quam nisi ut quam. Curabitur nec accumsan enim, non interdum diam. Aenean sed est et mi ornare imperdiet. Nulla ultrices convallis nisl, id fringilla libero pretium in. Aliquam ac ipsum varius, condimentum neque facilisis, rutrum mi. Cras vitae neque vel nisi suscipit vehicula. Suspendisse potenti. In ullamcorper imperdiet arcu vitae semper. Nam imperdiet sollicitudin turpis nec bibendum. Praesent quis placerat dui. Integer lobortis libero vitae massa mollis, vel varius arcu dignissim. Etiam vel commodo urna. Pellentesque vitae purus sit amet libero tempor faucibus. Nulla magna sapien, faucibus a eros non, tempor rhoncus velit. Etiam ultricies nisi lorem, a varius risus pharetra vel. Cras elementum lacinia purus eget dictum.'
-      },
-      {
-        media: null,
-        mediatype: 'image',
-        name: 'Announcement 2',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam commodo, eros nec aliquam vestibulum, odio ante pretium lorem, id tristique quam nisi ut quam. Curabitur nec accumsan enim, non interdum diam. Aenean sed est et mi ornare imperdiet. Nulla ultrices convallis nisl, id fringilla libero pretium in. Aliquam ac ipsum varius, condimentum neque facilisis, rutrum mi. Cras vitae neque vel nisi suscipit vehicula. Suspendisse potenti. In ullamcorper imperdiet arcu vitae semper. Nam imperdiet sollicitudin turpis nec bibendum. Praesent quis placerat dui. Integer lobortis libero vitae massa mollis, vel varius arcu dignissim. Etiam vel commodo urna. Pellentesque vitae purus sit amet libero tempor faucibus. Nulla magna sapien, faucibus a eros non, tempor rhoncus velit. Etiam ultricies nisi lorem, a varius risus pharetra vel. Cras elementum lacinia purus eget dictum.'
-      },
-      {
-        media: null,
-        mediatype: 'video',
-        name: 'Announcement 3',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam commodo, eros nec aliquam vestibulum, odio ante pretium lorem, id tristique quam nisi ut quam. Curabitur nec accumsan enim, non interdum diam. Aenean sed est et mi ornare imperdiet. Nulla ultrices convallis nisl, id fringilla libero pretium in. Aliquam ac ipsum varius, condimentum neque facilisis, rutrum mi. Cras vitae neque vel nisi suscipit vehicula. Suspendisse potenti. In ullamcorper imperdiet arcu vitae semper. Nam imperdiet sollicitudin turpis nec bibendum. Praesent quis placerat dui. Integer lobortis libero vitae massa mollis, vel varius arcu dignissim. Etiam vel commodo urna. Pellentesque vitae purus sit amet libero tempor faucibus. Nulla magna sapien, faucibus a eros non, tempor rhoncus velit. Etiam ultricies nisi lorem, a varius risus pharetra vel. Cras elementum lacinia purus eget dictum.'
-      }*/
-
-    ];
-    
     this.state = {
-      announcements : data,
+      announcements : [],
       currentIndex: 0,
       translateValue: 0,
       indexCount : 0
@@ -59,16 +32,9 @@ class Slider extends React.Component {
     this.goToNextSlide = this.goToNextSlide.bind(this);
   }
 
-  init() {
-    console.log('init called');
-  }
-
- 
   async getAnnouncements() {
-  
     let helper = this.core.make('oxzion/restClient');
     let announ = await helper.request('v1','/announcement/a', {}, 'get' );
-    // console.log(announ);
     return announ;
   }
 
@@ -135,10 +101,8 @@ class Slider extends React.Component {
   }
 }
 
-
 const Slide = ({ data }) => {
  const isImage = (data.media_type == 'image');
-  // console.log(isImage);
   return (
     <div className="App row slide" style={{margin:0}}>
       <div className="Announcement-visuals col s8">
@@ -157,6 +121,7 @@ const Slide = ({ data }) => {
 }
 
 const Img = ( {data}) => {
+ console.log(data);
   return (
     <img id='Announ-visual' src= {data.media} alt='Visuals go here'/>
   )

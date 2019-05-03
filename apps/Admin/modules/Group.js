@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 
 import {
@@ -91,32 +90,15 @@ class Group extends React.Component {
   }
 
   componentDidMount() {
+    M.AutoInit();
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
 
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: {
-        duration: 5000
-      },
-      dismissable: {
-        click: true
-      }
-    });
-  }
-
   addNotification(serverResponse) {
     this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
+      // title: "All Done!!!  👍",
       message: "Operation successfully completed.",
       type: "success",
       insert: "top",
@@ -137,7 +119,7 @@ class Group extends React.Component {
       this.setState({
         products: response.data
       });
-      this.addDataNotification(serverResponse);
+      this.addNotification(serverResponse);
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
@@ -155,14 +137,14 @@ class Group extends React.Component {
   async getUserData() {
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
-    return userData;
+    return userData.data;
   }
 
   async getGroupUsers(dataItem) {
     let helper = this.core.make("oxzion/restClient");
     let groupUsers = await helper.request(
       "v1", "/group/" + dataItem + "/users", {}, "get");
-    return groupUsers;
+    return groupUsers.data;
   }
 
   async deleteGroupData(dataItem) {
@@ -263,46 +245,6 @@ class Group extends React.Component {
       selectedUsers: []
     })
   }
-
-  // addUsers = dataItem => {
-  //   this.setState({
-  //     groupToBeEdited: dataItem.id
-  //   })
-  //   this.getUserData(dataItem.id).then(response => {
-  //     var tempUsers = [];
-  //     for (var i = 0; i <= response.data.length - 1; i++) {
-  //       var userName = response.data[i].firstname + " " + response.data[i].lastname;
-  //       var userid = response.data[i].id;
-  //       tempUsers.push({ userid: userid, userName: userName });
-  //     }
-  //     this.setState({
-  //       usersList: tempUsers
-  //     });
-  //     let loader = this.core.make("oxzion/splash");
-  //     loader.destroy();
-  //   });
-  // };
-
-  // addGroupUsers = dataItem => {
-  //   let loader = this.core.make("oxzion/splash");
-  //   loader.show();
-  //   this.addUsers(dataItem);
-  //   this.getGroupUsers(dataItem.id).then(response => {
-  //     var tempGroupUsers = [];
-  //     for (var i = 0; i <= response.data.length - 1; i++) {
-  //       var userName = response.data[i].name;
-  //       var userid = response.data[i].id;
-  //       tempGroupUsers.push({ userid: userid, userName: userName });
-  //     }
-  //     this.setState({
-  //       value: tempGroupUsers
-  //     });
-  //   });
-  //   this.setState({
-  //     visible: !this.state.visible
-  //   });
-  // };
-  
   remove = dataItem => {
     this.deleteGroupData(dataItem.id).then(response => {
       this.handler();

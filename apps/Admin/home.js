@@ -12,7 +12,6 @@ import Group from "./modules/Group";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
 import Application from "./modules/Application";
-import Development from "./devModules/Development";
 
 class Home extends React.Component {
   constructor(props) {
@@ -108,16 +107,6 @@ class Home extends React.Component {
             </div>
             <div className="titles">Apps</div>
           </div>
-
-          <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.devClick}>
-              <img src="apps/Admin/008-development-2.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Work In Progress</div>
-          </div>
-
         </div>
       );
     }
@@ -154,11 +143,8 @@ class Home extends React.Component {
     ReactDOM.render(<Application args={this.core} />, document.getElementById('componentsBox'));
   }
 
-  devClick = (e) => {
-    ReactDOM.render(<Development args={this.core} />, document.getElementById('componentsBox'));
-  }
-
   render() {
+    var screen = document.querySelector('.Window_Admin').querySelector('.osjs-window-content').clientHeight;
     return (
       <div style={{
         backgroundImage: "url(apps/Admin/wait.jpg)",
@@ -168,7 +154,7 @@ class Home extends React.Component {
           className="DashBG"
         >
           <center>
-            <div style={{ height: '-webkit-fill-available', height: '38em', display: 'flex' }} >
+            <div style={{ height: screen, display: 'flex' }} >
               <div className="container">
                 {this.createBlock()}
               </div>
@@ -178,7 +164,7 @@ class Home extends React.Component {
             </div>
           </center>
         </div>
-        <div id="componentsBox" style={{ paddingBottom: '100px', height: "37em" }}>
+        <div id="componentsBox" style={{ height: screen }}>
         </div>
       </div >
     );

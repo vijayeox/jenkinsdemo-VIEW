@@ -17,7 +17,6 @@ const loginAdapter = (core, config) => ({
     core.on('osjs/core:logged-in', () => splash.show());
     core.on('osjs/core:started', () => splash.destroy());
     let response = await core.request("/login", { method: 'POST', body: JSON.stringify({username:req.username,password:req.password}) }, 'json');
-    console.log(response['jwt']);
     var lsHelper = new LocalStorageAdapter;
     if((lsHelper.supported() || lsHelper.cookieEnabled()) && response['jwt'] != null){
       lsHelper.set('AUTH_token',response["jwt"]);
