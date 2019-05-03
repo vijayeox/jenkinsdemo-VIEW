@@ -56,7 +56,7 @@ class Role extends React.Component {
     this.notificationDOMRef = React.createRef();
 
     this.getRoleData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ products: response.data.data });
     });
   }
 
@@ -90,7 +90,7 @@ class Role extends React.Component {
 
   handler = serverResponse => {
     this.getRoleData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ products: response.data.data });
       this.addDataNotification(serverResponse);
     });
   };
@@ -146,6 +146,7 @@ class Role extends React.Component {
       products: products,
       roleInEdit: undefined
     });
+    this.handler();
   };
 
   cancel = () => {
@@ -211,9 +212,7 @@ class Role extends React.Component {
             <Column field="id" title="ID" width="70px" />
             <Column field="name" title="Name" />
             <Column field="description" title="Description" />
-
             {this.disp()}
-
           </Grid>
 
           {this.state.roleInEdit && (
@@ -244,22 +243,6 @@ class Role extends React.Component {
       id: "",
       name: "",
       description: "",
-      ReadG: false,
-      WriteG: false,
-      CreateG: false,
-      DeleteG: false,
-      ReadO: false,
-      WriteO: false,
-      CreateO: false,
-      DeleteO: false,
-      ReadR: false,
-      WriteR: false,
-      CreateR: false,
-      DeleteR: false,
-      ReadU: false,
-      WriteU: false,
-      CreateU: false,
-      DeleteU: false
     };
 
     return Object.assign(newProduct, source);

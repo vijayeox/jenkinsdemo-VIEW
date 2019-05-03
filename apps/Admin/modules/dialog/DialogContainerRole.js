@@ -29,6 +29,7 @@ export default class DialogContainer extends React.Component {
       roleInEdit: this.props.dataItem || null,
       visibleDialog: false,
       products2: [],
+      products1:[],
       privilegeInEdit: [],
 
     };
@@ -58,22 +59,28 @@ export default class DialogContainer extends React.Component {
   }
 
   handleFunction() {
-    this.getPrivilegeData().then(response => {
-      this.setState({ products2: response.data });
-      for (var i = 0; i < this.state.products2.length; i++) {
+    this.rolePrivilegeData().then(response => {
+      this.setState({ products1: response.data });
+      for (var i = 0; i < this.state.products1.length; i++) {
 
-        var number = this.state.products2[i].permission_allowed;
+        var number = this.state.products1[i].permission;
         if (number & 1) {
-          $('#' + this.state.products2[i].name + '1').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '1').attr('checked', true);
         }
         if (number & 2) {
-          $('#' + this.state.products2[i].name + '2').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '2').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
         }
         if (number & 4) {
-          $('#' + this.state.products2[i].name + '3').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '3').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '2').attr('disabled', true);
+          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
         }
         if (number & 8) {
-          $('#' + this.state.products2[i].name + '4').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '4').attr('checked', true);
+          $('#' + this.state.products1[i].privilege_name + '3').attr('disabled', true);
+          $('#' + this.state.products1[i].privilege_name + '2').attr('disabled', true);
+          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
         }
       }
 
@@ -81,16 +88,20 @@ export default class DialogContainer extends React.Component {
   }
   async pushData() {
     let helper = this.core.make("oxzion/restClient");
+    console.log(this.state.privilegeInEdit);
     let roleAddData = await helper.request(
       "v1",
       "/role",
       {
         name: this.state.roleInEdit.name,
         description: this.state.roleInEdit.description,
+        privileges: this.state.privilegeInEdit,
         show: false
       },
       "post"
     );
+    console.log(privileges);
+    console.log(this.state.privilegeInEdit);
     return roleAddData;
   }
 
@@ -108,7 +119,8 @@ export default class DialogContainer extends React.Component {
     );
   }
 
-  handleChange = event => {
+  handleChange = (event) => {
+    console.log("here");
     let name1 = event.target.id;
     let name2 = document.getElementById(event.target.id);
     let num = name1.slice(-1);
@@ -132,12 +144,12 @@ export default class DialogContainer extends React.Component {
       if (name2.checked == true) {
         name2.checked = true;
         manage1.checked = true;
-        manage1.disabled = true;
+        manage1.disabled = false;
         let event2 = parseInt(name2.value) + parseInt(manage1.value);
         clickValue = event2;
       } else {
         name2.checked = false;
-        manage1.checked = false;
+        manage1.checked = true;
         manage1.disabled = false;
         let event2 = 0;
         clickValue = event2;
@@ -149,14 +161,14 @@ export default class DialogContainer extends React.Component {
         manage1.checked = true;
         manage1.disabled = true;
         manage2.checked = true;
-        manage2.disabled = true;
+        manage2.disabled = false;
         let event3 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value);
         clickValue = event3;
       } else {
         name2.checked = false;
-        manage1.checked = false;
-        manage1.disabled = false;
-        manage2.checked = false;
+        manage1.checked = true;
+        manage1.disabled = true;
+        manage2.checked = true;
         manage2.disabled = false;
         let event3 = 0;
         clickValue = event3;
@@ -170,37 +182,32 @@ export default class DialogContainer extends React.Component {
         manage2.checked = true;
         manage2.disabled = true;
         manage3.checked = true;
-        manage3.disabled = true;
+        manage3.disabled = false;
         let event4 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value) + parseInt(manage3.value);
         clickValue = event4;
       } else {
         name2.checked = false;
-        manage1.checked = false;
-        manage1.disabled = false;
-        manage2.checked = false;
-        manage2.disabled = false;
-        manage3.checked = false;
+        manage1.checked = true;
+        manage1.disabled = true;
+        manage2.checked = true;
+        manage2.disabled = true;
+        manage3.checked = true;
         manage3.disabled = false;
         let event4 = 0;
         clickValue = event4;
       }
     }
 
-    // this.newMethod(manage,clickValue);
+    
   }
-
-  // newMethod(manage,clickValue) {
-
-  //   let tempData = { ...this.state.privilegeInEdit };
-  //   tempData[manage] = clickValue  ;
-  //   this.setState({ privilegeInEdit: tempData });
-
-  // }
+  async changehandler(event){
+    await this.setState({ privilegeInEdit: event });
+    console.log(this.state.privilegeInEdit);
+  }
 
   testdata = () => {
 
-    const edited = this.state.privilegeInEdit; 
-
+    var edited = [];
     for (var i = 0; i < this.state.products2.length; i++) {
       let test = this.state.products2[i].name;
       var clk = 0;
@@ -220,13 +227,17 @@ export default class DialogContainer extends React.Component {
       if (test4.checked == true) {
         clk = clk + parseInt(test4.value);
       }
-
-    edited[test] = clk;
-
+      if(clk!=0){
+    // edited[test] = clk;
+      var uid = { [this.state.products2[i].name] : clk };
+      edited.push(uid);
+      }
     }
-
-    this.setState({
-      privilegeInEdit: edited
+    console.log(edited);
+    this.changehandler(edited);
+    this.pushData().then(response => {
+      var addResponse = response.data.id;
+      this.props.action(addResponse);
     });
   }
 
@@ -254,10 +265,8 @@ export default class DialogContainer extends React.Component {
       this.editRole();
       this.handleFunction();
     } else {
-      this.pushData().then(response => {
-        var addResponse = response.data.id;
-        this.props.action(addResponse);
-      });
+      this.testdata();
+      
     }
     this.props.save();
   };
