@@ -6,7 +6,7 @@
   "hidden" : true,
   "autostart":true,
   "defaultAppforOrgs" : true,
-  "icon": "OXZion.png",
+  "icon": "icon.png",
   "title": {
     "en_EN": "Mail"
   },

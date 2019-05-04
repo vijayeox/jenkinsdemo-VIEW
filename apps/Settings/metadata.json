@@ -4,6 +4,7 @@
   "category": "utilities",
   "singleton": true,
   "internal": true,
+  "icon": "icon.png",
   "server": null,
   "title": {
     "en_EN": "Settings",
