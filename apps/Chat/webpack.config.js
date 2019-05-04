@@ -30,7 +30,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin(['oxchat.png']),
+    new CopyWebpackPlugin(['icon.png']),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

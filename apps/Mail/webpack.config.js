@@ -31,7 +31,7 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      'OXZion.png',
+      'icon.png',
       'close.png'
     ]),
     new MiniCssExtractPlugin({
