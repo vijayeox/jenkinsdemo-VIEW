@@ -193,7 +193,7 @@ class Home extends React.Component {
             <div className="container">{this.createBlock()}</div>
           </div>
         </div>
-        <div id="componentsBox" style={{ height: screen }} />
+        <div id="componentsBox" style={{ height: "inherit" }} />
       </div>
     );
   }

@@ -86,7 +86,7 @@ class User extends React.Component {
 
   render() {
     return (
-      <div id="userPage">
+      <div style={{height:"inherit"}}>
         <Notification ref={this.notif} />
         <div style={{ paddingTop: '12px' }} className="row">
           <div className="col s3">

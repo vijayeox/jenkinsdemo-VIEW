@@ -60,7 +60,7 @@ class GridTemplate extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{height:"90%", display:"flex"}}>
                 <DataLoader
                     ref={this.child}
                     args={this.core}
@@ -68,7 +68,7 @@ class GridTemplate extends React.Component {
                     dataState={this.state.dataState}
                     onDataRecieved={this.dataRecieved}
                 />
-                <Grid data={this.state.gridData}>
+                <Grid data={this.state.gridData} scrollable={"scrollable"}>
                     <GridToolbar>
                         <div>
                             <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>

@@ -20,11 +20,11 @@ const register = (core, args, options, metadata) => {
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
       dimension: {
-        width: 800,
+        width: 860,
         height: 570
       },
       minDimension: {
-        width: 800,
+        width: 860,
         height: 570
       },
       position: {

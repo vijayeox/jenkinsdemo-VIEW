@@ -138,10 +138,14 @@
     display: none;
   }
 
+
+  .k-grid-content
+  {
+     overflow-y: visible;
+  }
+
   .k-grid {
     margin: 15px;
-    max-height: 32rem;
-    height: -webkit-fill-available;
   }
 
   .k-tooltip-validation {

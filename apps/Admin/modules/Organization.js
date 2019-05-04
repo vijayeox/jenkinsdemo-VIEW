@@ -132,7 +132,7 @@ class Organization extends React.Component {
 
   render = () => {
     return (
-      <div id="organization">
+      <div style={{height:"inherit"}}>
         {this.state.visible && (
           <Dialog
             title={"Add Users to the Organization"}
