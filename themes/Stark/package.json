@@ -1,5 +1,5 @@
 {
-  "name": "OxzionTheme",
+  "name": "Stark",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint *.js",

@@ -55,6 +55,7 @@
     position: relative;
     box-sizing: border-box;
     padding: $base-margin / 1.5;
+    height:100%;
   }
 
   .osjs-panel-item--icon {
@@ -127,7 +128,7 @@
   position: absolute;
   top: 0;
   right: 25px;
-  font-size: 36px;
+  font-size: 48px;
   margin-left: 50px;
 }
 
@@ -173,13 +174,14 @@
   margin-bottom: 5px;
   margin-top: 5px;
   align-self: stretch;
+  padding:10px;
   background-color: rgba(0, 0, 0, 0.85);
 }
 
 .appmenu .app-bar .app {
-  margin: 5px 10px 0;
+  margin: 5px 10px;
   flex-direction: unset;
-  min-height: 36px;
+  min-height: 48px;
   max-width: unset;
   display: flex;
 }
@@ -195,7 +197,7 @@
   height: 48px;
   line-height: 48px !important;
   text-align: center;
-  background-size: 30px;
+  background-size: 45px;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
@@ -208,7 +210,7 @@
   box-sizing: border-box;
   color: #fff;
   font-size: 16px;
-  line-height: 36px;
+  line-height: 48px;
   display: inline-block;
   padding-left: 14px;
   width: 100%;
@@ -236,6 +238,7 @@
   position: relative;
   transition: all .3s ease-in-out;
   background: rgba(0, 0, 0, .5);
+  padding: 0 15px;
   display: flex;
 }
 
@@ -245,7 +248,7 @@
   white-space: nowrap;
   box-shadow: none;
   width: 100%;
-  height: 36px;
+  height: 48px;
   position: relative;
   top: 0;
   left: 0;
@@ -266,13 +269,13 @@
   background-repeat: no-repeat;
   box-sizing: border-box;
   position: relative;
-  max-width: 36px;
-  min-width: 36px;
+  max-width: 48px;
+  min-width: 48px;
   font-size: 25px;
   display: flex;
   color: #fff !important;
-  height: 36px;
-  line-height: 36px !important;
+  height: 48px;
+  line-height: 48px !important;
   text-align: center;
   background-size: 30px;
   background-position: center;
@@ -292,7 +295,7 @@
 }
 
 .osjs-panel-logout img {
-  max-width: 36px;
+  max-width: 48px;
 }
 
 .osjs-panel-item[data-name=logout]:hover {

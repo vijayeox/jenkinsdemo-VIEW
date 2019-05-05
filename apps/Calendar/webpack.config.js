@@ -70,6 +70,12 @@ module.exports = {
         use: {
           loader: 'babel-loader'
         }
+      },
+      {
+        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        use: [{
+          loader: 'file-loader'
+        }]
       }
     ]
   }

@@ -1,7 +1,7 @@
 {
-  "name": "FileManager",
+  "name": "DocumentManager",
   "version": "1.3.2",
-  "description": "Filemanager Application",
+  "description": "Document Manager",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint *.js",

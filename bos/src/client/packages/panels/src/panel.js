@@ -31,7 +31,6 @@
 import PanelItem from './panel-item';
 import * as languages from './locales';
 import {EventEmitter} from '@osjs/event-emitter';
-import 'materialize-css/dist/css/materialize.min.css';
 /**
  * Panel
  *

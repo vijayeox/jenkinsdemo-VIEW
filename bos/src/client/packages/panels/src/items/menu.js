@@ -61,19 +61,11 @@ const makeCategory = (category, core) => {
   categoryDiv = makeAppList(category, categoryDiv, core);
   return categoryDiv;
 };
-const getRandomColor = () => {
-  let letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
+
 const makeAppList = (category, categoryDiv, core) => {
   if (category.items) {
     let appListDiv = document.createElement('div');
     appListDiv.classList.add('applist');
-    let categoryColor = getRandomColor();
     for (let i = 0; i < category.items.length; i++) {
       const appItem = category.items[i];
       let appDiv = document.createElement('div');
@@ -83,8 +75,6 @@ const makeAppList = (category, categoryDiv, core) => {
       icon.classList.add('osjs-icon');
       icon.setAttribute('data-icon', appItem.icon);
       icon.style['background-image'] = 'url(' + appItem.icon + ')';
-      icon.style['background-size'] = '28px';
-      icon.style['background-color'] = categoryColor;
       captionDiv.classList.add('appcaption');
       let appLabel = document.createTextNode(appItem.label);
       captionDiv.append(appLabel);

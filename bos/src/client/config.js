@@ -35,9 +35,6 @@
 
 module.exports = {
   development:"production",
-  search:{
-    enabled:false
-  },
   auth: {
     ui: {
       title: 'Welcome to OX Zion',
@@ -52,12 +49,11 @@ module.exports = {
   },
   desktop: {
     settings: {
-      theme: "OxzionTheme",
+      theme: "Vision",
       icons: "oxzioniconpack",
       font: "Century Gothic",
       background: {
-        src: require('./assets/images/OX_UnderConstruction.png'),
-        color: '#452767',
+        src: undefined,
         style: 'cover'
       },
       panels: [{

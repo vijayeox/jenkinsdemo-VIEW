@@ -1,13 +1,13 @@
 {
   "type": "theme",
-  "name": "OxzionTheme",
+  "name": "Stark",
   "internal": true,
   "category": null,
   "title": {
-    "en_EN": "OxzionTheme"
+    "en_EN": "Stark"
   },
   "description": {
-    "en_EN": "OxzionTheme"
+    "en_EN": "Stark"
   },
   "files": [
     "main.js",

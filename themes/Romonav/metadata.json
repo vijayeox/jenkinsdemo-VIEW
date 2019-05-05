@@ -1,0 +1,16 @@
+{
+  "type": "theme",
+  "name": "Romonav",
+  "internal": true,
+  "category": null,
+  "title": {
+    "en_EN": "Romonav"
+  },
+  "description": {
+    "en_EN": "Romonav"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

@@ -35,7 +35,8 @@
 
   & > div {
     flex: 1 1;
-    padding: $base-margin / 1.5 $base-margin / 3;
+    margin: 0 2px;
+    padding: 0 .333em;
 
     & > img {
       margin-right: 0;
@@ -45,6 +46,7 @@
 }
 
 .badge {
+color:white;
   position: absolute;
     right: unset;
     left: unset;
@@ -76,17 +78,36 @@
 .osjs-panel-item[data-name=profile] {
   display: flex;
   padding: 0;
+  height: auto;
 
 
   & > div {
     flex: 1 1;
-    padding: $base-margin / 1.5 $base-margin / 3;
+    padding: 0 $base-margin / 3;
 
     & > img {
       margin-right: 0;
       vertical-align: middle;
-      height:30px;
-      width:30px;
+      height:2.8em;
+      width:2.8em;
+    }
+  }
+}
+.osjs-panel-item[data-name=logout] {
+  display: flex;
+  padding: 0;
+  height: auto;
+
+
+  & > div {
+    flex: 1 1;
+    padding: 0 $base-margin / 3;
+
+    & > img {
+      margin-right: 0;
+      vertical-align: middle;
+      height:2.8em;
+      width:2.8em;
     }
   }
 }

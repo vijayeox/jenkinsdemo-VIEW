@@ -29,125 +29,138 @@
  */
 import {name as applicationName} from './metadata.json';
 const baseUrl = process.env.SERVER;
+const trayOptions = {};
+let tray = null;
 //import {icon} from './metadata.json';
-const createIframe = (bus, proc, win, cb) => {
+const createIframe = (core, proc, win, cb) => {
   const iframe = document.createElement('iframe');
   iframe.style.width = '100%';
   iframe.style.height = '100%';
   iframe.setAttribute('border', '0');
-
   iframe.addEventListener('load', () => {
-   
     const ref = iframe.contentWindow;
-    // win.maximize(); // Maximize
-    
-    // This will proxy the window focus events to iframe
     win.on('focus', () => ref.focus());
     win.on('blur', () => ref.blur());
-
-    // Create message sending wrapper
-    const sendMessage = msg => ref.postMessage(msg, window.location.href);
-
-    // After connection is established, this handler will process
-    // all events coming from iframe.
-    proc.on('message', data => {
-      console.warn('[Application', 'Iframe sent', data);
-      bus.emit(data.method, sendMessage, ...data.args);
+    win.on('iframe:post', msg => ref.postMessage(msg, baseUrl));
+    win.on('iframe:get', msg => {
+      console.warn('Message from Iframe', msg);
+      switch(msg){
+        case 'Ping':
+        win.emit('iframe:post', 'Pong');
+        break;
+      }
     });
-
-    cb(sendMessage);
+    win.on('message', data => {
+      console.warn('[Application', 'Iframe sent', data);
+      win.emit(data.method, sendMessage, ...data.args);
+    });
   });
-
   return iframe;
 };
 
 // Creates the internal callback function when OS.js launches an application
 // Note the first argument is the 'name' taken from your metadata.json file
 OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) => {
-
   // Create a new Application instance
   const proc = core.make('osjs/application', {
     args,
     options,
     metadata 
   });
- 
+ // Chat Header Icons are interchanged purposefully. Do not change this.
+  const HeaderIcon = () => {
+    let parent = document.getElementsByClassName('osjs-window-header')[0];
+    if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
+      let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+    }
+  }
   const getEmails = async () => {
     let helper  = core.make('oxzion/restClient');
     let res = await helper.request('v1','/email',{},'get');
     return res;
   }
 
-  let result = [];
-  let res = getEmails().then(response => {
-    console.log(response);
-    result = response["data"];
-
-
-
-    let emails = [];
-    if(result.length != 0) {
-      console.log(result);
-      // console.log(result[0]);
-      // console.log(result[0]["email"]);
-      for(let i =0;i<result.length;i++){
-        emails.push(result[i]["email"]);
-      }
-    } else {
-      console.log('user has no emails.');
-    }
-    let user = core.getUser().username;
-    console.log(user);
-    console.log(emails);
-
-    let data = {
-      'username': user,
-      'emailList': emails
-    }
-
-    // Create  a new Window instance
-    proc.createWindow({
-      id: 'CalendarApplicationWindow',
+  let trayInitialized = false;
+  const createProcWindow = (data) => {
+      let win = proc.createWindow({
+      id: 'CalendarWindow',
       icon: proc.resource(proc.metadata.icon),
       title: metadata.title.en_EN,
-      attributes:{maximizable: true},
-      dimension: {width: 400, height: 400},
+      attributes: {
+            visibility: 'restricted',
+            closeable: false
+          },
+      dimension: {width: 640, height: 480},
       position: {left: 200, top: 400}
     })
-      .on('destroy', () => proc.destroy())
-      // .on('init', () => ref.maximize())
+      .on('close', () => {
+          console.log("close event");
+        })
       .render(($content, win) => {
-        win.maximize();
-        
-        // Create a new bus for our messaging
-        const bus = core.make('osjs/event-handler', 'CalendarApplicationWindow');
+        HeaderIcon();
+          // Context menu is hidden
+          win.$icon.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+            core.make('osjs/contextmenu').hide();
+          });
+          win.$icon.addEventListener('dblclick', (ev) =>{
+            ev.stopPropagation();
+            ev.preventDefault();
+          }); 
+        // console.log(maximize);
+        win.minimize();
         const user = core.make('osjs/auth').user();
         // Get path to iframe content
+        console.log(data);
         const src = proc.resource(baseUrl+'?userdata='+JSON.stringify(data));
-
         // Create DOM element
-        const iframe = createIframe(bus, proc, win, send => {
-          bus.on('yo', (send, args) => send({
-            method: 'yo',
-            args: ['OX-CALENDAR says hello']
-          }));
-
-          // Send the process ID to our iframe to establish communication
-          send({
-            method: 'init',
-            args: [proc.pid]
-          });
-        });
-
+        const iframe = createIframe(core, proc, win, send => {});
         // Finally set the source and attach
         iframe.src = src;
-
+        // Tray Icon
+        if (core.has('osjs/tray') && !trayInitialized) {
+          trayInitialized = true;
+          trayOptions.title = "Calendar";
+          trayOptions.icon = proc.resource(metadata.icon);
+          trayOptions.onclick = () => {
+            win.raise();
+            HeaderIcon();
+            win.focus();
+          }
+          tray = core.make('osjs/tray').create(trayOptions, (ev) => {
+            core.make('osjs/contextmenu').show({
+              position: ev
+            });
+          });
+        }
+        console.log($content);
         // Attach
         $content.appendChild(iframe);
       });
-
+    };
+    let result = [];
+    let res = getEmails().then(response => {
+      console.log(response);
+      result = response["data"];
+      let emails = [];
+      if(result.length != 0) {
+        console.log(result);
+        for(let i =0;i<result.length;i++){
+          emails.push(result[i]["email"]);
+        }
+      } else {
+        console.log('user has no emails.');
+      }
+      let user = core.getUser().username;
+      console.log(user);
+      console.log(emails);
+      let data = {
+        'username': user,
+        'emailList': emails
+      }
+      createProcWindow(data); 
+      return;
+    });
     return proc;
-  });
-  return res;
-  
 });

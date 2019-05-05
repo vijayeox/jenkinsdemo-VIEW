@@ -1,0 +1,16 @@
+{
+  "name": "DocumentManager",
+  "category": "office",
+  "icon": "icon.png",
+  "defaultAppforOrgs" : true,
+  "title": {
+    "en_EN": "Document Manager"
+  },
+  "description": {
+    "en_EN": "Document Manager"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
