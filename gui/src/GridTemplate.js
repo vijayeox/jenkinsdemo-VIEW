@@ -44,7 +44,17 @@ class GridTemplate extends React.Component {
                         title="ID"
                     />
                 );
-            } else {
+            } else if (this.props.config.column[i] == "logo") {
+                table.push(
+                    <GridColumn
+                        key={i}
+                        width="100px"
+                        title="Logo"
+                        cell={(props) => <LogoCell {...props} myProp={this.props} />}
+                    />
+                );
+            }
+            else {
                 table.push(
                     <GridColumn
                         field={this.props.config.column[i]}
@@ -60,7 +70,7 @@ class GridTemplate extends React.Component {
 
     render() {
         return (
-            <div style={{height:"90%", display:"flex"}}>
+            <div style={{ height: "90%", display: "flex" }}>
                 <DataLoader
                     ref={this.child}
                     args={this.core}
@@ -119,6 +129,17 @@ class AddButton extends React.Component {
         } else {
             return <div />;
         }
+    }
+}
+
+class LogoCell extends React.Component {
+    render() {
+        return (
+            <center>
+                <img src="https://image.flaticon.com/icons/svg/145/145812.svg" alt=""
+                    className="circle responsive-img" style={{ maxWidth: "60px", margin: "10px" }}></img>
+            </center>
+        );
     }
 }
 

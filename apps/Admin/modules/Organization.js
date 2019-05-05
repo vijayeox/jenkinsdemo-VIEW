@@ -190,7 +190,7 @@ class Organization extends React.Component {
           ref={this.child}
           config={{
             title: "organization",
-            column: ["id", "name", "state", "zip"]
+            column: ["logo", "name", "state", "zip"]
           }}
           manageGrid={{
             add: this.insert,

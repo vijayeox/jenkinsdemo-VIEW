@@ -32,7 +32,7 @@
     "@telerik/kendo-intl": "^1.4.4",
     "axios": "^0.18.0",
     "babel-upgrade": "0.0.24",
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "file-loader": "^3.0.1",
     "file-upload-with-preview": "^3.4.3",
     "filepond": "^4.4.0",

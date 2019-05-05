@@ -7,8 +7,10 @@
   @import "./node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
   @import "./node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
   @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
+  // @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
+  @import "./node_modules/materialize-css/dist/css/materialize.min.css";
 
-  background: #f06151;
+  background: #336666;
 
   .k-window-titlebar {
     display: none;
@@ -89,6 +91,10 @@
     -moz-outline-style: none;
   }
 
+  .moduleBtn{
+    width: 100%;
+  }
+
   #adminHeader {
     margin: auto;
     margin-bottom: 0px;
@@ -141,7 +147,7 @@
 
   .k-grid-content
   {
-     overflow-y: visible;
+     overflow-y: scroll;
   }
 
   .k-grid {
@@ -204,7 +210,7 @@
     text-align: center;
   }
 
-  .container {
+  .dashIcons {
     width: 90%;
     margin: auto;
     position: relative;

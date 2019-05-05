@@ -190,7 +190,7 @@ class Home extends React.Component {
           <div
             style={{ height: "100%", display: "flex", alignItems: "center" }}
           >
-            <div className="container">{this.createBlock()}</div>
+            <div className="dashIcons">{this.createBlock()}</div>
           </div>
         </div>
         <div id="componentsBox" style={{ height: "inherit" }} />
