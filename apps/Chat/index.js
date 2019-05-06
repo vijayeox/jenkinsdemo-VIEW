@@ -28,7 +28,6 @@
   * @licence Simplified BSD License
   */
   import {name as applicationName} from './metadata.json';
-    
   const baseUrl = process.env.SERVER;
 
   const trayOptions = {};
@@ -37,10 +36,17 @@
 
   const resetBadge = () => {
     if(trayOptions.count > 0){
-      trayOptions.count = undefined;
-      trayOptions.badge = '';
+      chatCount = "";
+      trayOptions.count = chatCount;
+      trayOptions.badge = "";
       tray.update(trayOptions);
     }
+  };
+
+  // To clear Client-side cookie
+  const clearClientCookie = () => {
+    document.cookie = 'MMUSERID=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+    document.cookie = `MMUSERID=;expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=${window.location.hostname};path=/`;
   };
 
   // Chat Header Icons are interchanged purposefully. Do not change this.
@@ -63,12 +69,10 @@
       const handleNotification = () => {
                
         if(win.state.focused == false || win.state.minimized == true){
-          
           chatCount++;
-          chatCount = chatCount > 0 ? (chatCount) : '';
+          chatCount = chatCount > 0 ? (chatCount) : "";
           trayOptions.badge = 'badgeCheck';
-          trayOptions.count= chatCount;
-          
+          trayOptions.count= chatCount;          
         }
         
         tray.update(trayOptions);
@@ -80,6 +84,10 @@
         resetBadge();
       });
 
+      core.on('osjs/core:logged-out', () => {
+        clearClientCookie();
+      });
+      
       win.on('blur', () => ref.blur());
       win.on('iframe:post', msg => ref.postMessage(msg, baseUrl));
       win.on('iframe:get', msg => {
@@ -107,7 +115,7 @@
     
     return iframe;
   };
-  
+
   const makeApiCall = function(core, params) {
     return (async () => {
       var caller = core.make("oxzion/restClient");
@@ -229,6 +237,7 @@
           // Attach
           $content.appendChild(iframe);
         })
+      
       }
       createProcWindow();  
       return proc;
