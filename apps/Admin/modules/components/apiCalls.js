@@ -8,6 +8,11 @@ export async function DeleteEntry(api,dataItem) {
 
 export async function GetData(api) {
     let response = await helper.request("v1", "/" + api , {}, "get");
+    return response;
+}
+
+export async function GetData2(api) {
+    let response = await helper.request("v1", "/" + api , {}, "get");
     return response.data;
 }
 

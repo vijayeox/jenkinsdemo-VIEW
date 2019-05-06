@@ -29,7 +29,7 @@ const register = (core, args, options, metadata) => {
       },
       position: {
         left: 150,
-        top: 60
+        top: 50
       }
     })
     .on("destroy", () => proc.destroy())

@@ -1,14 +1,8 @@
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Button } from "@progress/kendo-react-buttons";
-import {
-  MultiSelectComponent,
-  CheckBoxSelection,
-  Inject
-} from "@syncfusion/ej2-react-dropdowns";
-import { GridTemplate, Notification } from "@oxzion/gui";
-import { GetData, DeleteEntry } from "./components/apiCalls";
+import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { DeleteEntry } from "./components/apiCalls";
 
 import DialogContainer from "./dialog/DialogContainerOrg";
 
@@ -18,8 +12,6 @@ class Organization extends React.Component {
     this.core = this.props.args;
     this.state = {
       orgInEdit: undefined,
-      userList: [],
-      selectedUsers: [],
       orgToBeEdited: [],
       action: "",
       visible: false,
@@ -27,10 +19,8 @@ class Organization extends React.Component {
     };
 
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.captureSelectedUsers = this.captureSelectedUsers.bind(this);
     this.notif = React.createRef();
     this.child = React.createRef();
-    this.checkFields = { text: "userName", value: "userid" };
   }
 
   handler = serverResponse => {
@@ -54,53 +44,22 @@ class Organization extends React.Component {
   }
 
   addOrgUsers = dataItem => {
-    let loader = this.core.make("oxzion/splash");
-    loader.show();
-
     this.setState({
       orgToBeEdited: dataItem.id,
       visible: !this.state.visible
     });
-
-    GetData("user").then(response => {
-      var tempUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName =
-          response.data[i].firstname + " " + response.data[i].lastname;
-        var userid = response.data[i].id;
-        tempUsers.push({ userid: userid, userName: userName });
-      }
-      this.setState({
-        userList: tempUsers
-      });
-
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
-    });
   };
 
-  captureSelectedUsers(e) {
-    this.setState({
-      selectedUsers: e.value
-    });
-  }
-
-  saveAndSend = () => {
-    this.sendTheData();
-    this.toggleDialog();
-  };
-
-  sendTheData = () => {
-    var temp1 = this.state.selectedUsers;
-    for (var i = 0; i <= temp1.length - 1; i++) {
-      this.pushOrgUsers(this.state.orgToBeEdited, temp1[i]);
+  sendTheData = selectedUsers => {
+    for (var i = 0; i <= selectedUsers.length - 1; i++) {
+      this.pushOrgUsers(this.state.orgToBeEdited, selectedUsers[i]);
     }
+    this.toggleDialog();
   };
 
   toggleDialog() {
     this.setState({
       visible: !this.state.visible,
-      selectedUsers: [],
       orgToBeEdited: []
     });
   }
@@ -132,41 +91,20 @@ class Organization extends React.Component {
 
   render = () => {
     return (
-      <div style={{height:"inherit"}}>
+      <div style={{ height: "inherit" }}>
         {this.state.visible && (
-          <Dialog
-            title={"Add Users to the Organization"}
-            onClose={this.toggleDialog}
-          >
-            <div>
-              <div className="control-section col-lg-8">
-                <div id="multigroup">
-                  <MultiSelectComponent
-                    id="checkbox"
-                    dataSource={this.state.userList}
-                    value={this.state.selectedUsers}
-                    change={this.captureSelectedUsers}
-                    fields={this.checkFields}
-                    mode="CheckBox"
-                    placeholder="Click to add Users"
-                    showDropDownIcon={true}
-                    filterBarPlaceholder="Search Users"
-                    popupHeight="350px"
-                  >
-                    <Inject services={[CheckBoxSelection]} />
-                  </MultiSelectComponent>
-                </div>
-              </div>
-            </div>
-            <DialogActionsBar>
-              <button className="k-button" onClick={this.saveAndSend}>
-                Save
-              </button>
-              <button className="k-button" onClick={this.toggleDialog}>
-                Cancel
-              </button>
-            </DialogActionsBar>
-          </Dialog>
+          <MultiSelect
+            args={this.core}
+            config={{
+              dataItem: this.state.orgToBeEdited,
+              mainList: "user",
+              subList: "group"
+            }}
+            manage={{
+              postSelected: this.sendTheData,
+              closeDialog: this.toggleDialog
+            }}
+          />
         )}
         <Notification ref={this.notif} />
         <div style={{ paddingTop: "12px" }} className="row">
