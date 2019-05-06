@@ -92,14 +92,13 @@ export default class Auth {
    * Run the shutdown procedure
    */
   shutdown(reload) {
+    this.core.emit('osjs/core:logged-out');
     try {
       this.core.destroy();
     } catch (e) {
       console.warn('Exception on destruction', e);
     }
-
-    this.core.emit('osjs/core:logged-out');
-
+    
     if (reload) {
       setTimeout(() => {
         window.location.reload();
