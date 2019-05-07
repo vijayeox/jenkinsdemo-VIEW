@@ -143,11 +143,17 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
     let res = getEmails().then(response => {
       console.log(response);
       result = response["data"];
+
       let emails = [];
+      let defEmail;
       if(result.length != 0) {
         console.log(result);
         for(let i =0;i<result.length;i++){
-          emails.push(result[i]["email"]);
+          if(result[i]["isdefault"] == 1){
+            defEmail = result[i]["email"];
+          } else{
+            emails.push(result[i]["email"]);
+          }
         }
       } else {
         console.log('user has no emails.');
@@ -155,10 +161,14 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
       let user = core.getUser().username;
       console.log(user);
       console.log(emails);
+
       let data = {
         'username': user,
+        'defaultEmail': defEmail,
         'emailList': emails
       }
+      console.log(data);
+
       createProcWindow(data); 
       return;
     });
