@@ -45,7 +45,7 @@ class Home extends React.Component {
         $(".DashBG").fadeOut(), $("#componentsBox").show();
       });
 
-      $(document).on("click", ".goBack", function() {
+      $('#componentsBox').on("click", ".goBack", function() {
         $("#componentsBox").hide(), $(".DashBG").show();
         ReactDOM.render(<div />, document.getElementById("componentsBox"));
       });

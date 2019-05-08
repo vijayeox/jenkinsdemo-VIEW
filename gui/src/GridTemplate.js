@@ -17,7 +17,7 @@ class GridTemplate extends React.Component {
         this.core = this.props.args;
         this.state = {
             dataState: { take: 10, skip: 0 },
-            gridData: undefined
+            gridData: []
         };
         this.title = this.capitalizeFirstLetter(this.props.config.title);
     }
@@ -70,7 +70,7 @@ class GridTemplate extends React.Component {
 
     render() {
         return (
-            <div style={{ height: "90%", display: "flex" }}>
+            <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
                 <DataLoader
                     ref={this.child}
                     args={this.core}
@@ -135,10 +135,12 @@ class AddButton extends React.Component {
 class LogoCell extends React.Component {
     render() {
         return (
-            <center>
-                <img src="https://image.flaticon.com/icons/svg/145/145812.svg" alt=""
-                    className="circle responsive-img" style={{ maxWidth: "60px", margin: "10px" }}></img>
-            </center>
+            <div class="text-center">
+                <img src="https://image.flaticon.com/icons/svg/145/145812.svg" alt="Organization Logo"
+                    className="circle" style={{ maxWidth: "60px", margin: "10px" }}></img>
+            </div>
+
+
         );
     }
 }

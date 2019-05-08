@@ -1,11 +1,9 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import { Button } from "@progress/kendo-react-buttons";
 import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
+import { TitleBar } from "./components/titlebar";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
-
 class Group extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +26,7 @@ class Group extends React.Component {
     } else {
       this.notif.current.failNotification();
     }
-    this.child.current.child.current.refresh();
+    this.child.current.child.current.refresh("group");
   };
 
   async pushGroupUsers(dataItem, dataObject) {
@@ -73,6 +71,14 @@ class Group extends React.Component {
       groupInEdit: this.cloneProduct(dataItem),
       action: "edit"
     });
+    this.inputTemplate =
+      React.createElement(DialogContainer, {
+        args: this.core,
+        dataItem: dataItem || null,
+        cancel: this.cancel,
+        formAction: this.state.action,
+        action: this.handler
+      });
   };
 
   cloneProduct(product) {
@@ -91,6 +97,14 @@ class Group extends React.Component {
 
   insert = () => {
     this.setState({ groupInEdit: {}, action: "add" });
+    this.inputTemplate =
+      React.createElement(DialogContainer, {
+        args: this.core,
+        dataItem: [],
+        cancel: this.cancel,
+        formAction: this.state.action,
+        action: this.handler
+      });
   };
 
   render() {
@@ -100,7 +114,7 @@ class Group extends React.Component {
           <MultiSelect
             args={this.core}
             config={{
-              dataItem: this.state.orgToBeEdited,
+              dataItem: this.state.groupToBeEdited,
               mainList: "user",
               subList: "group"
             }}
@@ -111,22 +125,7 @@ class Group extends React.Component {
           />
         )}
         <Notification ref={this.notif} />
-        <div style={{ paddingTop: "12px" }} className="row">
-          <div className="col s3">
-            <Button
-              className="goBack"
-              primary={true}
-              style={{ width: "45px", height: "45px" }}
-            >
-              <FaArrowLeft />
-            </Button>
-          </div>
-          <center>
-            <div className="col s6" id="pageTitle">
-              Manage Groups
-            </div>
-          </center>
-        </div>
+        <TitleBar title="Manage Groups" />
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -141,16 +140,7 @@ class Group extends React.Component {
             addUsers: this.addGroupUsers
           }}
           permission={this.state.permission}
-        />
-        {this.state.groupInEdit && (
-          <DialogContainer
-            args={this.core}
-            dataItem={this.state.groupInEdit}
-            cancel={this.cancel}
-            formAction={this.state.action}
-            action={this.handler}
-          />
-        )}
+        /> {this.state.groupInEdit && this.inputTemplate}
       </div>
     );
   }

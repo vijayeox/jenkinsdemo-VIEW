@@ -23,5 +23,5 @@ export async function ExistingUsers(api, selectedEntity) {
     {},
     "get"
   );
-  return response;
+  return response.data;
 }

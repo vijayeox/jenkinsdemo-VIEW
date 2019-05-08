@@ -3,6 +3,7 @@ import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Validator } from "@progress/kendo-validator-react-wrapper";
 import { DropDownList } from '@progress/kendo-react-dropdowns';
 import { filterBy } from '@progress/kendo-data-query';
+import TextareaAutosize from 'react-textarea-autosize';
 import "@progress/kendo-ui";
 
 import withValueField from './withValueField.js';
@@ -15,7 +16,7 @@ export default class DialogContainer extends React.Component {
     this.masterUserList = [];
     this.state = {
       usersList: [],
-      groupsList: this.props.groupsList,
+      groupsList: [],
       groupInEdit: this.props.dataItem || null,
       visibleDialog: false,
       show: false
@@ -34,6 +35,17 @@ export default class DialogContainer extends React.Component {
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     });
+    this.getGroupsData().then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var groupName = response.data[i].name;
+        var groupid = response.data[i].id;
+        tempUsers.push({ id: groupid, name: groupName });
+      }
+      this.setState({
+        groupsList: tempUsers
+      });
+    })
   }
 
   componentDidMount() {
@@ -46,6 +58,12 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let userData = await helper.request("v1", "/user", {}, "get");
     return userData.data;
+  }
+
+  async getGroupsData() {
+    let helper = this.core.make("oxzion/restClient");
+    let userData = await helper.request("v1", "/group", {}, "get");
+    return userData;
   }
 
   async pushData() {
@@ -130,7 +148,7 @@ export default class DialogContainer extends React.Component {
         this.props.action(addResponse);
       });
     }
-    this.props.save();
+    this.props.cancel();
   };
 
   filterChange = (event) => {
@@ -148,103 +166,92 @@ export default class DialogContainer extends React.Component {
     return (
       <Validator>
         <Dialog onClose={this.props.cancel}>
-          <div className="row">
-            <form className="col s12" onSubmit={this.submitData} id="groupForm">
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="groupName"
-                    type="text"
-                    className="validate"
-                    name="name"
-                    value={this.state.groupInEdit.name || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="groupName">Group Name</label>
+          <div>
+            <form id="groupForm">
+              <div className="form-group">
+                <label>Group Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  value={this.state.groupInEdit.name || ""}
+                  onChange={this.onDialogInputChange}
+                  placeholder="Enter Group Name"
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <TextareaAutosize
+                  type="text"
+                  className="form-control"
+                  name="description"
+                  value={this.state.groupInEdit.description || ""}
+                  onChange={this.onDialogInputChange}
+                  placeholder="Enter Group Description"
+                />
+              </div>
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col">
+                    <label>Group Manager</label>
+                    <div>
+                      <DropDownListWithValueField
+                        data={this.state.usersList}
+                        textField="name"
+                        value={this.state.groupInEdit.manager_id}
+                        valueField="id"
+                        onChange={this.managerOnChange}
+                        filterable={true}
+                        onFilterChange={this.filterChange}
+                        style={{ width: "210px" }}
+                        popupSettings={{ height: "160px" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="col">
+                    <label>Parent Group</label>
+                    <div>
+                      <DropDownListWithValueField
+                        data={this.state.groupsList}
+                        textField="name"
+                        onChange={this.parentGroupOnChange}
+                        style={{ width: "210px" }}
+                        value={this.state.groupInEdit.parent_id}
+                        valueField="id"
+                        popupSettings={{ height: "160px" }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <textarea
-                    id="groupDescription"
-                    type="text"
-                    className="materialize-textarea validate"
-                    name="description"
-                    value={this.state.groupInEdit.description || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="groupDescription">Description</label>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <p style={{ marginTop: "0px" }}><label>Group Manager</label> </p>
-                  <DropDownListWithValueField
-                    data={this.state.usersList}
-                    textField="name"
-                    value={this.state.groupInEdit.manager_id}
-                    valueField="id"
-                    onChange={this.managerOnChange}
-                    filterable={true}
-                    onFilterChange={this.filterChange}
-                    style={{ width: "200px" }}
-                    popupSettings={{ height: "170px" }}
-                  />
-                </div>
-              </div>
-
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <p style={{ marginTop: "0px" }}><label>Parent Group</label> </p>
-                  <DropDownListWithValueField
-                    data={this.state.groupsList}
-                    textField="name"
-                    onChange={this.parentGroupOnChange}
-                    style={{ width: "200px" }}
-                    value={this.state.groupInEdit.parent_id}
-                    valueField="id"
-                    popupSettings={{ height: "170px" }}
-                  />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="input-field col s6">
-                  <input
-                    id="organizationManager_id"
-                    type="number"
-                    className="validate"
-                    name="org_id"
-                    value={this.state.groupInEdit.org_id || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="organizationManager_id">Organization ID</label>
-                </div>
+              <div className="form-group">
+                <label>Organization ID</label>
+                <input
+                  type="number"
+                  className="form-control validate"
+                  name="org_id"
+                  value={this.state.groupInEdit.org_id || ""}
+                  onChange={this.onDialogInputChange}
+                  placeholder="Enter Organization ID"
+                />
               </div>
             </form>
           </div>
 
           <DialogActionsBar args={this.core}>
-            <button className="k-button" onClick={this.props.cancel}>
-              Cancel
-            </button>
-            <button
+          <button
               className="k-button k-primary"
-              type="submit"
+              onClick={this.handleSubmit}
               form="groupForm"
             >
               Save
             </button>
+            <button className="k-button" onClick={this.props.cancel}>
+              Cancel
+            </button>
           </DialogActionsBar>
         </Dialog>
-      </Validator>
+      </Validator >
     );
   }
 }

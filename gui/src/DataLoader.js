@@ -16,10 +16,16 @@ export class DataLoader extends React.Component {
     return data;
   }
 
-  refresh = () => {
-    this.getData(this.url).then(response => {
-      this.props.onDataRecieved(response.data.data);
-    });
+  refresh = (temp) => {
+    if (temp == "group" || temp == "announcement") {
+      this.getData(this.url).then(response => {
+        this.props.onDataRecieved(response.data);
+      });
+    } else {
+      this.getData(this.url).then(response => {
+        this.props.onDataRecieved(response.data.data);
+      });
+    }
   };
 
   requestDataIfNeeded = () => {
@@ -30,7 +36,7 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState);
-    if (this.url == "group") {
+    if (this.url == "group" || this.url == "announcement/a") {
       this.getData(this.url).then(response => {
         this.lastSuccess = this.pending;
         this.pending = "";

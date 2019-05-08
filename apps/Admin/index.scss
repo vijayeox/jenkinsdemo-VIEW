@@ -7,8 +7,7 @@
   @import "./node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
   @import "./node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
   @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
-  // @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
-  @import "./node_modules/materialize-css/dist/css/materialize.min.css";
+  @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
 
   background: #336666;
 
@@ -23,11 +22,11 @@
     width: 100% !important;
   }
 
-  .k-filtercell > .k-filtercell-wrapper > input::placeholder {
+  .k-filtercell>.k-filtercell-wrapper>input::placeholder {
     font-size: 1em;
   }
 
-  .k-filtercell > .k-filtercell-wrapper > input {
+  .k-filtercell>.k-filtercell-wrapper>input {
     font-size: 1em;
     margin-bottom: 0px;
     height: 25px;
@@ -64,7 +63,7 @@
     width: 1px;
   }
 
-  [type="file"] + .btn-upload {
+  [type="file"]+.btn-upload {
     background-color: #000;
     border-radius: 4rem;
     color: #fff;
@@ -80,18 +79,18 @@
     transition: background-color 0.3s;
   }
 
-  [type="file"]:focus + .btn-upload,
-  [type="file"] + label:hover {
+  [type="file"]:focus+.btn-upload,
+  [type="file"]+label:hover {
     background-color: #f06151;
   }
 
-  [type="file"]:focus + .btn-upload {
+  [type="file"]:focus+.btn-upload {
     outline: 0;
     outline-style: none;
     -moz-outline-style: none;
   }
 
-  .moduleBtn{
+  .moduleBtn {
     width: 100%;
   }
 
@@ -145,9 +144,8 @@
   }
 
 
-  .k-grid-content
-  {
-     overflow-y: scroll;
+  .k-grid-content {
+    overflow-y: scroll;
   }
 
   .k-grid {
@@ -171,15 +169,15 @@
 
   //Not working request test
 
-  .k-dropdown-wrap > .k-input {
+  .k-dropdown-wrap>.k-input {
     margin: auto;
   }
 
-  .k-list > li {
+  .k-list>li {
     font-size: 2.13em !important;
   }
 
-  .k-list-filter > .k-icon {
+  .k-list-filter>.k-icon {
     top: 43% !important;
   }
 
@@ -187,7 +185,7 @@
     padding: 0px !important;
   }
 
-  .k-list-filter > .k-textbox {
+  .k-list-filter>.k-textbox {
     height: 27px;
     margin: 0px;
   }
@@ -221,6 +219,8 @@
     font-size: 25px;
     color: #183651;
     padding-top: 5px;
+    font-family: "Century Gothic", "Futura", "Didact Gothic", san-serif;
+    font-weight: 500;
   }
 
   .block {
@@ -262,7 +262,7 @@
     float: right;
   }
 
-  .k-widget.k-state-invalid > .k-picker-wrap {
+  .k-widget.k-state-invalid>.k-picker-wrap {
     border-color: #949494;
     color: #9e9e9e;
   }

@@ -201,11 +201,11 @@ export default class DialogContainer extends React.Component {
           </div>
 
           <DialogActionsBar args={this.core}>
+            <Button className="k-button k-primary" primary={true} type="submit" form="organizationForm">
+              Submit
+            </Button>
             <Button onClick={this.props.cancel}>
               Cancel
-            </Button>
-            <Button primary={true} type="submit" form="organizationForm">
-              Submit
             </Button>
           </DialogActionsBar>
         </Dialog>

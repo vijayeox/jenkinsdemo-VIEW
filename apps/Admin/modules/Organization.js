@@ -1,9 +1,7 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import { Button } from "@progress/kendo-react-buttons";
+import { TitleBar } from "./components/titlebar";
 import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
-
 import DialogContainer from "./dialog/DialogContainerOrg";
 
 class Organization extends React.Component {
@@ -66,13 +64,13 @@ class Organization extends React.Component {
 
   edit = dataItem => {
     this.setState({
-      orgInEdit: this.cloneProduct(dataItem),
+      orgInEdit: this.cloneItem(dataItem),
       action: "edit"
     });
   };
 
-  cloneProduct(product) {
-    return Object.assign({}, product);
+  cloneItem(item) {
+    return Object.assign({}, item);
   }
 
   remove = dataItem => {
@@ -107,22 +105,7 @@ class Organization extends React.Component {
           />
         )}
         <Notification ref={this.notif} />
-        <div style={{ paddingTop: "12px" }} className="row">
-          <div className="col s3">
-            <Button
-              className="goBack"
-              primary={true}
-              style={{ width: "45px", height: "45px" }}
-            >
-              <FaArrowLeft />
-            </Button>
-          </div>
-          <center>
-            <div className="col s6" id="pageTitle">
-              Manage Organizations
-            </div>
-          </center>
-        </div>
+        <TitleBar title="Manage Organizations" />
         <GridTemplate
           args={this.core}
           ref={this.child}

@@ -1,10 +1,7 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import { Button } from '@progress/kendo-react-buttons';
-import { GridTemplate } from "@oxzion/gui";
-import { Notification } from "@oxzion/gui";
+import { TitleBar } from "./components/titlebar";
+import { GridTemplate, Notification } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
-
 import DialogContainer from "./dialog/DialogContainerUser";
 
 class User extends React.Component {
@@ -15,7 +12,7 @@ class User extends React.Component {
       userInEdit: undefined,
       products: [],
       action: "",
-      permission:"15"
+      permission: "15"
     };
     this.notif = React.createRef();
     this.child = React.createRef();
@@ -24,17 +21,10 @@ class User extends React.Component {
   handler = serverResponse => {
     if (serverResponse == "success") {
       this.notif.current.successNotification();
-    } else {      
-      this.notif.current.failNotification();      
+    } else {
+      this.notif.current.failNotification();
     }
     this.child.current.child.current.refresh();
-
-  }
-
-  async deleteUserData(dataItem) {
-    let helper = this.core.make("oxzion/restClient");
-    let delUser = helper.request("v1", "/user/" + dataItem, {}, "delete");
-    return delUser;
   }
 
   edit = dataItem => {
@@ -48,15 +38,6 @@ class User extends React.Component {
     DeleteEntry("user", dataItem.id).then(response => {
       this.handler(response.status);
     });
-
-    const products = this.state.products;
-    const index = products.findIndex(p => p.id === dataItem.id);
-    if (index !== -1) {
-      products.splice(index, 1);
-      this.setState({
-        products: products
-      });
-    }
   };
 
   save = () => {
@@ -86,21 +67,9 @@ class User extends React.Component {
 
   render() {
     return (
-      <div style={{height:"inherit"}}>
+      <div style={{ height: "inherit" }}>
         <Notification ref={this.notif} />
-        <div style={{ paddingTop: '12px' }} className="row">
-          <div className="col s3">
-            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
-              <FaArrowLeft />
-            </Button>
-          </div>
-          <center>
-            <div className="col s6" id="pageTitle">
-              Manage Users
-            </div>
-          </center>
-        </div>
-
+        <TitleBar title="Manage Users" />
         <GridTemplate args={this.core} ref={this.child}
           config={{ "title": "user", "column": ["id", "name", "designation", "country"] }}
           manageGrid={{

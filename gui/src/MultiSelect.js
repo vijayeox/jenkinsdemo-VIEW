@@ -22,7 +22,7 @@ class MultiSelect extends React.Component {
   componentDidMount() {
     let loader = this.core.make("oxzion/splash");
     loader.show();
-
+    
     ExistingUsers(this.props.config.subList, this.props.config.dataItem).then(
       response => {
         var ExistingUsers = [];
@@ -66,8 +66,8 @@ class MultiSelect extends React.Component {
         onClose={this.props.manage.toggleDialog}
       >
         <div>
-          <div className="control-section col-lg-8">
-            <div id="multigroup">
+          <div className="justify-content-center col-12">
+            <div style={{margin:"auto", width:"85%", paddingTop:"15px"}}>
               <MultiSelectComponent
                 id="checkbox"
                 dataSource={this.state.userList}
@@ -86,7 +86,7 @@ class MultiSelect extends React.Component {
           </div>
         </div>
         <DialogActionsBar>
-          <button className="k-button" onClick={()=>this.props.manage.postSelected(this.state.selectedUsers)}>
+          <button className="k-button k-primary" onClick={()=>this.props.manage.postSelected(this.state.selectedUsers)}>
             Save
           </button>
           <button className="k-button" onClick={this.props.manage.closeDialog}>

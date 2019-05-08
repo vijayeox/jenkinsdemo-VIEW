@@ -19,7 +19,9 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     path.resolve(__dirname, 'index.js')
-  ],
+  ], externals: {
+    osjs: "OSjs"
+  },
   optimization: {
     minimize,
   },
