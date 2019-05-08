@@ -134,9 +134,10 @@
             // Create a new bus for our messaging
             const profile = core.make("oxzion/profile");
             const details = profile.get();
+            const defaultFlag = details.key.authRequired;
             const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
             const src = proc.resource(
-              baseUrl + "/oxindex.php" + suffix + "&email=" + details.key.email
+              baseUrl + "/oxindex.php" + suffix + "&email=" + details.key.email + "&authRequired=" + defaultFlag
             );
             // Create DOM element
             const iframe = createIframe(proc, win);
