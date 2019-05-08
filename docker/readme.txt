@@ -12,7 +12,7 @@ $ cd ..
 
 TO RUN THE IMAGE CONTAINER
 
-$ docker run -t -v ${PWD}:/app -p 8081:8081 view ./build.sh
+$ docker run -it -v ${PWD}:/app -p 8081:8081 view ./build.sh
 
 TO RUN INTO CONTAINER SHELL
 
