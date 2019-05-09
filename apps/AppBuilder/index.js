@@ -1,4 +1,3 @@
-import './index.scss';
 import osjs from "osjs";
 import {
   name as applicationName
@@ -9,6 +8,7 @@ import {
   icon
 } from "./metadata.json";
 import App from "./App";
+import 'sass-loader!./index.scss';
 
 // Our launcher
 const register = (core, args, options, metadata) => {
@@ -20,8 +20,7 @@ const register = (core, args, options, metadata) => {
   });
 
   // Create  a new Window instance
-  proc
-    .createWindow({
+  proc.createWindow({
       id: "AppBuilderWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon),
@@ -35,7 +34,7 @@ const register = (core, args, options, metadata) => {
       }
     })
     .on("destroy", () => proc.destroy())
-    .render($content => ReactDOM.render(<App args={core} />, $content));
+    .render($content => ReactDOM.render(<App core={core} proc={proc} />, $content));
 
   return proc;
 };

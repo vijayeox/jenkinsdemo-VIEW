@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2000"
+   height="2000"
+   viewBox="0 0 2000 2000"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r"
+   sodipodi:docname="manual-task.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.2121582"
+     inkscape:cx="1938.1556"
+     inkscape:cy="1279.0523"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     showguides="false"
+     inkscape:window-width="1878"
+     inkscape:window-height="1028"
+     inkscape:window-x="40"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4008"
+       empspacing="100"
+       dotted="false" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="https://github.com/bpmn-io/bpmn-font/blob/master/LICENSE" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jörg Dotzki</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>BPMN</rdf:li>
+            <rdf:li>bpmn-io</rdf:li>
+            <rdf:li>bpmn.io</rdf:li>
+            <rdf:li>Font</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,947.63784)">
+    <rect
+       style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:119.99999237;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4187"
+       width="1800"
+       height="1460"
+       x="100"
+       y="-677.63782"
+       rx="329.65115"
+       ry="328.5" />
+    <g
+       id="layer1-9"
+       inkscape:label="Ebene 1"
+       transform="matrix(0.62376697,0,0,0.62376697,123.3598,-185.77569)">
+      <path
+         sodipodi:nodetypes="cccccczcccccccssccccccccccccc"
+         inkscape:connector-curvature="0"
+         d="m 1057.4944,449.6932 514.0738,0 c 51.1303,0 74.4288,-29.4777 83.6678,-74.92709 14.3644,-70.36824 -21.1355,-136.96644 -84.6687,-137.12313 -156.1118,-0.78361 -513.0744,-0.31367 -513.0744,-0.31367 l 0,0.35594 c 0,0 545.6634,0.43094 608.5006,0 62.8374,-0.43094 85.428,-54.3215 85.6178,-114.65949 0.1911,-60.181317 -30.311,-113.413581 -85.428,-113.491915 -187.8149,-0.156714 -608.6889,-1.01868 -608.6889,-1.01868 l 0,-0.311387 c 0,0 319.6907,0.746186 457.1982,0.746186 56.1926,-0.156713 85.681,-48.598177 85.4912,-109.484714 -0.3798,-59.63272 -31.1337,-101.7198 -86.1241,-101.7198 -219.7715,-0.39189 -687.56108,3.03638 -701.33223,-0.23504 -3.64636,-0.86624 -6.76556,-7.96935 -4.36633,-10.8922 22.53134,-27.4486 129.1545,-127.41505 152.8213,-158.05422 29.6783,-38.16189 32.8423,-91.29067 10.2513,-125.69118 -26.1979,-40.0426 -61.57147,-39.18065 -93.65441,-18.49333 -92.45207,59.86787 -417.6481,285.46933 -489.34433,334.68008 -56.95202,39.10217 -95.93251,98.186397 -119.09297,171.6106983 C 245.9284,65.113256 248.33165,151.80598 248.58476,227.73787 c 0.2529,56.26326 1.52129,101.76557 15.31633,158.0288 39.80312,163.53949 144.91007,247.15006 298.93359,247.62028 292.22705,1.09701 584.58072,1.4889 876.87112,0 47.7764,-0.31324 74.1008,-31.58607 74.7968,-88.94635 0.7595,-59.08422 -26.7673,-93.93196 -74.8602,-94.2454 -112.5119,-0.78361 -382.1465,0 -382.1465,0 z"
+         id="path4135-6"
+         style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:70;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

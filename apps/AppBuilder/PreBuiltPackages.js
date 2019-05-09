@@ -16,7 +16,8 @@ import { orderBy } from "@progress/kendo-data-query";
 class PreBuiltPackages extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.args;
+    this.core = this.props.core;
+    this.proc = this.props.proc;
     this.state = {
       appInEdit: undefined,
       sort: [{ field: "name", dir: "asc" }],
@@ -56,12 +57,8 @@ class PreBuiltPackages extends React.Component {
             </div>
           </center>
         </div>
-
         <Grid
             sortable={true}
-            pageSize={10}
-            pageable={true}
-            groupable={true}
             filterable={true}
             reorderable={true}
             resizable={true}

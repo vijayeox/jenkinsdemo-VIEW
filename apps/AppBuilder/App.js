@@ -5,12 +5,12 @@ import "jquery/dist/jquery.js";
 import $ from "jquery";
 import PreBuiltPackages from "./PreBuiltPackages";
 import AdHocApps from "./AdHocApps";
-import "./public/js/materialize.js";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.args;
+    this.core = this.props.core;
+    this.proc = this.props.proc;
   }
 
   componentDidMount() {
@@ -38,11 +38,11 @@ class App extends React.Component {
 
 
   prebuiltappClick = (e) => {
-    ReactDOM.render(<PreBuiltPackages args={this.core} />, document.getElementById('componentsBox'));
+    ReactDOM.render(<PreBuiltPackages core={this.core} proc={this.proc}  />, document.getElementById('componentsBox'));
   }
 
   customAppClick = (e) => {
-    ReactDOM.render(<AdHocApps args={this.core} />, document.getElementById('componentsBox'));
+    ReactDOM.render(<AdHocApps core={this.core} proc={this.proc}  />, document.getElementById('componentsBox'));
   }
 
 

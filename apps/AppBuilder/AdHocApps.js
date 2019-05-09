@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-
+import ReactDOM from "react-dom";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
-
 import {
   Grid,
   GridColumn as Column,
@@ -9,27 +8,52 @@ import {
 } from "@progress/kendo-react-grid";
 
 import ReactNotification from "react-notifications-component";
-import { Button } from '@progress/kendo-react-buttons';
-import AdHocAppsDialog from "./AdHocAppsDialog";
-import { orderBy } from "@progress/kendo-data-query";
+import Button from '@material-ui/core/Button';
+import DialogContainer from "./DialogContainer";
+import ReactBpmn from "./ReactBpmn";
+import FormBuilderContainer from "./FormBuilderContainer";
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import IconButton from '@material-ui/core/IconButton';
 
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
+  gridList: {
+    width: 500,
+    height: 450,
+  },
+  icon: {
+    color: 'rgba(255, 255, 255, 0.54)',
+  },
+});
 class AdHocApps extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.args;
-
+    this.core = this.props.core;
+    this.proc = this.props.proc;
     this.state = {
       appInEdit: undefined,
       sort: [{ field: "name", dir: "asc" }],
-      products: [],
+      apps: [],
       action: ""
     };
 
     this.addNotification = this.addNotification.bind(this);
+    this.insert = this.insert.bind(this);
     this.notificationDOMRef = React.createRef();
 
     this.getAppData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ apps: response.data });
     });
   }
 
@@ -63,7 +87,7 @@ class AdHocApps extends React.Component {
 
   handler = serverResponse => {
     this.getAppData().then(response => {
-      this.setState({ products: response.data });
+      this.setState({ apps: response.data });
       this.addDataNotification(serverResponse);
     });
   };
@@ -74,10 +98,24 @@ class AdHocApps extends React.Component {
     return OrgData;
   }
 
-  edit = dataItem => {
+  edit = (dataItem) => {
     this.setState({
       appInEdit: this.cloneProduct(dataItem),
       action: "edit"
+    });
+  };
+
+  buildworkflow = dataItem => {
+    this.setState({
+      appInEdit: this.cloneProduct(dataItem),
+      action: "buildworkflow"
+    });
+  };
+
+  buildform = dataItem => {
+    this.setState({
+      appInEdit: this.cloneProduct(dataItem),
+      action: "buildform"
     });
   };
 
@@ -88,7 +126,7 @@ class AdHocApps extends React.Component {
       "/app/" + dataItem,
       {},
       "delete"
-    );
+      );
     return delApp;
   }
 
@@ -97,29 +135,29 @@ class AdHocApps extends React.Component {
       this.addNotification();
     });
 
-    const products = this.state.products;
-    const index = products.findIndex(p => p.id === dataItem.id);
+    const apps = this.state.apps;
+    const index = apps.findIndex(p => p.id === dataItem.id);
     if (index !== -1) {
-      products.splice(index, 1);
+      apps.splice(index, 1);
       this.setState({
-        products: products
+        apps: apps
       });
     }
   };
 
   save = () => {
     const dataItem = this.state.appInEdit;
-    const products = this.state.products.slice();
+    const apps = this.state.apps.slice();
 
     if (dataItem.id === undefined) {
-      products.unshift(this.newProduct(dataItem));
+      apps.unshift(this.newApp(dataItem));
     } else {
-      const index = products.findIndex(p => p.id === dataItem.id);
-      products.splice(index, 1, dataItem);
+      const index = apps.findIndex(p => p.id === dataItem.id);
+      apps.splice(index, 1, dataItem);
     }
 
     this.setState({
-      products: products,
+      apps: apps,
       appInEdit: undefined
     });
   };
@@ -135,86 +173,119 @@ class AdHocApps extends React.Component {
   render = () => {
     return (
       <div>
-        <ReactNotification ref={this.notificationDOMRef} />
-        <div style={{ paddingTop: '12px' }} className="row">
-          <div className="col s3">
-            <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
-              <FaArrowLeft />
-            </Button>
+      <ReactNotification ref={this.notificationDOMRef} />
+      <div style={{ paddingTop: '12px' }} className="row">
+      <div className="col s3">
+      <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
+      <FaArrowLeft />
+      </Button>
+      </div>
+      </div>
+      <GridList className="AdHocAppGrid" cellHeight={180}>
+      <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+      <ListSubheader component="div">Manage Ad-Hoc Packages</ListSubheader>
+      </GridListTile>
+      {this.state.apps.map(app => (
+        <GridListTile key={app.id}>
+        <img src={app.logo} alt={app.name} />
+        <GridListTileBar
+        title={app.name}
+        />
+        <div className="appButtons">
+        <Button
+             variant="contained" color="primary"
+            onClick={() => {
+              this.edit(app);
+            }}
+          >
+            Edit
+          </Button>
+          &nbsp;
+          <Button
+             variant="contained" color="primary" 
+            onClick={() => {
+              this.buildworkflow(app);
+            }}
+          >
+            Build
+          </Button>
+          &nbsp;
+          <Button
+             variant="contained" color="primary" 
+            onClick={() => {
+              this.buildform(app);
+            }}
+          >
+            Publish
+          </Button>
+          &nbsp;
+          <Button 
+             variant="contained" color="secondary" 
+            onClick={() => {
+              this.delete(app);
+            }}
+          >
+            Delete
+          </Button>
           </div>
-          <center>
-            <div className="col s6" id="pageTitle">
-              Manage Ad-Hoc Packages
-            </div>
-          </center>
-        </div>
-        <Grid
-          data={orderBy(this.state.products, this.state.sort)}
-          sortable
-          sort={this.state.sort}
-          onSortChange={e => {
-            this.setState({
-              sort: e.sort
-            });
-          }}
-        >
-          <GridToolbar>
-            <div>
-              <div style={{ fontSize: "20px" }}>Apps List</div>
-              <button
-                onClick={this.insert}
-                className="k-button"
-                style={{ position: "absolute", top: "8px", right: "16px" }}
-              >
-                <FaPlusCircle style={{ fontSize: "20px" }} />
-                <p style={{ margin: "0px", paddingLeft: "10px" }}>
-                  Add AdHocApps
-                </p>
-              </button>
-            </div>
-          </GridToolbar>
-          <Column field="uuid" title="UUID" width="70px" />
-          <Column field="name" title="Name" />
-          <Column field="description" title="Description" />
-          <Column field="category" title="Category" />
-          <Column
-            title="Edit"
-            width="160px"
-            cell={AdHocAppsDialog(this.edit, this.remove)}
-          />
-        </Grid>
+        </GridListTile>
+        ))}
+        </GridList>
+
         {this.state.appInEdit && (
           <DialogContainer
-            args={this.core}
-            dataItem={this.state.appInEdit}
-            save={this.save}
-            cancel={this.cancel}
-            formAction={this.state.action}
-            action={this.handler}
+          core={this.core}
+          proc={this.proc}
+          dataItem={this.state.appInEdit}
+          save={this.save}
+          cancel={this.cancel}
+          formAction={this.state.action}
+          action={this.handler}
           />
-        )}
-      </div>
-    );
-  };
+          )}
+        {this.state.appInEdit && this.state.action=='buildworkflow' && (
+          <ReactBpmn
+          core={this.core}
+          proc={this.proc}
+          dataItem={this.state.appInEdit}
+          save={this.save}
+          cancel={this.cancel}
+          formAction={this.state.action}
+          action={this.handler}
+          />
+          )}
+        {this.state.appInEdit && this.state.action=='buildform' && (
+          <FormBuilderContainer
+          core={this.core}
+          proc={this.proc}
+          dataItem={this.state.appInEdit}
+          save={this.save}
+          cancel={this.cancel}
+          formAction={this.state.action}
+          action={this.handler}
+          />
+          )}
+        </div>
+        );
+      };
 
-  dialogTitle() {
-    return `${this.state.appInEdit.id === undefined ? "Add" : "Edit"} product`;
-  }
+      dialogTitle() {
+        return `${this.state.appInEdit.id === undefined ? "Add" : "Edit"} product`;
+      }
 
-  cloneProduct(product) {
-    return Object.assign({}, product);
-  }
+      cloneProduct(product) {
+        return Object.assign({}, product);
+      }
 
-  newProduct(source) {
-    const newProduct = {
-      uuid: "",
-      name: "",
-      type: "",
-      category: ""
-    };
+      newApp(source) {
+        const newApp = {
+          name: "",
+          type: "",
+          category: ""
+        };
 
-    return Object.assign(newProduct, source);
-  }
-}
+        return Object.assign(newApp, source);
+      }
+    }
 
-export default AdHocApps;
+    export default AdHocApps;
