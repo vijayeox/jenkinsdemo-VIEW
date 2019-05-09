@@ -50,7 +50,11 @@ const {
 const WebSocketProvider = require('./providers/WebSocketProvider');
 const AuthAdapter = require('./auth/AuthAdapter.js');
 const config = require('./config.js');
-const osjs = new Core(config, {});
+const localConfig = require('./local.js');
+const merge = require('deepmerge');
+
+let mergedConfig = merge(config, localConfig);
+const osjs = new Core(mergedConfig, {});
 
 osjs.register(CoreServiceProvider, {before: true});
 osjs.register(PackageServiceProvider);
