@@ -16,6 +16,7 @@ export default class Login extends defaultLogin {
       setError: error => state => ({error, hidden: false}),
       submit: ev => state => {
         ev.preventDefault();
+        state.error = false;
         if (state.loading) {
           return;
         }
@@ -46,7 +47,7 @@ export default class Login extends defaultLogin {
           h('div', {
             class: 'osjs-login-error',
             style: {display: state.error ? 'block' : 'none'}
-          }, h('span', {}, "The email address or password that you have entered does not match any OX Zion account.")),
+          }, h('span', {}, "The username and/or password is incorrect! Please try again.")),
           h('div',{className: 'form-signin__footer'},[
           h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
           //h('a',{href: '#'},'Forgot your password?'),
