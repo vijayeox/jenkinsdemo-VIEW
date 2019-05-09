@@ -46,6 +46,7 @@ const register = (core, args, options, metadata) => {
       if (core.has('osjs/tray')) {
         const tray = core.make('osjs/tray').create({
           icon: proc.resource(metadata.icon),
+          title: applicationName,
           badge: 'badgeCheck',
           count: announcementsCount,
           onclick: () => {
