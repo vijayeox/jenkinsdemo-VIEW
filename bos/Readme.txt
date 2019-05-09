@@ -8,6 +8,8 @@ Node 8 (or newer) and any modern web-browser.
 
 ### Demo
 
+Make a Copy of local.js from local.js.example under the client and server project. 
+
 You can run a demo using docker without checkout out any source-code:
 
 ```
