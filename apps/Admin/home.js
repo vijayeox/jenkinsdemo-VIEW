@@ -1,10 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import "jquery/dist/jquery.js";
 import $ from "jquery";
-import "./public/js/materialize.js";
-
 import Organization from "./modules/Organization";
 import Project from "./modules/Project";
 import User from "./modules/User";

@@ -3,16 +3,8 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
-import "jquery/dist/jquery.js";
-import $ from "jquery";
 import FileUploadWithPreview from "file-upload-with-preview";
 import TextareaAutosize from "react-textarea-autosize";
-
-import {
-  MultiSelectComponent,
-  CheckBoxSelection,
-  Inject
-} from "@syncfusion/ej2-react-dropdowns";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -398,21 +390,7 @@ export default class DialogContainer extends React.Component {
               >
                 <label id="label1">Groups</label>
                 <div id="multigroup">
-                  <MultiSelectComponent
-                    id="checkbox"
-                    dataSource={this.state.groupsList}
-                    value={this.state.selectedGroups}
-                    change={this.captureSelectedGroups}
-                    fields={this.checkFields}
-                    mode="CheckBox"
-                    placeholder="Click to add Groups"
-                    showDropDownIcon={true}
-                    openOnClick="false"
-                    filterBarPlaceholder="Search Groups"
-                    popupHeight="350px"
-                  >
-                    <Inject services={[CheckBoxSelection]} />
-                  </MultiSelectComponent>
+                 
                 </div>
               </div>
             </div>

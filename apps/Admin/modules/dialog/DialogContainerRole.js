@@ -1,23 +1,18 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
-import { Validator } from "@progress/kendo-validator-react-wrapper";
-import { Tooltip } from '@progress/kendo-react-tooltip';
-import { Grid, GridColumn as Column } from '@progress/kendo-react-grid';
-import { orderBy } from '@progress/kendo-data-query';
-import "../../public/scss/kendo.css";
-import "@progress/kendo-ui";
+import { Tooltip } from "@progress/kendo-react-tooltip";
+import { Grid, GridColumn as Column } from "@progress/kendo-react-grid";
 
 import "jquery/dist/jquery.js";
 import $ from "jquery";
 
 class ProductNameHeader extends React.Component {
   render() {
-      return (
-          <a className="k-link" onClick={this.props.onClick}>
-          <span title={this.props.field}>{this.props.title}</span>
-          </a>
-      );
+    return (
+      <a className="k-link" onClick={this.props.onClick}>
+        <span title={this.props.field}>{this.props.title}</span>
+      </a>
+    );
   }
 }
 
@@ -29,16 +24,14 @@ export default class DialogContainer extends React.Component {
       roleInEdit: this.props.dataItem || null,
       visibleDialog: false,
       products2: [],
-      products1:[],
-      privilegeInEdit: [],
-
+      products1: [],
+      privilegeInEdit: []
     };
     this.getPrivilegeData().then(response => {
       this.setState({ products2: response.data });
     });
     this.handleChange = this.handleChange.bind(this);
     this.testdata = this.testdata.bind(this);
-
   }
   async getPrivilegeData() {
     let helper2 = this.core.make("oxzion/restClient");
@@ -62,28 +55,56 @@ export default class DialogContainer extends React.Component {
     this.getPrivilegeData().then(response => {
       this.setState({ products1: response.data });
       for (var i = 0; i < this.state.products1.length; i++) {
-
         var number = this.state.products1[i].permission;
         if (number & 1) {
-          $('#' + this.state.products1[i].privilege_name + '1').attr('checked', true);
+          $("#" + this.state.products1[i].privilege_name + "1").attr(
+            "checked",
+            true
+          );
         }
         if (number & 2) {
-          $('#' + this.state.products1[i].privilege_name + '2').attr('checked', true);
-          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
+          $("#" + this.state.products1[i].privilege_name + "2").attr(
+            "checked",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "1").attr(
+            "disabled",
+            true
+          );
         }
         if (number & 4) {
-          $('#' + this.state.products1[i].privilege_name + '3').attr('checked', true);
-          $('#' + this.state.products1[i].privilege_name + '2').attr('disabled', true);
-          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
+          $("#" + this.state.products1[i].privilege_name + "3").attr(
+            "checked",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "2").attr(
+            "disabled",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "1").attr(
+            "disabled",
+            true
+          );
         }
         if (number & 8) {
-          $('#' + this.state.products1[i].privilege_name + '4').attr('checked', true);
-          $('#' + this.state.products1[i].privilege_name + '3').attr('disabled', true);
-          $('#' + this.state.products1[i].privilege_name + '2').attr('disabled', true);
-          $('#' + this.state.products1[i].privilege_name + '1').attr('disabled', true);
+          $("#" + this.state.products1[i].privilege_name + "4").attr(
+            "checked",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "3").attr(
+            "disabled",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "2").attr(
+            "disabled",
+            true
+          );
+          $("#" + this.state.products1[i].privilege_name + "1").attr(
+            "disabled",
+            true
+          );
         }
       }
-
     });
   }
   async pushData() {
@@ -119,16 +140,16 @@ export default class DialogContainer extends React.Component {
     );
   }
 
-  handleChange = (event) => {
+  handleChange = event => {
     console.log("here");
     let name1 = event.target.id;
     let name2 = document.getElementById(event.target.id);
     let num = name1.slice(-1);
     let manage = name1.slice(0, -1);
-    let manage1 = document.getElementById(manage + '1');
-    let manage2 = document.getElementById(manage + '2');
-    let manage3 = document.getElementById(manage + '3');
-    let clickValue = '';
+    let manage1 = document.getElementById(manage + "1");
+    let manage2 = document.getElementById(manage + "2");
+    let manage3 = document.getElementById(manage + "3");
+    let clickValue = "";
     if (num == 1) {
       if (name2.checked == true) {
         name2.checked = true;
@@ -162,7 +183,10 @@ export default class DialogContainer extends React.Component {
         manage1.disabled = true;
         manage2.checked = true;
         manage2.disabled = false;
-        let event3 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value);
+        let event3 =
+          parseInt(name2.value) +
+          parseInt(manage1.value) +
+          parseInt(manage2.value);
         clickValue = event3;
       } else {
         name2.checked = false;
@@ -183,7 +207,11 @@ export default class DialogContainer extends React.Component {
         manage2.disabled = true;
         manage3.checked = true;
         manage3.disabled = false;
-        let event4 = parseInt(name2.value) + parseInt(manage1.value) + parseInt(manage2.value) + parseInt(manage3.value);
+        let event4 =
+          parseInt(name2.value) +
+          parseInt(manage1.value) +
+          parseInt(manage2.value) +
+          parseInt(manage3.value);
         clickValue = event4;
       } else {
         name2.checked = false;
@@ -197,24 +225,21 @@ export default class DialogContainer extends React.Component {
         clickValue = event4;
       }
     }
-
-    
-  }
-  async changehandler(event){
+  };
+  async changehandler(event) {
     await this.setState({ privilegeInEdit: event });
     console.log(this.state.privilegeInEdit);
   }
 
   testdata = () => {
-
     var edited = [];
     for (var i = 0; i < this.state.products2.length; i++) {
       let test = this.state.products2[i].name;
       var clk = 0;
-      let test1 = document.getElementById(this.state.products2[i].name + '1')
-      let test2 = document.getElementById(this.state.products2[i].name + '2')
-      let test3 = document.getElementById(this.state.products2[i].name + '3')
-      let test4 = document.getElementById(this.state.products2[i].name + '4')
+      let test1 = document.getElementById(this.state.products2[i].name + "1");
+      let test2 = document.getElementById(this.state.products2[i].name + "2");
+      let test3 = document.getElementById(this.state.products2[i].name + "3");
+      let test4 = document.getElementById(this.state.products2[i].name + "4");
       if (test1.checked == true) {
         clk = parseInt(test1.value);
       }
@@ -227,10 +252,10 @@ export default class DialogContainer extends React.Component {
       if (test4.checked == true) {
         clk = clk + parseInt(test4.value);
       }
-      if(clk!=0){
-    // edited[test] = clk;
-      var uid = { [this.state.products2[i].name] : clk };
-      edited.push(uid);
+      if (clk != 0) {
+        // edited[test] = clk;
+        var uid = { [this.state.products2[i].name]: clk };
+        edited.push(uid);
       }
     }
     console.log(edited);
@@ -239,7 +264,7 @@ export default class DialogContainer extends React.Component {
       var addResponse = response.data.id;
       this.props.action(addResponse);
     });
-  }
+  };
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -266,120 +291,154 @@ export default class DialogContainer extends React.Component {
       this.handleFunction();
     } else {
       this.testdata();
-      
     }
     this.props.save();
   };
 
   render() {
     return (
-      <Validator>
-        <Dialog onClose={this.props.cancel}>
-          <div className="row">
-            <form className="col s12" onSubmit={this.submitData} id="roleForm">
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="Name"
-                    type="text"
-                    className="validate"
-                    name="name"
-                    value={this.state.roleInEdit.name || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
+      <Dialog onClose={this.props.cancel}>
+        <div className="row">
+          <form className="col s12" onSubmit={this.submitData} id="roleForm">
+            <div className="row">
+              <div className="input-field col s12">
+                <input
+                  id="Name"
+                  type="text"
+                  className="validate"
+                  name="name"
+                  value={this.state.roleInEdit.name || ""}
+                  onChange={this.onDialogInputChange}
+                  required={true}
+                />
 
-                  <label htmlFor="roleName">Role Name</label>
-                </div>
+                <label htmlFor="roleName">Role Name</label>
               </div>
+            </div>
 
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="roleDescription"
-                    type="text"
-                    className="validate"
-                    name="description"
-                    value={this.state.roleInEdit.description || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="roleDescription">Description</label>
-                </div>
+            <div className="row">
+              <div className="input-field col s12">
+                <input
+                  id="roleDescription"
+                  type="text"
+                  className="validate"
+                  name="description"
+                  value={this.state.roleInEdit.description || ""}
+                  onChange={this.onDialogInputChange}
+                  required={true}
+                />
+                <label htmlFor="roleDescription">Description</label>
               </div>
+            </div>
 
-              <div> 
-                <label>
-                  Privileges    
-                  </label>
-              </div>
-              <Tooltip openDelay={100} position="top" anchorElement="element">
+            <div>
+              <label>Privileges</label>
+            </div>
+            <Tooltip openDelay={100} position="top" anchorElement="element">
               <Grid
-                style={{ height: '225px', width: '373px' }}
+                style={{ height: "225px", width: "373px" }}
                 data={this.state.products2}
               >
                 <Column field="id" title="ID" width="40px" />
-                <Column field="name" title="Name" width="150px"
-                  cell={(props) => (
+                <Column
+                  field="name"
+                  title="Name"
+                  width="150px"
+                  cell={props => (
                     <td>
                       <label>{props.dataItem.name.slice(7)}</label>
                     </td>
                   )}
                 />
-                <Column field="Read" title="R" width="40px" headerCell={ProductNameHeader}
-                  cell={(props) => (
+                <Column
+                  field="Read"
+                  title="R"
+                  width="40px"
+                  headerCell={ProductNameHeader}
+                  cell={props => (
                     <td>
-                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "1"} className={props.dataItem.name + "1"}
+                      <input
+                        type="checkbox"
+                        onChange={this.handleChange}
+                        id={props.dataItem.name + "1"}
+                        className={props.dataItem.name + "1"}
                         //  checked={this.state[props.dataItem.name] & 1 ? true : false}
-                        value="1" />
+                        value="1"
+                      />
                     </td>
-                  )} />
-                <Column field="Write" title="W" width="40px" headerCell={ProductNameHeader}
-                  cell={(props) => (
+                  )}
+                />
+                <Column
+                  field="Write"
+                  title="W"
+                  width="40px"
+                  headerCell={ProductNameHeader}
+                  cell={props => (
                     <td>
-                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "2"} className={props.dataItem.name + "2"}
-                        //  checked={this.state[props.dataItem.name] & 2 ? true : false} 
-                        value="2" />
+                      <input
+                        type="checkbox"
+                        onChange={this.handleChange}
+                        id={props.dataItem.name + "2"}
+                        className={props.dataItem.name + "2"}
+                        //  checked={this.state[props.dataItem.name] & 2 ? true : false}
+                        value="2"
+                      />
                     </td>
-                  )} />
-                <Column field="Create" title="C" width="40px" headerCell={ProductNameHeader}
-                  cell={(props) => (
+                  )}
+                />
+                <Column
+                  field="Create"
+                  title="C"
+                  width="40px"
+                  headerCell={ProductNameHeader}
+                  cell={props => (
                     <td>
-                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "3"} className={props.dataItem.name + "3"}
-                        //  checked={this.state[props.dataItem.name] & 4 ? true : false} 
-                        value="4" />
+                      <input
+                        type="checkbox"
+                        onChange={this.handleChange}
+                        id={props.dataItem.name + "3"}
+                        className={props.dataItem.name + "3"}
+                        //  checked={this.state[props.dataItem.name] & 4 ? true : false}
+                        value="4"
+                      />
                     </td>
-                  )} />
-                <Column field="Delete" title="D" width="40px" headerCell={ProductNameHeader}
-                  cell={(props) => (
+                  )}
+                />
+                <Column
+                  field="Delete"
+                  title="D"
+                  width="40px"
+                  headerCell={ProductNameHeader}
+                  cell={props => (
                     <td>
-                      <input type="checkbox" onChange={this.handleChange} id={props.dataItem.name + "4"} className={props.dataItem.name + "4"}
+                      <input
+                        type="checkbox"
+                        onChange={this.handleChange}
+                        id={props.dataItem.name + "4"}
+                        className={props.dataItem.name + "4"}
                         // checked={this.state[props.dataItem.name] & 8 ? true : false}
-                        value="8" />
+                        value="8"
+                      />
                     </td>
-                  )} />
+                  )}
+                />
               </Grid>
             </Tooltip>
-            </form>
-          </div>
+          </form>
+        </div>
 
-          <DialogActionsBar args={this.core}>
-            <button className="k-button" onClick={this.props.cancel}>
-              Cancel
-            </button>
-            <button
-              className="k-button k-primary"
-              type="submit"
-              form="roleForm"
-            >
-              Save
-            </button>
-            <button className="k-button" onClick={this.testdata}>
-              Test
-            </button>
-          </DialogActionsBar>
-        </Dialog>
-      </Validator>
+        <DialogActionsBar args={this.core}>
+          <button className="k-button" onClick={this.props.cancel}>
+            Cancel
+          </button>
+          <button className="k-button k-primary" type="submit" form="roleForm">
+            Save
+          </button>
+          <button className="k-button" onClick={this.testdata}>
+            Test
+          </button>
+        </DialogActionsBar>
+      </Dialog>
     );
   }
 }

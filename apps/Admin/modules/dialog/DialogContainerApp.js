@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Validator } from "@progress/kendo-validator-react-wrapper";
-import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -81,7 +79,6 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Validator>
         <Dialog onClose={this.props.cancel}>
           <div className="row">
             <form
@@ -154,7 +151,6 @@ export default class DialogContainer extends React.Component {
             </button>
           </DialogActionsBar>
         </Dialog>
-      </Validator>
     );
   }
 }

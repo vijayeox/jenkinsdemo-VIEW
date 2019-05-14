@@ -9,6 +9,7 @@ import {
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
+import "bootstrap/dist/css/bootstrap.min.css"
 
 class GridTemplate extends React.Component {
     constructor(props) {
@@ -70,7 +71,7 @@ class GridTemplate extends React.Component {
 
     render() {
         return (
-            <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
+            <div style={{ height: "90%", display: "flex", marginTop: "10px" }} >
                 <DataLoader
                     ref={this.child}
                     args={this.core}
@@ -78,7 +79,12 @@ class GridTemplate extends React.Component {
                     dataState={this.state.dataState}
                     onDataRecieved={this.dataRecieved}
                 />
-                <Grid data={this.state.gridData} scrollable={"scrollable"}>
+                <Grid data={this.state.gridData}
+                    scrollable={"scrollable"}
+                    onRowClick={(e) => {
+                        this.props.manageGrid.edit(e.dataItem);
+                    }}
+                >
                     <GridToolbar>
                         <div>
                             <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>
@@ -135,12 +141,10 @@ class AddButton extends React.Component {
 class LogoCell extends React.Component {
     render() {
         return (
-            <div class="text-center">
+            <td>
                 <img src="https://image.flaticon.com/icons/svg/145/145812.svg" alt="Organization Logo"
-                    className="circle" style={{ maxWidth: "60px", margin: "10px" }}></img>
-            </div>
-
-
+                    className="text-center circle" style={{ maxWidth: "60px", margin: "10px" }}></img>
+            </td>
         );
     }
 }

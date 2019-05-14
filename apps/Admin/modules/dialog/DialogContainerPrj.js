@@ -3,11 +3,6 @@ import {
   Dialog,
   DialogActionsBar
 } from "@progress/kendo-react-dialogs";
-import {
-  Validator
-} from "@progress/kendo-validator-react-wrapper";
-import "../../public/js/materialize.js";
-import "@progress/kendo-ui";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -21,8 +16,6 @@ export default class DialogContainer extends React.Component {
   }
 
   componentDidMount() {
-    M.AutoInit();
-    M.updateTextFields();
   }
 
   async pushData() {
@@ -80,12 +73,11 @@ export default class DialogContainer extends React.Component {
         this.props.action(addResponse);
       });
     }
-    this.props.save();
+    this.props.cancel();
   };
 
   render() {
     return (
-      <Validator>
         <Dialog onClose={this.props.cancel}>
           <div className="row">
             <form
@@ -127,19 +119,19 @@ export default class DialogContainer extends React.Component {
           </div>
 
           <DialogActionsBar args={this.core}>
-            <button className="k-button" onClick={this.props.cancel}>
-              Cancel
-            </button>
             <button
               className="k-button k-primary"
               type="submit"
               form="projectForm"
+              onClick={this.handleSubmit}
             >
               Save
             </button>
+            <button className="k-button" onClick={this.props.cancel}>
+              Cancel
+            </button>
           </DialogActionsBar>
         </Dialog>
-      </Validator>
     );
   }
 }

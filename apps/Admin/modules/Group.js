@@ -11,7 +11,6 @@ class Group extends React.Component {
     this.state = {
       groupInEdit: undefined,
       groupToBeEdited: [],
-      action: "",
       visible: false,
       permission: "15"
     };
@@ -68,15 +67,14 @@ class Group extends React.Component {
 
   edit = dataItem => {
     this.setState({
-      groupInEdit: this.cloneProduct(dataItem),
-      action: "edit"
+      groupInEdit: this.cloneProduct(dataItem)
     });
     this.inputTemplate =
       React.createElement(DialogContainer, {
         args: this.core,
         dataItem: dataItem || null,
         cancel: this.cancel,
-        formAction: this.state.action,
+        formAction: "edit",
         action: this.handler
       });
   };
@@ -96,13 +94,13 @@ class Group extends React.Component {
   };
 
   insert = () => {
-    this.setState({ groupInEdit: {}, action: "add" });
+    this.setState({ groupInEdit: {} });
     this.inputTemplate =
       React.createElement(DialogContainer, {
         args: this.core,
         dataItem: [],
         cancel: this.cancel,
-        formAction: this.state.action,
+        formAction: "add",
         action: this.handler
       });
   };

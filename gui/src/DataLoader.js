@@ -17,7 +17,7 @@ export class DataLoader extends React.Component {
   }
 
   refresh = (temp) => {
-    if (temp == "group" || temp == "announcement") {
+    if (temp == "group" || temp == "announcement" || temp == "project") {
       this.getData(this.url).then(response => {
         this.props.onDataRecieved(response.data);
       });

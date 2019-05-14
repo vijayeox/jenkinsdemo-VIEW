@@ -190,14 +190,7 @@ class Application extends React.Component {
         </div>
 
         <Grid
-          data={orderBy(this.state.products, this.state.sort)}
-          sortable
-          sort={this.state.sort}
-          onSortChange={e => {
-            this.setState({
-              sort: e.sort
-            });
-          }}
+          data={this.state.products}
         >
           <GridToolbar>
             <div>

@@ -96,7 +96,7 @@ class Organization extends React.Component {
             config={{
               dataItem: this.state.orgToBeEdited,
               mainList: "user",
-              subList: "group"
+              subList: "organization"
             }}
             manage={{
               postSelected: this.sendTheData,

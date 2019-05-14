@@ -1,10 +1,8 @@
 import React from "react";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Validator } from "@progress/kendo-validator-react-wrapper";
 import { DropDownList } from '@progress/kendo-react-dropdowns';
 import { filterBy } from '@progress/kendo-data-query';
 import TextareaAutosize from 'react-textarea-autosize';
-import "@progress/kendo-ui";
 
 import withValueField from './withValueField.js';
 const DropDownListWithValueField = withValueField(DropDownList);
@@ -164,7 +162,6 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Validator>
         <Dialog onClose={this.props.cancel}>
           <div>
             <form id="groupForm">
@@ -251,7 +248,6 @@ export default class DialogContainer extends React.Component {
             </button>
           </DialogActionsBar>
         </Dialog>
-      </Validator >
     );
   }
 }

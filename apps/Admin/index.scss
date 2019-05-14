@@ -1,11 +1,6 @@
 .Window_Admin {
-  @import "./public/scss/notifTheme.css";
-  @import "./public/scss/kendo.css";
+  @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
-  @import "./node_modules/@syncfusion/ej2-base/styles/material.css";
-  @import "./node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
-  @import "./node_modules/@syncfusion/ej2-react-dropdowns/styles/material.css";
-  @import "./node_modules/@syncfusion/ej2-react-buttons/styles/material.css";
   @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
 
@@ -249,6 +244,12 @@
     height: auto;
   }
 
+  .border-box {
+    border: solid 1px #ccc;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
   #downloadApp {
     position: absolute;
     height: 12%;
@@ -256,7 +257,7 @@
     right: 4%;
   }
 
-  #clearAncImage {
+  #clearUploadImage {
     margin-top: -7px;
     margin-right: 15px;
     float: right;
@@ -265,6 +266,10 @@
   .k-widget.k-state-invalid>.k-picker-wrap {
     border-color: #949494;
     color: #9e9e9e;
+  }
+
+  .e-multi-select-list-wrapper {
+    top: 160px !important;
   }
 }
 

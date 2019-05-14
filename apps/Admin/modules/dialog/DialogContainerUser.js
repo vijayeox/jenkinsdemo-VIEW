@@ -2,10 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import { Input } from "@progress/kendo-react-inputs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
-import "@progress/kendo-ui";
 import Codes from "../data/Codes";
 import ReactTooltip from "react-tooltip";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -260,7 +258,7 @@ export default class DialogContainer extends React.Component {
           <form className="col s12" onSubmit={this.submitData} id="userForm">
             <div className="row">
               <div className="input-field col s12">
-                <Input
+                <input
                   id="UserFName"
                   type="text"
                   className="validate"
@@ -275,7 +273,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <Input
+                <input
                   id="UserLName"
                   type="text"
                   className="validate"
@@ -290,7 +288,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <Input
+                <input
                   id="UserUsername"
                   type="text"
                   className="validate"
@@ -306,7 +304,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="row">
               <div className="input-field col s12">
-                <Input
+                <input
                   id="UserEmail"
                   type="email"
                   className="validate"
@@ -320,7 +318,7 @@ export default class DialogContainer extends React.Component {
             </div>
             <div className="row" style={style}>
               <div className="input-field col s12">
-                <Input
+                <input
                   id="UserPassword"
                   type="password"
                   className="validate"
@@ -351,7 +349,7 @@ export default class DialogContainer extends React.Component {
                 className="input-field col s12"
                 style={{ marginBottom: "7px" }}
               >
-                <Input
+                <input
                   id="UserDesignation"
                   type="text"
                   className="validate"
@@ -373,7 +371,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="col s3 input-field gender1">
                   <label>
-                    <Input
+                    <input
                       id="UserGender"
                       className="validate"
                       type="radio"
@@ -387,7 +385,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="col s3 input-field gender2">
                   <label>
-                    <Input
+                    <input
                       id="UserGender"
                       className="validate"
                       type="radio"
