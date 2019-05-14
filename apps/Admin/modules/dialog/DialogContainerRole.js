@@ -59,7 +59,7 @@ export default class DialogContainer extends React.Component {
   }
 
   handleFunction() {
-    this.rolePrivilegeData().then(response => {
+    this.getPrivilegeData().then(response => {
       this.setState({ products1: response.data });
       for (var i = 0; i < this.state.products1.length; i++) {
 

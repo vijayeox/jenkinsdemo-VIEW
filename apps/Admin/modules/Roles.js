@@ -56,7 +56,7 @@ class Role extends React.Component {
     this.notificationDOMRef = React.createRef();
 
     this.getRoleData().then(response => {
-      this.setState({ products: response.data.data });
+      this.setState({ products: response.data });
     });
   }
 
@@ -91,6 +91,7 @@ class Role extends React.Component {
   handler = serverResponse => {
     this.getRoleData().then(response => {
       this.setState({ products: response.data.data });
+      console.log(response.data.data);
       this.addDataNotification(serverResponse);
     });
   };
