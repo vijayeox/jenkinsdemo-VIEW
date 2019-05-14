@@ -1,3 +1,9 @@
-.Window_ImageUploaderWindow {
+.Window_ImageUploader.osjs-window{
+    position : fixed;
+    font-family: 'Century Gothic';
+  } 
+
+.Window_ImageUploader{
+@import "./node_modules/materialize-css/sass/materialize";
 @import "./public/scss/notifTheme.css";
 }

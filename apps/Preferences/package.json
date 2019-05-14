@@ -11,6 +11,11 @@
   },
   "dependencies": {
     "@material-ui/core": "^3.9.2",
+    "@progress/kendo-react-dateinputs": "^2.10.0",
+    "@progress/kendo-react-dropdowns": "^2.10.0",
+    "@progress/kendo-react-intl": "^2.10.0",
+    "@progress/kendo-ui": "^2019.1.424",
+    "bootstrap": "^4.3.1",
     "copy-webpack-plugin": "^4.6.0",
     "create-react-class": "^15.6.3",
     "cross-env": "^5.2.0",
@@ -28,6 +33,8 @@
     "react-notifications-component": "^1.0.1",
     "react-phone-input-2": "^2.7.1",
     "react-phone-number-input": "^2.3.5",
+    "react-textarea-autosize": "^7.1.0",
+    "react-tooltip": "^3.10.0",
     "react-web-tabs": "^1.0.1"
   },
   "devDependencies": {

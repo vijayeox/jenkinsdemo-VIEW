@@ -5,7 +5,8 @@
   
 .Window_Preferences {
 @import "./public/scss/notifTheme.css";
-@import "./node_modules/materialize-css/sass/materialize";
+@import "./public/scss/kendo.css";
+@import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
  .input-field > label{
     font-size:16px;
     color:#333 !important;
@@ -98,7 +99,7 @@
   .rwt__tabpanel {
     width: 100%;
     overflow-y: auto;
-    height: calc(100% - 99px);
+    height: calc(100% - 106px);
   }
   .form {
     padding: 15px;
@@ -149,7 +150,7 @@
     &__show {
       cursor: pointer;
       position: absolute;
-      bottom: 11px;
+      bottom: 23px;
       height: 16px;
       right: 0;
       background: $secondary;
@@ -503,12 +504,28 @@ margin-left:0px;
   width:600px !important;
 }
 
+
 .marginsize{
   margin-bottom: 20px !important;
+  margin-top:29px;
+  font-size:16px;
 }
+
+
+
 .marginsize2{
+    margin-top: 22px !important;
     margin-bottom: 13px !important;
 }
+
+.about{
+  margin-top: 0px !important;
+}
+
+.interest{
+  margin-top:13px !important;
+}
+
 .savebutton{
   padding-left: 2% !important;
 }
@@ -518,16 +535,17 @@ margin-left:0px;
   margin-left:2% !important;
 }
 
-.gender2{
-  margin-bottom: 0px !important;
-  margin-top:0px !important;
+.gender{
+  margin-top:15px;
 }
 
-.gender1{
-  margin-bottom: 0px !important;
-  margin-top:0px !important;
-  padding-left: 0px !important;
+.marginstyle{
+  margin-top:19px;
+}
 
+#gender{
+  font-size:16px;
+  padding-left : 5px;
 }
 
 .timezonediv{
@@ -536,6 +554,132 @@ margin-left:0px;
 
 #info{
   padding: 0% !important;
+}
+
+.country{ 
+    margin-left: 16px;
+    font-size: 16px;
+    color: #343a40;
+    margin-bottom :20px !important;
+    margin-top:8px !important;
+}
+
+
+.dropdownstyle{
+    margin-top:15px !important;
+    width: 100%;
+    height: 40px;
+    background: ghostwhite;
+    margin-left: 15px;
+    border: cornsilk;
+}
+
+#country{
+    width: 100%;
+    height: 35px;
+    background: ghostwhite;
+    border: cornsilk;
+}
+
+#rowdob{
+  margin-bottom: 12px !important;
+}
+
+.k-datepicker{
+    width: 100%;  
+}
+
+#phoneno{
+  margin-top:5px !important;
+  width:125%;
+  margin-bottom:0px !important;  
+}
+
+#textareaField{
+    height: 31px;
+    font-size: 17px;
+    margin-top: 15px;
+    width: 100%;
+}  
+
+
+.borderStyle{
+   border-bottom-color: grey !important;
+    border-top-color: ghostwhite !important;
+    border-left-color: ghostwhite !important;
+    border-right-color: ghostwhite !important;
+}
+div.click-to-top span {
+  display: none; 
+  position: absolute;
+   bottom: 0;
+   left: 50px; 
+   right: 0;
+    background: #333;
+    width:400px;
+     color: #fff; }
+div.click-to-top:hover span {display: block; }
+
+.click-to-top{
+      margin-left: -505px;
+      margin-top: 4px;
+}
+
+
+
+div.datetooltip span {
+  display: none; 
+  position: absolute;
+   bottom: 0;
+   top:50px;
+   left: 0; 
+   right: 0;
+    background: #333;
+    width:390px;
+    height:90px;
+     color: #fff; }
+div.datetooltip:hover span {display: block; }
+
+
+#dateicon{
+  margin-top:15px !important;
+}
+
+#labelname{
+  font-size:16px;
+  color:black !important;
+}
+
+
+.timezone{ 
+    font-size: 16px;
+    color: #343a40;
+    margin-bottom :20px !important;
+    margin-top:8px !important;
+}
+
+#timezone{
+    width: 70%;
+    height: 35px;
+    background: ghostwhite;
+    border: cornsilk;
+    margin-left:-15px;
+}
+
+.dateformat{
+  margin-left:-12px;
+}
+
+div.select.inner{
+  height:100px;
+}
+
+div.select.open{
+  height:100px;
+}
+
+.listheight{
+  height: 100px;
 }
 
 }

@@ -20,6 +20,8 @@ class App extends Component {
   });
   this.changePassword=this.changePassword.bind(this);
 }
+
+
 async getProfile() {
   // call to api using wrapper
   let userprofile = await this.core.make("oxzion/profile").get();

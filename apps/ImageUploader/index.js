@@ -10,7 +10,7 @@ const register = (core, args, options, metadata) => {
   const proc = core.make('osjs/application', {args, options, metadata});
   let contentDom = '';
   // Create  a new Window instance
-  proc.createWindow({
+  const win = proc.createWindow({
     id: 'ImageUploaderWindow',
     title: metadata.title.en_EN,
     dimension: {width: 400, height: 400},
@@ -34,7 +34,9 @@ const register = (core, args, options, metadata) => {
         contentDom = $content;
         ReactDOM.render(<Imagewindow args={core}/>, $content);
       });
-  
+    if(win.$element.className.indexOf('Window_'+applicationName) == -1){
+      win.$element.className += " Window_"+applicationName;
+    }
   // Creates a new WebSocket connection (see server.js)
   //const sock = proc.socket('/socket');
   //sock.on('message', (...args) => console.log(args))

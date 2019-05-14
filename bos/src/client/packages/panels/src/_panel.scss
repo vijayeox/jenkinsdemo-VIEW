@@ -327,11 +327,6 @@
   font-size: 17px;
 }
 
-#addresic {
-  font-size: 17px;
-  display: inline-block;
-  word-break: break-word;
-}
 
 .profileDiv {
   display: flex;
@@ -351,6 +346,7 @@
   color: white;
   text-align: left;
   line-height: 23px;
+  word-wrap: word-break;
   margin-top: 8px;
 }
 
@@ -374,9 +370,15 @@
   padding: 5px;
   float: right;
   position: absolute;
-  width: 95%;
-  text-align: end;
   padding-left: 120px;
+}
+
+.profileIcon{
+    width: 70% !important;
+}
+
+.profileEdit{
+margin-left:85px;  
 }
 
 .profileicon {

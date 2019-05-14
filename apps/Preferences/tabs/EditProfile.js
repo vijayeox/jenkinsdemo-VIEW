@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import Countries from "./Countries";
-import M from "materialize-css";
 import Codes from "./Codes";
-import ErrorBoundary from "./ErrorBoundary";
 import ReactNotification from "react-notifications-component";
+import { DropDownList } from '@progress/kendo-react-dropdowns';
 import $ from "jquery";
 import Moment from "moment";
+import "@progress/kendo-ui";
+import TextareaAutosize from 'react-textarea-autosize';
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+
  
 class EditProfile extends Component {
+
   constructor(props) {
     super(props);
     
@@ -19,22 +22,20 @@ class EditProfile extends Component {
     this.dob = null;
     this.doj = null;
     this.state = {
+      DOBInEdit: undefined,
       phone: "",
       heightSet: 0,
-      country: "India",
+      selectedCountry: [],
+      country : "India",
       dial_code: "India +91",
       fields: {},
       errors: {},
       initialized: -1,
       phonenumber: {},
-     dateformat:this.userprofile.key.preferences['dateformat']
-     
+      dateformat:this.userprofile.key.preferences['dateformat'],
+      fields:this.userprofile.key
     };
 
-    this.getProfile().then(response => {
-      this.setState({ fields: response.key });
-      this.splitPhoneNumber();
-    });
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -44,18 +45,6 @@ class EditProfile extends Component {
     this.addNotification = this.addNotification.bind(this);
     this.addNotificationFail = this.addNotificationFail.bind(this);
     this.notificationDOMRef = React.createRef();
-  }
-  
-
-
-  async getProfile() {
-    // call to api using wrapper
-    let profile = await this.core.make("oxzion/profile").get();
-    
-    if (this.state.initialized < 0) {
-      this.setState({ initialized: this.state.initialized + 1 });
-    }
-    return profile;
   }
 
   addNotification() {
@@ -109,44 +98,53 @@ class EditProfile extends Component {
   }
 
 
-  componentDidMount() {
-    let dobElem = document.getElementById("date_of_birth")
-    M.Datepicker.init(dobElem, {
-      format: this.state.dateformat,
-      showClearBtn: true,
-      yearRange: 100,
-      maxDate: new Date(),
-      defaultDate:this.dateobj(this.state.fields.date_of_birth),
-      setDefaultDate:false
-    });
-    let dojElem = document.getElementById("date_of_join");
-    M.Datepicker.init(dojElem, {
-      format: this.state.dateformat,
-       showClearBtn: true,
-      yearRange: 100,
-      maxDate: new Date(),
-      defaultDate:this.dateobj(this.state.fields.date_of_join),
-      setDefaultDate:false
-    });
-     this.dob = M.Datepicker.getInstance(dobElem);
-     this.doj = M.Datepicker.getInstance(dojElem);
-     M.updateTextFields();
-     M.textareaAutoResize($("#address"));
-     M.textareaAutoResize($("#about"));
-  }
+  componentWillMount(){
+      this.splitPhoneNumber();
+      console.log(this.state.fields);
+      let fieldsTemp = { ...this.state.fields };
+      if (
+        this.state.fields.date_of_birth == "0000-00-00" ||
+        this.state.fields.date_of_birth == null
+      ) {
+        if (
+          this.state.fields.date_of_birth == "0000-00-00" ||
+          this.state.fields.date_of_birth == null
+        ) {
+          fieldsTemp.date_of_birth = "";
+          this.setState({ fields: fieldsTemp });
+          this.setState({ DOBInEdit: "" });
+        } else {
+          const DOBDate = this.state.fields.date_of_birth;
+          const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
+          const DOBkendo = new Date(DOBiso);
 
+          fieldsTemp.date_of_birth = DOBkendo;
+          this.setState({ fields: fieldsTemp });
 
-  handleDateChange(event) {
-    console.log(event.timeStamp);
-    event.target.value = event.timestamp;
-    console.log(event);
-    let fields = this.state.fields;
-    fields[this.target.name] = date;
-    self.setState({
-      fields
-    });
-    console.log(fields);
-  }
+          this.setState({ DOBInEdit: DOBiso });
+        }
+      } else {
+        const DOBDate = this.state.fields.date_of_birth;
+        const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
+        const DOBkendo = new Date(DOBiso);
+       
+        let fields = { ...this.state.fields };
+        fields.date_of_birth = DOBkendo;
+        this.setState({ fields: fields });
+
+        this.setState({ DOBInEdit: DOBiso });
+      }
+    }
+
+  handleDOBChange = event => {
+    let fields = { ...this.state.fields };
+    fields.date_of_birth = event.target.value;
+    this.setState({ fields: fields });
+
+    var DOBiso = new Moment(event.target.value).format();
+    this.setState({ DOBInEdit: DOBiso });
+  };
+
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -163,21 +161,9 @@ class EditProfile extends Component {
   }
 
   getStandardDateString(date1){
-    if(!date1.date){
-      return null;
-    }      
-    return (date1.date.getFullYear() + "-" + (date1.date.getMonth() + 1) + "-" + date1.date.getDate());
+    
+    return new Date(date1.toISOString().slice(0,10));
   }
-
-  dateobj(date2){
-    if(!date2 || date2 === ''){
-      return null
-    }
-    var momentObj = Moment(date2, 'YYYY-MM-DD');
-    var momentString = momentObj.format((this.state.dateformat).toUpperCase());
-    return momentString;
-  }
-
 
 async handleSubmit(event) {
     event.preventDefault();
@@ -186,14 +172,11 @@ async handleSubmit(event) {
       const formData = {};
       this.joinPhNo();
 
-      let date_of_birth = this.getStandardDateString(this.dob);
-      let date_of_join= this.getStandardDateString(this.doj);
+      let date_of_birth = this.getStandardDateString(this.state.fields.date_of_birth);
       if(date_of_birth){
         this.state.fields.date_of_birth=date_of_birth;
       }
-      if(date_of_join){
-        this.state.fields.date_of_join=date_of_join;
-      }
+
       Object.keys(this.state.fields).map(key => {
         formData[key] = this.state.fields[key];
       });
@@ -220,18 +203,7 @@ async handleSubmit(event) {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
-
-  
-    if (!fields["email"]) {
-      formIsValid = false;
-      errors["email"] = "*Please enter your email-ID.";
-    }
-
-    if(this.doj.date < this.dob.date){
-       formIsValid = false;
-       alert("*Date of Joining cannot be earlier than Date of Birth");
-     }
-
+ 
     if (!fields["address"]) {
       formIsValid = false;
       errors["address"] = "*Please enter your address";
@@ -250,30 +222,15 @@ async handleSubmit(event) {
 
   init() {}
   render() {
-    const self = this;
-    window.setTimeout(function() {
-      M.updateTextFields();
-      if (self.state.initialized === 0) {
-        M.textareaAutoResize($("#address"));
-        M.textareaAutoResize($("#about"));
-        var selectElems = document.querySelectorAll("select");
-        var instances = M.FormSelect.init(selectElems, {
-          classes: "createSelect"
-        });
-        self.setState({ initialized: 1 });
-      }
-    }, 0);
-
-    
    return (
-      <ErrorBoundary>
         <div>
         <ReactNotification ref={this.notificationDOMRef}/>
         <div></div>
           
-          <form onSubmit={this.handleSubmit} className="formmargin">
+          <form className="formmargin" onSubmit={this.handleSubmit}>
             <div className="row" style={{marginTop:"20px"}}>
-              <div className="col s6 input-field">
+              <div className="col-md-6 input-field">
+              <label>First Name *</label>          
                 <input
                   type="text"
                   name="firstname"
@@ -286,11 +243,11 @@ async handleSubmit(event) {
                   className="validate"
                   
                 />
-                <label htmlFor="firstname">First Name *</label>
                 <div className="errorMsg">{this.state.errors.firstname}</div>
               </div>
 
-              <div className="col s6 input-field">
+              <div className="col-md-6 input-field">
+              <label>Last Name *</label>
                 <input
                   type="text"
                   name="lastname"
@@ -303,13 +260,13 @@ async handleSubmit(event) {
                   className="validate"
                   
                 />
-                <label htmlFor="lastname">Last Name *</label>
                 <div className="errorMsg">{this.state.errors.lastname}</div>
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12 input-field">
+              <div className="col-md-12 input-field">
+                <label htmlFor="email">Email *</label>
                 <input
                   name="email"
                   type="text"
@@ -318,28 +275,31 @@ async handleSubmit(event) {
                   id="email"
                   readonly={true}
                 />
-                <label htmlFor="email">Email *</label>
               </div>
             </div>
 
-            <div className="row">
-              <div className="col s6 input-field">
-                <input
-                  className="datepicker"
-                  ref="date_of_birth"
-                  id="date_of_birth"
+            <div className="row marginstyle">
+              <div className="col input-field marginbottom">
+              <label id="rowdob">Date of Birth *</label>
+              <div>
+                <DatePicker
+                  format={this.state.dateformat}
                   name="date_of_birth"
-                  required
-                 defaultValue={this.dateobj(this.state.fields.date_of_birth)}
-                onChange={this.handleDateChange}
+                  id="date_of_birth"
+                  ref="date_of_birth"
+                  value={this.state.fields.date_of_birth}
+                  onChange={this.handleDOBChange}
                 />
-                <label htmlFor="date_of_birth" className="active">Date of Birth *</label>
+                </div>
+
                 <div className="errorMsg">{this.state.errors.date_of_birth}</div>
              </div>
 
-             <div className="col s6 input-field">
-             <label id="name" htmlFor="gender" className="active">Gender *</label>
-                <div className="col s3 input-field gender1">
+
+             <div className="col input-field">
+             <label id="name" className="active"  style={{fontSize:"16px"}}>Gender *</label>
+             <div className="row gender">
+                <div className="col-md-3 input-field">
                 <label>
                   <input
                     type="radio"
@@ -351,10 +311,10 @@ async handleSubmit(event) {
                     className="validate"
                     required
                   />
-                  <span id="name">Male</span>
+                  <span id="gender">Male</span>
                 </label>
               </div>
-              <div className="col s3 input-field gender2">
+              <div className="col-md-5 input-field">
 
                 <label>
                   <input
@@ -367,38 +327,22 @@ async handleSubmit(event) {
                     className="validate"
                     required
                   />
-                  <span id="name">Female</span>
+                  <span id="gender">Female</span>
                 </label>
                 <div className="errorMsg">{this.state.errors.gender}</div>            
                 </div>
+                </div>
                </div>
                </div>
-              
-            <div className="row marginsize1">
-              <div className="col s12 input-field marginsize1">
-                <select
-                  value={this.state.fields.country}
-                  onChange={this.handleChange}
-                  ref="country" id="country"
-                  name="country"
-                  
-                >
-                  {Codes.map((country, key) => (
-                    <option key={key} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-                <label id="country" style={{fontSize:"13px"}}>Country *</label>
-              </div>
-            </div>
+
 
           
-            <div className="row marginsize input-field">
-            <div className="col s12" style={{fontSize:"13px"}}>Contact Number *</div>
+            <div className="row">
+            <div className="col-md-12" style={{fontSize:"17px"}}>Contact Number *</div>
               <div className="row">
-              <div className="col s3">
+              <div className="col-md-5">
                 <select
+                  className="dropdownstyle"
                   value={this.state.dial_code}
                   onChange={this.onSelect1}
                   id="dial_code"
@@ -412,8 +356,9 @@ async handleSubmit(event) {
                     </option>
                   ))}
                 </select>
-              </div>
-              <div className="col s9">
+                </div>
+
+              <div className="col-md-7">
                 <input
                   id="phoneno"
                   type="text"
@@ -421,79 +366,92 @@ async handleSubmit(event) {
                   name="phoneno"
                   required
                   value={this.state.phoneno}
-                  onChange={this.onSelect2}
-                  
+                  onChange={this.onSelect2} 
                 />
               </div>
               </div>
             </div>
             <label type="hidden" id="joint" ref="phone" name="phone" />
 
+
             <div className="row">
-              <div className="col s12 input-field ">
-                <textarea className="materialize-textarea"
-                  id="address"
+              <div className="col-md-12 input-field">
+               <label style={{fontSize:"17px"}}>Address *</label>
+               <div>
+               <TextareaAutosize
+                  className ="borderStyle"
                   type="text"
+                  id="textareaField"
                   ref="address"
-                  name="address"
                   required
+                  name="address"
                   value={this.state.fields.address}
                   onChange={this.handleChange}
                 />
-                <label htmlFor="address">Address *</label>
+                </div>        
                 <div className="errorMsg">{this.state.errors.address}</div>
               </div>
             </div>
 
+              
             <div className="row">
-              <div className="col s12 input-field">
-                <input
-                  className="datepicker"
-                  ref="date_of_join"
-                  id="date_of_join"
-                  name="date_of_join"
-                  required
-                  defaultValue={this.dateobj(this.state.fields.date_of_join)}
-                  onChange={this.handleDateChange}
-                  
-                />
-                <label htmlFor="date_of_join" className="active">Date of Joining *</label>
-                <div className="errorMsg">{this.state.errors.date_of_join}</div>
+            <label className = "country" style={{marginTop:""}}>Country *</label>
+              
+              <div className="col-md-12">
+             <select
+                  value={this.state.fields.country}
+                  onChange={this.handleChange}
+                  ref="country" id="country"
+                  name="country" 
 
+                >
+                  {Codes.map((country, key) => (
+                    <option key={key} value={country.name}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+               </div>
               </div>
-            </div>
-
+            
             <div className="row marginsize2">
-              <div className="col s12 input-field">
+              <div className="col-md-12 input-field">
+                <label htmlFor="website">Website</label>
                 <input
                   id="website"
                   type="text"
                   ref="website"
                   name="website"
                   value={this.state.fields.website}
-                  onChange={this.handleChange}
-                  
+                  onChange={this.handleChange} 
                 />
-                <label htmlFor="website">Website</label>
+              
               </div>
             </div>
-            <div className="row marginsize2">
-              <div className="col s12 input-field">
-                <textarea className="materialize-textarea" 
-                  id="about"
-                  ref="about"
-                  name="about"
+            <div className="row about">
+              <div className="col-md-12 input-field">
+                <label>About Me</label>
+                 <div>
+               <TextareaAutosize
+                  className ="borderStyle"
                   type="text"
+                  id="textareaField"
+                  ref="about"
+                  required
+                  name="about"
                   value={this.state.fields.about}
                   onChange={this.handleChange}
-                  
                 />
-                <label htmlFor="about">About Me</label>
+                </div> 
+           
               </div>
             </div>
 
             <div className="row">
-              <div className="col s12 input-field">
+
+              <div className="col-md-12 input-field interest">
+              <label htmlFor="interest">Interest *</label>
+                
                 <input
                   id="interest"
                   type="text"
@@ -505,21 +463,19 @@ async handleSubmit(event) {
                   onChange={this.handleChange}
                   
                 />
-                <label htmlFor="interest">Interest *</label>
                 <div className="errorMsg">{this.state.errors.interest}</div>
               </div>
             </div>
            
             <div className="row">
               <div className="col s12 input-field">
-                <button className="btn waves-effect waves-light black" type="submit" onClick={this.functionreferesh}>
+                <button className="k-button k-primary" type="submit">
                   Submit
                 </button>
               </div>
             </div>
           </form>
           </div>
-      </ErrorBoundary>
     );
   }
 }

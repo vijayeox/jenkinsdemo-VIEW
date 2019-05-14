@@ -172,3 +172,7 @@
 .webdiv{
   margin-top:19%;
 }
+
+#editbutton{
+  cursor:pointer;
+}

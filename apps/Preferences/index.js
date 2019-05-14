@@ -13,7 +13,7 @@ const register = (core, args, options, metadata) => {
     const win = proc.createWindow({
       id: 'PreferencesWindow',
       title: metadata.title.en_EN,
-      dimension: {width: 690, height: 510},
+      dimension: {width: 700, height: 550},
       position: {left: 700, top: 200},
       attributes:{  
       visibility: 'restricted',

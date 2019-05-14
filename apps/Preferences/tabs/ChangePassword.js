@@ -49,8 +49,8 @@ class ChangePassword extends Component {
   }
 
   componentDidMount(){
-    var selectElems1 = document.querySelectorAll(".tooltipped");
-    var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
+    // var selectElems1 = document.querySelectorAll(".tooltipped");
+    // var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
     }
 
   handleChange(e) {
@@ -168,7 +168,8 @@ render() {
       <div className="form">
         <div className="row">
             <div className="col s12">
-              <div className="password input-field">     
+              <div className="password input-field">  
+               <label>Old Password *</label>   
                 <input
                   type={this.state.type}
                   className="password_input"
@@ -176,8 +177,7 @@ render() {
                   ref="old_password"
                   onChange={this.handleChange}
                 />
-                <label>Old Password *</label>
-                <span style={{ height: "25px" }}
+               <span style={{ height: "25px" }}
                   className="password__show"
                   onClick={this.showHide}>{this.state.type === 'text' ? 'Hide' : 'Show'}
                 </span>
@@ -187,7 +187,8 @@ render() {
         </div>
         <div className="row">
             <div className="col s12">
-                <div className="password input-field">     
+                <div className="password input-field">   
+                <label>New Password *</label>  
                   <input
                       id="new"
                       type={this.state.type1}
@@ -195,7 +196,6 @@ render() {
                       ref="new_password"
                       onChange={this.handleChange}
                   />
-                  <label>New Password *</label>
                   <span style={{ height: "25px" }}
                       className="password__show"
                       onClick={this.showHide1}>{this.state.type1 === 'text' ? 'Hide' : 'Show'}
@@ -206,7 +206,8 @@ render() {
             </div>
         <div className="row">
           <div className="col s12">
-            <div className="password input-field">     
+            <div className="password input-field"> 
+            <label>Confirm Password *</label>    
               <input
                 id="confirm"
                 type={this.state.type2}
@@ -215,7 +216,6 @@ render() {
                 onChange={this.handleChange}
               />
               
-              <label>Confirm Password *</label>
               <span style={{ height: "25px" }}
                 className="password__show"
                 onClick={this.showHide2}>{this.state.type2 === 'text' ? 'Hide' : 'Show'}
@@ -226,17 +226,17 @@ render() {
         </div>
       <div className="row" id="info">
       <div className="col s2 input-field">
-         <button className="btn waves-effect waves-light waves-effect black" type="submit">
+         <button className="k-button k-primary" type="submit">
           Submit
          </button>
         </div>
-        <div className="input-field col s2">
-                <a className="btn-floating black waves-effect waves-light tooltipped" data-html="true" data-position="right" data-tooltip="Password must contain:<br/>
+        <div className="input-field col s2 click-to-top">
+               <i className="material-icons">info_outline</i><span>Password must contain:<br/>
                                                                                                   at least 8 characters<br/>
                                                                                                   at least one number (0-9)<br/>
                                                                                                   at least one lowercase letter (a-z)<br/>
                                                                                                   at least one uppercase letter (A-Z)<br/>
-                                                                                                  at least one Special Character($&+,:;=?@#|'<>.-^*()%!)"><i className="material-icons">info_outline</i></a>
+                                                                                                  at least one Special Character($&+,:;=?@#|'>.-^*()%!)</span>
                 </div>
       </div>
       </div>

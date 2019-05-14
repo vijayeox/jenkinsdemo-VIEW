@@ -200,9 +200,8 @@ export default class Panel extends EventEmitter {
     let profileCard = document.createElement('div');
     profileCard.classList.add('profileCard');
     let cacheBurster = (new Date()).getTime();
-    profileCard.innerHTML =  '<div class="profileImage"><div class="profileButton"><a class="btn-floating btn-small waves-effect waves-light red" onclick={OSjs.run("Preferences");document.getElementById("profileMenu").classList.remove("profile-visible");}; '
+    profileCard.innerHTML =  '<div class="profileImage"><div class="profileButton profileIcon"><a class="fa fa-edit fa-2x profileEdit" onclick={OSjs.run("Preferences");document.getElementById("profileMenu").classList.remove("profile-visible");}; '
     + 'id="editbutton">'
-    + '<i class="material-icons">edit</i>'
     + '</a></div><img id="imgprofile" '
          + 'src="' + profileInfo['icon'] + '?' + cacheBurster + '"'
          + 'height="100" '
