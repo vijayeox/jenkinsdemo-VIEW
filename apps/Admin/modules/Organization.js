@@ -43,29 +43,39 @@ class Organization extends React.Component {
 
   addOrgUsers = dataItem => {
     this.setState({
-      orgToBeEdited: dataItem.id,
       visible: !this.state.visible
+    });
+    this.addUsersTemplate=React.createElement(MultiSelect, {
+      args: this.core,
+      config: {
+        dataItem: dataItem.id,
+        mainList: "user",
+        subList: "organization"
+      },
+      manage: {
+        postSelected: this.sendTheData,
+        closeDialog: this.toggleDialog
+      }
     });
   };
 
-  sendTheData = selectedUsers => {
+  sendTheData = (dataItem, selectedUsers) => {
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      this.pushOrgUsers(this.state.orgToBeEdited, selectedUsers[i]);
+      this.pushOrgUsers(dataItem, selectedUsers[i]);
     }
     this.toggleDialog();
   };
 
   toggleDialog() {
     this.setState({
-      visible: !this.state.visible,
-      orgToBeEdited: []
+      visible: !this.state.visible
     });
   }
 
   edit = dataItem => {
     this.setState({
       orgInEdit: this.cloneItem(dataItem),
-      action: "edit"
+      action: "put"
     });
   };
 
@@ -84,26 +94,13 @@ class Organization extends React.Component {
   };
 
   insert = () => {
-    this.setState({ orgInEdit: {}, action: "add" });
+    this.setState({ orgInEdit: {}, action: "post" });
   };
 
   render = () => {
     return (
       <div style={{ height: "inherit" }}>
-        {this.state.visible && (
-          <MultiSelect
-            args={this.core}
-            config={{
-              dataItem: this.state.orgToBeEdited,
-              mainList: "user",
-              subList: "organization"
-            }}
-            manage={{
-              postSelected: this.sendTheData,
-              closeDialog: this.toggleDialog
-            }}
-          />
-        )}
+        {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
         <TitleBar title="Manage Organizations" />
         <GridTemplate

@@ -54,12 +54,7 @@ class MultiSelect extends React.Component {
     });
   }
 
-  praj = (event) => {
-    console.log(event);
-  }
-
   captureSelectedUsers(e) {
-    console.log(document.querySelector(".e-popup-open"));
     this.setState({
       selectedUsers: e.value
     });
@@ -76,7 +71,6 @@ class MultiSelect extends React.Component {
             <div style={{ margin: "auto", width: "85%", paddingTop: "15px" }}>
               <MultiSelectComponent
                 id="checkbox"
-                focus={this.praj}
                 dataSource={this.state.userList}
                 value={this.state.selectedUsers}
                 change={this.captureSelectedUsers}
@@ -93,7 +87,15 @@ class MultiSelect extends React.Component {
           </div>
         </div>
         <DialogActionsBar>
-          <button className="k-button k-primary" onClick={() => this.props.manage.postSelected(this.state.selectedUsers)}>
+          <button
+            className="k-button k-primary"
+            onClick={() =>
+              this.props.manage.postSelected(
+                this.props.config.dataItem,
+                this.state.selectedUsers
+              )
+            }
+          >
             Save
           </button>
           <button className="k-button" onClick={this.props.manage.closeDialog}>

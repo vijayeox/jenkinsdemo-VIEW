@@ -1,7 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import FileUploadWithPreview from "file-upload-with-preview";
+import { PushData } from "../components/apiCalls";
 import { FileUploader } from "@oxzion/gui";
 
 export default class DialogContainer extends React.Component {
@@ -9,54 +9,13 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      orgInEdit: this.props.dataItem || null,
-      visibleDialog: false,
-      show: false
+      orgInEdit: this.props.dataItem || null
     };
     this.fUpload = React.createRef();
   }
 
-  async pushData(fileCode) {
-    let helper = this.core.make("oxzion/restClient");
-    let orgAddData = await helper.request(
-      "v1",
-      "/organization",
-      {
-        name: this.state.orgInEdit.name,
-        address: this.state.orgInEdit.address,
-        city: this.state.orgInEdit.city,
-        state: this.state.orgInEdit.state,
-        zip: this.state.orgInEdit.zip,
-        logo: fileCode,
-        languagefile: this.state.orgInEdit.languagefile,
-        contact: this.state.orgInEdit.contact
-      },
-      "post"
-    );
-    return orgAddData;
-  }
-
-  async editOrganization(fileCode) {
-    let helper = this.core.make("oxzion/restClient");
-    let orgEditData = await helper.request(
-      "v1",
-      "/organization/" + this.state.orgInEdit.uuid,
-      {
-        name: this.state.orgInEdit.name,
-        address: this.state.orgInEdit.address,
-        city: this.state.orgInEdit.city,
-        state: this.state.orgInEdit.state,
-        zip: this.state.orgInEdit.zip,
-        logo: fileCode,
-        languagefile: this.state.orgInEdit.languagefile,
-        contact: this.state.orgInEdit.contact
-      },
-      "put"
-    );
-    return orgEditData;
-  }
-
   onDialogInputChange = event => {
+    console.log(event);
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -69,37 +28,24 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  async pushFile(event) {
-    var files = this.fUpload.current.firstUpload.cachedFileArray[0];
-    let helper = this.core.make("oxzion/restClient");
-    let ancFile = await helper.request(
-      "v1",
-      "/attachment",
-      {
-        type: "ORGANIZATION",
-        files: files
-      },
-      "filepost"
-    );
-    return ancFile;
-  }
-
   submitData = event => {
-    if (this.props.formAction == "edit") {
-      this.pushFile().then(response => {
-        var addResponse = response.data.filename[0];
-        this.editOrganization(addResponse).then(response => {
-          this.props.action(response.status);
-        });
+    PushData("attachment", "filepost", {
+      type: "ANNOUNCEMENT",
+      files: this.fUpload.current.firstUpload.cachedFileArray[0]
+    }).then(response => {
+      PushData("organization", this.props.formAction, {
+        name: this.state.orgInEdit.name,
+        address: this.state.orgInEdit.address,
+        city: this.state.orgInEdit.city,
+        state: this.state.orgInEdit.state,
+        zip: this.state.orgInEdit.zip,
+        logo: response.data.filename[0],
+        languagefile: this.state.orgInEdit.languagefile,
+        contact: this.state.orgInEdit.contact
+      }).then(response => {
+        this.props.action(response.status);
       });
-    } else {
-      this.pushFile().then(response => {
-        var addResponse = response.data.filename[0];
-        this.pushData(addResponse).then(response => {
-          this.props.action(response.status);
-        });
-      });
-    }
+    });
     this.props.cancel();
   };
 
@@ -141,7 +87,7 @@ export default class DialogContainer extends React.Component {
                     <input
                       type="text"
                       className="form-control"
-                      name="name"
+                      name="city"
                       value={this.state.orgInEdit.city || ""}
                       onChange={this.onDialogInputChange}
                       placeholder="Enter City"
@@ -155,7 +101,7 @@ export default class DialogContainer extends React.Component {
                     <input
                       type="text"
                       className="form-control"
-                      name="name"
+                      name="state"
                       value={this.state.orgInEdit.state || ""}
                       onChange={this.onDialogInputChange}
                       placeholder="Enter State"
@@ -196,9 +142,9 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col">
                   <input
-                    type="number"
-                    name="zip"
-                    value={this.state.orgInEdit.zip || ""}
+                    type="text"
+                    name="fname"
+                    value={this.state.orgInEdit.temp || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
                   />
@@ -206,10 +152,10 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
-                    name="languagefile"
-                    value={this.state.orgInEdit.languagefile || ""}
+                    name="lname"
+                    value={this.state.orgInEdit.temp || ""}
                     onChange={this.onDialogInputChange}
-                    placeholder="Enter Second Name"
+                    placeholder="Enter Last Name"
                   />
                 </div>
               </div>
@@ -217,8 +163,8 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="email"
-                    name="languagefile"
-                    value={this.state.orgInEdit.languagefile || ""}
+                    name="email"
+                    value={this.state.orgInEdit.temp || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Email ID"
                   />
@@ -230,7 +176,7 @@ export default class DialogContainer extends React.Component {
               title={"Upload Organization Logo"}
               uploadID={"organizationLogo"}
             />
-            <div className="row pt-1" style={{ paddingBottom: "30px" }}>
+            <div className="row pt-3" style={{ paddingBottom: "30px" }}>
               <div className="col-12 text-center">
                 <button
                   type="button"
