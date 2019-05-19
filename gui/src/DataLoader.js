@@ -10,12 +10,24 @@ export class DataLoader extends React.Component {
     this.refresh = this.refresh.bind(this);
   }
 
+  isEmpty(obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key))
+        return false;
+    }
+    return true;
+  }
+
   async getData(url, filters) {
-    console.log(filters);
+    if (this.isEmpty(filters.sort[0])) {
+      this.sortValue = [];
+    } else {
+      this.sortValue = "&sort=" + filters.sort[0].field;
+    }
     let helper = this.core.make("oxzion/restClient");
     let data = await helper.request(
       "v1",
-      "/" + url + "?pg=1&psz=1000&sort=" + filters.sort[0].field,
+      "/" + url + "?pg=1&psz=1000" + this.sortValue,
       {},
       "get"
     );
@@ -23,13 +35,17 @@ export class DataLoader extends React.Component {
   }
 
   refresh = temp => {
-    if (temp == "group" || temp == "announcement" || temp == "project") {
+    if (temp == "group" || temp == "announcement") {
       this.getData(this.url, this.props.dataState).then(response => {
-        this.props.onDataRecieved(response.data);
+        this.props.onDataRecieved({
+          data: response.data,
+          total: response.data.length
+        });
       });
     } else {
       this.getData(this.url, this.props.dataState).then(response => {
-        this.props.onDataRecieved(response.data.data);
+        this.props.onDataRecieved({data: response.data.data,
+          total: response.data.data.length});
       });
     }
   };
@@ -43,7 +59,7 @@ export class DataLoader extends React.Component {
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
     if (this.url == "group" || this.url == "announcement/a") {
-      this.getData(this.url).then(response => {
+      this.getData(this.url, this.props.dataState).then(response => {
         this.lastSuccess = this.pending;
         this.pending = "";
         if (toODataString(this.props.dataState) === this.lastSuccess) {

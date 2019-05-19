@@ -3,6 +3,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
 import { FileUploader } from "@oxzion/gui";
+import { SaveCancel } from "../components/saveCancel";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -15,7 +16,6 @@ export default class DialogContainer extends React.Component {
   }
 
   onDialogInputChange = event => {
-    console.log(event);
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -30,7 +30,7 @@ export default class DialogContainer extends React.Component {
 
   submitData = event => {
     PushData("attachment", "filepost", {
-      type: "ANNOUNCEMENT",
+      type: "ORGANIZATION",
       files: this.fUpload.current.firstUpload.cachedFileArray[0]
     }).then(response => {
       PushData("organization", this.props.formAction, {
@@ -73,7 +73,7 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="address"
                 value={this.state.orgInEdit.address || ""}
-                onChange={this.onDialogInputChange}
+                onChange={this.onDialogInputChange}any
                 placeholder="Enter Organization Address"
                 style={{ marginTop: "5px" }}
               />
@@ -176,26 +176,9 @@ export default class DialogContainer extends React.Component {
               title={"Upload Organization Logo"}
               uploadID={"organizationLogo"}
             />
-            <div className="row pt-3" style={{ paddingBottom: "30px" }}>
-              <div className="col-12 text-center">
-                <button
-                  type="button"
-                  className="btn btn-success col-sm-2 mr-3"
-                  onClick={this.submitData}
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger col-sm-2 ml-3"
-                  onClick={this.props.cancel}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
           </form>
         </div>
+        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
       </Window>
     );
   }

@@ -1,8 +1,8 @@
 import React from "react";
-import {
-  Dialog,
-  DialogActionsBar
-} from "@progress/kendo-react-dialogs";
+import { Window } from "@progress/kendo-react-dialogs";
+import TextareaAutosize from "react-textarea-autosize";
+import { PushData } from "../components/apiCalls";
+import { SaveCancel } from "../components/saveCancel";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -13,35 +13,6 @@ export default class DialogContainer extends React.Component {
       visibleDialog: false,
       show: false
     };
-  }
-
-  componentDidMount() {
-  }
-
-  async pushData() {
-    let helper = this.core.make("oxzion/restClient");
-    let prjAddData = await helper.request(
-      "v1",
-      "/project", {
-        name: this.state.prjInEdit.name,
-        description: this.state.prjInEdit.description
-      },
-      "post"
-    );
-    return prjAddData;
-  }
-
-  async editProject() {
-    let helper = this.core.make("oxzion/restClient");
-    let prjEditData = await helper.request(
-      "v1",
-      "/project/" + this.state.prjInEdit.id, {
-        name: this.state.prjInEdit.name,
-        description: this.state.prjInEdit.description
-      },
-      "put"
-    );
-    return prjEditData;
   }
 
   onDialogInputChange = event => {
@@ -57,81 +28,48 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.submitData();
-  };
-
   submitData = event => {
-    if (this.props.formAction == "edit") {
-      this.editProject().then(response => {
-        this.props.action();
-      });
-    } else {
-      this.pushData().then(response => {
-        var addResponse = response.data.id;
-        this.props.action(addResponse);
-      });
-    }
+    PushData("project", this.props.formAction, {
+      name: this.state.prjInEdit.name,
+      description: this.state.prjInEdit.description
+    }).then(response => {
+      this.props.action(response.status);
+    });
     this.props.cancel();
   };
 
   render() {
     return (
-        <Dialog onClose={this.props.cancel}>
-          <div className="row">
-            <form
-              className="col s12"
-              onSubmit={this.submitData}
-              id="projectForm"
-            >
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="projectName"
-                    type="text"
-                    className="validate"
-                    name="name"
-                    value={this.state.prjInEdit.name || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="projectName">Project Name</label>
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="input-field col s12">
-                  <input
-                    id="projectDescription"
-                    type="text"
-                    className="validate"
-                    name="description"
-                    value={this.state.prjInEdit.description || ""}
-                    onChange={this.onDialogInputChange}
-                    required={true}
-                  />
-                  <label htmlFor="projectDescription">Project Description</label>
-                </div>
-              </div>
-
-            </form>
-          </div>
-
-          <DialogActionsBar args={this.core}>
-            <button
-              className="k-button k-primary"
-              type="submit"
-              form="projectForm"
-              onClick={this.handleSubmit}
-            >
-              Save
-            </button>
-            <button className="k-button" onClick={this.props.cancel}>
-              Cancel
-            </button>
-          </DialogActionsBar>
-        </Dialog>
+      <Window onClose={this.props.cancel}>
+        <div>
+          <form       >
+            <div className="form-group">
+              <label>Project Name</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={this.state.prjInEdit.name || ""}
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Project Name"
+              />
+            </div>
+            <div className="form-group">
+              <label>Project Description</label>
+              <TextareaAutosize
+                type="text"
+                className="form-control"
+                name="description"
+                value={this.state.prjInEdit.description || ""}
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Project Description"
+                style={{ marginTop: "5px" }}
+              />
+            </div>
+          </form>
+        </div>
+        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+      </Window>
     );
   }
 }

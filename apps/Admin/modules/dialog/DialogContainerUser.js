@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { SaveCancel } from "../components/saveCancel";
 
-import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
+import { Window, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
 import Codes from "../data/Codes";
 import ReactTooltip from "react-tooltip";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
+import "bootstrap/js/src/tooltip";
 
 import withValueField from "./withValueField.js";
 const DropDownListWithValueField = withValueField(DropDownList);
@@ -99,8 +101,6 @@ export default class DialogContainer extends React.Component {
   }
 
   componentDidMount() {
-    M.updateTextFields();
-
     if (this.props.formAction === "edit") {
       ReactDOM.render(
         <ReactTooltip
@@ -229,11 +229,6 @@ export default class DialogContainer extends React.Component {
     return filterBy(data, filter);
   }
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.submitData();
-  };
-
   submitData = event => {
     if (this.props.formAction == "edit") {
       this.editUser().then(response => {
@@ -252,7 +247,7 @@ export default class DialogContainer extends React.Component {
     const style = this.props.formAction === "edit" ? { display: "none" } : {};
 
     return (
-      <Dialog onClose={this.props.cancel}>
+      <Window onClose={this.props.cancel}>
         <div id="tooltip" />
         <div className="row">
           <form className="col s12" onSubmit={this.submitData} id="userForm">
@@ -449,16 +444,8 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-
-        <DialogActionsBar args={this.core}>
-          <button className="k-button" onClick={this.props.cancel}>
-            Cancel
-          </button>
-          <button className="k-button k-primary" type="submit" form="userForm">
-            Save
-          </button>
-        </DialogActionsBar>
-      </Dialog>
+       <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+      </Window>
     );
   }
 }

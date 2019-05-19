@@ -12,7 +12,6 @@ class FileUploader extends React.Component {
 
   render() {
     return (
-      
         <div className="form-group border-box">
         <label>{this.props.title}</label>
         <div
@@ -55,6 +54,7 @@ class FileUploader extends React.Component {
                     href="javascript:void(0)"
                     className="pl-5 custom-file-container__image-clear"
                     title="Clear Image"
+                    style={{outline:"none"}}
                   >
                     <img
                       style={{ width: "50px" }}

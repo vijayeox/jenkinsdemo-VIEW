@@ -61,7 +61,6 @@ class Project extends React.Component {
   };
 
   addProjectUsers = dataItem => {
-    console.log(dataItem);
     this.setState({
       projectToBeEdited: dataItem.id,
       visible: !this.state.visible
@@ -94,7 +93,7 @@ class Project extends React.Component {
         args: this.core,
         dataItem: dataItem,
         cancel: this.cancel,
-        formAction: "edit",
+        formAction: "put",
         action: this.handler
       });
   };
@@ -120,7 +119,7 @@ class Project extends React.Component {
         args: this.core,
         dataItem: [],
         cancel: this.cancel,
-        formAction: "add",
+        formAction: "post",
         action: this.handler
       });
   };

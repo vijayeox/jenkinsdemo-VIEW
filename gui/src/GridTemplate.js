@@ -1,11 +1,10 @@
 import React from "react";
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import {
-  FaPlusCircle,
-  FaPencilAlt,
-  FaUserPlus,
-  FaTrashAlt
+  FaPlusCircle, FaPencilAlt,
+  FaUserPlus, FaTrashAlt
 } from "react-icons/fa";
+import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
@@ -26,6 +25,7 @@ class GridTemplate extends React.Component {
       filter: [],
       pageSizes: {}
     };
+    this.notif = React.createRef();
     this.title = this.capitalizeFirstLetter(this.props.config.title);
   }
 
@@ -82,9 +82,19 @@ class GridTemplate extends React.Component {
     return table;
   }
 
+  refreshHandler = serverResponse => {
+    if (serverResponse == "success") {
+      this.notif.current.successNotification();
+    } else {
+      this.notif.current.failNotification();
+    }
+    this.child.current.refresh();
+  }
+
   render() {
     return (
       <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
+        <Notification ref={this.notif} />
         <DataLoader
           ref={this.child}
           args={this.core}
@@ -104,6 +114,7 @@ class GridTemplate extends React.Component {
           onRowClick={e => {
             this.props.manageGrid.edit(e.dataItem);
           }}
+          resizable
         >
           <GridToolbar>
             <div>
@@ -119,7 +130,8 @@ class GridTemplate extends React.Component {
           {this.props.permission != 1 && (
             <GridColumn
               title="Edit"
-              width="160px"
+              width="170px"
+              minResizableWidth="170px"
               cell={CellWithEditing(
                 this.title,
                 this.props.manageGrid.edit,

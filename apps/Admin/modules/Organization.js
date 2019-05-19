@@ -1,6 +1,6 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerOrg";
 
@@ -15,20 +15,9 @@ class Organization extends React.Component {
       visible: false,
       permission: "15"
     };
-
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.notif = React.createRef();
     this.child = React.createRef();
   }
-
-  handler = serverResponse => {
-    if (serverResponse == "success") {
-      this.notif.current.successNotification();
-    } else {
-      this.notif.current.failNotification();
-    }
-    this.child.current.child.current.refresh();
-  };
 
   async pushOrgUsers(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
@@ -45,7 +34,7 @@ class Organization extends React.Component {
     this.setState({
       visible: !this.state.visible
     });
-    this.addUsersTemplate=React.createElement(MultiSelect, {
+    this.addUsersTemplate = React.createElement(MultiSelect, {
       args: this.core,
       config: {
         dataItem: dataItem.id,
@@ -74,9 +63,16 @@ class Organization extends React.Component {
 
   edit = dataItem => {
     this.setState({
-      orgInEdit: this.cloneItem(dataItem),
-      action: "put"
+      orgInEdit: this.cloneItem(dataItem)
     });
+    this.inputTemplate =
+      React.createElement(DialogContainer, {
+        args: this.core,
+        dataItem: dataItem || null,
+        cancel: this.cancel,
+        formAction: "put",
+        action: this.child.current.refreshHandler
+      });
   };
 
   cloneItem(item) {
@@ -85,7 +81,7 @@ class Organization extends React.Component {
 
   remove = dataItem => {
     DeleteEntry("organization", dataItem.id).then(response => {
-      this.handler(response.status);
+      this.child.current.refreshHandler(response.status);
     });
   };
 
@@ -94,14 +90,21 @@ class Organization extends React.Component {
   };
 
   insert = () => {
-    this.setState({ orgInEdit: {}, action: "post" });
+    this.setState({ orgInEdit: {} });
+    this.inputTemplate =
+      React.createElement(DialogContainer, {
+        args: this.core,
+        dataItem: [],
+        cancel: this.cancel,
+        formAction: "post",
+        action: this.child.current.refreshHandler
+      });
   };
 
   render = () => {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <Notification ref={this.notif} />
         <TitleBar title="Manage Organizations" />
         <GridTemplate
           args={this.core}
@@ -118,16 +121,7 @@ class Organization extends React.Component {
           }}
           permission={this.state.permission}
         />
-
-        {this.state.orgInEdit && (
-          <DialogContainer
-            args={this.core}
-            dataItem={this.state.orgInEdit}
-            cancel={this.cancel}
-            formAction={this.state.action}
-            action={this.handler}
-          />
-        )}
+        {this.state.orgInEdit && this.inputTemplate}
       </div>
     );
   };

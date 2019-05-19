@@ -1,5 +1,5 @@
 import React from "react";
-import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
 
@@ -15,18 +15,8 @@ class Group extends React.Component {
       permission: "15"
     };
     this.toggleDialog = this.toggleDialog.bind(this);
-    this.notif = React.createRef();
     this.child = React.createRef();
   }
-
-  handler = serverResponse => {
-    if (serverResponse == "success") {
-      this.notif.current.successNotification();
-    } else {
-      this.notif.current.failNotification();
-    }
-    this.child.current.child.current.refresh("group");
-  };
 
   async pushGroupUsers(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
@@ -74,8 +64,8 @@ class Group extends React.Component {
         args: this.core,
         dataItem: dataItem || null,
         cancel: this.cancel,
-        formAction: "edit",
-        action: this.handler
+        formAction: "put",
+        action: this.child.current.refreshHandler
       });
   };
 
@@ -85,7 +75,7 @@ class Group extends React.Component {
 
   remove = dataItem => {
     DeleteEntry("group", dataItem.id).then(response => {
-      this.handler(response.status);
+      this.child.current.refreshHandler(response.status);
     });
   };
 
@@ -100,8 +90,8 @@ class Group extends React.Component {
         args: this.core,
         dataItem: [],
         cancel: this.cancel,
-        formAction: "add",
-        action: this.handler
+        formAction: "post",
+        action: this.child.current.refreshHandler
       });
   };
 
@@ -122,7 +112,6 @@ class Group extends React.Component {
             }}
           />
         )}
-        <Notification ref={this.notif} />
         <TitleBar title="Manage Groups" />
         <GridTemplate
           args={this.core}
