@@ -32,7 +32,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 		let userData = this.core.getUser();
 		this.token = userData["jwt"];
 		try {
-			let url = this.baseUrl + 'user/me/a';
+			let url = this.baseUrl + 'user/me/a+p+bapp';
 			var xmlHttp = new XMLHttpRequest();
 			xmlHttp.open("GET", url, false);
 			let auth = 'Bearer ' + this.token;
@@ -116,6 +116,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 			let auth = 'Bearer ' + this.token;
 			reqHeaders['Authorization'] = auth;
 			if (method == 'get' || method == 'put') {
+
+
+
+				
 				if (!(reqHeaders['Content-Type'])) {
 					reqHeaders['Content-Type'] = 'application/json';
 				}

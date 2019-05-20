@@ -380,6 +380,7 @@ export default class Packages {
   getPackages(filter) {
     filter = filter || (() => true);
 
+    const details = this.core.make("oxzion/profile").get();
     const user = this.core.getUser();
     const metadata = this.metadata.map(m => Object.assign({}, m));
 
@@ -387,8 +388,9 @@ export default class Packages {
       ? iter.groups.every(g => user.groups.indexOf(g) !== -1)
       : true;
 
-    const filterBlacklist = iter => user.blacklist instanceof Array
-      ? user.blacklist.indexOf(iter.name) === -1
+
+    const filterBlacklist = iter => details.key.blackListedApps instanceof Object
+      ? !details.key.blackListedApps[iter.name] 
       : true;
 
     return metadata
