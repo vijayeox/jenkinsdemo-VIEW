@@ -18,7 +18,7 @@ class EditProfile extends Component {
     this.userprofile = this.core.make('oxzion/profile').get();
     this.userprofile.key.preferences['dateformat'] = 
     this.userprofile.key.preferences['dateformat'] && this.userprofile.key.preferences['dateformat'] != '' ? 
-    this.userprofile.key.preferences['dateformat'] : "yyyy/m/dd"
+    this.userprofile.key.preferences['dateformat'] : "yyyy/MM/dd"
     this.dob = null;
     this.doj = null;
     this.state = {
@@ -99,8 +99,8 @@ class EditProfile extends Component {
 
 
   componentWillMount(){
+      this.state.dateformat = this.state.dateformat.replace(/m/g,"M");
       this.splitPhoneNumber();
-      console.log(this.state.fields);
       let fieldsTemp = { ...this.state.fields };
       if (
         this.state.fields.date_of_birth == "0000-00-00" ||
@@ -289,6 +289,7 @@ async handleSubmit(event) {
                   ref="date_of_birth"
                   value={this.state.fields.date_of_birth}
                   onChange={this.handleDOBChange}
+                  readonly
                 />
                 </div>
 
@@ -392,7 +393,6 @@ async handleSubmit(event) {
                 <div className="errorMsg">{this.state.errors.address}</div>
               </div>
             </div>
-
               
             <div className="row">
             <label className = "country" style={{marginTop:""}}>Country *</label>
