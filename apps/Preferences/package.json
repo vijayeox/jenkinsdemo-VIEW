@@ -22,7 +22,6 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.4.0",
     "material-ui-avatar-picker": "^1.0.3",
-    "materialize-css": "^1.0.0-rc.2",
     "rc-datepicker": "^5.0.13",
     "react-bootstrap-datetimepicker": "0.0.22",
     "react-calendar": "^2.18.1",

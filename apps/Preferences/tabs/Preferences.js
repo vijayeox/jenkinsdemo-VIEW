@@ -10,18 +10,11 @@ class Preferences extends Component {
     this.state = {
       file: null,
       timez: "",
-      fields: {},
+      fields: this.userprofile.key.preferences,
       errors: {},
       initialized: -1
 
     };
-
-    this.getPreferences().then(response => {
-      console.log(response);
-      this.setState({fields :response.key.preferences});
-      console.log(this.state.fields);
-  
-   });
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -56,12 +49,10 @@ class Preferences extends Component {
     });
   }
 
-
-  async getPreferences() {
-    let userpreferences = await this.core.make("oxzion/profile").get();
-    return userpreferences;
+  componentWillMount(){
+     this.state.fields['dateformat'] = this.state.fields['dateformat'].replace(/m/g,"M");
   }
-  
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
@@ -122,7 +113,6 @@ class Preferences extends Component {
                     onChange={this.handleChange}
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "true"}
-                    // checked
                   />
                   <span className="m-2">On</span>
                 </label>
