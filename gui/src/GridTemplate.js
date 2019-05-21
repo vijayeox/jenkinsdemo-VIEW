@@ -10,7 +10,6 @@ import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 class GridTemplate extends React.Component {
   constructor(props) {

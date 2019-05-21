@@ -62,6 +62,7 @@ class User extends React.Component {
           ref={this.child}
           config={{
             showToolBar:false,
+            title:"user",
             column: ["id", "name", "designation", "country"]
           }}
           manageGrid={{
