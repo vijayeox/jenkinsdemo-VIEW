@@ -1,6 +1,6 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
 import { DropDown } from "../components/DropDownList";
 import { SaveCancel } from "../components/saveCancel";
@@ -14,65 +14,13 @@ export default class DialogContainer extends React.Component {
     };
   }
 
-  async pushData() {
-    let helper = this.core.make("oxzion/restClient");
-    let projectAddData = await helper.request(
-      "v1",
-      "/group",
-      {
-        name: this.state.groupInEdit.name,
-        parent_id: this.state.groupInEdit.parent_id,
-        manager_id: this.state.groupInEdit.manager_id,
-        org_id: this.state.groupInEdit.org_id,
-        description: this.state.groupInEdit.description
-      },
-      "post"
-    );
-    return projectAddData;
-  }
-
-  async editGroup() {
-    let helper = this.core.make("oxzion/restClient");
-    let groupEditData = await helper.request(
-      "v1",
-      "/group/" + this.state.groupInEdit.id,
-      {
-        name: this.state.groupInEdit.name,
-        parent_id: this.state.groupInEdit.parent_id,
-        manager_id: this.state.groupInEdit.manager_id,
-        org_id: this.state.groupInEdit.org_id,
-        description: this.state.groupInEdit.description
-      },
-      "put"
-    );
-  }
-
-  managerOnChange = event => {
+  listOnChange = (event, item) => {
     const edited = this.state.groupInEdit;
-    edited["manager_id"] = event.target.value;
-
+    edited[item] = event.target.value;
     this.setState({
       groupInEdit: edited
     });
-  }
-
-  parentGroupOnChange = event => {
-    const edited = this.state.groupInEdit;
-    edited["parent_id"] = event.target.value;
-
-    this.setState({
-      groupInEdit: edited
-    });
-  }
-
-  orgOnChange = (event) => {
-    const edited = this.state.groupInEdit;
-    edited["org_id"] = event.target.value;
-
-    this.setState({
-      groupInEdit: edited
-    });
-  }
+  };
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -97,7 +45,6 @@ export default class DialogContainer extends React.Component {
     }).then(response => {
       this.props.action(response.status);
     });
-
     this.props.cancel();
   };
 
@@ -137,7 +84,10 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       mainList={"user"}
                       selectedItem={this.state.groupInEdit.manager_id}
-                      onDataChange={this.managerOnChange} />
+                      onDataChange={event =>
+                        this.listOnChange(event, "manager_id")
+                      }
+                    />
                   </div>
                 </div>
                 <div className="col">
@@ -147,7 +97,10 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       mainList={"group"}
                       selectedItem={this.state.groupInEdit.parent_id}
-                      onDataChange={this.parentGroupOnChange} />
+                      onDataChange={event =>
+                        this.listOnChange(event, "parent_id")
+                      }
+                    />
                   </div>
                 </div>
                 <div className="col">
@@ -157,7 +110,8 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       mainList={"organization"}
                       selectedItem={this.state.groupInEdit.org_id}
-                      onDataChange={this.orgOnChange} />
+                      onDataChange={event => this.listOnChange(event, "org_id")}
+                    />
                   </div>
                 </div>
               </div>

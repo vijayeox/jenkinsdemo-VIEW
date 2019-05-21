@@ -6,6 +6,100 @@
 
   background: #336666;
 
+  legend.form-label {
+    font-size: 1.5rem;
+    color: #3d658f;
+  }
+
+  .control-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #52657a;
+  }
+
+  .form-control {
+    font-size: 1rem;
+  }
+
+  .form-hint {
+    font-size: 0.7rem;
+    line-height: 1.4;
+    margin: -5px auto 5px;
+    color: #999;
+  }
+  .form-hint.error {
+    color: #c00;
+    font-size: 0.8rem;
+  }
+
+  .password-count {
+    bottom: 85px;
+    right: 15px;
+    font-size: 1rem;
+  }
+
+  .password-show {
+    bottom: 29px;
+    right: 83px;
+    font-size: 1rem;
+  }
+
+  .strength-meter {
+    position: relative;
+    height: 3px;
+    background: #ddd;
+    margin: 7px 0;
+    border-radius: 2px;
+  }
+  .strength-meter:before,
+  .strength-meter:after {
+    content: "";
+    height: inherit;
+    background: transparent;
+    display: block;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 6px 0;
+    position: absolute;
+    width: calc(20% + 6px);
+    z-index: 10;
+  }
+  .strength-meter:before {
+    left: calc(20% - 3px);
+  }
+  .strength-meter:after {
+    right: calc(20% - 3px);
+  }
+
+  .strength-meter-fill {
+    background: transparent;
+    height: inherit;
+    position: absolute;
+    width: 0;
+    border-radius: inherit;
+    transition: width 0.5s ease-in-out, background 0.25s;
+  }
+  .strength-meter-fill[data-strength="0"] {
+    width: 20%;
+    background: darkred;
+  }
+  .strength-meter-fill[data-strength="1"] {
+    width: 40%;
+    background: orangered;
+  }
+  .strength-meter-fill[data-strength="2"] {
+    width: 60%;
+    background: orange;
+  }
+  .strength-meter-fill[data-strength="3"] {
+    width: 80%;
+    background: yellowgreen;
+  }
+  .strength-meter-fill[data-strength="4"] {
+    width: 100%;
+    background: green;
+  }
+
   .k-window-titlebar {
     display: none;
   }
@@ -17,11 +111,11 @@
     width: 100% !important;
   }
 
-  .k-filtercell>.k-filtercell-wrapper>input::placeholder {
+  .k-filtercell > .k-filtercell-wrapper > input::placeholder {
     font-size: 1em;
   }
 
-  .k-filtercell>.k-filtercell-wrapper>input {
+  .k-filtercell > .k-filtercell-wrapper > input {
     font-size: 1em;
     margin-bottom: 0px;
     height: 25px;
@@ -58,7 +152,7 @@
     width: 1px;
   }
 
-  [type="file"]+.btn-upload {
+  [type="file"] + .btn-upload {
     background-color: #000;
     border-radius: 4rem;
     color: #fff;
@@ -74,12 +168,12 @@
     transition: background-color 0.3s;
   }
 
-  [type="file"]:focus+.btn-upload,
-  [type="file"]+label:hover {
+  [type="file"]:focus + .btn-upload,
+  [type="file"] + label:hover {
     background-color: #f06151;
   }
 
-  [type="file"]:focus+.btn-upload {
+  [type="file"]:focus + .btn-upload {
     outline: 0;
     outline-style: none;
     -moz-outline-style: none;
@@ -160,8 +254,6 @@
     width: 100%;
     background-color: #3c404de1;
     z-index: 10;
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
   }
 
   //items per page for kendo grid
@@ -250,13 +342,23 @@
     float: right;
   }
 
-  .k-widget.k-state-invalid>.k-picker-wrap {
+  .k-widget.k-state-invalid > .k-picker-wrap {
     border-color: #949494;
     color: #9e9e9e;
   }
 
+  .radioLabel {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #727a82;
+  }
+
   .e-multi-select-list-wrapper {
     top: 160px !important;
+  }
+
+  .k-dateinput-wrap > input {
+    padding-left: 5%;
   }
 }
 
@@ -280,7 +382,7 @@
   font-size: 11.2px !important;
 }
 
-.k-dropdown-wrap>.k-input {
+.k-dropdown-wrap > .k-input {
   margin: auto;
 }
 
@@ -289,7 +391,7 @@
   min-height: 35px;
 }
 
-.k-list-filter>.k-textbox {
+.k-list-filter > .k-textbox {
   margin: 0px;
   height: 35px;
 }

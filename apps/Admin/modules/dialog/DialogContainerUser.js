@@ -1,43 +1,49 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { SaveCancel } from "../components/saveCancel";
 
-import { Window, DialogActionsBar } from "@progress/kendo-react-dialogs";
+import { Window } from "@progress/kendo-react-dialogs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
-import { filterBy } from "@progress/kendo-data-query";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { Input } from "@progress/kendo-react-inputs";
+import { Ripple } from "@progress/kendo-react-ripple";
+import { PushData } from "../components/apiCalls";
+
+import PasswordField from "../components/PasswordField";
+import EmailField from "../components/EmailField";
+import FormField from "../components/FormField";
+import { SaveCancel } from "../components/saveCancel";
+import { DropDown } from "../components/DropDownList";
 import Codes from "../data/Codes";
 import ReactTooltip from "react-tooltip";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
-import "bootstrap/js/src/tooltip";
-
-import withValueField from "./withValueField.js";
-const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    this.masterUserList = this.props.usersList;
     this.state = {
       DOBInEdit: undefined,
       DOJInEdit: undefined,
       userInEdit: this.props.dataItem || null,
-      visibleDialog: false,
-      show: false,
-      date1: null,
-      date2: null,
-      usersList: this.props.usersList,
-      value: null,
-      value1: null,
       countries: Codes
     };
-    this.getUserData().then(response => {
-      this.setState({ usersList: response.data });
-    });
   }
+
+  fieldStateChanged = field => state => {
+    this.setState({ [field]: state.errors.length === 0 });
+    if (field == "password") {
+      let userInEdit = { ...this.state.userInEdit };
+      userInEdit.password = state.value;
+      this.setState({ userInEdit: userInEdit });
+    }
+  };
+
+  emailChanged = this.fieldStateChanged("email");
+  cPasswordChanged = this.fieldStateChanged("cPassword");
+  passwordChanged = this.fieldStateChanged("password");
+
   componentWillMount() {
-    if (this.props.formAction === "add") {
+    if (this.props.formAction === "post") {
     } else {
       let userInEditTemp = { ...this.state.userInEdit };
       if (
@@ -101,7 +107,7 @@ export default class DialogContainer extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.formAction === "edit") {
+    if (this.props.formAction === "put") {
       ReactDOM.render(
         <ReactTooltip
           place="bottom"
@@ -148,64 +154,11 @@ export default class DialogContainer extends React.Component {
 
   genderChange = event => {
     let userInEdit = { ...this.state.userInEdit };
-    userInEdit.gender = event.value;
+    userInEdit.gender = event.target.value;
     this.setState({ userInEdit: userInEdit });
   };
 
-  async getUserData() {
-    let helper = this.core.make("oxzion/restClient");
-    let userData = await helper.request("v1", "/user", {}, "get");
-    return userData.data;
-  }
-
-  async pushData() {
-    let helper = this.core.make("oxzion/restClient");
-    let userAddData = await helper.request(
-      "v1",
-      "/user",
-      {
-        username: this.state.userInEdit.username,
-        password: this.state.userInEdit.password,
-        firstname: this.state.userInEdit.firstname,
-        lastname: this.state.userInEdit.lastname,
-        email: this.state.userInEdit.email,
-        date_of_birth: this.state.DOBInEdit,
-        designation: this.state.userInEdit.designation,
-        gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
-        date_of_join: this.state.DOJInEdit,
-        country: this.state.userInEdit.country
-      },
-      "post"
-    );
-    return userAddData;
-  }
-
-  async editUser() {
-    let helper = this.core.make("oxzion/restClient");
-    let orgEditData = await helper.request(
-      "v1",
-      "/user/" + this.state.userInEdit.id,
-      {
-        username: this.state.userInEdit.username,
-        firstname: this.state.userInEdit.firstname,
-        lastname: this.state.userInEdit.lastname,
-        email: this.state.userInEdit.email,
-        date_of_birth: this.state.DOBInEdit,
-        designation: this.state.userInEdit.designation,
-        gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
-        date_of_join: this.state.DOJInEdit,
-        country: this.state.userInEdit.country
-      },
-      "put"
-    );
-    return orgEditData;
-  }
-
   onDialogInputChange = event => {
-    M.updateTextFields();
-
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -218,233 +171,256 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  filterChange = event => {
-    this.setState({
-      usersList: this.filterData(event.filter)
+  handleSubmit = event => {
+    event.preventDefault();
+    PushData("user", this.props.formAction, {
+      username: this.state.userInEdit.username,
+      password: this.state.userInEdit.password,
+      firstname: this.state.userInEdit.firstname,
+      lastname: this.state.userInEdit.lastname,
+      email: this.state.userInEdit.email,
+      date_of_birth: this.state.DOBInEdit,
+      designation: this.state.userInEdit.designation,
+      gender: this.state.userInEdit.gender,
+      managerid: this.state.userInEdit.managerid,
+      date_of_join: this.state.DOJInEdit,
+      country: this.state.userInEdit.country
+    }).then(response => {
+      this.props.action(response.status);
     });
-  };
-
-  filterData(filter) {
-    const data = this.masterUserList.slice();
-    return filterBy(data, filter);
-  }
-
-  submitData = event => {
-    if (this.props.formAction == "edit") {
-      this.editUser().then(response => {
-        this.props.action();
-      });
-    } else {
-      this.pushData().then(response => {
-        var addResponse = response.data.id;
-        this.props.action(addResponse);
-      });
-    }
-    this.props.save();
+    this.props.cancel();
   };
 
   render() {
-    const style = this.props.formAction === "edit" ? { display: "none" } : {};
+    const hide = this.props.formAction === "put" ? { display: "none" } : {};
+    const { fullname, email, password } = this.state;
+    const formValidated = fullname && email && password;
 
+    const validateFullname = value => {
+      if (value !== this.state.userInEdit.password)
+        throw new Error("Fullname is invalid");
+    };
     return (
       <Window onClose={this.props.cancel}>
         <div id="tooltip" />
-        <div className="row">
-          <form className="col s12" onSubmit={this.submitData} id="userForm">
-            <div className="row">
-              <div className="input-field col s12">
-                <input
-                  id="UserFName"
-                  type="text"
-                  className="validate"
-                  name="firstname"
-                  value={this.state.userInEdit.firstname || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="UserFName">First Name</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="input-field col s12">
-                <input
-                  id="UserLName"
-                  type="text"
-                  className="validate"
-                  name="lastname"
-                  value={this.state.userInEdit.lastname || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="UserLName">Last Name</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="input-field col s12">
-                <input
-                  id="UserUsername"
-                  type="text"
-                  className="validate"
-                  name="username"
-                  value={this.state.userInEdit.username || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                  data-tip="Warning: </br> Changing the username will lead to loss of some user data, like chat history."
-                />
-                <label htmlFor="UserUsername">User Name</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="input-field col s12">
-                <input
-                  id="UserEmail"
-                  type="email"
-                  className="validate"
-                  name="email"
-                  value={this.state.userInEdit.email || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="UserEmail">Email</label>
-              </div>
-            </div>
-            <div className="row" style={style}>
-              <div className="input-field col s12">
-                <input
-                  id="UserPassword"
-                  type="password"
-                  className="validate"
-                  name="password"
-                  value={this.state.userInEdit.password || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="UserPassword">Password</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col s12 example-col" id="datecol">
-                <div>
-                  <label id="label1">Date Of Birth</label>
-                </div>
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.userInEdit.date_of_birth}
-                  onChange={this.handleDOBChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div
-                className="input-field col s12"
-                style={{ marginBottom: "7px" }}
-              >
-                <input
-                  id="UserDesignation"
-                  type="text"
-                  className="validate"
-                  name="designation"
-                  value={this.state.userInEdit.designation || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="UserDesignation">Designation</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="input-field col s12 gendersel">
-                <div>
-                  <label htmlFor="UserGender" id="label1">
-                    Gender
-                  </label>
-                </div>
-                <div className="col s3 input-field gender1">
-                  <label>
-                    <input
-                      id="UserGender"
-                      className="validate"
-                      type="radio"
-                      name="gender"
-                      value="Male"
-                      onChange={this.genderChange}
-                      checked={this.state.userInEdit.gender == "Male"}
+        <Ripple>
+          <div className="container-fluid">
+            <form className="k-form" onSubmit={this.handleSubmit} id="userForm">
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col">
+                    <label>First Name</label>
+                    <Input
+                      type="text"
+                      className="form-control"
+                      name="firstname"
+                      value={this.state.userInEdit.firstname || ""}
+                      onChange={this.onDialogInputChange}
+                      placeholder="Enter First Name"
+                      pattern={"[A-Za-z]+"}
+                      minLength={4}
+                      required={true}
+                      validationMessage={"Please enter a valid First Name"}
                     />
-                    <span id="name">Male</span>
-                  </label>
-                </div>
-                <div className="col s3 input-field gender2">
-                  <label>
+                  </div>
+                  <div className="col">
+                    <label>Last Name</label>
                     <input
-                      id="UserGender"
-                      className="validate"
-                      type="radio"
-                      name="gender"
-                      value="Female"
-                      onChange={this.genderChange}
-                      checked={this.state.userInEdit.gender == "Female"}
+                      type="text"
+                      className="form-control"
+                      name="lastname"
+                      value={this.state.userInEdit.lastname || ""}
+                      onChange={this.onDialogInputChange}
+                      placeholder="Enter Last Name"
+                      pattern={"[A-Za-z]+"}
+                      minLength={2}
+                      required={true}
+                      validationMessage={"Please enter a valid Last Name"}
                     />
-                    <span id="name">Female</span>
-                  </label>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="input-field col s12">
-                <p style={{ marginTop: "0px" }}>
-                  <label style={{ fontSize: "12px" }}>Manager Assigned</label>{" "}
-                </p>
-                <DropDownListWithValueField
-                  data={this.state.usersList}
-                  textField="name"
-                  value={this.state.userInEdit.managerid}
-                  valueField="id"
-                  onChange={this.managerOnChange}
-                  filterable={true}
-                  onFilterChange={this.filterChange}
-                  style={{ width: "200px" }}
-                  popupSettings={{ height: "170px" }}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col s12 example-col" id="datecol">
-                <div>
-                  <label id="label1">Date Of Join</label>
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col">
+                    <label>Email</label>
+                    <EmailField
+                      value={this.state.userInEdit.email}
+                      placeholder="Enter Email Address"
+                      onStateChanged={this.emailChanged}
+                      required={true}
+                    />
+                  </div>
                 </div>
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.userInEdit.date_of_join}
-                  defaultValue={new Date()}
-                  onChange={this.handleDOJChange}
-                  required={true}
-                />
               </div>
-            </div>
 
-            <div className="row">
-              <div className="input-field col s12">
-                <div>
-                  <label id="label1">Country</label>
+              <div className="form-group border-box" style={hide}>
+                <div className="form-row">
+                  <div className="col">
+                    <label>Password</label>
+                    <PasswordField
+                      fieldId="password"
+                      label="Password"
+                      placeholder="Enter Password"
+                      onStateChanged={this.passwordChanged}
+                      thresholdLength={7}
+                      minStrength={3}
+                      required={true}
+                    />
+                  </div>
+                  <div className="col">
+                    <label>Confirm Password</label>
+                    <span
+                      className="d-block form-hint"
+                      style={{ paddingBottom: "14px" }}
+                    >
+                      Please enter the same password once more.
+                    </span>
+                    <FormField
+                      type="password"
+                      placeholder="Retype Password"
+                      validator={validateFullname}
+                      onStateChanged={this.fullnameChanged}
+                      required={true}
+                    />
+                  </div>
                 </div>
-                <DropDownList
-                  data={this.state.countries}
-                  onChange={this.countryOnChange}
-                  style={{ width: "200px" }}
-                  value={this.state.userInEdit.country}
-                />
               </div>
-            </div>
-          </form>
-        </div>
-       <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col">
+                    <label>User Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="username"
+                      value={this.state.userInEdit.username || ""}
+                      onChange={this.onDialogInputChange}
+                      placeholder="Enter User Name"
+                      required={true}
+                      validationMessage={"Please enter a valid User Name"}
+                    />
+                  </div>
+                  <div className="col">
+                    <label>Designation</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="designation"
+                      value={this.state.userInEdit.designation || ""}
+                      onChange={this.onDialogInputChange}
+                      placeholder="Enter Designation"
+                      required={true}
+                      validationMessage={"Please enter a valid User Name"}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col-6">
+                    <label>Manager Assigned</label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        mainList={"user"}
+                        selectedItem={this.state.userInEdit.managerid}
+                        onDataChange={this.managerOnChange}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <label>Country</label>
+                    <div>
+                      <DropDownList
+                        data={this.state.countries}
+                        onChange={this.countryOnChange}
+                        style={{ width: "200px" }}
+                        value={this.state.userInEdit.country}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col-6">
+                    <label>Gender</label>
+                    <div className="pt-2">
+                      <span className="col-6">
+                        <input
+                          type="radio"
+                          id="mRadio"
+                          name="gender"
+                          value="Male"
+                          className="k-radio"
+                          onChange={this.genderChange}
+                          checked={this.state.userInEdit.gender == "Male"}
+                          required
+                        />
+                        <label
+                          className="k-radio-label pl-4 radioLabel"
+                          htmlFor="mRadio"
+                        >
+                          Male
+                        </label>
+                      </span>
+                      <span className="col-4">
+                        <input
+                          type="radio"
+                          id="fRadio"
+                          name="gender"
+                          value="Female"
+                          className="k-radio pl-2"
+                          onChange={this.genderChange}
+                          checked={this.state.userInEdit.gender == "Female"}
+                          required
+                        />
+                        <label
+                          className="k-radio-label pl-4 radioLabel"
+                          htmlFor="fRadio"
+                        >
+                          Female
+                        </label>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="col-3">
+                    <label>Date Of Birth</label>
+                    <div>
+                      <DatePicker
+                        format={"dd-MMM-yyyy"}
+                        value={this.state.userInEdit.date_of_birth}
+                        onChange={this.handleDOBChange}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-3">
+                    <label>Date Of Join</label>
+                    <div>
+                      <DatePicker
+                        format={"dd-MMM-yyyy"}
+                        value={this.state.userInEdit.date_of_join}
+                        defaultValue={new Date()}
+                        onChange={this.handleDOJChange}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style={{ margin: "75px" }} />
+            </form>
+          </div>
+          <SaveCancel form={"userForm"} cancel={this.props.cancel} />
+        </Ripple>
       </Window>
     );
   }

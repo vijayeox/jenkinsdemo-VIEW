@@ -25,7 +25,6 @@
     "file-upload-with-preview": "^4.0.2",
     "jquery": "^3.4.0",
     "npm": "^6.9.0",
-    "react-icons": "^3.6.1",
     "react-notifications-component": "^1.1.1",
     "sweetalert2": "^8.9.0"
   },
@@ -45,7 +44,11 @@
     "react-dom": "^16.8.6",
     "sass-loader": "^7.1.0",
     "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1"
+    "webpack-cli": "^3.2.1",
+    "react-icons": "^3.6.1"
+  },
+  "peerDependencies": {
+    "react-icons": "^3.6.1"
   },
   "osjs": {
     "type": "package"

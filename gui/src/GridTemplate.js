@@ -1,8 +1,10 @@
 import React from "react";
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import {
-  FaPlusCircle, FaPencilAlt,
-  FaUserPlus, FaTrashAlt
+  FaPlusCircle,
+  FaPencilAlt,
+  FaUserPlus,
+  FaTrashAlt
 } from "react-icons/fa";
 import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
@@ -89,7 +91,7 @@ class GridTemplate extends React.Component {
       this.notif.current.failNotification();
     }
     this.child.current.refresh();
-  }
+  };
 
   render() {
     return (
@@ -116,22 +118,24 @@ class GridTemplate extends React.Component {
           }}
           resizable
         >
-          <GridToolbar>
-            <div>
-              <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>
-              <AddButton
-                args={this.props.manageGrid.add}
-                permission={this.props.permission}
-                label={this.title}
-              />
-            </div>
-          </GridToolbar>
+          {this.props.config.showToolBar == true && (
+            <GridToolbar>
+              <div>
+                <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>
+                <AddButton
+                  args={this.props.manageGrid.add}
+                  permission={this.props.permission}
+                  label={this.title}
+                />
+              </div>
+            </GridToolbar>
+          )}
           {this.createColumns()}
           {this.props.permission != 1 && (
             <GridColumn
               title="Edit"
               width="170px"
-              minResizableWidth="170px"
+              minResizableWidth={170}
               cell={CellWithEditing(
                 this.title,
                 this.props.manageGrid.edit,
