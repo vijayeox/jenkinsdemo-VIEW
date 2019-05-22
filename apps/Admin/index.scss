@@ -79,23 +79,25 @@
     border-radius: inherit;
     transition: width 0.5s ease-in-out, background 0.25s;
   }
-  .strength-meter-fill[data-strength="0"] {
+  .strength-meter-fill[data-strength="1"],
+  .strength-meter-fill[data-strength="2"] {
     width: 20%;
     background: darkred;
   }
-  .strength-meter-fill[data-strength="1"] {
+  .strength-meter-fill[data-strength="3"],
+  .strength-meter-fill[data-strength="4"] {
     width: 40%;
     background: orangered;
   }
-  .strength-meter-fill[data-strength="2"] {
+  .strength-meter-fill[data-strength="5"] {
     width: 60%;
     background: orange;
   }
-  .strength-meter-fill[data-strength="3"] {
+  .strength-meter-fill[data-strength="6"] {
     width: 80%;
     background: yellowgreen;
   }
-  .strength-meter-fill[data-strength="4"] {
+  .strength-meter-fill[data-strength="7"] {
     width: 100%;
     background: green;
   }
@@ -252,6 +254,7 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
+    left: 15px;
     background-color: #3c404de1;
     z-index: 10;
   }

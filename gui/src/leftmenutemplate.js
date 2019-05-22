@@ -1,5 +1,4 @@
 import React from "react";
-import $ from "jquery";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import { Button, ButtonGroup } from '@trendmicro/react-buttons';
 import Dropdown, { MenuItem } from '@trendmicro/react-dropdown';

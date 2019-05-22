@@ -70,8 +70,8 @@ class FormField extends Component {
 
 FormField.propTypes = {
   type: PropTypes.oneOf(["text", "password"]).isRequired,
-  label: PropTypes.string.isRequired,
-  fieldId: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  fieldId: PropTypes.string,
   placeholder: PropTypes.string.isRequired,
   required: PropTypes.bool,
   children: PropTypes.node,

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
-import zxcvbn from "zxcvbn";
 
 import FormField from "./FormField";
 
@@ -17,14 +16,19 @@ class PasswordField extends Component {
     this.thresholdLength =
       typeof thresholdLength === "number" ? Math.max(thresholdLength, 7) : 7;
 
-    this.state = { password: "", strength: 0, type: "password", textHide:"SHOW" };
+    this.state = {
+      password: "",
+      strength: 0,
+      type: "password",
+      textHide: "SHOW"
+    };
   }
 
   stateChanged = state => {
     this.setState(
       {
         password: state.value,
-        strength: zxcvbn(state.value).score
+        strength: Math.min(state.value.length, 7)
       },
       () => this.props.onStateChanged(state)
     );
@@ -33,23 +37,22 @@ class PasswordField extends Component {
   validatePasswordStrong = value => {
     if (value.length <= this.thresholdLength)
       throw new Error("Password is short");
-    if (zxcvbn(value).score < this.minStrength)
-      throw new Error("Password is weak");
+    if (3 < this.minStrength) throw new Error("Password is weak");
   };
 
   showHide = () => {
-	  if(this.state.type=="password"){
-	  this.setState({
-		  type:"text",
-		  textHide:"HIDE"
-	  })
-	} else {
-		this.setState({
-			type:"password",
-			textHide:"SHOW"
-		})
-	}
-  }
+    if (this.state.type == "password") {
+      this.setState({
+        type: "text",
+        textHide: "HIDE"
+      });
+    } else {
+      this.setState({
+        type: "password",
+        textHide: "SHOW"
+      });
+    }
+  };
 
   render() {
     const {
@@ -101,9 +104,15 @@ class PasswordField extends Component {
             </div>
           </FormField>
           <div className="position-absolute password-show mx-3">
-            <h5><span className="badge badge-primary" onClick={this.showHide} style={{cursor:"pointer"}}>
-              {this.state.textHide}
-            </span></h5>
+            <h5>
+              <span
+                className="badge badge-primary"
+                onClick={this.showHide}
+                style={{ cursor: "pointer" }}
+              >
+                {this.state.textHide}
+              </span>
+            </h5>
           </div>
           <div className="position-absolute password-count mx-3">
             <span className={counterClass}>

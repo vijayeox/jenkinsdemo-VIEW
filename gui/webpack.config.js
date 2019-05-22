@@ -1,67 +1,68 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-const mode = process.env.NODE_ENV || 'development';
-const minimize = mode === 'production';
+const mode = process.env.NODE_ENV || "development";
+const minimize = mode === "production";
 const plugins = [];
-const pkg = require('./package.json');
-const libraryName= pkg.name;
+const pkg = require("./package.json");
+const libraryName = pkg.name;
 
-
-if (mode === 'production') {
-  plugins.push(new OptimizeCSSAssetsPlugin({
-    cssProcessorOptions: {
-      discardComments: true
-    },
-  }));
+if (mode === "production") {
+  plugins.push(
+    new OptimizeCSSAssetsPlugin({
+      cssProcessorOptions: {
+        discardComments: true
+      }
+    })
+  );
 }
 
 module.exports = {
   output: {
-    path: path.join(__dirname, './dist'),
-    filename: 'GridTemplate.js',
+    path: path.join(__dirname, "./dist"),
+    filename: "GridTemplate.js",
     library: libraryName,
-    libraryTarget: 'umd',
-    publicPath: '/dist/',
+    libraryTarget: "umd",
+    publicPath: "/dist/",
     umdNamedDefine: true
   },
   mode,
-  devtool: 'source-map',
-  entry: [
-    path.resolve(__dirname, 'index.js')
-  ],
+  devtool: "source-map",
+  entry: [path.resolve(__dirname, "index.js")],
   externals: {
-    osjs: "OSjs",
-    reacticons: {
-      commonjs: "react-icons",
-      commonjs2: "react-icons",
-      amd: "react-icons",
-      root: "react-icons"
-    }
+    osjs: "OSjs"
+    // "react-icons/fa": "react-icons",
+    // "react" : "react",
+    // "react-dom" : "react-dom",
+    // "jquery": "jquery",
+    // "sweetalert2":"sweetalert2",
+    // "react-dom/server":"react-dom"
   },
   optimization: {
-    minimize,
+    minimize
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     }),
     ...plugins
   ],
   resolve: {
     alias: {
-      'react-icons': path.resolve(__dirname, './node_modules/react-icons')
+      "react-icons": path.resolve(__dirname, "./node_modules/react-icons")
     }
   },
   module: {
     rules: [
       {
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [{
-          loader: "file-loader"
-        }]
+        use: [
+          {
+            loader: "file-loader"
+          }
+        ]
       },
       {
         test: /\.(eot|ttf|woff|woff2)$/,
@@ -78,13 +79,13 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               minimize,
               sourceMap: true
@@ -96,7 +97,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader"
         }
       }
     ]

@@ -6,8 +6,10 @@ import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
-import { PushData } from "../components/apiCalls";
+import Cleave from "cleave.js/react";
+import scrollIntoView from "scroll-into-view-if-needed";
 
+import { PushData } from "../components/apiCalls";
 import PasswordField from "../components/PasswordField";
 import EmailField from "../components/EmailField";
 import FormField from "../components/FormField";
@@ -30,6 +32,7 @@ export default class DialogContainer extends React.Component {
   }
 
   fieldStateChanged = field => state => {
+    console.log(this.state);
     this.setState({ [field]: state.errors.length === 0 });
     if (field == "password") {
       let userInEdit = { ...this.state.userInEdit };
@@ -173,32 +176,48 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    PushData("user", this.props.formAction, {
-      username: this.state.userInEdit.username,
-      password: this.state.userInEdit.password,
-      firstname: this.state.userInEdit.firstname,
-      lastname: this.state.userInEdit.lastname,
-      email: this.state.userInEdit.email,
-      date_of_birth: this.state.DOBInEdit,
-      designation: this.state.userInEdit.designation,
-      gender: this.state.userInEdit.gender,
-      managerid: this.state.userInEdit.managerid,
-      date_of_join: this.state.DOJInEdit,
-      country: this.state.userInEdit.country
-    }).then(response => {
-      this.props.action(response.status);
-    });
-    this.props.cancel();
+    if (this.state.email || this.state.password) {
+      PushData("user", this.props.formAction, {
+        username: this.state.userInEdit.username,
+        password: this.state.userInEdit.password,
+        firstname: this.state.userInEdit.firstname,
+        lastname: this.state.userInEdit.lastname,
+        email: this.state.userInEdit.email,
+        date_of_birth: this.state.DOBInEdit,
+        designation: this.state.userInEdit.designation,
+        gender: this.state.userInEdit.gender,
+        managerid: this.state.userInEdit.managerid,
+        date_of_join: this.state.DOJInEdit,
+        country: this.state.userInEdit.country
+      }).then(response => {
+        this.props.action(response.status);
+      });
+      this.props.cancel();
+    } else {
+      var elm = document.getElementById("email");
+      scrollIntoView(elm, {
+        scrollMode: "if-needed",
+        block: "center",
+        behavior: "smooth",
+        inline: "nearest"
+      });
+      this.emailChanged;
+    }
   };
 
   render() {
-    const hide = this.props.formAction === "put" ? { display: "none" } : {};
     const { fullname, email, password } = this.state;
-    const formValidated = fullname && email && password;
-
     const validateFullname = value => {
-      if (value !== this.state.userInEdit.password)
+      if (value !== this.state.userInEdit.password) {
+        this.setState({
+          validForm: false
+        });
         throw new Error("Fullname is invalid");
+      } else {
+        this.setState({
+          validForm: true
+        });
+      }
     };
     return (
       <Window onClose={this.props.cancel}>
@@ -218,14 +237,14 @@ export default class DialogContainer extends React.Component {
                       onChange={this.onDialogInputChange}
                       placeholder="Enter First Name"
                       pattern={"[A-Za-z]+"}
-                      minLength={4}
+                      minLength={3}
                       required={true}
                       validationMessage={"Please enter a valid First Name"}
                     />
                   </div>
                   <div className="col">
                     <label>Last Name</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-control"
                       name="lastname"
@@ -244,9 +263,9 @@ export default class DialogContainer extends React.Component {
               <div className="form-group">
                 <div className="form-row">
                   <div className="col">
-                    <label>Email</label>
+                    <label id="email">Email</label>
                     <EmailField
-                      value={this.state.userInEdit.email}
+                      value={this.state.userInEdit.email || ""}
                       placeholder="Enter Email Address"
                       onStateChanged={this.emailChanged}
                       required={true}
@@ -255,44 +274,49 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
 
-              <div className="form-group border-box" style={hide}>
-                <div className="form-row">
-                  <div className="col">
-                    <label>Password</label>
-                    <PasswordField
-                      fieldId="password"
-                      label="Password"
-                      placeholder="Enter Password"
-                      onStateChanged={this.passwordChanged}
-                      thresholdLength={7}
-                      minStrength={3}
-                      required={true}
-                    />
-                  </div>
-                  <div className="col">
-                    <label>Confirm Password</label>
-                    <span
-                      className="d-block form-hint"
-                      style={{ paddingBottom: "14px" }}
-                    >
-                      Please enter the same password once more.
-                    </span>
-                    <FormField
-                      type="password"
-                      placeholder="Retype Password"
-                      validator={validateFullname}
-                      onStateChanged={this.fullnameChanged}
-                      required={true}
-                    />
+              {this.props.formAction === "post" && (
+                <div className="form-group border-box">
+                  <div className="form-row">
+                    <div className="col">
+                      <label>Password</label>
+                      <PasswordField
+                        fieldId="password"
+                        label="Password"
+                        placeholder="Enter Password"
+                        value={this.state.userInEdit.cpassword || ""}
+                        onStateChanged={this.passwordChanged}
+                        thresholdLength={7}
+                        minStrength={3}
+                        required={true}
+                      />
+                    </div>
+                    <div className="col">
+                      <label>Confirm Password</label>
+                      <span
+                        className="d-block form-hint"
+                        style={{ paddingBottom: "14px" }}
+                      >
+                        Please enter the same password once more.
+                      </span>
+                      <FormField
+                        type="password"
+                        value="hel"
+                        value={this.state.userInEdit.cpassword || ""}
+                        placeholder="Retype Password"
+                        validator={validateFullname}
+                        onStateChanged={this.fullnameChanged}
+                        required={true}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="form-group">
                 <div className="form-row">
                   <div className="col">
                     <label>User Name</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-control"
                       name="username"
@@ -305,7 +329,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                   <div className="col">
                     <label>Designation</label>
-                    <input
+                    <Input
                       type="text"
                       className="form-control"
                       name="designation"

@@ -14,8 +14,8 @@ const EmailField = props => {
 };
 
 EmailField.propTypes = {
-  label: PropTypes.string.isRequired,
-  fieldId: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  fieldId: PropTypes.string,
   placeholder: PropTypes.string.isRequired,
   required: PropTypes.bool,
   children: PropTypes.node,

@@ -61,7 +61,7 @@ class User extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
-            showToolBar:false,
+            showToolBar:true,
             title:"user",
             column: ["id", "name", "designation", "country"]
           }}
