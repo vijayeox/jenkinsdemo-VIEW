@@ -134,7 +134,7 @@
             // Create a new bus for our messaging
             const profile = core.make("oxzion/profile");
             const details = profile.get();
-            const defaultFlag = details.key.authRequired;
+            const defaultFlag = details.key.authRequired ? true : false;
             const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
             const src = proc.resource(
               baseUrl + "/oxindex.php" + suffix + "&email=" + details.key.email + "&authRequired=" + defaultFlag
