@@ -4,6 +4,8 @@ import { GridTemplate, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerOrg";
 
+import orders from "./data/orders.json";
+
 class Organization extends React.Component {
   constructor(props) {
     super(props);
@@ -65,14 +67,13 @@ class Organization extends React.Component {
     this.setState({
       orgInEdit: this.cloneItem(dataItem)
     });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: dataItem || null,
-        cancel: this.cancel,
-        formAction: "put",
-        action: this.child.current.refreshHandler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: dataItem || null,
+      cancel: this.cancel,
+      formAction: "put",
+      action: this.child.current.refreshHandler
+    });
   };
 
   cloneItem(item) {
@@ -91,14 +92,13 @@ class Organization extends React.Component {
 
   insert = () => {
     this.setState({ orgInEdit: {} });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: [],
-        cancel: this.cancel,
-        formAction: "post",
-        action: this.child.current.refreshHandler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: [],
+      cancel: this.cancel,
+      formAction: "post",
+      action: this.child.current.refreshHandler
+    });
   };
 
   render = () => {
@@ -107,9 +107,12 @@ class Organization extends React.Component {
         {this.state.visible && this.addUsersTemplate}
         <TitleBar title="Manage Organizations" />
         <GridTemplate
+          gridData={orders}
+          rawData={true}
           args={this.core}
           ref={this.child}
           config={{
+            showToolBar: true,
             title: "organization",
             column: ["logo", "name", "state", "zip"]
           }}

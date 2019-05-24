@@ -117,6 +117,7 @@ class Group extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
+            showToolBar:true,
             title: "group",
             column: ["id", "name", "description"]
           }}

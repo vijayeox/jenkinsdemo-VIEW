@@ -12,7 +12,17 @@ export async function DeleteEntry(api, dataItem) {
 }
 
 export async function GetData(api) {
-  let response = await helper.request("v1", "/" + api, {}, "get");
+  let response = await helper.request("v1", "/" + api + "?psz=1000", {}, "get");
+  return response.data;
+}
+
+export async function GetDataSearch(api, term) {
+  let response = await helper.request(
+    "v1",
+    "/" + api + "?q=" + term + "&psz=10",
+    {},
+    "get"
+  );
   return response.data;
 }
 

@@ -1,10 +1,11 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Moment from "moment";
-import FileUploadWithPreview from "file-upload-with-preview";
 import TextareaAutosize from "react-textarea-autosize";
+import { PushData } from "../components/apiCalls";
+import { FileUploader } from "@oxzion/gui";
+import { SaveCancel } from "../components/saveCancel";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -14,15 +15,8 @@ export default class DialogContainer extends React.Component {
     this.state = {
       DOAInEdit: undefined,
       DOEInEdit: undefined,
-      ancInEdit: this.props.dataItem || null,
-      groupsList: [],
-      selectedGroups: [],
-      visibleDialog: false,
-      show: false
+      ancInEdit: this.props.dataItem || null
     };
-    this.pushFile = this.pushFile.bind(this);
-    this.captureSelectedGroups = this.captureSelectedGroups.bind(this);
-    this.checkFields = { text: "groupName", value: "groupid" };
   }
 
   componentWillMount() {
@@ -78,31 +72,6 @@ export default class DialogContainer extends React.Component {
     }
   }
 
-  componentDidMount() {
-    M.updateTextFields();
-
-    this.firstUpload = new FileUploadWithPreview("myFirstImage");
-    if (this.props.formAction == "edit") {
-      this.addGroups();
-    } else {
-      this.getGroupData().then(response => {
-        var tempUsers = [];
-        for (var i = 0; i <= response.data.length - 1; i++) {
-          var groupName = response.data[i].name;
-          var groupid = response.data[i].id;
-          tempUsers.push({ groupid: groupid, groupName: groupName });
-        }
-        this.setState({
-          groupsList: tempUsers
-        });
-      });
-    }
-
-    document.onKeyPress = (ev) => {
-      console.log(ev);
-    }
-  }
-
   handleDOEChange = event => {
     let ancInEdit = { ...this.state.ancInEdit };
     ancInEdit.end_date = event.target.value;
@@ -120,12 +89,6 @@ export default class DialogContainer extends React.Component {
     var DOAiso = new Moment(event.target.value).format();
     this.setState({ DOAInEdit: DOAiso });
   };
-
-  async getGroupData() {
-    let helper = this.core.make("oxzion/restClient");
-    let groupData = await helper.request("v1", "/group", {}, "get");
-    return groupData;
-  }
 
   async getAnnouncementGroups(dataItem) {
     let helper = this.core.make("oxzion/restClient");
@@ -199,37 +162,6 @@ export default class DialogContainer extends React.Component {
     );
   }
 
-  addGroups = () => {
-    this.getAnnouncementGroups(this.state.ancInEdit.id).then(response => {
-      var tempAnnouncementGroups = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var groupid = response.data[i].id;
-        tempAnnouncementGroups.push(groupid);
-      }
-      this.setState({
-        selectedGroups: tempAnnouncementGroups
-      });
-    });
-
-    this.getGroupData().then(response => {
-      var tempUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var groupName = response.data[i].name;
-        var groupid = response.data[i].id;
-        tempUsers.push({ groupid: groupid, groupName: groupName });
-      }
-      this.setState({
-        groupsList: tempUsers
-      });
-    });
-  };
-
-  captureSelectedGroups(e) {
-    this.setState({
-      selectedGroups: e.value
-    });
-  }
-
   sendTheData = () => {
     var temp1 = this.state.selectedGroups;
     var temp2 = [];
@@ -245,12 +177,6 @@ export default class DialogContainer extends React.Component {
       value: [],
       pushAnnouncementGroups: []
     });
-  };
-
-  media_typeChange = event => {
-    let ancInEdit = { ...this.state.ancInEdit };
-    ancInEdit.media_type = event.target.value;
-    this.setState({ ancInEdit: ancInEdit });
   };
 
   onDialogInputChange = event => {
@@ -282,159 +208,114 @@ export default class DialogContainer extends React.Component {
     this.props.save();
   };
 
-  clearFileButton = () => {
-    return (
-      // this.firstUpload &&
-      // this.firstUpload.cachedFileArray.length > 0 && (
-        <img
-          style={{ width: "30px" }}
-          src="https://img.icons8.com/color/64/000000/cancel.png"
-        />
-      )
-    // );
-  };
-
   render() {
     return (
       <Window onClose={this.props.cancel}>
-        <div className="row">
-          <div className="col s6">
-            <div
-              className="custom-file-container"
-              data-upload-id="myFirstImage"
-            >
-              <label>
-                <p>
-                  Upload Announcement Image
-                  <a
-                    href="javascript:void(0)"
-                    id="clearAncImage"
-                    className="custom-file-container__image-clear"
-                    title="Clear Image"
-                  >
-                    {this.clearFileButton()}
-                  </a>
-                </p>
-              </label>
-              <div className="custom-file-container__image-preview" />
-              <center>
-                <label className="custom-file-container__custom-file">
-                  <input
-                    type="file"
-                    className="custom-file-container__custom-file__custom-file-input"
-                    id="customFile"
-                    accept="image/*"
-                    aria-label="Choose File"
-                  />
-                  <span className="custom-file-container__custom-file__custom-file-control" />
-                </label>
-              </center>
+        <div className="container-fluid">
+          <form>
+            <div className="form-group">
+              <label>Announcement Title</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={this.state.ancInEdit.name || ""}
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Announcement Title"
+                required={true}
+              />
             </div>
-          </div>
-
-          <form
-            className="col s6"
-            onSubmit={this.handleSubmit}
-            id="announcementForm"
-          >
-            <div className="row">
-              <div className="input-field col s8">
-                <input
-                  id="AncName"
-                  type="text"
-                  className="validate"
-                  name="name"
-                  value={this.state.ancInEdit.name || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="AncName">Announcement Title</label>
-              </div>
+            <div className="form-group">
+              <label>Description</label>
+              <TextareaAutosize
+                type="text"
+                className="form-control"
+                name="description"
+                value={this.state.ancInEdit.address || ""}
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Announcement Description"
+                style={{ marginTop: "5px", minHeight: "100px" }}
+                required={true}
+              />
             </div>
 
-            <div className="row">
-              <div className="input-field col s12">
-                <TextareaAutosize
-                  style={{ minHeight: "100px" }}
-                  id="ancDescription"
-                  type="text"
-                  className="k-textarea validate col s12"
-                  name="description"
-                  value={this.state.ancInEdit.description || ""}
-                  onChange={this.onDialogInputChange}
-                  required={true}
-                />
-                <label htmlFor="ancDescription">Description</label>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="input-field col s12">
-                <div>
-                  {" "}
-                  <label id="label1">Media Type</label>
+            <div className="form-group">
+              <div className="form-row">
+                <div className="col-6">
+                  <label>Media Type</label>
+                  <div className="pt-2">
+                    <span className="col-6">
+                      <input
+                        type="radio"
+                        id="iRadio"
+                        name="media_type"
+                        value="image"
+                        className="k-radio"
+                        onChange={this.media_typeChange}
+                        checked={this.state.ancInEdit.media_type == "image"}
+                        required
+                      />
+                      <label
+                        className="k-radio-label pl-4 radioLabel"
+                        htmlFor="iRadio"
+                      >
+                        Image
+                      </label>
+                    </span>
+                    <span className="col-4">
+                      <input
+                        type="radio"
+                        id="vRadio"
+                        name="media_type"
+                        value="video"
+                        className="k-radio pl-2"
+                        onChange={this.media_typeChange}
+                        checked={this.state.ancInEdit.media_type == "video"}
+                        required
+                      />
+                      <label
+                        className="k-radio-label pl-4 radioLabel"
+                        htmlFor="vRadio"
+                      >
+                        Video
+                      </label>
+                    </span>
+                  </div>
                 </div>
-                <DropDownList
-                  data={["image","video"]}
-                  onChange={this.media_typeChange}
-                  style={{ width: "200px" }}
-                  value={this.state.ancInEdit.media_type}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div
-                className="control-section col-lg-8"
-                style={{ paddingLeft: "10px" }}
-              >
-                <label id="label1">Groups</label>
-                <div id="multigroup">
-                 
+                <div className="col-3">
+                  <label>Start Data</label>
+                  <div>
+                    <DatePicker
+                      format={"dd-MMM-yyyy"}
+                      value={this.state.ancInEdit.start_date}
+                      onChange={this.handleDOAChange}
+                      required={true}
+                    />
+                  </div>
+                </div>
+                <div className="col-3">
+                  <label>End Date</label>
+                  <div>
+                    <DatePicker
+                      format={"dd-MMM-yyyy"}
+                      value={this.state.ancInEdit.end_date}
+                      defaultValue={new Date()}
+                      onChange={this.handleDOEChange}
+                      required={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="row" style={{ paddingTop: "40px" }}>
-              <div className="col s6" id="datecol">
-                <label id="label1">Date Of Announcement</label>
-                <br />
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.ancInEdit.start_date}
-                  required={true}
-                  onChange={this.handleDOAChange}
-                />
-              </div>
-              <div className="col s6" id="datecol">
-                <label id="label1">Date Of Expire</label>
-                <br />
-                <DatePicker
-                  format={"dd-MMM-yyyy"}
-                  value={this.state.ancInEdit.end_date}
-                  onChange={this.handleDOEChange}
-                  required={true}
-                />
-              </div>
-            </div>
+            <FileUploader
+              ref={this.fUpload}
+              title={"Upload Announcement Banner"}
+              uploadID={"announcementLogo"}
+            />
           </form>
-          <div style={{ float: "right", marginTop: "20px", marginRight: "4%" }}>
-            <button
-              className="btn waves-effect red"
-              onClick={this.props.cancel}
-            >
-              Cancel
-            </button>
-            <button
-              className="btn waves-effect green"
-              type="submit"
-              form="announcementForm"
-              style={{ marginLeft: "10px", width: "85px" }}
-            >
-              Save
-            </button>
-          </div>
         </div>
+        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+
       </Window>
     );
   }

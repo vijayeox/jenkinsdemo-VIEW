@@ -24,20 +24,19 @@ class Announcement extends React.Component {
       this.notif.current.failNotification();
     }
     this.child.current.child.current.refresh();
-  }
+  };
 
   edit = dataItem => {
     this.setState({
       ancInEdit: this.cloneItem(dataItem)
     });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: dataItem,
-        cancel: this.cancel,
-        formAction: "edit",
-        action: this.handler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: dataItem,
+      cancel: this.cancel,
+      formAction: "put",
+      action: this.handler
+    });
   };
 
   cloneItem(item) {
@@ -56,14 +55,13 @@ class Announcement extends React.Component {
 
   insert = () => {
     this.setState({ ancInEdit: {} });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: [],
-        cancel: this.cancel,
-        formAction: "add",
-        action: this.handler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: [],
+      cancel: this.cancel,
+      formAction: "post",
+      action: this.handler
+    });
   };
 
   render = () => {
@@ -75,8 +73,9 @@ class Announcement extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
+            showToolBar: true,
             title: "announcement/a",
-            column: ["id","name", "description"]
+            column: ["id", "name", "description"]
           }}
           manageGrid={{
             add: this.insert,
@@ -90,7 +89,6 @@ class Announcement extends React.Component {
       </div>
     );
   };
-
 }
 
 export default Announcement;

@@ -148,6 +148,7 @@ class Project extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
+            showToolBar:true,
             title: "project",
             column: ["id", "name", "description"]
           }}

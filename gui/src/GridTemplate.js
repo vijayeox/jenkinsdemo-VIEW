@@ -22,7 +22,7 @@ class GridTemplate extends React.Component {
         skip: 0,
         sort: [{ field: "id", dir: "asc" }]
       },
-      gridData: [],
+      gridData: this.props.gridData,
       filter: [],
       pageSizes: {}
     };
@@ -96,15 +96,18 @@ class GridTemplate extends React.Component {
     return (
       <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
         <Notification ref={this.notif} />
-        <DataLoader
-          ref={this.child}
-          args={this.core}
-          url={this.props.config.title}
-          dataState={this.state.dataState}
-          onDataRecieved={this.dataRecieved}
-        />
+        {!this.props.rawData && (
+          <DataLoader
+            ref={this.child}
+            args={this.core}
+            url={this.props.config.title}
+            dataState={this.state.dataState}
+            onDataRecieved={this.dataRecieved}
+          />
+        )}
         <Grid
-          {...this.state.gridData}
+          // {...this.state.gridData}
+          data={this.state.gridData}
           scrollable={"scrollable"}
           sortable={true}
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
@@ -116,6 +119,7 @@ class GridTemplate extends React.Component {
             this.props.manageGrid.edit(e.dataItem);
           }}
           resizable
+          reorderable
         >
           {this.props.config.showToolBar == true && (
             <GridToolbar>
