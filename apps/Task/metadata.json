@@ -3,6 +3,7 @@
   "name": "Task",
   "category": null,
   "server": "server.js",
+  "icon": "icon.png",
   "title": {
     "en_EN": "Task"
   },

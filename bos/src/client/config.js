@@ -62,8 +62,7 @@ module.exports = {
           {name: 'menu'},
           {name: 'windows'},
           {name: 'tray'},
-          {name: 'profile'},
-          {name:'logout'}
+          {name: 'profile'}
         ]
       }],
     }
