@@ -108,7 +108,6 @@ class Organization extends React.Component {
         <TitleBar title="Manage Organizations" />
         <GridTemplate
           gridData={orders}
-          rawData={true}
           args={this.core}
           ref={this.child}
           config={{

@@ -13,17 +13,17 @@ export async function DeleteEntry(api, dataItem) {
 
 export async function GetData(api) {
   let response = await helper.request("v1", "/" + api + "?psz=1000", {}, "get");
-  return response.data;
+  return response;
 }
 
-export async function GetDataSearch(api, term) {
+export async function GetDataSearch(api, term, size) {
   let response = await helper.request(
     "v1",
-    "/" + api + "?q=" + term + "&psz=10",
+    "/" + api + "?q=" + term + "&psz=" + size,
     {},
     "get"
   );
-  return response.data;
+  return response;
 }
 
 export async function ExistingUsers(api, selectedEntity) {
@@ -33,5 +33,5 @@ export async function ExistingUsers(api, selectedEntity) {
     {},
     "get"
   );
-  return response.data;
+  return response;
 }

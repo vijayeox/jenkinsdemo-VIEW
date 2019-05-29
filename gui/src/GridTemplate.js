@@ -1,17 +1,27 @@
 import React from "react";
-import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
+import {
+  Grid,
+  GridColumn,
+  GridToolbar,
+  GridNoRecords
+} from "@progress/kendo-react-grid";
 import {
   FaPlusCircle,
   FaPencilAlt,
   FaUserPlus,
-  FaTrashAlt
+  FaTrashAlt,
+  FaArrowCircleRight,
+  FaInfoCircle
 } from "react-icons/fa";
 import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
+import $ from "jquery";
+import "@progress/kendo-theme-default/dist/all.css";
+import "./public/css/gridStyles.css";
 
-class GridTemplate extends React.Component {
+export default class GridTemplate extends React.Component {
   constructor(props) {
     super(props);
     this.child = React.createRef();
@@ -30,12 +40,17 @@ class GridTemplate extends React.Component {
     this.title = this.capitalizeFirstLetter(this.props.config.title);
   }
 
+  componentDidMount() {
+    $(document).ready(function() {
+      $(".k-textbox").attr("placeholder", "Search");
+    });
+  }
+
   dataStateChange = e => {
     this.setState({
       ...this.state,
       dataState: e.data
     });
-    console.log(e.data);
   };
 
   dataRecieved = data => {
@@ -92,11 +107,15 @@ class GridTemplate extends React.Component {
     this.child.current.refresh();
   };
 
+  emptyCell = () => {
+    return <div />;
+  };
+
   render() {
     return (
       <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
         <Notification ref={this.notif} />
-        {!this.props.rawData && (
+        {this.props.gridData !== "" && (
           <DataLoader
             ref={this.child}
             args={this.core}
@@ -106,21 +125,57 @@ class GridTemplate extends React.Component {
           />
         )}
         <Grid
-          // {...this.state.gridData}
-          data={this.state.gridData}
-          scrollable={"scrollable"}
-          sortable={true}
-          pageable={{ buttonCount: 5, pageSizes: true, info: true }}
-          // filterable={true}
+          {...this.state.gridData}
           {...this.state.dataState}
+          sortable={{ mode: "multiple" }}
+          filterable={true}
+          resizable={true}
+          reorderable={true}
+          scrollable={"scrollable"}
+          pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
-          onFilterChange={this.dataStateChange}
           onRowClick={e => {
             this.props.manageGrid.edit(e.dataItem);
           }}
-          resizable
-          reorderable
         >
+          <GridNoRecords>
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "4%"
+              }}
+            >
+              <ul className="list-group" style={{ listStyle: "disc" }}>
+                <div
+                  href="#"
+                  className="list-group-item list-group-item-action bg-warning"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <div style={{ fontSize: "medium" }}>No Records Available</div>
+                  <div style={{ marginLeft: "auto" }}>
+                    <FaInfoCircle />
+                  </div>
+                </div>
+                <li
+                  className="list-group-item"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <FaArrowCircleRight /> &nbsp; &nbsp; Please try a different
+                  search keyword.
+                </li>
+                <li
+                  className="list-group-item"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <FaArrowCircleRight /> &nbsp; &nbsp; If you see this warning
+                  all the time, please contact System Administrator.
+                </li>
+              </ul>
+            </div>
+          </GridNoRecords>
           {this.props.config.showToolBar == true && (
             <GridToolbar>
               <div>
@@ -146,7 +201,7 @@ class GridTemplate extends React.Component {
                 this.props.manageGrid.addUsers,
                 this.props.permission
               )}
-              filterCell={<div />}
+              filterCell={this.emptyCell}
             />
           )}
         </Grid>
@@ -268,5 +323,3 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
     }
   };
 }
-
-export default GridTemplate;

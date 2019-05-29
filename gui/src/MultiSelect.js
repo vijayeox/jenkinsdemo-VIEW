@@ -37,11 +37,11 @@ class MultiSelect extends React.Component {
         });
       }
     );
-    this.getMainList("");
+    this.getMainList("", 20);
   }
 
-  getMainList = query => {
-    GetDataSearch("user", query).then(response => {
+  getMainList = (query, size) => {
+    GetDataSearch("user", query, size).then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName =
@@ -59,16 +59,19 @@ class MultiSelect extends React.Component {
   };
 
   filterData = e => {
-    this.getMainList(e.text);
+    this.getMainList(e.text, 20);
     e.updateData();
   };
 
   captureSelectedUsers(e) {
-    this.getMainList("");
     this.setState({
       selectedUsers: e.value
     });
   }
+
+  closePopup = () => {
+    this.getMainList("", 1000);
+  };
 
   render() {
     return (
@@ -86,6 +89,9 @@ class MultiSelect extends React.Component {
                 filtering={this.filterData.bind(this)}
                 allowFiltering={true}
                 change={this.captureSelectedUsers}
+                sortOrder="Ascending"
+                text="name"
+                close={this.closePopup}
                 fields={this.checkFields}
                 mode="CheckBox"
                 placeholder="Click to add Users"
@@ -106,10 +112,10 @@ class MultiSelect extends React.Component {
             alignItems: "center"
           }}
         >
-          <ul class="list-group" style={{ listStyle: "disc" }}>
+          <ul className="list-group" style={{ listStyle: "disc" }}>
             <div
               href="#"
-              class="list-group-item list-group-item-action active"
+              className="list-group-item list-group-item-action active"
               style={{ display: "flex", alignItems: "center" }}
             >
               <div style={{ fontSize: "medium" }}>Please Note:</div>
@@ -118,14 +124,14 @@ class MultiSelect extends React.Component {
               </div>
             </div>
             <li
-              class="list-group-item"
+              className="list-group-item"
               style={{ display: "flex", alignItems: "center" }}
             >
               <FaArrowCircleRight /> &nbsp; &nbsp; Initially the list displays
               only the first 20 users.
             </li>
             <li
-              class="list-group-item"
+              className="list-group-item"
               style={{ display: "flex", alignItems: "center" }}
             >
               <FaArrowCircleRight /> &nbsp; &nbsp; Please use the search filter
@@ -137,10 +143,7 @@ class MultiSelect extends React.Component {
           <button
             className="k-button k-primary"
             onClick={() =>
-              this.props.manage.postSelected(
-                this.props.config.dataItem,
-                this.state.selectedUsers
-              )
+              this.props.manage.postSelected(this.state.selectedUsers)
             }
           >
             Save

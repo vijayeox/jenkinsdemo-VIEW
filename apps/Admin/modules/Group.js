@@ -2,6 +2,7 @@ import React from "react";
 import { GridTemplate, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
+import Swal from "sweetalert2";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
 class Group extends React.Component {
@@ -33,19 +34,32 @@ class Group extends React.Component {
 
   addGroupUsers = dataItem => {
     this.setState({
-      groupToBeEdited: dataItem.id,
+      groupToBeEdited: dataItem.uuid,
       visible: !this.state.visible
     });
   };
 
   sendTheData = selectedUsers => {
-    var temp2 = [];
-    for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i] };
-      temp2.push(uid);
+    if (selectedUsers.length == 0) {
+      Swal.fire({
+        title: "Action not possible",
+        text: "Please have atleast one user for the group.",
+        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+        imageWidth: 75,
+        imageHeight: 75,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#66bb6a",
+        target: ".Window_Admin"
+      });
+    } else {
+      var temp2 = [];
+      for (var i = 0; i <= selectedUsers.length - 1; i++) {
+        var uid = { id: selectedUsers[i] };
+        temp2.push(uid);
+      }
+      this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
+      this.toggleDialog();
     }
-    this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
-    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -59,14 +73,13 @@ class Group extends React.Component {
     this.setState({
       groupInEdit: this.cloneProduct(dataItem)
     });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: dataItem || null,
-        cancel: this.cancel,
-        formAction: "put",
-        action: this.child.current.refreshHandler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: dataItem || null,
+      cancel: this.cancel,
+      formAction: "put",
+      action: this.child.current.refreshHandler
+    });
   };
 
   cloneProduct(product) {
@@ -85,14 +98,13 @@ class Group extends React.Component {
 
   insert = () => {
     this.setState({ groupInEdit: {} });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: [],
-        cancel: this.cancel,
-        formAction: "post",
-        action: this.child.current.refreshHandler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: [],
+      cancel: this.cancel,
+      formAction: "post",
+      action: this.child.current.refreshHandler
+    });
   };
 
   render() {
@@ -117,7 +129,7 @@ class Group extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
-            showToolBar:true,
+            showToolBar: true,
             title: "group",
             column: ["id", "name", "description"]
           }}
@@ -128,7 +140,8 @@ class Group extends React.Component {
             addUsers: this.addGroupUsers
           }}
           permission={this.state.permission}
-        /> {this.state.groupInEdit && this.inputTemplate}
+        />{" "}
+        {this.state.groupInEdit && this.inputTemplate}
       </div>
     );
   }

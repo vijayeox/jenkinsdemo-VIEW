@@ -42,7 +42,7 @@ class Project extends React.Component {
     return addProjectUsers;
   }
 
-  saveAndSend = (selectedUsers) => {
+  saveAndSend = selectedUsers => {
     if (selectedUsers.length == 0) {
       Swal.fire({
         title: "Action not possible",
@@ -62,12 +62,12 @@ class Project extends React.Component {
 
   addProjectUsers = dataItem => {
     this.setState({
-      projectToBeEdited: dataItem.id,
+      projectToBeEdited: dataItem.uuid,
       visible: !this.state.visible
     });
   };
 
-  sendTheData = (selectedUsers) => {
+  sendTheData = selectedUsers => {
     var temp1 = selectedUsers;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
@@ -88,14 +88,13 @@ class Project extends React.Component {
     this.setState({
       prjInEdit: this.cloneProduct(dataItem)
     });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: dataItem,
-        cancel: this.cancel,
-        formAction: "put",
-        action: this.handler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: dataItem,
+      cancel: this.cancel,
+      formAction: "put",
+      action: this.handler
+    });
   };
 
   cloneProduct(dataItem) {
@@ -114,14 +113,13 @@ class Project extends React.Component {
 
   insert = () => {
     this.setState({ prjInEdit: {} });
-    this.inputTemplate =
-      React.createElement(DialogContainer, {
-        args: this.core,
-        dataItem: [],
-        cancel: this.cancel,
-        formAction: "post",
-        action: this.handler
-      });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: [],
+      cancel: this.cancel,
+      formAction: "post",
+      action: this.handler
+    });
   };
 
   render() {
@@ -140,7 +138,8 @@ class Project extends React.Component {
                 postSelected: this.saveAndSend,
                 closeDialog: this.toggleDialog
               }}
-            /> </div>
+            />{" "}
+          </div>
         )}
         <Notification ref={this.notif} />
         <TitleBar title="Manage Projects" />
@@ -148,7 +147,7 @@ class Project extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
-            showToolBar:true,
+            showToolBar: true,
             title: "project",
             column: ["id", "name", "description"]
           }}
@@ -159,7 +158,8 @@ class Project extends React.Component {
             addUsers: this.addProjectUsers
           }}
           permission={this.state.permission}
-        /> {this.state.prjInEdit && this.inputTemplate}
+        />{" "}
+        {this.state.prjInEdit && this.inputTemplate}
       </div>
     );
   }

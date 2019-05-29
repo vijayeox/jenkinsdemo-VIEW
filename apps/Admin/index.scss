@@ -1,10 +1,14 @@
 .Window_Admin {
-  @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
 
   background: #336666;
+
+  .k-grid-norecords :hover {
+    background-color: white;
+    cursor: default;
+  }
 
   legend.form-label {
     font-size: 1.5rem;

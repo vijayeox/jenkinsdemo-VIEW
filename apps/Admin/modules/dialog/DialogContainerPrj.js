@@ -28,7 +28,8 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  submitData = event => {
+  sendData = e => {
+    e.preventDefault();
     PushData("project", this.props.formAction, {
       name: this.state.prjInEdit.name,
       description: this.state.prjInEdit.description
@@ -42,7 +43,7 @@ export default class DialogContainer extends React.Component {
     return (
       <Window onClose={this.props.cancel}>
         <div>
-          <form       >
+          <form id="prjForm" onSubmit={this.sendData}>
             <div className="form-group">
               <label>Project Name</label>
               <input
@@ -68,7 +69,7 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+        <SaveCancel save="prjForm" cancel={this.props.cancel} />
       </Window>
     );
   }

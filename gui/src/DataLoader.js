@@ -12,13 +12,13 @@ export class DataLoader extends React.Component {
 
   isEmpty(obj) {
     for (var key in obj) {
-      if (obj.hasOwnProperty(key))
-        return false;
+      if (obj.hasOwnProperty(key)) return false;
     }
     return true;
   }
 
   async getData(url, filters) {
+    console.log(filters);
     if (this.isEmpty(filters.sort[0])) {
       this.sortValue = [];
     } else {
@@ -27,6 +27,7 @@ export class DataLoader extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let data = await helper.request(
       "v1",
+      // "/" + url + "?" + filters,
       "/" + url + "?pg=1&psz=1000" + this.sortValue,
       {},
       "get"
@@ -35,19 +36,12 @@ export class DataLoader extends React.Component {
   }
 
   refresh = temp => {
-    if (temp == "group" || temp == "announcement") {
-      this.getData(this.url, this.props.dataState).then(response => {
-        this.props.onDataRecieved({
-          data: response.data,
-          total: response.data.length
-        });
+    this.getData(this.url, this.props.dataState).then(response => {
+      this.props.onDataRecieved({
+        data: response.data.data,
+        total: response.data.data.length
       });
-    } else {
-      this.getData(this.url, this.props.dataState).then(response => {
-        this.props.onDataRecieved({data: response.data.data,
-          total: response.data.data.length});
-      });
-    }
+    });
   };
 
   requestDataIfNeeded = () => {
@@ -58,33 +52,19 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    if (this.url == "group" || this.url == "announcement/a") {
-      this.getData(this.url, this.props.dataState).then(response => {
-        this.lastSuccess = this.pending;
-        this.pending = "";
-        if (toODataString(this.props.dataState) === this.lastSuccess) {
-          this.props.onDataRecieved.call(undefined, {
-            data: response.data,
-            total: response.data.length
-          });
-        } else {
-          this.requestDataIfNeeded();
-        }
-      });
-    } else {
-      this.getData(this.url, this.props.dataState).then(response => {
-        this.lastSuccess = this.pending;
-        this.pending = "";
-        if (toODataString(this.props.dataState) === this.lastSuccess) {
-          this.props.onDataRecieved.call(undefined, {
-            data: response.data.data,
-            total: response.data.data.length
-          });
-        } else {
-          this.requestDataIfNeeded();
-        }
-      });
-    }
+    this.getData(this.url, this.props.dataState).then(response => {
+      this.lastSuccess = this.pending;
+      this.pending = "";
+      if (toODataString(this.props.dataState) === this.lastSuccess) {
+        this.props.onDataRecieved.call(undefined, {
+          data: response.data,
+          total: response.data.length
+        });
+      } else {
+        this.requestDataIfNeeded();
+      }
+    });
+    console.log(this.pending);
   };
 
   render() {

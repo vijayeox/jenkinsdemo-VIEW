@@ -16,40 +16,20 @@ export class DropDown extends React.Component {
     };
     let loader = this.core.make("oxzion/splash");
     loader.show();
-    if (
-      this.props.mainList == "organization" ||
-      this.props.mainList == "user"
-    ) {
-      GetData2(this.props.mainList).then(response => {
-        var tempUsers = [];
-        for (var i = 0; i <= response.data.length - 1; i++) {
-          var userName = response.data[i].name;
-          var userid = response.data[i].id;
-          tempUsers.push({ id: userid, name: userName });
-        }
-        this.setState({
-          mainList: tempUsers
-        });
-        this.masterUserList = tempUsers;
-        let loader = this.core.make("oxzion/splash");
-        loader.destroy();
+    GetData(this.props.mainList).then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userName = response.data[i].name;
+        var userid = response.data[i].id;
+        tempUsers.push({ id: userid, name: userName });
+      }
+      this.setState({
+        mainList: tempUsers
       });
-    } else {
-      GetData(this.props.mainList).then(response => {
-        var tempUsers = [];
-        for (var i = 0; i <= response.data.length - 1; i++) {
-          var userName = response.data[i].name;
-          var userid = response.data[i].id;
-          tempUsers.push({ id: userid, name: userName });
-        }
-        this.setState({
-          mainList: tempUsers
-        });
-        this.masterUserList = tempUsers;
-        let loader = this.core.make("oxzion/splash");
-        loader.destroy();
-      });
-    }
+      this.masterUserList = tempUsers;
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
+    });
   }
 
   filterChange = event => {
@@ -64,18 +44,18 @@ export class DropDown extends React.Component {
   }
   render() {
     return (
-        <DropDownListWithValueField
-          data={this.state.mainList}
-          textField="name"
-          value={this.props.selectedItem}
-          valueField="id"
-          onChange={this.props.onDataChange}
-          filterable={true}
-          onFilterChange={this.filterChange}
-          style={{ width: "210px" }}
-          popupSettings={{ height: "160px" }}
-          required={true}
-        />
+      <DropDownListWithValueField
+        data={this.state.mainList}
+        textField="name"
+        value={this.props.selectedItem}
+        valueField="id"
+        onChange={this.props.onDataChange}
+        filterable={true}
+        onFilterChange={this.filterChange}
+        style={{ width: "210px" }}
+        popupSettings={{ height: "160px" }}
+        required={this.props.required}
+      />
     );
   }
 }

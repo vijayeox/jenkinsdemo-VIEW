@@ -7,7 +7,7 @@ export class SaveCancel extends React.Component {
           <button
             type="submit"
             className="btn btn-success col-sm-2 mr-3"
-            form={this.props.form}
+            form={this.props.save}
           >
             Save
           </button>

@@ -35,7 +35,8 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  submitData = event => {
+  sendData = e => {
+    e.preventDefault();
     PushData("group", this.props.formAction, {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
@@ -52,7 +53,7 @@ export default class DialogContainer extends React.Component {
     return (
       <Window onClose={this.props.cancel}>
         <div>
-          <form>
+          <form id="groupForm" onSubmit={this.sendData}>
             <div className="form-group">
               <label>Group Name</label>
               <input
@@ -87,6 +88,7 @@ export default class DialogContainer extends React.Component {
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
+                      required={true}
                     />
                   </div>
                 </div>
@@ -100,6 +102,7 @@ export default class DialogContainer extends React.Component {
                       onDataChange={event =>
                         this.listOnChange(event, "parent_id")
                       }
+                      required={false}
                     />
                   </div>
                 </div>
@@ -111,6 +114,7 @@ export default class DialogContainer extends React.Component {
                       mainList={"organization"}
                       selectedItem={this.state.groupInEdit.org_id}
                       onDataChange={event => this.listOnChange(event, "org_id")}
+                      required={true}
                     />
                   </div>
                 </div>
@@ -118,7 +122,7 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+        <SaveCancel save="groupForm" cancel={this.props.cancel} />
       </Window>
     );
   }

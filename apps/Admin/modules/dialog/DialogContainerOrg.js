@@ -28,23 +28,24 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  submitData = event => {
-    PushData("attachment", "filepost", {
-      type: "ORGANIZATION",
-      files: this.fUpload.current.firstUpload.cachedFileArray[0]
+  sendData = e => {
+    console.log(this.fUpload);
+    e.preventDefault();
+    PushData("organization", this.props.formAction, {
+      name: this.state.orgInEdit.name,
+      address: this.state.orgInEdit.address,
+      city: this.state.orgInEdit.city,
+      state: this.state.orgInEdit.state,
+      zip: this.state.orgInEdit.zip,
+      logo: this.fUpload.current.firstUpload.cachedFileArray[0],
+      languagefile: this.state.orgInEdit.languagefile,
+      contact: JSON.stringify({
+        firstname: this.state.orgInEdit.firstname,
+        lastname: this.state.orgInEdit.lastname,
+        email: this.state.orgInEdit.email
+      })
     }).then(response => {
-      PushData("organization", this.props.formAction, {
-        name: this.state.orgInEdit.name,
-        address: this.state.orgInEdit.address,
-        city: this.state.orgInEdit.city,
-        state: this.state.orgInEdit.state,
-        zip: this.state.orgInEdit.zip,
-        logo: response.data.filename[0],
-        languagefile: this.state.orgInEdit.languagefile,
-        contact: this.state.orgInEdit.contact
-      }).then(response => {
-        this.props.action(response.status);
-      });
+      this.props.action(response.status);
     });
     this.props.cancel();
   };
@@ -53,7 +54,7 @@ export default class DialogContainer extends React.Component {
     return (
       <Window onClose={this.props.cancel}>
         <div className="container-fluid">
-          <form>
+          <form id="orgForm" onSubmit={this.sendData}>
             <div className="form-group">
               <label>Organization Name</label>
               <input
@@ -143,8 +144,8 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
-                    name="fname"
-                    value={this.state.orgInEdit.temp || ""}
+                    name="firstname"
+                    value={this.state.orgInEdit.firstname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
                   />
@@ -152,8 +153,8 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
-                    name="lname"
-                    value={this.state.orgInEdit.temp || ""}
+                    name="lastname"
+                    value={this.state.orgInEdit.lastname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
                   />
@@ -164,7 +165,7 @@ export default class DialogContainer extends React.Component {
                   <input
                     type="email"
                     name="email"
-                    value={this.state.orgInEdit.temp || ""}
+                    value={this.state.orgInEdit.email || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Email ID"
                   />
@@ -178,7 +179,7 @@ export default class DialogContainer extends React.Component {
             />
           </form>
         </div>
-        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+        <SaveCancel save="orgForm" cancel={this.props.cancel} />
       </Window>
     );
   }

@@ -224,7 +224,7 @@ export default class DialogContainer extends React.Component {
         <div id="tooltip" />
         <Ripple>
           <div className="container-fluid">
-            <form className="k-form" onSubmit={this.handleSubmit} id="userForm">
+            <form onSubmit={this.handleSubmit} id="userForm">
               <div className="form-group">
                 <div className="form-row">
                   <div className="col">
@@ -443,7 +443,7 @@ export default class DialogContainer extends React.Component {
               <div style={{ margin: "75px" }} />
             </form>
           </div>
-          <SaveCancel form={"userForm"} cancel={this.props.cancel} />
+          <SaveCancel save="userForm" cancel={this.props.cancel} />
         </Ripple>
       </Window>
     );
