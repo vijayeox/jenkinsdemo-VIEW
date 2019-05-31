@@ -6,8 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
+   * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
@@ -86,14 +85,22 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
       id: 'CalendarWindow',
       icon: proc.resource(proc.metadata.icon),
       title: metadata.title.en_EN,
+      state: {
+        maximized : true
+      },
       attributes: {
-            visibility: 'restricted',
-            closeable: false
-          },
+        visibility: "restricted",
+        closeable: false,
+        minimizable: true,
+        resizable: false
+      },
       dimension: {width: 640, height: 480},
       position: {left: 200, top: 400}
     })
       .on('close', () => {
+          win.state.minimized == true;
+          win.minimize = true;
+          win.attributes.minimized = true;
           console.log("close event");
         })
       .render(($content, win) => {
@@ -110,9 +117,9 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
           }); 
         // console.log(maximize);
         win.minimize();
+        win.attributes.maximizable = false;
         const user = core.make('osjs/auth').user();
         // Get path to iframe content
-        console.log(data);
         const src = proc.resource(baseUrl+'?userdata='+JSON.stringify(data));
         // Create DOM element
         const iframe = createIframe(core, proc, win, send => {});
@@ -134,20 +141,18 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
             });
           });
         }
-        console.log($content);
         // Attach
         $content.appendChild(iframe);
       });
     };
     let result = [];
     let res = getEmails().then(response => {
-      console.log(response);
       result = response["data"];
 
       let emails = [];
       let defEmail;
       if(result.length != 0) {
-        console.log(result);
+        // console.log(result);
         for(let i =0;i<result.length;i++){
           if(result[i]["isdefault"] == 1){
             defEmail = result[i]["email"];
@@ -156,18 +161,15 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
           }
         }
       } else {
-        console.log('user has no emails.');
+        // console.log('user has no emails.');
       }
       let user = core.getUser().username;
-      console.log(user);
-      console.log(emails);
 
       let data = {
         'username': user,
         'defaultEmail': defEmail,
         'emailList': emails
       }
-      console.log(data);
 
       createProcWindow(data); 
       return;
