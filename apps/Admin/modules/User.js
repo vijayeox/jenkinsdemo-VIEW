@@ -61,9 +61,23 @@ class User extends React.Component {
           args={this.core}
           ref={this.child}
           config={{
-            showToolBar:true,
-            title:"user",
-            column: ["id", "name", "designation", "country"]
+            showToolBar: true,
+            title: "User",
+            api: "user",
+            column: [
+              {
+                title: "Name",
+                field: "name"
+              },
+              {
+                title: "Designation",
+                field: "designation"
+              },
+              {
+                title: "Country",
+                field: "country"
+              }
+            ]
           }}
           manageGrid={{
             add: this.insert,

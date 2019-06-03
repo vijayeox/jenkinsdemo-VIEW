@@ -37,7 +37,7 @@ module.exports = {
     new CompressionPlugin(),
     // new BundleAnalyzerPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new CopyWebpackPlugin(["icon.svg", "images/"]),
+    new CopyWebpackPlugin(["icon.png", "images/"]),
     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
       filename: "[name].css",

@@ -26,18 +26,17 @@ export default class GridTemplate extends React.Component {
     super(props);
     this.child = React.createRef();
     this.core = this.props.args;
+    this.baseUrl = this.core.config("wrapper.url");
     this.state = {
       dataState: {
         take: 20,
-        skip: 0,
-        sort: [{ field: "id", dir: "asc" }]
+        skip: 0
       },
       gridData: this.props.gridData,
       filter: [],
       pageSizes: {}
     };
     this.notif = React.createRef();
-    this.title = this.capitalizeFirstLetter(this.props.config.title);
   }
 
   componentDidMount() {
@@ -59,42 +58,35 @@ export default class GridTemplate extends React.Component {
     });
   };
 
-  capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  createColumns(manageButton) {
+  createColumns() {
     let table = [];
     for (var i = 0; i < this.props.config.column.length; i++) {
-      if (this.props.config.column[i] == "id") {
-        table.push(
-          <GridColumn
-            field={this.props.config.column[i]}
-            key={i}
-            width="70px"
-            title="ID"
-          />
-        );
-      } else if (this.props.config.column[i] == "logo") {
+      if (
+        this.props.config.column[i].field == "media" ||
+        this.props.config.column[i].field == "logo"
+      ) {
         table.push(
           <GridColumn
             key={i}
-            width="100px"
-            title="Logo"
-            cell={props => <LogoCell {...props} myProp={this.props} />}
+            width="200px"
+            title={this.props.config.column[i].title}
+            filterCell={this.emptyCell}
+            sortable={false}
+            cell={props => (
+              <LogoCell {...props} myProp={this.props} url={this.baseUrl} />
+            )}
           />
         );
       } else {
         table.push(
           <GridColumn
-            field={this.props.config.column[i]}
+            field={this.props.config.column[i].field}
             key={i}
-            title={this.capitalizeFirstLetter(this.props.config.column[i])}
+            title={this.props.config.column[i].title}
           />
         );
       }
     }
-    table.push(manageButton);
     return table;
   }
 
@@ -119,7 +111,7 @@ export default class GridTemplate extends React.Component {
           <DataLoader
             ref={this.child}
             args={this.core}
-            url={this.props.config.title}
+            url={this.props.config.api}
             dataState={this.state.dataState}
             onDataRecieved={this.dataRecieved}
           />
@@ -179,11 +171,11 @@ export default class GridTemplate extends React.Component {
           {this.props.config.showToolBar == true && (
             <GridToolbar>
               <div>
-                <div style={{ fontSize: "20px" }}>{this.title + "'s"} List</div>
+                <div style={{ fontSize: "20px" }}>{this.props.config.title + "'s"} List</div>
                 <AddButton
                   args={this.props.manageGrid.add}
                   permission={this.props.permission}
-                  label={this.title}
+                  label={this.props.config.title}
                 />
               </div>
             </GridToolbar>
@@ -195,12 +187,13 @@ export default class GridTemplate extends React.Component {
               width="170px"
               minResizableWidth={170}
               cell={CellWithEditing(
-                this.title,
+                this.props.config.title,
                 this.props.manageGrid.edit,
                 this.props.manageGrid.remove,
                 this.props.manageGrid.addUsers,
                 this.props.permission
               )}
+              sortable={false}
               filterCell={this.emptyCell}
             />
           )}
@@ -237,10 +230,9 @@ class LogoCell extends React.Component {
     return (
       <td>
         <img
-          src="https://image.flaticon.com/icons/svg/145/145812.svg"
-          alt="Organization Logo"
-          className="text-center circle"
-          style={{ maxWidth: "60px", margin: "10px" }}
+          src={this.props.url + "resource/" + this.props.dataItem.media}
+          alt="Logo"
+          className="text-center circle gridBanner"
         />
       </td>
     );

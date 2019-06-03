@@ -20,15 +20,6 @@ class Project extends React.Component {
     this.child = React.createRef();
   }
 
-  handler = serverResponse => {
-    if (serverResponse == "success") {
-      this.notif.current.successNotification();
-    } else {
-      this.notif.current.failNotification();
-    }
-    this.child.current.child.current.refresh("project");
-  };
-
   async pushProjectUsers(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
     let addProjectUsers = await helper.request(
@@ -93,7 +84,7 @@ class Project extends React.Component {
       dataItem: dataItem,
       cancel: this.cancel,
       formAction: "put",
-      action: this.handler
+      action: this.child.current.refreshHandler
     });
   };
 
@@ -102,8 +93,8 @@ class Project extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("project", dataItem.id).then(response => {
-      this.handler(response.status);
+    DeleteEntry("project", dataItem.uuid).then(response => {
+      this.child.current.refreshHandler(response.status);
     });
   };
 
@@ -118,7 +109,7 @@ class Project extends React.Component {
       dataItem: [],
       cancel: this.cancel,
       formAction: "post",
-      action: this.handler
+      action: this.child.current.refreshHandler
     });
   };
 
@@ -148,8 +139,18 @@ class Project extends React.Component {
           ref={this.child}
           config={{
             showToolBar: true,
-            title: "project",
-            column: ["id", "name", "description"]
+            title: "Project",
+            api: "project",
+            column: [
+              {
+                title: "Name",
+                field: "name"
+              },
+              {
+                title: "Description",
+                field: "description"
+              }
+            ]
           }}
           manageGrid={{
             add: this.insert,

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Window } from "@progress/kendo-react-dialogs";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { DropDownList, AutoComplete } from "@progress/kendo-react-dropdowns";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
@@ -26,8 +26,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       DOBInEdit: undefined,
       DOJInEdit: undefined,
-      userInEdit: this.props.dataItem || null,
-      countries: Codes
+      userInEdit: this.props.dataItem || null
     };
   }
 
@@ -151,7 +150,7 @@ export default class DialogContainer extends React.Component {
 
   countryOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
-    userInEdit.country = event.target.value[0];
+    userInEdit.country = event.target.value;
     this.setState({ userInEdit: userInEdit });
   };
 
@@ -360,11 +359,12 @@ export default class DialogContainer extends React.Component {
                   <div className="col-6">
                     <label>Country</label>
                     <div>
-                      <DropDownList
-                        data={this.state.countries}
-                        onChange={this.countryOnChange}
-                        style={{ width: "200px" }}
-                        value={this.state.userInEdit.country}
+                      <DropDown
+                        args={this.core}
+                        rawData={Codes}
+                        textField={""}
+                        selectedItem={this.state.userInEdit.country}
+                        onDataChange={this.countryOnChange}
                         required={true}
                       />
                     </div>

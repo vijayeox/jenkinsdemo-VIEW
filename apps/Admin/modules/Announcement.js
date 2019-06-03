@@ -74,8 +74,23 @@ class Announcement extends React.Component {
           ref={this.child}
           config={{
             showToolBar: true,
-            title: "announcement/a",
-            column: ["id", "name", "description"]
+            title: "Announcement",
+            api:"announcement/a",
+            column: [
+              {
+                title: "Banner",
+                field: "media"
+              },
+
+              {
+                title: "Name",
+                field: "name"
+              },
+              {
+                title: "Description",
+                field: "description"
+              }
+            ]
           }}
           manageGrid={{
             add: this.insert,

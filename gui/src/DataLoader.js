@@ -18,18 +18,19 @@ export class DataLoader extends React.Component {
   }
 
   async getData(url, filters) {
-    console.log(filters);
-    if (this.isEmpty(filters.sort[0])) {
-      this.sortValue = [];
-    } else {
-      this.sortValue = "&sort=" + filters.sort[0].field;
-    }
+    // if (this.isEmpty(filters.sort[0])) {
+    //   this.sortValue = [];
+    // } else {
+    //   this.sortValue = "&sort=" + filers.sort[0].field;
+    // }
     let helper = this.core.make("oxzion/restClient");
     let data = await helper.request(
       "v1",
-      // "/" + url + "?" + filters,
-      "/" + url + "?pg=1&psz=1000" + this.sortValue,
-      {},
+      // "/" + url +"?"+ JSON.stringify(this.props.dataState),
+      "/" + url + "?pg=1&psz=1000",
+      {
+        // filter: JSON.stringify(filters)
+      },
       "get"
     );
     return data;
@@ -52,7 +53,7 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    this.getData(this.url, this.props.dataState).then(response => {
+    this.getData(this.url, this.pending).then(response => {
       this.lastSuccess = this.pending;
       this.pending = "";
       if (toODataString(this.props.dataState) === this.lastSuccess) {
@@ -64,7 +65,6 @@ export class DataLoader extends React.Component {
         this.requestDataIfNeeded();
       }
     });
-    console.log(this.pending);
   };
 
   render() {

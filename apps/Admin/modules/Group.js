@@ -130,8 +130,19 @@ class Group extends React.Component {
           ref={this.child}
           config={{
             showToolBar: true,
-            title: "group",
-            column: ["id", "name", "description"]
+            title: "Group",
+            api: "group",
+            column: [
+              {
+                title: "Name",
+                field: "name"
+              },
+
+              {
+                title: "Description",
+                field: "description"
+              }
+            ]
           }}
           manageGrid={{
             add: this.insert,

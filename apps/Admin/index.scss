@@ -10,6 +10,12 @@
     cursor: default;
   }
 
+  .gridBanner {
+    max-width: -moz-available;
+    max-width: -webkit-fill-available;
+    max-width: fill-available;
+  }
+
   legend.form-label {
     font-size: 1.5rem;
     color: #3d658f;
@@ -234,9 +240,9 @@
     margin-top: 25px;
   }
 
-  .k-filtercell-operator {
-    display: none;
-  }
+  // .k-filtercell-operator {
+  //   display: none;
+  // }
 
   .k-grid-content {
     overflow-y: scroll;
