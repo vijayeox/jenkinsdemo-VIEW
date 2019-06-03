@@ -10,37 +10,22 @@ export class DataLoader extends React.Component {
     this.refresh = this.refresh.bind(this);
   }
 
-  isEmpty(obj) {
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) return false;
-    }
-    return true;
-  }
-
-  async getData(url, filters) {
-    // if (this.isEmpty(filters.sort[0])) {
-    //   this.sortValue = [];
-    // } else {
-    //   this.sortValue = "&sort=" + filers.sort[0].field;
-    // }
+  async getData(url) {
     let helper = this.core.make("oxzion/restClient");
     let data = await helper.request(
       "v1",
-      // "/" + url +"?"+ JSON.stringify(this.props.dataState),
-      "/" + url + "?pg=1&psz=1000",
-      {
-        // filter: JSON.stringify(filters)
-      },
+      "/" + url + "?" + "filter=[" + JSON.stringify(this.props.dataState) + "]",
+      {},
       "get"
     );
     return data;
   }
 
   refresh = temp => {
-    this.getData(this.url, this.props.dataState).then(response => {
+    this.getData(this.url).then(response => {
       this.props.onDataRecieved({
-        data: response.data.data,
-        total: response.data.data.length
+        data: response.data,
+        total: response.total
       });
     });
   };
@@ -53,13 +38,13 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    this.getData(this.url, this.pending).then(response => {
+    this.getData(this.url).then(response => {
       this.lastSuccess = this.pending;
       this.pending = "";
       if (toODataString(this.props.dataState) === this.lastSuccess) {
         this.props.onDataRecieved.call(undefined, {
           data: response.data,
-          total: response.data.length
+          total: response.total
         });
       } else {
         this.requestDataIfNeeded();

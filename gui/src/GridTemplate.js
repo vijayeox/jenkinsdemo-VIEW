@@ -32,9 +32,7 @@ export default class GridTemplate extends React.Component {
         take: 20,
         skip: 0
       },
-      gridData: this.props.gridData,
-      filter: [],
-      pageSizes: {}
+      gridData: this.props.gridData
     };
     this.notif = React.createRef();
   }
@@ -171,7 +169,9 @@ export default class GridTemplate extends React.Component {
           {this.props.config.showToolBar == true && (
             <GridToolbar>
               <div>
-                <div style={{ fontSize: "20px" }}>{this.props.config.title + "'s"} List</div>
+                <div style={{ fontSize: "20px" }}>
+                  {this.props.config.title + "'s"} List
+                </div>
                 <AddButton
                   args={this.props.manageGrid.add}
                   permission={this.props.permission}

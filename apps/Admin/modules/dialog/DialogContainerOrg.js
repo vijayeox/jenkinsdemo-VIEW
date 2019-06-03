@@ -9,6 +9,7 @@ export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.url = this.core.config("wrapper.url");
     this.state = {
       orgInEdit: this.props.dataItem || null
     };
@@ -77,6 +78,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
                 style={{ marginTop: "5px" }}
+                required={true}
               />
             </div>
 
@@ -174,6 +176,8 @@ export default class DialogContainer extends React.Component {
             </div>
             <FileUploader
               ref={this.fUpload}
+              url={this.url}
+              media={this.props.dataItem.media}
               title={"Upload Organization Logo"}
               uploadID={"organizationLogo"}
             />

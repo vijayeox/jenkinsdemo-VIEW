@@ -1,6 +1,5 @@
 .Window_Admin {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
-  @import "./node_modules/file-upload-with-preview/dist/file-upload-with-preview.min.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
 
   background: #336666;
@@ -9,6 +8,14 @@
     background-color: white;
     cursor: default;
   }
+
+  // move to gui
+
+  .custom-file-container__image-preview {
+    background-size: contain;
+  }
+
+  // move to gui
 
   .gridBanner {
     max-width: -moz-available;

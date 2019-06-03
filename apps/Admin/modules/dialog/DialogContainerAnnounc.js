@@ -11,6 +11,7 @@ export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.url = this.core.config("wrapper.url");
     this.firstUpload = null;
     this.state = {
       DOAInEdit: undefined,
@@ -179,6 +180,12 @@ export default class DialogContainer extends React.Component {
     });
   };
 
+  media_typeChange = event => {
+    let ancInEdit = { ...this.state.ancInEdit };
+    ancInEdit.media_type = event.target.value;
+    this.setState({ ancInEdit: ancInEdit });
+  };
+
   onDialogInputChange = event => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -231,7 +238,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
-                value={this.state.ancInEdit.address || ""}
+                value={this.state.ancInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"
                 style={{ marginTop: "5px", minHeight: "100px" }}
@@ -309,13 +316,14 @@ export default class DialogContainer extends React.Component {
             </div>
             <FileUploader
               ref={this.fUpload}
+              url={this.url}
+              media={this.props.dataItem.media}
               title={"Upload Announcement Banner"}
               uploadID={"announcementLogo"}
             />
           </form>
         </div>
         <SaveCancel save={this.submitData} cancel={this.props.cancel} />
-
       </Window>
     );
   }
