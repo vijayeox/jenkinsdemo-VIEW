@@ -30,7 +30,6 @@ export default class DialogContainer extends React.Component {
   };
 
   sendData = e => {
-    console.log(this.fUpload);
     e.preventDefault();
     PushData("organization", this.props.formAction, {
       name: this.state.orgInEdit.name,

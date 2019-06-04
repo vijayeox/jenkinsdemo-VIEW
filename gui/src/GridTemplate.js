@@ -88,6 +88,22 @@ export default class GridTemplate extends React.Component {
     return table;
   }
 
+  rawDataPresent() {
+    if (this.props.gridData) {
+      return <div />;
+    } else {
+      return (
+        <DataLoader
+          ref={this.child}
+          args={this.core}
+          url={this.props.config.api}
+          dataState={this.state.dataState}
+          onDataRecieved={this.dataRecieved}
+        />
+      );
+    }
+  }
+
   refreshHandler = serverResponse => {
     if (serverResponse == "success") {
       this.notif.current.successNotification();
@@ -105,17 +121,9 @@ export default class GridTemplate extends React.Component {
     return (
       <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
         <Notification ref={this.notif} />
-        {this.props.gridData !== "" && (
-          <DataLoader
-            ref={this.child}
-            args={this.core}
-            url={this.props.config.api}
-            dataState={this.state.dataState}
-            onDataRecieved={this.dataRecieved}
-          />
-        )}
+        {this.rawDataPresent()}
         <Grid
-          {...this.state.gridData}
+          data={this.state.gridData}
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}

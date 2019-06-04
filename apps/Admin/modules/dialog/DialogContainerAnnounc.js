@@ -12,16 +12,16 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
-    this.firstUpload = null;
     this.state = {
       DOAInEdit: undefined,
       DOEInEdit: undefined,
       ancInEdit: this.props.dataItem || null
     };
+    this.fUpload = React.createRef();
   }
 
   componentWillMount() {
-    if (this.props.formAction === "add") {
+    if (this.props.formAction === "post") {
     } else {
       let ancInEdittemp = { ...this.state.ancInEdit };
       if (
@@ -133,7 +133,7 @@ export default class DialogContainer extends React.Component {
   }
 
   async pushFile(event) {
-    var files = this.firstUpload.cachedFileArray[0];
+    var files = this.fUpload.current.firstUpload.cachedFileArray[0];
     let helper = this.core.make("oxzion/restClient");
     let ancFile = await helper.request(
       "v1",
@@ -201,7 +201,7 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.props.formAction == "edit") {
+    if (this.props.formAction == "put") {
       this.pushFile().then(response => {
         var addResponse = response.data.filename[0];
         this.editAnnouncements(addResponse);
@@ -219,7 +219,7 @@ export default class DialogContainer extends React.Component {
     return (
       <Window onClose={this.props.cancel}>
         <div className="container-fluid">
-          <form>
+          <form onSubmit={this.handleSubmit} id="ancForm">
             <div className="form-group">
               <label>Announcement Title</label>
               <input
@@ -323,7 +323,7 @@ export default class DialogContainer extends React.Component {
             />
           </form>
         </div>
-        <SaveCancel save={this.submitData} cancel={this.props.cancel} />
+        <SaveCancel save="ancForm" cancel={this.props.cancel} />
       </Window>
     );
   }

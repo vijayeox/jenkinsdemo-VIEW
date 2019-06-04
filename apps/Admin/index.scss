@@ -1,6 +1,6 @@
 .Window_Admin {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
-  @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
+  @import "./node_modules/bootstrap/dist/css/bootstrap.css";
 
   background: #336666;
 
@@ -13,6 +13,7 @@
 
   .custom-file-container__image-preview {
     background-size: contain;
+    overflow: hidden;
   }
 
   // move to gui
@@ -26,6 +27,17 @@
   legend.form-label {
     font-size: 1.5rem;
     color: #3d658f;
+  }
+
+  input {
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    padding: 2px;
+  }
+  input:focus {
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
   }
 
   .control-label {
@@ -341,6 +353,12 @@
 
   .k-multiselect-wrap .k-searchbar .k-input {
     height: auto;
+  }
+
+  .k-searchbar > input{
+    border: none;
+    padding: 5px;
+    margin: 5px;
   }
 
   .border-box {
