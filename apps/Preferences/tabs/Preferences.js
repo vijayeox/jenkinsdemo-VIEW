@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
 import ReactNotification from "react-notifications-component";
+import merge from "deepmerge";
+import osjs from "osjs";
 
 class Preferences extends Component {
   constructor(props) {
@@ -12,9 +14,70 @@ class Preferences extends Component {
       timez: "",
       fields: this.userprofile.key.preferences,
       errors: {},
-      initialized: -1
-
+      initialized: -1,
+      languageName: ""
     };
+
+    this.settingsService = this.core.make("osjs/settings");
+    this.packageService = this.core.make("osjs/packages");
+    this.desktopService = this.core.make("osjs/desktop");
+    const { translate, translatableFlat } = this.core.make("osjs/locale");
+    this.translatableFlat = translatableFlat;
+    this.filter = type => pkg => pkg.type === type;
+
+    this.setSettings = this.setSettings.bind(this);
+    this.resolveNewSetting = this.resolveNewSetting.bind(this);
+    this.getLocales = this.getLocales.bind(this);
+    this.getDefaults = this.getDefaults.bind(this);
+    this.getSettings = this.getSettings.bind(this);
+
+    this.initialState = {
+      loading: false,
+      locales: this.getLocales(),
+      defaults: this.getDefaults(),
+      settings: this.getSettings()
+    };
+
+    console.log((this.initialState.locales));
+
+    this.newSettings = this.initialState;
+
+    this.actions = {
+      save: () => {
+        if (this.initialState.loading) {
+          return;
+        }
+
+        this.actions.setLoading(true);
+
+        this.setSettings(this.newSettings.settings)
+          .then(() => {
+            this.actions.setLoading(false);
+            this.desktopService.applySettings();
+          })
+          .catch(error => {
+            this.actions.setLoading(false);
+            console.error(error); // FIXME
+          });
+      },
+
+      update: (path, value) => {
+        this.newSettings = this.resolveNewSetting(path, value);
+      },
+      refresh: () => {
+        this.initialState.settings = this.getSettings();
+      },
+      setLoading: loading => ({ loading })
+    };
+
+    this.languagesList = [];
+
+    for(var i in this.initialState.locales){
+      this.languagesList.push(
+        {value: i, label: this.initialState.locales[i]}
+      )
+    }
+    console.log(this.languagesList);
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,6 +85,40 @@ class Preferences extends Component {
     this.addNotificationFail = this.addNotificationFail.bind(this);
     this.notificationDOMRef = React.createRef();
   }
+
+  getDefaults = () => ({
+    locale: this.core.config("locale", {})
+  });
+
+  getSettings = () => ({
+    locale: this.settingsService.get("osjs/locale", undefined, {})
+  });
+
+    getLocales = () => this.core.config('languages', {
+      en_EN: 'English'
+    });
+
+    setSettings = settings =>
+    this.settingsService
+      .set("osjs/locale", null, settings.locale)
+      .save();
+
+  resolveNewSetting = (key, value) => {
+    const object = {};
+    const keys = key.split(/\./g);
+
+    let previous = object;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const last = i >= keys.length - 1;
+
+      previous[key] = last ? value : {};
+      previous = previous[key];
+    }
+
+    const settings = merge(this.newSettings.settings, object);
+    return { settings };
+  };
 
   addNotification() {
     this.notificationDOMRef.current.addNotification({
@@ -53,12 +150,33 @@ class Preferences extends Component {
      this.state.fields['dateformat'] = this.state.fields['dateformat'].replace(/m/g,"M");
   }
 
+  componentDidMount(){
+    if(this.newSettings.settings.locale.language){
+      this.setState({
+        languageName: (this.newSettings.settings.locale.language ? this.newSettings.settings.locale.language : this.newSettings.defaults.locale.language)
+      });
+    }
+    else{
+      this.setState({
+        languageName: (this.newSettings.defaults.locale.language ? this.newSettings.defaults.locale.language : '')
+      });
+    }
+  }
+
   handleChange(e) {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
+    
+    if(event.target.name === "locale.language"){
+      console.log("selected:" +  e.target.name, e.target.value);
+      this.actions.update(e.target.name, e.target.value);
+      this.setState({
+          languageName: this.newSettings.settings.locale.language
+        });
+    }
   }
 
   async handleSubmit(event) {
@@ -88,6 +206,8 @@ class Preferences extends Component {
          this.addNotification();
          this.core.make("oxzion/profile").update();
       }
+      this.actions.save();
+      this.actions.refresh();
 
   }
 
@@ -100,26 +220,24 @@ class Preferences extends Component {
         
           <form style={{padding:"20px"}} onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-              <div className="col-md-5" id="sound" style={{marginTop:"5px"}}>
-                <label id="labelname">Sound Notification</label>
+              <div className="col-md-6" id="sound" style={{marginTop:"5px", paddingLeft: "18%" }}>
+                <label id="labelname">Sound Notification:</label>
               </div>
               <div className="col-md-6">
               <div className="row">
                 <label id="name">
                   <input
+                    id="preferencesRadio"
                     type="radio"
                     name="soundnotification"
                     value="true"
                     onChange={this.handleChange}
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "true"}
-                  />
-                  <span className="m-2">On</span>
-                </label>
-              </div>
-              <div className="row">
-                <label id="name">
+                  /> 
+                  <span className="m-2 radioLabel">On</span>
                   <input
+                    id="preferencesRadio"
                     type="radio"
                     name="soundnotification"
                     value="false"
@@ -127,7 +245,7 @@ class Preferences extends Component {
                     ref="soundnotification"
                     checked={this.state.fields['soundnotification'] == "false"}
                     />
-                  <span className="m-2">Off</span>
+                  <span className="m-2 radioLabel">Off</span>
                 </label>
               </div>
               </div>
@@ -135,13 +253,14 @@ class Preferences extends Component {
 
           <div>
             <div className="row">
-                <div className="col-md-5" id="emailalert" style={{marginTop:"7px"}}>
-                  <label id="labelname">Email Alerts</label>
+                <div className="col-md-6" id="emailalert" style={{marginTop:"7px", paddingLeft: "18%" }}>
+                  <label id="labelname">Email Alerts:</label>
                 </div>
               <div className="col-md-6">
               <div className="row">
                   <label id="name">
                     <input
+                      id="preferencesRadio"
                       type="radio"
                       name="emailalerts"
                       value="true"
@@ -149,12 +268,9 @@ class Preferences extends Component {
                       ref="emailalerts"
                       checked={this.state.fields['emailalerts'] == "true"}
                     />
-                    <span className="m-2">On</span>
-                  </label>
-                </div>
-                <div className="row">
-                  <label id="name">
+                    <span className="m-2 radioLabel">On</span>
                     <input
+                      id="preferencesRadio"
                       type="radio"
                       name="emailalerts"
                       value="false"
@@ -162,7 +278,7 @@ class Preferences extends Component {
                       ref="emailalerts"
                       checked={this.state.fields['emailalerts'] == "false"}
                     />
-                    <span className="m-2">Off</span>
+                    <span className="m-2 radioLabel">Off</span>
                   </label>
                 </div>
               </div>
@@ -170,8 +286,8 @@ class Preferences extends Component {
           </div>
 
           <div className="row" id="row1" style={{paddingTop:"5px"}}>
-            <div className="col-md-5" id="localtimezone" style={{marginTop:"18px"}}>
-              <label id="labelname">Local Time Zone</label>
+            <div className="col-md-6" id="localtimezone" style={{marginTop:"18px", paddingLeft: "18%" }}>
+              <label id="labelname">Local Time Zone:</label>
               </div>
               <div className="col-md-6 timezonediv">
               <select
@@ -191,8 +307,8 @@ class Preferences extends Component {
           </div>
 
           <div className="row" id="row2" style={{paddingBottom:0}}>
-                <div className="input-field col-md-5" id="datef" style={{marginTop:"16px"}}>
-                <label id="labelname">Date Format</label>
+                <div className="input-field col-md-6" id="datef" style={{marginTop:"16px", paddingLeft: "18%" }}>
+                <label id="labelname">Date Format:</label>
                   </div>
                 <div className="input-field col-md-3 dateformat">
                 <input
@@ -206,7 +322,7 @@ class Preferences extends Component {
                 />               
 
                 </div>
-                <div className="input-field col-md-3 datetooltip">
+                <div className="input-field col-md-3 datetooltip" style={{zIndex:2}}>
 
 
                 <i className="material-icons" id="dateicon">info_outline</i><span>"dd-MM-yyyy - 01-02-2012<br/>
@@ -217,8 +333,30 @@ class Preferences extends Component {
                 </div>
           </div>
 
+
+          <div className="row" id="row1" style={{paddingTop:"5px"}}>
+            <div className="col-md-6" id="locallanguage" style={{marginTop:"18px", paddingLeft: "18%" }}>
+              <label id="labelname">Language:</label>
+              </div>
+              <div className="col-md-6 languagediv">
+              <select
+                value={this.state.languageName}
+                onChange={this.handleChange}
+                ref="language"
+                name="locale.language"
+                className="language"
+                id="language"
+              > {this.languagesList.map((language, key) => (
+                  <option key={key} value={language.value}>
+                    {language.label}
+                  </option>
+                ))}
+                </select>
+            </div>
+          </div>
+          
           <div className="row savebutton">
-            <div className="col s12 input-field">
+            <div className="col s12 input-field" style={{paddingLeft: "16%"}}>
               <button className="k-button k-primary" type="submit">
                 Submit
               </button>

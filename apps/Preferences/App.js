@@ -3,6 +3,8 @@ import { Tabs, Tab, TabPanel, TabList } from "react-web-tabs";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
+import Themes from './tabs/Themes';
+import Background from './tabs/Background';
 
 class App extends Component {
   constructor(props) {
@@ -55,6 +57,14 @@ async changePassword(formData){
             <i className="fa fa-cogs" id="iconj" />
             <span className="tabHeader">Preferences</span>
           </Tab>
+          <Tab tabFor="vertical-tab-four" style={{color:"white"}}>
+              <i className="fa fa-picture-o" id="iconj" />
+              <span className="tabHeader">Background</span>
+            </Tab>
+            <Tab tabFor="vertical-tab-five" style={{color:"white"}}>
+              <i className="fa fa-desktop" id="iconj" />
+              <span className="tabHeader">Themes</span>
+            </Tab>
         </TabList>
         <TabPanel tabId="vertical-tab-one" className="tab1">
           <EditProfile args={this.core} />
@@ -64,6 +74,12 @@ async changePassword(formData){
         </TabPanel>
         <TabPanel tabId="vertical-tab-three" className="tab1">
           <Preferences args={this.core}/>
+        </TabPanel>
+        <TabPanel tabId="vertical-tab-four" className="tab1">
+          <Background args={this.core} />
+        </TabPanel>
+        <TabPanel tabId="vertical-tab-five" className="tab1">
+          <Themes args={this.core}/>
         </TabPanel>
       </Tabs>
     );

@@ -45,16 +45,16 @@ module.exports = {
   },
   vfs: {
     watch: false,
-    root: path.join(process.cwd(), 'vfs'),
+    root: path.join(process.cwd(), '../vfs'),
     mountpoints: [{
       name: 'bos',
       attributes: {
-        root: path.join(process.cwd(), 'common')
+        root:  '{vfs}/common'
       }
     }, {
       name: 'home',
       attributes: {
-        root: '{vfs}/{username}'
+        root: '{vfs}/user/home/{username}'
       }
     }]
   }

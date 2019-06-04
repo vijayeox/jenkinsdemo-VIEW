@@ -110,13 +110,13 @@ const defaultConfiguration = {
     mountpoints: [{
       name: 'bos',
       attributes: {
-        root: path.join(process.cwd(), 'common'),
+        root: '{vfs}/common',
         readOnly: true
       }
     }, {
       name: 'home',
       attributes: {
-        root: '{vfs}/{username}'
+        root: '{vfs}/user/home/{username}'
       }
     }]
   }

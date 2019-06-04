@@ -303,6 +303,7 @@ async handleSubmit(event) {
                 <div className="col-md-3 input-field">
                 <label>
                   <input
+                    id="preferencesRadio"
                     type="radio"
                     name="gender"
                     value="Male"
@@ -319,6 +320,7 @@ async handleSubmit(event) {
 
                 <label>
                   <input
+                    id="preferencesRadio"
                     type="radio"
                     name="gender"
                     value="Female"
