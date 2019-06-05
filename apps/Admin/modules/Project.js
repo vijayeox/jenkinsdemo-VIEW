@@ -52,8 +52,11 @@ class Project extends React.Component {
   };
 
   addProjectUsers = dataItem => {
+    let projectToBeEdited = [];
+    projectToBeEdited.name = dataItem.name;
+    projectToBeEdited.id = dataItem.id;
     this.setState({
-      projectToBeEdited: dataItem.uuid,
+      projectToBeEdited: projectToBeEdited,
       visible: !this.state.visible
     });
   };

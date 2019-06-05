@@ -4,7 +4,8 @@ import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import {
   FaArrowCircleRight,
   FaInfoCircle,
-  FaQuestionCircle
+  FaQuestionCircle,
+  FaArrowRight
 } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import "./public/css/syncfusion.css";
@@ -12,8 +13,10 @@ import {
   Grid,
   GridColumn,
   GridToolbar,
-  GridNoRecords
+  GridNoRecords,
+  GridCell
 } from "@progress/kendo-react-grid";
+import $ from "jquery";
 import { Popup } from "@progress/kendo-react-popup";
 
 class MultiSelect extends React.Component {
@@ -23,12 +26,14 @@ class MultiSelect extends React.Component {
     this.state = {
       userList: [],
       selectedUsers: [],
-      showHelp: false
+      showHelp: false,
+      filterValue: []
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
+    console.log(this.props);
     let loader = this.core.make("oxzion/splash");
     loader.show();
 
@@ -66,7 +71,14 @@ class MultiSelect extends React.Component {
   };
 
   filterChange = e => {
-    this.getMainList(e.filter.value, 20);
+    if (e.filter.value.length > 0) {
+      setTimeout(() => {
+        this.setState({
+          filterValue: e.filter.value
+        });
+        this.getMainList(e.filter.value, 20);
+      }, 500);
+    }
   };
 
   handleChange(e) {
@@ -74,10 +86,46 @@ class MultiSelect extends React.Component {
       selectedUsers: e.target.value
     });
   }
-  tagRender = (tagData, li) => {};
+  tagRender = (tagData, li) => {
+    $(document).ready(function() {
+      $(".k-searchbar")
+        .children()
+        .attr({ placeholder: "Search For Users" })
+        .css("min-width", "387px");
+    });
+  };
+
+  onOpen = () => {
+    $(document).ready(function() {
+      $(".k-searchbar")
+        .children()
+        .attr({ placeholder: "Search For Users" })
+        .css("min-width", "387px");
+    });
+  };
+
+  onClose = () => {
+    $(document).ready(function() {
+      $(".k-searchbar")
+        .children()
+        .attr({ placeholder: "Click to add Users" })
+        .css("min-width", "387px");
+    });
+  };
 
   onHelpClick = () => {
     this.setState({ showHelp: !this.state.showHelp });
+  };
+
+  deleteRecord = item => {
+    const selectedUsers = this.state.selectedUsers.slice();
+    const index = selectedUsers.findIndex(p => p.userid === item.userid);
+    if (index !== -1) {
+      selectedUsers.splice(index, 1);
+      this.setState({
+        selectedUsers: selectedUsers
+      });
+    }
   };
 
   render() {
@@ -86,6 +134,12 @@ class MultiSelect extends React.Component {
         title={"Add Users to the Organization"}
         onClose={this.props.manage.toggleDialog}
       >
+        <nav class="navbar bg-dark">
+          <h6 style={{ color: "white", paddingTop: "3px" }}>
+            Project &nbsp; -&nbsp; {this.props.config.dataItem.name}
+            &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage Users
+          </h6>
+        </nav>
         <div style={{ display: "flex" }}>
           <div
             className="col-10 justify-content-center"
@@ -98,7 +152,10 @@ class MultiSelect extends React.Component {
                 value={this.state.selectedUsers}
                 filterable={true}
                 onFilterChange={this.filterChange}
+                onOpen={this.onOpen}
+                onClose={this.onClose}
                 autoClose={false}
+                clearButton={false}
                 textField="userName"
                 dataItemKey="userid"
                 tagRender={this.tagRender}
@@ -106,28 +163,31 @@ class MultiSelect extends React.Component {
               />
             </div>
           </div>
-          {/* <div
-            className="col-3"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <button
-              type="button"
-              class="btn btn-primary btn-square"
-              onClick={this.onHelpClick}
-              ref={button => {
-                this.anchor = button;
-              }}
-            >
-              <FaQuestionCircle />
-            </button>
-          </div> */}
         </div>
 
-        {/* <Popup
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "64px",
+            right: "33px"
+          }}
+        >
+          <button
+            type="button"
+            class="btn btn-primary btn-square"
+            onClick={this.onHelpClick}
+            ref={button => {
+              this.anchor = button;
+            }}
+          >
+            <FaQuestionCircle />
+          </button>
+        </div>
+
+        <Popup
           anchor={this.anchor}
           show={this.state.showHelp}
           popupClass={"popup-content"}
@@ -176,18 +236,31 @@ class MultiSelect extends React.Component {
               </li>
             </ul>
           </div>
-        </Popup> */}
-        <div
-          className="col-6 justify-content-center"
-          style={{ margin: "auto" }}
-        >
-          <Grid data={this.state.selectedUsers}>
-            <GridColumn field="userName" title="Selected Users" />
-            <GridNoRecords>
-              <center>Please select some Users using the Dropdown List.</center>
-            </GridNoRecords>
-          </Grid>
-        </div>
+        </Popup>
+        {this.state.selectedUsers.length > 0 && (
+          <div
+            className="col-10 justify-content-center"
+            style={{ margin: "auto" }}
+          >
+            <Grid
+              data={this.state.selectedUsers}
+              onRowClick={e => {
+                this.deleteRecord(e.dataItem);
+              }}
+            >
+              <GridColumn
+                field="userName"
+                title="Selected Users"
+                headerCell={this.columnTitle}
+              />
+              <GridColumn
+                title="Edit"
+                width="100px"
+                cell={cellWithEditing(this.deleteRecord)}
+              />
+            </Grid>
+          </div>
+        )}
         <DialogActionsBar>
           <button
             className="k-button k-primary"
@@ -204,6 +277,25 @@ class MultiSelect extends React.Component {
       </Dialog>
     );
   }
+}
+
+function cellWithEditing(remove) {
+  return class extends GridCell {
+    render() {
+      return (
+        <td>
+          <button
+            className="k-primary k-button k-grid-edit-command"
+            onClick={() => {
+              remove(this.props.dataItem);
+            }}
+          >
+            Remove
+          </button>
+        </td>
+      );
+    }
+  };
 }
 
 export default MultiSelect;

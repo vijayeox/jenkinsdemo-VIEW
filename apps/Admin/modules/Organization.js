@@ -114,7 +114,7 @@ class Organization extends React.Component {
             column: [
               {
                 title: "Logo",
-                field: "media"
+                field: "logo"
               },
 
               {

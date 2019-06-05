@@ -59,10 +59,7 @@ export default class GridTemplate extends React.Component {
   createColumns() {
     let table = [];
     for (var i = 0; i < this.props.config.column.length; i++) {
-      if (
-        this.props.config.column[i].field == "media" ||
-        this.props.config.column[i].field == "logo"
-      ) {
+      if (this.props.config.column[i].field == "media") {
         table.push(
           <GridColumn
             key={i}
@@ -73,6 +70,17 @@ export default class GridTemplate extends React.Component {
             cell={props => (
               <LogoCell {...props} myProp={this.props} url={this.baseUrl} />
             )}
+          />
+        );
+      } else if (this.props.config.column[i].field == "logo") {
+        table.push(
+          <GridColumn
+            key={i}
+            width="200px"
+            title={this.props.config.column[i].title}
+            filterCell={this.emptyCell}
+            sortable={false}
+            cell={props => <LogoCell2 {...props} myProp={this.props} />}
           />
         );
       } else {
@@ -239,6 +247,20 @@ class LogoCell extends React.Component {
       <td>
         <img
           src={this.props.url + "resource/" + this.props.dataItem.media}
+          alt="Logo"
+          className="text-center circle gridBanner"
+        />
+      </td>
+    );
+  }
+}
+
+class LogoCell2 extends React.Component {
+  render() {
+    return (
+      <td>
+        <img
+          src={this.props.dataItem.logo}
           alt="Logo"
           className="text-center circle gridBanner"
         />

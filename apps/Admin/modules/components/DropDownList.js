@@ -2,6 +2,7 @@ import React from "react";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
 import { GetData } from "../components/apiCalls";
+import $ from "jquery";
 
 import withValueField from "../dialog/withValueField";
 const DropDownListWithValueField = withValueField(DropDownList);

@@ -38,18 +38,20 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    this.getData(this.url).then(response => {
-      this.lastSuccess = this.pending;
-      this.pending = "";
-      if (toODataString(this.props.dataState) === this.lastSuccess) {
-        this.props.onDataRecieved.call(undefined, {
-          data: response.data,
-          total: response.total
-        });
-      } else {
-        this.requestDataIfNeeded();
-      }
-    });
+    setTimeout(() => {
+      this.getData(this.url).then(response => {
+        this.lastSuccess = this.pending;
+        this.pending = "";
+        if (toODataString(this.props.dataState) === this.lastSuccess) {
+          this.props.onDataRecieved.call(undefined, {
+            data: response.data,
+            total: response.total
+          });
+        } else {
+          this.requestDataIfNeeded();
+        }
+      });
+    }, 500);
   };
 
   render() {

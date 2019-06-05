@@ -16,6 +16,20 @@
     overflow: hidden;
   }
 
+  table {
+    .k-header {
+      font-size: larger;
+      background-color: #2d3440;
+      color: #f8f0ee;
+      font-weight: bolder;
+      font-family: "Century Gothic", "Futura", "Didact Gothic", san-serif;
+    }
+  }
+
+  .k-window-content{
+    padding: 0px;
+  }
+
   // move to gui
 
   .gridBanner {
@@ -298,10 +312,6 @@
     width: 80px;
   }
 
-  a {
-    color: #656565 !important;
-  }
-
   .manageIcons {
     font-size: 1.3em;
     color: #002c3e;
@@ -355,10 +365,19 @@
     height: auto;
   }
 
-  .k-searchbar > input{
+  .k-searchbar > input {
     border: none;
     padding: 5px;
     margin: 5px;
+  }
+
+  .k-clear-value {
+    padding-top: 14px;
+    padding-right: 19px;
+    font-size: 25px;
+  }
+
+  .k-header {
   }
 
   .border-box {

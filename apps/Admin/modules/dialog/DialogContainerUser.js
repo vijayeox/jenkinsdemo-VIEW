@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Window } from "@progress/kendo-react-dialogs";
-import { DropDownList, AutoComplete } from "@progress/kendo-react-dropdowns";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
@@ -145,6 +144,12 @@ export default class DialogContainer extends React.Component {
   managerOnChange = event => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit.managerid = event.target.value;
+    this.setState({ userInEdit: userInEdit });
+  };
+
+  organizationOnChange = event => {
+    let userInEdit = { ...this.state.userInEdit };
+    userInEdit.orgid = event.target.value;
     this.setState({ userInEdit: userInEdit });
   };
 
@@ -344,7 +349,7 @@ export default class DialogContainer extends React.Component {
 
               <div className="form-group">
                 <div className="form-row">
-                  <div className="col-6">
+                  <div className="col-4">
                     <label>Manager Assigned</label>
                     <div>
                       <DropDown
@@ -356,7 +361,19 @@ export default class DialogContainer extends React.Component {
                       />
                     </div>
                   </div>
-                  <div className="col-6">
+                  <div className="col-4">
+                    <label>Organization</label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        mainList={"organization"}
+                        selectedItem={this.state.userInEdit.orgid}
+                        onDataChange={this.organizationOnChange}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-4">
                     <label>Country</label>
                     <div>
                       <DropDown
