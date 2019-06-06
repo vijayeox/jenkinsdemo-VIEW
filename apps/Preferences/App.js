@@ -75,11 +75,11 @@ async changePassword(formData){
         <TabPanel tabId="vertical-tab-three" className="tab1">
           <Preferences args={this.core}/>
         </TabPanel>
-        <TabPanel tabId="vertical-tab-four" className="tab1">
-          <Background args={this.core} />
+        <TabPanel tabId="vertical-tab-four" className="tab1" 
+                  render={({ selected }) => selected ? (<Background args={this.core} /> ) : (null)}>
         </TabPanel>
-        <TabPanel tabId="vertical-tab-five" className="tab1">
-          <Themes args={this.core}/>
+        <TabPanel tabId="vertical-tab-five" className="tab1"
+                  render={({ selected }) => selected ? (<Themes args={this.core}/> ) : (null)}>
         </TabPanel>
       </Tabs>
     );
