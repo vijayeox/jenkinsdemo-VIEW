@@ -1,5 +1,5 @@
 import React from "react";
-export class SaveCancel extends React.Component {
+export default class SaveCancel extends React.Component {
   render() {
     return (
       <div className="row pt-2 saveCancelArea">

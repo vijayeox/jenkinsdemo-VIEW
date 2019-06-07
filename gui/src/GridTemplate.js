@@ -199,8 +199,8 @@ export default class GridTemplate extends React.Component {
           {this.createColumns()}
           {this.props.permission != 1 && (
             <GridColumn
-              title="Edit"
-              width="170px"
+              title="Manage"
+              width="190px"
               minResizableWidth={170}
               cell={CellWithEditing(
                 this.props.config.title,
@@ -281,7 +281,8 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
         return (
           <abbr title={"Delete " + title}>
             <button
-              className="k-button k-grid-remove-command"
+              type="button"
+              className="btn manage-btn k-grid-remove-command"
               onClick={() => {
                 Swal.fire({
                   title: "Are you sure?",
@@ -316,7 +317,8 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
           <center>
             <abbr title={"Edit " + title + " Details"}>
               <button
-                className=" k-button k-grid-edit-command"
+                type="button"
+                className=" btn manage-btn k-grid-edit-command"
                 onClick={() => {
                   edit(this.props.dataItem);
                 }}
@@ -328,7 +330,8 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
             {addUsers && (
               <abbr title={"Add Users to " + title}>
                 <button
-                  className="k-button"
+                  type="button"
+                  className="btn manage-btn"
                   onClick={() => {
                     addUsers(this.props.dataItem);
                   }}

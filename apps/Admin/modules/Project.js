@@ -96,7 +96,7 @@ class Project extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("project", dataItem.uuid).then(response => {
+    DeleteEntry("project", dataItem.id).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };

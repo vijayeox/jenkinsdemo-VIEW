@@ -3,7 +3,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
 import { FileUploader } from "@oxzion/gui";
-import { SaveCancel } from "../components/saveCancel";
+import { SaveCancel } from "../components/index";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {

@@ -16,8 +16,13 @@
     overflow: hidden;
   }
 
-  table {
-    .k-header {
+  .manage-btn {
+    background-color: #ff6358;
+    border-radius: 10px;
+  }
+
+  tr {
+    th.k-header {
       font-size: larger;
       background-color: #2d3440;
       color: #f8f0ee;
@@ -26,8 +31,10 @@
     }
   }
 
-  .k-window-content{
-    padding: 0px;
+  .multiselectWindow {
+    .k-window-content {
+      padding: 0px;
+    }
   }
 
   // move to gui
@@ -313,8 +320,8 @@
   }
 
   .manageIcons {
-    font-size: 1.3em;
-    color: #002c3e;
+    font-size: 1.1em;
+    color: #ffffff;
     display: block;
   }
 
@@ -375,9 +382,6 @@
     padding-top: 14px;
     padding-right: 19px;
     font-size: 25px;
-  }
-
-  .k-header {
   }
 
   .border-box {

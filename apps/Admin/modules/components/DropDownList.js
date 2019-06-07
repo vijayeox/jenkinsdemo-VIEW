@@ -7,7 +7,7 @@ import $ from "jquery";
 import withValueField from "../dialog/withValueField";
 const DropDownListWithValueField = withValueField(DropDownList);
 
-export class DropDown extends React.Component {
+export default class DropDown extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;

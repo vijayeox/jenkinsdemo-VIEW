@@ -2,8 +2,7 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
-import { DropDown } from "../components/DropDownList";
-import { SaveCancel } from "../components/saveCancel";
+import { DropDown, SaveCancel } from "../components/index";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
