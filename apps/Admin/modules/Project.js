@@ -54,7 +54,7 @@ class Project extends React.Component {
   addProjectUsers = dataItem => {
     let projectToBeEdited = [];
     projectToBeEdited.name = dataItem.name;
-    projectToBeEdited.id = dataItem.id;
+    projectToBeEdited.id = dataItem.uuid;
     this.setState({
       projectToBeEdited: projectToBeEdited,
       visible: !this.state.visible
@@ -65,10 +65,10 @@ class Project extends React.Component {
     var temp1 = selectedUsers;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
-      var uid = { id: temp1[i] };
+      var uid = { id: temp1[i].id };
       temp2.push(uid);
     }
-    this.pushProjectUsers(this.state.projectToBeEdited, JSON.stringify(temp2));
+    this.pushProjectUsers(this.state.projectToBeEdited.id, JSON.stringify(temp2));
   };
 
   toggleDialog() {
@@ -96,7 +96,7 @@ class Project extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("project", dataItem.id).then(response => {
+    DeleteEntry("project", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };

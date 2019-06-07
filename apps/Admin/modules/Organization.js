@@ -37,7 +37,10 @@ class Organization extends React.Component {
     this.addUsersTemplate = React.createElement(MultiSelect, {
       args: this.core,
       config: {
-        dataItem: dataItem.id,
+        dataItem: {
+          name: dataItem.name,
+          id: dataItem.uuid
+        },
         mainList: "user",
         subList: "organization"
       },
@@ -79,7 +82,7 @@ class Organization extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("organization", dataItem.id).then(response => {
+    DeleteEntry("organization", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };

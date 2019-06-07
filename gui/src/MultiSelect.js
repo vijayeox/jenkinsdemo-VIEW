@@ -2,16 +2,13 @@ import React from "react";
 import { GetDataSearch, ExistingUsers } from "./components/apiCalls";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import {
-  FaArrowCircleRight,
-  FaInfoCircle,
-  FaQuestionCircle,
-  FaArrowRight
+  FaArrowRight,
+  FaSearch
 } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import "./public/css/syncfusion.css";
 import { Grid, GridColumn, GridCell } from "@progress/kendo-react-grid";
 import $ from "jquery";
-import { Popup } from "@progress/kendo-react-popup";
 
 class MultiSelect extends React.Component {
   constructor(props) {
@@ -26,22 +23,18 @@ class MultiSelect extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
-    // let loader = this.core.make("oxzion/splash");
-    // loader.show();
+    let loader = this.core.make("oxzion/splash");
+    loader.show();
 
     ExistingUsers(
       this.props.config.subList,
       this.props.config.dataItem.id
     ).then(response => {
-      var ExistingUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var userid = response.data[i].id;
-        ExistingUsers.push(userid);
-      }
       this.setState({
-        selectedUsers: ExistingUsers
+        selectedUsers: response.data
       });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   }
 
@@ -52,14 +45,11 @@ class MultiSelect extends React.Component {
         var userName =
           response.data[i].firstname + " " + response.data[i].lastname;
         var userid = response.data[i].id;
-        tempUsers.push({ userid: userid, userName: userName });
+        tempUsers.push({ id: userid, name: userName });
       }
       this.setState({
         userList: tempUsers
       });
-
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
     });
   };
 
@@ -80,7 +70,9 @@ class MultiSelect extends React.Component {
   listNoDataRender = element => {
     const noData = (
       <h4 style={{ fontSize: "1em" }}>
-        <span className="k-icon .k-i-search" style={{ fontSize: "2.5em" }} />
+        <span style={{ fontSize: "2.5em" }}>
+          <FaSearch />
+        </span>
         <br />
         <br />
         Please type a name to search.
@@ -139,123 +131,43 @@ class MultiSelect extends React.Component {
           title={"Add Users to the Organization"}
           onClose={this.props.manage.toggleDialog}
         >
-          <nav class="navbar bg-dark">
+          <nav className="navbar bg-dark">
             <h6 style={{ color: "white", paddingTop: "3px" }}>
               Project &nbsp; -&nbsp; {this.props.config.dataItem.name}
               &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage Users
             </h6>
           </nav>
-          <div style={{ display: "flex" }}>
-            <div
-              className="col-10 justify-content-center"
-              style={{ margin: "auto" }}
-            >
-              <div style={{ margin: "auto", width: "85%", paddingTop: "15px" }}>
-                <MSelect
-                  data={this.state.userList}
-                  onChange={this.handleChange}
-                  value={this.state.selectedUsers}
-                  filterable={true}
-                  onFilterChange={this.filterChange}
-                  onOpen={this.onOpen}
-                  onClose={this.onClose}
-                  autoClose={false}
-                  clearButton={false}
-                  textField="userName"
-                  dataItemKey="userid"
-                  tagRender={this.tagRender}
-                  listNoDataRender={this.listNoDataRender}
-                  placeholder="Click to add Users"
-                />
-              </div>
-            </div>
-          </div>
-
           <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              position: "absolute",
-              top: "64px",
-              right: "33px"
-            }}
+            className="col-10 justify-content-center"
+            style={{ margin: "auto" }}
           >
-            <button
-              type="button"
-              class="btn btn-primary btn-square"
-              onClick={this.onHelpClick}
-              ref={button => {
-                this.anchor = button;
-              }}
-            >
-              <FaQuestionCircle />
-            </button>
-          </div>
-
-          <Popup
-            anchor={this.anchor}
-            show={this.state.showHelp}
-            popupClass={"popup-content"}
-            anchorAlign={{
-              horizontal: "right",
-              vertical: "bottom"
-            }}
-            popupAlign={{
-              horizontal: "right",
-              vertical: "top"
-            }}
-          >
-            <div
-              style={{
-                height: "50%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                paddingTop: "2px"
-              }}
-            >
-              <ul className="list-group" style={{ listStyle: "disc" }}>
-                <div
-                  href="#"
-                  className="list-group-item list-group-item-action active"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <div style={{ fontSize: "medium" }}>Please Note:</div>
-                  <div style={{ marginLeft: "auto" }}>
-                    <FaInfoCircle />
-                  </div>
-                </div>
-                <li
-                  className="list-group-item"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <FaArrowCircleRight /> &nbsp; &nbsp; Initially the list
-                  displays only the first 20 users.
-                </li>
-                <li
-                  className="list-group-item"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <FaArrowCircleRight /> &nbsp; &nbsp; Please use the search
-                  filter to find other users.
-                </li>
-              </ul>
+            <div style={{ margin: "auto", width: "85%", paddingTop: "15px" }}>
+              <MSelect
+                data={this.state.userList}
+                onChange={this.handleChange}
+                value={this.state.selectedUsers}
+                filterable={true}
+                onFilterChange={this.filterChange}
+                onOpen={this.onOpen}
+                onClose={this.onClose}
+                autoClose={false}
+                clearButton={false}
+                textField="name"
+                dataItemKey="id"
+                tagRender={this.tagRender}
+                listNoDataRender={this.listNoDataRender}
+                placeholder="Click to add Users"
+              />
             </div>
-          </Popup>
+          </div>
           {this.state.selectedUsers.length > 0 && (
             <div
               className="col-10 justify-content-center"
               style={{ margin: "auto" }}
             >
-              <Grid
-                data={this.state.selectedUsers}
-                onRowClick={e => {
-                  this.deleteRecord(e.dataItem);
-                }}
-              >
+              <Grid data={this.state.selectedUsers}>
                 <GridColumn
-                  field="userName"
+                  field="name"
                   title="Selected Users"
                   headerCell={this.columnTitle}
                 />

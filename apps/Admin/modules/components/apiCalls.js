@@ -16,12 +16,20 @@ export async function GetData(api) {
   return response;
 }
 
-export async function PushData(api, method, body) {
-  let response = await helper.request(
-    "v1",
-    "/" + api,
-    body,
-    method
-  );
-  return response;
+export async function PushData(api, method, item, body) {
+  console.log(body);
+  if (method == "put") {
+    let response = await helper.request(
+      "v1",
+      "/" + api + "/" + item,
+      body,
+      method
+    );
+    return response;
+  } else if (method == "post") {
+    let response = await helper.request("v1", "/" + api, body, method);
+    return response;
+  }
+
+
 }

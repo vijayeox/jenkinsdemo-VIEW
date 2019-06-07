@@ -87,7 +87,7 @@ class Group extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("group", dataItem.id).then(response => {
+    DeleteEntry("group", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };
@@ -151,7 +151,7 @@ class Group extends React.Component {
             addUsers: this.addGroupUsers
           }}
           permission={this.state.permission}
-        />{" "}
+        />
         {this.state.groupInEdit && this.inputTemplate}
       </div>
     );

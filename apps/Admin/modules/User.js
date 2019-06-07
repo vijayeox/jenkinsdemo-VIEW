@@ -33,7 +33,7 @@ class User extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("user", dataItem.id).then(response => {
+    DeleteEntry("user", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };

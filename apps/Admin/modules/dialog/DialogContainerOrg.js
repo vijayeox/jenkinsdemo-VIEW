@@ -2,8 +2,9 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
-import { FileUploader } from "@oxzion/gui";
+import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel } from "../components/index";
+import scrollIntoView from "scroll-into-view-if-needed";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -31,28 +32,44 @@ export default class DialogContainer extends React.Component {
 
   sendData = e => {
     e.preventDefault();
-    PushData("organization", this.props.formAction, {
-      name: this.state.orgInEdit.name,
-      address: this.state.orgInEdit.address,
-      city: this.state.orgInEdit.city,
-      state: this.state.orgInEdit.state,
-      zip: this.state.orgInEdit.zip,
-      logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-      languagefile: this.state.orgInEdit.languagefile,
-      contact: JSON.stringify({
-        firstname: this.state.orgInEdit.firstname,
-        lastname: this.state.orgInEdit.lastname,
-        email: this.state.orgInEdit.email
-      })
-    }).then(response => {
-      this.props.action(response.status);
-    });
-    this.props.cancel();
+    if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
+      var elm = document.getElementsByClassName("orgFileUploader")[0];
+      scrollIntoView(elm, {
+        scrollMode: "if-needed",
+        block: "center",
+        behavior: "smooth",
+        inline: "nearest"
+      });
+    } else {
+      PushData(
+        "organization",
+        this.props.formAction,
+        this.state.orgInEdit.uuid,
+        {
+          name: this.state.orgInEdit.name,
+          address: this.state.orgInEdit.address,
+          city: this.state.orgInEdit.city,
+          state: this.state.orgInEdit.state,
+          zip: this.state.orgInEdit.zip,
+          logo: this.fUpload.current.firstUpload.cachedFileArray[0],
+          languagefile: this.state.orgInEdit.languagefile,
+          contact: JSON.stringify({
+            firstname: this.state.orgInEdit.firstname,
+            lastname: this.state.orgInEdit.lastname,
+            email: this.state.orgInEdit.email
+          })
+        }
+      ).then(response => {
+        this.props.action(response.status);
+      });
+      this.props.cancel();
+    }
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
+        <Notification ref={this.notif} />
         <div className="container-fluid">
           <form id="orgForm" onSubmit={this.sendData}>
             <div className="form-group">
@@ -60,7 +77,6 @@ export default class DialogContainer extends React.Component {
               <input
                 type="text"
                 className="form-control"
-                name="name"
                 value={this.state.orgInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Name"
@@ -72,7 +88,6 @@ export default class DialogContainer extends React.Component {
               <TextareaAutosize
                 type="text"
                 className="form-control"
-                name="address"
                 value={this.state.orgInEdit.address || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
@@ -89,7 +104,6 @@ export default class DialogContainer extends React.Component {
                     <input
                       type="text"
                       className="form-control"
-                      name="city"
                       value={this.state.orgInEdit.city || ""}
                       onChange={this.onDialogInputChange}
                       placeholder="Enter City"
@@ -103,7 +117,6 @@ export default class DialogContainer extends React.Component {
                     <input
                       type="text"
                       className="form-control"
-                      name="state"
                       value={this.state.orgInEdit.state || ""}
                       onChange={this.onDialogInputChange}
                       placeholder="Enter State"
@@ -120,7 +133,6 @@ export default class DialogContainer extends React.Component {
                   <label>Zip Code</label>
                   <input
                     type="number"
-                    name="zip"
                     value={this.state.orgInEdit.zip || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Zip Code"
@@ -130,7 +142,6 @@ export default class DialogContainer extends React.Component {
                   <label>Language</label>
                   <input
                     type="text"
-                    name="languagefile"
                     value={this.state.orgInEdit.languagefile || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Language"
@@ -145,8 +156,11 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
-                    name="firstname"
-                    value={this.state.orgInEdit.firstname || ""}
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.firstname
+                        : ""
+                    }
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
                   />
@@ -154,8 +168,11 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
-                    name="lastname"
-                    value={this.state.orgInEdit.lastname || ""}
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.lastname
+                        : ""
+                    }
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
                   />
@@ -165,21 +182,26 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="email"
-                    name="email"
-                    value={this.state.orgInEdit.email || ""}
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.email
+                        : ""
+                    }
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Email ID"
                   />
                 </div>
               </div>
             </div>
-            <FileUploader
-              ref={this.fUpload}
-              url={this.url}
-              media={this.props.dataItem.media}
-              title={"Upload Organization Logo"}
-              uploadID={"organizationLogo"}
-            />
+            <div className="orgFileUploader">
+              <FileUploader
+                ref={this.fUpload}
+                url={this.url}
+                media={this.props.dataItem.media}
+                title={"Upload Organization Logo"}
+                uploadID={"organizationLogo"}
+              />
+            </div>
           </form>
         </div>
         <SaveCancel save="orgForm" cancel={this.props.cancel} />
