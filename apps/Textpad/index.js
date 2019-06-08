@@ -116,7 +116,7 @@ const createApplication = (core, proc, win, $content) => {
 const createMainWindow = (core, proc) => {
   proc.createWindow({
     id: 'TextpadWindow',
-    icon: proc.resource(proc.metadata.icon),
+    icon: proc.resource(proc.metadata.icon_white),
     dimension: {width: 400, height: 400}
   })
     .on('destroy', () => proc.destroy())

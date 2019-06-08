@@ -3,6 +3,7 @@
   "name": "Announcements",
   "category": null,
   "icon" : "icon.png",
+  "icon_white": "icon_white.png",
   "server": "server.js",
   "autostart": true,
   "singleton": true,

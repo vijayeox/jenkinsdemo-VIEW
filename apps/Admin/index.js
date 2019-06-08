@@ -2,7 +2,7 @@ import osjs from "osjs";
 import { name as applicationName } from "./metadata.json";
 import React from "react";
 import ReactDOM from "react-dom";
-import { icon } from "./metadata.json";
+import { icon_white } from "./metadata.json";
 import Home from "./home";
 
 // Our launcher
@@ -18,7 +18,7 @@ const register = (core, args, options, metadata) => {
     .createWindow({
       id: "AdminWindow",
       title: metadata.title.en_EN,
-      icon: proc.resource(icon),
+      icon: proc.resource(icon_white),
       dimension: {
         width: 860,
         height: 555

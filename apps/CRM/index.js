@@ -96,7 +96,7 @@ OSjs.make("osjs/packages").register(
     const win = proc
       .createWindow({
         id: "CRMApplicationWindow",
-        icon: proc.resource(proc.metadata.icon),
+        icon: proc.resource(proc.metadata.icon_white),
         title: metadata.title.en_EN,
         attributes: {
           state: {

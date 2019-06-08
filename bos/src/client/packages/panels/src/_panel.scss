@@ -208,7 +208,7 @@
 
 .appmenu .app-bar .app .appcaption {
   box-sizing: border-box;
-  color: #fff;
+  color: #275261;
   font-size: 16px;
   line-height: 48px;
   display: inline-block;
@@ -286,7 +286,7 @@
   cursor: inherit !important;
 }
 
-.appmenu .app-bar .app:hover>i {
+.appmenu .app-bar .app:hover {
   background: #ffffff4d;
   transition: all 200ms ease-in;
   transform: scale(1.1);
@@ -384,4 +384,45 @@ margin-left:85px;
 .profileicon {
   border-radius: 50%;
   cursor: pointer;
+}
+.osjs-panel-item[data-name=profile]:hover .profile-content {
+  display: block;
+}
+.profile-dropdown-div {
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+img.profile-dropdown-image {
+  max-height: 45px;
+  max-width: 45px;
+  border-radius: 50%;
+}
+.profile-dropdown-div {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  padding: 10px 10px 0px 10px;
+  height: 60px;
+}
+
+.profile-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  width: 200px;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.profile-dropdown-text {
+    line-height: 45px;
+    font-size: 20px;
+    padding-left: 10px;
+}
+.profile-dropdown-div:hover {
+    background-color: white;
+    color: #275261;
 }

@@ -107,7 +107,7 @@
         const win = proc
           .createWindow({
             id: "MailApplicationWindow",
-            icon: proc.resource(proc.metadata.icon),
+            icon: proc.resource(proc.metadata.icon_white),
             title: metadata.title.en_EN,
             state: {
               maximized : true

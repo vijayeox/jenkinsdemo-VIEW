@@ -7,6 +7,7 @@
   "autostart":true,
   "defaultAppforOrgs" : true,
   "icon": "icon.png",
+  "icon_white": "icon_white.png",
   "title": {
     "en_EN": "Mail"
   },

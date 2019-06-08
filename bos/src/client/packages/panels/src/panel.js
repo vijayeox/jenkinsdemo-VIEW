@@ -216,31 +216,10 @@ export default class Panel extends EventEmitter {
     profileElement.appendChild(profileCard);
     let emailElement = document.createElement('div');
     emailElement.classList.add('profileDiv');
-    emailElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-envelope" id="icon"> </i> </div><div class="info">' + profileInfo['email'] + '</div> <br/>';
+    emailElement.innerHTML = '<div class="profile-content"><a href="#">Link 1</a><a href="#">Link 2</a><a href="#">Link 3</a></div>';
     profileElement.appendChild(emailElement);
-    let phoneElement = document.createElement('div');
-    phoneElement.classList.add('profileDiv');
-    phoneElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-phone" id="icon" > </i> </div><div class="info">' + profileInfo['phone'] + '</div> <br/>';
-    profileElement.appendChild(phoneElement);
-    let addressElement = document.createElement('div');
-    addressElement.classList.add('profileDiv');
-    addressElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-location-arrow" id="icon" > </i></div> <div class="info">' + profileInfo['address'] + '</div> <br/>';
-    profileElement.appendChild(addressElement);
-    let countryElement = document.createElement('div');
-    countryElement.classList.add('profileDiv');
-    countryElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-map-marker" id="icon" > </i> </div><div class="info">' + profileInfo['country'] + '</div> <br/>';
-    profileElement.appendChild(countryElement);
-    let dobElement = document.createElement('div');
-    dobElement.classList.add('profileDiv');
-    dobElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-birthday-cake" id="icon" > </i> </div><div class="info">' + this.dob + '</div> <br/>';
-    profileElement.appendChild(dobElement);
-    let interestElement = document.createElement('div');
-    interestElement.classList.add('profileDiv');
-    interestElement.innerHTML = '<div class="icon"><i class="fa-lg fa fa-heart" id="icon" > </i> </div><div class="info">' + profileInfo['interest'] + '</div> <br/>';
-    profileElement.appendChild(interestElement);
 
-
-    this.core.$root.appendChild(profileElement);
+    // this.core.$root.appendChild(profileElement);
     if (this.options.position === 'top') {
       profileElement.style['margin-top'] = '3.5em';
     } else {

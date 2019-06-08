@@ -183,20 +183,20 @@ export default class MenuPanelItem extends PanelItem {
       let appBarDiv = document.createElement('div');
       appBarDiv.classList.add('app-bar');
 
-      let searchDiv = document.createElement('div');
-      searchDiv.classList.add('app-search-div');
-      let searchBarDiv = document.createElement('div');
-      searchBarDiv.classList.add('app-search-bar-div');
+      // let searchDiv = document.createElement('div');
+      // searchDiv.classList.add('app-search-div');
+      // let searchBarDiv = document.createElement('div');
+      // searchBarDiv.classList.add('app-search-bar-div');
 
-      let input = document.createElement('input');
-      input.type = 'text';
-      input.name = 'appsearch';
-      input.id = 'appsearch';
-      input.placeholder = 'Search...';
-      input.onkeyup = function() { addSearch(searchDiv, input); };
-      searchBarDiv.appendChild(input);
-      searchDiv.appendChild(searchBarDiv);
-      appmenuElement.appendChild(searchDiv);
+      // let input = document.createElement('input');
+      // input.type = 'text';
+      // input.name = 'appsearch';
+      // input.id = 'appsearch';
+      // input.placeholder = 'Search...';
+      // input.onkeyup = function() { addSearch(searchDiv, input); };
+      // searchBarDiv.appendChild(input);
+      // searchDiv.appendChild(searchBarDiv);
+      // appmenuElement.appendChild(searchDiv);
 
       // appmenuElement.classList.toggle('appmenu-visible');
       console.log(packages);

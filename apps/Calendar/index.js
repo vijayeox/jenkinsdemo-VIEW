@@ -83,7 +83,7 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
   const createProcWindow = (data) => {
       let win = proc.createWindow({
       id: 'CalendarWindow',
-      icon: proc.resource(proc.metadata.icon),
+      icon: proc.resource(proc.metadata.icon_white),
       title: metadata.title.en_EN,
       state: {
         maximized : true

@@ -3,19 +3,28 @@
 //
 
 .osjs-panel {
-  background: #007474;
+  background: #275362;
 }
 div#appmenu {
-    background-color: #336666;
+    background-color: #e1eff4;
 }
 .profile-visible{
-  background-color: #336666;
+  background-color: #e1eff4;
 }
 
 .osjs-panel-item[data-name=windows] {
   & > div[data-focused=false] {
     opacity: 0.5;
   }
+}
+.osjs-panel-item[data-name=tray] {
+  & > div {
+    background: #e1eff4;
+    border-radius: 50%;
+}
+}
+.profile-content{
+    background: #e1eff4;
 }
 .appmenu .app-bar .category .caption{
   background-color: rgb(67, 145, 146);

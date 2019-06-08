@@ -32,15 +32,18 @@
 .osjs-panel-item[data-name=tray] {
   display: flex;
   padding: 0;
-
   & > div {
     flex: 1 1;
-    margin: 0 2px;
-    padding: 0 .333em;
+    padding: .5em;
+    margin: 4px 1px;
+    background: #e1eff4;
+    border-radius: 50%;
 
     & > img {
       margin-right: 0;
       vertical-align: middle;
+      height: 100%;
+      width: auto;
     }
   }
 }
@@ -78,18 +81,14 @@ color:white;
 .osjs-panel-item[data-name=profile] {
   display: flex;
   padding: 0;
-  height: auto;
-
-
   & > div {
     flex: 1 1;
-    padding: 0 $base-margin / 3;
-
+    margin: 4px 1px;
     & > img {
       margin-right: 0;
       vertical-align: middle;
-      height:2.8em;
-      width:2.8em;
+      height: 100%;
+      width: auto;
     }
   }
 }

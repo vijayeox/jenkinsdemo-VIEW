@@ -482,7 +482,7 @@ osjs.register(applicationName, (core, args, options, metadata) => {
   proc.createWindow({
     id: 'FileManager',
     title,
-    icon: proc.resource(metadata.icon),
+    icon: proc.resource(metadata.icon_white),
     dimension: {width: 400, height: 400},
     attributes: {
       mediaQueries: {

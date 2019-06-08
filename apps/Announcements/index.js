@@ -1,6 +1,6 @@
 import osjs from 'osjs';
 import { name as applicationName } from './metadata.json';
-import { icon } from './metadata.json';
+import { icon_white } from './metadata.json';
 import Slider from './slider.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -18,7 +18,7 @@ const register = (core, args, options, metadata) => {
       const window = proc.createWindow({
         id: 'annoucementsWindow',
         title: metadata.title.en_EN,
-        icon: proc.resource(icon),
+        icon: proc.resource(icon_white),
         dimension: {width: 800, height: 450},
         position: {left: 700, top: 200}, 
         attributes : {

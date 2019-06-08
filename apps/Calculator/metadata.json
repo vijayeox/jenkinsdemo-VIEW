@@ -2,6 +2,7 @@
   "name": "Calculator",
   "category": "office",
   "icon": "icon.png",
+  "icon_white": "icon_white.png",
   "defaultAppforOrgs" : true,
   "title": {
     "en_EN": "Calculator",

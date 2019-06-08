@@ -218,7 +218,7 @@ osjs.register(applicationName, (core, args, options, metadata) => {
   proc.createWindow({
     title,
     id: 'Calculator',
-    icon: proc.resource(metadata.icon),
+    icon: proc.resource(metadata.icon_white),
     dimension: {width: 300, height: 500}
   })
     .on('destroy', () => proc.destroy())

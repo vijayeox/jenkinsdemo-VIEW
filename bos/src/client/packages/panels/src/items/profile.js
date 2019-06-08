@@ -29,6 +29,10 @@
  */
 import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
+const logoutIcon = require('../../../../assets/images/logout.png');
+const profileIcon = require('../../../../assets/images/profile.png');
+const settingsIcon = require('../../../../assets/images/settings.png');
+import Swal from 'sweetalert2';
 // const profileIcon = require('../../../../assets/images/profile_pic.png');
 /**
  * Profile
@@ -49,15 +53,82 @@ export default class ProfilePanelItem extends PanelItem {
   render(state, actions) {
     let profileDetails = this.core.make('oxzion/profile').get();
     let profileIcon = profileDetails['key'];
-    const profile = () => {
-      let profileElement = document.getElementById('profile');
-      profileElement.classList.toggle('profile-visible');
+    console.log(profileIcon);
+    const logout = async () => {
+      await this.core.make('osjs/session').save();
+      await this.core.make('oxzion/usersession').set();
+      this.core.make('osjs/auth').logout();
     };
+    const openProfile= () =>{
+      this.core.run("Preferences");
+    }
+    const confirm = () => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to logout now?',
+        imageUrl: "https://image.flaticon.com/icons/svg/529/529873.svg",
+        imageWidth: 75,
+        imageHeight: 75,
+        confirmButtonText: 'Logout',
+        confirmButtonColor: '#d33',
+        showCancelButton: true,
+        cancelButtonColor: '#66bb6a'
+      }).then((result) => {
+        if (result.value) {
+          logout();
+        }
+      })  
+    }
     return super.render('profile', [
       h('div', {
-        onclick: profile,
         className: 'osjs-panel-profile'
       }, [
+      h('div', {
+        className: 'profile-content'
+      },[
+      h('a', {
+        className: 'myprofile'},[
+        h('div', {
+        onclick: openProfile,
+        className: 'profile-dropdown-div'
+      }, [
+          h('img', {
+            src: profileIcon.icon,
+            alt: 'My Profile',
+            className: 'profile-dropdown-image',
+            title: 'My Profile'
+          }),
+          h('span', {
+            title: 'Profile',
+            innerHTML : 'My Profile',
+            className: 'profile-dropdown-text'
+          })
+          ]
+          )
+        ]
+      ),
+      h('a', {
+        className: 'logout'},[
+        h('div', {
+        onclick: confirm,
+        className: 'profile-dropdown-div'
+      }, [
+          h('img', {
+            src: logoutIcon,
+            alt: 'Log Out',
+            className: 'profile-dropdown-image',
+            title: 'Logout'
+          }),
+          h('span', {
+            title: 'Logout',
+            innerHTML : 'Log out',
+            className: 'profile-dropdown-text'
+          })
+          ]
+          )
+        ]
+      ),
+      ]),
         h('img', {
           className:'profileicon',
           src: profileIcon['icon'] + '?' + (new Date()).getTime(),
