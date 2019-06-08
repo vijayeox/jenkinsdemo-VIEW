@@ -166,29 +166,27 @@ class Background extends Component {
       render(){
           return(
               <div>
-        <form style={{ padding: "20px" }} onSubmit={this.handleSubmit}>
-        <div className="row" id="row2" style={{ paddingTop: "5px",  }}>
+        <form  className="formmargin" onSubmit={this.handleSubmit}>
+        <div className="row marginsize">
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%"}}
+              className="col-md-4"
             >
-              <label id="labelname">Image:</label>
+              <label id="imageLabel">Image:</label>
             </div>
-            <div className="col-md-7 imagediv">
+            <div className="col-md-4 imagediv">
                 <div className="image" id="image">
                     {this.state.imageSrc}  <button className="imageBtn" onClick={this.selectBackgroundImageDialog}>Select Image</button>
                 </div>
             </div>
           </div>
 
-          <div className="row" id="row2" style={{ paddingTop: "5px" }}>
+          <div className="row marginsize">
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%" }}
+              className="col-md-4"
             >
-              <label id="labelname">Style:</label>
+              <label id="styleLabel">Style:</label>
             </div>
-            <div className="col-md-7 backgroundStylediv">
+            <div className="col-md-4 backgroundStylediv">
               <select
                 value={this.state.styleName}
                 onChange={this.handleChange}
@@ -205,14 +203,13 @@ class Background extends Component {
             </div>
           </div>
 
-          <div className="row" id="row1" style={{ paddingTop: "5px" }}>
+          <div className="row marginsize" >
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%" }}
+              className="col-md-4"
             >
-              <label id="labelname">Color:</label>
+              <label id="colorLabel">Color:</label>
             </div>
-            <div className="col-md-7 colordiv">
+            <div className="col-md-4 colordiv">
                <input type="color"                 
                 value={this.state.colorCode}
                 onChange={this.handleChange}
@@ -223,8 +220,8 @@ class Background extends Component {
             </div>
           </div>
 
-          <div className="row savebutton">
-            <div className="col s12 input-field" style={{paddingLeft: "23%"}}>
+          <div className="row">
+            <div className="col-md-12 input-field" >
               <button className="k-button k-primary" type="submit">
                 Save
               </button>

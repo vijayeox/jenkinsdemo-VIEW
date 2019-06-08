@@ -155,15 +155,14 @@ class Themes extends Component {
   render() {
     return (
       <div>
-        <form style={{ padding: "20px" }} onSubmit={this.handleSubmit}>
-          <div className="row" id="row2" style={{ paddingTop: "5px" }}>
+        <form className="formmargin" onSubmit={this.handleSubmit}>
+          <div className="row marginsize" >
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%" }}
-            >
-              <label id="labelname">Style:</label>
+              className="col-md-4"
+              >
+              <label id="styleLabel">Style:</label>
             </div>
-            <div className="col-md-7 themeStylediv">
+            <div className="col-md-4 themeStylediv">
               <select
                 value={this.state.themeName}
                 onChange={this.handleChange}
@@ -181,14 +180,13 @@ class Themes extends Component {
             </div>
           </div>
 
-          <div className="row" id="row2" style={{ paddingTop: "5px" }}>
+          <div className="row marginsize" >
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%" }}
-            >
-              <label id="labelname">Icons:</label>
+              className="col-md-4"
+              >
+              <label id="iconsLabel">Icons:</label>
             </div>
-            <div className="col-md-7 iconsdiv">
+            <div className="col-md-4 iconsdiv">
               <select
                 value={this.state.iconName}
                 onChange={this.handleChange}
@@ -206,14 +204,13 @@ class Themes extends Component {
             </div>
           </div>
 
-          <div className="row" id="row2" style={{ paddingTop: "5px" }}>
+          <div className="row marginsize">
             <div
-              className="col-md-5"
-              style={{ marginTop: "18px", paddingLeft: "25%" }}
+              className="col-md-4"
             >
-              <label id="labelname">Sounds:</label>
+              <label id="soundsLabel">Sounds:</label>
             </div>
-            <div className="col-md-7 soundsdiv">
+            <div className="col-md-4 soundsdiv">
               <select
                 value={this.state.soundName}
                 onChange={this.handleChange}
@@ -231,8 +228,8 @@ class Themes extends Component {
             </div>
           </div>
 
-          <div className="row savebutton">
-            <div className="col s12 input-field" style={{paddingLeft: "23%"}}>
+          <div className="row">
+            <div className="col-md-12 input-field" >
               <button className="k-button k-primary" type="submit">
                 Save
               </button>

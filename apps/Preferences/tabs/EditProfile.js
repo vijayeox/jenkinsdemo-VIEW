@@ -224,9 +224,7 @@ async handleSubmit(event) {
   render() {
    return (
         <div>
-        <ReactNotification ref={this.notificationDOMRef}/>
-        <div></div>
-          
+        <ReactNotification ref={this.notificationDOMRef}/>          
           <form className="formmargin" onSubmit={this.handleSubmit}>
             <div className="row" style={{marginTop:"20px"}}>
               <div className="col-md-6 input-field">

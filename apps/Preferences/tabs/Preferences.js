@@ -217,14 +217,12 @@ class Preferences extends Component {
     return (
       <div>
       <ReactNotification ref={this.notificationDOMRef}/>
-        
-          <form style={{padding:"20px"}} onSubmit={this.handleSubmit}>
+          <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-              <div className="col-md-6" id="sound" style={{marginTop:"5px", paddingLeft: "18%" }}>
+              <div className="col-md-4" id="sound">
                 <label id="labelname">Sound Notification:</label>
               </div>
-              <div className="col-md-6">
-              <div className="row">
+              <div className="col-md-8">
                 <label id="name">
                   <input
                     id="preferencesRadio"
@@ -248,16 +246,12 @@ class Preferences extends Component {
                   <span className="m-2 radioLabel">Off</span>
                 </label>
               </div>
-              </div>
           </div>
-
-          <div>
-            <div className="row">
-                <div className="col-md-6" id="emailalert" style={{marginTop:"7px", paddingLeft: "18%" }}>
+            <div className="row marginsize">
+                <div className="col-md-4" id="emailalert">
                   <label id="labelname">Email Alerts:</label>
                 </div>
-              <div className="col-md-6">
-              <div className="row">
+              <div className="col-md-8">
                   <label id="name">
                     <input
                       id="preferencesRadio"
@@ -280,16 +274,13 @@ class Preferences extends Component {
                     />
                     <span className="m-2 radioLabel">Off</span>
                   </label>
-                </div>
               </div>
             </div>
-          </div>
-
-          <div className="row" id="row1" style={{paddingTop:"5px"}}>
-            <div className="col-md-6" id="localtimezone" style={{marginTop:"18px", paddingLeft: "18%" }}>
+          <div className="row marginsize">
+            <div className="col-md-4" id="localtimezone">
               <label id="labelname">Local Time Zone:</label>
               </div>
-              <div className="col-md-6 timezonediv">
+              <div className="col-md-4 timezonediv">
               <select
                 value={this.state.fields['timezone']}
                 onChange={this.handleChange}
@@ -305,12 +296,11 @@ class Preferences extends Component {
                 </select>
             </div>
           </div>
-
-          <div className="row" id="row2" style={{paddingBottom:0}}>
-                <div className="input-field col-md-6" id="datef" style={{marginTop:"16px", paddingLeft: "18%" }}>
+          <div className="row marginsize">
+                <div className="input-field col-md-4" id="datef">
                 <label id="labelname">Date Format:</label>
                   </div>
-                <div className="input-field col-md-3 dateformat">
+                <div className="input-field col-md-4 dateformat">
                 <input
                   type="text"
                   name="dateformat"
@@ -322,7 +312,7 @@ class Preferences extends Component {
                 />               
 
                 </div>
-                <div className="input-field col-md-3 datetooltip" style={{zIndex:2}}>
+                <div className="input-field col-md-4 datetooltip" style={{zIndex:2}}>
 
 
                 <i className="material-icons" id="dateicon">info_outline</i><span>"dd-MM-yyyy - 01-02-2012<br/>
@@ -334,11 +324,11 @@ class Preferences extends Component {
           </div>
 
 
-          <div className="row" id="row1" style={{paddingTop:"5px"}}>
-            <div className="col-md-6" id="locallanguage" style={{marginTop:"18px", paddingLeft: "18%" }}>
+          <div className="row marginsize" style={{paddingTop:"5px"}}>
+            <div className="col-md-4" id="locallanguage">
               <label id="labelname">Language:</label>
               </div>
-              <div className="col-md-6 languagediv">
+              <div className="col-md-4 languagediv">
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
@@ -355,8 +345,8 @@ class Preferences extends Component {
             </div>
           </div>
           
-          <div className="row savebutton">
-            <div className="col s12 input-field" style={{paddingLeft: "16%"}}>
+          <div className="row marginsize">
+            <div className="col-md-12 input-field" >
               <button className="k-button k-primary" type="submit">
                 Submit
               </button>
