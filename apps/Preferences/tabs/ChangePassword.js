@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ReactNotification from "react-notifications-component";
+import Notification from "../components/Notification"
 
 class ChangePassword extends Component {
   constructor() {
@@ -17,35 +17,7 @@ class ChangePassword extends Component {
     this.showHide1 = this.showHide1.bind(this);
     this.showHide2 = this.showHide2.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.addNotification = this.addNotification.bind(this);
-    this.addNotificationFail = this.addNotificationFail.bind(this);
-    this.notificationDOMRef = React.createRef();
-  }
-
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      message: "Password Update Successfull",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotificationFail(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      message: serverResponse,
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
+    this.notif = React.createRef();
   }
 
   componentDidMount(){
@@ -69,12 +41,11 @@ class ChangePassword extends Component {
         formData[key] = this.state.fields[key];
       });
 
-      console.log(formData);
       this.props.changePassword(formData).then((response) => {
         if (response.status == "error") {
-         this.addNotificationFail(response.message);
+         this.notif.current.failNotification(response.message);
         }else{
-         this.addNotification();
+          this.notif.current.successNotification("Password update successfull.");
         }
       });
     }
@@ -164,7 +135,7 @@ init() {}
 render() {
   return (
     <form onSubmit={this.handleSubmit}>
-      <ReactNotification ref={this.notificationDOMRef}/>         
+      <Notification ref={this.notif} />        
       <div className="form">
         <div className="row">
             <div className="col s12">

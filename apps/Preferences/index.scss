@@ -591,7 +591,7 @@ margin-left:0px;
   margin-bottom:0px !important;  
 }
 
-#textareaField{
+.textareaField{
     height: 31px;
     font-size: 17px;
     margin-top: 15px;
@@ -698,11 +698,15 @@ div#datef,label#imageLabel,label#styleLabel,label#colorLabel,#iconsLabel,#sounds
   align-items: baseline;
 }
 
-#preferencesRadio{
+.preferencesRadio{
   transform: scale(1.5);
 }
 
 .radioLabel{
   padding-right: 25px;
+}
+
+.componentDiv{
+  width: 99%;
 }
 }

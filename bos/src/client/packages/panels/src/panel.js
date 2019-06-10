@@ -96,7 +96,7 @@ export default class Panel extends EventEmitter {
     });
 
     let element = this.core.$root.querySelector('#profileMenu');
-    this.core.$root.removeChild(element);
+    //this.core.$root.removeChild(element);
     element =  this.core.$root.querySelector('#appmenu');
     this.core.$root.removeChild(element);
     this.destroyed = true;
@@ -183,14 +183,12 @@ export default class Panel extends EventEmitter {
       if (ev.target.closest('.appmenu') || ev.target.closest('.osjs-panel-item[data-name="menu"]') || ev.target.closest('.profile') || ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
         if (ev.target.closest('.osjs-panel-item[data-name="menu"]')) {
           document.getElementById('appmenu').classList.toggle('appmenu-visible');
-        } else if (ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
-          document.getElementById('profileMenu').classList.toggle('profile-visible');
         } else {
           return;
         }
       } else {
         document.getElementById('appmenu').classList.remove('appmenu-visible');
-        document.getElementById('profileMenu').classList.remove('profile-visible');
+        //document.getElementById('profileMenu').classList.remove('profile-visible');
       }
     };
 

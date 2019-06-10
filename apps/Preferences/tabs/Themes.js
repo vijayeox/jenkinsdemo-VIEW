@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
+import Notification from "../components/Notification"
 
 class Themes extends Component {
   constructor(props) {
@@ -46,10 +47,12 @@ class Themes extends Component {
           .then(() => {
             this.actions.setLoading(false);
             this.desktopService.applySettings();
+            this.notif.current.successNotification("Updated successfully.");
           })
           .catch(error => {
             this.actions.setLoading(false);
             console.error(error); // FIXME
+            this.notif.current.failNotification("Update failed.");
           });
       },
 
@@ -64,14 +67,18 @@ class Themes extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.notif = React.createRef();
   }
 
   componentDidMount() {
     if(this.newSettings.settings.desktop){
+      this.newSettings.settings.desktop.theme = this.newSettings.settings.desktop.theme ? this.newSettings.settings.desktop.theme : this.newSettings.defaults.desktop.theme;
+      this.newSettings.settings.desktop.icons = this.newSettings.settings.desktop.icons ? this.newSettings.settings.desktop.icons : this.newSettings.defaults.desktop.icons;
+      this.newSettings.settings.desktop.sounds = this.newSettings.settings.desktop.sounds ? this.newSettings.settings.desktop.sounds : this.newSettings.defaults.desktop.sounds;
         this.setState({
-        themeName: (this.newSettings.settings.desktop.theme ? this.newSettings.settings.desktop.theme : this.newSettings.defaults.desktop.theme),
-        iconName: (this.newSettings.settings.desktop.icons ? this.newSettings.settings.desktop.icons : this.newSettings.defaults.desktop.icons),
-        soundName: (this.newSettings.settings.desktop.sounds ? this.newSettings.settings.desktop.sounds : this.newSettings.defaults.desktop.sounds)
+        themeName: this.newSettings.settings.desktop.theme,
+        iconName: this.newSettings.settings.desktop.icons,
+        soundName: this.newSettings.settings.desktop.sounds
         });
     }
     else{
@@ -130,7 +137,7 @@ class Themes extends Component {
   handleSubmit = event => {
     event.preventDefault();
     this.actions.save();
-    this.actions.refresh();
+    this.actions.refresh(); 
   };
 
   handleChange = event => {
@@ -154,7 +161,8 @@ class Themes extends Component {
 
   render() {
     return (
-      <div>
+      <div className="componentDiv">
+        <Notification ref={this.notif} />
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize" >
             <div

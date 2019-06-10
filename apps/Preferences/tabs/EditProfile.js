@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import Codes from "./Codes";
-import ReactNotification from "react-notifications-component";
-import { DropDownList } from '@progress/kendo-react-dropdowns';
-import $ from "jquery";
 import Moment from "moment";
 import "@progress/kendo-ui";
 import TextareaAutosize from 'react-textarea-autosize';
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import Notification from "../components/Notification"
 
- 
+
 class EditProfile extends Component {
 
   constructor(props) {
@@ -42,38 +40,8 @@ class EditProfile extends Component {
     this.onSelect2 = this.onSelect2.bind(this);
     this.onSelect1 = this.onSelect1.bind(this);
     this.joinPhNo = this.joinPhNo.bind(this);
-    this.addNotification = this.addNotification.bind(this);
-    this.addNotificationFail = this.addNotificationFail.bind(this);
-    this.notificationDOMRef = React.createRef();
+    this.notif = React.createRef();
   }
-
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      message: "Profile has been successfully updated.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotificationFail(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      message: "Updation Failed: " + serverResponse,
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
-
 
   onSelect1(event) {
     const field = {};
@@ -101,38 +69,14 @@ class EditProfile extends Component {
   componentWillMount(){
       this.state.dateformat = this.state.dateformat.replace(/m/g,"M");
       this.splitPhoneNumber();
-      let fieldsTemp = { ...this.state.fields };
-      if (
-        this.state.fields.date_of_birth == "0000-00-00" ||
-        this.state.fields.date_of_birth == null
-      ) {
-        if (
-          this.state.fields.date_of_birth == "0000-00-00" ||
-          this.state.fields.date_of_birth == null
-        ) {
-          fieldsTemp.date_of_birth = "";
-          this.setState({ fields: fieldsTemp });
-          this.setState({ DOBInEdit: "" });
-        } else {
-          const DOBDate = this.state.fields.date_of_birth;
-          const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
-          const DOBkendo = new Date(DOBiso);
-
-          fieldsTemp.date_of_birth = DOBkendo;
-          this.setState({ fields: fieldsTemp });
-
-          this.setState({ DOBInEdit: DOBiso });
-        }
-      } else {
-        const DOBDate = this.state.fields.date_of_birth;
-        const DOBiso = new Moment(DOBDate, "YYYY-MM-DD").format();
-        const DOBkendo = new Date(DOBiso);
-       
-        let fields = { ...this.state.fields };
-        fields.date_of_birth = DOBkendo;
-        this.setState({ fields: fields });
-
-        this.setState({ DOBInEdit: DOBiso });
+      if (Moment(this.state.fields.date_of_birth, "YYYY-MM-DD", true).isValid()) {
+        const Dateiso = new Moment(this.state.fields.date_of_birth, "YYYY-MM-DD").format();
+        const Datekendo = new Date(Dateiso);
+        let fields = {...this.state.fields};
+        fields["date_of_birth"] = Datekendo;
+        this.setState({
+          fields
+        });
       }
     }
 
@@ -140,9 +84,6 @@ class EditProfile extends Component {
     let fields = { ...this.state.fields };
     fields.date_of_birth = event.target.value;
     this.setState({ fields: fields });
-
-    var DOBiso = new Moment(event.target.value).format();
-    this.setState({ DOBInEdit: DOBiso });
   };
 
 
@@ -161,8 +102,7 @@ class EditProfile extends Component {
   }
 
   getStandardDateString(date1){
-    
-    return new Date(date1.toISOString().slice(0,10));
+    return new Moment(date1).format();
   }
 
 async handleSubmit(event) {
@@ -173,15 +113,19 @@ async handleSubmit(event) {
       this.joinPhNo();
 
       let date_of_birth = this.getStandardDateString(this.state.fields.date_of_birth);
-      if(date_of_birth){
-        this.state.fields.date_of_birth=date_of_birth;
-      }
 
       Object.keys(this.state.fields).map(key => {
-        formData[key] = this.state.fields[key];
+        if(key == "date_of_birth"){
+          formData["date_of_birth"] = date_of_birth;
+        }
+        if(key == "name"){
+          let name = this.state.fields["firstname"] + " " + this.state.fields["lastname"];
+          formData["name"] = name;
+        }
+        else{
+          formData[key] = this.state.fields[key];
+        }
       });
-    
-      console.log(formData);
 
       let helper = this.core.make("oxzion/restClient");
 
@@ -191,9 +135,9 @@ async handleSubmit(event) {
         "put"
       );
       if (editresponse.status == "error") {
-         this.addNotificationFail(editresponse.message);
+         this.notif.current.failNotification("Update failed: "+ editresponse.message);
       }else{
-         this.addNotification();
+        this.notif.current.successNotification("Profile has been successfully updated.");
          this.core.make("oxzion/profile").update();
       }       
     }
@@ -223,8 +167,8 @@ async handleSubmit(event) {
   init() {}
   render() {
    return (
-        <div>
-        <ReactNotification ref={this.notificationDOMRef}/>          
+        <div className="componentDiv">
+       <Notification ref={this.notif} />     
           <form className="formmargin" onSubmit={this.handleSubmit}>
             <div className="row" style={{marginTop:"20px"}}>
               <div className="col-md-6 input-field">
@@ -271,7 +215,7 @@ async handleSubmit(event) {
                   value={this.state.fields.email}
                   ref="email"
                   id="email"
-                  readonly={true}
+                  readOnly={true}
                 />
               </div>
             </div>
@@ -287,7 +231,7 @@ async handleSubmit(event) {
                   ref="date_of_birth"
                   value={this.state.fields.date_of_birth}
                   onChange={this.handleDOBChange}
-                  readonly
+                  readOnly
                 />
                 </div>
 
@@ -301,14 +245,13 @@ async handleSubmit(event) {
                 <div className="col-md-3 input-field">
                 <label>
                   <input
-                    id="preferencesRadio"
                     type="radio"
                     name="gender"
                     value="Male"
                     onChange={this.handleChange}
                     ref="gender"
                     checked={this.state.fields.gender == "Male"}
-                    className="validate"
+                    className="validate preferencesRadio"
                     required
                   />
                   <span id="gender">Male</span>
@@ -318,14 +261,13 @@ async handleSubmit(event) {
 
                 <label>
                   <input
-                    id="preferencesRadio"
                     type="radio"
                     name="gender"
                     value="Female"
                     onChange={this.handleChange}
                     ref="gender"
                     checked={this.state.fields.gender == "Female"}
-                    className="validate"
+                    className="validate preferencesRadio"
                     required
                   />
                   <span id="gender">Female</span>
@@ -380,9 +322,8 @@ async handleSubmit(event) {
                <label style={{fontSize:"17px"}}>Address *</label>
                <div>
                <TextareaAutosize
-                  className ="borderStyle"
+                  className ="borderStyle textareaField"
                   type="text"
-                  id="textareaField"
                   ref="address"
                   required
                   name="address"
@@ -433,9 +374,8 @@ async handleSubmit(event) {
                 <label>About Me</label>
                  <div>
                <TextareaAutosize
-                  className ="borderStyle"
+                  className ="borderStyle textareaField"
                   type="text"
-                  id="textareaField"
                   ref="about"
                   required
                   name="about"

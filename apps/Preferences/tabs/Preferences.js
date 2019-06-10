@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Timezones from "./Timezones";
-import ReactNotification from "react-notifications-component";
 import merge from "deepmerge";
 import osjs from "osjs";
+import Notification from "../components/Notification"
 
 class Preferences extends Component {
   constructor(props) {
@@ -37,8 +37,6 @@ class Preferences extends Component {
       defaults: this.getDefaults(),
       settings: this.getSettings()
     };
-
-    console.log((this.initialState.locales));
 
     this.newSettings = this.initialState;
 
@@ -77,13 +75,10 @@ class Preferences extends Component {
         {value: i, label: this.initialState.locales[i]}
       )
     }
-    console.log(this.languagesList);
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.addNotification = this.addNotification.bind(this);
-    this.addNotificationFail = this.addNotificationFail.bind(this);
-    this.notificationDOMRef = React.createRef();
+    this.notif = React.createRef();
   }
 
   getDefaults = () => ({
@@ -120,32 +115,6 @@ class Preferences extends Component {
     return { settings };
   };
 
-  addNotification() {
-    this.notificationDOMRef.current.addNotification({
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
-  addNotificationFail(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      message: "Operation Unsuccessfull" + serverResponse,
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
   componentWillMount(){
      this.state.fields['dateformat'] = this.state.fields['dateformat'].replace(/m/g,"M");
   }
@@ -171,7 +140,6 @@ class Preferences extends Component {
     });
     
     if(event.target.name === "locale.language"){
-      console.log("selected:" +  e.target.name, e.target.value);
       this.actions.update(e.target.name, e.target.value);
       this.setState({
           languageName: this.newSettings.settings.locale.language
@@ -186,11 +154,8 @@ class Preferences extends Component {
       Object.keys(this.state.fields).map(key => {
         formData[key] = this.state.fields[key];
       });
-    console.log("-->", formData);
 
     let preferencedata={"preferences":JSON.stringify(formData)};
-    console.log(preferencedata);
-
 
     let helper = this.core.make("oxzion/restClient");
 
@@ -199,11 +164,11 @@ class Preferences extends Component {
         "/user/" + this.userprofile.key.id,preferencedata,
         "put"
       );
-      console.log("done");
+
       if (pref.status == "error") {
-         this.addNotificationFail(pref.message);
+        this.notif.current.failNotification("Failed to update.");
       }else{
-         this.addNotification();
+         this.notif.current.successNotification("Updated successfully.");
          this.core.make("oxzion/profile").update();
       }
       this.actions.save();
@@ -215,8 +180,8 @@ class Preferences extends Component {
   init() {}
   render() {
     return (
-      <div>
-      <ReactNotification ref={this.notificationDOMRef}/>
+      <div className="componentDiv">
+      <Notification ref={this.notif} />
           <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
               <div className="col-md-4" id="sound">
@@ -225,7 +190,7 @@ class Preferences extends Component {
               <div className="col-md-8">
                 <label id="name">
                   <input
-                    id="preferencesRadio"
+                    className = "preferencesRadio"
                     type="radio"
                     name="soundnotification"
                     value="true"
@@ -235,7 +200,7 @@ class Preferences extends Component {
                   /> 
                   <span className="m-2 radioLabel">On</span>
                   <input
-                    id="preferencesRadio"
+                    className="preferencesRadio"
                     type="radio"
                     name="soundnotification"
                     value="false"
@@ -254,7 +219,7 @@ class Preferences extends Component {
               <div className="col-md-8">
                   <label id="name">
                     <input
-                      id="preferencesRadio"
+                      className="preferencesRadio"
                       type="radio"
                       name="emailalerts"
                       value="true"
@@ -264,7 +229,7 @@ class Preferences extends Component {
                     />
                     <span className="m-2 radioLabel">On</span>
                     <input
-                      id="preferencesRadio"
+                      className="preferencesRadio"
                       type="radio"
                       name="emailalerts"
                       value="false"

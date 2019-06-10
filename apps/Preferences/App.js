@@ -10,7 +10,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    console.log(this.core);
     this.state = {
   
       fields:{}
