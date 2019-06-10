@@ -28,5 +28,5 @@ build_projects $ICON_PACKS
 build_projects $THEMES
 build_project $BOS
 cd $BOS
-    npm run package:discover
+    npm run package:discover --relative
 cd ..
