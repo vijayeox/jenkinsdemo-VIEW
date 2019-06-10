@@ -80,7 +80,7 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
   }
 
   let trayInitialized = false;
-  const createProcWindow = (data) => {
+  const createProcWindow = () => {
       let win = proc.createWindow({
       id: 'CalendarWindow',
       icon: proc.resource(proc.metadata.icon_white),
@@ -119,8 +119,9 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
         win.minimize();
         win.attributes.maximizable = false;
         const user = core.make('osjs/auth').user();
+        const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
         // Get path to iframe content
-        const src = proc.resource(baseUrl+'?userdata='+JSON.stringify(data));
+        const src = proc.resource(baseUrl + suffix +'&oxauth=' + user.jwt);
         // Create DOM element
         const iframe = createIframe(core, proc, win, send => {});
         // Finally set the source and attach
@@ -145,34 +146,6 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
         $content.appendChild(iframe);
       });
     };
-    let result = [];
-    let res = getEmails().then(response => {
-      result = response["data"];
-
-      let emails = [];
-      let defEmail;
-      if(result.length != 0) {
-        // console.log(result);
-        for(let i =0;i<result.length;i++){
-          if(result[i]["isdefault"] == 1){
-            defEmail = result[i]["email"];
-          } else{
-            emails.push(result[i]["email"]);
-          }
-        }
-      } else {
-        // console.log('user has no emails.');
-      }
-      let user = core.getUser().username;
-
-      let data = {
-        'username': user,
-        'defaultEmail': defEmail,
-        'emailList': emails
-      }
-
-      createProcWindow(data); 
-      return;
-    });
+    createProcWindow(); 
     return proc;
 });
