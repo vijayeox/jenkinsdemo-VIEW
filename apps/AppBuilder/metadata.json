@@ -3,6 +3,7 @@
   "name": "AppBuilder",
   "category": null,
   "server": "server.js",
+  "hidden": true,
   "title": {
     "en_EN": "AppBuilder"
   },

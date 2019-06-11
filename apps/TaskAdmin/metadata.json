@@ -4,6 +4,7 @@
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
+  "hidden": true,
   "title": {
     "en_EN": "TaskAdmin"
   },

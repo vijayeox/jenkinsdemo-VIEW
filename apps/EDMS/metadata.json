@@ -3,6 +3,7 @@
   "name": "EDMS",
   "category": null,
   "server": "server.js",
+  "hidden": true,
   "title": {
     "en_EN": "EDMS"
   },
