@@ -34,12 +34,25 @@ class Group extends React.Component {
 
   addGroupUsers = dataItem => {
     this.setState({
-      groupToBeEdited: dataItem.uuid,
       visible: !this.state.visible
+    });
+
+    this.addUsersTemplate = React.createElement(MultiSelect, {
+      args: this.core,
+      config: {
+        dataItem: dataItem,
+        mainList: "user",
+        subList: "group"
+      },
+      manage: {
+        postSelected: this.sendTheData,
+        closeDialog: this.toggleDialog
+      }
     });
   };
 
-  sendTheData = selectedUsers => {
+  sendTheData = (selectedUsers, item) => {
+    console.log(selectedUsers);
     if (selectedUsers.length == 0) {
       Swal.fire({
         title: "Action not possible",
@@ -54,10 +67,10 @@ class Group extends React.Component {
     } else {
       var temp2 = [];
       for (var i = 0; i <= selectedUsers.length - 1; i++) {
-        var uid = { id: selectedUsers[i] };
+        var uid = { id: selectedUsers[i].id };
         temp2.push(uid);
       }
-      this.pushGroupUsers(this.state.groupToBeEdited, JSON.stringify(temp2));
+      this.pushGroupUsers(item, JSON.stringify(temp2));
       this.toggleDialog();
     }
   };
@@ -110,20 +123,7 @@ class Group extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        {this.state.visible && (
-          <MultiSelect
-            args={this.core}
-            config={{
-              dataItem: this.state.groupToBeEdited,
-              mainList: "user",
-              subList: "group"
-            }}
-            manage={{
-              postSelected: this.sendTheData,
-              closeDialog: this.toggleDialog
-            }}
-          />
-        )}
+        {this.state.visible && this.addUsersTemplate}
         <TitleBar title="Manage Groups" />
         <GridTemplate
           args={this.core}

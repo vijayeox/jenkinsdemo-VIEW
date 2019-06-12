@@ -109,6 +109,28 @@ class Home extends React.Component {
           </div>
 
           <div style={{ display: "inline-grid" }}>
+            <div className="block d1" onClick={this.mailAdminClick}>
+              <img
+                src="apps/Admin/091-email-1.svg"
+                className="App-logo"
+                style={{width:"100%"}}
+              />
+            </div>
+            <div className="titles">Mail Admin</div>
+          </div>
+
+          <div style={{ display: "inline-grid" }}>
+            <div className="block d1" onClick={this.taskAdminClick}>
+              <img
+                src="apps/Admin/042-task.svg"
+                className="App-logo"
+                style={{width:"100%"}}
+              />
+            </div>
+            <div className="titles">Task Admin</div>
+          </div>
+
+          {/* <div style={{ display: "inline-grid" }}>
             <div className="block d1" onClick={this.appClick}>
               <img
                 src="apps/Admin/102-production.svg"
@@ -116,7 +138,7 @@ class Home extends React.Component {
               />
             </div>
             <div className="titles">Apps</div>
-          </div>
+          </div> */}
         </div>
       );
     }
@@ -171,6 +193,14 @@ class Home extends React.Component {
       <Application args={this.core} />,
       document.getElementById("componentsBox")
     );
+  };
+
+  mailAdminClick = e => {
+    this.core.run("MailAdmin");
+  };
+
+  taskAdminClick = e => {
+    this.core.run("TaskAdmin");
   };
 
   render() {

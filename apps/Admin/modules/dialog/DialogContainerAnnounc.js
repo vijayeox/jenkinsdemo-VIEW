@@ -135,6 +135,7 @@ export default class DialogContainer extends React.Component {
   async pushFile(event) {
     var files = this.fUpload.current.firstUpload.cachedFileArray[0];
     let helper = this.core.make("oxzion/restClient");
+    console.log(files);
     let ancFile = await helper.request(
       "v1",
       "/attachment",

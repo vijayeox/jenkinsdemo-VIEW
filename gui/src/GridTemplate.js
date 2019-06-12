@@ -11,7 +11,8 @@ import {
   FaUserPlus,
   FaTrashAlt,
   FaArrowCircleRight,
-  FaInfoCircle
+  FaInfoCircle,
+  FaUserLock
 } from "react-icons/fa";
 import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
@@ -19,7 +20,6 @@ import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
 import "@progress/kendo-theme-default/dist/all.css";
-import "./public/css/gridStyles.css";
 
 export default class GridTemplate extends React.Component {
   constructor(props) {
@@ -207,7 +207,8 @@ export default class GridTemplate extends React.Component {
                 this.props.manageGrid.edit,
                 this.props.manageGrid.remove,
                 this.props.manageGrid.addUsers,
-                this.props.permission
+                this.props.permission,
+                this.props.manageGrid.setPrivileges
               )}
               sortable={false}
               filterCell={this.emptyCell}
@@ -269,7 +270,7 @@ class LogoCell2 extends React.Component {
   }
 }
 
-function CellWithEditing(title, edit, remove, addUsers, perm) {
+function CellWithEditing(title, edit, remove, addUsers, perm, setPrivileges) {
   return class extends GridCell {
     constructor(props) {
       super(props);
@@ -327,6 +328,21 @@ function CellWithEditing(title, edit, remove, addUsers, perm) {
               </button>
             </abbr>
             &nbsp; &nbsp;
+            {setPrivileges && (
+              <React.Fragment>
+                <abbr title={"Set " + title + " Privileges"}>
+                  <button
+                    type="button"
+                    className=" btn manage-btn k-grid-edit-command"
+                    onClick={() => {
+                      setPrivileges(this.props.dataItem);
+                    }}
+                  >
+                    <FaUserLock className="manageIcons" />
+                  </button>
+                </abbr>
+              </React.Fragment>
+            )}
             {addUsers && (
               <abbr title={"Add Users to " + title}>
                 <button

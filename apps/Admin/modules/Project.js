@@ -52,29 +52,37 @@ class Project extends React.Component {
   };
 
   addProjectUsers = dataItem => {
-    let projectToBeEdited = [];
-    projectToBeEdited.name = dataItem.name;
-    projectToBeEdited.id = dataItem.uuid;
     this.setState({
-      projectToBeEdited: projectToBeEdited,
       visible: !this.state.visible
+    });
+    this.addUsersTemplate = React.createElement(MultiSelect, {
+      args: this.core,
+      config: {
+        dataItem: dataItem,
+        mainList: "user",
+        subList: "project"
+      },
+      manage: {
+        postSelected: this.sendTheData,
+        closeDialog: this.toggleDialog
+      }
     });
   };
 
-  sendTheData = selectedUsers => {
+  sendTheData = (selectedUsers, item) => {
     var temp1 = selectedUsers;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
       var uid = { id: temp1[i].id };
       temp2.push(uid);
     }
-    this.pushProjectUsers(this.state.projectToBeEdited.id, JSON.stringify(temp2));
+    this.pushProjectUsers(item, JSON.stringify(temp2));
+    this.toggleDialog();
   };
 
   toggleDialog() {
     this.setState({
-      visible: !this.state.visible,
-      groupToBeEdited: []
+      visible: !this.state.visible
     });
   }
 
@@ -119,22 +127,7 @@ class Project extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        {this.state.visible && (
-          <div style={{ all: "unset" }}>
-            <MultiSelect
-              args={this.core}
-              config={{
-                dataItem: this.state.projectToBeEdited,
-                mainList: "user",
-                subList: "project"
-              }}
-              manage={{
-                postSelected: this.saveAndSend,
-                closeDialog: this.toggleDialog
-              }}
-            />{" "}
-          </div>
-        )}
+        {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
         <TitleBar title="Manage Projects" />
         <GridTemplate

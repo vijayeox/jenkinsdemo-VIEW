@@ -37,10 +37,7 @@ class Organization extends React.Component {
     this.addUsersTemplate = React.createElement(MultiSelect, {
       args: this.core,
       config: {
-        dataItem: {
-          name: dataItem.name,
-          id: dataItem.uuid
-        },
+        dataItem: dataItem,
         mainList: "user",
         subList: "organization"
       },
@@ -51,9 +48,9 @@ class Organization extends React.Component {
     });
   };
 
-  sendTheData = (dataItem, selectedUsers) => {
+  sendTheData = (selectedUsers, dataItem) => {
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      this.pushOrgUsers(dataItem, selectedUsers[i]);
+      this.pushOrgUsers(dataItem, selectedUsers[i].id);
     }
     this.toggleDialog();
   };

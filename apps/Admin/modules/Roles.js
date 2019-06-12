@@ -1,153 +1,60 @@
-import React, { Component } from "react";
-
-import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
-
-import {
-  Grid,
-  GridColumn as Column,
-  GridToolbar
-} from "@progress/kendo-react-grid";
-
-import ReactNotification from "react-notifications-component";
-import { Button } from '@progress/kendo-react-buttons';
+import React from "react";
+import { TitleBar } from "./components/titlebar";
+import { GridTemplate, MultiSelect } from "@oxzion/gui";
+import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerRole";
-import cellWithEditing from "./manage/cellWithEditing";
-import { orderBy } from "@progress/kendo-data-query";
-
-class Permissionallowed extends React.Component {
-  render() {
-    if(this.props.perm == 7 || this.props.perm == 15){
-      return (
-        <button
-        onClick={this.props.args}
-        className="k-button"
-        style={{ position: "absolute", top: "8px", right: "16px" }}
-      >
-        <FaPlusCircle style={{ fontSize: "20px" }} />
-
-        <p style={{ margin: "0px", paddingLeft: "10px" }}>
-          Add Role
-        </p>
-      </button>
-      );
-    }
-    else{
-     return(
-       <div></div>
-     )
-    }
-  }
-}
+import PrivilegeTemplate from "./dialog/PrivilegeTemplate";
 
 class Role extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-
     this.state = {
       roleInEdit: undefined,
-      sort: [{ field: "name", dir: "asc" }],
-      products: [],
+      roleToBeEdited: [],
       action: "",
-      permission:"15"
+      visible: false,
+      permission: "15"
     };
-
-    this.addNotification = this.addNotification.bind(this);
-    this.notificationDOMRef = React.createRef();
-
-    this.getRoleData().then(response => {
-      this.setState({ products: response.data });
-    });
+    this.child = React.createRef();
   }
 
-  addDataNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation Successful",
-      message: "Entry created with ID:" + serverResponse,
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
+  setPrivileges = dataItem => {
+    this.setState({
+      visible: !this.state.visible
     });
-  }
-
-  addNotification(serverResponse) {
-    this.notificationDOMRef.current.addNotification({
-      title: "All Done!!!  👍",
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  handler = serverResponse => {
-    this.getRoleData().then(response => {
-      this.setState({ products: response.data.data });
-      console.log(response.data.data);
-      this.addDataNotification(serverResponse);
+    this.privilegeTemplate = React.createElement(PrivilegeTemplate, {
+      args: this.core,
+      dataItem: dataItem || null,
+      cancel: () => {
+        this.setState({
+          visible: !this.state.visible
+        });
+      }
     });
   };
-
-  async getRoleData() {
-    let helper = this.core.make("oxzion/restClient");
-    let RoleData = await helper.request("v1", "/role", {}, "get");
-    let helper2 = this.core.make("oxzion/restClient");
-    await helper2.request("v1", "/privilege", {}, "get");
-    return RoleData.data;
-  }
 
   edit = dataItem => {
     this.setState({
-      roleInEdit: this.cloneProduct(dataItem),
-      action: "edit"
+      roleInEdit: this.cloneItem(dataItem)
+    });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: dataItem || null,
+      cancel: this.cancel,
+      formAction: "put",
+      action: this.child.current.refreshHandler
     });
   };
 
-  async deleteRoleData(dataItem) {
-    let helper = this.core.make("oxzion/restClient");
-    let delRole = helper.request("v1", "/role/" + dataItem, {}, "delete");
-    return delRole;
+  cloneItem(item) {
+    return Object.assign({}, item);
   }
 
   remove = dataItem => {
-    this.deleteRoleData(dataItem.id).then(response => {
-      this.addNotification();
+    DeleteEntry("role", dataItem.id).then(response => {
+      this.child.current.refreshHandler(response.status);
     });
-
-    const products = this.state.products;
-    const index = products.findIndex(p => p.id === dataItem.id);
-    if (index !== -1) {
-      products.splice(index, 1);
-      this.setState({
-        products: products
-      });
-    }
-  };
-
-  save = () => {
-    const dataItem = this.state.roleInEdit;
-    const products = this.state.products.slice();
-
-    if (dataItem.id === undefined) {
-      products.unshift(this.newProduct(dataItem));
-    } else {
-      const index = products.findIndex(p => p.id === dataItem.id);
-      products.splice(index, 1, dataItem);
-    }
-
-    this.setState({
-      products: products,
-      roleInEdit: undefined
-    });
-    this.handler();
   };
 
   cancel = () => {
@@ -155,98 +62,51 @@ class Role extends React.Component {
   };
 
   insert = () => {
-    this.setState({ roleInEdit: {}, action: "add" });
+    this.setState({ roleInEdit: {} });
+    this.inputTemplate = React.createElement(DialogContainer, {
+      args: this.core,
+      dataItem: [],
+      cancel: this.cancel,
+      formAction: "post",
+      action: this.child.current.refreshHandler
+    });
   };
-
-
-  disp(){
-    if(this.state.permission!=1){
-      return(
-    <Column
-    title="Edit"
-    width="160px"
-    cell={cellWithEditing(this.edit, this.remove, this.state.permission)}
-    filterCell={this.searchUnavailable}
-  />
-      );
-    } 
-  }
 
   render() {
     return (
-      <div>
-        <div id="rolePage">
-          <ReactNotification ref={this.notificationDOMRef} />
-          <div style={{ paddingTop: '12px' }} className="row">
-            <div className="col s3">
-              <Button className="goBack" primary={true} style={{ width: '45px', height: '45px' }}>
-                <FaArrowLeft />
-              </Button>
-            </div>
-            <center>
-              <div className="col s6" id="pageTitle">
-                Manage Roles
-              </div>
-            </center>
-          </div>
+      <div style={{ height: "inherit" }}>
+        {this.state.visible && this.privilegeTemplate}
+        <TitleBar title="Manage User Roles" />
+        <GridTemplate
+          args={this.core}
+          ref={this.child}
+          config={{
+            showToolBar: true,
+            title: "Role",
+            api: "role",
+            column: [
+              {
+                title: "Name",
+                field: "name"
+              },
 
-          <Grid
-            data={orderBy(this.state.products, this.state.sort)}
-            sortable
-            sort={this.state.sort}
-            onSortChange={e => {
-              this.setState({
-                sort: e.sort
-              });
-            }}
-          >
-            <GridToolbar>
-              <div>
-                <div style={{ fontSize: "20px" }}>Role List</div>
-                <Permissionallowed
-               args={this.insert}
-               perm={this.state.permission}
-               />
-              </div>
-            </GridToolbar>
-
-            <Column field="id" title="ID" width="70px" />
-            <Column field="name" title="Name" />
-            <Column field="description" title="Description" />
-            {this.disp()}
-          </Grid>
-
-          {this.state.roleInEdit && (
-            <DialogContainer
-              args={this.core}
-              dataItem={this.state.roleInEdit}
-              save={this.save}
-              cancel={this.cancel}
-              formAction={this.state.action}
-              action={this.handler}
-            />
-          )}
-        </div>
+              {
+                title: "Description",
+                field: "description"
+              }
+            ]
+          }}
+          manageGrid={{
+            add: this.insert,
+            edit: this.edit,
+            remove: this.remove,
+            setPrivileges: this.setPrivileges
+          }}
+          permission={this.state.permission}
+        />
+        {this.state.roleInEdit && this.inputTemplate}
       </div>
     );
-  }
-
-  dialogTitle() {
-    return `${this.state.roleInEdit.id === undefined ? "Add" : "Edit"} product`;
-  }
-
-  cloneProduct(product) {
-    return Object.assign({}, product);
-  }
-
-  newProduct(source) {
-    const newProduct = {
-      id: "",
-      name: "",
-      description: "",
-    };
-
-    return Object.assign(newProduct, source);
   }
 }
 

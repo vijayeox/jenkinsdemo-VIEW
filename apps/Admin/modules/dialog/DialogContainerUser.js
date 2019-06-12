@@ -32,7 +32,6 @@ export default class DialogContainer extends React.Component {
   }
 
   fieldStateChanged = field => state => {
-    console.log(this.state);
     this.setState({ [field]: state.errors.length === 0 });
     if (field == "password") {
       let userInEdit = { ...this.state.userInEdit };
@@ -58,6 +57,7 @@ export default class DialogContainer extends React.Component {
         />,
         document.getElementById("tooltip")
       );
+      this.state.email = true;
     }
   }
 
@@ -83,21 +83,43 @@ export default class DialogContainer extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (this.state.email || this.state.password) {
-      PushData("user", this.props.formAction, {
-        username: this.state.userInEdit.username,
-        password: this.state.userInEdit.password,
-        firstname: this.state.userInEdit.firstname,
-        lastname: this.state.userInEdit.lastname,
-        email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(),
-        designation: this.state.userInEdit.designation,
-        gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
-        country: this.state.userInEdit.country
-      }).then(response => {
-        this.props.action(response.status);
-      });
+      if (this.props.formAction == "post") {
+        PushData("user", this.props.formAction, this.props.dataItem.uuid, {
+          username: this.state.userInEdit.username,
+          password: this.state.userInEdit.password,
+          firstname: this.state.userInEdit.firstname,
+          lastname: this.state.userInEdit.lastname,
+          email: this.state.userInEdit.email,
+          date_of_birth: new Moment(
+            this.state.userInEdit.date_of_birth
+          ).format(),
+          designation: this.state.userInEdit.designation,
+          gender: this.state.userInEdit.gender,
+          managerid: this.state.userInEdit.managerid,
+          date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
+          country: this.state.userInEdit.country
+        }).then(response => {
+          this.props.action(response.status);
+        });
+      } else if (this.props.formAction == "put") {
+        PushData("user", this.props.formAction, this.props.dataItem.uuid, {
+          password: this.state.userInEdit.password,
+          firstname: this.state.userInEdit.firstname,
+          lastname: this.state.userInEdit.lastname,
+          email: this.state.userInEdit.email,
+          date_of_birth: new Moment(
+            this.state.userInEdit.date_of_birth
+          ).format(),
+          designation: this.state.userInEdit.designation,
+          orgid: this.state.userInEdit.orgid,
+          gender: this.state.userInEdit.gender,
+          managerid: this.state.userInEdit.managerid,
+          date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
+          country: this.state.userInEdit.country
+        }).then(response => {
+          this.props.action(response.status);
+        });
+      }
       this.props.cancel();
     } else {
       var elm = document.getElementById("email");

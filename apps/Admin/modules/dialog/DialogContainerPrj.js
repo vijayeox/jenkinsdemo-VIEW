@@ -9,9 +9,7 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      prjInEdit: this.props.dataItem || null,
-      visibleDialog: false,
-      show: false
+      prjInEdit: this.props.dataItem || null
     };
   }
 
@@ -30,7 +28,7 @@ export default class DialogContainer extends React.Component {
 
   sendData = e => {
     e.preventDefault();
-    PushData("project", this.props.formAction, {
+    PushData("project", this.props.formAction, this.props.dataItem.uuid, {
       name: this.state.prjInEdit.name,
       description: this.state.prjInEdit.description
     }).then(response => {

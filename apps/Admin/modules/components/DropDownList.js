@@ -1,7 +1,7 @@
 import React from "react";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
-import { GetData } from "../components/apiCalls";
+import { GetData, GetDataSearch } from "../components/apiCalls";
 import $ from "jquery";
 
 import withValueField from "../dialog/withValueField";
@@ -26,22 +26,31 @@ export default class DropDown extends React.Component {
     } else {
       let loader = this.core.make("oxzion/splash");
       loader.show();
-      GetData(this.props.mainList).then(response => {
-        var tempUsers = [];
-        for (var i = 0; i <= response.data.length - 1; i++) {
-          var userName = response.data[i].name;
-          var userid = response.data[i].id;
-          tempUsers.push({ id: userid, name: userName });
-        }
-        this.setState({
-          mainList: tempUsers
-        });
-        this.masterUserList = tempUsers;
-        let loader = this.core.make("oxzion/splash");
-        loader.destroy();
-      });
+      this.getMainList(null, 20);
     }
   }
+
+  getMainList = (query, size) => {
+    GetDataSearch(this.props.mainList, query, size).then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userName = response.data[i].name;
+        var userid = response.data[i].id;
+        tempUsers.push({ id: userid, name: userName });
+      }
+      this.setState({
+        mainList: tempUsers
+      });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
+    });
+  };
+
+  filterChangeAPI = e => {
+    setTimeout(() => {
+      this.getMainList(e.filter.value, 20);
+    }, 500);
+  };
 
   filterChange = event => {
     this.setState({
@@ -76,7 +85,7 @@ export default class DropDown extends React.Component {
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}
-            onFilterChange={this.filterChange}
+            onFilterChange={this.filterChangeAPI}
             style={{ width: "210px" }}
             popupSettings={{ height: "160px" }}
             required={this.props.required}

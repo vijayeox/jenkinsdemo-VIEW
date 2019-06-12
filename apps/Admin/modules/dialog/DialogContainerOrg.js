@@ -30,6 +30,21 @@ export default class DialogContainer extends React.Component {
     });
   };
 
+  onContactIPChange = event => {
+    let target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.props ? target.props.name : target.name;
+
+    const edited = this.state.orgInEdit;
+    edited["contact"] = edited["contact"] ? edited["contact"] : {};
+    edited["contact"][name] = value;
+
+    this.setState({
+      orgInEdit: edited
+    });
+    console.log(this.state.orgInEdit);
+  };
+
   sendData = e => {
     e.preventDefault();
     if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
@@ -54,9 +69,9 @@ export default class DialogContainer extends React.Component {
           logo: this.fUpload.current.firstUpload.cachedFileArray[0],
           languagefile: this.state.orgInEdit.languagefile,
           contact: JSON.stringify({
-            firstname: this.state.orgInEdit.firstname,
-            lastname: this.state.orgInEdit.lastname,
-            email: this.state.orgInEdit.email
+            firstname: this.state.orgInEdit.contact.firstname,
+            lastname: this.state.orgInEdit.contact.lastname,
+            email: this.state.orgInEdit.contact.email
           })
         }
       ).then(response => {
@@ -78,6 +93,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.name || ""}
+                name="name"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Name"
                 required={true}
@@ -89,6 +105,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.address || ""}
+                name="address"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
                 style={{ marginTop: "5px" }}
@@ -105,6 +122,7 @@ export default class DialogContainer extends React.Component {
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.city || ""}
+                      name="city"
                       onChange={this.onDialogInputChange}
                       placeholder="Enter City"
                       required={true}
@@ -118,6 +136,7 @@ export default class DialogContainer extends React.Component {
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.state || ""}
+                      name="state"
                       onChange={this.onDialogInputChange}
                       placeholder="Enter State"
                       required={true}
@@ -134,6 +153,7 @@ export default class DialogContainer extends React.Component {
                   <input
                     type="number"
                     value={this.state.orgInEdit.zip || ""}
+                    name="zip"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Zip Code"
                   />
@@ -143,6 +163,7 @@ export default class DialogContainer extends React.Component {
                   <input
                     type="text"
                     value={this.state.orgInEdit.languagefile || ""}
+                    name="languagefile"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Language"
                   />
@@ -156,24 +177,26 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="text"
+                    name="firstname"
                     value={
                       this.state.orgInEdit.contact
                         ? this.state.orgInEdit.contact.firstname
                         : ""
                     }
-                    onChange={this.onDialogInputChange}
+                    onChange={this.onContactIPChange}
                     placeholder="Enter First Name"
                   />
                 </div>
                 <div className="col">
                   <input
                     type="text"
+                    name="lastname"
                     value={
                       this.state.orgInEdit.contact
                         ? this.state.orgInEdit.contact.lastname
                         : ""
                     }
-                    onChange={this.onDialogInputChange}
+                    onChange={this.onContactIPChange}
                     placeholder="Enter Last Name"
                   />
                 </div>
@@ -182,12 +205,13 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <input
                     type="email"
+                    name="email"
                     value={
                       this.state.orgInEdit.contact
                         ? this.state.orgInEdit.contact.email
                         : ""
                     }
-                    onChange={this.onDialogInputChange}
+                    onChange={this.onContactIPChange}
                     placeholder="Enter Email ID"
                   />
                 </div>

@@ -1,8 +1,13 @@
 .Window_Admin {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
+  @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
 
   background: #336666;
+
+  .osjs-window-header {
+    background: #265160;
+  }
 
   .k-grid-norecords :hover {
     background-color: white;
@@ -25,7 +30,7 @@
   tr {
     th.k-header {
       font-size: larger;
-      background-color: #2d3440;
+      background-color: #546e7a;
       color: #f8f0ee;
       font-weight: bolder;
       font-family: "Century Gothic", "Futura", "Didact Gothic", san-serif;
@@ -39,6 +44,14 @@
   }
 
   // move to gui
+
+  .privilegeGrid {
+    th {
+      .k-link {
+        text-align: center;
+      }
+    }
+  }
 
   .gridBanner {
     max-width: -moz-available;
@@ -174,10 +187,8 @@
     height: 25px;
   }
 
-  [type="checkbox"]:not(:checked),
-  [type="checkbox"]:checked {
-    opacity: 100 !important;
-    pointer-events: visible !important;
+  .privelegeGridcellFix {
+    padding-left: 20px;
   }
 
   .custom-file-container__custom-file {

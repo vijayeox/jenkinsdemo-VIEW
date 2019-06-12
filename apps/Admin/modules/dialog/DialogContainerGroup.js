@@ -34,9 +34,11 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  sendData = e => {
+  handleSubmit = e => {
     e.preventDefault();
-    PushData("group", this.props.formAction, {
+    console.log(this.props.formAction);
+    console.log(this.state.groupInEdit);
+    PushData("group", this.props.formAction, this.state.groupInEdit.uuid, {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
       manager_id: this.state.groupInEdit.manager_id,
@@ -52,7 +54,7 @@ export default class DialogContainer extends React.Component {
     return (
       <Window onClose={this.props.cancel}>
         <div>
-          <form id="groupForm" onSubmit={this.sendData}>
+          <form id="groupForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label>Group Name</label>
               <input

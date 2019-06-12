@@ -1,10 +1,7 @@
 import React from "react";
 import { GetDataSearch, ExistingUsers } from "./components/apiCalls";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
-import {
-  FaArrowRight,
-  FaSearch
-} from "react-icons/fa";
+import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import "./public/css/syncfusion.css";
 import { Grid, GridColumn, GridCell } from "@progress/kendo-react-grid";
@@ -23,12 +20,12 @@ class MultiSelect extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props);
     let loader = this.core.make("oxzion/splash");
     loader.show();
-
     ExistingUsers(
       this.props.config.subList,
-      this.props.config.dataItem.id
+      this.props.config.dataItem.uuid
     ).then(response => {
       this.setState({
         selectedUsers: response.data
@@ -183,7 +180,10 @@ class MultiSelect extends React.Component {
             <button
               className="k-button k-primary"
               onClick={() =>
-                this.props.manage.postSelected(this.state.selectedUsers)
+                this.props.manage.postSelected(
+                  this.state.selectedUsers,
+                  this.props.config.dataItem.uuid
+                )
               }
             >
               Save
