@@ -73,6 +73,11 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
       let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
     }
   }
+  const getEmails = async () => {
+    let helper  = core.make('oxzion/restClient');
+    let res = await helper.request('v1','/email',{},'get');
+    return res;
+  }
 
   let trayInitialized = false;
   const createProcWindow = () => {
