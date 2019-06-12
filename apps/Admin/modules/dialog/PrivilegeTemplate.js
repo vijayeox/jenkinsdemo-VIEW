@@ -3,7 +3,6 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { PushData } from "../components/apiCalls";
 import { SaveCancel } from "../components/index";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
-import { Checkbox, CheckboxGroup } from "react-checkbox-group";
 import { Ripple } from "@progress/kendo-react-ripple";
 
 export default class PrivilegeTemplate extends React.Component {
