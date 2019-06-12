@@ -4,6 +4,7 @@ import { PushData } from "../components/apiCalls";
 import { SaveCancel } from "../components/index";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
 import { Ripple } from "@progress/kendo-react-ripple";
+import { orderBy } from '@progress/kendo-data-query';
 
 export default class PrivilegeTemplate extends React.Component {
   constructor(props) {
@@ -12,7 +13,8 @@ export default class PrivilegeTemplate extends React.Component {
     this.state = {
       roleInEdit: this.props.dataItem || null,
       privilegeData1: [],
-      temp: ["1", "2", "4"]
+      temp: ["1", "2", "4"],
+      sort:[]
     };
     this.getPrivilegeData().then(response => {
       var ar = response.data;
@@ -42,15 +44,14 @@ export default class PrivilegeTemplate extends React.Component {
 
   async getPrivilegeData() {
     let helper2 = this.core.make("oxzion/restClient");
-    let privilegedata = await helper2.request("v1", "/privilege", {}, "get");
+    let privilegedata = await helper2.request(
+      "v1",
+      "/role/" + this.props.dataItem.id + "/privilege",
+      {},
+      "get"
+    );
     return privilegedata;
   }
-
-  fruitsChanged = newFruits => {
-    this.setState({
-      temp: newFruits
-    });
-  };
 
   handleSubmit = event => {
     event.preventDefault();
@@ -71,48 +72,43 @@ export default class PrivilegeTemplate extends React.Component {
           >
             <div className="privilegeGrid">
               <Grid
-                data={this.state.privilegeData1}
+                data={orderBy(this.state.privilegeData1, this.state.sort)}
                 resizable={true}
                 reorderable={true}
+                sortable
+                sort={this.state.sort}
+                onSortChange={(e) => {
+                  this.setState({
+                      sort: e.sort
+                  });
+              }}
                 scrollable={"scrollable"}
               >
+                <GridColumn title="App Name" field="name" />
                 <GridColumn
-                  width="100px"
-                  headerCell={() => {
-                    return <div>Index</div>;
-                  }}
-                  cell={props => {
-                    return (
-                      <td>
-                        <label>{props.dataIndex}</label>
-                      </td>
-                    );
-                  }}
-                />
-                <GridColumn
-                  title="App Name"
+                  title="Privilege Name"
                   cell={props => (
                     <td>
-                      <label>{props.dataItem.name.slice(7)}</label>
+                      <label>{props.dataItem.privilege_name.slice(7)}</label>
                     </td>
                   )}
                 />
-                <GridColumn title="Permission" field="permission_allowed" />
+                <GridColumn title="Permission" field="permission" />
                 <GridColumn
                   title="Read"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed >= 1 ? (
+                    props.dataItem.permission & 1 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.name + "_R"}
+                            id={props.dataItem.privilege_name + "_R"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_R"}
+                            htmlFor={props.dataItem.privilege_name + "_R"}
                           />
                         </div>
                       </td>
@@ -125,17 +121,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Write"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed >= 3 ? (
+                    props.dataItem.permission & 2 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.name + "_W"}
+                            id={props.dataItem.privilege_name + "_W"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_W"}
+                            htmlFor={props.dataItem.privilege_name + "_W"}
                           />
                         </div>
                       </td>
@@ -148,17 +144,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Create"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed >= 7 ? (
+                    props.dataItem.permission & 4 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.name + "_C"}
+                            id={props.dataItem.privilege_name + "_C"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_C"}
+                            htmlFor={props.dataItem.privilege_name + "_C"}
                           />
                         </div>
                       </td>
@@ -171,17 +167,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Delete"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed >= 15 ? (
+                    props.dataItem.permission & 8 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.name + "_D"}
+                            id={props.dataItem.privilege_name + "_D"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_D"}
+                            htmlFor={props.dataItem.privilege_name + "_D"}
                           />
                         </div>
                       </td>

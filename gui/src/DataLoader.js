@@ -51,7 +51,7 @@ export class DataLoader extends React.Component {
           this.requestDataIfNeeded();
         }
       });
-    }, 500);
+    }, 1000);
   };
 
   render() {
