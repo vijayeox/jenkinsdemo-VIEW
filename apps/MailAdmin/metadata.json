@@ -3,6 +3,9 @@
   "name": "MailAdmin",
   "category": "utilities",
   "server": "server.js",
+  "icon": "icon.png",
+  "hidden": false,
+  "icon_white": "icon_white.png",
   "title": {
     "en_EN": "MailAdmin"
   },

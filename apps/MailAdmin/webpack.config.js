@@ -1,5 +1,6 @@
-const Dotenv = require('dotenv-webpack')
+const Dotenv = require('dotenv-webpack');
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
@@ -33,6 +34,9 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
+    new CopyWebpackPlugin([
+      'icon.png','icon_white.png'
+    ]),
     new Dotenv({
       path: './.env',
       safe: true
