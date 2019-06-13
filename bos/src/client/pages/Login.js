@@ -1,6 +1,5 @@
 import {Login as defaultLogin} from '../../osjs-client/index.js';
 import {h, app} from 'hyperapp';
-import '../../../node_modules/materialize-css/dist/js/materialize.min.js';
 import '../assets/scss/login.scss';
 
 export default class Login extends defaultLogin {
@@ -36,12 +35,12 @@ export default class Login extends defaultLogin {
           h('div',{id: 'ox-img', className: 'ox-imgDiv'},[
             h('img',{id:'ox-logo', className: 'ox-img',src:require('../assets/images/OXZion.png')}),
             ]),
-            h('div',{className: 'input-field'},[
-            h("input",{type: "text",name:"username",className:'validate',id:'username'}),
+            h('div',{className: 'floating-label'},[
+            h("input",{type: "text",name:"username",className:'validate',id:'username', placeholder:"Username"}),
             h('label',{for:'username'},'Username')
           ]),
-          h('div',{className: 'input-field'},[
-            h("input",{type: "password",name:"password",className:'validate',id:'password'}),
+          h('div',{className: 'floating-label'},[
+            h("input",{type: "password",name:"password",className:'validate',id:'password', placeholder:"Password"}),
             h('label',{for:'password'},'Password')
           ]),
           h('div', {
@@ -49,7 +48,7 @@ export default class Login extends defaultLogin {
             style: {display: state.error ? 'block' : 'none'}
           }, h('span', {}, "The username and/or password is incorrect! Please try again.")),
           h('div',{className: 'form-signin__footer'},[
-          h("input",{type:"submit",value:"login",className: 'btn waves-effect waves-light'}),
+          h("button",{type:"submit",value:"login",className: 'btn waves-effect waves-light'},'Login'),
           //h('a',{href: '#'},'Forgot your password?'),
         ]),
         ]),

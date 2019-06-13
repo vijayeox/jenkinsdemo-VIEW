@@ -70,8 +70,6 @@
     "dateformat": "^3.0.3",
     "deepmerge": "^3.2.0",
     "font-awesome": "^4.7.0",
-    "materialize-css": "^1.0.0-rc.2",
-    "react-web-tabs": "^1.0.1",
     "signale": "^1.4.0",
     "simplejsonconf": "^2.0.5",
     "morgan": "^1.9.1",
