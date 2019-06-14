@@ -73,7 +73,6 @@ body {
     max-width:  200px; 
     margin-bottom:  40px; 
   }
-}
 a.discrete {
     color:  rgba(#000, .4); 
     font-size:  14px; 
@@ -158,6 +157,7 @@ input {
     animation-name: shake-shake;
     animation-duration: .3s;
   }
+}
 }
 $displacement:  3px; 
 @keyframes shake-shake {
