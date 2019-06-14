@@ -43,13 +43,13 @@ export async function GetData(api) {
 }
 
 export async function PushData(api, method, item, body) {
-  console.log(item);
+  console.log(body);
   if (method == "put") {
     let response = await helper.request(
       "v1",
       "/" + api + "/" + item,
       body,
-      method
+      "post"
     );
     return response;
   } else if (method == "post") {

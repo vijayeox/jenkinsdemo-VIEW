@@ -7,6 +7,9 @@ import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 
+import IntlTelInput from "react-intl-tel-input";
+import "react-intl-tel-input/dist/main.css";
+
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -46,6 +49,15 @@ export default class DialogContainer extends React.Component {
     });
   };
 
+  onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
+    console.table(inValid, newNumber, data, fullNumber);
+
+    let orgInEdit = { ...this.state.orgInEdit };
+    orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
+    orgInEdit["contact"]["phNumber"] = newNumber;
+    this.setState({ orgInEdit: orgInEdit, contactValid: inValid });
+  };
+
   sendData = e => {
     e.preventDefault();
     if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
@@ -73,7 +85,8 @@ export default class DialogContainer extends React.Component {
           contact: JSON.stringify({
             firstname: this.state.orgInEdit.contact.firstname,
             lastname: this.state.orgInEdit.contact.lastname,
-            email: this.state.orgInEdit.contact.email
+            email: this.state.orgInEdit.contact.email,
+            phone: "232323"
           })
         }
       ).then(response => {
@@ -113,7 +126,6 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Organization Address"
                 style={{ marginTop: "5px" }}
                 required={true}
-                validationMessage={"Please enter a valid Organization Address"}
               />
             </div>
 
@@ -167,9 +179,7 @@ export default class DialogContainer extends React.Component {
                   />
                 </div>
                 <div className="col">
-                  <label>
-                    Language
-                  </label>
+                  <label>Language</label>
                   <Input
                     type="text"
                     value={this.state.orgInEdit.languagefile || ""}
@@ -216,6 +226,22 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
               <div className="form-row" style={{ marginTop: "10px" }}>
+                <div className="col">
+                  <IntlTelInput
+                    containerClassName="intl-tel-input"
+                    inputClassName="form-control contactPhone"
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.phNumber
+                        : ""
+                    }
+                    preferredCountries={["in", "us"]}
+                    onPhoneNumberChange={this.onContactPhoneChange}
+                    placeholder="Enter Phone Number"
+                    // format={true}
+                    autoHideDialCode={true}
+                  />
+                </div>
                 <div className="col">
                   <Input
                     type="email"

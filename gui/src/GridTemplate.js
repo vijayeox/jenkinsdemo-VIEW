@@ -19,7 +19,7 @@ import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
-import "@progress/kendo-theme-default/dist/all.css";
+// import "@progress/kendo-theme-default/dist/all.css";
 
 export default class GridTemplate extends React.Component {
   constructor(props) {
@@ -167,7 +167,7 @@ export default class GridTemplate extends React.Component {
                   <div style={{ marginLeft: "10px" }}>
                     <FaInfoCircle />
                   </div>
-                  <div style={{ fontSize: "medium", paddingLeft: "30px" }}>
+                  <div style={{ fontSize: "medium", paddingLeft: "30px" }} className="noRecords">
                     No Records Available
                   </div>
                 </div>

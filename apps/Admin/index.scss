@@ -4,6 +4,7 @@
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
 
   background: #336666;
+  all: revert;
 
   .osjs-window-header {
     background: #265160;
@@ -15,6 +16,10 @@
     .list-group {
       background-color: revert;
     }
+  }
+
+  .noRecords :hover {
+    background-color: transparent;
   }
   // move to gui
 
@@ -439,6 +444,14 @@
 
   .k-dateinput-wrap > input {
     padding-left: 5%;
+  }
+
+  .intl-tel-input {
+    width: inherit;
+    input {
+      position: relative;
+      width: 70%;
+    }
   }
 }
 
