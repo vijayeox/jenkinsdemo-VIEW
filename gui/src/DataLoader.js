@@ -45,7 +45,7 @@ export class DataLoader extends React.Component {
         if (toODataString(this.props.dataState) === this.lastSuccess) {
           this.props.onDataRecieved.call(undefined, {
             data: response.data,
-            total: response.total
+            total: response.total ? response.total : null
           });
         } else {
           this.requestDataIfNeeded();

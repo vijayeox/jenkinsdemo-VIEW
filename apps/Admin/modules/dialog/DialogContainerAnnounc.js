@@ -1,11 +1,9 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Moment from "moment";
 import TextareaAutosize from "react-textarea-autosize";
-import { PushData } from "../components/apiCalls";
 import { FileUploader } from "@oxzion/gui";
-import { SaveCancel } from "../components/index";
+import { SaveCancel, DateComponent } from "../components/index";
+import Moment from "moment";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -13,82 +11,15 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      DOAInEdit: undefined,
-      DOEInEdit: undefined,
       ancInEdit: this.props.dataItem || null
     };
     this.fUpload = React.createRef();
   }
 
-  componentWillMount() {
-    if (this.props.formAction === "post") {
-    } else {
-      let ancInEdittemp = { ...this.state.ancInEdit };
-      if (
-        this.state.ancInEdit.start_date == "0000-00-00 00:00:00" ||
-        this.state.ancInEdit.end_date == "0000-00-00 00:00:00"
-      ) {
-        if (this.state.ancInEdit.start_date == "0000-00-00 00:00:00") {
-          ancInEdittemp.start_date = "";
-          this.setState({ ancInEdit: ancInEdittemp });
-          this.setState({ DOAInEdit: "" });
-        } else {
-          const DOADate = this.state.ancInEdit.start_date;
-          const DOAiso = new Moment(DOADate, "YYYY-MM-DD").format();
-          const DOAkendo = new Date(DOAiso);
-
-          ancInEdittemp.start_date = DOAkendo;
-          this.setState({ ancInEdit: ancInEdittemp });
-          this.setState({ ancInEdit: DOAiso });
-        }
-        if (this.state.ancInEdit.end_date == "0000-00-00 00:00:00") {
-          ancInEdittemp.end_date = null;
-          this.setState({ ancInEdit: ancInEdittemp });
-          this.setState({ DOEInEdit: null });
-        } else {
-          const DOEDate = this.state.ancInEdit.end_date;
-          const DOEiso = new Moment(DOEDate, "YYYY-MM-DD").format();
-          const DOEkendo = new Date(DOEiso);
-
-          ancInEdittemp.end_date = DOEkendo;
-          this.setState({ ancInEdit: ancInEdittemp });
-          this.setState({ ancInEdit: DOEiso });
-        }
-      } else {
-        const DOADate = this.state.ancInEdit.start_date;
-        const DOEDate = this.state.ancInEdit.end_date;
-        const DOAiso = new Moment(DOADate, "YYYY-MM-DD").format();
-        const DOEiso = new Moment(DOEDate, "YYYY-MM_DD").format();
-        const DOAkendo = new Date(DOAiso);
-        const DOEkendo = new Date(DOEiso);
-
-        let ancInEdit = { ...this.state.ancInEdit };
-        ancInEdit.start_date = DOAkendo;
-        ancInEdit.end_date = DOEkendo;
-        this.setState({ ancInEdit: ancInEdit });
-
-        this.setState({ DOAInEdit: DOAiso });
-        this.setState({ DOEInEdit: DOEiso });
-      }
-    }
-  }
-
-  handleDOEChange = event => {
+  valueChange = (field, event) => {
     let ancInEdit = { ...this.state.ancInEdit };
-    ancInEdit.end_date = event.target.value;
+    ancInEdit[field] = event.target.value;
     this.setState({ ancInEdit: ancInEdit });
-
-    var DOEiso = new Moment(event.target.value).format();
-    this.setState({ DOEInEdit: DOEiso });
-  };
-
-  handleDOAChange = event => {
-    let ancInEdit = { ...this.state.ancInEdit };
-    ancInEdit.start_date = event.target.value;
-    this.setState({ ancInEdit: ancInEdit });
-
-    var DOAiso = new Moment(event.target.value).format();
-    this.setState({ DOAInEdit: DOAiso });
   };
 
   async getAnnouncementGroups(dataItem) {
@@ -115,27 +46,9 @@ export default class DialogContainer extends React.Component {
     return addGroups;
   }
 
-  async pushData(fileCode) {
-    let helper = this.core.make("oxzion/restClient");
-    let ancAddData = await helper.request(
-      "v1",
-      "/announcement",
-      {
-        name: this.state.ancInEdit.name,
-        media: fileCode,
-        status: "1",
-        description: this.state.ancInEdit.description,
-        media_type: this.state.ancInEdit.media_type
-      },
-      "post"
-    );
-    return ancAddData;
-  }
-
   async pushFile(event) {
     var files = this.fUpload.current.firstUpload.cachedFileArray[0];
     let helper = this.core.make("oxzion/restClient");
-    console.log(files);
     let ancFile = await helper.request(
       "v1",
       "/attachment",
@@ -146,6 +59,25 @@ export default class DialogContainer extends React.Component {
       "filepost"
     );
     return ancFile;
+  }
+
+  async pushData(fileCode) {
+    let helper = this.core.make("oxzion/restClient");
+    let ancAddData = await helper.request(
+      "v1",
+      "/announcement",
+      {
+        name: this.state.ancInEdit.name,
+        media: fileCode,
+        status: "1",
+        description: this.state.ancInEdit.description,
+        media_type: this.state.ancInEdit.media_type,
+        start_date: new Moment(this.state.ancInEdit.start_date).format(),
+        end_date: new Moment(this.state.ancInEdit.end_date).format()
+      },
+      "post"
+    );
+    return ancAddData;
   }
 
   async editAnnouncements(fileCode) {
@@ -210,10 +142,12 @@ export default class DialogContainer extends React.Component {
     } else {
       this.pushFile().then(response => {
         var addResponse = response.data.filename[0];
-        this.pushData(addResponse);
+        this.pushData(addResponse).then(response => {
+          this.props.action(response.status);
+        });
       });
     }
-    this.props.save();
+    this.props.cancel();
   };
 
   render() {
@@ -293,10 +227,10 @@ export default class DialogContainer extends React.Component {
                 <div className="col-3">
                   <label>Start Data</label>
                   <div>
-                    <DatePicker
+                    <DateComponent
                       format={"dd-MMM-yyyy"}
                       value={this.state.ancInEdit.start_date}
-                      onChange={this.handleDOAChange}
+                      change={e => this.valueChange("start_date", e)}
                       required={true}
                     />
                   </div>
@@ -304,11 +238,10 @@ export default class DialogContainer extends React.Component {
                 <div className="col-3">
                   <label>End Date</label>
                   <div>
-                    <DatePicker
+                    <DateComponent
                       format={"dd-MMM-yyyy"}
                       value={this.state.ancInEdit.end_date}
-                      defaultValue={new Date()}
-                      onChange={this.handleDOEChange}
+                      change={e => this.valueChange("end_date", e)}
                       required={true}
                     />
                   </div>

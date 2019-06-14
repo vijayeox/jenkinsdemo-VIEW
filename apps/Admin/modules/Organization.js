@@ -21,14 +21,17 @@ class Organization extends React.Component {
 
   async pushOrgUsers(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
-    let addProjectUsers = await helper.request(
+    let addOrgUsers = await helper.request(
       "v1",
-      "/organization/" + dataItem + "/adduser/" + dataObject,
-      {},
-      "get"
+      "/organization/" + dataItem + "/save",
+      {
+        userid: dataObject
+      },
+      "post"
     );
-    return addProjectUsers;
+    return addOrgUsers;
   }
+
 
   addOrgUsers = dataItem => {
     this.setState({
@@ -49,9 +52,12 @@ class Organization extends React.Component {
   };
 
   sendTheData = (selectedUsers, dataItem) => {
+    var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      this.pushOrgUsers(dataItem, selectedUsers[i].id);
+      var uid = { id: selectedUsers[i].id };
+      temp2.push(uid);
     }
+    this.pushOrgUsers(dataItem, JSON.stringify(temp2));
     this.toggleDialog();
   };
 

@@ -3,6 +3,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
+import { Input } from "@progress/kendo-react-inputs";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -36,13 +37,11 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    console.log(this.props.formAction);
-    console.log(this.state.groupInEdit);
     PushData("group", this.props.formAction, this.state.groupInEdit.uuid, {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
       manager_id: this.state.groupInEdit.manager_id,
-      org_id: this.state.groupInEdit.org_id,
+      // org_id: this.state.groupInEdit.org_id,
       description: this.state.groupInEdit.description
     }).then(response => {
       this.props.action(response.status);
@@ -57,13 +56,18 @@ export default class DialogContainer extends React.Component {
           <form id="groupForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label>Group Name</label>
-              <input
+              <Input
                 type="text"
                 className="form-control"
                 name="name"
                 value={this.state.groupInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Name"
+                required={true}
+                validationMessage={
+                  "Please enter the Group name." 
+                }
+
               />
             </div>
             <div className="form-group">
@@ -75,11 +79,12 @@ export default class DialogContainer extends React.Component {
                 value={this.state.groupInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Description"
+                required={true}
               />
             </div>
             <div className="form-group">
               <div className="form-row">
-                <div className="col">
+                <div className="col-4">
                   <label>Group Manager</label>
                   <div>
                     <DropDown
@@ -93,7 +98,7 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="col">
+                <div className="col-4">
                   <label>Parent Group</label>
                   <div>
                     <DropDown
@@ -107,7 +112,7 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="col">
+                {/* <div className="col">
                   <label>Organization</label>
                   <div>
                     <DropDown
@@ -118,7 +123,7 @@ export default class DialogContainer extends React.Component {
                       required={true}
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </form>

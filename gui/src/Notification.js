@@ -10,6 +10,20 @@ class Notification extends React.Component {
     this.failNotification = this.failNotification.bind(this);
   }
 
+  uploadImage(){
+    this.notificationDOMRef.current.addNotification({
+      title: "Warning",
+      message: "Please choose an image.",
+      type: "warning",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
   successNotification() {
     this.notificationDOMRef.current.addNotification({
       message: "Operation succesfully completed.",

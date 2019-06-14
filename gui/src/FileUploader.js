@@ -12,11 +12,19 @@ class FileUploader extends React.Component {
     if (this.props.media == undefined) {
       this.firstUpload = new FileUploadWithPreview(this.props.uploadID);
     } else {
-      this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
-        images: {
-          baseImage: this.props.url + "resource/" + this.props.media
-        }
-      });
+      if (this.props.uploadID == "organizationLogo") {
+        this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
+          images: {
+            baseImage: this.props.media
+          }
+        });
+      } else {
+        this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
+          images: {
+            baseImage: this.props.url + "resource/" + this.props.media
+          }
+        });
+      }
     }
   }
 

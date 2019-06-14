@@ -158,27 +158,19 @@ export default class GridTemplate extends React.Component {
                 <div
                   href="#"
                   className="list-group-item list-group-item-action bg-warning"
-                  style={{ display: "flex", alignItems: "center" }}
+                  style={{
+                    display: "flex",
+                    width: "110%",
+                    alignItems: "center"
+                  }}
                 >
-                  <div style={{ fontSize: "medium" }}>No Records Available</div>
-                  <div style={{ marginLeft: "auto" }}>
+                  <div style={{ marginLeft: "10px" }}>
                     <FaInfoCircle />
                   </div>
+                  <div style={{ fontSize: "medium", paddingLeft: "30px" }}>
+                    No Records Available
+                  </div>
                 </div>
-                <li
-                  className="list-group-item"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <FaArrowCircleRight /> &nbsp; &nbsp; Please try a different
-                  search keyword.
-                </li>
-                <li
-                  className="list-group-item"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <FaArrowCircleRight /> &nbsp; &nbsp; If you see this warning
-                  all the time, please contact System Administrator.
-                </li>
               </ul>
             </div>
           </GridNoRecords>

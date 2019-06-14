@@ -25,8 +25,6 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      DOBInEdit: undefined,
-      DOJInEdit: undefined,
       userInEdit: this.props.dataItem || null
     };
   }

@@ -207,7 +207,7 @@ class Home extends React.Component {
     return (
       <div
         style={{
-          backgroundImage: "url(apps/Admin/wait.jpg)",
+          backgroundColor:"#ffffff",
           backgroundSize: "cover",
           height: this.state.windowSize || "32rem"
         }}

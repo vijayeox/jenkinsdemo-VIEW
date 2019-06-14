@@ -3,6 +3,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData } from "../components/apiCalls";
 import { SaveCancel } from "../components/index";
+import { Input } from "@progress/kendo-react-inputs";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -44,7 +45,7 @@ export default class DialogContainer extends React.Component {
           <form id="prjForm" onSubmit={this.sendData}>
             <div className="form-group">
               <label>Project Name</label>
-              <input
+              <Input
                 type="text"
                 className="form-control"
                 name="name"

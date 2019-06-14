@@ -6,7 +6,7 @@ export default class DateComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: ""
+      value: null
     };
   }
 
@@ -27,6 +27,7 @@ export default class DateComponent extends React.Component {
     }
   }
   render() {
+    console.log(this.state.value);
     return (
       <DatePicker
         format={this.props.format}

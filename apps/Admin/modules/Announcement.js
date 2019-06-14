@@ -1,6 +1,6 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, Notification } from "@oxzion/gui";
+import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerAnnounc";
 
@@ -10,11 +10,24 @@ class Announcement extends React.Component {
     this.core = this.props.args;
     this.state = {
       ancInEdit: undefined,
-      permission: "15"
+      permission: "15",
+      visible: false
     };
-
     this.notif = React.createRef();
     this.child = React.createRef();
+  }
+
+  async pushAnnouncementGroups(dataItem, dataObject) {
+    let helper = this.core.make("oxzion/restClient");
+    let addGroups = await helper.request(
+      "v1",
+      "/announcement/" + dataItem + "/save",
+      {
+        userid: dataObject
+      },
+      "post"
+    );
+    return addGroups;
   }
 
   handler = serverResponse => {
@@ -25,6 +38,42 @@ class Announcement extends React.Component {
     }
     this.child.current.child.current.refresh();
   };
+
+  addAncUsers = dataItem => {
+    this.setState({
+      visible: !this.state.visible
+    });
+    this.addUsersTemplate = React.createElement(MultiSelect, {
+      args: this.core,
+      config: {
+        dataItem: dataItem,
+        mainList: "group",
+        subList: "announcement"
+      },
+      manage: {
+        postSelected: this.sendTheData,
+        closeDialog: this.toggleDialog
+      }
+    });
+  };
+
+
+  sendTheData = (selectedUsers, dataItem) => {
+    var temp2 = [];
+    for (var i = 0; i <= selectedUsers.length - 1; i++) {
+      var uid = { id: selectedUsers[i].id };
+      temp2.push(uid);
+    }
+    this.pushAnnouncementGroups(dataItem, JSON.stringify(temp2));
+    this.toggleDialog();
+  };
+
+  toggleDialog() {
+    this.setState({
+      visible: !this.state.visible
+    });
+  }
+
 
   edit = dataItem => {
     this.setState({
@@ -67,6 +116,7 @@ class Announcement extends React.Component {
   render = () => {
     return (
       <div style={{ height: "inherit" }}>
+        {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
         <TitleBar title="Manage Announcements" />
         <GridTemplate
@@ -96,7 +146,7 @@ class Announcement extends React.Component {
             add: this.insert,
             edit: this.edit,
             remove: this.remove,
-            addUsers: this.addOrgUsers
+            addUsers: this.addAncUsers
           }}
           permission={this.state.permission}
         />

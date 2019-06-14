@@ -124,7 +124,7 @@ class Group extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Groups" />
+        <TitleBar args={this.core} title="Manage Groups" />
         <GridTemplate
           args={this.core}
           ref={this.child}

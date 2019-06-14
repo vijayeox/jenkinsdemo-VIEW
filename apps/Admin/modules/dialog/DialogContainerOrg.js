@@ -1,6 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
+import { Input } from "@progress/kendo-react-inputs";
 import { PushData } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel } from "../components/index";
@@ -15,6 +16,7 @@ export default class DialogContainer extends React.Component {
       orgInEdit: this.props.dataItem || null
     };
     this.fUpload = React.createRef();
+    this.notif = React.createRef();
   }
 
   onDialogInputChange = event => {
@@ -42,7 +44,6 @@ export default class DialogContainer extends React.Component {
     this.setState({
       orgInEdit: edited
     });
-    console.log(this.state.orgInEdit);
   };
 
   sendData = e => {
@@ -55,6 +56,7 @@ export default class DialogContainer extends React.Component {
         behavior: "smooth",
         inline: "nearest"
       });
+      this.notif.current.uploadImage();
     } else {
       PushData(
         "organization",
@@ -89,7 +91,7 @@ export default class DialogContainer extends React.Component {
           <form id="orgForm" onSubmit={this.sendData}>
             <div className="form-group">
               <label>Organization Name</label>
-              <input
+              <Input
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.name || ""}
@@ -97,6 +99,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Name"
                 required={true}
+                validationMessage={"Please enter a valid Organization Name"}
               />
             </div>
             <div className="form-group">
@@ -110,6 +113,7 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Organization Address"
                 style={{ marginTop: "5px" }}
                 required={true}
+                validationMessage={"Please enter a valid Organization Address"}
               />
             </div>
 
@@ -118,7 +122,7 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <label>City</label>
                   <div>
-                    <input
+                    <Input
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.city || ""}
@@ -126,13 +130,14 @@ export default class DialogContainer extends React.Component {
                       onChange={this.onDialogInputChange}
                       placeholder="Enter City"
                       required={true}
+                      validationMessage={"Please enter the city name."}
                     />
                   </div>
                 </div>
                 <div className="col">
                   <label>State</label>
                   <div>
-                    <input
+                    <Input
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.state || ""}
@@ -140,6 +145,7 @@ export default class DialogContainer extends React.Component {
                       onChange={this.onDialogInputChange}
                       placeholder="Enter State"
                       required={true}
+                      validationMessage={"Please enter the state name."}
                     />
                   </div>
                 </div>
@@ -150,22 +156,28 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col">
                   <label>Zip Code</label>
-                  <input
+                  <Input
                     type="number"
                     value={this.state.orgInEdit.zip || ""}
                     name="zip"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Zip Code"
+                    required={true}
+                    validationMessage={"Please enter the Zip Code."}
                   />
                 </div>
                 <div className="col">
-                  <label>Language</label>
-                  <input
+                  <label>
+                    Language
+                  </label>
+                  <Input
                     type="text"
                     value={this.state.orgInEdit.languagefile || ""}
                     name="languagefile"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Language"
+                    required={true}
+                    validationMessage={"Please enter the language."}
                   />
                 </div>
               </div>
@@ -175,7 +187,7 @@ export default class DialogContainer extends React.Component {
               <label>Contact Details</label>
               <div className="form-row">
                 <div className="col">
-                  <input
+                  <Input
                     type="text"
                     name="firstname"
                     value={
@@ -185,10 +197,11 @@ export default class DialogContainer extends React.Component {
                     }
                     onChange={this.onContactIPChange}
                     placeholder="Enter First Name"
+                    required={true}
                   />
                 </div>
                 <div className="col">
-                  <input
+                  <Input
                     type="text"
                     name="lastname"
                     value={
@@ -198,12 +211,13 @@ export default class DialogContainer extends React.Component {
                     }
                     onChange={this.onContactIPChange}
                     placeholder="Enter Last Name"
+                    required={true}
                   />
                 </div>
               </div>
               <div className="form-row" style={{ marginTop: "10px" }}>
                 <div className="col">
-                  <input
+                  <Input
                     type="email"
                     name="email"
                     value={
@@ -213,6 +227,7 @@ export default class DialogContainer extends React.Component {
                     }
                     onChange={this.onContactIPChange}
                     placeholder="Enter Email ID"
+                    required={true}
                   />
                 </div>
               </div>
@@ -221,7 +236,7 @@ export default class DialogContainer extends React.Component {
               <FileUploader
                 ref={this.fUpload}
                 url={this.url}
-                media={this.props.dataItem.media}
+                media={this.props.dataItem.logo}
                 title={"Upload Organization Logo"}
                 uploadID={"organizationLogo"}
               />
