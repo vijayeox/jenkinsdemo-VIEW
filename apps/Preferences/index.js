@@ -13,7 +13,7 @@ const register = (core, args, options, metadata) => {
     const win = proc.createWindow({
       id: 'PreferencesWindow',
       title: metadata.title.en_EN,
-      dimension: {width: 700, height: 550},
+      dimension: {width: 720, height: 550},
       position: {left: 700, top: 200},
       attributes:{  
       visibility: 'restricted',
@@ -32,8 +32,8 @@ const register = (core, args, options, metadata) => {
       win.$content.dispatchEvent(resizedEvent)
     })
     .on('destroy', () => proc.destroy())
-    .render($content => 
-        ReactDOM.render(<App args = {core} />, $content));
+    .render(($content,win) => 
+        ReactDOM.render(<App args = {core} win={win} />, $content));
     if(win.$element.className.indexOf('Window_'+applicationName) == -1){
       win.$element.className += " Window_"+applicationName;
     } 

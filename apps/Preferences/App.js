@@ -10,6 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.win = this.props.win;
     this.state = {
   
       fields:{}
@@ -65,17 +66,17 @@ async changePassword(formData){
               <span className="tabHeader">Themes</span>
             </Tab>
         </TabList>
-        <TabPanel tabId="vertical-tab-one" className="tab1">
-          <EditProfile args={this.core} />
+        <TabPanel tabId="vertical-tab-one" className="tab1"
+                  render={({ selected }) => selected ? (<EditProfile args={this.core} /> ) : (null)}>
         </TabPanel>
-        <TabPanel tabId="vertical-tab-two" className="tab1">
-        <ChangePassword changePassword={this.changePassword} />
+        <TabPanel tabId="vertical-tab-two" className="tab1"
+                  render={({ selected }) => selected ? (<ChangePassword changePassword={this.changePassword} /> ) : (null)}>
         </TabPanel>
-        <TabPanel tabId="vertical-tab-three" className="tab1">
-          <Preferences args={this.core}/>
+        <TabPanel tabId="vertical-tab-three" className="tab1"
+                  render={({ selected }) => selected ? (<Preferences args={this.core}/> ) : (null)}>
         </TabPanel>
         <TabPanel tabId="vertical-tab-four" className="tab1" 
-                  render={({ selected }) => selected ? (<Background args={this.core} /> ) : (null)}>
+                  render={({ selected }) => selected ? (<Background args={this.core} win={this.win} /> ) : (null)}>
         </TabPanel>
         <TabPanel tabId="vertical-tab-five" className="tab1"
                   render={({ selected }) => selected ? (<Themes args={this.core}/> ) : (null)}>

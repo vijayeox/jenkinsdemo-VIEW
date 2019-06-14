@@ -93,7 +93,7 @@ export default class ProfilePanelItem extends PanelItem {
         className: 'profile-dropdown-div'
       }, [
           h('img', {
-            src: profileIcon.icon,
+            src: profileIcon.icon + "?" + new Date(),
             alt: 'My Profile',
             className: 'profile-dropdown-image',
             title: 'My Profile'

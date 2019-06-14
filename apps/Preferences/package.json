@@ -21,9 +21,11 @@
     "create-react-class": "^15.6.3",
     "cross-env": "^5.2.0",
     "font-awesome": "^4.7.0",
+    "image-to-base64": "^2.0.1",
     "jquery": "^3.4.0",
     "material-ui-avatar-picker": "^1.0.3",
     "rc-datepicker": "^5.0.13",
+    "react-avatar-image-cropper": "^1.3.3",
     "react-bootstrap-datetimepicker": "0.0.22",
     "react-calendar": "^2.18.1",
     "react-date-picker-cs": "^0.1.28",
@@ -35,7 +37,8 @@
     "react-phone-number-input": "^2.3.5",
     "react-textarea-autosize": "^7.1.0",
     "react-tooltip": "^3.10.0",
-    "react-web-tabs": "^1.0.1"
+    "react-web-tabs": "^1.0.1",
+    "react-webcam": "^1.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

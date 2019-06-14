@@ -7,6 +7,7 @@ class Background extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.win = this.props.win;
     this.state = {
       styleName: "",
       colorCode: "",
@@ -173,7 +174,10 @@ class Background extends Component {
       mime: [/^image/]
     };
 
-    this.createDialog("file", args, this.callback);
+    this.createDialog("file", args,{
+      attributes: {modal: true},
+      parent: this.win
+    }, this.callback);
   };
 
   render() {
