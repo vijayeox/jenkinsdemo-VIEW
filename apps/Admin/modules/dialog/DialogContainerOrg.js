@@ -4,11 +4,18 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
 import { PushData } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel } from "../components/index";
+import { SaveCancel, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 
 import IntlTelInput from "react-intl-tel-input";
 import "react-intl-tel-input/dist/main.css";
+import TimeZoneList from "../../public/js/timezones.js";
+
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+import { filterBy } from "@progress/kendo-data-query";
+
+import withValueField from "../dialog/withValueField";
+const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -16,10 +23,19 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      orgInEdit: this.props.dataItem || null
+      orgInEdit: this.props.dataItem || null,
+      timeZone: []
     };
+    this.masterZoneList = [];
     this.fUpload = React.createRef();
     this.notif = React.createRef();
+  }
+
+  componentWillMount() {
+    this.setState({
+      timeZone: TimeZoneList
+    });
+    this.masterZoneList = TimeZoneList;
   }
 
   onDialogInputChange = event => {
@@ -49,9 +65,15 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
-    console.table(inValid, newNumber, data, fullNumber);
+  handleChange = e => {
+    let orgInEdit = this.state.orgInEdit;
+    orgInEdit[e.target.name] = e.target.value;
+    this.setState({
+      orgInEdit
+    });
+  };
 
+  onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
     orgInEdit["contact"]["phNumber"] = newNumber;
@@ -70,6 +92,7 @@ export default class DialogContainer extends React.Component {
       });
       this.notif.current.uploadImage();
     } else {
+      this.notif.current.uploadingData();
       PushData(
         "organization",
         this.props.formAction,
@@ -91,8 +114,16 @@ export default class DialogContainer extends React.Component {
         }
       ).then(response => {
         this.props.action(response.status);
+        if (response.status == "success") {
+          this.props.cancel();
+        } else if (
+          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+        ) {
+          this.notif.current.duplicateEntry();
+        } else {
+          this.notif.current.failNotification();
+        }
       });
-      this.props.cancel();
     }
   };
 
@@ -277,6 +308,56 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
             </div>
+
+            <div className="form-group border-box">
+              <label className="required-label">Organization Config</label>
+              <div className="form-row">
+                <div className="col">
+                  <Input
+                    type="text"
+                    name="dateFormat"
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.firstname
+                        : ""
+                    }
+                    onChange={this.onContactIPChange}
+                    placeholder="Enter Date Format"
+                    required={true}
+                  />
+                </div>
+                <div className="col">
+                  <Input
+                    type="text"
+                    name="lastname"
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.lastname
+                        : ""
+                    }
+                    onChange={this.onContactIPChange}
+                    placeholder="Enter Currency"
+                    required={true}
+                  />
+                </div>
+              </div>
+              <div className="form-row" style={{ marginTop: "10px" }}>
+                <div className="col">
+                  <select
+                    value={this.state.orgInEdit.timezone}
+                    onChange={this.handleChange}
+                    name="timezone"
+                  >
+                    {TimeZoneList.map((timezone, key) => (
+                      <option key={key} value={timezone.name}>
+                        {timezone.offset} {timezone.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <div className="orgFileUploader">
               <FileUploader
                 ref={this.fUpload}

@@ -10,6 +10,20 @@ class Notification extends React.Component {
     this.failNotification = this.failNotification.bind(this);
   }
 
+  uploadingData(){
+    this.notificationDOMRef.current.addNotification({
+      title: "Uploading Data",
+      message: "Please wait for a few seconds.",
+      type: "default",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 2000 },
+      dismissable: { click: true }
+    });
+  }
+
   uploadImage(){
     this.notificationDOMRef.current.addNotification({
       title: "Warning",
@@ -50,6 +64,22 @@ class Notification extends React.Component {
       dismissable: { click: true }
     });
   }
+
+  
+  duplicateEntry() {
+    this.notificationDOMRef.current.addNotification({
+      title: "Operation failed",
+      message: "Name already exists. Please try again.",
+      type: "danger",
+      insert: "bottom",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
 
   render() {
     return (
