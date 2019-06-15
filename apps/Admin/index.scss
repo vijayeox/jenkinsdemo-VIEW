@@ -76,16 +76,49 @@
     color: #3d658f;
   }
 
+  // ---Form Validation (Start)---
+
+  .required-label:after {
+    content: " *";
+    color: red;
+    font-size: 15px;
+  }
+
+  // ---Form Validation (End)---
+
+  // ---HTML Elements Direct (Start)---
+
   input {
     border: 2px solid #dadada;
     border-radius: 7px;
     padding: 2px;
   }
+
   input:focus {
     outline: none;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
   }
+
+  // ---HTML Elements Direct (End)---
+
+  // ---Custom Form Eements (Start)---
+
+  .text-area-custom {
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
+    }
+  }
+
+  // ---Custom Form Eements (End)---
 
   .control-label {
     font-size: 0.8rem;
@@ -446,13 +479,48 @@
     padding-left: 5%;
   }
 
-  .intl-tel-input {
-    width: inherit;
-    input {
-      position: relative;
-      width: 70%;
+  .text-area-custom {
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
     }
   }
+
+  // ---Contact Number Input Component (Start)---
+
+  .intl-tel-input {
+    width: inherit;
+    .country-list {
+      width: inherit;
+    }
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
+    }
+
+    .contactPhone {
+      position: relative !important;
+      width: fill-available !important;
+      width: -moz-available !important; /* WebKit-based browsers will ignore this. */
+      width: -webkit-fill-available !important; /* Mozilla-based browsers will ignore this. */
+    }
+  }
+
+  // ---Contact Number Input Component (End)---
 }
 
 .gender1,

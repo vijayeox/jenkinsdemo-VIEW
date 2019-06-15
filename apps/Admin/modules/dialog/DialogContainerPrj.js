@@ -54,7 +54,7 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Project Name"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group text-area-custom">
               <label>Project Description</label>
               <TextareaAutosize
                 type="text"

@@ -97,13 +97,20 @@ export default class DialogContainer extends React.Component {
   };
 
   render() {
+    if (typeof this.state.orgInEdit.contact == "undefined") {
+      var contactValue = "";
+    } else {
+      var contactValue = this.state.orgInEdit.contact.phNumber
+        ? this.state.orgInEdit.contact.phNumber
+        : "";
+    }
     return (
       <Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div className="container-fluid">
           <form id="orgForm" onSubmit={this.sendData}>
             <div className="form-group">
-              <label>Organization Name</label>
+              <label className="required-label">Organization Name</label>
               <Input
                 type="text"
                 className="form-control"
@@ -115,8 +122,8 @@ export default class DialogContainer extends React.Component {
                 validationMessage={"Please enter a valid Organization Name"}
               />
             </div>
-            <div className="form-group">
-              <label>Address</label>
+            <div className="form-group text-area-custom">
+              <label className="required-label">Address</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
@@ -132,7 +139,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
-                  <label>City</label>
+                  <label className="required-label">City</label>
                   <div>
                     <Input
                       type="text"
@@ -147,7 +154,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col">
-                  <label>State</label>
+                  <label className="required-label">State</label>
                   <div>
                     <Input
                       type="text"
@@ -167,7 +174,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
-                  <label>Zip Code</label>
+                  <label className="required-label">Zip Code</label>
                   <Input
                     type="number"
                     value={this.state.orgInEdit.zip || ""}
@@ -179,7 +186,7 @@ export default class DialogContainer extends React.Component {
                   />
                 </div>
                 <div className="col">
-                  <label>Language</label>
+                  <label className="required-label">Language</label>
                   <Input
                     type="text"
                     value={this.state.orgInEdit.languagefile || ""}
@@ -194,7 +201,7 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="form-group border-box">
-              <label>Contact Details</label>
+              <label className="required-label">Contact Details</label>
               <div className="form-row">
                 <div className="col">
                   <Input
@@ -227,19 +234,31 @@ export default class DialogContainer extends React.Component {
               </div>
               <div className="form-row" style={{ marginTop: "10px" }}>
                 <div className="col">
+                  <Input
+                    type="text"
+                    name="username"
+                    value={
+                      this.state.orgInEdit.contact
+                        ? this.state.orgInEdit.contact.username
+                        : ""
+                    }
+                    onChange={this.onContactIPChange}
+                    placeholder="Enter User Name"
+                    required={true}
+                  />
+                </div>
+              </div>
+              <div className="form-row" style={{ marginTop: "10px" }}>
+                <div className="col">
                   <IntlTelInput
                     containerClassName="intl-tel-input"
                     inputClassName="form-control contactPhone"
-                    value={
-                      this.state.orgInEdit.contact
-                        ? this.state.orgInEdit.contact.phNumber
-                        : ""
-                    }
+                    value={contactValue}
                     preferredCountries={["in", "us"]}
                     onPhoneNumberChange={this.onContactPhoneChange}
                     placeholder="Enter Phone Number"
-                    // format={true}
                     autoHideDialCode={true}
+                    telInputProps={{ required: true }}
                   />
                 </div>
                 <div className="col">
@@ -262,6 +281,7 @@ export default class DialogContainer extends React.Component {
               <FileUploader
                 ref={this.fUpload}
                 url={this.url}
+                required={true}
                 media={this.props.dataItem.logo}
                 title={"Upload Organization Logo"}
                 uploadID={"organizationLogo"}

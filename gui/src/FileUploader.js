@@ -39,7 +39,9 @@ class FileUploader extends React.Component {
   render() {
     return (
       <div className="form-group border-box">
-        <label>{this.props.title}</label>
+        <label className={this.props.required ? "required-label" : ""}>
+          {this.props.title}
+        </label>
         <div
           className="form-row custom-file-container"
           data-upload-id={this.props.uploadID}

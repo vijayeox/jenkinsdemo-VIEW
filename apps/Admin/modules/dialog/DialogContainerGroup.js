@@ -70,7 +70,7 @@ export default class DialogContainer extends React.Component {
 
               />
             </div>
-            <div className="form-group">
+            <div className="form-group text-area-custom">
               <label>Description</label>
               <TextareaAutosize
                 type="text"
