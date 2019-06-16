@@ -38,7 +38,7 @@ export default class GridTemplate extends React.Component {
   }
 
   componentDidMount() {
-    $(document).ready(function() {
+    $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
@@ -145,15 +145,7 @@ export default class GridTemplate extends React.Component {
           }}
         >
           <GridNoRecords>
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: "4%"
-              }}
-            >
+            <div className="grid-no-records"            >
               <ul className="list-group" style={{ listStyle: "disc" }}>
                 <div
                   href="#"
@@ -207,7 +199,7 @@ export default class GridTemplate extends React.Component {
             />
           )}
         </Grid>
-      </div>
+      </div >
     );
   }
 }

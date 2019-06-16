@@ -10,9 +10,24 @@
     background: #265160;
   }
 
+  .k-grid-norecords {
+    width: inherit !important;
+  }
+
+  .grid-no-records {
+    height: 100%;
+    width: 33%;
+    display: flex;
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+
   .k-grid-norecords :hover {
     background-color: white;
     cursor: default;
+
     .list-group {
       background-color: revert;
     }
@@ -21,6 +36,7 @@
   .noRecords :hover {
     background-color: transparent;
   }
+
   // move to gui
 
   .custom-file-container__image-preview {
@@ -120,6 +136,102 @@
 
   // ---Custom Form Eements (End)---
 
+  // ---TimeZone Picker (Start)---
+
+  .timeZonePicker {
+    div {
+      display: flex;
+      width: inherit;
+      font: 15px sans-serif;
+      position: relative;
+    }
+
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::-moz-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    input {
+      width: 100%;
+      padding: 9px 12px;
+      font: inherit;
+      box-sizing: border-box;
+      outline: 0;
+      background: #fff;
+      border: 1px solid #e6ebec;
+      border-radius: 2px;
+      color: #474747;
+    }
+
+    ul {
+      position: absolute;
+      z-index: 15;
+      top: 100%;
+      left: 0;
+      right: 0;
+      border-radius: 0 0 3px 3px;
+      position: absolute;
+      list-style: none;
+      text-align: left;
+      padding: 0;
+      margin: 0 0 0 -1px;
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+      background-color: #fff;
+      border: 1px solid #ccc;
+      white-space: nowrap;
+      max-height: 200px;
+      overflow-y: scroll;
+      display: none;
+    }
+
+    li {
+      display: block;
+    }
+
+    button {
+      color: #444;
+      padding: 5px 12px;
+      cursor: pointer;
+      outline: none;
+      display: block;
+      border: 0;
+      width: 100%;
+      text-align: left;
+      border-radius: 0;
+      font: inherit;
+      background: transparent;
+    }
+
+    button.focus {
+      background: #f0f0f0;
+    }
+
+    ul.open {
+      display: block;
+    }
+
+    input::-ms-clear {
+      display: none;
+    }
+  }
+
+  // ---TimeZone Picker (End)---
+
   .control-label {
     font-size: 0.8rem;
     font-weight: bold;
@@ -136,6 +248,7 @@
     margin: -5px auto 5px;
     color: #999;
   }
+
   .form-hint.error {
     color: #c00;
     font-size: 0.8rem;
@@ -160,6 +273,7 @@
     margin: 7px 0;
     border-radius: 2px;
   }
+
   .strength-meter:before,
   .strength-meter:after {
     content: "";
@@ -173,9 +287,11 @@
     width: calc(20% + 6px);
     z-index: 10;
   }
+
   .strength-meter:before {
     left: calc(20% - 3px);
   }
+
   .strength-meter:after {
     right: calc(20% - 3px);
   }
@@ -188,24 +304,29 @@
     border-radius: inherit;
     transition: width 0.5s ease-in-out, background 0.25s;
   }
+
   .strength-meter-fill[data-strength="1"],
   .strength-meter-fill[data-strength="2"] {
     width: 20%;
     background: darkred;
   }
+
   .strength-meter-fill[data-strength="3"],
   .strength-meter-fill[data-strength="4"] {
     width: 40%;
     background: orangered;
   }
+
   .strength-meter-fill[data-strength="5"] {
     width: 60%;
     background: orange;
   }
+
   .strength-meter-fill[data-strength="6"] {
     width: 80%;
     background: yellowgreen;
   }
+
   .strength-meter-fill[data-strength="7"] {
     width: 100%;
     background: green;
@@ -497,9 +618,11 @@
 
   .intl-tel-input {
     width: inherit;
+
     .country-list {
       width: inherit;
     }
+
     ::-webkit-input-placeholder {
       color: #9e9e9e;
     }
@@ -515,8 +638,10 @@
     .contactPhone {
       position: relative !important;
       width: fill-available !important;
-      width: -moz-available !important; /* WebKit-based browsers will ignore this. */
-      width: -webkit-fill-available !important; /* Mozilla-based browsers will ignore this. */
+      width: -moz-available !important;
+      /* WebKit-based browsers will ignore this. */
+      width: -webkit-fill-available !important;
+      /* Mozilla-based browsers will ignore this. */
     }
   }
 

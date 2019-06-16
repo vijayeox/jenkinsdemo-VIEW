@@ -4,18 +4,14 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
 import { PushData } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel, DropDown } from "../components/index";
+import { SaveCancel, TimezonePicker } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 
 import IntlTelInput from "react-intl-tel-input";
 import "react-intl-tel-input/dist/main.css";
-import TimeZoneList from "../../public/js/timezones.js";
 
-import { DropDownList } from "@progress/kendo-react-dropdowns";
-import { filterBy } from "@progress/kendo-data-query";
+import CurrencySelect from "../components/Currency Select/currencySelect.js"
 
-import withValueField from "../dialog/withValueField";
-const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -23,19 +19,10 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      orgInEdit: this.props.dataItem || null,
-      timeZone: []
+      orgInEdit: this.props.dataItem || null
     };
-    this.masterZoneList = [];
     this.fUpload = React.createRef();
     this.notif = React.createRef();
-  }
-
-  componentWillMount() {
-    this.setState({
-      timeZone: TimeZoneList
-    });
-    this.masterZoneList = TimeZoneList;
   }
 
   onDialogInputChange = event => {
@@ -66,11 +53,7 @@ export default class DialogContainer extends React.Component {
   };
 
   handleChange = e => {
-    let orgInEdit = this.state.orgInEdit;
-    orgInEdit[e.target.name] = e.target.value;
-    this.setState({
-      orgInEdit
-    });
+    console.log(e);
   };
 
   onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
@@ -327,33 +310,20 @@ export default class DialogContainer extends React.Component {
                   />
                 </div>
                 <div className="col">
-                  <Input
-                    type="text"
-                    name="lastname"
-                    value={
-                      this.state.orgInEdit.contact
-                        ? this.state.orgInEdit.contact.lastname
-                        : ""
-                    }
-                    onChange={this.onContactIPChange}
-                    placeholder="Enter Currency"
-                    required={true}
-                  />
+                <CurrencySelect id={'select-currency'} name={'currency'} value={""} onChange={this.onChange} />
                 </div>
               </div>
               <div className="form-row" style={{ marginTop: "10px" }}>
-                <div className="col">
-                  <select
-                    value={this.state.orgInEdit.timezone}
-                    onChange={this.handleChange}
-                    name="timezone"
-                  >
-                    {TimeZoneList.map((timezone, key) => (
-                      <option key={key} value={timezone.name}>
-                        {timezone.offset} {timezone.name}
-                      </option>
-                    ))}
-                  </select>
+                <div className="col timeZonePicker">
+                  <TimezonePicker
+                    onChange={timezone =>
+                      console.log("New Timezone Selected:", timezone)
+                    }
+                    inputProps={{
+                      placeholder: "Select Organization Timezone",
+                      name: "timezone"
+                    }}
+                  />
                 </div>
               </div>
             </div>
