@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import Codes from "./Codes";
 import Moment from "moment";
-import "@progress/kendo-ui";
-import TextareaAutosize from "react-textarea-autosize";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Notification from "../components/Notification";
 import AvatarImageCropper from "react-avatar-image-cropper";

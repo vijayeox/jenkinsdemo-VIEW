@@ -6,6 +6,7 @@ const webpack = require('webpack');
 const mode = process.env.NODE_ENV || 'development';
 const minimize = mode === 'production';
 const plugins = [];
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 if (mode === 'production') {
   plugins.push(new OptimizeCSSAssetsPlugin({
@@ -30,6 +31,7 @@ module.exports = {
     minimize,
   },
   plugins: [
+    // new BundleAnalyzerPlugin(),
     new CopyWebpackPlugin([
       'Images/'
     ]),
