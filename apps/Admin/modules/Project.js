@@ -55,10 +55,11 @@ class Project extends React.Component {
     this.setState({
       visible: !this.state.visible
     });
-    this.addUsersTemplate = React.createElement(MultiSelect, {
+    self = this.addUsersTemplate = React.createElement(MultiSelect, {
       args: this.core,
       config: {
         dataItem: dataItem,
+        title: "Project",
         mainList: "user",
         subList: "project"
       },
@@ -70,14 +71,29 @@ class Project extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    var temp1 = selectedUsers;
-    var temp2 = [];
-    for (var i = 0; i <= temp1.length - 1; i++) {
-      var uid = { id: temp1[i].id };
-      temp2.push(uid);
+    if (selectedUsers.length == 0) {
+      Swal.fire({
+        title: "Action not possible",
+        text: "Please have atleast one user for the project.",
+        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+        imageWidth: 75,
+        imageHeight: 75,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#66bb6a",
+        target: ".Window_Admin"
+      });
+    } else {
+      var temp1 = selectedUsers;
+      var temp2 = [];
+      for (var i = 0; i <= temp1.length - 1; i++) {
+        var uid = { id: temp1[i].id };
+        temp2.push(uid);
+      }
+      this.pushProjectUsers(item, JSON.stringify(temp2)).then(response => {
+        this.child.current.refreshHandler(response.status);
+      });
+      this.toggleDialog();
     }
-    this.pushProjectUsers(item, JSON.stringify(temp2));
-    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -155,7 +171,7 @@ class Project extends React.Component {
             addUsers: this.addProjectUsers
           }}
           permission={this.state.permission}
-        />{" "}
+        />
         {this.state.prjInEdit && this.inputTemplate}
       </div>
     );

@@ -52,8 +52,18 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  handleChange = e => {
-    console.log(e);
+  onPrefrencesChange = event => {
+    let target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.props ? target.props.name : target.name;
+
+    const edited = this.state.orgInEdit;
+    edited["prefrences"] = edited["prefrences"] ? edited["prefrences"] : {};
+    edited["prefrences"][name] = value;
+
+    this.setState({
+      orgInEdit: edited
+    });
   };
 
   onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {

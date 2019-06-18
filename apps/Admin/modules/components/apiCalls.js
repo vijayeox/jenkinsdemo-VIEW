@@ -43,19 +43,16 @@ export async function GetData(api) {
 }
 
 export async function PushData(api, method, item, body) {
-  console.log(body);
   if (method == "put") {
     let response = await helper.request(
       "v1",
       "/" + api + "/" + item,
       body,
-      "post"
+      method
     );
     return response;
   } else if (method == "post") {
     let response = await helper.request("v1", "/" + api, body, method);
     return response;
   }
-
-
 }

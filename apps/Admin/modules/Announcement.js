@@ -15,19 +15,32 @@ class Announcement extends React.Component {
     };
     this.notif = React.createRef();
     this.child = React.createRef();
+    this.toggleDialog = this.toggleDialog.bind(this);
   }
 
   async pushAnnouncementGroups(dataItem, dataObject) {
+    console.log(dataObject);
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem + "/save",
+      "/announcement/" + dataItem,
       {
-        userid: dataObject
+        groups: dataObject
       },
-      "post"
+      "put"
     );
     return addGroups;
+  }
+
+  async getAnnouncementGroups(dataItem) {
+    let helper = this.core.make("oxzion/restClient");
+    let groupUsers = await helper.request(
+      "v1",
+      "/announcement/" + dataItem + "/groups",
+      {},
+      "get"
+    );
+    return groupUsers;
   }
 
   handler = serverResponse => {
@@ -40,23 +53,26 @@ class Announcement extends React.Component {
   };
 
   addAncUsers = dataItem => {
-    this.setState({
-      visible: !this.state.visible
-    });
-    this.addUsersTemplate = React.createElement(MultiSelect, {
-      args: this.core,
-      config: {
-        dataItem: dataItem,
-        mainList: "group",
-        subList: "announcement"
-      },
-      manage: {
-        postSelected: this.sendTheData,
-        closeDialog: this.toggleDialog
-      }
+    this.getAnnouncementGroups(dataItem.uuid).then(response => {
+      console.log(response);
+      this.addUsersTemplate = React.createElement(MultiSelect, {
+        args: this.core,
+        config: {
+          dataItem: dataItem,
+          title: "Announcement",
+          mainList: "group",
+          subList: response.data
+        },
+        manage: {
+          postSelected: this.sendTheData,
+          closeDialog: this.toggleDialog
+        }
+      });
+      this.setState({
+        visible: !this.state.visible
+      });
     });
   };
-
 
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
@@ -73,7 +89,6 @@ class Announcement extends React.Component {
       visible: !this.state.visible
     });
   }
-
 
   edit = dataItem => {
     this.setState({
@@ -93,7 +108,7 @@ class Announcement extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("announcement", dataItem.id).then(response => {
+    DeleteEntry("announcement", dataItem.uuid).then(response => {
       this.handler(response.status);
     });
   };
@@ -125,7 +140,7 @@ class Announcement extends React.Component {
           config={{
             showToolBar: true,
             title: "Announcement",
-            api:"announcement/a",
+            api: "announcement/a",
             column: [
               {
                 title: "Banner",

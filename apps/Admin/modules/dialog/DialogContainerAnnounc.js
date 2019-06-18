@@ -22,30 +22,6 @@ export default class DialogContainer extends React.Component {
     this.setState({ ancInEdit: ancInEdit });
   };
 
-  async getAnnouncementGroups(dataItem) {
-    let helper = this.core.make("oxzion/restClient");
-    let groupUsers = await helper.request(
-      "v1",
-      "/announcement/" + dataItem + "/group",
-      {},
-      "get"
-    );
-    return groupUsers;
-  }
-
-  async pushAnnouncementGroups(dataItem, dataObject) {
-    let helper = this.core.make("oxzion/restClient");
-    let addGroups = await helper.request(
-      "v1",
-      "/announcement/" + dataItem + "/save",
-      {
-        userid: dataObject
-      },
-      "post"
-    );
-    return addGroups;
-  }
-
   async pushFile(event) {
     var files = this.fUpload.current.firstUpload.cachedFileArray[0];
     let helper = this.core.make("oxzion/restClient");
@@ -84,13 +60,15 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let orgEditData = await helper.request(
       "v1",
-      "/announcement/" + this.state.ancInEdit.id,
+      "/announcement/" + this.state.ancInEdit.uuid,
       {
         name: this.state.ancInEdit.name,
         media: fileCode,
         status: "1",
         description: this.state.ancInEdit.description,
-        media_type: this.state.ancInEdit.media_type
+        media_type: this.state.ancInEdit.media_type,
+        start_date: new Moment(this.state.ancInEdit.start_date).format(),
+        end_date: new Moment(this.state.ancInEdit.end_date).format()
       },
       "put"
     );

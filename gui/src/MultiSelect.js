@@ -5,6 +5,7 @@ import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import "./public/css/syncfusion.css";
 import { Grid, GridColumn, GridCell } from "@progress/kendo-react-grid";
+import Swal from "sweetalert2";
 import $ from "jquery";
 
 class MultiSelect extends React.Component {
@@ -17,30 +18,38 @@ class MultiSelect extends React.Component {
       showHelp: false
     };
     this.handleChange = this.handleChange.bind(this);
+    this.getMainList = this.getMainList.bind(this);
   }
 
   componentDidMount() {
-    console.log(this.props);
     let loader = this.core.make("oxzion/splash");
     loader.show();
-    ExistingUsers(
-      this.props.config.subList,
-      this.props.config.dataItem.uuid
-    ).then(response => {
+
+    if (typeof this.props.config.subList == "object") {
       this.setState({
-        selectedUsers: response.data
+        selectedUsers: this.props.config.subList
       });
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
-    });
+    } else {
+      ExistingUsers(
+        this.props.config.subList,
+        this.props.config.dataItem.uuid
+      ).then(response => {
+        this.setState({
+          selectedUsers: response.data
+        });
+        let loader = this.core.make("oxzion/splash");
+        loader.destroy();
+      });
+    }
   }
 
   getMainList = (query, size) => {
-    GetDataSearch("user", query, size).then(response => {
+    GetDataSearch(this.props.config.mainList, query, size).then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName =
-          response.data[i].firstname + " " + response.data[i].lastname;
+        var userName = response.data[i].name;
         var userid = response.data[i].id;
         tempUsers.push({ id: userid, name: userName });
       }
@@ -49,6 +58,10 @@ class MultiSelect extends React.Component {
       });
     });
   };
+
+  capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   filterChange = e => {
     if (e.filter.value.length > 0) {
@@ -80,28 +93,46 @@ class MultiSelect extends React.Component {
   };
 
   tagRender = (tagData, li) => {
-    $(document).ready(function() {
+    const self = this;
+    $(document).ready(function(item) {
       $(".k-searchbar")
         .children()
-        .attr({ placeholder: "Search For Users" })
+        .attr({
+          placeholder:
+            "Search For " +
+            self.capitalizeFirstLetter(self.props.config.mainList) +
+            "'s"
+        })
         .css("min-width", "387px");
     });
   };
 
   onOpen = () => {
+    const self = this;
     $(document).ready(function() {
       $(".k-searchbar")
         .children()
-        .attr({ placeholder: "Search For Users" })
+        .attr({
+          placeholder:
+            "Search For " +
+            self.capitalizeFirstLetter(self.props.config.mainList) +
+            "'s"
+        })
         .css("min-width", "387px");
     });
   };
 
   onClose = () => {
+    const self = this;
     $(document).ready(function() {
       $(".k-searchbar")
         .children()
-        .attr({ placeholder: "Search For Users" })
+        .attr({
+          placeholder:
+            "Search For " +
+            self.capitalizeFirstLetter(self.props.config.mainList) +
+            "'s"
+        })
         .css("min-width", "387px");
     });
   };
@@ -112,7 +143,7 @@ class MultiSelect extends React.Component {
 
   deleteRecord = item => {
     const selectedUsers = this.state.selectedUsers.slice();
-    const index = selectedUsers.findIndex(p => p.userid === item.userid);
+    const index = selectedUsers.findIndex(p => p.id === item.id);
     if (index !== -1) {
       selectedUsers.splice(index, 1);
       this.setState({
@@ -124,14 +155,12 @@ class MultiSelect extends React.Component {
   render() {
     return (
       <div className="multiselectWindow">
-        <Dialog
-          title={"Add Users to the Organization"}
-          onClose={this.props.manage.toggleDialog}
-        >
+        <Dialog onClose={this.props.manage.toggleDialog}>
           <nav className="navbar bg-dark">
             <h6 style={{ color: "white", paddingTop: "3px" }}>
-              Project &nbsp; -&nbsp; {this.props.config.dataItem.name}
-              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage Users
+              {this.props.config.title} &nbsp; -&nbsp; {this.props.config.dataItem.name}
+              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage &nbsp;
+              {this.capitalizeFirstLetter(this.props.config.mainList+"'s")}
             </h6>
           </nav>
           <div
@@ -153,7 +182,7 @@ class MultiSelect extends React.Component {
                 dataItemKey="id"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
-                placeholder="Click to add Users"
+                placeholder={"Click to add " + this.props.config.mainList}
               />
             </div>
           </div>
@@ -209,7 +238,24 @@ function cellWithEditing(remove) {
           <button
             className="k-primary k-button k-grid-edit-command"
             onClick={() => {
-              remove(this.props.dataItem);
+              Swal.fire({
+                title: "Are you sure?",
+                text:
+                  "You are about to remove " + this.props.dataItem.name + ".",
+                imageUrl:
+                  "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+                imageWidth: 75,
+                imageHeight: 75,
+                confirmButtonText: "OK",
+                confirmButtonColor: "#d33",
+                showCancelButton: true,
+                cancelButtonColor: "#3085d6",
+                target: ".Window_Admin"
+              }).then(result => {
+                if (result.value) {
+                  remove(this.props.dataItem);
+                }
+              });
             }}
           >
             Remove

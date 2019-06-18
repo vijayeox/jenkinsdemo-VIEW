@@ -55,7 +55,7 @@ export default class DialogContainer extends React.Component {
         <div>
           <form id="groupForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
-              <label>Group Name</label>
+              <label className="required-label">Group Name</label>
               <Input
                 type="text"
                 className="form-control"
@@ -64,14 +64,11 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Name"
                 required={true}
-                validationMessage={
-                  "Please enter the Group name." 
-                }
-
+                validationMessage={"Please enter the Group name."}
               />
             </div>
             <div className="form-group text-area-custom">
-              <label>Description</label>
+              <label className="required-label">Description</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
@@ -85,7 +82,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col-4">
-                  <label>Group Manager</label>
+                  <label className="required-label">Group Manager</label>
                   <div>
                     <DropDown
                       args={this.core}

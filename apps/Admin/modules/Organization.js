@@ -41,6 +41,7 @@ class Organization extends React.Component {
       args: this.core,
       config: {
         dataItem: dataItem,
+        title:"Organization",
         mainList: "user",
         subList: "organization"
       },

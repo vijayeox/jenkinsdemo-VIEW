@@ -41,6 +41,7 @@ class Group extends React.Component {
       args: this.core,
       config: {
         dataItem: dataItem,
+        title:"Group",
         mainList: "user",
         subList: "group"
       },
@@ -52,7 +53,6 @@ class Group extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    console.log(selectedUsers);
     if (selectedUsers.length == 0) {
       Swal.fire({
         title: "Action not possible",

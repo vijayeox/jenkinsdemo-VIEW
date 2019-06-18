@@ -4,7 +4,7 @@ import { PushData } from "../components/apiCalls";
 import { SaveCancel } from "../components/index";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
 import { Ripple } from "@progress/kendo-react-ripple";
-import { orderBy } from '@progress/kendo-data-query';
+import { orderBy } from "@progress/kendo-data-query";
 
 export default class PrivilegeTemplate extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class PrivilegeTemplate extends React.Component {
       roleInEdit: this.props.dataItem || null,
       privilegeData1: [],
       temp: ["1", "2", "4"],
-      sort:[]
+      sort: []
     };
     this.getPrivilegeData().then(response => {
       var ar = response.data;
@@ -46,7 +46,8 @@ export default class PrivilegeTemplate extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let privilegedata = await helper2.request(
       "v1",
-      "/role/" + this.props.dataItem.id + "/privilege",
+      // "/role/" + this.props.dataItem.id + "/privilege",
+      "/privilege",
       {},
       "get"
     );
@@ -77,11 +78,11 @@ export default class PrivilegeTemplate extends React.Component {
                 reorderable={true}
                 sortable
                 sort={this.state.sort}
-                onSortChange={(e) => {
+                onSortChange={e => {
                   this.setState({
-                      sort: e.sort
+                    sort: e.sort
                   });
-              }}
+                }}
                 scrollable={"scrollable"}
               >
                 <GridColumn title="App Name" field="name" />
@@ -89,7 +90,7 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Privilege Name"
                   cell={props => (
                     <td>
-                      <label>{props.dataItem.privilege_name.slice(7)}</label>
+                      <label>{props.dataItem.name.slice(7)}</label>
                     </td>
                   )}
                 />
@@ -98,17 +99,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Read"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission & 1 ? (
+                    props.dataItem.permission_allowed & 1 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.privilege_name + "_R"}
+                            id={props.dataItem.name + "_R"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.privilege_name + "_R"}
+                            htmlFor={props.dataItem.name + "_R"}
                           />
                         </div>
                       </td>
@@ -121,17 +122,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Write"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission & 2 ? (
+                    props.dataItem.permission_allowed & 2 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.privilege_name + "_W"}
+                            id={props.dataItem.name + "_W"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.privilege_name + "_W"}
+                            htmlFor={props.dataItem.name + "_W"}
                           />
                         </div>
                       </td>
@@ -144,17 +145,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Create"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission & 4 ? (
+                    props.dataItem.permission_allowed & 4 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.privilege_name + "_C"}
+                            id={props.dataItem.name + "_C"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.privilege_name + "_C"}
+                            htmlFor={props.dataItem.name + "_C"}
                           />
                         </div>
                       </td>
@@ -167,17 +168,17 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Delete"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission & 8 ? (
+                    props.dataItem.permission_allowed & 8 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <input
                             type="checkbox"
-                            id={props.dataItem.privilege_name + "_D"}
+                            id={props.dataItem.name + "_D"}
                             className="k-checkbox"
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.privilege_name + "_D"}
+                            htmlFor={props.dataItem.name + "_D"}
                           />
                         </div>
                       </td>

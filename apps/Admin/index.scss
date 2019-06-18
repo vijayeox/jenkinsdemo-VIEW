@@ -15,6 +15,7 @@
   }
 
   .grid-no-records {
+    padding-top: 10%;
     height: 100%;
     width: 33%;
     display: flex;
@@ -231,6 +232,10 @@
   }
 
   // ---TimeZone Picker (End)---
+
+  .notification-close {
+    top: 10px !important;
+  }
 
   .control-label {
     font-size: 0.8rem;
