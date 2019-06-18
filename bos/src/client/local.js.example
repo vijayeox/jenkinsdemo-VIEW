@@ -1,4 +1,5 @@
 module.exports = {
+    development : true,
     wrapper: {
       url: "http://localhost:8080/"
   }
