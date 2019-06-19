@@ -28,11 +28,11 @@ class EditProfile extends Component {
     this.doj = null;
     this.state = {
       DOBInEdit: undefined,
-      phone: "",
+      phoneno: "",
       heightSet: 0,
       selectedCountry: [],
       country: "India",
-      dial_code: "India +91",
+      dial_code: "+91",
       errors: {},
       initialized: -1,
       phonenumber: {},
@@ -47,7 +47,6 @@ class EditProfile extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.onSelect2 = this.onSelect2.bind(this);
     this.onSelect1 = this.onSelect1.bind(this);
-    this.joinPhNo = this.joinPhNo.bind(this);
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
   }
@@ -59,12 +58,17 @@ class EditProfile extends Component {
   }
 
   splitPhoneNumber() {
-    const phoneno = this.state.fields.phone;
-    const phone1 = phoneno.indexOf("-");
-    this.setState({
-      dial_code: phoneno.substring(0, phone1),
-      phoneno: phoneno.substring(phone1 + 1)
-    });
+    if(this.state.fields.phone == (null || undefined)){
+      return;
+    }
+    else if(this.state.fields.phone){
+      const phoneno = this.state.fields.phone;
+      const phone1 = phoneno.indexOf("-");
+      this.setState({
+        dial_code: phoneno.substring(0, phone1),
+        phoneno: phoneno.substring(phone1 + 1)
+      });
+    }
   }
 
   onSelect2(event) {
@@ -104,11 +108,6 @@ class EditProfile extends Component {
     });
   }
 
-  joinPhNo() {
-    const phoneno1 = this.state.dial_code + "-" + this.state.phoneno;
-    this.state.fields.phone = phoneno1;
-  }
-
   getStandardDateString(date1) {
     return new Moment(date1).format();
   }
@@ -118,7 +117,12 @@ class EditProfile extends Component {
 
     if (this.validateForm()) {
       const formData = {};
-      this.joinPhNo();
+
+      let fields = {...this.state.fields};
+      fields.phone = this.state.dial_code + "-" + this.state.phoneno;
+      this.setState({
+        fields: fields
+      });
 
       let date_of_birth = this.getStandardDateString(
         this.state.fields.date_of_birth
@@ -387,7 +391,7 @@ class EditProfile extends Component {
                   ref="firstname"
                   id="firstname"
                   pattern={"[A-Za-z ]+"}
-                  value={this.state.fields.firstname}
+                  value={this.state.fields.firstname ? this.state.fields.firstname : ""}
                   onChange={this.handleChange}
                   required
                   className="validate"
@@ -402,7 +406,7 @@ class EditProfile extends Component {
                   ref="lastname"
                   id="lastname"
                   pattern={"[A-Za-z ]+"}
-                  value={this.state.fields.lastname}
+                  value={this.state.fields.lastname ? this.state.fields.lastname : ""}
                   onChange={this.handleChange}
                   required
                   className="validate"
@@ -423,7 +427,7 @@ class EditProfile extends Component {
               <input
                 name="email"
                 type="text"
-                value={this.state.fields.email}
+                value={this.state.fields.email ? this.state.fields.email: ""}
                 ref="email"
                 id="email"
                 readOnly={true}
@@ -440,7 +444,7 @@ class EditProfile extends Component {
                   name="date_of_birth"
                   id="date_of_birth"
                   ref="date_of_birth"
-                  value={this.state.fields.date_of_birth}
+                  value={this.state.fields.date_of_birth ? this.state.fields.date_of_birth : ""}
                   onChange={this.handleDOBChange}
                   readOnly
                 />
@@ -497,7 +501,7 @@ class EditProfile extends Component {
               <div className="col-md-5">
                 <select
                   className="dropdownstyle"
-                  value={this.state.dial_code}
+                  value={this.state.dial_code ? this.state.dial_code: ""}
                   onChange={this.onSelect1}
                   id="dial_code"
                   name="dial_code"
@@ -518,7 +522,7 @@ class EditProfile extends Component {
                   ref="phoneno"
                   name="phoneno"
                   required
-                  value={this.state.phoneno}
+                  value={this.state.phoneno? this.state.phoneno : ""}
                   onChange={this.onSelect2}
                 />
                 <div className="errorMsg">{this.state.errors["phoneno"]}</div>
@@ -538,7 +542,7 @@ class EditProfile extends Component {
                   type="text"
                   ref="address"
                   name="address"
-                  value={this.state.fields.address}
+                  value={this.state.fields.address ? this.state.fields.address: ""}
                   onChange={this.handleChange}
                   required
                 />
@@ -554,7 +558,7 @@ class EditProfile extends Component {
 
             <div className="col-md-12">
               <select
-                value={this.state.fields.country}
+                value={this.state.fields.country? this.state.fields.country: ""}
                 onChange={this.handleChange}
                 ref="country"
                 id="country"
@@ -577,7 +581,7 @@ class EditProfile extends Component {
                 type="text"
                 ref="website"
                 name="website"
-                value={this.state.fields.website}
+                value={this.state.fields.website ? this.state.fields.website: ""}
                 onChange={this.handleChange}
               />
             </div>
@@ -610,7 +614,7 @@ class EditProfile extends Component {
                 required
                 className="validate"
                 name="interest"
-                value={this.state.fields.interest}
+                value={this.state.fields.interest ? this.state.fields.interest : ""}
                 onChange={this.handleChange}
               />
               <div className="errorMsg">{this.state.errors["interest"]}</div>
