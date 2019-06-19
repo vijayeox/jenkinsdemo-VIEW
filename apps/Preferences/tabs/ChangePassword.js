@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import Notification from "../components/Notification"
+import Notification from "../components/Notification";
 
 class ChangePassword extends Component {
   constructor() {
     super();
     this.state = {
-      type: 'password',
-      type1: 'password',
-      type2: 'password',
+      type: "password",
+      type1: "password",
+      type2: "password",
       fields: {},
       errors: {}
     };
@@ -20,10 +20,10 @@ class ChangePassword extends Component {
     this.notif = React.createRef();
   }
 
-  componentDidMount(){
+  componentDidMount() {
     // var selectElems1 = document.querySelectorAll(".tooltipped");
     // var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
-    }
+  }
 
   handleChange(e) {
     let fields = this.state.fields;
@@ -41,11 +41,13 @@ class ChangePassword extends Component {
         formData[key] = this.state.fields[key];
       });
 
-      this.props.changePassword(formData).then((response) => {
+      this.props.changePassword(formData).then(response => {
         if (response.status == "error") {
-         this.notif.current.failNotification(response.message);
-        }else{
-          this.notif.current.successNotification("Password update successfull.");
+          this.notif.current.failNotification(response.message);
+        } else {
+          this.notif.current.successNotification(
+            "Password update successfull."
+          );
         }
       });
     }
@@ -54,22 +56,22 @@ class ChangePassword extends Component {
     e.preventDefault();
     e.stopPropagation();
     this.setState({
-      type: this.state.type === 'text' ? 'password' : 'text'
-    })
+      type: this.state.type === "text" ? "password" : "text"
+    });
   }
   showHide1(e) {
     e.preventDefault();
     e.stopPropagation();
     this.setState({
-      type1: this.state.type1 === 'text' ? 'password' : 'text'
-    })
+      type1: this.state.type1 === "text" ? "password" : "text"
+    });
   }
   showHide2(e) {
     e.preventDefault();
     e.stopPropagation();
     this.setState({
-      type2: this.state.type2 === 'text' ? 'password' : 'text'
-    })
+      type2: this.state.type2 === "text" ? "password" : "text"
+    });
   }
 
   validateForm() {
@@ -92,55 +94,59 @@ class ChangePassword extends Component {
       errors["confirm_password"] = "*Please confirm your password";
     }
 
-    if (fields["new_password"]!=fields["confirm_password"]) {
+    if (fields["new_password"] != fields["confirm_password"]) {
       formIsValid = false;
       errors["confirm_password"] = "*Password does not match";
-    }    
-    if(fields["new_password"].length < 8) {
+    }
+    if (fields["new_password"].length < 8) {
       formIsValid = false;
-      errors["new_password"] = "Password must contain at least eight characters!";
+      errors["new_password"] =
+        "Password must contain at least eight characters!";
     }
     var re = /[0-9]/;
-    if(!re.test(fields["new_password"])) {
+    if (!re.test(fields["new_password"])) {
       formIsValid = false;
-      errors["new_password"]="Password must contain at least one number (0-9)!";        
+      errors["new_password"] =
+        "Password must contain at least one number (0-9)!";
     }
 
     re = /[a-z]/;
-    if(!re.test(fields["new_password"])) {
+    if (!re.test(fields["new_password"])) {
       formIsValid = false;
-      errors["new_password"]="Password must contain at least one lowercase letter (a-z)!";
+      errors["new_password"] =
+        "Password must contain at least one lowercase letter (a-z)!";
     }
 
     re = /[A-Z]/;
-    if(!re.test(fields["new_password"])) {
-     formIsValid = false;
-     errors["new_password"]= "Password must contain at least one uppercase letter (A-Z)!";
-   }
+    if (!re.test(fields["new_password"])) {
+      formIsValid = false;
+      errors["new_password"] =
+        "Password must contain at least one uppercase letter (A-Z)!";
+    }
 
-   re=/[$ & + , : ; = ? @ # | ' < > . - ^ * ( ) % !]/;
-   if(!re.test(fields["new_password"])) {
-    formIsValid = false;
-    errors["new_password"]= "Password must contain at least one Special Character($&+,:;=?@#|'<>.-^*()%!)!";
+    re = /[$ & + , : ; = ? @ # | ' < > . - ^ * ( ) % !]/;
+    if (!re.test(fields["new_password"])) {
+      formIsValid = false;
+      errors["new_password"] =
+        "Password must contain at least one Special Character($&+,:;=?@#|'<>.-^*()%!)!";
+    }
+
+    this.setState({
+      errors: errors
+    });
+    return formIsValid;
   }
 
-
-  this.setState({
-    errors: errors
-  });
-  return formIsValid;
-}
-
-init() {}
-render() {
-  return (
-    <form onSubmit={this.handleSubmit}>
-      <Notification ref={this.notif} />        
-      <div className="form">
-        <div className="row">
+  init() {}
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <Notification ref={this.notif} />
+        <div className="form">
+          <div className="row">
             <div className="col s12">
-              <div className="password input-field">  
-               <label>Old Password *</label>   
+              <div className="password input-field">
+                <label>Old Password *</label>
                 <input
                   type={this.state.type}
                   className="password_input"
@@ -148,70 +154,89 @@ render() {
                   ref="old_password"
                   onChange={this.handleChange}
                 />
-               <span style={{ height: "25px" }}
+                <span
+                  style={{ height: "25px" }}
                   className="password__show"
-                  onClick={this.showHide}>{this.state.type === 'text' ? 'Hide' : 'Show'}
+                  onClick={this.showHide}
+                >
+                  {this.state.type === "text" ? "Hide" : "Show"}
                 </span>
                 <div className="errorMsg">{this.state.errors.old_password}</div>
               </div>
             </div>
-        </div>
-        <div className="row">
+          </div>
+          <div className="row">
             <div className="col s12">
-                <div className="password input-field">   
-                <label>New Password *</label>  
-                  <input
-                      id="new"
-                      type={this.state.type1}
-                      name="new_password"
-                      ref="new_password"
-                      onChange={this.handleChange}
-                  />
-                  <span style={{ height: "25px" }}
-                      className="password__show"
-                      onClick={this.showHide1}>{this.state.type1 === 'text' ? 'Hide' : 'Show'}
-                  </span>
-                  <div className="errorMsg">{this.state.errors.new_password}</div>
+              <div className="password input-field">
+                <label>New Password *</label>
+                <input
+                  id="new"
+                  type={this.state.type1}
+                  name="new_password"
+                  ref="new_password"
+                  onChange={this.handleChange}
+                />
+                <span
+                  style={{ height: "25px" }}
+                  className="password__show"
+                  onClick={this.showHide1}
+                >
+                  {this.state.type1 === "text" ? "Hide" : "Show"}
+                </span>
+                <div className="errorMsg">{this.state.errors.new_password}</div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col s12">
+              <div className="password input-field">
+                <label>Confirm Password *</label>
+                <input
+                  id="confirm"
+                  type={this.state.type2}
+                  name="confirm_password"
+                  ref="confirm_password"
+                  onChange={this.handleChange}
+                />
+
+                <span
+                  style={{ height: "25px" }}
+                  className="password__show"
+                  onClick={this.showHide2}
+                >
+                  {this.state.type2 === "text" ? "Hide" : "Show"}
+                </span>
+                <div className="errorMsg">
+                  {this.state.errors.confirm_password}
                 </div>
               </div>
             </div>
-        <div className="row">
-          <div className="col s12">
-            <div className="password input-field"> 
-            <label>Confirm Password *</label>    
-              <input
-                id="confirm"
-                type={this.state.type2}
-                name="confirm_password"
-                ref="confirm_password"
-                onChange={this.handleChange}
-              />
-              
-              <span style={{ height: "25px" }}
-                className="password__show"
-                onClick={this.showHide2}>{this.state.type2 === 'text' ? 'Hide' : 'Show'}
+          </div>
+          <div className="row" id="info">
+            <div className="col s2 input-field">
+              <button className="k-button k-primary" type="submit">
+                Submit
+              </button>
+            </div>
+            <div className="input-field col s2 click-to-top">
+              <i className="material-icons">info_outline</i>
+              <span className="infoDiv">
+                Password must contain:
+                <br />
+                at least 8 characters
+                <br />
+                at least one number (0-9)
+                <br />
+                at least one lowercase letter (a-z)
+                <br />
+                at least one uppercase letter (A-Z)
+                <br />
+                at least one Special Character($&+,:;=?@#|'>.-^*()%!)
               </span>
-              <div className="errorMsg">{this.state.errors.confirm_password}</div>
             </div>
           </div>
         </div>
-      <div className="row" id="info">
-      <div className="col s2 input-field">
-         <button className="k-button k-primary" type="submit">
-          Submit
-         </button>
-        </div>
-        <div className="input-field col s2 click-to-top">
-               <i className="material-icons">info_outline</i><span>Password must contain:<br/>
-                                                                                                  at least 8 characters<br/>
-                                                                                                  at least one number (0-9)<br/>
-                                                                                                  at least one lowercase letter (a-z)<br/>
-                                                                                                  at least one uppercase letter (A-Z)<br/>
-                                                                                                  at least one Special Character($&+,:;=?@#|'>.-^*()%!)</span>
-                </div>
-      </div>
-      </div>
-     </form>
+      </form>
     );
   }
 }
