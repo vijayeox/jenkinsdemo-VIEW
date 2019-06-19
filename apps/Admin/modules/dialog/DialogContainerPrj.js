@@ -1,6 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
+import { Notification } from "@oxzion/gui";
 import { PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
@@ -12,6 +13,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       prjInEdit: this.props.dataItem || null
     };
+    this.notif = React.createRef();
   }
 
   onDialogInputChange = event => {
@@ -37,19 +39,29 @@ export default class DialogContainer extends React.Component {
 
   sendData = e => {
     e.preventDefault();
+    this.notif.current.uploadingData();
     PushData("project", this.props.formAction, this.props.dataItem.uuid, {
       name: this.state.prjInEdit.name,
       description: this.state.prjInEdit.description,
       manager_id: this.state.prjInEdit.manager_id
     }).then(response => {
       this.props.action(response.status);
+      if (response.status == "success") {
+        this.props.cancel();
+      } else if (
+        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+      ) {
+        this.notif.current.duplicateEntry();
+      } else {
+        this.notif.current.failNotification();
+      }
     });
-    this.props.cancel();
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
+        <Notification ref={this.notif} />
         <div>
           <form id="prjForm" onSubmit={this.sendData}>
             <div className="form-group">
