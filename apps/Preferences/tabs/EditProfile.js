@@ -13,11 +13,17 @@ class EditProfile extends Component {
 
     this.core = this.props.args;
     this.userprofile = this.core.make("oxzion/profile").get();
-    this.userprofile.key.preferences["dateformat"] =
+    if(this.userprofile.key.preferences != undefined || this.userprofile.key.preferences != null){
+      this.userprofile.key.preferences["dateformat"] =
       this.userprofile.key.preferences["dateformat"] &&
       this.userprofile.key.preferences["dateformat"] != ""
         ? this.userprofile.key.preferences["dateformat"]
         : "yyyy/MM/dd";
+    }
+    else{
+      this.userprofile.key.preferences = {"dateformat":"yyyy/MM/dd"};
+    }
+
     this.dob = null;
     this.doj = null;
     this.state = {
