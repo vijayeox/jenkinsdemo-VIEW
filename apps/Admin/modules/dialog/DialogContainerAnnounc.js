@@ -1,7 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { FileUploader } from "@oxzion/gui";
+import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, DateComponent } from "../components/index";
 import Moment from "moment";
 
@@ -14,6 +14,7 @@ export default class DialogContainer extends React.Component {
       ancInEdit: this.props.dataItem || null
     };
     this.fUpload = React.createRef();
+    this.notif = React.createRef();
   }
 
   valueChange = (field, event) => {
@@ -115,22 +116,42 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "put") {
       this.pushFile().then(response => {
         var addResponse = response.data.filename[0];
-        this.editAnnouncements(addResponse);
+        this.editAnnouncements(addResponse).then(response => {
+          this.props.action(response.status);
+          if (response.status == "success") {
+            this.props.cancel();
+          } else if (
+            response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+          ) {
+            this.notif.current.duplicateEntry();
+          } else {
+            this.notif.current.failNotification();
+          }
+        });
       });
     } else {
       this.pushFile().then(response => {
         var addResponse = response.data.filename[0];
         this.pushData(addResponse).then(response => {
           this.props.action(response.status);
+          if (response.status == "success") {
+            this.props.cancel();
+          } else if (
+            response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+          ) {
+            this.notif.current.duplicateEntry();
+          } else {
+            this.notif.current.failNotification();
+          }
         });
       });
     }
-    this.props.cancel();
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
+        <Notification ref={this.notif} />
         <div className="container-fluid">
           <form onSubmit={this.handleSubmit} id="ancForm">
             <div className="form-group">

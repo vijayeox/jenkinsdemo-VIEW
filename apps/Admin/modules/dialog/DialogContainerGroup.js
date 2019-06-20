@@ -1,6 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
+import { Notification } from "@oxzion/gui";
 import { PushData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
@@ -12,6 +13,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       groupInEdit: this.props.dataItem || null
     };
+    this.notif = React.createRef();
   }
 
   listOnChange = (event, item) => {
@@ -37,21 +39,30 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    this.notif.current.uploadingData();
     PushData("group", this.props.formAction, this.state.groupInEdit.uuid, {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
       manager_id: this.state.groupInEdit.manager_id,
-      // org_id: this.state.groupInEdit.org_id,
       description: this.state.groupInEdit.description
     }).then(response => {
       this.props.action(response.status);
+      if (response.status == "success") {
+        this.props.cancel();
+      } else if (
+        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+      ) {
+        this.notif.current.duplicateEntry();
+      } else {
+        this.notif.current.failNotification();
+      }
     });
-    this.props.cancel();
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
+        <Notification ref={this.notif} />
         <div>
           <form id="groupForm" onSubmit={this.handleSubmit}>
             <div className="form-group">
@@ -109,18 +120,6 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-                {/* <div className="col">
-                  <label>Organization</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      mainList={"organization"}
-                      selectedItem={this.state.groupInEdit.org_id}
-                      onDataChange={event => this.listOnChange(event, "org_id")}
-                      required={true}
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
           </form>

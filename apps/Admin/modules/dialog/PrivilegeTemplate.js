@@ -3,6 +3,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { PushData } from "../components/apiCalls";
 import { SaveCancel } from "../components/index";
 import { Grid, GridColumn } from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { orderBy } from "@progress/kendo-data-query";
 
@@ -102,7 +103,7 @@ export default class PrivilegeTemplate extends React.Component {
                     props.dataItem.permission_allowed & 1 ? (
                       <td>
                         <div className="privelegeGridcellFix">
-                          <input
+                          <Input
                             type="checkbox"
                             id={props.dataItem.name + "_R"}
                             className="k-checkbox"
@@ -125,7 +126,7 @@ export default class PrivilegeTemplate extends React.Component {
                     props.dataItem.permission_allowed & 2 ? (
                       <td>
                         <div className="privelegeGridcellFix">
-                          <input
+                          <Input
                             type="checkbox"
                             id={props.dataItem.name + "_W"}
                             className="k-checkbox"
@@ -148,7 +149,7 @@ export default class PrivilegeTemplate extends React.Component {
                     props.dataItem.permission_allowed & 4 ? (
                       <td>
                         <div className="privelegeGridcellFix">
-                          <input
+                          <Input
                             type="checkbox"
                             id={props.dataItem.name + "_C"}
                             className="k-checkbox"
@@ -171,7 +172,7 @@ export default class PrivilegeTemplate extends React.Component {
                     props.dataItem.permission_allowed & 8 ? (
                       <td>
                         <div className="privelegeGridcellFix">
-                          <input
+                          <Input
                             type="checkbox"
                             id={props.dataItem.name + "_D"}
                             className="k-checkbox"

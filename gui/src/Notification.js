@@ -10,7 +10,7 @@ class Notification extends React.Component {
     this.failNotification = this.failNotification.bind(this);
   }
 
-  uploadingData(){
+  uploadingData() {
     this.notificationDOMRef.current.addNotification({
       title: "Uploading Data",
       message: "Please wait for a few seconds.",
@@ -24,7 +24,7 @@ class Notification extends React.Component {
     });
   }
 
-  uploadImage(){
+  uploadImage() {
     this.notificationDOMRef.current.addNotification({
       title: "Warning",
       message: "Please choose an image.",
@@ -65,7 +65,6 @@ class Notification extends React.Component {
     });
   }
 
-  
   duplicateEntry() {
     this.notificationDOMRef.current.addNotification({
       title: "Operation failed",
@@ -79,7 +78,6 @@ class Notification extends React.Component {
       dismissable: { click: true }
     });
   }
-
 
   render() {
     return (

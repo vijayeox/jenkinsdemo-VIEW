@@ -6,7 +6,6 @@ import LocaleCurrency from 'locale-currency'
 import cc from 'country-code'
 import _ from 'lodash'
 
-import "./css/flag-icon.css"
 import './style.css'
 
 const debug = require('debug')('select-currency:info')
@@ -45,10 +44,8 @@ function getSuggestionValue(country) {
 }
 
 function renderSuggestion({name, alpha2: countryCode, currencyCode}) {
-	const iconClasses = classNames('flag-icon', `flag-icon-${countryCode.toLowerCase()}`)
 	return(
 		<div className="inputContainer">
-			<span className={iconClasses} />
 			&nbsp;&nbsp;&nbsp;<span className="country-name">{name} ({currencyCode})</span>
 		</div>
 	)
@@ -105,7 +102,7 @@ export default class CurrencySelect extends React.Component {
 	    const inputProps = {
 			...passProps,
 			value,
-			placeholder: "USD or United...",
+			placeholder: "Search By Country Name or Currency Code",
 			onChange: this.onChange,
 	    }
 		return (

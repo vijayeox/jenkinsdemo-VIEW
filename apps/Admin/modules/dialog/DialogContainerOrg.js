@@ -4,14 +4,12 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
 import { PushData } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel, TimezonePicker } from "../components/index";
+import { SaveCancel, TimezonePicker, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
-
 import IntlTelInput from "react-intl-tel-input";
 import "react-intl-tel-input/dist/main.css";
 
-import CurrencySelect from "../components/Currency Select/currencySelect.js"
-
+import CurrencySelect from "../components/Currency Select/currencySelect.js";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -23,6 +21,7 @@ export default class DialogContainer extends React.Component {
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
+    this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
   }
 
   onDialogInputChange = event => {
@@ -69,8 +68,21 @@ export default class DialogContainer extends React.Component {
   onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
-    orgInEdit["contact"]["phNumber"] = newNumber;
+    orgInEdit["contact"]["phone"] = fullNumber.replace(/\s|-/g, "");
     this.setState({ orgInEdit: orgInEdit, contactValid: inValid });
+  };
+
+  valueChange = (field, event) => {
+    let orgInEdit = { ...this.state.orgInEdit };
+    orgInEdit["prefrences"] = orgInEdit["prefrences"]
+      ? orgInEdit["prefrences"]
+      : {};
+    if (field == "dateFormat") {
+      orgInEdit["prefrences"][field] = event.target.value;
+    } else {
+      orgInEdit["prefrences"][field] = event;
+    }
+    this.setState({ orgInEdit: orgInEdit });
   };
 
   sendData = e => {
@@ -97,12 +109,11 @@ export default class DialogContainer extends React.Component {
           state: this.state.orgInEdit.state,
           zip: this.state.orgInEdit.zip,
           logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-          languagefile: this.state.orgInEdit.languagefile,
           contact: JSON.stringify({
             firstname: this.state.orgInEdit.contact.firstname,
             lastname: this.state.orgInEdit.contact.lastname,
             email: this.state.orgInEdit.contact.email,
-            phone: "232323"
+            phone: this.state.orgInEdit.contact.phone
           })
         }
       ).then(response => {
@@ -124,8 +135,8 @@ export default class DialogContainer extends React.Component {
     if (typeof this.state.orgInEdit.contact == "undefined") {
       var contactValue = "";
     } else {
-      var contactValue = this.state.orgInEdit.contact.phNumber
-        ? this.state.orgInEdit.contact.phNumber
+      var contactValue = this.state.orgInEdit.contact.phone
+        ? this.state.orgInEdit.contact.phone
         : "";
     }
     return (
@@ -177,6 +188,11 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="form-row">
                 <div className="col">
                   <label className="required-label">State</label>
                   <div>
@@ -192,11 +208,6 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="form-row">
                 <div className="col">
                   <label className="required-label">Zip Code</label>
                   <Input
@@ -207,18 +218,6 @@ export default class DialogContainer extends React.Component {
                     placeholder="Enter Zip Code"
                     required={true}
                     validationMessage={"Please enter the Zip Code."}
-                  />
-                </div>
-                <div className="col">
-                  <label className="required-label">Language</label>
-                  <Input
-                    type="text"
-                    value={this.state.orgInEdit.languagefile || ""}
-                    name="languagefile"
-                    onChange={this.onDialogInputChange}
-                    placeholder="Enter Language"
-                    required={true}
-                    validationMessage={"Please enter the language."}
                   />
                 </div>
               </div>
@@ -239,6 +238,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onContactIPChange}
                     placeholder="Enter First Name"
                     required={true}
+                    validationMessage={"Please enter the First Name."}
                   />
                 </div>
                 <div className="col">
@@ -253,6 +253,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onContactIPChange}
                     placeholder="Enter Last Name"
                     required={true}
+                    validationMessage={"Please enter the Last Name."}
                   />
                 </div>
               </div>
@@ -269,6 +270,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onContactIPChange}
                     placeholder="Enter User Name"
                     required={true}
+                    validationMessage={"Please enter the First Name."}
                   />
                 </div>
               </div>
@@ -282,7 +284,12 @@ export default class DialogContainer extends React.Component {
                     onPhoneNumberChange={this.onContactPhoneChange}
                     placeholder="Enter Phone Number"
                     autoHideDialCode={true}
-                    telInputProps={{ required: true }}
+                    formatOnInit={false}
+                    formatFull={false}
+                    telInputProps={{
+                      required: true
+                    }}
+                    format={false}
                   />
                 </div>
                 <div className="col">
@@ -303,31 +310,58 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="form-group border-box">
-              <label className="required-label">Organization Config</label>
-              <div className="form-row">
+              <label className="required-label">Organization Prefrences</label>
+              <div className="form-row pt-3 pb-3">
                 <div className="col">
-                  <Input
-                    type="text"
-                    name="dateFormat"
+                  <label className="required-label">Currency</label>
+                  <CurrencySelect
+                    id={"select-currency"}
+                    name={"currency"}
+                    onChange={e => this.valueChange("currency", e)}
                     value={
-                      this.state.orgInEdit.contact
-                        ? this.state.orgInEdit.contact.firstname
+                      this.state.orgInEdit.prefrences
+                        ? this.state.orgInEdit.prefrences.currency
                         : ""
                     }
-                    onChange={this.onContactIPChange}
-                    placeholder="Enter Date Format"
-                    required={true}
                   />
                 </div>
-                <div className="col">
-                <CurrencySelect id={'select-currency'} name={'currency'} value={""} onChange={this.onChange} />
+
+                <div className="col" style={{ display: "flex" }}>
+                  <label
+                    style={{ position: "absolute", paddingLeft: "6%" }}
+                    className="required-label"
+                  >
+                    Date Format
+                  </label>
+                  <div style={{ margin: "auto", marginTop: "11%" }}>
+                    <DropDown
+                      args={this.core}
+                      rawData={[
+                        "19-06-2019  (dd-MM-yyyy)",
+                        "19-Jun-2019 (dd-MMM-yyyy)",
+                        "2019-06-19  (yyy-MM-dd)",
+                        "06-19-2019  (MM-dd-yyyy)"
+                      ]}
+                      selectedItem={
+                        this.state.orgInEdit.prefrences
+                          ? this.state.orgInEdit.prefrences.dateFormat
+                          : ""
+                      }
+                      onDataChange={e => this.valueChange("dateFormat", e)}
+                      required={true}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="form-row" style={{ marginTop: "10px" }}>
+              <div className="form-row" style={{ marginTop: "5px" }}>
                 <div className="col timeZonePicker">
+                  <label className="required-label">Timezone</label>
                   <TimezonePicker
-                    onChange={timezone =>
-                      console.log("New Timezone Selected:", timezone)
+                    onChange={e => this.valueChange("timeZOne", e)}
+                    value={
+                      this.state.orgInEdit.prefrences
+                        ? this.state.orgInEdit.prefrences.timeZOne
+                        : ""
                     }
                     inputProps={{
                       placeholder: "Select Organization Timezone",

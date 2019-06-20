@@ -137,6 +137,42 @@
 
   // ---Custom Form Eements (End)---
 
+  // ---Currency Picker (Start)---
+  .select-currency {
+    input {
+      width: 100%;
+      padding: 9px 12px;
+      font: inherit;
+      box-sizing: border-box;
+      outline: 0;
+      background: #fff;
+      border: 1px solid #e6ebec;
+      border-radius: 2px;
+      color: #474747;
+    }
+
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::-moz-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+  }
+  // ---Currency Picker (End)---
+
   // ---TimeZone Picker (Start)---
 
   .timeZonePicker {
