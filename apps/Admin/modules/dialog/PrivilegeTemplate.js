@@ -13,46 +13,66 @@ export default class PrivilegeTemplate extends React.Component {
     this.core = this.props.args;
     this.state = {
       roleInEdit: this.props.dataItem || null,
-      privilegeData1: [],
-      temp: ["1", "2", "4"],
+      masterList: [],
+      privilegeData: [],
       sort: []
     };
     this.getPrivilegeData().then(response => {
-      var ar = response.data;
-      // ar.length = 30;
-      this.setState({ privilegeData1: ar });
-      //   for (var i = 0; i <= response.data.length - 1; i++) {
-      //     if (response.data[i].permission_allowed == 1) {
-      //       let privilegeData = { ...this.state.privilegeData };
-      //       privilegeData[response.data[i].app_id] = ["1"];
-      //       this.setState({ privilegeData: privilegeData });
-      //     } else if (response.data[i].permission_allowed == 3) {
-      //       let privilegeData = { ...this.state.privilegeData };
-      //       privilegeData[response.data[i].app_id] = ["1", "2"];
-      //       this.setState({ privilegeData: privilegeData });
-      //     } else if (response.data[i].permission_allowed == 7) {
-      //       let privilegeData = { ...this.state.privilegeData };
-      //       privilegeData[response.data[i].app_id] = ["1", "2", "4"];
-      //       this.setState({ privilegeData: privilegeData });
-      //     } else if (response.data[i].permission_allowed == 15) {
-      //       let privilegeData = { ...this.state.privilegeData };
-      //       privilegeData[response.data[i].app_id] = ["1", "2", "4", "8"];
-      //       this.setState({ privilegeData: privilegeData });
-      //     }
-      //   }
+      this.setState({
+        masterList: response.data
+      });
+      let temp = [];
+      for (let i = 0; i < response.data.length; i++) {
+        temp[response.data[i].privilege_name] = response.data[i].permission;
+      }
+      this.setState({
+        privilegeData: temp
+      });
     });
+    this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
   }
 
   async getPrivilegeData() {
     let helper2 = this.core.make("oxzion/restClient");
     let privilegedata = await helper2.request(
       "v1",
-      // "/role/" + this.props.dataItem.id + "/privilege",
-      "/privilege",
+      "/role/" + this.props.dataItem.id + "/privilege",
+      // "/privilege",
       {},
       "get"
     );
     return privilegedata;
+  }
+
+  onChangeCheckbox(e) {
+    var value = e.target.props;
+
+    console.log(value);
+    let privilegeData = { ...this.state.privilegeData };
+    if (value.checked == "true") {
+      var privilege = 1;
+      privilegeData[value.id] = "15";
+    } else {
+      var privilege = 1;
+      switch (value.refs) {
+        case "read":
+          console.log("its read");
+          break;
+        case "write":
+          console.log("its write");
+          break;
+        case "create":
+          console.log("its create");
+          break;
+        case "delete":
+          console.log("its delete");
+          break;
+        default:
+          console.log("sorry");
+      }
+      privilegeData[value.id] = "1";
+    }
+    this.setState({ privilegeData: privilegeData });
   }
 
   handleSubmit = event => {
@@ -65,6 +85,7 @@ export default class PrivilegeTemplate extends React.Component {
   };
 
   render() {
+    console.log(this.state.privilegeData);
     return (
       <Window onClose={this.props.cancel}>
         <Ripple>
@@ -74,7 +95,7 @@ export default class PrivilegeTemplate extends React.Component {
           >
             <div className="privilegeGrid">
               <Grid
-                data={orderBy(this.state.privilegeData1, this.state.sort)}
+                data={orderBy(this.state.masterList, this.state.sort)}
                 resizable={true}
                 reorderable={true}
                 sortable
@@ -91,7 +112,7 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Privilege Name"
                   cell={props => (
                     <td>
-                      <label>{props.dataItem.name.slice(7)}</label>
+                      <label>{props.dataItem.privilege_name.slice(7)}</label>
                     </td>
                   )}
                 />
@@ -100,17 +121,27 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Read"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed & 1 ? (
+                    props.dataItem.permission & 1 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <Input
                             type="checkbox"
-                            id={props.dataItem.name + "_R"}
+                            refs="read"
+                            someData="Its Read"
+                            id={props.dataItem.privilege_name}
                             className="k-checkbox"
+                            onChange={this.onChangeCheckbox}
+                            checked={
+                              this.state.privilegeData[
+                                props.dataItem.privilege_name
+                              ] & 1
+                                ? true
+                                : false
+                            }
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_R"}
+                            htmlFor={props.dataItem.privilege_name}
                           />
                         </div>
                       </td>
@@ -123,17 +154,26 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Write"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed & 2 ? (
+                    props.dataItem.permission & 2 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <Input
                             type="checkbox"
-                            id={props.dataItem.name + "_W"}
+                            refs="write"
+                            id={props.dataItem.privilege_name}
                             className="k-checkbox"
+                            onChange={this.onChangeCheckbox}
+                            checked={
+                              this.state.privilegeData[
+                                props.dataItem.privilege_name
+                              ] & 2
+                                ? true
+                                : false
+                            }
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_W"}
+                            htmlFor={props.dataItem.privilege_name}
                           />
                         </div>
                       </td>
@@ -146,17 +186,26 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Create"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed & 4 ? (
+                    props.dataItem.permission & 4 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <Input
                             type="checkbox"
-                            id={props.dataItem.name + "_C"}
+                            refs="create"
+                            id={props.dataItem.privilege_name}
                             className="k-checkbox"
+                            onChange={this.onChangeCheckbox}
+                            checked={
+                              this.state.privilegeData[
+                                props.dataItem.privilege_name
+                              ] & 4
+                                ? true
+                                : false
+                            }
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_C"}
+                            htmlFor={props.dataItem.privilege_name}
                           />
                         </div>
                       </td>
@@ -169,17 +218,26 @@ export default class PrivilegeTemplate extends React.Component {
                   title="Delete"
                   width="80px"
                   cell={props =>
-                    props.dataItem.permission_allowed & 8 ? (
+                    props.dataItem.permission & 8 ? (
                       <td>
                         <div className="privelegeGridcellFix">
                           <Input
                             type="checkbox"
-                            id={props.dataItem.name + "_D"}
+                            refs="delete"
+                            id={props.dataItem.privilege_name}
                             className="k-checkbox"
+                            onChange={this.onChangeCheckbox}
+                            checked={
+                              this.state.privilegeData[
+                                props.dataItem.privilege_name
+                              ] & 8
+                                ? true
+                                : false
+                            }
                           />
                           <label
                             className="k-checkbox-label"
-                            htmlFor={props.dataItem.name + "_D"}
+                            htmlFor={props.dataItem.privilege_name}
                           />
                         </div>
                       </td>
