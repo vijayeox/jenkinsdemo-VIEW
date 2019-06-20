@@ -18,10 +18,10 @@ class EditProfile extends Component {
       this.userprofile.key.preferences["dateformat"] &&
       this.userprofile.key.preferences["dateformat"] != ""
         ? this.userprofile.key.preferences["dateformat"]
-        : "yyyy/MM/dd";
+        : "dd-MM-yyyy";
     }
     else{
-      this.userprofile.key.preferences = {"dateformat":"yyyy/MM/dd"};
+      this.userprofile.key.preferences = {"dateformat":"dd-MM-yyyy"};
     }
 
     this.dob = null;
