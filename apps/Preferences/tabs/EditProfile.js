@@ -147,9 +147,9 @@ class EditProfile extends Component {
 
       let editresponse = await helper.request(
         "v1",
-        "/user/" + this.state.fields.id,
+        "/user/me/save",
         JSON.stringify(formData),
-        "put"
+        "post"
       );
       if (editresponse.status == "error") {
         this.notif.current.failNotification(
@@ -596,7 +596,7 @@ class EditProfile extends Component {
                   type="text"
                   ref="about"
                   name="about"
-                  value={this.state.fields.about}
+                  value={this.state.fields.about ? this.state.fields.about : ""}
                   onChange={this.handleChange}
                 />
               </div>
