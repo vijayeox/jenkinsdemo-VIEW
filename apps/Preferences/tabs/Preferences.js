@@ -190,9 +190,9 @@ class Preferences extends Component {
     } else {
       this.notif.current.successNotification("Updated successfully.");
       this.core.make("oxzion/profile").update();
+      this.actions.save();
+      this.actions.refresh();
     }
-    this.actions.save();
-    this.actions.refresh();
   }
 
   init() {}
