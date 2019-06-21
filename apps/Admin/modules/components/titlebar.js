@@ -1,6 +1,6 @@
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import {DropDown} from "./index.js";
+import { DropDown } from "./index.js";
 import { Button } from "@progress/kendo-react-buttons";
 
 export class TitleBar extends React.Component {
@@ -8,7 +8,7 @@ export class TitleBar extends React.Component {
     return (
       <div style={{ paddingTop: "12px", marginLeft: "0px" }} className="row">
         <div
-          style={{ marginLeft: "16px", position: "absolute", zIndex: "100" }}
+          style={{ marginLeft: "16px", position: "absolute", zIndex: "101" }}
         >
           <Button
             className="goBack"
@@ -22,7 +22,12 @@ export class TitleBar extends React.Component {
           {this.props.title}
         </div>
         <div
-          style={{ right: "164px", top:"76px", position: "absolute", zIndex: "100" }}
+          style={{
+            right: "164px",
+            top: "76px",
+            position: "absolute",
+            zIndex: "100"
+          }}
         >
           {/* <DropDown
             args={this.props.args}

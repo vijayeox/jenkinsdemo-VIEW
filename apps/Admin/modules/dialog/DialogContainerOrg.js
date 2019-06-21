@@ -51,20 +51,6 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onPrefrencesChange = event => {
-    let target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.props ? target.props.name : target.name;
-
-    const edited = this.state.orgInEdit;
-    edited["prefrences"] = edited["prefrences"] ? edited["prefrences"] : {};
-    edited["prefrences"][name] = value;
-
-    this.setState({
-      orgInEdit: edited
-    });
-  };
-
   onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
@@ -74,14 +60,11 @@ export default class DialogContainer extends React.Component {
 
   valueChange = (field, event) => {
     let orgInEdit = { ...this.state.orgInEdit };
-    orgInEdit["prefrences"] = orgInEdit["prefrences"]
-      ? orgInEdit["prefrences"]
+    orgInEdit["preferences"] = orgInEdit["preferences"]
+      ? orgInEdit["preferences"]
       : {};
-    if (field == "dateFormat") {
-      orgInEdit["prefrences"][field] = event.target.value;
-    } else {
-      orgInEdit["prefrences"][field] = event;
-    }
+    orgInEdit["preferences"][field] = event;
+
     this.setState({ orgInEdit: orgInEdit });
   };
 
@@ -310,17 +293,17 @@ export default class DialogContainer extends React.Component {
             </div>
 
             <div className="form-group border-box">
-              <label className="required-label">Organization Prefrences</label>
+              <label className="required-label">Organization Preferences</label>
               <div className="form-row pt-3 pb-3">
                 <div className="col">
                   <label className="required-label">Currency</label>
                   <CurrencySelect
                     id={"select-currency"}
                     name={"currency"}
-                    onChange={e => this.valueChange("currency", e)}
+                    onChange={e => this.valueChange("currency", e.target.value)}
                     value={
-                      this.state.orgInEdit.prefrences
-                        ? this.state.orgInEdit.prefrences.currency
+                      this.state.orgInEdit.preferences
+                        ? this.state.orgInEdit.preferences.currency
                         : ""
                     }
                   />
@@ -343,11 +326,13 @@ export default class DialogContainer extends React.Component {
                         "06-19-2019  (MM-dd-yyyy)"
                       ]}
                       selectedItem={
-                        this.state.orgInEdit.prefrences
-                          ? this.state.orgInEdit.prefrences.dateFormat
+                        this.state.orgInEdit.preferences
+                          ? this.state.orgInEdit.preferences.dateformat
                           : ""
                       }
-                      onDataChange={e => this.valueChange("dateFormat", e)}
+                      onDataChange={e =>
+                        this.valueChange("dateformat", e.target.value)
+                      }
                       required={true}
                     />
                   </div>
@@ -357,10 +342,10 @@ export default class DialogContainer extends React.Component {
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
                   <TimezonePicker
-                    onChange={e => this.valueChange("timeZOne", e)}
+                    onChange={e => this.valueChange("timezone", e)}
                     value={
-                      this.state.orgInEdit.prefrences
-                        ? this.state.orgInEdit.prefrences.timeZOne
+                      this.state.orgInEdit.preferences
+                        ? this.state.orgInEdit.preferences.timezone
                         : ""
                     }
                     inputProps={{

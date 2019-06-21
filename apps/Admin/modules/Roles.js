@@ -1,9 +1,8 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, MultiSelect } from "@oxzion/gui";
+import { GridTemplate } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerRole";
-import PrivilegeTemplate from "./dialog/PrivilegeTemplate";
 
 class Role extends React.Component {
   constructor(props) {
@@ -13,26 +12,10 @@ class Role extends React.Component {
       roleInEdit: undefined,
       roleToBeEdited: [],
       action: "",
-      visible: false,
       permission: "15"
     };
     this.child = React.createRef();
   }
-
-  setPrivileges = dataItem => {
-    this.setState({
-      visible: !this.state.visible
-    });
-    this.privilegeTemplate = React.createElement(PrivilegeTemplate, {
-      args: this.core,
-      dataItem: dataItem || null,
-      cancel: () => {
-        this.setState({
-          visible: !this.state.visible
-        });
-      }
-    });
-  };
 
   edit = dataItem => {
     this.setState({
@@ -75,7 +58,6 @@ class Role extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        {this.state.visible && this.privilegeTemplate}
         <TitleBar title="Manage User Roles" />
         <GridTemplate
           args={this.core}
@@ -99,8 +81,7 @@ class Role extends React.Component {
           manageGrid={{
             add: this.insert,
             edit: this.edit,
-            remove: this.remove,
-            setPrivileges: this.setPrivileges
+            remove: this.remove
           }}
           permission={this.state.permission}
         />

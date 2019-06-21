@@ -38,7 +38,7 @@ export default class GridTemplate extends React.Component {
   }
 
   componentDidMount() {
-    $(document).ready(function () {
+    $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
@@ -145,7 +145,7 @@ export default class GridTemplate extends React.Component {
           }}
         >
           <GridNoRecords>
-            <div className="grid-no-records"            >
+            <div className="grid-no-records">
               <ul className="list-group" style={{ listStyle: "disc" }}>
                 <div
                   href="#"
@@ -159,7 +159,10 @@ export default class GridTemplate extends React.Component {
                   <div style={{ marginLeft: "10px" }}>
                     <FaInfoCircle />
                   </div>
-                  <div style={{ fontSize: "medium", paddingLeft: "30px" }} className="noRecords">
+                  <div
+                    style={{ fontSize: "medium", paddingLeft: "30px" }}
+                    className="noRecords"
+                  >
                     No Records Available
                   </div>
                 </div>
@@ -191,15 +194,14 @@ export default class GridTemplate extends React.Component {
                 this.props.manageGrid.edit,
                 this.props.manageGrid.remove,
                 this.props.manageGrid.addUsers,
-                this.props.permission,
-                this.props.manageGrid.setPrivileges
+                this.props.permission
               )}
               sortable={false}
               filterCell={this.emptyCell}
             />
           )}
         </Grid>
-      </div >
+      </div>
     );
   }
 }
@@ -312,21 +314,6 @@ function CellWithEditing(title, edit, remove, addUsers, perm, setPrivileges) {
               </button>
             </abbr>
             &nbsp; &nbsp;
-            {setPrivileges && (
-              <React.Fragment>
-                <abbr title={"Set " + title + " Privileges"}>
-                  <button
-                    type="button"
-                    className=" btn manage-btn k-grid-edit-command"
-                    onClick={() => {
-                      setPrivileges(this.props.dataItem);
-                    }}
-                  >
-                    <FaUserLock className="manageIcons" />
-                  </button>
-                </abbr>
-              </React.Fragment>
-            )}
             {addUsers && (
               <abbr title={"Add Users to " + title}>
                 <button
