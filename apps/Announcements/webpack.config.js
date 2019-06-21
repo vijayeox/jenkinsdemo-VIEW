@@ -1,58 +1,58 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-const mode = process.env.NODE_ENV || 'development';
-const minimize = mode === 'production';
+const mode = process.env.NODE_ENV || "development";
+const minimize = mode === "production";
 const plugins = [];
 
-if (mode === 'production') {
-  plugins.push(new OptimizeCSSAssetsPlugin({
-    cssProcessorOptions: {
-      discardComments: true
-    },
-  }));
+if (mode === "production") {
+  plugins.push(
+    new OptimizeCSSAssetsPlugin({
+      cssProcessorOptions: {
+        discardComments: true
+      }
+    })
+  );
 }
 
 module.exports = {
-  mode: (mode !== 'development' ? 'production' : mode),
-  devtool: 'source-map',
+  mode: mode !== "development" ? "production" : mode,
+  devtool: "source-map",
   entry: [
-    path.resolve(__dirname, 'index.js'),
-    path.resolve(__dirname, 'index.scss')
+    path.resolve(__dirname, "index.js"),
+    path.resolve(__dirname, "index.scss")
   ],
   externals: {
-    osjs: 'OSjs'
+    osjs: "OSjs"
   },
   optimization: {
-    minimize,
+    minimize
   },
   plugins: [
-    new CopyWebpackPlugin([
-      'icon.png','icon_white.png',
-      'content.txt'
-    ]),
+    new CopyWebpackPlugin(["icon.png", "icon_white.png"]),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     }),
     ...plugins
   ],
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.(sa|sc|c)ss$/,
         exclude: /(node_modules|bower_components)/,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               minimize,
               sourceMap: true
@@ -64,7 +64,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader"
         }
       }
     ]
