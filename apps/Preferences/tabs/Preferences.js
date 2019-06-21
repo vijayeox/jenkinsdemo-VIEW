@@ -180,9 +180,9 @@ class Preferences extends Component {
 
     let pref = await helper.request(
       "v1",
-      "/user/" + this.userprofile.key.id,
+      "/user/me/save",
       preferencedata,
-      "put"
+      "post"
     );
 
     if (pref.status == "error") {
