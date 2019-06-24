@@ -85,6 +85,10 @@ module.exports = {
         label: 'LBL_APP_CAT_ORGANIZATION',
         icon: 'applications-development'
       },
+      analytics: {
+        label: 'LBL_APP_CAT_ANALYTICS',
+        icon: 'applications-analytics'
+      }
     }
   }
 };

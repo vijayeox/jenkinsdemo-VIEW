@@ -1,0 +1,20 @@
+{
+  "type": "application",
+  "name": "QueryBuilder",
+  "category": "analytics",
+  "singleton": true,
+  "defaultAppforOrgs" : true,
+  "icon": "icon.png", 
+  "icon_white":"icon.png",
+  "server": "server.js",
+  "title": {
+    "en_EN": "QueryBuilder"
+  },
+  "description": {
+    "en_EN": "QueryBuilder"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
