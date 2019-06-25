@@ -108,10 +108,6 @@ class EditProfile extends Component {
     });
   }
 
-  getStandardDateString(date1) {
-    return new Moment(date1).format();
-  }
-
   async handleSubmit(event) {
     event.preventDefault();
 
@@ -124,15 +120,13 @@ class EditProfile extends Component {
         fields: fields
       });
 
-      let date_of_birth = this.getStandardDateString(
-        this.state.fields.date_of_birth
-      );
+      let date_of_birth = new Moment(this.state.fields.date_of_birth).format();
 
       Object.keys(this.state.fields).map(key => {
         if (key == "date_of_birth") {
-          formData["date_of_birth"] = date_of_birth;
+          formData.date_of_birth = date_of_birth;
         }
-        if (key == "name") {
+        else if (key == "name") {
           let name =
             this.state.fields["firstname"] +
             " " +
@@ -143,6 +137,7 @@ class EditProfile extends Component {
         }
       });
 
+      console.log(formData);
       let helper = this.core.make("oxzion/restClient");
 
       let editresponse = await helper.request(
