@@ -77,7 +77,6 @@ class Slider extends React.Component {
 
   renderCard(data) {
     const isImage = data.media_type == "image";
-    console.log(isImage);
     return (
       <div className="App row slide" style={{ margin: 0 }} key={data.uuid}>
         <div className="Announcement-visuals col s12">
@@ -122,7 +121,7 @@ class Slider extends React.Component {
             description: "Please use the Admin app to add a new Announcement.",
             media_type: "image",
             media: "https://i.ibb.co/2qqJryz/no-data-found1.jpg",
-            uuid:"wda"
+            uuid: "empty"
           })
         ) : (
           <div>
@@ -168,30 +167,14 @@ class Slider extends React.Component {
 }
 
 const Img = ({ data }) => {
-  console.log("coming");
   return <img id="Announ-visual" src={data.media} alt="Visuals go here" />;
 };
 
 const Video = ({ data }) => {
   return (
-    // <video controls="controls" id="video" preload="none">
-    //   <source id="mp4" src={data.media} type="video/mp4" />
-    //   Video goes here
-    // </video>
-
-    <video
-      id="video"
-      controls="controls"
-      preload="none"
-      width="600"
-      poster="http://media.w3.org/2010/05/sintel/poster.png"
-      onClick="this.play()"
-    >
-      <source
-        id="mp4"
-        src="http://media.w3.org/2010/05/sintel/trailer.mp4"
-        type="video/mp4"
-      />
+    <video controls="controls" id="video" preload="none" autoplay="true">
+      <source id="mp4" src={data.media} type="video/mp4" />
+      Video goes here
     </video>
   );
 };
