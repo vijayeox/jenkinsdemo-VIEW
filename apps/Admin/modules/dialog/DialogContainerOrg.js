@@ -87,7 +87,7 @@ export default class DialogContainer extends React.Component {
           lastname: this.state.orgInEdit.contact.lastname,
           username: this.state.orgInEdit.contact.username,
           email: this.state.orgInEdit.contact.email,
-          phone: this.state.orgInEdit.contact.phone
+          phone: "+" + this.state.orgInEdit.contact.phone
         }),
         preferences: JSON.stringify({
           dateformat: this.state.orgInEdit.preferences.dateformat,
