@@ -56,3 +56,18 @@ export async function PushData(api, method, item, body) {
     return response;
   }
 }
+
+export async function PushDataPOST(api, method, item, body) {
+  if (method == "put") {
+    let response = await helper.request(
+      "v1",
+      "/" + api + "/" + item,
+      body,
+      "post" 
+    );
+    return response;
+  } else if (method == "post") {
+    let response = await helper.request("v1", "/" + api, body, method);
+    return response;
+  }
+}

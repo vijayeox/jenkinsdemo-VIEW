@@ -2,7 +2,7 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
-import { PushData } from "../components/apiCalls";
+import { PushDataPOST } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, TimezonePicker, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
@@ -22,6 +22,7 @@ export default class DialogContainer extends React.Component {
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
+    this.imageExists = this.props.dataItem.logo ? true : false;
   }
 
   onDialogInputChange = event => {
@@ -68,49 +69,63 @@ export default class DialogContainer extends React.Component {
     this.setState({ orgInEdit: orgInEdit });
   };
 
+  pushData = () => {
+    this.notif.current.uploadingData();
+    PushDataPOST(
+      "organization",
+      this.props.formAction,
+      this.state.orgInEdit.uuid,
+      {
+        name: this.state.orgInEdit.name,
+        address: this.state.orgInEdit.address,
+        city: this.state.orgInEdit.city,
+        state: this.state.orgInEdit.state,
+        zip: this.state.orgInEdit.zip,
+        logo: this.fUpload.current.firstUpload.cachedFileArray[0],
+        contact: JSON.stringify({
+          firstname: this.state.orgInEdit.contact.firstname,
+          lastname: this.state.orgInEdit.contact.lastname,
+          username: this.state.orgInEdit.contact.username,
+          email: this.state.orgInEdit.contact.email,
+          phone: this.state.orgInEdit.contact.phone
+        }),
+        preferences: JSON.stringify({
+          dateformat: this.state.orgInEdit.preferences.dateformat,
+          currency: this.state.orgInEdit.preferences.currency,
+          timezone: this.state.orgInEdit.preferences.timezone
+        })
+      }
+    ).then(response => {
+      this.props.action(response.status);
+      if (response.status == "success") {
+        this.props.cancel();
+      } else if (
+        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+      ) {
+        this.notif.current.duplicateEntry();
+      } else {
+        this.notif.current.failNotification();
+      }
+    });
+  };
+
   sendData = e => {
     e.preventDefault();
-    if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
-      var elm = document.getElementsByClassName("orgFileUploader")[0];
-      scrollIntoView(elm, {
-        scrollMode: "if-needed",
-        block: "center",
-        behavior: "smooth",
-        inline: "nearest"
-      });
-      this.notif.current.uploadImage();
+    if (this.imageExists) {
+      this.pushData();
     } else {
-      this.notif.current.uploadingData();
-      PushData(
-        "organization",
-        this.props.formAction,
-        this.state.orgInEdit.uuid,
-        {
-          name: this.state.orgInEdit.name,
-          address: this.state.orgInEdit.address,
-          city: this.state.orgInEdit.city,
-          state: this.state.orgInEdit.state,
-          zip: this.state.orgInEdit.zip,
-          logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-          contact: JSON.stringify({
-            firstname: this.state.orgInEdit.contact.firstname,
-            lastname: this.state.orgInEdit.contact.lastname,
-            email: this.state.orgInEdit.contact.email,
-            phone: this.state.orgInEdit.contact.phone
-          })
-        }
-      ).then(response => {
-        this.props.action(response.status);
-        if (response.status == "success") {
-          this.props.cancel();
-        } else if (
-          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-        ) {
-          this.notif.current.duplicateEntry();
-        } else {
-          this.notif.current.failNotification();
-        }
-      });
+      if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
+        var elm = document.getElementsByClassName("orgFileUploader")[0];
+        scrollIntoView(elm, {
+          scrollMode: "if-needed",
+          block: "center",
+          behavior: "smooth",
+          inline: "nearest"
+        });
+        this.notif.current.uploadImage();
+      } else {
+        this.pushData();
+      }
     }
   };
 
@@ -322,7 +337,7 @@ export default class DialogContainer extends React.Component {
                       rawData={[
                         "19-06-2019  (dd-MM-yyyy)",
                         "19-Jun-2019 (dd-MMM-yyyy)",
-                        "2019-06-19  (yyy-MM-dd)",
+                        "2019-06-19  (yyyy-MM-dd)",
                         "06-19-2019  (MM-dd-yyyy)"
                       ]}
                       selectedItem={
@@ -330,9 +345,14 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.preferences.dateformat
                           : ""
                       }
-                      onDataChange={e =>
-                        this.valueChange("dateformat", e.target.value)
-                      }
+                      onDataChange={e => {
+                        var start = e.target.value.indexOf("(") + 1;
+                        var end = e.target.value.indexOf(")");
+                        this.valueChange(
+                          "dateformat",
+                          e.target.value.slice(start, end)
+                        );
+                      }}
                       required={true}
                     />
                   </div>
@@ -350,7 +370,8 @@ export default class DialogContainer extends React.Component {
                     }
                     inputProps={{
                       placeholder: "Select Organization Timezone",
-                      name: "timezone"
+                      name: "timezone",
+                      required: true
                     }}
                   />
                 </div>

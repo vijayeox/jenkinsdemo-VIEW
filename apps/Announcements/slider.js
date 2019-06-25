@@ -120,7 +120,7 @@ class Slider extends React.Component {
             name: "No Announcements available!",
             description: "Please use the Admin app to add a new Announcement.",
             media_type: "image",
-            media: "https://i.ibb.co/2qqJryz/no-data-found1.jpg",
+            media: "https://svgshare.com/i/DqC.svg",
             uuid: "empty"
           })
         ) : (
@@ -172,7 +172,7 @@ const Img = ({ data }) => {
 
 const Video = ({ data }) => {
   return (
-    <video controls="controls" id="video" preload="none" autoplay="true">
+    <video controls="controls" id="video" preload="none" autoPlay={true}>
       <source id="mp4" src={data.media} type="video/mp4" />
       Video goes here
     </video>

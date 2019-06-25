@@ -104,6 +104,7 @@ export default class CurrencySelect extends React.Component {
 			value,
 			placeholder: "Search By Country Name or Currency Code",
 			onChange: this.onChange,
+			required:true
 	    }
 		return (
 			<div className="select-currency">

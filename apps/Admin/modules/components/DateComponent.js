@@ -27,7 +27,6 @@ export default class DateComponent extends React.Component {
     }
   }
   render() {
-    console.log(this.state.value);
     return (
       <DatePicker
         format={this.props.format}

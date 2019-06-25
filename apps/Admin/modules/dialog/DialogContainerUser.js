@@ -1,8 +1,9 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { Window } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
-import scrollIntoView from "scroll-into-view-if-needed";
+import { MultiSelect } from "@progress/kendo-react-dropdowns";
 
 import { PushData } from "../components/apiCalls";
 import { Notification } from "@oxzion/gui";
@@ -17,15 +18,58 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      userInEdit: this.props.dataItem || null
+      userInEdit: this.props.dataItem || null,
+      roleList: []
     };
     this.notif = React.createRef();
   }
 
+  componentDidMount() {
+    this.getRolesList().then(response => {
+      var tempUsers = [];
+      for (var i = 0; i <= response.data.length - 1; i++) {
+        var userName = response.data[i].name;
+        var userid = response.data[i].id;
+        tempUsers.push({ id: userid, name: userName });
+      }
+      this.setState({
+        roleList: tempUsers
+      });
+    });
+
+    if (this.props.formAction == "put") {
+      ReactDOM.render(
+        <ReactTooltip
+          place="bottom"
+          type="error"
+          effect="solid"
+          delayHide={100}
+          delayShow={100}
+          html={true}
+        />,
+        document.getElementById("tooltip")
+      );
+    }
+  }
+
+  async getRolesList() {
+    let helper2 = this.core.make("oxzion/restClient");
+    let rolesList = await helper2.request("v1", "/role", {}, "get");
+    return rolesList;
+  }
+
   valueChange = (field, event) => {
-    let userInEdit = { ...this.state.userInEdit };
-    userInEdit[field] = event.target.value;
-    this.setState({ userInEdit: userInEdit });
+    if (field == "role") {
+      let userInEdit = { ...this.state.userInEdit };
+      userInEdit[field] = event.target.value;
+      const selectedRole = event.target.value.map(x => x.id);
+      userInEdit["selectedRole"] = selectedRole;
+      this.setState({ userInEdit: userInEdit });
+    } else {
+      let userInEdit = { ...this.state.userInEdit };
+      userInEdit[field] = event.target.value;
+      this.setState({ userInEdit: userInEdit });
+    }
   };
 
   onDialogInputChange = event => {
@@ -44,6 +88,11 @@ export default class DialogContainer extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     this.notif.current.uploadingData();
+    var userRoles = [];
+    for (var i = 0; i <= this.state.userInEdit.role.length - 1; i++) {
+      var uid = { id: this.state.userInEdit.role[i].id };
+      userRoles.push(uid);
+    }
 
     if (this.props.formAction == "post") {
       PushData("user", this.props.formAction, this.props.dataItem.uuid, {
@@ -56,6 +105,7 @@ export default class DialogContainer extends React.Component {
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
+        role: JSON.stringify(userRoles),
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
         country: this.state.userInEdit.country
       }).then(response => {
@@ -81,6 +131,7 @@ export default class DialogContainer extends React.Component {
         orgid: this.state.userInEdit.orgid,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
+        role: JSON.stringify(userRoles),
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
         country: this.state.userInEdit.country
       }).then(response => {
@@ -108,7 +159,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
-                  <label>First Name</label>
+                  <label className="required-label">First Name</label>
                   <Input
                     type="text"
                     className="form-control"
@@ -123,7 +174,7 @@ export default class DialogContainer extends React.Component {
                   />
                 </div>
                 <div className="col">
-                  <label>Last Name</label>
+                  <label className="required-label">Last Name</label>
                   <Input
                     type="text"
                     className="form-control"
@@ -143,7 +194,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
-                  <label id="email">Email</label>
+                  <label className="required-label">Email</label>
                   <Input
                     type="text"
                     className="form-control"
@@ -160,7 +211,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
-                  <label>User Name</label>
+                  <label className="required-label">User Name</label>
                   <Input
                     type="text"
                     className="form-control"
@@ -170,11 +221,11 @@ export default class DialogContainer extends React.Component {
                     placeholder="Enter User Name"
                     required={true}
                     validationMessage={"Please enter a valid User Name"}
-                    data-tip="hello world"
+                    data-tip="Changing the username will reset the User's chat history."
                   />
                 </div>
                 <div className="col">
-                  <label>Designation</label>
+                  <label className="required-label">Designation</label>
                   <Input
                     type="text"
                     className="form-control"
@@ -186,13 +237,28 @@ export default class DialogContainer extends React.Component {
                     validationMessage={"Please enter a valid User Name"}
                   />
                 </div>
+                <div className="col">
+                  <label className="required-label">Role</label>
+                  <MultiSelect
+                    data={this.state.roleList}
+                    onChange={e => {
+                      this.valueChange("role", e);
+                    }}
+                    value={this.state.userInEdit.role}
+                    clearButton={false}
+                    textField="name"
+                    dataItemKey="id"
+                    placeholder={"Select User Roles"}
+                    required={true}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="form-group">
               <div className="form-row">
                 <div className="col-4">
-                  <label>Manager Assigned</label>
+                  <label className="required-label">Manager Assigned</label>
                   <div>
                     <DropDown
                       args={this.core}
@@ -204,7 +270,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-4">
-                  <label>Organization</label>
+                  <label className="required-label">Organization</label>
                   <div>
                     <DropDown
                       args={this.core}
@@ -216,7 +282,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-4">
-                  <label>Country</label>
+                  <label className="required-label">Country</label>
                   <div>
                     <DropDown
                       args={this.core}
@@ -233,7 +299,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col-6">
-                  <label>Gender</label>
+                  <label className="required-label">Gender</label>
                   <div className="pt-2">
                     <Ripple>
                       <span className="col-6">
@@ -276,7 +342,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-3">
-                  <label>Date Of Birth</label>
+                  <label className="required-label">Date Of Birth</label>
                   <div>
                     <DateComponent
                       format={"dd-MMM-yyyy"}
@@ -287,7 +353,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-3">
-                  <label>Date Of Join</label>
+                  <label className="required-label">Date Of Join</label>
                   <div>
                     <DateComponent
                       format={"dd-MMM-yyyy"}
