@@ -1,3 +1,67 @@
 .Window_QueryBuilderWindow {
 	@import "./node_modules/bootstrap/dist/css/bootstrap.css";
 }
+
+.osjs-window-header {
+    background: #265160;
+}
+
+.osjs-window-title {
+    color:white;
+}
+
+.full-height {
+    height:100%;
+}
+
+.full-width {
+    width:100%;
+}
+
+.no-padding {
+    padding:0px;
+}
+
+.body .nav-bar {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:96px;
+    height:100%;
+}
+
+.body .content {
+    position:absolute;
+    left:0px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    margin-left:96px;
+}
+
+.body .content div:first-child {
+    width:100%;
+    height:100%;
+}
+
+.body div.nav-bar {
+    border-right:2px solid gray;
+}
+
+.body div.nav-bar ul.left-nav {
+    width:94px;
+}
+
+.body div.nav-bar ul li a img {
+    padding:15px;
+}
+
+.body div.nav-bar ul li:first-child a img {
+    padding-top:30px;
+}
+
+.body div.nav-bar ul li:last-child a img {
+    padding-bottom:30px;
+}
+

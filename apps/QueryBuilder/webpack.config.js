@@ -30,7 +30,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin(['icon.png','icon_white.png']),
+    new CopyWebpackPlugin(['icon.png','icon_white.png', 'images/']),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -43,6 +43,17 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              publicPath: "/apps/QueryBuilder"
+            }
+          }
+        ]
+      },
       {
         test: /\.(sa|sc|c)ss$/,
         exclude: /(node_modules|bower_components)/,
