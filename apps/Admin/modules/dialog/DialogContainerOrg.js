@@ -285,7 +285,8 @@ export default class DialogContainer extends React.Component {
                     formatOnInit={false}
                     formatFull={false}
                     telInputProps={{
-                      required: true
+                      required: true,
+                      pattern:"++[0-9]"
                     }}
                     format={false}
                   />

@@ -88,6 +88,28 @@ class Home extends React.Component {
           <div
             style={{ display: "inline-grid" }}
             className="moduleBtn"
+            onClick={this.userClick}
+          >
+            <div className="block d1">
+              <img src="apps/Admin/115-manager.svg" className="App-logo" />
+            </div>
+            <div className="titles">Users</div>
+          </div>
+
+          <div
+            style={{ display: "inline-grid" }}
+            className="moduleBtn"
+            onClick={this.roleClick}
+          >
+            <div className="block d1">
+              <img src="apps/Admin/005-workflow.svg" className="App-logo" />
+            </div>
+            <div className="titles">Roles</div>
+          </div>
+
+          <div
+            style={{ display: "inline-grid" }}
+            className="moduleBtn"
             onClick={this.groupClick}
           >
             <div className="block d1">
@@ -105,27 +127,6 @@ class Home extends React.Component {
               <img src="apps/Admin/101-project.svg" className="App-logo" />
             </div>
             <div className="titles">Projects</div>
-          </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.userClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/115-manager.svg" className="App-logo" />
-            </div>
-            <div className="titles">Users</div>
-          </div>
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.roleClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/005-workflow.svg" className="App-logo" />
-            </div>
-            <div className="titles">Roles</div>
           </div>
 
           <div
@@ -234,10 +235,12 @@ class Home extends React.Component {
   };
 
   mailAdminClick = e => {
+    this.hideMenu();
     this.core.run("MailAdmin");
   };
 
   taskAdminClick = e => {
+    this.hideMenu();
     this.core.run("TaskAdmin");
   };
 
@@ -258,7 +261,7 @@ class Home extends React.Component {
           pageWrapId={"admin-page-wrap"}
           outerContainerId={"admin-outer-container"}
           customBurgerIcon={false}
-          onStateChange={(e) => {
+          onStateChange={e => {
             this.setState({
               showMenu: e.isOpen
             });
@@ -267,11 +270,14 @@ class Home extends React.Component {
             bmMenuWrap: {
               position: "absolute"
             },
-            bmOverlay: { height: this.state.windowSize },
+            bmOverlay: {
+              height: this.state.windowSize,
+              display: this.state.showMenu ? "flex" : "none"
+            },
             bmMenu: { height: this.state.windowSize }
           }}
         >
-          <div onClick={this.showMainPage}>
+          <div onClick={this.showMainPage} style={{ paddingLeft: "0px" }}>
             <div className="titles" style={{ textAlign: "center" }}>
               Main Page
             </div>
