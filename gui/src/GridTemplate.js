@@ -247,7 +247,7 @@ class LogoCell2 extends React.Component {
     return (
       <td>
         <img
-          src={this.props.dataItem.logo}
+          src={this.props.dataItem.logo + "?" + new Date()}
           alt="Logo"
           className="text-center circle gridBanner"
         />

@@ -15,7 +15,7 @@ class FileUploader extends React.Component {
       if (this.props.uploadID == "organizationLogo") {
         this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
           images: {
-            baseImage: this.props.media
+            baseImage: this.props.media + "?" + new Date()
           }
         });
       } else {

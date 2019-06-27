@@ -145,7 +145,7 @@ class Project extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Projects" />
+        <TitleBar title="Manage Projects" menu={this.props.menu}/>
         <GridTemplate
           args={this.core}
           ref={this.child}

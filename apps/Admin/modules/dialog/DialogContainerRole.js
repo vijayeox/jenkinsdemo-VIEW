@@ -18,10 +18,19 @@ export default class DialogContainer extends React.Component {
       roleInEdit: this.props.dataItem || null,
       masterList: [],
       privilegeData: [],
-      sort: []
+      sort: [],
+      isAdmin: null
     };
-
-    this.props.formAction=="put"
+    this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
+    this.vals = {
+      read: ["0", "1"],
+      write: ["1", "3"],
+      create: ["3", "7"],
+      delete: ["7", "15"]
+    };
+  }
+  componentWillMount() {
+    this.props.formAction == "put"
       ? this.getPrivilegeData().then(response => {
           this.setState({
             masterList: response.data.masterPrivilege
@@ -32,25 +41,17 @@ export default class DialogContainer extends React.Component {
               response.data.rolePrivilege[i].permission;
           }
           this.setState({
-            privilegeData: temp
+            privilegeData: temp,
+            isAdmin:
+              this.state.roleInEdit.name.toUpperCase() == "ADMIN" ? true : false
           });
-          this.isAdmin =
-            this.state.roleInEdit.name.toUpperCase() == "ADMIN" ? true : false;
         })
       : this.masterList().then(response => {
           this.setState({
-            masterList: response.data.masterPrivilege
+            masterList: response.data.masterPrivilege,
+            isAdmin: false
           });
-          this.isAdmin = false;
         });
-
-    this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
-    this.vals = {
-      read: ["0", "1"],
-      write: ["1", "3"],
-      create: ["3", "7"],
-      delete: ["7", "15"]
-    };
   }
 
   async getPrivilegeData() {
@@ -199,7 +200,7 @@ export default class DialogContainer extends React.Component {
                           ? this.toTitleCase(this.state.roleInEdit.name)
                           : ""}
                         &nbsp;
-                        {this.isAdmin ? (
+                        {this.state.isAdmin ? (
                           <React.Fragment>
                             &nbsp; (READ ONLY MODE)
                             <FaUserLock
@@ -239,7 +240,9 @@ export default class DialogContainer extends React.Component {
                               id={props.dataItem.privilege_name + "R"}
                               className="k-checkbox"
                               onChange={
-                                this.isAdmin ? null : this.onChangeCheckbox
+                                this.state.isAdmin
+                                  ? null
+                                  : this.onChangeCheckbox
                               }
                               checked={
                                 this.state.privilegeData[
@@ -273,7 +276,9 @@ export default class DialogContainer extends React.Component {
                               id={props.dataItem.privilege_name + "W"}
                               className="k-checkbox"
                               onChange={
-                                this.isAdmin ? null : this.onChangeCheckbox
+                                this.state.isAdmin
+                                  ? null
+                                  : this.onChangeCheckbox
                               }
                               checked={
                                 this.state.privilegeData[
@@ -307,7 +312,9 @@ export default class DialogContainer extends React.Component {
                               id={props.dataItem.privilege_name + "C"}
                               className="k-checkbox"
                               onChange={
-                                this.isAdmin ? null : this.onChangeCheckbox
+                                this.state.isAdmin
+                                  ? null
+                                  : this.onChangeCheckbox
                               }
                               checked={
                                 this.state.privilegeData[
@@ -341,7 +348,9 @@ export default class DialogContainer extends React.Component {
                               id={props.dataItem.privilege_name + "D"}
                               className="k-checkbox"
                               onChange={
-                                this.isAdmin ? null : this.onChangeCheckbox
+                                this.state.isAdmin
+                                  ? null
+                                  : this.onChangeCheckbox
                               }
                               checked={
                                 this.state.privilegeData[
