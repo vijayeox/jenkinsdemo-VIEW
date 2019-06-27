@@ -32,7 +32,6 @@ class Organization extends React.Component {
     return addOrgUsers;
   }
 
-
   addOrgUsers = dataItem => {
     this.setState({
       visible: !this.state.visible
@@ -41,7 +40,7 @@ class Organization extends React.Component {
       args: this.core,
       config: {
         dataItem: dataItem,
-        title:"Organization",
+        title: "Organization",
         mainList: "user",
         subList: "organization"
       },
@@ -110,7 +109,7 @@ class Organization extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Organizations" />
+        <TitleBar title="Manage Organizations" menu={this.props.menu}/>
         <GridTemplate
           args={this.core}
           ref={this.child}

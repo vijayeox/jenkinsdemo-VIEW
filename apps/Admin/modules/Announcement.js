@@ -133,7 +133,7 @@ class Announcement extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Announcements" />
+        <TitleBar title="Manage Announcements" menu={this.props.menu} />
         <GridTemplate
           args={this.core}
           ref={this.child}

@@ -56,7 +56,7 @@ class User extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        <TitleBar title="Manage Users" />
+        <TitleBar title="Manage Users" menu={this.props.menu} />
         <GridTemplate
           args={this.core}
           ref={this.child}

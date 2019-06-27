@@ -40,12 +40,25 @@ export default class DialogContainer extends React.Component {
   handleSubmit = e => {
     e.preventDefault();
     this.notif.current.uploadingData();
-    PushData("group", this.props.formAction, this.state.groupInEdit.uuid, {
+    let tempData = {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
       manager_id: this.state.groupInEdit.manager_id,
       description: this.state.groupInEdit.description
-    }).then(response => {
+    };
+
+    for (var i = 0; i <= Object.keys(tempData).length; i++) {
+      let propertyName = Object.keys(tempData)[i];
+      if (tempData[propertyName] == undefined) {
+        delete tempData[propertyName];
+      }
+    }
+    PushData(
+      "group",
+      this.props.formAction,
+      this.state.groupInEdit.uuid,
+      tempData
+    ).then(response => {
       this.props.action(response.status);
       if (response.status == "success") {
         this.props.cancel();

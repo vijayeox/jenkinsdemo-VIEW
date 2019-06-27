@@ -3,13 +3,6 @@
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
 
-  background: #336666;
-  all: revert;
-
-  .osjs-window-header {
-    background: #265160;
-  }
-
   .k-grid-norecords {
     width: inherit !important;
   }
@@ -39,6 +32,18 @@
   }
 
   // move to gui
+
+  .k-clear-value {
+    display: none !important;
+  }
+
+  .k-multiselect-wrap {
+    input:focus {
+      outline: none;
+      border-color: none;
+      box-shadow: none;
+    }
+  }
 
   .custom-file-container__image-preview {
     background-size: contain;
@@ -274,6 +279,102 @@
 
   // ---TimeZone Picker (End)---
 
+  // ---Burger Menu Component (Start)---
+
+  .bm-item {
+    display: inline-block;
+    outline: none;
+
+    /* Our sidebar item styling */
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+    transition: color 0.2s;
+    padding-left: 10%;
+    margin-top: 5%;
+  }
+
+  /* The rest copied directly from react-burger-menu docs */
+
+  /* Position and sizing of burger button */
+  .bm-burger-button {
+    position: fixed;
+    width: 55px;
+    height: 55px;
+    left: 21px;
+    top: 65px;
+    button {
+      outline: none;
+    }
+  }
+
+  .bm-icon {
+    outline: none;
+  }
+
+  /* Color/shape of burger icon bars */
+  .bm-burger-bars {
+    background: #373a47;
+  }
+
+  /* Position and sizing of clickable cross button */
+  .bm-cross-button {
+    display: none;
+    right: 10% !important;
+    button {
+      top: 8px !important;
+      outline: none;
+    }
+  }
+
+  /* Color/shape of close button cross */
+  .bm-cross {
+    background: #bdc3c7;
+    height: 30px !important;
+  }
+
+  /* General sidebar styles */
+  .bm-menu {
+    background: #373a47;
+    width: 100% !important;
+    font-size: 1.15em;
+    overflow: hidden !important;
+  }
+
+  /* Wrapper for item list */
+  .bm-item-list {
+    color: #b8b7ad;
+  }
+
+  /* Styling of overlay */
+  .bm-overlay {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .bm-menu {
+    .block {
+      display: none;
+    }
+    .titles {
+      padding-top: 15%;
+      font-size: 1.5rem;
+    }
+    .titles:hover {
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .dashIcons > div {
+      display: grid;
+    }
+
+    .dashIcons {
+      text-align: left !important;
+    }
+  }
+
+  // ---Burger Menu Component (End)---
+
   .notification-close {
     top: 10px !important;
   }
@@ -465,9 +566,9 @@
     -moz-outline-style: none;
   }
 
-  .moduleBtn {
-    width: 100%;
-  }
+  // .App-logo {
+  //   width: 100%;
+  // }
 
   #adminHeader {
     margin: auto;

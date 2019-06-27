@@ -5,6 +5,12 @@
     "scripts": {
         "clean": "bash clean.sh",
         "build": "bash build.sh",
+        "build-bos": "bash build.sh bos",
+        "build-gui": "bash build.sh gui",
+        "build-apps": "bash build.sh apps",
+        "build-iconpacks": "bash build.sh iconpacks",
+        "build-themes": "bash build.sh themes",
+        "help": "bash build.sh -h",
         "serve": "node bos/src/server/index.js"
     },
     "keywords": [

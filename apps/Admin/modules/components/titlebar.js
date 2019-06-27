@@ -1,5 +1,5 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import { DropDown } from "./index.js";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -11,11 +11,11 @@ export class TitleBar extends React.Component {
           style={{ marginLeft: "16px", position: "absolute", zIndex: "101" }}
         >
           <Button
-            className="goBack"
+            onClick={this.props.menu}
             primary={true}
             style={{ width: "45px", height: "45px" }}
           >
-            <FaArrowLeft />
+            <FaBars />
           </Button>
         </div>
         <div className="col text-center" id="pageTitle">

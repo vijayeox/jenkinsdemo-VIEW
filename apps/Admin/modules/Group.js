@@ -41,7 +41,7 @@ class Group extends React.Component {
       args: this.core,
       config: {
         dataItem: dataItem,
-        title:"Group",
+        title: "Group",
         mainList: "user",
         subList: "group"
       },
@@ -124,7 +124,7 @@ class Group extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar args={this.core} title="Manage Groups" />
+        <TitleBar title="Manage Groups" menu={this.props.menu} />
         <GridTemplate
           args={this.core}
           ref={this.child}
