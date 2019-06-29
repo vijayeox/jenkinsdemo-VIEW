@@ -58,7 +58,16 @@ class Role extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        <TitleBar title="Manage User Roles" menu={this.props.menu} />
+        <TitleBar
+          title="Manage User Roles"
+          menu={this.props.menu}
+          args={this.core}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

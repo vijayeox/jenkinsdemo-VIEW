@@ -19,7 +19,7 @@
   }
 
   .k-grid-norecords :hover {
-    background-color: white;
+    // background-color: #ededed00!important;
     cursor: default;
 
     .list-group {
@@ -281,8 +281,7 @@
 
   // ---Burger Menu Component (Start)---
 
-  .bm-item {
-    display: inline-block;
+  .bm-item-list {
     outline: none;
 
     /* Our sidebar item styling */
@@ -290,8 +289,8 @@
     margin-bottom: 10px;
     color: #e0e0e0;
     transition: color 0.2s;
-    padding-left: 10%;
-    margin-top: 5%;
+    margin-top: 4%;
+    padding-bottom: 8%;
   }
 
   /* The rest copied directly from react-burger-menu docs */
@@ -306,6 +305,10 @@
     button {
       outline: none;
     }
+  }
+
+  .bm-menu-wrap {
+    position: absolute;
   }
 
   .bm-icon {
@@ -344,6 +347,8 @@
   /* Wrapper for item list */
   .bm-item-list {
     color: #b8b7ad;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   /* Styling of overlay */
@@ -359,18 +364,21 @@
       padding-top: 8%;
       padding-bottom: 8%;
       font-size: 1.5rem;
+      text-align: center;
+      outline: none;
     }
     .titles:hover {
       color: white;
       transform: scale(1.1);
     }
 
-    .dashIcons > div {
-      display: grid;
-    }
-
     .dashIcons {
+      padding-left: 10%;
+      display: flex !important;
+      justify-content: space-between;
+      flex-direction: column;
       text-align: left !important;
+      outline: none;
     }
   }
 
@@ -567,10 +575,6 @@
     -moz-outline-style: none;
   }
 
-  // .App-logo {
-  //   width: 100%;
-  // }
-
   #adminHeader {
     margin: auto;
     margin-bottom: 0px;
@@ -667,11 +671,20 @@
     text-align: center;
   }
 
+  .DashBG {
+    height: 100%;
+  }
+
   .dashIcons {
     width: 90%;
+    height: 100%;
+    margin-top: -3%;
     margin: auto;
-    position: relative;
     text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
   }
 
   #pageTitle {

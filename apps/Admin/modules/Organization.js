@@ -109,7 +109,11 @@ class Organization extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Organizations" menu={this.props.menu}/>
+        <TitleBar
+          title="Manage Organizations"
+          menu={this.props.menu}
+          args={this.core}
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

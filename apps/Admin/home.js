@@ -14,8 +14,9 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.userProfile = this.core.make("oxzion/profile").get();
+    this.userProfile = this.userProfile.key;
     this.state = {
-      value: "1",
       windowSize: undefined,
       showMenu: false
     };
@@ -70,168 +71,93 @@ class Home extends React.Component {
   };
 
   createBlock = () => {
+    var appsList = [
+      {
+        name: "Organization",
+        api: "ORGANIZATION",
+        icon: "apps/Admin/org.svg",
+        component: Organization
+      },
+      {
+        name: "Users",
+        api: "USER",
+        icon: "apps/Admin/115-manager.svg",
+        component: User
+      },
+      {
+        name: "Roles",
+        api: "ROLE",
+        icon: "apps/Admin/005-workflow.svg",
+        component: Role
+      },
+      {
+        name: "Groups",
+        api: "GROUP",
+        icon: "apps/Admin/group.svg",
+        component: Group
+      },
+      {
+        name: "Projects",
+        api: "PROJECT",
+        icon: "apps/Admin/101-project.svg",
+        component: Project
+      },
+      {
+        name: "Announcements",
+        api: "ANNOUNCEMENT",
+        icon: "apps/Admin/131-laptop.svg",
+        component: Announcement
+      }
+    ];
     let table = [];
-    if (this.state.value == 1) {
+
+    appsList.map(x =>
       table.push(
-        <div key="1">
+        this.userProfile.privileges["MANAGE_" + x.api + "_READ"] ? (
           <div
-            style={{ display: "inline-grid" }}
             className="moduleBtn"
-            onClick={this.orgClick}
+            onClick={() => {
+              this.hideMenu();
+              ReactDOM.render(
+                React.createElement(x.component, {
+                  args: this.core,
+                  userProfile: this.userProfile,
+                  menu: this.showMenu
+                }),
+                document.getElementById("componentsBox")
+              );
+            }}
           >
             <div className="block d1">
-              <img src="apps/Admin/org.svg" className="App-logo" />
+              <img src={x.icon} />
             </div>
-            <div className="titles">Organization</div>
+            <div className="titles">{x.name}</div>
           </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.userClick}
-          >
+        ) : null
+      )
+    );
+    table.push(
+      <React.Fragment>
+        {this.userProfile.privileges.MANAGE_EMAIL_READ ? (
+          <div className="moduleBtn" onClick={this.mailAdminClick}>
             <div className="block d1">
-              <img src="apps/Admin/115-manager.svg" className="App-logo" />
-            </div>
-            <div className="titles">Users</div>
-          </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.roleClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/005-workflow.svg" className="App-logo" />
-            </div>
-            <div className="titles">Roles</div>
-          </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.groupClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/group.svg" className="App-logo" />
-            </div>
-            <div className="titles">Groups</div>
-          </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.prjClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/101-project.svg" className="App-logo" />
-            </div>
-            <div className="titles">Projects</div>
-          </div>
-
-          <div
-            style={{ display: "inline-grid" }}
-            className="moduleBtn"
-            onClick={this.announClick}
-          >
-            <div className="block d1">
-              <img src="apps/Admin/131-laptop.svg" className="App-logo" />
-            </div>
-            <div className="titles">Announcements</div>
-          </div>
-
-          <div style={{ display: "inline-grid" }} onClick={this.mailAdminClick}>
-            <div className="block d1">
-              <img
-                src="apps/Admin/091-email-1.svg"
-                className="App-logo"
-                style={{ width: "100%" }}
-              />
+              <img src="apps/Admin/091-email-1.svg" />
             </div>
             <div className="titles">Mail Admin</div>
           </div>
+        ) : null}
 
-          <div style={{ display: "inline-grid" }} onClick={this.taskAdminClick}>
+        {this.userProfile.privileges.MANAGE_TASK_READ ? (
+          <div className="moduleBtn" onClick={this.taskAdminClick}>
             <div className="block d1">
-              <img
-                src="apps/Admin/042-task.svg"
-                className="App-logo"
-                style={{ width: "100%" }}
-              />
+              <img src="apps/Admin/042-task.svg" />
             </div>
             <div className="titles">Task Admin</div>
           </div>
-
-          {/* <div style={{ display: "inline-grid" }}>
-            <div className="block d1" onClick={this.appClick}>
-              <img
-                src="apps/Admin/102-production.svg"
-                className="moduleBtn App-logo"
-              />
-            </div>
-            <div className="titles">Apps</div>
-          </div> */}
-        </div>
-      );
-    }
-
+        ) : null}
+      </React.Fragment>
+    );
     return table;
-  };
-
-  orgClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Organization args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  groupClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Group args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  prjClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Project args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  userClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <User args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  roleClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Role args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  announClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Announcement args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
-  };
-
-  appClick = e => {
-    this.hideMenu();
-    ReactDOM.render(
-      <Application args={this.core} menu={this.showMenu} />,
-      document.getElementById("componentsBox")
-    );
   };
 
   mailAdminClick = e => {
@@ -255,7 +181,7 @@ class Home extends React.Component {
         }}
       >
         <Menu
-          width={"28%"}
+          width={"15rem"}
           isOpen={this.state.showMenu}
           disableAutoFocus
           pageWrapId={"admin-page-wrap"}
@@ -267,9 +193,6 @@ class Home extends React.Component {
             });
           }}
           styles={{
-            bmMenuWrap: {
-              position: "absolute"
-            },
             bmOverlay: {
               height: this.state.windowSize,
               display: this.state.showMenu ? "flex" : "none"
@@ -277,23 +200,22 @@ class Home extends React.Component {
             bmMenu: { height: this.state.windowSize }
           }}
         >
-          <div onClick={this.showMainPage} style={{ paddingLeft: "0px" }}>
-            <div className="titles" style={{ textAlign: "center" }}>
+          <div
+            onClick={this.showMainPage}
+            style={{ paddingLeft: "0px", outline: "none" }}
+          >
+            <div
+              className="titles"
+            >
               Main Page
             </div>
           </div>
 
-          <div className="dashIcons" style={{ display: "flex" }}>
-            {this.createBlock()}
-          </div>
+          <div className="dashIcons">{this.createBlock()}</div>
         </Menu>
 
         <div className="DashBG" style={{ height: "100%" }} id="admin-page-wrap">
-          <div
-            style={{ height: "100%", display: "flex", alignItems: "center" }}
-          >
-            <div className="dashIcons">{this.createBlock()}</div>
-          </div>
+          <div className="dashIcons">{this.createBlock()}</div>
         </div>
         <div id="componentsBox" style={{ height: "inherit" }} />
       </div>

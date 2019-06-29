@@ -56,7 +56,16 @@ class User extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        <TitleBar title="Manage Users" menu={this.props.menu} />
+        <TitleBar
+          title="Manage Users"
+          menu={this.props.menu}
+          args={this.core}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -87,7 +96,6 @@ class User extends React.Component {
           permission={this.state.permission}
         />
         {this.state.userInEdit && this.inputTemplate}
-        /> )}
       </div>
     );
   }

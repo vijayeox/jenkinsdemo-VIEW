@@ -13,7 +13,11 @@ class Group extends React.Component {
       groupInEdit: undefined,
       groupToBeEdited: [],
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_GROUP_CREATE,
+        canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_GROUP_DELETE
+      }
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();
@@ -124,7 +128,16 @@ class Group extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Groups" menu={this.props.menu} />
+        <TitleBar
+          title="Manage Groups"
+          menu={this.props.menu}
+          args={this.core}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

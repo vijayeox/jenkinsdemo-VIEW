@@ -19,6 +19,7 @@ import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
+
 // import "@progress/kendo-theme-default/dist/all.css";
 
 export default class GridTemplate extends React.Component {
@@ -131,7 +132,7 @@ export default class GridTemplate extends React.Component {
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
-          data={this.state.gridData}
+          data={this.state.gridData == undefined ? [] : this.state.gridData}
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}
@@ -177,14 +178,15 @@ export default class GridTemplate extends React.Component {
                 </div>
                 <AddButton
                   args={this.props.manageGrid.add}
-                  permission={this.props.permission}
+                  permission={this.props.permission.canAdd}
                   label={this.props.config.title}
                 />
               </div>
             </GridToolbar>
           )}
           {this.createColumns()}
-          {this.props.permission != 1 && (
+          {(this.props.permission.canEdit ||
+            this.props.permission.canDelete) && (
             <GridColumn
               title="Manage"
               width="190px"
@@ -208,29 +210,25 @@ export default class GridTemplate extends React.Component {
 
 class AddButton extends React.Component {
   render() {
-    if (this.props.permission == 7 || this.props.permission == 15) {
-      return (
-        <button
-          onClick={this.props.args}
-          className="k-button"
-          style={{ position: "absolute", top: "8px", right: "16px" }}
-        >
-          <FaPlusCircle style={{ fontSize: "20px" }} />
+    return this.props.permission ? (
+      <button
+        onClick={this.props.args}
+        className="k-button"
+        style={{ position: "absolute", top: "8px", right: "16px" }}
+      >
+        <FaPlusCircle style={{ fontSize: "20px" }} />
 
-          <p style={{ margin: "0px", paddingLeft: "10px" }}>
-            Add {this.props.label}
-          </p>
-        </button>
-      );
-    } else {
-      return <div />;
-    }
+        <p style={{ margin: "0px", paddingLeft: "10px" }}>
+          Add {this.props.label}
+        </p>
+      </button>
+    ) : null;
   }
 }
 
 class LogoCell extends React.Component {
   render() {
-    return (
+    return this.props.dataItem.media ? (
       <td>
         <img
           src={this.props.url + "resource/" + this.props.dataItem.media}
@@ -238,13 +236,13 @@ class LogoCell extends React.Component {
           className="text-center circle gridBanner"
         />
       </td>
-    );
+    ) : null;
   }
 }
 
 class LogoCell2 extends React.Component {
   render() {
-    return (
+    return this.props.dataItem.logo ? (
       <td>
         <img
           src={this.props.dataItem.logo + "?" + new Date()}
@@ -252,11 +250,18 @@ class LogoCell2 extends React.Component {
           className="text-center circle gridBanner"
         />
       </td>
-    );
+    ) : null;
   }
 }
 
-function CellWithEditing(title, edit, remove, addUsers, perm, setPrivileges) {
+function CellWithEditing(
+  title,
+  edit,
+  remove,
+  addUsers,
+  permission,
+  setPrivileges
+) {
   return class extends GridCell {
     constructor(props) {
       super(props);
@@ -264,69 +269,73 @@ function CellWithEditing(title, edit, remove, addUsers, perm, setPrivileges) {
     }
 
     deleteButton() {
-      if (perm == 15) {
-        return (
-          <abbr title={"Delete " + title}>
-            <button
-              type="button"
-              className="btn manage-btn k-grid-remove-command"
-              onClick={() => {
-                Swal.fire({
-                  title: "Are you sure?",
-                  text:
-                    "Do you really want to delete the record? This cannot be undone.",
-                  imageUrl:
-                    "https://image.flaticon.com/icons/svg/1632/1632714.svg",
-                  imageWidth: 75,
-                  imageHeight: 75,
-                  confirmButtonText: "Delete",
-                  confirmButtonColor: "#d33",
-                  showCancelButton: true,
-                  cancelButtonColor: "#3085d6",
-                  target: ".Window_Admin"
-                }).then(result => {
-                  if (result.value) {
-                    remove(this.props.dataItem);
-                  }
-                });
-              }}
-            >
-              <FaTrashAlt className="manageIcons" />
-            </button>
-          </abbr>
-        );
-      }
+      return permission.canDelete ? (
+        <abbr title={"Delete " + title}>
+          <button
+            type="button"
+            className="btn manage-btn k-grid-remove-command"
+            onClick={() => {
+              Swal.fire({
+                title: "Are you sure?",
+                text:
+                  "Do you really want to delete the record? This cannot be undone.",
+                imageUrl:
+                  "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+                imageWidth: 75,
+                imageHeight: 75,
+                confirmButtonText: "Delete",
+                confirmButtonColor: "#d33",
+                showCancelButton: true,
+                cancelButtonColor: "#3085d6",
+                target: ".Window_Admin"
+              }).then(result => {
+                if (result.value) {
+                  remove(this.props.dataItem);
+                }
+              });
+            }}
+          >
+            <FaTrashAlt className="manageIcons" />
+          </button>
+        </abbr>
+      ) : null;
     }
 
     render() {
       return (
         <td>
           <center>
-            <abbr title={"Edit " + title + " Details"}>
-              <button
-                type="button"
-                className=" btn manage-btn k-grid-edit-command"
-                onClick={() => {
-                  edit(this.props.dataItem);
-                }}
-              >
-                <FaPencilAlt className="manageIcons" />
-              </button>
-            </abbr>
-            &nbsp; &nbsp;
-            {addUsers && (
-              <abbr title={"Add Users to " + title}>
-                <button
-                  type="button"
-                  className="btn manage-btn"
-                  onClick={() => {
-                    addUsers(this.props.dataItem);
-                  }}
-                >
-                  <FaUserPlus className="manageIcons" />
-                </button>
-              </abbr>
-            )}
+            {permission.canEdit ? (
+              <React.Fragment>
+                <abbr title={"Edit " + title + " Details"}>
+                  <button
+                    type="button"
+                    className=" btn manage-btn k-grid-edit-command"
+                    onClick={() => {
+                      edit(this.props.dataItem);
+                    }}
+                  >
+                    <FaPencilAlt className="manageIcons" />
+                  </button>
+                </abbr>
+                {addUsers && (
+                  <React.Fragment>
+                    &nbsp; &nbsp;
+                    <abbr title={"Add Users to " + title}>
+                      <button
+                        type="button"
+                        className="btn manage-btn"
+                        onClick={() => {
+                          addUsers(this.props.dataItem);
+                        }}
+                      >
+                        <FaUserPlus className="manageIcons" />
+                      </button>
+                    </abbr>
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            ) : null}
             &nbsp; &nbsp;
             {this.deleteButton()}
           </center>
