@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import $ from "jquery";
 import {name as applicationName} from './metadata.json';
 
-class Query extends React.Component {
+class Visualization extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -11,11 +11,11 @@ class Query extends React.Component {
 
   render() {
     return(
-        <div class="query full-height">
-            Query
+        <div class="visualization full-height">
+            Visualization
         </div>
     );
   }
 }
-export default Query;
+export default Visualization;
 

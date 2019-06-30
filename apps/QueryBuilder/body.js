@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import $ from "jquery";
 import {name as applicationName} from './metadata.json';
 import DataSource from './dataSource';
+import Query from './query';
+import Visualization from './visualization';
 
 class Body extends React.Component {
   constructor(props) {
@@ -12,16 +14,33 @@ class Body extends React.Component {
 
   dataSourceClicked = e => {
     ReactDOM.render(
-      <DataSource  args={this.core}/>, 
+      <DataSource args={this.core}/>, 
       $('.Window_' + applicationName + ' #content')[0]
     );
   };
+
+  queryClicked = e => {
+    ReactDOM.render(
+      <Query args={this.core}/>, 
+      $('.Window_' + applicationName + ' #content')[0]
+    );
+  }
+
+  visualizationClicked = e => {
+    ReactDOM.render(
+      <Visualization args={this.core}/>, 
+      $('.Window_' + applicationName + ' #content')[0]
+    );
+  }
 
   render() {
     return(
         <div class="body full-height">
             <div class="container-fluid full-height no-padding">
-                <div class="nav-bar">
+                <div class="content" id="content">
+                    <div>Content</div>
+                </div>
+                <div class="left-icon-bar nav-bar">
                     <ul class="nav nav-stacked">
                         <li>
                             <a href="#" onClick={this.dataSourceClicked}>
@@ -41,9 +60,6 @@ class Body extends React.Component {
                             </a>
                         </li>
                     </ul>
-                </div>
-                <div class="content" id="content">
-                    <div>Content</div>
                 </div>
             </div>
         </div>

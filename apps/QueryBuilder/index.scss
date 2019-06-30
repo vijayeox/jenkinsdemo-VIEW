@@ -37,7 +37,8 @@
     left:0px;
     width:100%;
     height:100%;
-    margin-left:96px;
+    padding-left:96px;
+    overflow-y:scroll;
 }
 
 .body .content div:first-child {
@@ -45,23 +46,46 @@
     height:100%;
 }
 
-.body div.nav-bar {
+.body div.left-icon-bar {
     border-right:2px solid gray;
 }
 
-.body div.nav-bar ul.left-nav {
+.body div.left-icon-bar ul.nav {
     width:94px;
 }
 
-.body div.nav-bar ul li a img {
+.body div.left-icon-bar ul.nav li a img {
     padding:15px;
 }
 
-.body div.nav-bar ul li:first-child a img {
+.body div.left-icon-bar ul.nav li:first-child a img {
     padding-top:30px;
 }
 
-.body div.nav-bar ul li:last-child a img {
+.body div.left-icon-bar ul.nav li:last-child a img {
     padding-bottom:30px;
+}
+
+.body nav ul li.page-item a {
+    min-width:3em;
+    text-align:center;
+    cursor:pointer;
+}
+
+.body nav ul li.page-item.disabled a,
+.body nav ul li.page-item.active a {
+    cursor:auto;
+}
+
+.body .table-striped tbody tr a.action-button {
+    color:white;
+}
+.body .table-striped tbody tr:nth-of-type(odd) a.action-button {
+    color: rgba(0, 0, 0, 0.05);
+}
+
+.body .table-striped tbody tr:hover a.action-button {
+    color:black;
+    cursor:pointer;
 }
 
