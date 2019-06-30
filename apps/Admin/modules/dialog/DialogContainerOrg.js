@@ -327,12 +327,12 @@ export default class DialogContainer extends React.Component {
 
                 <div className="col" style={{ display: "flex" }}>
                   <label
-                    style={{ position: "absolute", paddingLeft: "6%" }}
+                    style={{ position: "absolute" }}
                     className="required-label"
                   >
                     Date Format
                   </label>
-                  <div style={{ margin: "auto", marginTop: "11%" }}>
+                  <div style={{ margin: "auto", marginTop: "11%", width:"inherit" }}>
                     <DropDown
                       args={this.core}
                       rawData={[

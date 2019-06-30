@@ -10,9 +10,15 @@ class Announcement extends React.Component {
     this.core = this.props.args;
     this.state = {
       ancInEdit: undefined,
-      permission: "15",
-      visible: false
+      visible: false,
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
+      }
     };
+    console.log(this.props.userProfile.privileges);
+    
     this.notif = React.createRef();
     this.child = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);

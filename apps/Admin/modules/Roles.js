@@ -12,7 +12,11 @@ class Role extends React.Component {
       roleInEdit: undefined,
       roleToBeEdited: [],
       action: "",
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ROLE_WRITE
+      }
     };
     this.child = React.createRef();
   }

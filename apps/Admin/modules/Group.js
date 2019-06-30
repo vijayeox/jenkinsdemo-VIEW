@@ -5,6 +5,7 @@ import { TitleBar } from "./components/titlebar";
 import Swal from "sweetalert2";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
+
 class Group extends React.Component {
   constructor(props) {
     super(props);
@@ -14,9 +15,9 @@ class Group extends React.Component {
       groupToBeEdited: [],
       visible: false,
       permission: {
-        canAdd: this.props.userProfile.privileges.MANAGE_GROUP_CREATE,
+        canAdd: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
-        canDelete: this.props.userProfile.privileges.MANAGE_GROUP_DELETE
+        canDelete: this.props.userProfile.privileges.MANAGE_GROUP_WRITE
       }
     };
     this.toggleDialog = this.toggleDialog.bind(this);

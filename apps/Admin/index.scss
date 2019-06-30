@@ -308,7 +308,7 @@
   }
 
   .bm-menu-wrap {
-    position: absolute;
+    position: absolute !important;
   }
 
   .bm-icon {
@@ -361,8 +361,8 @@
       display: none;
     }
     .titles {
-      padding-top: 8%;
-      padding-bottom: 8%;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
       font-size: 1.5rem;
       text-align: center;
       outline: none;
@@ -373,12 +373,17 @@
     }
 
     .dashIcons {
-      padding-left: 10%;
+      padding-left: 0%;
       display: flex !important;
       justify-content: space-between;
       flex-direction: column;
       text-align: left !important;
       outline: none;
+      height: 85%;
+
+      .titles {
+        text-align: left !important;
+      }
     }
   }
 

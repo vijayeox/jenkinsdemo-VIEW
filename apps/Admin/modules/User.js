@@ -10,7 +10,11 @@ class User extends React.Component {
     this.core = this.props.args;
     this.state = {
       userInEdit: undefined,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_USER_CREATE,
+        canEdit: this.props.userProfile.privileges.MANAGE_USER_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_USER_DELETE
+      }
     };
     this.child = React.createRef();
   }

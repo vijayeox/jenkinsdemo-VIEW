@@ -13,7 +13,11 @@ class Organization extends React.Component {
       orgToBeEdited: [],
       action: "",
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ORGANIZATION_CREATE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ORGANIZATION_DELETE
+      }
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();

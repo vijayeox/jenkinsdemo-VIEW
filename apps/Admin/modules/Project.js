@@ -13,7 +13,11 @@ class Project extends React.Component {
       prjInEdit: undefined,
       projectToBeEdited: [],
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE
+      }
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.notif = React.createRef();

@@ -84,7 +84,9 @@ class Slider extends React.Component {
         </div>
         <div className="Announcement-content col">
           <h5 style={{ paddingTop: "10px" }}> {data.name} </h5>
-          <p> {data.description.slice(0, 150) + "..."} </p>
+          {data.description ? (
+            <p> {data.description.slice(0, 150) + "..."} </p>
+          ) : null}
           {data.description.length < 150 ? null : (
             <button
               className="readMore"
@@ -123,13 +125,13 @@ class Slider extends React.Component {
             media: "https://svgshare.com/i/DqC.svg",
             uuid: "empty"
           })
-        ) : (
+        ) : this.state.announcements.length > 1 ? (
           <div>
             <LeftArrow goToPrevSlide={this.goToPrevSlide} />
 
             <RightArrow goToNextSlide={this.goToNextSlide} />
           </div>
-        )}
+        ) : null}
 
         <SlidingPanel
           type={"bottom"}

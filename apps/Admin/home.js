@@ -202,13 +202,9 @@ class Home extends React.Component {
         >
           <div
             onClick={this.showMainPage}
-            style={{ paddingLeft: "0px", outline: "none" }}
+            style={{ padding: "0.5rem 0 0.5rem 0px", outline: "none" }}
           >
-            <div
-              className="titles"
-            >
-              Main Page
-            </div>
+            <div className="titles">Main Page</div>
           </div>
 
           <div className="dashIcons">{this.createBlock()}</div>
