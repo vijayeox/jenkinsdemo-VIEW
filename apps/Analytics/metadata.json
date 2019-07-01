@@ -1,17 +1,17 @@
 {
   "type": "application",
-  "name": "QueryBuilder",
-  "category": "analytics",
+  "name": "Analytics",
+  "category": "organization",
   "singleton": true,
   "defaultAppforOrgs" : true,
   "icon": "icon.png", 
   "icon_white":"icon_white.png",
   "server": "server.js",
   "title": {
-    "en_EN": "QueryBuilder"
+    "en_EN": "Analytics"
   },
   "description": {
-    "en_EN": "QueryBuilder"
+    "en_EN": "Analytics"
   },
   "files": [
     "main.js",

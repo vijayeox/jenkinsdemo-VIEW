@@ -13,7 +13,7 @@ const register = (core, args, options, metadata) => {
 
   // Create  a new Window instance
   const win = proc.createWindow({
-    id: 'QueryBuilderWindow',
+    id: applicationName + 'Window',
     title: metadata.title.en_EN,
     icon: proc.resource(icon_white),
     dimension: {width: 800, height: 400},

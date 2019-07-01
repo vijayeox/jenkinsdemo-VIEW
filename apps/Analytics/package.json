@@ -1,5 +1,5 @@
 {
-  "name": "QueryBuilder",
+  "name": "Analytics",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint *.js",

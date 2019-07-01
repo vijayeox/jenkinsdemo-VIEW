@@ -44,19 +44,19 @@ class Body extends React.Component {
                     <ul class="nav nav-stacked">
                         <li>
                             <a href="#" onClick={this.dataSourceClicked}>
-                                <img src="apps/QueryBuilder/datasource-icon-64-64.png"/>
+                                <img src="apps/Analytics/datasource-icon-64-64.png"/>
                             </a>
                         </li>
                         <li>&nbsp;</li>
                         <li>
                             <a href="#" onClick={this.queryClicked}>
-                                <img src="apps/QueryBuilder/query-icon-64-64.png"/>
+                                <img src="apps/Analytics/query-icon-64-64.png"/>
                             </a>
                         </li>
                         <li>&nbsp;</li>
                         <li>
                             <a href="#" onClick={this.visualizationClicked}>
-                                <img src="apps/QueryBuilder/data-visualization-icon-64-64.png"/>
+                                <img src="apps/Analytics/data-visualization-icon-64-64.png"/>
                             </a>
                         </li>
                     </ul>

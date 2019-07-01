@@ -49,7 +49,7 @@ module.exports = {
           {
             loader: "file-loader",
             options: {
-              publicPath: "/apps/QueryBuilder"
+              publicPath: "/apps/Analytics"
             }
           }
         ]
