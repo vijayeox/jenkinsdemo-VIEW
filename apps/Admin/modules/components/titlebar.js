@@ -27,7 +27,8 @@ export class TitleBar extends React.Component {
               right: "2%",
               top: "1.5%",
               position: "absolute",
-              zIndex: "100"
+              zIndex: "100",
+              width: "200px"
             }}
           >
             <label

@@ -18,10 +18,20 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      userInEdit: this.props.dataItem || null,
+      userInEdit: [],
       roleList: []
     };
     this.notif = React.createRef();
+  }
+
+  componentDidMount() {
+    if (this.props.formAction == "put") {
+      this.getUserDetails(this.props.dataItem.uuid).then(response => {
+        this.setState({
+          userInEdit: response.data
+        });
+      });
+    }
   }
 
   componentDidMount() {
@@ -49,12 +59,28 @@ export default class DialogContainer extends React.Component {
         />,
         document.getElementById("tooltip")
       );
+      this.getUserDetails(this.props.dataItem.uuid).then(response => {
+        this.setState({
+          userInEdit: response.data
+        });
+      });
     }
   }
 
   async getRolesList() {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request("v1", "/role", {}, "get");
+    return rolesList;
+  }
+
+  async getUserDetails(uuid) {
+    let helper2 = this.core.make("oxzion/restClient");
+    let rolesList = await helper2.request(
+      "v1",
+      "/user/" + uuid + "/role+a",
+      {},
+      "get"
+    );
     return rolesList;
   }
 

@@ -142,7 +142,9 @@ export default class GridTemplate extends React.Component {
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
           onRowClick={e => {
-            this.props.manageGrid.edit(e.dataItem);
+            this.props.permission.canEdit
+              ? this.props.manageGrid.edit(e.dataItem, { diableField: false })
+              : this.props.manageGrid.edit(e.dataItem, { diableField: true });
           }}
         >
           <GridNoRecords>
@@ -246,6 +248,14 @@ class LogoCell2 extends React.Component {
       <td>
         <img
           src={this.props.dataItem.logo + "?" + new Date()}
+          alt="Logo"
+          className="text-center circle gridBanner"
+        />
+      </td>
+    ) : this.props.dataItem.icon ? (
+      <td>
+        <img
+          src={this.props.dataItem.icon + "?" + new Date()}
           alt="Logo"
           className="text-center circle gridBanner"
         />

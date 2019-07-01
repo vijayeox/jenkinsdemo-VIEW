@@ -62,11 +62,13 @@ export default class DropDown extends React.Component {
   }
 
   render() {
+    this.props.disableItem ? (this.inputProps = { opened: false }) : [];
     return (
       <div>
         {this.props.rawData ? (
           <DropDownList
             data={this.state.mainList}
+            {...this.inputProps}
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}
@@ -78,6 +80,7 @@ export default class DropDown extends React.Component {
         ) : (
           <DropDownListWithValueField
             data={this.state.mainList}
+            {...this.inputProps}
             textField={"name"}
             valueField={"id"}
             value={this.props.selectedItem}

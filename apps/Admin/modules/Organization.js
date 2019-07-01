@@ -71,16 +71,18 @@ class Organization extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     this.setState({
       orgInEdit: this.cloneItem(dataItem)
     });
+
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 

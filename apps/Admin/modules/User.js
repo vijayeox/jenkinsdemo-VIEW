@@ -79,6 +79,10 @@ class User extends React.Component {
             api: "user",
             column: [
               {
+                title: "Profile Image",
+                field: "logo"
+              },
+              {
                 title: "Name",
                 field: "name"
               },
