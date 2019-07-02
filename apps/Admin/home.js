@@ -111,15 +111,16 @@ class Home extends React.Component {
     ];
     let table = [];
 
-    appsList.map(x =>
+    appsList.map((currentValue, index) => {
       table.push(
-        this.userProfile.privileges["MANAGE_" + x.api + "_READ"] ? (
+        this.userProfile.privileges["MANAGE_" + currentValue.api + "_READ"] ? (
           <div
+            key={index}
             className="moduleBtn"
             onClick={() => {
               this.hideMenu();
               ReactDOM.render(
-                React.createElement(x.component, {
+                React.createElement(currentValue.component, {
                   args: this.core,
                   userProfile: this.userProfile,
                   menu: this.showMenu
@@ -129,17 +130,17 @@ class Home extends React.Component {
             }}
           >
             <div className="block d1">
-              <img src={x.icon} />
+              <img src={currentValue.icon} />
             </div>
-            <div className="titles">{x.name}</div>
+            <div className="titles">{currentValue.name}</div>
           </div>
         ) : null
-      )
-    );
+      );
+    });
     table.push(
-      <React.Fragment>
+      <React.Fragment key={15}>
         {this.userProfile.privileges.MANAGE_EMAIL_READ ? (
-          <div className="moduleBtn" onClick={this.mailAdminClick}>
+          <div key={10} className="moduleBtn" onClick={this.mailAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/091-email-1.svg" />
             </div>

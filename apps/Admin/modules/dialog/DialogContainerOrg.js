@@ -394,7 +394,8 @@ export default class DialogContainer extends React.Component {
                       placeholder: "Select Organization Timezone",
                       name: "timezone",
                       required: true,
-                      readOnly: this.props.diableField ? true : false
+                      readOnly: this.props.diableField ? true : false,
+                      autoComplete: false
                     }}
                   />
                 </div>

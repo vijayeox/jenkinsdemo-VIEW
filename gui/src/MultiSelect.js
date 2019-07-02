@@ -158,9 +158,10 @@ class MultiSelect extends React.Component {
         <Dialog onClose={this.props.manage.toggleDialog}>
           <nav className="navbar bg-dark">
             <h6 style={{ color: "white", paddingTop: "3px" }}>
-              {this.props.config.title} &nbsp; -&nbsp; {this.props.config.dataItem.name}
+              {this.props.config.title} &nbsp; -&nbsp;
+              {this.props.config.dataItem.name}
               &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage &nbsp;
-              {this.capitalizeFirstLetter(this.props.config.mainList+"'s")}
+              {this.capitalizeFirstLetter(this.props.config.mainList + "'s")}
             </h6>
           </nav>
           <div

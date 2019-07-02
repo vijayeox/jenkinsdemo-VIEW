@@ -119,7 +119,6 @@ export default class DialogContainer extends React.Component {
       var uid = { id: this.state.userInEdit.role[i].id };
       userRoles.push(uid);
     }
-
     if (this.props.formAction == "post") {
       PushData("user", this.props.formAction, this.props.dataItem.uuid, {
         username: this.state.userInEdit.username,
@@ -127,12 +126,12 @@ export default class DialogContainer extends React.Component {
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
         email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(),
+        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format("YYYY-MM-DD"),
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
         role: JSON.stringify(userRoles),
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
+        date_of_join: new Moment(this.state.userInEdit.date_of_join).format("YYYY-MM-DD"),
         country: this.state.userInEdit.country
       }).then(response => {
         this.props.action(response.status);
@@ -152,13 +151,13 @@ export default class DialogContainer extends React.Component {
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
         email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(),
+        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format("YYYY-MM-DD"),
         designation: this.state.userInEdit.designation,
         orgid: this.state.userInEdit.orgid,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
         role: JSON.stringify(userRoles),
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(),
+        date_of_join: new Moment(this.state.userInEdit.date_of_join).format("YYYY-MM-DD"),
         country: this.state.userInEdit.country
       }).then(response => {
         this.props.action(response.status);
