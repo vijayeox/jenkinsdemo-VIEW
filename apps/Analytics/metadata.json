@@ -13,6 +13,21 @@
   "description": {
     "en_EN": "Analytics"
   },
+  "dataSource": {
+    "title": {
+      "en_EN":"Data Source"
+    }
+  },
+  "query": {
+    "title": {
+      "en_EN":"Query"
+    }
+  },
+  "visualization": {
+    "title": {
+      "en_EN":"Visualization"
+    }
+  },
   "files": [
     "main.js",
     "main.css"

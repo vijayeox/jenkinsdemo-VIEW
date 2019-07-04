@@ -5,62 +5,100 @@ import {name as applicationName} from './metadata.json';
 import DataSource from './dataSource';
 import Query from './query';
 import Visualization from './visualization';
+import { slide as Menu } from "react-burger-menu";
+
+const SECTION_DATA_SOURCE = 'dataSource';
+const SECTION_QUERY = 'query';
+const SECTION_VISUALIZATION = 'visualization';
 
 class Body extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.state = {
+      isMenuOpen: false,
+      displaySection: SECTION_DATA_SOURCE,
+      title:''
+    };
   }
 
-  dataSourceClicked = e => {
-    ReactDOM.render(
-      <DataSource args={this.core}/>, 
-      $('.Window_' + applicationName + ' #content')[0]
-    );
+  dataSourceClicked = (e) => {
+    this.hideMenu();
+    this.setState({
+        displaySection: SECTION_DATA_SOURCE
+    });
   };
 
-  queryClicked = e => {
-    ReactDOM.render(
-      <Query args={this.core}/>, 
-      $('.Window_' + applicationName + ' #content')[0]
-    );
+  queryClicked = (e) => {
+    this.hideMenu();
+    this.setState({
+        displaySection: SECTION_QUERY
+    });
   }
 
-  visualizationClicked = e => {
-    ReactDOM.render(
-      <Visualization args={this.core}/>, 
-      $('.Window_' + applicationName + ' #content')[0]
-    );
+  visualizationClicked = (e) => {
+    this.hideMenu();
+    this.setState({
+        displaySection: SECTION_VISUALIZATION
+    });
+  }
+
+  hideMenu = () => {
+    this.setState({isMenuOpen: false});
+  };
+
+  showMenu = () => {
+    this.setState({isMenuOpen: true});
+  };
+
+  handleMenuStateChange = (state) => {
+    this.setState({isMenuOpen: state.isOpen});
+    this.showHideMenuElement(state.isOpen);
+  }
+
+  //Hack to prevent menu element from showing up when it slides off to left.
+  showHideMenuElement = (isOpen) => {
+    var menuElement = $('.page-body .bm-menu-wrap');
+    if (isOpen) {
+        menuElement.show();
+    }
+    else {
+        menuElement.hide();
+    }
+  }
+
+  setTitle = (title) => {
+    this.setState({title:title});
+  }
+
+  componentDidMount() {
+    this.showHideMenuElement(false);
   }
 
   render() {
+    let sectionContent;
+    if (this.state.displaySection == SECTION_DATA_SOURCE) {
+        sectionContent = <DataSource args={this.core} setTitle={this.setTitle}/>;
+    }
+    else if (this.state.displaySection == SECTION_QUERY) {
+        sectionContent = <Query args={this.core} setTitle={this.setTitle}/>;
+    }
+    else if (this.state.displaySection == SECTION_VISUALIZATION) {
+        sectionContent = <Visualization args={this.core} setTitle={this.setTitle}/>;
+    }
+
     return(
-        <div class="body full-height">
-            <div class="container-fluid full-height no-padding">
-                <div class="content" id="content">
-                    <div>Content</div>
-                </div>
-                <div class="left-icon-bar nav-bar">
-                    <ul class="nav nav-stacked">
-                        <li>
-                            <a href="#" onClick={this.dataSourceClicked}>
-                                <img src="apps/Analytics/datasource-icon-64-64.png"/>
-                            </a>
-                        </li>
-                        <li>&nbsp;</li>
-                        <li>
-                            <a href="#" onClick={this.queryClicked}>
-                                <img src="apps/Analytics/query-icon-64-64.png"/>
-                            </a>
-                        </li>
-                        <li>&nbsp;</li>
-                        <li>
-                            <a href="#" onClick={this.visualizationClicked}>
-                                <img src="apps/Analytics/data-visualization-icon-64-64.png"/>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+        <div id="page-body" className="page-body full-width">
+            <Menu isOpen={this.state.isMenuOpen} onStateChange={this.handleMenuStateChange} 
+                disableAutoFocus width="20%" 
+                outerContainerId="page-body" pageWrapId="page-content">
+                <a className="menu-item" onClick={this.dataSourceClicked}>Data Source</a>
+                <a className="menu-item" onClick={this.queryClicked}>Query</a>
+                <a className="menu-item" onClick={this.visualizationClicked}>Visualization</a>
+            </Menu>
+            <div className="page-title full-width">{this.state.title}</div>
+            <div className="page-content full-width" id="page-content">
+                { sectionContent }
             </div>
         </div>
     );

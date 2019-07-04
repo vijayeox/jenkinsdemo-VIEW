@@ -1,17 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import $ from "jquery";
-import {name as applicationName} from './metadata.json';
+import {visualization as section} from './metadata.json';
 
 class Visualization extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+
+    this.props.setTitle(section.title.en_EN);
   }
 
   render() {
     return(
-        <div class="visualization full-height">
+        <div className="visualization full-height">
             Visualization
         </div>
     );

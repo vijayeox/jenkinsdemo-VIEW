@@ -1,17 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import $ from "jquery";
-import {name as applicationName} from './metadata.json';
+import {query as section} from './metadata.json';
 
 class Query extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+
+    this.props.setTitle(section.title.en_EN);
   }
 
   render() {
     return(
-        <div class="query full-height">
+        <div className="query full-height">
             Query
         </div>
     );

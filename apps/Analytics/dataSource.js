@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import $ from "jquery";
-import {name as applicationName} from './metadata.json';
+import {dataSource as section} from './metadata.json';
 import Pagination from "./pagination"
 
 class DataSource extends React.Component {
@@ -16,27 +15,28 @@ class DataSource extends React.Component {
         pageOfItems: []
     };
 
-    this.onChangePage = this.onChangePage.bind(this);
+    this.props.setTitle(section.title.en_EN);
+    //this.onChangePage = this.onChangePage.bind(this);
   }
 
-  onChangePage(pageOfItems) {
+  onChangePage = (pageOfItems) => {
     // update state with new page of items
     this.setState({ pageOfItems: pageOfItems });
   }
 
-  editDataSource(e) {
+  editDataSource = (e) => {
       console.log(e);
   }
 
-  deleteDataSource(e) {
+  deleteDataSource = (e) => {
       console.log(e);
   }
 
   render() {
     return(
-        <div class="data-source full-height">
-            <table class="table table-striped">
-                <thead class="thead-dark">
+        <div className="data-source">
+            <table className="table table-striped">
+                <thead className="thead-dark">
                     <tr>
                         <th>Sl. No.</th>
                         <th>Name</th>
@@ -44,18 +44,18 @@ class DataSource extends React.Component {
                 </thead>
                 <tbody>
                     {this.state.pageOfItems.map(item =>
-                        <tr>
-                            <td class="number">
+                        <tr key={item.id}>
+                            <td className="number">
                                 {item.slNum}
                             </td>
                             <td>
                                 {item.name} &nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="action-button" onClick={() => this.editDataSource(item.id)}>
-                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                <a className="action-button" onClick={() => this.editDataSource(item.id)}>
+                                    <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
                                 </a>
                                 &nbsp;&nbsp;
-                                <a class="action-button" onClick={() => this.deleteDataSource(item.id)}>
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                <a className="action-button" onClick={() => this.deleteDataSource(item.id)}>
+                                    <i className="fa fa-trash" aria-hidden="true"></i>
                                 </a>
                             </td>
                         </tr>

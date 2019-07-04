@@ -11,7 +11,10 @@
   "dependencies": {
     "jquery": "^3.4.1",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-icons": "^3.6.1",
+    "ckeditor4-react": "1.0.0-beta",
+    "react-burger-menu": "2.6.10"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -21,6 +24,8 @@
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.2.0",
+    "@progress/kendo-react-buttons": "^2.10.0",
+    "@oxzion/gui": "file:../../gui",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.0",
     "dotenv-webpack": "^1.7.0",

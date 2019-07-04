@@ -1,5 +1,6 @@
 .Window_AnalyticsWindow {
 	@import "./node_modules/bootstrap/dist/css/bootstrap.css";
+    @import "./components/burger-menu.css";
 }
 
 .osjs-window-header {
@@ -22,70 +23,19 @@
     padding:0px;
 }
 
-.body .nav-bar {
-    position:absolute;
-    left:0px;
-    top:0px;
-    width:96px;
-    height:100%;
+.page-body {
+    height:calc(100%); /* Same height as .osjs-window-content */
 }
 
-.body .content {
-    position:absolute;
-    left:0px;
-    top:0px;
-    left:0px;
-    width:100%;
-    height:100%;
-    padding-left:96px;
-    overflow-y:scroll;
-}
-
-.body .content div:first-child {
-    width:100%;
-    height:100%;
-}
-
-.body div.left-icon-bar {
-    border-right:2px solid gray;
-}
-
-.body div.left-icon-bar ul.nav {
-    width:94px;
-}
-
-.body div.left-icon-bar ul.nav li a img {
-    padding:15px;
-}
-
-.body div.left-icon-bar ul.nav li:first-child a img {
-    padding-top:30px;
-}
-
-.body div.left-icon-bar ul.nav li:last-child a img {
-    padding-bottom:30px;
-}
-
-.body nav ul li.page-item a {
-    min-width:3em;
+.page-body .page-title {
     text-align:center;
-    cursor:pointer;
+    font-size:2em;
+    font-weight:bold;
+    padding:0.5em;
 }
 
-.body nav ul li.page-item.disabled a,
-.body nav ul li.page-item.active a {
-    cursor:auto;
-}
-
-.body .table-striped tbody tr a.action-button {
-    color:white;
-}
-.body .table-striped tbody tr:nth-of-type(odd) a.action-button {
-    color: rgba(0, 0, 0, 0.05);
-}
-
-.body .table-striped tbody tr:hover a.action-button {
-    color:black;
-    cursor:pointer;
+.page-body .page-content {
+    overflow-y:scroll;
+    height:calc(100% - 4.0em); /* Height of .page-body minus title bar height. */
 }
 
