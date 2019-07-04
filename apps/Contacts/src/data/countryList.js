@@ -1,4 +1,5 @@
-export const countries = [
+const CountryList = [
+    "",
     "Afghanistan",
     "Åland Islands",
     "Albania",
@@ -243,3 +244,5 @@ export const countries = [
     "Zambia",
     "Zimbabwe"
 ];
+
+export default CountryList;
