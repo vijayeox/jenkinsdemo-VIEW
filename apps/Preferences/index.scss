@@ -540,5 +540,10 @@
   .infoDiv {
     padding: 5px
   }
+  .mandatory:after { 
+    content:" *";
+    color: #e02222;
+    font-size: 16px;
+   }
 
 }

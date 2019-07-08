@@ -379,7 +379,7 @@ class EditProfile extends Component {
           <div className="row">
             <div className="col-md-6 firstLastNameDiv">
               <div className="col-md-12">
-                <label className="firstNameLabel">First Name *</label>
+                <label className="firstNameLabel mandatory">First Name</label>
                 <input
                   type="text"
                   name="firstname"
@@ -394,7 +394,7 @@ class EditProfile extends Component {
                 <div className="errorMsg">{this.state.errors["firstname"]}</div>
               </div>
               <div className="col-md-12">
-                <label className="firstNameLabel">Last Name *</label>
+                <label className="firstNameLabel mandatory">Last Name</label>
                 <input
                   type="text"
                   name="lastname"
@@ -418,7 +418,7 @@ class EditProfile extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field">
-              <label htmlFor="email">Email *</label>
+              <label className="mandatory" htmlFor="email">Email</label>
               <input
                 name="email"
                 type="text"
@@ -432,7 +432,7 @@ class EditProfile extends Component {
 
           <div className="row marginstyle">
             <div className="col input-field marginbottom">
-              <label id="rowdob">Date of Birth *</label>
+              <label className="mandatory" id="rowdob">Date of Birth</label>
               <div>
                 <DatePicker
                   format={this.state.dateformat}
@@ -449,8 +449,8 @@ class EditProfile extends Component {
             </div>
 
             <div className="col input-field">
-              <label id="name" className="active" style={{ fontSize: "16px" }}>
-                Gender *
+              <label id="name" className="active mandatory" style={{ fontSize: "16px" }}>
+                Gender
               </label>
               <div className="row gender">
                 <div className="col-md-3 input-field">
@@ -489,8 +489,8 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-md-12" style={{ fontSize: "17px" }}>
-              Contact Number *
+            <div className="col-md-12 mandatory" style={{ fontSize: "17px" }}>
+              Contact Number
             </div>
             <div className="row">
               <div className="col-md-5">
@@ -529,7 +529,7 @@ class EditProfile extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field">
-              <label style={{ fontSize: "17px" }}>Address *</label>
+              <label className="mandatory" style={{ fontSize: "17px" }}>Address</label>
               <div>
                 <textarea
                   rows="3"
@@ -547,8 +547,8 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <label className="country" style={{ marginTop: "" }}>
-              Country *
+            <label className="country mandatory" style={{ marginTop: "" }}>
+              Country
             </label>
 
             <div className="col-md-12">
@@ -600,7 +600,7 @@ class EditProfile extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field interest">
-              <label htmlFor="interest">Interest *</label>
+              <label className="mandatory" htmlFor="interest">Interest</label>
 
               <input
                 id="interest"
