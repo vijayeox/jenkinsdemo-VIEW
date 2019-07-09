@@ -39,7 +39,7 @@ class Role extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("role", dataItem.id).then(response => {
+    DeleteEntry("role", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };
@@ -66,11 +66,11 @@ class Role extends React.Component {
           title="Manage User Roles"
           menu={this.props.menu}
           args={this.core}
-          orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-              ? true
-              : false
-          }
+          // orgSwitch={
+          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+          //     ? true
+          //     : false
+          // }
         />
         <GridTemplate
           args={this.core}

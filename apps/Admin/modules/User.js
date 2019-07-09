@@ -14,10 +14,15 @@ class User extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_USER_CREATE,
         canEdit: this.props.userProfile.privileges.MANAGE_USER_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_USER_DELETE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.child = React.createRef();
   }
+
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
 
   edit = dataItem => {
     this.setState({
@@ -64,6 +69,7 @@ class User extends React.Component {
           title="Manage Users"
           menu={this.props.menu}
           args={this.core}
+          orgChange={this.orgChange}
           orgSwitch={
             this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
               ? true
@@ -76,7 +82,7 @@ class User extends React.Component {
           config={{
             showToolBar: true,
             title: "User",
-            api: "user",
+            api: "organization/" + this.state.selectedOrg + "/users",
             column: [
               {
                 title: "Profile Image",

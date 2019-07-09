@@ -60,6 +60,12 @@ export default class DialogContainer extends React.Component {
     this.setState({ orgInEdit: orgInEdit, contactValid: inValid });
   };
 
+  dropdownChange = (field, event) => {
+    let orgInEdit = { ...this.state.orgInEdit };
+    orgInEdit[field] = event;
+    this.setState({ orgInEdit: orgInEdit });
+  };
+
   valueChange = (field, event) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["preferences"] = orgInEdit["preferences"]
@@ -72,6 +78,16 @@ export default class DialogContainer extends React.Component {
 
   pushData = () => {
     this.notif.current.uploadingData();
+    let contactData =
+      this.props.formAction == "post"
+        ? JSON.stringify({
+            firstname: this.state.orgInEdit.contact.firstname,
+            lastname: this.state.orgInEdit.contact.lastname,
+            username: this.state.orgInEdit.contact.username,
+            email: this.state.orgInEdit.contact.email,
+            phone: "+" + this.state.orgInEdit.contact.phone
+          })
+        : undefined;
     PushDataPOST(
       "organization",
       this.props.formAction,
@@ -83,13 +99,7 @@ export default class DialogContainer extends React.Component {
         state: this.state.orgInEdit.state,
         zip: this.state.orgInEdit.zip,
         logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-        contact: JSON.stringify({
-          firstname: this.state.orgInEdit.contact.firstname,
-          lastname: this.state.orgInEdit.contact.lastname,
-          username: this.state.orgInEdit.contact.username,
-          email: this.state.orgInEdit.contact.email,
-          phone: "+" + this.state.orgInEdit.contact.phone
-        }),
+        contact: contactData,
         preferences: JSON.stringify({
           dateformat: this.state.orgInEdit.preferences.dateformat,
           currency: this.state.orgInEdit.preferences.currency,
@@ -232,6 +242,32 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
             </div>
+
+            {this.props.formAction == "put" ? (
+              <div className="form-group">
+                <div className="form-row">
+                  <div className="col">
+                    <label className="required-label">
+                      Organization Contact Person (Admin)
+                    </label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        mainList={
+                          "organization/" +
+                          this.props.dataItem.uuid +
+                          "/adminusers"
+                        }
+                        selectedItem={this.state.orgInEdit.contactid}
+                        onDataChange={e => this.dropdownChange("contactid", e)}
+                        required={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             {this.props.formAction == "post" ? (
               <div className="form-group border-box">
                 <label className="required-label">Contact Details</label>

@@ -140,7 +140,7 @@ class Home extends React.Component {
     table.push(
       <React.Fragment key={15}>
         {this.userProfile.privileges.MANAGE_EMAIL_READ ? (
-          <div key={10} className="moduleBtn" onClick={this.mailAdminClick}>
+          <div key={10} onClick={this.mailAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/091-email-1.svg" />
             </div>
@@ -149,7 +149,7 @@ class Home extends React.Component {
         ) : null}
 
         {this.userProfile.privileges.MANAGE_TASK_READ ? (
-          <div className="moduleBtn" onClick={this.taskAdminClick}>
+          <div onClick={this.taskAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/042-task.svg" />
             </div>

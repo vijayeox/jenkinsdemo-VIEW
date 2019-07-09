@@ -87,16 +87,18 @@ class Slider extends React.Component {
           {data.description ? (
             <p> {data.description.slice(0, 150) + "..."} </p>
           ) : null}
-          {data.description.length < 150 ? null : (
-            <button
-              className="readMore"
-              onClick={() => {
-                this.setState({ isPaneOpen: true, focusData: data });
-              }}
-            >
-              READ MORE
-            </button>
-          )}
+          {data.description ? (
+            data.description.length < 150 ? null : (
+              <button
+                className="readMore"
+                onClick={() => {
+                  this.setState({ isPaneOpen: true, focusData: data });
+                }}
+              >
+                READ MORE
+              </button>
+            )
+          ) : null}
         </div>
       </div>
     );
@@ -112,9 +114,11 @@ class Slider extends React.Component {
             transition: "transform ease-out 0.45s"
           }}
         >
-          {this.state.announcements.map((announcement, i) =>
-            this.renderCard(announcement)
-          )}
+          {this.state.announcements.length >= 1
+            ? this.state.announcements.map((announcement, i) =>
+                this.renderCard(announcement)
+              )
+            : null}
         </div>
 
         {this.state.announcements.length == 0 ? (

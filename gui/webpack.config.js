@@ -32,12 +32,6 @@ module.exports = {
   entry: [path.resolve(__dirname, "index.js")],
   externals: {
     osjs: "OSjs"
-    // "react-icons/fa": "react-icons",
-    // "react" : "react",
-    // "react-dom" : "react-dom",
-    // "jquery": "jquery",
-    // "sweetalert2":"sweetalert2",
-    // "react-dom/server":"react-dom"
   },
   optimization: {
     minimize

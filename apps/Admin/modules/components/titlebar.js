@@ -25,25 +25,20 @@ export class TitleBar extends React.Component {
           <div
             style={{
               right: "2%",
-              top: "1.5%",
+              top: "3%",
               position: "absolute",
               zIndex: "100",
               width: "200px"
             }}
           >
-            <label
-              style={{
-                marginBottom: "3px"
-              }}
-            >
-              Switch Organization
-            </label>
             <DropDown
               args={this.props.args}
               mainList={"organization"}
-              placeholder="Switch Organization"
-              // selectedItem={this.state.groupInEdit.org_id}
-              onDataChange={e => console.log(e.target)}
+              selectedItem={{
+                id: "111",
+                name: "Switch Organization"
+              }}
+              onDataChange={this.props.orgChange}
             />
           </div>
         ) : null}

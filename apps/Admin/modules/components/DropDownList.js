@@ -33,7 +33,7 @@ export default class DropDown extends React.Component {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
-        var userid = response.data[i].id;
+        var userid = response.data[i].uuid;
         tempUsers.push({ id: userid, name: userName });
       }
       this.setState({

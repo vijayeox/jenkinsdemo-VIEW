@@ -153,11 +153,11 @@ class Project extends React.Component {
           title="Manage Projects"
           menu={this.props.menu}
           args={this.core}
-          orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-              ? true
-              : false
-          }
+          // orgSwitch={
+          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+          //     ? true
+          //     : false
+          // }
         />
         <GridTemplate
           args={this.core}

@@ -1,8 +1,9 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { PushData } from "../components/apiCalls";
+import { Notification } from "@oxzion/gui";
 import { SaveCancel } from "../components/index";
+import { PushData } from "../components/apiCalls";
 import { FaUserLock } from "react-icons/fa";
 
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
@@ -28,6 +29,7 @@ export default class DialogContainer extends React.Component {
       create: ["3", "7"],
       delete: ["7", "15"]
     };
+    this.notif = React.createRef();
   }
   componentWillMount() {
     this.props.formAction == "put"
@@ -73,35 +75,38 @@ export default class DialogContainer extends React.Component {
 
   async pushData() {
     let helper = this.core.make("oxzion/restClient");
-    console.log(this.state.privilegeInEdit);
-    let roleAddData = await helper.request(
-      "v1",
-      "/role",
-      {
-        name: this.state.roleInEdit.name,
-        description: this.state.roleInEdit.description,
-        privileges: this.state.privilegeInEdit,
-        show: false
-      },
-      "post"
-    );
-    console.log(privileges);
-    console.log(this.state.privilegeInEdit);
-    return roleAddData;
-  }
-
-  async editRole() {
-    let helper = this.core.make("oxzion/restClient");
-    let roleEditData = await helper.request(
-      "v1",
-      "/role/" + this.state.roleInEdit.id,
-      {
-        name: this.state.roleInEdit.name,
-        description: this.state.roleInEdit.description,
-        show: false
-      },
-      "put"
-    );
+    let table = [];
+    Object.keys(this.state.privilegeData).map(currentValue => {
+      table.push({
+        privilege_name: currentValue,
+        permission: this.state.privilegeData[currentValue]
+      });
+    });
+    if (this.props.formAction == "post") {
+      let roleAddData = await helper.request(
+        "v1",
+        "/role",
+        {
+          name: this.state.roleInEdit.name,
+          description: this.state.roleInEdit.description,
+          privileges: table
+        },
+        "post"
+      );
+      return roleAddData;
+    } else if (this.props.formAction == "put") {
+      let roleAddData = await helper.request(
+        "v1",
+        "/role/"+this.props.dataItem.uuid,
+        {
+          name: this.state.roleInEdit.name,
+          description: this.state.roleInEdit.description,
+          privileges: table
+        },
+        "post"
+      );
+      return roleAddData;
+    }
   }
 
   onChangeCheckbox = e => {
@@ -131,19 +136,28 @@ export default class DialogContainer extends React.Component {
     });
   }
 
-  handleSubmit = event => {
-    event.preventDefault();
-    this.submitData();
-  };
-
   submitData = event => {
-    this.props.cancel();
+    event.preventDefault();
+    this.notif.current.uploadingData();
+    this.pushData().then(response => {
+      this.props.action(response.status);
+      if (response.status == "success") {
+        this.props.cancel();
+      } else if (
+        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+      ) {
+        this.notif.current.duplicateEntry();
+      } else {
+        this.notif.current.failNotification();
+      }
+    });
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
         <div>
+          <Notification ref={this.notif} />
           <form id="roleForm" onSubmit={this.submitData}>
             <div className="form-group">
               <label>Role Name</label>

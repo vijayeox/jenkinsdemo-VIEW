@@ -18,6 +18,10 @@ import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./DataLoader";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
+
 import $ from "jquery";
 
 // import "@progress/kendo-theme-default/dist/all.css";
@@ -33,7 +37,8 @@ export default class GridTemplate extends React.Component {
         take: 20,
         skip: 0
       },
-      gridData: this.props.gridData
+      gridData: this.props.gridData,
+      api: this.props.config.api
     };
     this.notif = React.createRef();
   }
@@ -42,6 +47,14 @@ export default class GridTemplate extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.config.api !== prevProps.config.api) {
+      this.setState({
+        api: this.props.config.api
+      });
+    }
   }
 
   dataStateChange = e => {
@@ -77,7 +90,7 @@ export default class GridTemplate extends React.Component {
         table.push(
           <GridColumn
             key={i}
-            width="200px"
+            width="150px"
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
@@ -105,7 +118,7 @@ export default class GridTemplate extends React.Component {
         <DataLoader
           ref={this.child}
           args={this.core}
-          url={this.props.config.api}
+          url={this.state.api}
           dataState={this.state.dataState}
           onDataRecieved={this.dataRecieved}
         />
@@ -284,8 +297,9 @@ function CellWithEditing(
           <button
             type="button"
             className="btn manage-btn k-grid-remove-command"
-            onClick={() => {
-              Swal.fire({
+            onClick={e => {
+              e.preventDefault();
+              MySwal.fire({
                 title: "Are you sure?",
                 text:
                   "Do you really want to delete the record? This cannot be undone.",
@@ -322,7 +336,7 @@ function CellWithEditing(
                     type="button"
                     className=" btn manage-btn k-grid-edit-command"
                     onClick={() => {
-                      edit(this.props.dataItem);
+                      edit(this.props.dataItem, { diableField: false });
                     }}
                   >
                     <FaPencilAlt className="manageIcons" />
