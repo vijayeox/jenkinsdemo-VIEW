@@ -78,16 +78,20 @@ export default class DialogContainer extends React.Component {
 
   pushData = () => {
     this.notif.current.uploadingData();
-    let contactData =
-      this.props.formAction == "post"
-        ? JSON.stringify({
-            firstname: this.state.orgInEdit.contact.firstname,
-            lastname: this.state.orgInEdit.contact.lastname,
-            username: this.state.orgInEdit.contact.username,
-            email: this.state.orgInEdit.contact.email,
-            phone: "+" + this.state.orgInEdit.contact.phone
-          })
-        : undefined;
+    if (this.props.formAction == "post") {
+      var contactData = JSON.stringify({
+        firstname: this.state.orgInEdit.contact.firstname,
+        lastname: this.state.orgInEdit.contact.lastname,
+        username: this.state.orgInEdit.contact.username,
+        email: this.state.orgInEdit.contact.email,
+        phone: "+" + this.state.orgInEdit.contact.phone
+      });
+      var contact_id = this.state.orgInEdit.contactid;
+    } else {
+      var contactData = [];
+      var contact_id = [];
+    }
+
     PushDataPOST(
       "organization",
       this.props.formAction,
@@ -100,6 +104,7 @@ export default class DialogContainer extends React.Component {
         zip: this.state.orgInEdit.zip,
         logo: this.fUpload.current.firstUpload.cachedFileArray[0],
         contact: contactData,
+        contact_id: contact_id || undefined,
         preferences: JSON.stringify({
           dateformat: this.state.orgInEdit.preferences.dateformat,
           currency: this.state.orgInEdit.preferences.currency,
