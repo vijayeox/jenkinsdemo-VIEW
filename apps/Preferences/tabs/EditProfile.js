@@ -49,6 +49,8 @@ class EditProfile extends Component {
     this.onSelect1 = this.onSelect1.bind(this);
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
+
+    Codes.sort((a, b) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
   }
 
   onSelect1(event) {

@@ -10,6 +10,16 @@
     //   background: #265160;
     // }
 
+    .osjs-window-content {
+        overflow-y: auto; 
+    }
+
+    .osjs-window-content>.k-window-content{
+        .osjs-window-content:root{
+            overflow-y: hidden;
+        }
+    }
+
     .searchContact {
         border: 1px solid #ced4da !important;
         border-radius: 6px !important;
