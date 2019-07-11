@@ -126,12 +126,16 @@ export default class DialogContainer extends React.Component {
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
         email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format("YYYY-MM-DD"),
+        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
+          "YYYY-MM-DD"
+        ),
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
         role: JSON.stringify(userRoles),
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format("YYYY-MM-DD"),
+        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
+          "YYYY-MM-DD"
+        ),
         country: this.state.userInEdit.country
       }).then(response => {
         this.props.action(response.status);
@@ -151,13 +155,16 @@ export default class DialogContainer extends React.Component {
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
         email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format("YYYY-MM-DD"),
+        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
+          "YYYY-MM-DD"
+        ),
         designation: this.state.userInEdit.designation,
-        orgid: this.state.userInEdit.orgid,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
         role: JSON.stringify(userRoles),
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format("YYYY-MM-DD"),
+        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
+          "YYYY-MM-DD"
+        ),
         country: this.state.userInEdit.country
       }).then(response => {
         this.props.action(response.status);
@@ -262,68 +269,12 @@ export default class DialogContainer extends React.Component {
                     validationMessage={"Please enter a valid User Name"}
                   />
                 </div>
-                <div className="col">
-                  <label className="required-label">Role</label>
-                  <MultiSelect
-                    data={this.state.roleList}
-                    onChange={e => {
-                      this.valueChange("role", e);
-                    }}
-                    value={this.state.userInEdit.role}
-                    clearButton={false}
-                    textField="name"
-                    dataItemKey="id"
-                    placeholder={"Select User Roles"}
-                    required={true}
-                  />
-                </div>
               </div>
             </div>
 
             <div className="form-group">
               <div className="form-row">
                 <div className="col-4">
-                  <label className="required-label">Manager Assigned</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      mainList={"user"}
-                      selectedItem={this.state.userInEdit.managerid}
-                      onDataChange={e => this.valueChange("managerid", e)}
-                      required={true}
-                    />
-                  </div>
-                </div>
-                <div className="col-4">
-                  <label className="required-label">Organization</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      mainList={"organization"}
-                      selectedItem={this.state.userInEdit.orgid}
-                      onDataChange={e => this.valueChange("orgid", e)}
-                      required={true}
-                    />
-                  </div>
-                </div>
-                <div className="col-4">
-                  <label className="required-label">Country</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      rawData={Codes}
-                      selectedItem={this.state.userInEdit.country}
-                      onDataChange={e => this.valueChange("country", e)}
-                      required={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="form-row">
-                <div className="col-6">
                   <label className="required-label">Gender</label>
                   <div className="pt-2">
                     <Ripple>
@@ -365,6 +316,50 @@ export default class DialogContainer extends React.Component {
                       </span>
                     </Ripple>
                   </div>
+                </div>
+                <div className="col-4">
+                  <label className="required-label">Manager Assigned</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      mainList={"user"}
+                      selectedItem={this.state.userInEdit.managerid}
+                      onDataChange={e => this.valueChange("managerid", e)}
+                      required={true}
+                    />
+                  </div>
+                </div>
+                <div className="col-4">
+                  <label className="required-label">Country</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={Codes}
+                      selectedItem={this.state.userInEdit.country}
+                      onDataChange={e => this.valueChange("country", e)}
+                      required={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="form-row">
+                <div className="col-6">
+                  <label className="required-label">Role</label>
+                  <MultiSelect
+                    data={this.state.roleList}
+                    onChange={e => {
+                      this.valueChange("role", e);
+                    }}
+                    value={this.state.userInEdit.role}
+                    clearButton={false}
+                    textField="name"
+                    dataItemKey="id"
+                    placeholder={"Select User Roles"}
+                    required={true}
+                  />
                 </div>
                 <div className="col-3">
                   <label className="required-label">Date Of Birth</label>

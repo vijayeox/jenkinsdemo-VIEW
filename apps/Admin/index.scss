@@ -811,6 +811,17 @@
     top: 160px !important;
   }
 
+  .k-multiselect-wrap{
+    padding: 0.5rem;
+    input{
+      height: unset;
+      margin: unset;
+    }
+  }
+  .k-multiselect-wrap li.k-button{
+    margin-bottom: 0.5rem;
+  }
+
   .k-dateinput-wrap > input {
     padding-left: 5%;
   }
