@@ -75,7 +75,7 @@ class Group extends React.Component {
         var uid = { id: selectedUsers[i].id };
         temp2.push(uid);
       }
-      this.pushGroupUsers(item, JSON.stringify(temp2));
+      this.pushGroupUsers(item, temp2);
       this.toggleDialog();
     }
   };

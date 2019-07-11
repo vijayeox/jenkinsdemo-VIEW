@@ -61,7 +61,7 @@ class Organization extends React.Component {
       var uid = { id: selectedUsers[i].id };
       temp2.push(uid);
     }
-    this.pushOrgUsers(dataItem, JSON.stringify(temp2));
+    this.pushOrgUsers(dataItem, temp2);
     this.toggleDialog();
   };
 
