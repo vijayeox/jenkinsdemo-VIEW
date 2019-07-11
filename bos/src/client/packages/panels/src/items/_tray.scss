@@ -29,7 +29,7 @@
  */
 
 
-.osjs-panel-item[data-name=tray] {
+/*.osjs-panel-item[data-name=tray] {
   display: flex;
   padding: 0;
   & > div {
@@ -46,13 +46,54 @@
       width: auto;
     }
   }
-}
+}*/
 
 .badge {
 color:white;
   position: absolute;
     right: unset;
     left: unset;
+}
+
+@media all {
+  .osjs-panel-item[data-name=tray] {
+    display: flex;
+    padding: 0;
+    & > div {
+      flex: 1 1;
+      padding: .5em;
+      margin: 4px 1px;
+      background: #e1eff4;
+      border-radius: 50%;
+      padding: 0px;
+      height:45px;
+      width:45px;
+  
+      & > img {
+        margin-right: 0;
+        vertical-align: middle;
+        height: 35px;
+        width: auto;
+        margin-left: 5px;
+      }
+    }
+  }
+  
+  .osjs-panel-item[data-name=profile] {
+    display: flex;
+    padding: 0;
+    width: 50px;
+    & > div {
+      flex: 1 1;
+      margin: 4px 1px;
+      & > img {
+        margin-right: 0;
+        vertical-align: middle;
+        height: 102%;
+        width: 100%;
+      }
+    }
+  }
 }
 
 @supports (-ms-ime-align:auto) {
@@ -161,7 +202,7 @@ color:white;
   }
 }
 
-.osjs-panel-item[data-name=profile] {
+/*.osjs-panel-item[data-name=profile] {
   display: flex;
   padding: 0;
   & > div {
@@ -174,7 +215,7 @@ color:white;
       width: auto;
     }
   }
-}
+}*/
 .osjs-panel-item[data-name=logout] {
   display: flex;
   padding: 0;
