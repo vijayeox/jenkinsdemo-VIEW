@@ -13,15 +13,17 @@ class EditProfile extends Component {
 
     this.core = this.props.args;
     this.userprofile = this.core.make("oxzion/profile").get();
-    if(this.userprofile.key.preferences != undefined || this.userprofile.key.preferences != null){
+    if (
+      this.userprofile.key.preferences != undefined ||
+      this.userprofile.key.preferences != null
+    ) {
       this.userprofile.key.preferences["dateformat"] =
-      this.userprofile.key.preferences["dateformat"] &&
-      this.userprofile.key.preferences["dateformat"] != ""
-        ? this.userprofile.key.preferences["dateformat"]
-        : "dd-MM-yyyy";
-    }
-    else{
-      this.userprofile.key.preferences = {"dateformat":"dd-MM-yyyy"};
+        this.userprofile.key.preferences["dateformat"] &&
+        this.userprofile.key.preferences["dateformat"] != ""
+          ? this.userprofile.key.preferences["dateformat"]
+          : "dd-MM-yyyy";
+    } else {
+      this.userprofile.key.preferences = { dateformat: "dd-MM-yyyy" };
     }
 
     this.dob = null;
@@ -50,7 +52,7 @@ class EditProfile extends Component {
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
 
-    Codes.sort((a, b) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
+    Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
   onSelect1(event) {
@@ -60,10 +62,9 @@ class EditProfile extends Component {
   }
 
   splitPhoneNumber() {
-    if(this.state.fields.phone == (null || undefined)){
+    if (this.state.fields.phone == (null || undefined)) {
       return;
-    }
-    else if(this.state.fields.phone){
+    } else if (this.state.fields.phone) {
       const phoneno = this.state.fields.phone;
       const phone1 = phoneno.indexOf("-");
       this.setState({
@@ -116,19 +117,18 @@ class EditProfile extends Component {
     if (this.validateForm()) {
       const formData = {};
 
-      let fields = {...this.state.fields};
+      let fields = { ...this.state.fields };
       fields.phone = this.state.dial_code + "-" + this.state.phoneno;
       this.setState({
         fields: fields
       });
 
-      let date_of_birth = new Moment(this.state.fields.date_of_birth).format();
+      let date_of_birth = new Moment(this.state.fields.date_of_birth).format("YYYY-MM-DD");
 
       Object.keys(this.state.fields).map(key => {
         if (key == "date_of_birth") {
           formData.date_of_birth = date_of_birth;
-        }
-        else if (key == "name") {
+        } else if (key == "name") {
           let name =
             this.state.fields["firstname"] +
             " " +
@@ -176,16 +176,16 @@ class EditProfile extends Component {
       errors["lastname"] = "*Please enter Last Name";
     }
 
-    if (!fields["date_of_birth"]){
+    if (!fields["date_of_birth"]) {
       formIsValid = false;
       errors["date_of_birth"] = "*Please enter Date Of Birth";
     }
 
-    if (!fields["gender"]){
+    if (!fields["gender"]) {
       formIsValid = false;
       errors["gender"] = "*Please select Gender";
     }
-    if (!this.state.phoneno){
+    if (!this.state.phoneno) {
       formIsValid = false;
       errors["phoneno"] = "*Please enter Phone Number";
     }
@@ -208,28 +208,27 @@ class EditProfile extends Component {
 
   async submitProfilePic(imageData) {
     const formData = {};
-    formData["file"]=imageData;
+    formData["file"] = imageData;
     let helper = this.core.make("oxzion/restClient");
     let uploadresponse = await helper.request(
-     "v1",
-     "/user/profile",
-     formData,
-     "post"
-     );
-     if (uploadresponse.status == "error") {
-        this.notif.current.failNotification(
-          "Update failed: " + uploadresponse.message
-        );
-      }
-      else{
-        this.setState({
-          icon: imageData
-        })
-        this.core.make('oxzion/profile').update();
-        this.notif.current.successNotification(
-          "Profile picture updated successfully."
-        );  
-      }
+      "v1",
+      "/user/profile",
+      formData,
+      "post"
+    );
+    if (uploadresponse.status == "error") {
+      this.notif.current.failNotification(
+        "Update failed: " + uploadresponse.message
+      );
+    } else {
+      this.setState({
+        icon: imageData
+      });
+      this.core.make("oxzion/profile").update();
+      this.notif.current.successNotification(
+        "Profile picture updated successfully."
+      );
+    }
   }
 
   apply = file => {
@@ -344,10 +343,7 @@ class EditProfile extends Component {
     if (this.state.showImageDiv == 1) {
       return (
         <div className="profileImageDiv">
-          <img 
-            src={this.state.icon}
-            className="rounded-circle displayImage"
-          />
+          <img src={this.state.icon} className="rounded-circle displayImage" />
           <div className="middle">
             <div className="text">
               <p
@@ -388,7 +384,11 @@ class EditProfile extends Component {
                   ref="firstname"
                   id="firstname"
                   pattern={"[A-Za-z ]+"}
-                  value={this.state.fields.firstname ? this.state.fields.firstname : ""}
+                  value={
+                    this.state.fields.firstname
+                      ? this.state.fields.firstname
+                      : ""
+                  }
                   onChange={this.handleChange}
                   required
                   className="validate"
@@ -403,7 +403,9 @@ class EditProfile extends Component {
                   ref="lastname"
                   id="lastname"
                   pattern={"[A-Za-z ]+"}
-                  value={this.state.fields.lastname ? this.state.fields.lastname : ""}
+                  value={
+                    this.state.fields.lastname ? this.state.fields.lastname : ""
+                  }
                   onChange={this.handleChange}
                   required
                   className="validate"
@@ -420,11 +422,13 @@ class EditProfile extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field">
-              <label className="mandatory" htmlFor="email">Email</label>
+              <label className="mandatory" htmlFor="email">
+                Email
+              </label>
               <input
                 name="email"
                 type="text"
-                value={this.state.fields.email ? this.state.fields.email: ""}
+                value={this.state.fields.email ? this.state.fields.email : ""}
                 ref="email"
                 id="email"
                 readOnly={true}
@@ -434,24 +438,36 @@ class EditProfile extends Component {
 
           <div className="row marginstyle">
             <div className="col input-field marginbottom">
-              <label className="mandatory" id="rowdob">Date of Birth</label>
+              <label className="mandatory" id="rowdob">
+                Date of Birth
+              </label>
               <div>
                 <DatePicker
                   format={this.state.dateformat}
                   name="date_of_birth"
                   id="date_of_birth"
                   ref="date_of_birth"
-                  value={this.state.fields.date_of_birth ? this.state.fields.date_of_birth : ""}
+                  value={
+                    this.state.fields.date_of_birth
+                      ? this.state.fields.date_of_birth
+                      : ""
+                  }
                   onChange={this.handleDOBChange}
                   readOnly
                 />
               </div>
 
-              <div className="errorMsg">{this.state.errors["date_of_birth"]}</div>
+              <div className="errorMsg">
+                {this.state.errors["date_of_birth"]}
+              </div>
             </div>
 
             <div className="col input-field">
-              <label id="name" className="active mandatory" style={{ fontSize: "16px" }}>
+              <label
+                id="name"
+                className="active mandatory"
+                style={{ fontSize: "16px" }}
+              >
                 Gender
               </label>
               <div className="row gender">
@@ -498,7 +514,7 @@ class EditProfile extends Component {
               <div className="col-md-5">
                 <select
                   className="dropdownstyle"
-                  value={this.state.dial_code ? this.state.dial_code: ""}
+                  value={this.state.dial_code ? this.state.dial_code : ""}
                   onChange={this.onSelect1}
                   id="dial_code"
                   name="dial_code"
@@ -519,19 +535,20 @@ class EditProfile extends Component {
                   ref="phoneno"
                   name="phoneno"
                   required
-                  value={this.state.phoneno? this.state.phoneno : ""}
+                  value={this.state.phoneno ? this.state.phoneno : ""}
                   onChange={this.onSelect2}
                 />
                 <div className="errorMsg">{this.state.errors["phoneno"]}</div>
               </div>
-              
             </div>
           </div>
           <label type="hidden" id="joint" ref="phone" name="phone" />
 
           <div className="row">
             <div className="col-md-12 input-field">
-              <label className="mandatory" style={{ fontSize: "17px" }}>Address</label>
+              <label className="mandatory" style={{ fontSize: "17px" }}>
+                Address
+              </label>
               <div>
                 <textarea
                   rows="3"
@@ -539,7 +556,9 @@ class EditProfile extends Component {
                   type="text"
                   ref="address"
                   name="address"
-                  value={this.state.fields.address ? this.state.fields.address: ""}
+                  value={
+                    this.state.fields.address ? this.state.fields.address : ""
+                  }
                   onChange={this.handleChange}
                   required
                 />
@@ -555,7 +574,9 @@ class EditProfile extends Component {
 
             <div className="col-md-12">
               <select
-                value={this.state.fields.country? this.state.fields.country: ""}
+                value={
+                  this.state.fields.country ? this.state.fields.country : ""
+                }
                 onChange={this.handleChange}
                 ref="country"
                 id="country"
@@ -578,7 +599,9 @@ class EditProfile extends Component {
                 type="text"
                 ref="website"
                 name="website"
-                value={this.state.fields.website ? this.state.fields.website: ""}
+                value={
+                  this.state.fields.website ? this.state.fields.website : ""
+                }
                 onChange={this.handleChange}
               />
             </div>
@@ -602,7 +625,9 @@ class EditProfile extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field interest">
-              <label className="mandatory" htmlFor="interest">Interest</label>
+              <label className="mandatory" htmlFor="interest">
+                Interest
+              </label>
 
               <input
                 id="interest"
@@ -611,7 +636,9 @@ class EditProfile extends Component {
                 required
                 className="validate"
                 name="interest"
-                value={this.state.fields.interest ? this.state.fields.interest : ""}
+                value={
+                  this.state.fields.interest ? this.state.fields.interest : ""
+                }
                 onChange={this.handleChange}
               />
               <div className="errorMsg">{this.state.errors["interest"]}</div>
