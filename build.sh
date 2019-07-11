@@ -72,8 +72,8 @@ while [ "$1" != "" ]; do
                         ;;
         apps )          BUILD_APPS=true
                         BUILD_ALL=false
-                        if [ -z "$2" ] ; then
-                            IFS=',' read -ra APPS_TO_BUILD <<< "$2" 
+                        if [ -n "$2" ] ; then
+                            IFS=',' read -a APPS_TO_BUILD <<< $2 
                             shift
                         fi
                         ;;
