@@ -139,7 +139,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="contactPanelMainDiv">
         <Notification ref={this.notif} />
         <div className="col">
           <div className="contactPanel">

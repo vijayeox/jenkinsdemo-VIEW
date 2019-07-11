@@ -95,6 +95,7 @@
   .rwt__tabpanel {
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     height: calc(100% - 106px);
   }
 
@@ -457,6 +458,7 @@
   }
 
   .profileImageDiv {
+    margin: auto;
     width: 170px;
     border-radius: 50%;
   }
@@ -498,7 +500,6 @@
   }
 
   .profileImage {
-    text-align: -webkit-center;
     margin: auto;
   }
 

@@ -3,21 +3,9 @@
     @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
     @import "./public/scss/notifTheme.css";
 
-    // background: #336666;
-    // all: revert;
-  
-    // .osjs-window-header {
-    //   background: #265160;
-    // }
-
-    .osjs-window-content {
+    .contactPanelMainDiv {
         overflow-y: auto; 
-    }
-
-    .osjs-window-content>.k-window-content{
-        .osjs-window-content:root{
-            overflow-y: hidden;
-        }
+        height: inherit;
     }
 
     .searchContact {
