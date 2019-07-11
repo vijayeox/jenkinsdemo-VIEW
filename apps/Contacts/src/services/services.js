@@ -18,7 +18,7 @@ export async function SaveContact(uuid, data) {
       }
     }
     if (uuid == "" || undefined || null) {
-      let response = await helper.request("v1", "/contact", data, "filepost");
+      let response = await helper.request("v1", "/contact", data, "post");
       return response;
     } else {
       let response = await helper.request(
