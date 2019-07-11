@@ -1,0 +1,19 @@
+{
+  "type": "application",
+  "name": "CRMAdmin",
+  "category": "organization",
+  "singleton":true,
+  "icon": "icon.png",
+  "hidden": false,
+  "icon_white": "icon_white.png",
+  "title": {
+    "en_EN": "CRMAdmin"
+  },
+  "description": {
+    "en_EN": "CRMAdmin"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

@@ -148,10 +148,10 @@ class Home extends React.Component {
           </div>
         ) : null}
 
-        {this.userProfile.privileges.MANAGE_TASK_READ ? (
-          <div onClick={this.taskAdminClick}>
+        {this.userProfile.privileges.MANAGE_CRM_READ ? (
+          <div onClick={this.crmAdminClick}>
             <div className="block d1">
-              <img src="apps/Admin/042-task.svg" />
+              <img src="apps/Admin/crm-icon.svg" />
             </div>
             <div className="titles">Task Admin</div>
           </div>
@@ -166,9 +166,9 @@ class Home extends React.Component {
     this.core.run("MailAdmin");
   };
 
-  taskAdminClick = e => {
+  crmAdminClick = e => {
     this.hideMenu();
-    this.core.run("TaskAdmin");
+    this.core.run("CRMAdmin");
   };
 
   render() {
