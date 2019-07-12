@@ -159,6 +159,11 @@ class EditProfile extends Component {
         this.core.make("oxzion/profile").update();
       }
     }
+    else{
+      this.notif.current.failNotification(
+        "Please fill all the mandatory fields."
+      );
+    }
   }
 
   validateForm() {
@@ -465,7 +470,7 @@ class EditProfile extends Component {
             <div className="col input-field">
               <label
                 id="name"
-                className="active mandatory"
+                className="active"
                 style={{ fontSize: "16px" }}
               >
                 Gender
