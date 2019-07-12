@@ -153,7 +153,7 @@ class Home extends React.Component {
             <div className="block d1">
               <img src="apps/Admin/crm-icon.svg" />
             </div>
-            <div className="titles">Task Admin</div>
+            <div className="titles">CRM Admin</div>
           </div>
         ) : null}
       </React.Fragment>
