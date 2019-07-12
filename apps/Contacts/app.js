@@ -24,6 +24,7 @@ class App extends React.Component {
     };
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
+    this.callSearch;
   }
 
   componentWillMount() {
@@ -97,12 +98,15 @@ class App extends React.Component {
   };
 
   handleChange = e => {
+    clearTimeout( this.callSearch );
     this.setState(
       {
         searchText: e.target.value
       },
       () => {
-        this.searchContact();
+        this.callSearch = window.setTimeout(() => {
+          this.searchContact();
+        },500);
       }
     );
   };
