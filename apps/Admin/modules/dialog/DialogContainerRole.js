@@ -103,7 +103,7 @@ export default class DialogContainer extends React.Component {
           description: this.state.roleInEdit.description,
           privileges: table
         },
-        "post"
+        "put"
       );
       return roleAddData;
     }
