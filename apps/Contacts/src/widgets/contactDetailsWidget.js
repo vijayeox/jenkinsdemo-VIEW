@@ -42,6 +42,7 @@ class ContactDetailsWidget extends React.Component {
             <img
               className="contactDetailsImage"
               src={this.props.contact.icon + "?" + new Date()}
+              key={this.props.contact.icon + "?" + new Date()}
             />
             <span className="mate-info">
               <h2>
