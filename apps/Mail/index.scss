@@ -11,6 +11,15 @@
     .osjs-window-button[data-action=minimize] {
         min-width: 3em;
     } 
+
+    // Changing the Icon cursor from Pointer to Auto
+    .osjs-window-icon > div {
+        cursor: auto!important;
+    }
+    .osjs-window-title > div {
+        cursor: auto!important;
+    }
+
     //  &:hover>div {
     //         background-color: lighten(#c75050, 10%);
     //     }
