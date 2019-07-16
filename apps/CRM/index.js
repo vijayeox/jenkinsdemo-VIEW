@@ -98,6 +98,7 @@
           id: "CRMApplicationWindow",
           icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
+          dimension: {width: document.body.clientWidth, height: document.body.clientHeight},
           attributes: {
             state: {
               maximized: true
