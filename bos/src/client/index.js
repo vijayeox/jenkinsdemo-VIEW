@@ -81,7 +81,7 @@ const init = () => {
   osjs.register(VFSServiceProvider);
   osjs.register(NotificationServiceProvider);
   osjs.register(SettingsServiceProvider, {before: true});
-  osjs.register(BosAdapter, {before: true});
+  osjs.register(BosAdapter);
   osjs.register(AuthServiceProvider, {
     before: true,
     args:

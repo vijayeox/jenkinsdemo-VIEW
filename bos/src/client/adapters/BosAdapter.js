@@ -37,46 +37,6 @@ export class BosAdapter extends ServiceProvider {
 
             }
         });
-        this.core.on('osjs/core:booted', () => {
-            var queryString = window.location.search.substr(1);
-            if (queryString) {
-                var queryObj = queryString.split("&").reduce(function(prev, curr, i, arr) {
-                    var p = curr.split(":");
-                    prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
-                    return prev;
-                }, {}); 
-                var url = window.location.href;
-                var arr = url.split("/");
-                var result = arr[0] + "//" + arr[2];
-                console.log(result);
-                if(queryObj){
-                    let formData = new FormData();
-                    formData.append('uname', queryObj.uname);
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', this.core.config('wrapper.url') + 'sso', false);
-                    xhr.onload = function () {
-                        let data = JSON.parse(this.responseText);
-                                    console.log(data);
-                        if (data["status"] == "success") {
-                                var lsHelper = new LocalStorageAdapter;
-                                if((lsHelper.supported() || lsHelper.cookieEnabled()) && data['data']['jwt'] != null){
-                                  lsHelper.set('AUTH_token',data['data']["jwt"]);
-                                  lsHelper.set('REFRESH_token',data['data']["refresh_token"]);
-                                  lsHelper.set('User',data['data']['username']);
-                                  let user = {jwt:data['data']["jwt"],refresh_token:data['data']['refresh_token'], username : data['data']['username']};
-                                  // this.core.setUser(user);
-                                  window.location = result;
-                              } else {
-                                window.location = result;
-                              }
-                        } else {
-                            window.location = result;
-                        }
-                    }
-                    xhr.send(formData);
-                }
-            }
-        });
 
         this.core.on('osjs/core:started', () => {
             var myDate = new Date();
