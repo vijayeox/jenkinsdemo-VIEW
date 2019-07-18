@@ -29,11 +29,11 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem,
+      "/announcement/" + dataItem + "/save",
       {
         groups: dataObject
       },
-      "put"
+      "post"
     );
     return addGroups;
   }
@@ -83,10 +83,10 @@ class Announcement extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushAnnouncementGroups(dataItem, JSON.stringify(temp2));
+    this.pushAnnouncementGroups(dataItem, temp2);
     this.toggleDialog();
   };
 

@@ -57,7 +57,7 @@ class MultiSelect extends React.Component {
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
         var userid = response.data[i].uuid;
-        tempUsers.push({ id: userid, name: userName });
+        tempUsers.push({ uuid: userid, name: userName });
       }
       this.setState({
         userList: tempUsers
@@ -186,7 +186,7 @@ class MultiSelect extends React.Component {
                 autoClose={false}
                 clearButton={false}
                 textField="name"
-                dataItemKey="id"
+                dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
                 placeholder={"Click to add " + this.props.config.mainList}
