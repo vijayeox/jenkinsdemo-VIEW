@@ -7,6 +7,6 @@ cd ..
 ./build.sh gui
 ./build.sh iconpacks
 ./build.sh themes
-./build.sh apps "Admin, Announcements, Calculator, Calendar, Chat, Contacts, CRM, ImageUploader, Mail, MailAdmin, Preferences"
+./build.sh apps "Admin, Announcements, Calculator, Calendar, Chat, Contacts, CRM, CRMAdmin, ImageUploader, Mail, MailAdmin, Preferences"
 ./build.sh bos
 echo build completed successfully
