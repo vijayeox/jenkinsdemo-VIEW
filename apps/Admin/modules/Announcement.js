@@ -86,7 +86,9 @@ class Announcement extends React.Component {
       var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushAnnouncementGroups(dataItem, temp2);
+    this.pushAnnouncementGroups(dataItem, temp2).then(response => {
+      this.child.current.refreshHandler(response.status);
+    });
     this.toggleDialog();
   };
 
