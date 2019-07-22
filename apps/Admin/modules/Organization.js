@@ -58,10 +58,12 @@ class Organization extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushOrgUsers(dataItem, temp2);
+    this.pushOrgUsers(dataItem, temp2).then(response => {
+        this.child.current.refreshHandler(response.status);
+      });
     this.toggleDialog();
   };
 
