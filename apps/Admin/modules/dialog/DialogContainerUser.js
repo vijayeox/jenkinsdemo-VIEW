@@ -39,8 +39,8 @@ export default class DialogContainer extends React.Component {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
-        var userid = response.data[i].id;
-        tempUsers.push({ id: userid, name: userName });
+        var userid = response.data[i].uuid;
+        tempUsers.push({ uuid: userid, name: userName });
       }
       this.setState({
         roleList: tempUsers
@@ -116,7 +116,7 @@ export default class DialogContainer extends React.Component {
     this.notif.current.uploadingData();
     var userRoles = [];
     for (var i = 0; i <= this.state.userInEdit.role.length - 1; i++) {
-      var uid = { id: this.state.userInEdit.role[i].id };
+      var uid = { uuid: this.state.userInEdit.role[i].uuid };
       userRoles.push(uid);
     }
     if (this.props.formAction == "post") {
@@ -132,7 +132,7 @@ export default class DialogContainer extends React.Component {
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
-        role: JSON.stringify(userRoles),
+        role: userRoles,
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
           "YYYY-MM-DD"
         ),
@@ -161,7 +161,7 @@ export default class DialogContainer extends React.Component {
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
-        role: JSON.stringify(userRoles),
+        role: userRoles,
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
           "YYYY-MM-DD"
         ),
@@ -356,7 +356,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.role}
                     clearButton={false}
                     textField="name"
-                    dataItemKey="id"
+                    dataItemKey="uuid"
                     placeholder={"Select User Roles"}
                     required={true}
                   />

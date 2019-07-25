@@ -40,7 +40,7 @@ class MultiSelect extends React.Component {
         for (var i = 0; i <= response.data.length - 1; i++) {
           var userName = response.data[i].name;
           var userid = response.data[i].uuid;
-          tempUsers.push({ id: userid, name: userName });
+          tempUsers.push({ uuid: userid, name: userName });
         }
         this.setState({
           selectedUsers: tempUsers
@@ -57,7 +57,7 @@ class MultiSelect extends React.Component {
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
         var userid = response.data[i].uuid;
-        tempUsers.push({ id: userid, name: userName });
+        tempUsers.push({ uuid: userid, name: userName });
       }
       this.setState({
         userList: tempUsers
@@ -149,7 +149,7 @@ class MultiSelect extends React.Component {
 
   deleteRecord = item => {
     const selectedUsers = this.state.selectedUsers.slice();
-    const index = selectedUsers.findIndex(p => p.id === item.id);
+    const index = selectedUsers.findIndex(p => p.uuid === item.uuid);
     if (index !== -1) {
       selectedUsers.splice(index, 1);
       this.setState({
@@ -186,7 +186,7 @@ class MultiSelect extends React.Component {
                 autoClose={false}
                 clearButton={false}
                 textField="name"
-                dataItemKey="id"
+                dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
                 placeholder={"Click to add " + this.props.config.mainList}

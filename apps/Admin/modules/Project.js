@@ -90,10 +90,10 @@ class Project extends React.Component {
       var temp1 = selectedUsers;
       var temp2 = [];
       for (var i = 0; i <= temp1.length - 1; i++) {
-        var uid = { id: temp1[i].id };
+        var uid = { uuid: temp1[i].uuid };
         temp2.push(uid);
       }
-      this.pushProjectUsers(item, JSON.stringify(temp2)).then(response => {
+      this.pushProjectUsers(item,temp2).then(response => {
         this.child.current.refreshHandler(response.status);
       });
       this.toggleDialog();
