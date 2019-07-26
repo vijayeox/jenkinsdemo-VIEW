@@ -1,7 +1,6 @@
 import React from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
-import { ExportToCsv } from "export-to-csv-file";
-import { GetContacts, ImportContacts } from "../services/services";
+import { ImportContacts, ExportContacts } from "../services/services";
 import { Notification } from "../components";
 
 class ImportExportContactsWidget extends React.Component {
@@ -12,50 +11,45 @@ class ImportExportContactsWidget extends React.Component {
     this.notif = React.createRef();
   }
 
+  convertToFile = (data, fileType, fileName) => {
+    const url = window.URL.createObjectURL(
+      new Blob([data], { type: fileType })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+  }
+
   exportContactsToCsv = () => {
-    var myContacts = [];
-    const options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalSeparator: ".",
-      showLabels: true,
-      showTitle: false,
-      title: "My Contacts",
-      useTextFile: false,
-      useBom: true,
-      useKeysAsHeaders: true
-      // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
-    };
-    this.loader.show();
-    GetContacts().then(response => {
+    ExportContacts('').then(response => {
       if (response.status == "success") {
-        if (response.data) {
-          myContacts = response.data.myContacts ? response.data.myContacts : [];
-          if (myContacts.length > 0) {
-            const csvExporter = new ExportToCsv(options);
-            csvExporter.generateCsv(myContacts);
-            this.notif.current.successNotification("Export Success.");
-          } else {
-            this.notif.current.failNotification("My Contacts List is Empty.");
-          }
-        }
+        this.convertToFile(response.data, "text/csv", "myContacts.csv");
+        this.notif.current.successNotification("Successfully imported");
+        this.props.getContact;
+      } else {
+        this.notif.current.failNotification(
+          "Failed to import:" + response.message
+        );
       }
-      this.loader.destroy();
     });
   };
 
-  importContactsFormCsv = (selectedFile) => {
-    let fileData = {file:selectedFile}
+  importContactsFormCsv = selectedFile => {
+    let fileData = { file: selectedFile };
     ImportContacts(fileData).then(response => {
-        if(response.status == "success"){
-            this.notif.current.successNotification("Successfully imported");
-            this.props.getContact;
-        }
-        else{
-            this.notif.current.failNotification("Failed to import:" + response.message);
-        }
-    })
-  }
+      if (response.status == "success") {
+        this.convertToFile(response.data, "text/csv", "myContactsErrorList.csv");
+        this.notif.current.successNotification("Successfully imported");
+        this.props.getContact;
+      } else {
+        this.notif.current.failNotification(
+          "Failed to import:" + response.message
+        );
+      }
+    });
+  };
 
   handleClick = e => {
     this.refs.fileUploader.click();
@@ -64,6 +58,11 @@ class ImportExportContactsWidget extends React.Component {
   handleFile = e => {
     this.importContactsFormCsv(e.target.files[0]);
   };
+
+  downloadCsvTemplate = () => {
+    const data = "Given Name,Family Name,Email 1 - Type,Email 1 - Value,E-mail 2 - Type,E-mail 2 - Value,E-mail 3 - Type,E-mail 3 - Value,Phone 1 - Type,Phone 1 - Value,Phone 2 - Type,Phone 2 - Value,Phone 3 - Type,Phone 3 - Value,Organization 1 - Name,Organization 1 - Title,Location,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name";
+    this.convertToFile(data, "text/csv", "contactsTemplate.csv");
+  }
 
   render() {
     return (
@@ -75,15 +74,15 @@ class ImportExportContactsWidget extends React.Component {
           ref="fileUploader"
           style={{ display: "none" }}
           onChange={this.handleFile}
+          accept=".csv"
         />
         <DropdownButton
           id="dropdown-basic-button"
           title="Import / Export Contacts"
         >
-          <Dropdown.Item onClick={this.handleClick}>Import (csv)</Dropdown.Item>
-          <Dropdown.Item onClick={this.exportContactsToCsv}>
-            Export (csv)
-          </Dropdown.Item>
+          <Dropdown.Item onClick={this.handleClick}>Import (Google csv)</Dropdown.Item>
+          <Dropdown.Item onClick={this.exportContactsToCsv}>Export (csv)</Dropdown.Item>
+          <Dropdown.Item onClick={this.downloadCsvTemplate}>Download csv template</Dropdown.Item>
         </DropdownButton>
       </span>
     );
