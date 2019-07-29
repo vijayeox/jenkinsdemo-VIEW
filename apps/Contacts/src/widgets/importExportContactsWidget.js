@@ -78,7 +78,7 @@ class ImportExportContactsWidget extends React.Component {
         />
         <DropdownButton
           id="dropdown-basic-button"
-          title="Import / Export Contacts"
+          title="Import / Export"
         >
           <Dropdown.Item onClick={this.handleClick}>Import (Google csv)</Dropdown.Item>
           <Dropdown.Item onClick={this.exportContactsToCsv}>Export (csv)</Dropdown.Item>
