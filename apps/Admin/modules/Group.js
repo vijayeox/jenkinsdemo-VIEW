@@ -90,8 +90,9 @@ class Group extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      groupInEdit: this.cloneProduct(dataItem)
+      groupInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,

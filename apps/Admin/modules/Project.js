@@ -107,8 +107,9 @@ class Project extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      prjInEdit: this.cloneProduct(dataItem)
+      prjInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,

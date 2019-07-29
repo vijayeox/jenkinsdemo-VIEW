@@ -436,7 +436,7 @@ export default class DialogContainer extends React.Component {
                       name: "timezone",
                       required: true,
                       readOnly: this.props.diableField ? true : false,
-                      autoComplete: false
+                      autoComplete: "off"
                     }}
                   />
                 </div>

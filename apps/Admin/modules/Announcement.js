@@ -99,8 +99,9 @@ class Announcement extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      ancInEdit: this.cloneItem(dataItem)
+      ancInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
