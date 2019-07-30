@@ -110,7 +110,7 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      mainList={"user"}
+                      mainList={"organization/"+this.props.selectedOrg+"/users"}
                       selectedItem={this.state.groupInEdit.manager_id}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")

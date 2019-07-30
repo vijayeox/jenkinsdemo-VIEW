@@ -17,7 +17,6 @@ class Announcement extends React.Component {
         canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
       }
     };
-    console.log(this.props.userProfile.privileges);
     
     this.notif = React.createRef();
     this.child = React.createRef();
@@ -25,7 +24,6 @@ class Announcement extends React.Component {
   }
 
   async pushAnnouncementGroups(dataItem, dataObject) {
-    console.log(dataObject);
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
