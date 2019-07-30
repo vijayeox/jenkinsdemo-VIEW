@@ -19,6 +19,13 @@ const loginAdapter = (core, config) => ({
     let response = await core.request("/login", { method: 'POST', body: JSON.stringify({username:req.username,password:req.password}) }, 'json');
     var lsHelper = new LocalStorageAdapter;
     if((lsHelper.supported() || lsHelper.cookieEnabled()) && response['jwt'] != null){
+      lsHelper.purge('AUTH_token');
+      lsHelper.purge('REFRESH_token');
+      lsHelper.purge('User');
+      lsHelper.purge('UserInfo');
+      lsHelper.purge('osjs/session');
+      lsHelper.purge('osjs/locale');
+      lsHelper.purge('osjs/desktop');
       lsHelper.set('AUTH_token',response["jwt"]);
       lsHelper.set('REFRESH_token',response["refresh_token"]);
       lsHelper.set('User',req.username);
@@ -39,6 +46,9 @@ const loginAdapter = (core, config) => ({
       lsHelper.purge('REFRESH_token');
       lsHelper.purge('User');
       lsHelper.purge('UserInfo');
+      lsHelper.purge('osjs/session');
+      lsHelper.purge('osjs/locale');
+      lsHelper.purge('osjs/desktop');
       return Promise.resolve(true); 
     }
   }
