@@ -61,11 +61,12 @@ class TimezonePicker extends React.Component {
   }
 
   handleFocus = e => {
-    this.setState({ focus: 0 });
-
-    if (this.props.inputProps.onFocus) {
-      this.props.inputProps.onFocus(e);
-    }
+    this.props.disableItem
+      ? e.preventDefault()
+      : (this.setState({ focus: 0 }),
+        this.props.inputProps.onFocus
+          ? this.props.inputProps.onFocus(e)
+          : null);
   };
 
   handleBlur = e => {

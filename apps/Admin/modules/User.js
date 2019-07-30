@@ -10,10 +10,19 @@ class User extends React.Component {
     this.core = this.props.args;
     this.state = {
       userInEdit: undefined,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_USER_CREATE,
+        canEdit: this.props.userProfile.privileges.MANAGE_USER_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_USER_DELETE
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.child = React.createRef();
   }
+
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
 
   edit = dataItem => {
     this.setState({
@@ -56,15 +65,29 @@ class User extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        <TitleBar title="Manage Users" menu={this.props.menu} />
+        <TitleBar
+          title="Manage Users"
+          menu={this.props.menu}
+          args={this.core}
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}
           config={{
             showToolBar: true,
             title: "User",
-            api: "user",
+            api: "organization/" + this.state.selectedOrg + "/users",
             column: [
+              {
+                title: "Profile Image",
+                field: "logo"
+              },
               {
                 title: "Name",
                 field: "name"
@@ -87,7 +110,6 @@ class User extends React.Component {
           permission={this.state.permission}
         />
         {this.state.userInEdit && this.inputTemplate}
-        /> )}
       </div>
     );
   }

@@ -12,7 +12,11 @@ class Role extends React.Component {
       roleInEdit: undefined,
       roleToBeEdited: [],
       action: "",
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ROLE_WRITE
+      }
     };
     this.child = React.createRef();
   }
@@ -35,7 +39,7 @@ class Role extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("role", dataItem.id).then(response => {
+    DeleteEntry("role", dataItem.uuid).then(response => {
       this.child.current.refreshHandler(response.status);
     });
   };
@@ -58,7 +62,16 @@ class Role extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-        <TitleBar title="Manage User Roles" menu={this.props.menu} />
+        <TitleBar
+          title="Manage User Roles"
+          menu={this.props.menu}
+          args={this.core}
+          // orgSwitch={
+          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+          //     ? true
+          //     : false
+          // }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

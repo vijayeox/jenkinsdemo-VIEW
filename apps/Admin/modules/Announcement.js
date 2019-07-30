@@ -10,9 +10,15 @@ class Announcement extends React.Component {
     this.core = this.props.args;
     this.state = {
       ancInEdit: undefined,
-      permission: "15",
-      visible: false
+      visible: false,
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
+      }
     };
+    console.log(this.props.userProfile.privileges);
+    
     this.notif = React.createRef();
     this.child = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);
@@ -23,11 +29,11 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem,
+      "/announcement/" + dataItem + "/save",
       {
         groups: dataObject
       },
-      "put"
+      "post"
     );
     return addGroups;
   }
@@ -77,10 +83,12 @@ class Announcement extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushAnnouncementGroups(dataItem, JSON.stringify(temp2));
+    this.pushAnnouncementGroups(dataItem, temp2).then(response => {
+      this.child.current.refreshHandler(response.status);
+    });
     this.toggleDialog();
   };
 
@@ -133,7 +141,7 @@ class Announcement extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Announcements" menu={this.props.menu} />
+        <TitleBar title="Manage Announcements" menu={this.props.menu} args={this.core}/>
         <GridTemplate
           args={this.core}
           ref={this.child}

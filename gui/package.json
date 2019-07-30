@@ -24,9 +24,10 @@
     "bootstrap": "^4.3.1",
     "file-upload-with-preview": "^4.0.2",
     "jquery": "^3.4.0",
-    "npm": "^6.9.2",
+    "npm": "^6.10.0",
     "react-notifications-component": "^1.1.1",
-    "sweetalert2": "^8.9.0"
+    "sweetalert2": "^8.9.0",
+    "sweetalert2-react-content": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

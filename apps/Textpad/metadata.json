@@ -2,6 +2,7 @@
   "name": "Textpad",
   "category": "office",
   "defaultAppforOrgs" : true,
+  "hidden": true,
   "icon": "icon.png",
   "icon_white": "icon_white.png",
   "title": {

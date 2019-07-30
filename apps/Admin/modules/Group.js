@@ -5,6 +5,7 @@ import { TitleBar } from "./components/titlebar";
 import Swal from "sweetalert2";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
+
 class Group extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +14,11 @@ class Group extends React.Component {
       groupInEdit: undefined,
       groupToBeEdited: [],
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_GROUP_WRITE
+      }
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();
@@ -67,10 +72,12 @@ class Group extends React.Component {
     } else {
       var temp2 = [];
       for (var i = 0; i <= selectedUsers.length - 1; i++) {
-        var uid = { id: selectedUsers[i].id };
+        var uid = { uuid: selectedUsers[i].uuid };
         temp2.push(uid);
       }
-      this.pushGroupUsers(item, JSON.stringify(temp2));
+      this.pushGroupUsers(item, temp2).then(response => {
+        this.child.current.refreshHandler(response.status);
+      });
       this.toggleDialog();
     }
   };
@@ -124,7 +131,16 @@ class Group extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Groups" menu={this.props.menu} />
+        <TitleBar
+          title="Manage Groups"
+          menu={this.props.menu}
+          args={this.core}
+          // orgSwitch={
+          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+          //     ? true
+          //     : false
+          // }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

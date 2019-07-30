@@ -13,7 +13,11 @@ class Organization extends React.Component {
       orgToBeEdited: [],
       action: "",
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_ORGANIZATION_CREATE,
+        canEdit: this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_ORGANIZATION_DELETE
+      }
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();
@@ -54,10 +58,12 @@ class Organization extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushOrgUsers(dataItem, JSON.stringify(temp2));
+    this.pushOrgUsers(dataItem, temp2).then(response => {
+        this.child.current.refreshHandler(response.status);
+      });
     this.toggleDialog();
   };
 
@@ -67,16 +73,18 @@ class Organization extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     this.setState({
       orgInEdit: this.cloneItem(dataItem)
     });
+
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 
@@ -109,7 +117,11 @@ class Organization extends React.Component {
     return (
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
-        <TitleBar title="Manage Organizations" menu={this.props.menu}/>
+        <TitleBar
+          title="Manage Organizations"
+          menu={this.props.menu}
+          args={this.core}
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

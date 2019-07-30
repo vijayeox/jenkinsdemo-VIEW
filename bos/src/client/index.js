@@ -65,7 +65,7 @@ import { ProfileServiceProvider } from './adapters/ProfileAdapter.js';
 import { WebSocketAdapter } from './adapters/WebSocketAdapter.js';
 import { SplashServiceProvider } from './adapters/SplashAdapter.js';
 import {UserSessionServiceProvider} from './adapters/UserSessionAdapter.js';
-import { CoreAdapter } from './adapters/CoreAdapter.js';
+import { BosAdapter } from './adapters/BosAdapter.js';
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -81,6 +81,7 @@ const init = () => {
   osjs.register(VFSServiceProvider);
   osjs.register(NotificationServiceProvider);
   osjs.register(SettingsServiceProvider, {before: true});
+  osjs.register(BosAdapter);
   osjs.register(AuthServiceProvider, {
     before: true,
     args:
@@ -97,7 +98,6 @@ const init = () => {
   osjs.register(SplashServiceProvider, {before: true});
   osjs.register(UserSessionServiceProvider, {before: true});
   osjs.register(WebSocketAdapter);
-  osjs.register(CoreAdapter);
   osjs.boot();
 };
 

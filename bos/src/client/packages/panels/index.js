@@ -32,7 +32,6 @@ import './index.scss';
 import PanelServiceProvider from './src/provider';
 import WindowsPanelItem from './src/items/windows';
 import TrayPanelItem from './src/items/tray';
-import LogoutPanelItem from './src/items/logout';
 import MenuPanelItem from './src/items/menu';
 import PanelItem from './src/panel-item';
 import Panel from './src/panel';
@@ -45,6 +44,5 @@ export {
   WindowsPanelItem,
   TrayPanelItem,
   ProfilePanelItem,
-  LogoutPanelItem,
   MenuPanelItem
 };
