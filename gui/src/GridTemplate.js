@@ -364,7 +364,10 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
               </React.Fragment>
             ) : null}
             &nbsp; &nbsp;
-            {this.deleteButton()}
+            {this.props.dataItem.is_system_role
+            ? this.props.dataItem.is_system_role == "0" &&
+              this.deleteButton()
+            : this.deleteButton()}
           </center>
         </td>
       );

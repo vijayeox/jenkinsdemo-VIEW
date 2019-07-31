@@ -18,7 +18,7 @@ export default class DialogContainer extends React.Component {
       roleInEdit: this.props.dataItem || null,
       masterList: [],
       privilegeData: [],
-      sort: [],
+      sort: [{ field: "name", dir: "desc" }],
       isAdmin: null
     };
     this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
@@ -183,7 +183,7 @@ export default class DialogContainer extends React.Component {
           </form>
 
           <Ripple>
-            <div className="col-10 pt-3" style={{ margin: "auto" }}>
+            <div className="col-11 pt-3" style={{ margin: "auto" }}>
               <div className="privilegeGrid">
                 <Grid
                   data={orderBy(this.state.masterList, this.state.sort)}
@@ -223,7 +223,7 @@ export default class DialogContainer extends React.Component {
                   <GridColumn title="App Name" field="name" width="100px" />
                   <GridColumn
                     title="Privilege Name"
-                    width="200px"
+                    width="250px"
                     cell={props => (
                       <td>
                         <label>{props.dataItem.privilege_name.slice(7)}</label>

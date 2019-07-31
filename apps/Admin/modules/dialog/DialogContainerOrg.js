@@ -7,6 +7,7 @@ import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, TimezonePicker, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 import IntlTelInput from "react-intl-tel-input";
+import Codes from "../data/Codes";
 import "react-intl-tel-input/dist/main.css";
 import { FaUserLock } from "react-icons/fa";
 
@@ -62,7 +63,7 @@ export default class DialogContainer extends React.Component {
 
   dropdownChange = (field, event) => {
     let orgInEdit = { ...this.state.orgInEdit };
-    orgInEdit[field] = event;
+    orgInEdit[field] = event.target.value;
     this.setState({ orgInEdit: orgInEdit });
   };
 
@@ -101,6 +102,7 @@ export default class DialogContainer extends React.Component {
         address: this.state.orgInEdit.address,
         city: this.state.orgInEdit.city,
         state: this.state.orgInEdit.state,
+        country: this.state.orgInEdit.country,
         zip: this.state.orgInEdit.zip,
         logo: this.fUpload.current.firstUpload.cachedFileArray[0],
         contact: contactData,
@@ -211,11 +213,6 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="form-row">
                 <div className="col">
                   <label className="required-label">State</label>
                   <div>
@@ -232,6 +229,11 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="form-row">
                 <div className="col">
                   <label className="required-label">Zip Code</label>
                   <Input
@@ -244,6 +246,18 @@ export default class DialogContainer extends React.Component {
                     validationMessage={"Please enter the Zip Code."}
                     readOnly={this.props.diableField ? true : false}
                   />
+                </div>
+                <div className="col">
+                  <label className="required-label">Country</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={Codes}
+                      selectedItem={this.state.orgInEdit.country}
+                      onDataChange={e => this.dropdownChange("country", e)}
+                      required={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
