@@ -20,10 +20,10 @@ class ImportExportContactsWidget extends React.Component {
     link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
-  }
+  };
 
   exportContactsToCsv = () => {
-    ExportContacts('').then(response => {
+    ExportContacts("").then(response => {
       if (response.status == "success") {
         this.convertToFile(response.data, "text/csv", "myContacts.csv");
         this.notif.current.successNotification("Successfully imported");
@@ -40,7 +40,11 @@ class ImportExportContactsWidget extends React.Component {
     let fileData = { file: selectedFile };
     ImportContacts(fileData).then(response => {
       if (response.status == "success") {
-        this.convertToFile(response.data, "text/csv", "myContactsErrorList.csv");
+        this.convertToFile(
+          response.data,
+          "text/csv",
+          "myContactsErrorList.csv"
+        );
         this.notif.current.successNotification("Successfully imported");
         this.props.getContact;
       } else {
@@ -60,9 +64,10 @@ class ImportExportContactsWidget extends React.Component {
   };
 
   downloadCsvTemplate = () => {
-    const data = "Given Name,Family Name,Email 1 - Type,Email 1 - Value,E-mail 2 - Type,E-mail 2 - Value,E-mail 3 - Type,E-mail 3 - Value,Phone 1 - Type,Phone 1 - Value,Phone 2 - Type,Phone 2 - Value,Phone 3 - Type,Phone 3 - Value,Organization 1 - Name,Organization 1 - Title,Location,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name";
+    const data =
+      "Given Name,Family Name,Email 1 - Type,Email 1 - Value,E-mail 2 - Type,E-mail 2 - Value,E-mail 3 - Type,E-mail 3 - Value,Phone 1 - Type,Phone 1 - Value,Phone 2 - Type,Phone 2 - Value,Phone 3 - Type,Phone 3 - Value,Organization 1 - Name,Organization 1 - Title,Location,Name Prefix,Name Suffix,Initials,Nickname,Short Name,Maiden Name";
     this.convertToFile(data, "text/csv", "contactsTemplate.csv");
-  }
+  };
 
   render() {
     return (
@@ -76,13 +81,16 @@ class ImportExportContactsWidget extends React.Component {
           onChange={this.handleFile}
           accept=".csv"
         />
-        <DropdownButton
-          id="dropdown-basic-button"
-          title="Import / Export"
-        >
-          <Dropdown.Item onClick={this.handleClick}>Import (Google csv)</Dropdown.Item>
-          <Dropdown.Item onClick={this.exportContactsToCsv}>Export (csv)</Dropdown.Item>
-          <Dropdown.Item onClick={this.downloadCsvTemplate}>Download csv template</Dropdown.Item>
+        <DropdownButton id="dropdown-basic-button" title="Import / Export">
+          <Dropdown.Item onClick={this.handleClick}>
+            Import (Google csv)
+          </Dropdown.Item>
+          <Dropdown.Item onClick={this.exportContactsToCsv}>
+            Export (csv)
+          </Dropdown.Item>
+          <Dropdown.Item onClick={this.downloadCsvTemplate}>
+            Download csv template
+          </Dropdown.Item>
         </DropdownButton>
       </span>
     );
