@@ -87,32 +87,39 @@ export default class DialogContainer extends React.Component {
         email: this.state.orgInEdit.contact.email,
         phone: "+" + this.state.orgInEdit.contact.phone
       });
-      var contact_id = this.state.orgInEdit.contactid;
     } else {
       var contactData = [];
-      var contact_id = [];
+      var contact_id = this.state.orgInEdit.contactid;
     }
 
+    let tempData = {
+      name: this.state.orgInEdit.name,
+      address: this.state.orgInEdit.address,
+      city: this.state.orgInEdit.city,
+      state: this.state.orgInEdit.state,
+      country: this.state.orgInEdit.country,
+      zip: this.state.orgInEdit.zip,
+      logo: this.fUpload.current.firstUpload.cachedFileArray[0],
+      contact: contactData,
+      contactid: contact_id || null,
+      preferences: JSON.stringify({
+        dateformat: this.state.orgInEdit.preferences.dateformat,
+        currency: this.state.orgInEdit.preferences.currency,
+        timezone: this.state.orgInEdit.preferences.timezone
+      })
+    };
+
+    for (var i = 0; i <= Object.keys(tempData).length; i++) {
+      let propertyName = Object.keys(tempData)[i];
+      if (tempData[propertyName] == undefined) {
+        delete tempData[propertyName];
+      }
+    }
     PushDataPOST(
       "organization",
       this.props.formAction,
       this.state.orgInEdit.uuid,
-      {
-        name: this.state.orgInEdit.name,
-        address: this.state.orgInEdit.address,
-        city: this.state.orgInEdit.city,
-        state: this.state.orgInEdit.state,
-        country: this.state.orgInEdit.country,
-        zip: this.state.orgInEdit.zip,
-        logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-        contact: contactData,
-        contact_id: contact_id || undefined,
-        preferences: JSON.stringify({
-          dateformat: this.state.orgInEdit.preferences.dateformat,
-          currency: this.state.orgInEdit.preferences.currency,
-          timezone: this.state.orgInEdit.preferences.timezone
-        })
-      }
+      tempData
     ).then(response => {
       this.props.action(response.status);
       if (response.status == "success") {
