@@ -33,7 +33,7 @@ class Role extends React.Component {
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler,
-      selectedOrg:this.state.selectedOrg
+      selectedOrg: this.state.selectedOrg
     });
   };
 
@@ -63,7 +63,7 @@ class Role extends React.Component {
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler,
-      selectedOrg:this.state.selectedOrg
+      selectedOrg: this.state.selectedOrg
     });
   };
 
@@ -99,7 +99,8 @@ class Role extends React.Component {
                 title: "Description",
                 field: "description"
               }
-            ]
+            ],
+            sortMode: [{ field: "is_system_role", dir: "desc" }]
           }}
           manageGrid={{
             add: this.insert,

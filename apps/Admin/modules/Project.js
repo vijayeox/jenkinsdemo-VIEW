@@ -174,7 +174,7 @@ class Project extends React.Component {
           config={{
             showToolBar: true,
             title: "Project",
-            api: "organization/" + this.state.selectedOrg + "/project",
+            api: "organization/" + this.state.selectedOrg + "/projects",
             column: [
               {
                 title: "Name",
