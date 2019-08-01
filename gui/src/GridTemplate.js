@@ -32,7 +32,8 @@ export default class GridTemplate extends React.Component {
     this.state = {
       dataState: {
         take: 20,
-        skip: 0
+        skip: 0,
+        sort: this.props.config.sortMode
       },
       gridData: this.props.gridData,
       api: this.props.config.api
@@ -365,9 +366,8 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
             ) : null}
             &nbsp; &nbsp;
             {this.props.dataItem.is_system_role
-            ? this.props.dataItem.is_system_role == "0" &&
-              this.deleteButton()
-            : this.deleteButton()}
+              ? this.props.dataItem.is_system_role == "0" && this.deleteButton()
+              : this.deleteButton()}
           </center>
         </td>
       );
