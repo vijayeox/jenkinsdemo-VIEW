@@ -83,6 +83,10 @@ class Group extends React.Component {
     }
   };
 
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
   toggleDialog() {
     this.setState({
       visible: !this.state.visible,
@@ -139,11 +143,12 @@ class Group extends React.Component {
           title="Manage Groups"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -151,7 +156,8 @@ class Group extends React.Component {
           config={{
             showToolBar: true,
             title: "Group",
-            api: "group",
+            api: "organization/" + this.state.selectedOrg + "/groups",
+
             column: [
               {
                 title: "Name",
