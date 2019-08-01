@@ -19,24 +19,22 @@ class ContactListComponent extends React.Component {
             )
           }
         >
-          <img
-            src={
-              this.props.contact.icon
-                ? this.props.contact.icon + "?" + new Date()
-                : ""
-            }
-            key={
-              this.props.contact.icon
-                ? this.props.contact.icon
-                : ""
-            }
-          />
-          <span className="mate-info">
+          <div className="teamMateIcon">
+            <img
+              src={
+                this.props.contact.icon
+                  ? this.props.contact.icon + "?" + new Date()
+                  : ""
+              }
+              key={this.props.contact.icon ? this.props.contact.icon : ""}
+            />
+          </div>
+          <div className="mate-info teamMateInfo">
             <h2>
               {this.props.contact.first_name} {this.props.contact.last_name}{" "}
             </h2>
             <p>{this.props.contact.email} </p>
-          </span>
+          </div>
         </div>
       );
     }

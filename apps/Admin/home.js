@@ -7,7 +7,6 @@ import User from "./modules/User";
 import Group from "./modules/Group";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
-import Application from "./modules/Application";
 import { slide as Menu } from "react-burger-menu";
 
 class Home extends React.Component {

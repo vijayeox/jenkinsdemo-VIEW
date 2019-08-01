@@ -1,0 +1,15 @@
+[
+    {
+      "consultant": "ABC Solutions",
+      "candidate": "Shwetha",
+      "status":"Interview",
+      "date": "May 15 2019"
+      },
+      {
+        "consultant": "XYZ Solutions",
+        "candidate": "Sharanya",
+        "status":"Interview",
+        "date": "May 11 2019"
+        }
+  ]
+  

@@ -3,7 +3,9 @@
     @include button;
   }
 }
-
+.osjs-notification{
+  background-color: #275261 !important;
+}
 .osjs-gui-input,
 .osjs-gui-field {
   select,

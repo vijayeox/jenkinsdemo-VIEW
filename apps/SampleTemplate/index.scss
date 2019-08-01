@@ -1,0 +1,34 @@
+.Window_SampleTemplate {
+
+    @import "./public/scss/kendo.css";
+    @import "./node_modules/bootstrap/dist/css/bootstrap.min.css"; 
+    @import "../Preferences/node_modules/react-web-tabs/dist/react-web-tabs.css";
+    @import "./node_modules/choices.js/public/assets/styles/choices.min.css";
+    // @import "../../gui/src/public/css/reactwebtab.css";
+    // @import "../../gui/dist/main.css";
+}
+.Window_SampleTemplate.osjs-window {
+
+    #zoomin:hover{
+        transform: scale(1.5);
+        color: yellow;
+    }
+
+    input[type="text"]:disabled {
+        cursor: not-allowed;
+        border-bottom:0px solid #9e9e9e;
+      }
+    input[type="email"]:disabled {
+        cursor: not-allowed;
+        border-bottom:0px solid #9e9e9e;
+      }
+    div[disabled]{
+        cursor: not-allowed;
+      }
+      textarea:disabled{
+        cursor: not-allowed;
+      }
+      div[class="formio-component-dateTime"]{
+        cursor: not-allowed;
+      }
+}

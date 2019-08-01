@@ -1,3 +1,14 @@
+// ---SweetAlert2 Fixes (Start)---
+
+body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
+  overflow-y: visible !important;
+}
+
+.swal2-shown {
+  overflow: visible !important;
+}
+// ---SweetAlert2 Fixes (End)---
+
 .Window_Admin {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
@@ -345,8 +356,7 @@
   /* General sidebar styles */
   .bm-menu {
     background: #373a47;
-    width: 100% !important;
-    font-size: 1.15em;
+    width: 87% !important;
     overflow: hidden !important;
   }
 
@@ -369,7 +379,7 @@
     .titles {
       padding-top: 0.75rem;
       padding-bottom: 0.75rem;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       text-align: center;
       outline: none;
     }
@@ -811,15 +821,17 @@
     top: 160px !important;
   }
 
-  .k-multiselect-wrap{
+  .k-multiselect-wrap {
     padding: 0.5rem;
-    input{
+    input {
       height: unset;
       margin: unset;
     }
   }
-  .k-multiselect-wrap li.k-button{
+  .k-multiselect-wrap li.k-button {
     margin-bottom: 0.5rem;
+    margin-right: 0.5rem;
+    padding: 4px 8px;
   }
 
   .k-dateinput-wrap > input {

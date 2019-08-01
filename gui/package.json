@@ -18,6 +18,7 @@
     "@progress/kendo-react-inputs": "^2.10.0",
     "@progress/kendo-react-intl": "^2.10.0",
     "@progress/kendo-theme-default": "^3.7.0",
+    "@syncfusion/ej2-react-dropdowns": "^17.2.34",
     "@trendmicro/react-buttons": "^1.3.1",
     "@trendmicro/react-dropdown": "^1.3.0",
     "@trendmicro/react-sidenav": "^0.4.5",
@@ -25,7 +26,10 @@
     "file-upload-with-preview": "^4.0.2",
     "jquery": "^3.4.0",
     "npm": "^6.10.0",
+    "react-formio": "^4.0.0-rc.7",
     "react-notifications-component": "^1.1.1",
+    "react-router-dom": "^5.0.1",
+    "react-web-tabs": "^1.0.1",
     "sweetalert2": "^8.9.0",
     "sweetalert2-react-content": "^1.1.0"
   },

@@ -243,15 +243,26 @@ class AddButton extends React.Component {
 
 class LogoCell extends React.Component {
   render() {
-    return this.props.dataItem.media ? (
-      <td>
-        <img
-          src={this.props.url + "resource/" + this.props.dataItem.media}
-          alt="Logo"
-          className="text-center circle gridBanner"
-        />
-      </td>
-    ) : null;
+    if(this.props.dataItem.media_type == "image"){
+      return this.props.dataItem.media ? (
+        <td>
+          <img
+            src={this.props.url + "resource/" + this.props.dataItem.media}
+            alt="Logo"
+            className="text-center circle gridBanner"
+          />
+        </td>
+      ) : null;
+    }
+    else{
+      return this.props.dataItem.media ? (
+        <td>
+          <video className="text-center circle gridBanner">
+            <source src={this.props.url + "resource/" + this.props.dataItem.media} type="video/mp4" />
+          </video>
+        </td>
+      ) : null;
+    }
   }
 }
 

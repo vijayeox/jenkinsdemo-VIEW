@@ -1,5 +1,9 @@
 import React from "react";
-import { ContactListWidget, ContactDetailsWidget } from "./src/widgets";
+import {
+  ContactListWidget,
+  ContactDetailsWidget,
+  ImportExportContactsWidget
+} from "./src/widgets";
 import { ContactDailog } from "./src/dailogs";
 import { SelectContactTypeEnum } from "./src/enums";
 import {
@@ -27,7 +31,7 @@ class App extends React.Component {
     this.callSearch;
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getContact();
   }
 
@@ -44,6 +48,7 @@ class App extends React.Component {
       if (result.value) {
         this.loader.show();
         DeleteContact(uuid).then(response => {
+          this.loader.destroy();
           if (response.status == "success") {
             this.notif.current.successNotification("Contact deleted.");
             this.getContact();
@@ -52,7 +57,6 @@ class App extends React.Component {
               "Operation failed" + response.message
             );
           }
-          this.loader.destroy();
         });
       }
     });
@@ -61,6 +65,7 @@ class App extends React.Component {
   getContact = () => {
     this.loader.show();
     GetContacts().then(response => {
+      this.loader.destroy();
       if (response.status == "success") {
         if (response.data) {
           this.setState(
@@ -82,23 +87,35 @@ class App extends React.Component {
           );
         }
       }
-      this.loader.destroy();
     });
   };
 
   searchContact = () => {
     SearchContact(this.state.searchText).then(response => {
       if (response.status == "success") {
-        this.setState({
-          myContacts: response.data.myContacts,
-          orgContacts: response.data.orgContacts
-        });
+        this.setState(
+          {
+            myContacts: response.data.myContacts
+              ? response.data.myContacts
+              : [],
+            orgContacts: response.data.orgContacts
+              ? response.data.orgContacts
+              : []
+          },
+          () => {
+            if (response.data.orgContacts.length > 0) {
+              this.setState({
+                selectedContact: response.data.orgContacts[0]
+              });
+            }
+          }
+        );
       }
     });
   };
 
   handleChange = e => {
-    clearTimeout( this.callSearch );
+    clearTimeout(this.callSearch);
     this.setState(
       {
         searchText: e.target.value
@@ -106,7 +123,7 @@ class App extends React.Component {
       () => {
         this.callSearch = window.setTimeout(() => {
           this.searchContact();
-        },500);
+        }, 500);
       }
     );
   };
@@ -121,13 +138,13 @@ class App extends React.Component {
   cancel = () => {
     this.toggleDialog();
     this.getContact();
-  }
+  };
 
   success = () => {
     this.notif.current.successNotification("Operation Success.");
     this.toggleDialog();
     this.getContact();
-  }
+  };
 
   handleSelected = (selectedContact, selectType) => {
     this.setState({
@@ -157,7 +174,13 @@ class App extends React.Component {
                   onChange={this.handleChange}
                 />
               </div>
-              <div className="col-md-6 topDiv">
+              <div className="col-md-3 topDiv">
+                <ImportExportContactsWidget
+                  args={this.core}
+                  getContact={this.getContact}
+                />
+              </div>
+              <div className="col-md-3 topDiv">
                 <button
                   type="submit"
                   className="btn btn-primary"

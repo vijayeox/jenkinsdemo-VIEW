@@ -17,7 +17,6 @@ class Announcement extends React.Component {
         canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
       }
     };
-    console.log(this.props.userProfile.privileges);
     
     this.notif = React.createRef();
     this.child = React.createRef();
@@ -25,15 +24,14 @@ class Announcement extends React.Component {
   }
 
   async pushAnnouncementGroups(dataItem, dataObject) {
-    console.log(dataObject);
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem,
+      "/announcement/" + dataItem + "/save",
       {
         groups: dataObject
       },
-      "put"
+      "post"
     );
     return addGroups;
   }
@@ -83,10 +81,12 @@ class Announcement extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushAnnouncementGroups(dataItem, JSON.stringify(temp2));
+    this.pushAnnouncementGroups(dataItem, temp2).then(response => {
+      this.child.current.refreshHandler(response.status);
+    });
     this.toggleDialog();
   };
 
@@ -97,8 +97,9 @@ class Announcement extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      ancInEdit: this.cloneItem(dataItem)
+      ancInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
