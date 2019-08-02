@@ -1,0 +1,16 @@
+{
+  "type": "application",
+  "name": "demo",
+  "category": null,
+  "server": "server.js",
+  "title": {
+    "en_EN": "demo"
+  },
+  "description": {
+    "en_EN": "demo"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

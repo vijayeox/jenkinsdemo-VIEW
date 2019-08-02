@@ -1,6 +1,4 @@
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
@@ -27,16 +25,9 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin([
-      'icon.png','icon_white.png'
-    ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
-    }),
-    new Dotenv({
-      path: './.env',
-      safe: true
     }),
     ...plugins
   ],
@@ -67,13 +58,7 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader'
-        },
-        query: {
-          presets: [
-              'es2015',
-              'react'
-          ]
-      }
+        }
       }
     ]
   }

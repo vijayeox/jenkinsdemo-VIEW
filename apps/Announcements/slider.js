@@ -92,7 +92,7 @@ class Slider extends React.Component {
               <button
                 className="readMore"
                 onClick={() => {
-                  this.setState({ isPaneOpen: true, focusData: data });
+                 this.setState({ isPaneOpen: true, focusData: data });
                 }}
               >
                 READ MORE
