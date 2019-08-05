@@ -369,11 +369,24 @@ class EditProfile extends Component {
   };
 
   profileImageData = () => {
+    let displayImage, middle;
+    if (this.state.icon == null || this.state.icon == "") {
+      displayImage = {
+        opacity: 0.5
+      };
+      middle = {
+        opacity: 1
+      };
+    }
     if (this.state.showImageDiv == 1) {
       return (
         <div className="profileImageDiv">
-          <img src={this.state.icon} className="rounded-circle displayImage" />
-          <div className="middle">
+          <img
+            src={this.state.icon}
+            className="rounded-circle displayImage"
+            style={displayImage}
+          />
+          <div className="middle" style={middle}>
             <div className="text">
               <p
                 className="btn-sm btn-success imgBtn"

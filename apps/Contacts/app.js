@@ -43,7 +43,8 @@ class App extends React.Component {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, delete it!",
+      target:".Window_Contacts"
     }).then(result => {
       if (result.value) {
         this.loader.show();
