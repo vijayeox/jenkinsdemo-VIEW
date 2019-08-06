@@ -3,7 +3,7 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/rea
 import { Button, ButtonGroup } from '@trendmicro/react-buttons';
 import Dropdown, { MenuItem } from '@trendmicro/react-dropdown';
 import Inbox from './inbox';
-import Home from './home';
+import Page from './page';
 import Outbox from './outbox';
 import Activity from './activity';
 import Dashboard from './dashboard';
@@ -35,10 +35,10 @@ class LeftMenuTemplate extends React.Component {
       this.onToggle=this.onToggle.bind(this);
       this.navigate=this.navigate.bind(this);
   }
-
+// REMOVE THE HARD CODED APP ID
   async getMenulist() {
     let helper = this.core.make('oxzion/restClient');
-    let menulist = await helper.request('v1','/app/30/menu', {}, 'get' );
+    let menulist = await helper.request('v1','/app/'+this.appId+'/menu', {}, 'get' );
     return menulist;
 };
   onToggle(expanded){
@@ -53,15 +53,13 @@ class LeftMenuTemplate extends React.Component {
 
   render() {
     const { expanded ,selected} = this.state;
-    let selection;     
+    let selection;
     console.log(this.state.selected);
     console.log(this.state.selected.name);
     if (this.state.selected.page_id) {
-        selection = <Home args={this.state.selected.page_id} config={this.props.config} core={this.props.args}/>
+        selection = <Page pageId={this.state.selected.page_id} config={this.props.config} app={this.props.appId} core={this.props.args}/>
     }
-    if(this.state.selected === 'Home'){
-        selection = <Home args={this.state.selected} config={this.props.config} core={this.props.args}/>
-    }
+
     if(this.state.selected === 'Inbox'){
         selection = <Inbox args={this.state.selected} config={this.props.config} core={this.props.args}/>
     }
