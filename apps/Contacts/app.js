@@ -9,7 +9,8 @@ import { SelectContactTypeEnum } from "./src/enums";
 import {
   GetContacts,
   SearchContact,
-  DeleteContact
+  DeleteContact,
+  DeleteSelectedContacts
 } from "./src/services/services";
 import { Notification } from "./src/components";
 import Swal from "sweetalert2";
@@ -24,7 +25,8 @@ class App extends React.Component {
       contactList: [],
       myContacts: [],
       orgContacts: [],
-      searchText: ""
+      searchText: "",
+      selectedContactsUUID: []
     };
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
@@ -44,7 +46,7 @@ class App extends React.Component {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-      target:".Window_Contacts"
+      target: ".Window_Contacts"
     }).then(result => {
       if (result.value) {
         this.loader.show();
@@ -159,6 +161,40 @@ class App extends React.Component {
     }
   };
 
+  handleChecked = e => {
+    let selectedContactsUUID = this.state.selectedContactsUUID;
+    if (
+      e.target.checked &&
+      !this.state.selectedContactsUUID.includes(e.target.value)
+    ) {
+      this.setState({
+        selectedContactsUUID: selectedContactsUUID.concat(e.target.value)
+      });
+    } else {
+      let contactIndex = selectedContactsUUID.indexOf(e.target.value);
+      selectedContactsUUID.splice(contactIndex, 1);
+      this.setState({
+        selectedContactsUUID
+      });
+    }
+  };
+
+  deleteSelectedContacts = () => {
+    if (this.state.selectedContactsUUID.length > 0) {
+      DeleteSelectedContacts(this.state.selectedContactsUUID).then(response => {
+        if (response.status == "success") {
+          this.notif.current.successNotification("Contacts deleted.");
+        } else {
+          this.notif.current.failNotification(
+            "Operation failed" + response.message
+          );
+        }
+      });
+    } else {
+      this.notif.current.failNotification("No contacts selected to delete.");
+    }
+  };
+
   render() {
     return (
       <div className="contactPanelMainDiv">
@@ -166,7 +202,7 @@ class App extends React.Component {
         <div className="col">
           <div className="contactPanel">
             <div className="row">
-              <div className="col-md-6 topDiv">
+              <div className="col-6 topDiv">
                 <input
                   type="search"
                   className="form-control searchContact"
@@ -175,13 +211,15 @@ class App extends React.Component {
                   onChange={this.handleChange}
                 />
               </div>
-              <div className="col-md-3 topDiv">
+              <div className="col-3 topDiv">
                 <ImportExportContactsWidget
                   args={this.core}
                   getContact={this.getContact}
+                  deleteSelectedContacts={this.deleteSelectedContacts}
+                  selectedContactsUUID={this.state.selectedContactsUUID}
                 />
               </div>
-              <div className="col-md-3 topDiv">
+              <div className="col-3 topDiv">
                 <button
                   type="submit"
                   className="btn btn-primary"
@@ -190,18 +228,19 @@ class App extends React.Component {
                     this.handleSelected({}, SelectContactTypeEnum.ADD)
                   }
                 >
-                  Add Contact
+                  Add contact
                 </button>
               </div>
-              <div className="col-md-6">
+              <div className="col-6">
                 <ContactListWidget
                   args={this.core}
                   myContacts={this.state.myContacts}
                   orgContacts={this.state.orgContacts}
                   handleSelected={this.handleSelected}
+                  handleChecked={this.handleChecked}
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-6">
                 <ContactDetailsWidget
                   args={this.core}
                   contact={this.state.selectedContact}

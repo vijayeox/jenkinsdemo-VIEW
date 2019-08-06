@@ -27,7 +27,7 @@ class ContactDetailsWidget extends React.Component {
             onClick={() => this.props.deleteContact(this.props.contact.uuid)}
           >
             {" "}
-            | <b>Delete</b> <i className="fa fa-trash" />
+            | <b>DELETE</b> <i className="fa fa-trash" />
           </span>
         ) : null}
       </p>
@@ -42,7 +42,7 @@ class ContactDetailsWidget extends React.Component {
             <div className="teamMateIcon">
               <img
                 className="contactDetailsImage"
-                src={this.props.contact.icon + "?" + new Date()}
+                src={this.props.contact.icon}
                 key={this.props.contact.icon + "?" + new Date()}
               />
             </div>

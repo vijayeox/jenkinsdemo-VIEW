@@ -23,7 +23,7 @@ class ImportExportContactsWidget extends React.Component {
   };
 
   exportContactsToCsv = () => {
-    ExportContacts("").then(response => {
+    ExportContacts(this.props.selectedContactsUUID).then(response => {
       if (response.status == "success") {
         this.convertToFile(response.data, "text/csv", "myContacts.csv");
         this.notif.current.successNotification("Successfully imported");
@@ -81,15 +81,18 @@ class ImportExportContactsWidget extends React.Component {
           onChange={this.handleFile}
           accept=".csv"
         />
-        <DropdownButton id="dropdown-basic-button" title="Import / Export">
+        <DropdownButton id="dropdown-basic-button" title="Actions">
           <Dropdown.Item onClick={this.handleClick}>
-            Import (Google csv)
+            Import contacts(Google csv)
           </Dropdown.Item>
           <Dropdown.Item onClick={this.exportContactsToCsv}>
-            Export (csv)
+            Export contacts(csv)
           </Dropdown.Item>
           <Dropdown.Item onClick={this.downloadCsvTemplate}>
             Download csv template
+          </Dropdown.Item>
+          <Dropdown.Item onClick={this.props.deleteSelectedContacts}>
+            Delete selected contacts
           </Dropdown.Item>
         </DropdownButton>
       </span>

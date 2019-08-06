@@ -112,6 +112,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .contactInfoDiv {
     border: 1px solid #cdcdcd;
     border-radius: 6px;
+    height: 55vh;
 
     .contactDetailsImage {
       width: 80px;
@@ -315,5 +316,17 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   .errorLabel {
     color: #dc3545;
+  }
+
+  .checkBoxIndividual {
+    float: left;
+    display: inline-block;
+    margin-left: 1vw;
+    margin-top: 4vh;
+    transform: scale(1.2);
+
+    .checkbox {
+        cursor: pointer;
+    }
   }
 }
