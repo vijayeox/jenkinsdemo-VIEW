@@ -18,7 +18,8 @@ class Group extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_GROUP_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();
@@ -90,19 +91,21 @@ class Group extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      groupInEdit: this.cloneProduct(dataItem)
+      groupInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
+      selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler
     });
   };
 
-  cloneProduct(product) {
+  cloneItem(product) {
     return Object.assign({}, product);
   }
 
@@ -121,6 +124,7 @@ class Group extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler

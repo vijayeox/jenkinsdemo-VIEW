@@ -18,7 +18,6 @@ class ProfilePictureWidget extends React.Component {
   }
 
   componentWillMount() {
-    console.log(this.props.contactDetails);
     this.setState({
       icon: this.props.contactDetails.icon,
       iconType:

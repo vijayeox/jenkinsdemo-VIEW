@@ -22,8 +22,9 @@ class Role extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      roleInEdit: this.cloneItem(dataItem)
+      roleInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,

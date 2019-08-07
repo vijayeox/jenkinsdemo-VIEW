@@ -12,8 +12,8 @@ class ContactDailog extends React.Component {
     this.core = this.props.args;
     this.state = {
       contactDetails: {},
-      tempPhoneData: { type: "other", value: "" },
-      tempEmailData: { type: "other", value: "" },
+      tempPhoneData: { type: "Other", value: "" },
+      tempEmailData: { type: "Other", value: "" },
       icon: null,
       errors: {
         first_name: true
@@ -128,7 +128,7 @@ class ContactDailog extends React.Component {
       }
       this.setState({
         contactDetails,
-        tempPhoneData: { type: "other", value: "" }
+        tempPhoneData: { type: "Other", value: "" }
       });
     } else if (type == "addNewEmail") {
       let contactDetails = this.state.contactDetails;
@@ -141,7 +141,7 @@ class ContactDailog extends React.Component {
 
       this.setState({
         contactDetails,
-        tempEmailData: { type: "other", value: "" }
+        tempEmailData: { type: "Other", value: "" }
       });
     }
   };
@@ -171,7 +171,7 @@ class ContactDailog extends React.Component {
       }
       this.loader.destroy();
     });
-  }
+  };
 
   saveContact = () => {
     const { contactDetails, errors } = this.state;
@@ -180,6 +180,18 @@ class ContactDailog extends React.Component {
       return;
     }
     let data = {};
+    if (contactDetails.phone_1 || contactDetails.email) {
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (contactDetails.email && !re.test(contactDetails.email)) {
+        this.notif.current.failNotification("Primary email is not valid.");
+        return;
+      }
+    } else {
+      this.notif.current.failNotification(
+        "Either primary phone or email is mandatory."
+      );
+      return;
+    }
     if (Object.keys(contactDetails).length != 0) {
       for (var i = 0; i < Object.keys(contactDetails).length; i++) {
         if ([Object.keys(contactDetails)[i]] == "icon") {

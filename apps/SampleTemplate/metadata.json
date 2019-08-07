@@ -1,0 +1,18 @@
+{
+  "type": "application",
+  "name": "SampleTemplate",
+  "category": null,
+  "server": "server.js",
+  "autostart":true,
+  "singleton":true,
+  "title": {
+    "en_EN": "SampleTemplate"
+  },
+  "description": {
+    "en_EN": "SampleTemplate"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

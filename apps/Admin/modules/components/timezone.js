@@ -175,7 +175,6 @@ class TimezonePicker extends React.Component {
       <div className={this.props.className} style={this.props.style}>
         <input
           type="text"
-          autoComplete="off"
           {...inputProps}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}

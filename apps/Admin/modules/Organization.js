@@ -74,8 +74,9 @@ class Organization extends React.Component {
   }
 
   edit = (dataItem, required) => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      orgInEdit: this.cloneItem(dataItem)
+      orgInEdit: dataItem
     });
 
     this.inputTemplate = React.createElement(DialogContainer, {

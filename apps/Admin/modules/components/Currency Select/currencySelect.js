@@ -112,7 +112,7 @@ export default class CurrencySelect extends React.Component {
     const inputProps = {
       ...passProps,
       value,
-      placeholder: "Search By Country Name or Currency Code",
+      placeholder: "Enter Country Name or Currency Code",
       onChange: this.onChange,
       required: true,
       readOnly: this.props.readOnly ? true : false

@@ -25,8 +25,9 @@ class User extends React.Component {
   };
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      userInEdit: this.cloneItem(dataItem)
+      userInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,

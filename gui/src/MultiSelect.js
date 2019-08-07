@@ -1,5 +1,5 @@
 import React from "react";
-import { GetDataSearch, ExistingUsers } from "./components/apiCalls";
+import { GetDataSearch, ExistingUsers } from "./components/MultiSelect/Requests";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
