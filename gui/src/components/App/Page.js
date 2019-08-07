@@ -1,7 +1,7 @@
 import React from "react";
-import FormEngine from "./FormEngine";
+import FormRender from "./FormRender";
 import ReactDOM from "react-dom";
-import Sourcing from "./sourcing.js";
+import Document from "./Document.js";
 import Loader from "./Loader";
 
 class Page extends React.Component {
@@ -17,10 +17,12 @@ class Page extends React.Component {
     }
     loadPage(pageId){
         this.getPageContent(pageId).then(response => {
-            this.setState({ pageContent: this.renderContent(response.data) });
-        }).catch((error) => {  
-                console.log('There seems to be an error: ' + error);  
+            if(response.status == 'success'){
+                this.setState({ pageContent: this.renderContent(response.data) }); 
+            } else {
+                console.log(response.message);
                 this.setState({ pageContent: this.renderContent([]) });
+            }
         });
     }
 
@@ -43,19 +45,19 @@ class Page extends React.Component {
         for (var i = 0; i < data.length; i++) {
             switch(data[i].type) {
               case 'Form':
-                content.push(<FormEngine content={data[i].content}  config={this.menu} core={this.config}/>);
+                content.push(<FormRender content={data[i].content} config={this.menu} core={this.config}/>);
                 break;
               default:
-                content.push(<Sourcing content={data[i].content} config={this.menu} core={this.config}/>);
+                content.push(<Document content={data[i].content} config={this.menu} core={this.config}/>);
                 break;
             }
         }
         if(content.length > 0){
             return content;
         } else {
-            content.push("<h2>No Content Available</h2>");
+            content.push(<h2>No Content Available</h2>);
         }
-        return;
+        return content;
     }
       
     render() {

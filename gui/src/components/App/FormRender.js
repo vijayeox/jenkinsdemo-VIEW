@@ -2,7 +2,7 @@ import React from "react";
 import {Form} from "react-formio";
 import 'bootstrap/dist/js/bootstrap.js';
 
-class FormEngine extends React.Component {
+class FormRender extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,4 +27,4 @@ class FormEngine extends React.Component {
     }
   }
   
-  export default FormEngine;
+  export default FormRender;
