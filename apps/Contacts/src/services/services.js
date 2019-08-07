@@ -48,7 +48,7 @@ export async function DeleteContact(uuid) {
 }
 
 export async function DeleteSelectedContacts(UUIDlist) {
-  let response = await helper.request("v1", "/contact/", UUIDlist, "post");
+  let response = await helper.request("v1", "/contacts/delete", UUIDlist, "post");
   return response;
 }
 
