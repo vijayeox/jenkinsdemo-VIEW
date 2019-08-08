@@ -65,7 +65,7 @@ class Project extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Project",
-        mainList: "user",
+        mainList: "users/list",
         subList: "project"
       },
       manage: {
