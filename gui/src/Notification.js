@@ -24,10 +24,10 @@ class Notification extends React.Component {
     });
   }
 
-  uploadImage() {
+  uploadImage(title, message) {
     this.notificationDOMRef.current.addNotification({
-      title: "Warning",
-      message: "Please choose an image.",
+      title: title,
+      message: message,
       type: "warning",
       insert: "top",
       container: "bottom-right",
@@ -55,6 +55,20 @@ class Notification extends React.Component {
     this.notificationDOMRef.current.addNotification({
       title: "Error",
       message: "Operation failed.",
+      type: "danger",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  customFailNotification(title, message) {
+    this.notificationDOMRef.current.addNotification({
+      title: title,
+      message: message,
       type: "danger",
       insert: "top",
       container: "bottom-right",
