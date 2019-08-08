@@ -11,7 +11,7 @@
             "icon": "Apps/HelpApp/task.png"
         },
         {
-            "id": null,
+            "id": "chat",
             "name": "Chat",
             "icon": "Apps/HelpApp/task.png"
         }

@@ -31,6 +31,7 @@ class HelpPage extends Component {
     console.log("inside handleClick");
     console.log(e.target.id);
     this.setState({ topic: e.target.id });
+    this.menuClick();
   }
 
   render() {
