@@ -107,6 +107,10 @@ class Project extends React.Component {
     });
   }
 
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
   edit = dataItem => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
@@ -157,11 +161,12 @@ class Project extends React.Component {
           title="Manage Projects"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -169,7 +174,7 @@ class Project extends React.Component {
           config={{
             showToolBar: true,
             title: "Project",
-            api: "project",
+            api: "organization/" + this.state.selectedOrg + "/projects",
             column: [
               {
                 title: "Name",

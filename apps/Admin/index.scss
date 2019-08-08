@@ -807,8 +807,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   }
 
   .k-widget.k-state-invalid > .k-picker-wrap {
-    border-color: #949494;
-    color: #9e9e9e;
+    border-color: #f2f2f2;
+    color: #f2f2f2;
+    border: solid 0.5vh;
   }
 
   .radioLabel {

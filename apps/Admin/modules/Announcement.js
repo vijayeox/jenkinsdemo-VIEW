@@ -15,9 +15,10 @@ class Announcement extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
-    
+
     this.notif = React.createRef();
     this.child = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);
@@ -114,6 +115,10 @@ class Announcement extends React.Component {
     return Object.assign({}, item);
   }
 
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
   remove = dataItem => {
     DeleteEntry("announcement", dataItem.uuid).then(response => {
       this.handler(response.status);
@@ -140,14 +145,25 @@ class Announcement extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Announcements" menu={this.props.menu} args={this.core}/>
+        <TitleBar
+          title="Manage Announcements"
+          menu={this.props.menu}
+          args={this.core}
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}
           config={{
             showToolBar: true,
             title: "Announcement",
-            api: "announcement/a",
+            api: "organization/" + this.state.selectedOrg + "/announcements",
+
             column: [
               {
                 title: "Banner",

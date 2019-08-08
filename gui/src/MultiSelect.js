@@ -40,7 +40,13 @@ class MultiSelect extends React.Component {
         for (var i = 0; i <= response.data.length - 1; i++) {
           var userName = response.data[i].name;
           var userid = response.data[i].uuid;
-          tempUsers.push({ uuid: userid, name: userName });
+          var is_manager =
+            response.data[i].is_manager || response.data[i].is_admin;
+          tempUsers.push({
+            uuid: userid,
+            name: userName,
+            is_manager: is_manager
+          });
         }
         this.setState({
           selectedUsers: tempUsers
@@ -205,9 +211,12 @@ class MultiSelect extends React.Component {
                   headerCell={this.columnTitle}
                 />
                 <GridColumn
-                  title="Edit"
-                  width="100px"
-                  cell={cellWithEditing(this.deleteRecord)}
+                  title="Manage"
+                  width="110px"
+                  cell={cellWithEditing(
+                    this.deleteRecord,
+                    this.props.config.title
+                  )}
                 />
               </Grid>
             </div>
@@ -237,36 +246,52 @@ class MultiSelect extends React.Component {
   }
 }
 
-function cellWithEditing(remove) {
+function cellWithEditing(remove, title) {
   return class extends GridCell {
     render() {
+      console.log(title);
+
       return (
         <td>
-          <button
-            className="k-primary k-button k-grid-edit-command"
-            onClick={() => {
-              Swal.fire({
-                title: "Are you sure?",
-                text:
-                  "You are about to remove " + this.props.dataItem.name + ".",
-                imageUrl:
-                  "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-                imageWidth: 75,
-                imageHeight: 75,
-                confirmButtonText: "OK",
-                confirmButtonColor: "#d33",
-                showCancelButton: true,
-                cancelButtonColor: "#3085d6",
-                target: ".Window_Admin"
-              }).then(result => {
-                if (result.value) {
-                  remove(this.props.dataItem);
-                }
-              });
-            }}
-          >
-            Remove
-          </button>
+          {this.props.dataItem.is_manager !== "1" ? (
+            <center>
+              <button
+                className="k-primary k-button k-grid-edit-command"
+                onClick={() => {
+                  Swal.fire({
+                    title: "Are you sure?",
+                    text:
+                      "You are about to remove " +
+                      this.props.dataItem.name +
+                      ".",
+                    imageUrl:
+                      "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+                    imageWidth: 75,
+                    imageHeight: 75,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#d33",
+                    showCancelButton: true,
+                    cancelButtonColor: "#3085d6",
+                    target: ".Window_Admin"
+                  }).then(result => {
+                    if (result.value) {
+                      remove(this.props.dataItem);
+                    }
+                  });
+                }}
+              >
+                Remove
+              </button>
+            </center>
+          ) : title == "Organization" ? (
+            <center>
+              <b>Admin</b>
+            </center>
+          ) : (
+            <center>
+              <b>Manager</b>
+            </center>
+          )}
         </td>
       );
     }
