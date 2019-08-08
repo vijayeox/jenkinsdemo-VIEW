@@ -245,7 +245,7 @@ class LogoCell extends React.Component {
       return this.props.dataItem.media ? (
         <td>
           <img
-            src={this.props.url + "resource/" + this.props.dataItem.media}
+            src={this.props.url + "resource/" + this.props.dataItem.media + "?" + new Date()}
             alt="Logo"
             className="text-center circle gridBanner"
           />
@@ -256,7 +256,7 @@ class LogoCell extends React.Component {
         <td>
           <video className="text-center circle gridBanner">
             <source
-              src={this.props.url + "resource/" + this.props.dataItem.media}
+              src={this.props.url + "resource/" + this.props.dataItem.media + "?" + new Date()}
               type="video/mp4"
             />
           </video>
