@@ -48,7 +48,7 @@ class Group extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Group",
-        mainList: "user",
+        mainList: "users/list",
         subList: "group"
       },
       manage: {

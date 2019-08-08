@@ -59,7 +59,6 @@ class Announcement extends React.Component {
 
   addAncUsers = dataItem => {
     this.getAnnouncementGroups(dataItem.uuid).then(response => {
-      console.log(response);
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
         config: {
