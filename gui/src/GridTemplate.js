@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import { Notification } from "../index";
 import { GridCell } from "@progress/kendo-react-grid";
-import DataLoader from "./DataLoader";
+import DataLoader from "./components/Grid/DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
 import withReactContent from "sweetalert2-react-content";
