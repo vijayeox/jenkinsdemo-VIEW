@@ -45,7 +45,9 @@ export default class DialogContainer extends React.Component {
           this.setState({
             privilegeData: temp,
             isAdmin:
-              this.state.roleInEdit.name.toUpperCase() == "ADMIN" ? true : false
+              this.state.roleInEdit.name.toUpperCase() == "ADMIN"
+                ? true
+                : this.props.diableField
           });
         })
       : this.masterList().then(response => {
@@ -164,6 +166,12 @@ export default class DialogContainer extends React.Component {
         <div>
           <Notification ref={this.notif} />
           <form id="roleForm" onSubmit={this.submitData}>
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="required-label">Role Name</label>
               <input
@@ -176,7 +184,10 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Role Name"
                 required={true}
                 disabled={
-                  this.state.roleInEdit.is_system_role == "1" ? true : false
+                  this.state.roleInEdit.is_system_role == "1" ||
+                  this.props.diableField
+                    ? true
+                    : false
                 }
               />
             </div>
@@ -190,6 +201,7 @@ export default class DialogContainer extends React.Component {
                 value={this.state.roleInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 required={true}
+                disabled={this.props.diableField ? true : false}
                 placeholder="Enter Role Description"
                 style={{ marginTop: "5px" }}
               />

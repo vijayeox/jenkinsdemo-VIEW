@@ -5,6 +5,7 @@ import { Notification } from "@oxzion/gui";
 import { PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
+import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -64,6 +65,12 @@ export default class DialogContainer extends React.Component {
         <Notification ref={this.notif} />
         <div>
           <form id="prjForm" onSubmit={this.sendData}>
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="required-label">Project Name</label>
               <Input
@@ -73,6 +80,7 @@ export default class DialogContainer extends React.Component {
                 value={this.state.prjInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Name"
+                readOnly={this.props.diableField ? true : false}
                 required={true}
               />
             </div>
@@ -86,6 +94,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Description"
                 style={{ marginTop: "5px" }}
+                readOnly={this.props.diableField ? true : false}
                 required={true}
               />
             </div>
@@ -96,12 +105,15 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      mainList={"organization/"+this.props.selectedOrg+"/users"}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/users"
+                      }
                       selectedItem={this.state.prjInEdit.manager_id}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
                       required={true}
+                      disableItem={this.props.diableField}
                       validationMessage={"Please select a Project Manager."}
                     />
                   </div>
@@ -110,7 +122,11 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-        <SaveCancel save="prjForm" cancel={this.props.cancel} />
+        <SaveCancel
+          save="prjForm"
+          cancel={this.props.cancel}
+          hideSave={this.props.diableField}
+        />
       </Window>
     );
   }

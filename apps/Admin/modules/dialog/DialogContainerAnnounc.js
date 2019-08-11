@@ -5,6 +5,7 @@ import scrollIntoView from "scroll-into-view-if-needed";
 import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, DateComponent } from "../components/index";
 import Moment from "moment";
+import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -72,7 +73,9 @@ export default class DialogContainer extends React.Component {
         status: "1",
         description: this.state.ancInEdit.description,
         media_type: this.state.ancInEdit.media_type,
-        start_date: new Moment(this.state.ancInEdit.start_date).format("YYYY-MM-DD"),
+        start_date: new Moment(this.state.ancInEdit.start_date).format(
+          "YYYY-MM-DD"
+        ),
         end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "put"
@@ -178,6 +181,12 @@ export default class DialogContainer extends React.Component {
         <Notification ref={this.notif} />
         <div className="container-fluid">
           <form onSubmit={this.handleSubmit} id="ancForm">
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="required-label">Announcement Title</label>
               <input
@@ -188,6 +197,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group text-area-custom">
@@ -201,6 +211,7 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Announcement Description"
                 style={{ marginTop: "5px", minHeight: "100px" }}
                 required={true}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
 
@@ -219,6 +230,7 @@ export default class DialogContainer extends React.Component {
                         onChange={this.media_typeChange}
                         checked={this.state.ancInEdit.media_type == "image"}
                         required
+                        disabled={this.props.diableField ? true : false}
                       />
                       <label
                         className="k-radio-label pl-4 radioLabel"
@@ -237,6 +249,7 @@ export default class DialogContainer extends React.Component {
                         onChange={this.media_typeChange}
                         checked={this.state.ancInEdit.media_type == "video"}
                         required
+                        disabled={this.props.diableField ? true : false}
                       />
                       <label
                         className="k-radio-label pl-4 radioLabel"
@@ -255,6 +268,7 @@ export default class DialogContainer extends React.Component {
                       value={this.state.ancInEdit.start_date}
                       change={e => this.valueChange("start_date", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
@@ -266,27 +280,36 @@ export default class DialogContainer extends React.Component {
                       value={this.state.ancInEdit.end_date}
                       change={e => this.valueChange("end_date", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="ancBannerUploader">
-              <FileUploader
-                ref={this.fUpload}
-                media_URL={
-                  this.props.dataItem.media
-                    ? this.url + "resource/" + this.props.dataItem.media
-                    : undefined
-                }
-                media_type={this.state.ancInEdit.media_type}
-                title={"Upload Announcement Banner"}
-                uploadID={"announcementLogo"}
-              />
-            </div>
+            {this.props.diableField ? (
+              <div style={{ margin: "50px" }} />
+            ) : (
+              <div className="ancBannerUploader">
+                <FileUploader
+                  ref={this.fUpload}
+                  media_URL={
+                    this.props.dataItem.media
+                      ? this.url + "resource/" + this.props.dataItem.media
+                      : undefined
+                  }
+                  media_type={this.state.ancInEdit.media_type}
+                  title={"Upload Announcement Banner"}
+                  uploadID={"announcementLogo"}
+                />
+              </div>
+            )}
           </form>
         </div>
-        <SaveCancel save="ancForm" cancel={this.props.cancel} />
+        <SaveCancel
+          save="ancForm"
+          cancel={this.props.cancel}
+          hideSave={this.props.diableField}
+        />
       </Window>
     );
   }

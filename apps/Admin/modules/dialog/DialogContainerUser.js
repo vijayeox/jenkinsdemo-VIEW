@@ -4,6 +4,7 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
+import { FaUserLock } from "react-icons/fa";
 
 import { PushData } from "../components/apiCalls";
 import { Notification } from "@oxzion/gui";
@@ -69,7 +70,12 @@ export default class DialogContainer extends React.Component {
 
   async getRolesList() {
     let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request("v1", "/role", {}, "get");
+    let rolesList = await helper2.request(
+      "v1",
+      "organization/" + this.props.selectedOrg + "/role",
+      {},
+      "get"
+    );
     return rolesList;
   }
 
@@ -188,6 +194,13 @@ export default class DialogContainer extends React.Component {
         <div id="tooltip" />
         <div className="container-fluid">
           <form onSubmit={this.handleSubmit} id="userForm">
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
+
             <div className="form-group">
               <div className="form-row">
                 <div className="col">
@@ -202,6 +215,7 @@ export default class DialogContainer extends React.Component {
                     pattern={"[A-Za-z]+"}
                     minLength={3}
                     required={true}
+                    readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid First Name"}
                   />
                 </div>
@@ -217,6 +231,7 @@ export default class DialogContainer extends React.Component {
                     pattern={"[A-Za-z]+"}
                     minLength={2}
                     required={true}
+                    readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Last Name"}
                   />
                 </div>
@@ -235,6 +250,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Email Address"
                     required={true}
+                    readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Email Address"}
                   />
                 </div>
@@ -252,6 +268,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Name"
                     required={true}
+                    readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
                     data-tip="Changing the username will reset the User's chat history."
                   />
@@ -266,6 +283,7 @@ export default class DialogContainer extends React.Component {
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Designation"
                     required={true}
+                    readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
                   />
                 </div>
@@ -287,6 +305,7 @@ export default class DialogContainer extends React.Component {
                           className="k-radio"
                           onChange={e => this.valueChange("gender", e)}
                           checked={this.state.userInEdit.gender == "Male"}
+                          disabled={this.props.diableField ? true : false}
                           required
                         />
                         <label
@@ -305,6 +324,7 @@ export default class DialogContainer extends React.Component {
                           className="k-radio pl-2"
                           onChange={e => this.valueChange("gender", e)}
                           checked={this.state.userInEdit.gender == "Female"}
+                          disabled={this.props.diableField ? true : false}
                           required
                         />
                         <label
@@ -322,10 +342,13 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      mainList={"user"}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/users"
+                      }
                       selectedItem={this.state.userInEdit.managerid}
                       onDataChange={e => this.valueChange("managerid", e)}
                       required={true}
+                      disableItem={this.props.diableField}
                     />
                   </div>
                 </div>
@@ -338,6 +361,7 @@ export default class DialogContainer extends React.Component {
                       selectedItem={this.state.userInEdit.country}
                       onDataChange={e => this.valueChange("country", e)}
                       required={true}
+                      disableItem={this.props.diableField}
                     />
                   </div>
                 </div>
@@ -358,6 +382,7 @@ export default class DialogContainer extends React.Component {
                     textField="name"
                     dataItemKey="uuid"
                     placeholder={"Select User Roles"}
+                    disabled={this.props.diableField ? true : false}
                     required={true}
                   />
                 </div>
@@ -369,6 +394,7 @@ export default class DialogContainer extends React.Component {
                       value={this.state.userInEdit.date_of_birth}
                       change={e => this.valueChange("date_of_birth", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
@@ -380,6 +406,7 @@ export default class DialogContainer extends React.Component {
                       value={this.state.userInEdit.date_of_join}
                       change={e => this.valueChange("date_of_join", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
