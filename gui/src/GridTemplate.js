@@ -143,7 +143,7 @@ export default class GridTemplate extends React.Component {
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
-          data={this.state.gridData == undefined ? [] : this.state.gridData}
+          data={typeof this.state.gridData == "object" ? this.state.gridData : []}
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}
@@ -245,7 +245,13 @@ class LogoCell extends React.Component {
       return this.props.dataItem.media ? (
         <td>
           <img
-            src={this.props.url + "resource/" + this.props.dataItem.media + "?" + new Date()}
+            src={
+              this.props.url +
+              "resource/" +
+              this.props.dataItem.media +
+              "?" +
+              new Date()
+            }
             alt="Logo"
             className="text-center circle gridBanner"
           />
@@ -256,7 +262,13 @@ class LogoCell extends React.Component {
         <td>
           <video className="text-center circle gridBanner">
             <source
-              src={this.props.url + "resource/" + this.props.dataItem.media + "?" + new Date()}
+              src={
+                this.props.url +
+                "resource/" +
+                this.props.dataItem.media +
+                "?" +
+                new Date()
+              }
               type="video/mp4"
             />
           </video>

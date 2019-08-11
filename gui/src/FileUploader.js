@@ -137,7 +137,10 @@ class FileUploader extends React.Component {
                 <span className="custom-file-container__custom-file__custom-file-control" />
               </label>
               <ul>
-                <li className="pt-3 pr-4">Video Format supported: MP4</li>
+                {this.state.media_type == "video" ? (
+                  <li className="pt-3 pr-4">Video Format supported: MP4</li>
+                ) : null}
+
                 <li className="pt-3 pr-4">Max file size allowed: 20 MB</li>
               </ul>
               <label className="pt-3">
