@@ -10,7 +10,6 @@ class Organization extends React.Component {
     this.core = this.props.args;
     this.state = {
       orgInEdit: undefined,
-      orgToBeEdited: [],
       action: "",
       visible: false,
       permission: {

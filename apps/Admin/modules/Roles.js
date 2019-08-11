@@ -22,7 +22,7 @@ class Role extends React.Component {
     this.child = React.createRef();
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       roleInEdit: dataItem
@@ -30,10 +30,11 @@ class Role extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler,
-      selectedOrg: this.state.selectedOrg
+      diableField: required.diableField
     });
   };
 

@@ -64,7 +64,7 @@ class Announcement extends React.Component {
         config: {
           dataItem: dataItem,
           title: "Announcement",
-          mainList: "group",
+          mainList: "organization/" + this.state.selectedOrg + "/groups/list",
           subList: response.data
         },
         manage: {
@@ -96,7 +96,7 @@ class Announcement extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       ancInEdit: dataItem
@@ -106,7 +106,8 @@ class Announcement extends React.Component {
       dataItem: dataItem,
       cancel: this.cancel,
       formAction: "put",
-      action: this.handler
+      action: this.handler,
+      diableField: required.diableField
     });
   };
 
