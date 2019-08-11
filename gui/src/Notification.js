@@ -65,6 +65,21 @@ class Notification extends React.Component {
     });
   }
 
+  customSuccessNotification(title, message) {
+    this.notificationDOMRef.current.addNotification({
+      title: title,
+      message: message,
+      type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+
   customFailNotification(title, message) {
     this.notificationDOMRef.current.addNotification({
       title: title,
