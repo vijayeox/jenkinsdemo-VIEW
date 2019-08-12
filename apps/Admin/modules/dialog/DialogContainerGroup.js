@@ -55,10 +55,11 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushData(
-      "organization/" + this.props.selectedOrg + "/group",
+      "group",
       this.props.formAction,
       this.state.groupInEdit.uuid,
-      tempData
+      tempData,
+      this.props.selectedOrg
     ).then(response => {
       this.props.action(response.status);
       if (response.status == "success") {
@@ -136,7 +137,9 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      mainList={"group"}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/groups"
+                      }
                       selectedItem={this.state.groupInEdit.parent_id}
                       onDataChange={event =>
                         this.listOnChange(event, "parent_id")

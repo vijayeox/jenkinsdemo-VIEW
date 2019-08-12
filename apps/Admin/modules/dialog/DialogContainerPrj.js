@@ -41,20 +41,25 @@ export default class DialogContainer extends React.Component {
   sendData = e => {
     e.preventDefault();
     this.notif.current.uploadingData();
-    PushData("project", this.props.formAction, this.props.dataItem.uuid, {
-      name: this.state.prjInEdit.name,
-      description: this.state.prjInEdit.description,
-      manager_id: this.state.prjInEdit.manager_id
-    }).then(response => {
+    PushData(
+      "project",
+      this.props.formAction,
+      this.props.dataItem.uuid,
+      {
+        name: this.state.prjInEdit.name,
+        description: this.state.prjInEdit.description,
+        manager_id: this.state.prjInEdit.manager_id
+      },
+      this.props.selectedOrg
+    ).then(response => {
       this.props.action(response.status);
       if (response.status == "success") {
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   };
