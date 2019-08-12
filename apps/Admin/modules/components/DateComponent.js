@@ -29,7 +29,7 @@ export default class DateComponent extends React.Component {
       }
     }
   }
-  
+
   render() {
     return (
       <DatePicker
@@ -37,6 +37,7 @@ export default class DateComponent extends React.Component {
         value={this.state.value}
         onChange={this.props.change}
         required={this.props.required}
+        disabled={this.props.disabled ? true : false}
       />
     );
   }

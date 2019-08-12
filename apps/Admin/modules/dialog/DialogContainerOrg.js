@@ -470,9 +470,9 @@ export default class DialogContainer extends React.Component {
               <div className="orgFileUploader">
                 <FileUploader
                   ref={this.fUpload}
-                  url={this.url}
                   required={true}
-                  media={this.props.dataItem.logo}
+                  media_type={"image"}
+                  media_URL={this.props.dataItem.logo}
                   title={"Upload Organization Logo"}
                   uploadID={"organizationLogo"}
                 />

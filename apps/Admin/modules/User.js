@@ -24,7 +24,7 @@ class User extends React.Component {
     this.setState({ selectedOrg: event.target.value });
   };
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       userInEdit: dataItem
@@ -32,9 +32,11 @@ class User extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
+      selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 

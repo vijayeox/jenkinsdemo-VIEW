@@ -48,7 +48,7 @@ class Group extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Group",
-        mainList: "user",
+        mainList: "organization/" + this.state.selectedOrg + "/users/list",
         subList: "group"
       },
       manage: {
@@ -94,7 +94,7 @@ class Group extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       groupInEdit: dataItem
@@ -105,7 +105,8 @@ class Group extends React.Component {
       selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 

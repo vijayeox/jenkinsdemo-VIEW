@@ -5,6 +5,7 @@ import { Notification } from "@oxzion/gui";
 import { PushData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
+import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -54,7 +55,7 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushData(
-      "group",
+      "organization/" + this.props.selectedOrg + "/group",
       this.props.formAction,
       this.state.groupInEdit.uuid,
       tempData
@@ -78,6 +79,12 @@ export default class DialogContainer extends React.Component {
         <Notification ref={this.notif} />
         <div>
           <form id="groupForm" onSubmit={this.handleSubmit}>
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="required-label">Group Name</label>
               <Input
@@ -89,6 +96,7 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Group Name"
                 required={true}
                 validationMessage={"Please enter the Group name."}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group text-area-custom">
@@ -101,6 +109,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Description"
                 required={true}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group">
@@ -117,6 +126,7 @@ export default class DialogContainer extends React.Component {
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
+                      disableItem={this.props.diableField}
                       required={true}
                     />
                   </div>
@@ -131,6 +141,7 @@ export default class DialogContainer extends React.Component {
                       onDataChange={event =>
                         this.listOnChange(event, "parent_id")
                       }
+                      disableItem={this.props.diableField}
                       required={false}
                     />
                   </div>
@@ -139,7 +150,11 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-        <SaveCancel save="groupForm" cancel={this.props.cancel} />
+        <SaveCancel
+          save="groupForm"
+          cancel={this.props.cancel}
+          hideSave={this.props.diableField}
+        />
       </Window>
     );
   }

@@ -10,7 +10,6 @@ class Organization extends React.Component {
     this.core = this.props.args;
     this.state = {
       orgInEdit: undefined,
-      orgToBeEdited: [],
       action: "",
       visible: false,
       permission: {
@@ -45,7 +44,7 @@ class Organization extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Organization",
-        mainList: "user",
+        mainList: "users/list",
         subList: "organization"
       },
       manage: {
