@@ -104,6 +104,7 @@ class Announcement extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.handler,
@@ -134,6 +135,7 @@ class Announcement extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.handler

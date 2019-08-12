@@ -45,7 +45,7 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
-      "/announcement",
+      "organization/" + this.props.selectedOrg + "/announcement",
       {
         name: this.state.ancInEdit.name,
         media: fileCode,
