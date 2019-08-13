@@ -25,7 +25,7 @@ export default class DialogContainer extends React.Component {
     this.notif = React.createRef();
   }
 
-  componentDidMount() {
+  componentWillMount() {
     if (this.props.formAction == "put") {
       this.getUserDetails(this.props.dataItem.uuid).then(response => {
         this.setState({
@@ -33,9 +33,7 @@ export default class DialogContainer extends React.Component {
         });
       });
     }
-  }
 
-  componentDidMount() {
     this.getRolesList().then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
@@ -47,7 +45,9 @@ export default class DialogContainer extends React.Component {
         roleList: tempUsers
       });
     });
+  }
 
+  componentDidMount() {
     if (this.props.formAction == "put") {
       ReactDOM.render(
         <ReactTooltip
@@ -60,11 +60,6 @@ export default class DialogContainer extends React.Component {
         />,
         document.getElementById("tooltip")
       );
-      this.getUserDetails(this.props.dataItem.uuid).then(response => {
-        this.setState({
-          userInEdit: response.data
-        });
-      });
     }
   }
 
@@ -72,7 +67,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/role",
+      "organization/" + this.props.selectedOrg + "/roles",
       {},
       "get"
     );
@@ -126,35 +121,36 @@ export default class DialogContainer extends React.Component {
       userRoles.push(uid);
     }
     if (this.props.formAction == "post") {
-      PushData("user", this.props.formAction, this.props.dataItem.uuid, {
-        username: this.state.userInEdit.username,
-        password: this.state.userInEdit.password,
-        firstname: this.state.userInEdit.firstname,
-        lastname: this.state.userInEdit.lastname,
-        email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
-          "YYYY-MM-DD"
-        ),
-        designation: this.state.userInEdit.designation,
-        gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
-        role: userRoles,
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
-          "YYYY-MM-DD"
-        ),
-        country: this.state.userInEdit.country
-      }).then(response => {
-        this.props.action(response.status);
+      PushData(
+        "organization/" + this.props.selectedOrg + "/user",
+        this.props.formAction,
+        this.props.dataItem.uuid,
+        {
+          username: this.state.userInEdit.username,
+          password: this.state.userInEdit.password,
+          firstname: this.state.userInEdit.firstname,
+          lastname: this.state.userInEdit.lastname,
+          email: this.state.userInEdit.email,
+          date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
+            "YYYY-MM-DD"
+          ),
+          designation: this.state.userInEdit.designation,
+          gender: this.state.userInEdit.gender,
+          managerid: this.state.userInEdit.managerid,
+          role: userRoles,
+          date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
+            "YYYY-MM-DD"
+          ),
+          country: this.state.userInEdit.country
+        }
+      ).then(response => {
         if (response.status == "success") {
+          this.props.action(response.status);
           this.props.cancel();
-        } else if (
-          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-        ) {
-          this.notif.current.duplicateEntry();
         } else {
           this.notif.current.failNotification(
             "Error",
-            response.message ? response.message : null
+            response.message ? response.message : "Operation failed."
           );
         }
       });
@@ -218,8 +214,6 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.firstname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
-                    pattern={"[A-Za-z]+"}
-                    minLength={3}
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid First Name"}
@@ -234,8 +228,6 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.lastname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
-                    pattern={"[A-Za-z]+"}
-                    minLength={2}
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Last Name"}
