@@ -157,7 +157,7 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.uploadImage();
+        this.notif.current.customWarningNotification("No Media Selected", "Please select a banner for the Announcement.");
       } else {
         this.pushFile().then(response => {
           var addResponse = response.data.filename[0];

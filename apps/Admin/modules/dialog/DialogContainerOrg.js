@@ -150,7 +150,10 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.uploadImage();
+        this.notif.current.customWarningNotification(
+          "No image selected",
+          "Please choose a logo for the Organization."
+        );
       } else {
         this.pushData();
       }
