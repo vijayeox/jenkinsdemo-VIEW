@@ -180,7 +180,7 @@ class MultiSelect extends React.Component {
                 dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
-                placeholder={"Click to add " + this.props.config.mainList}
+                placeholder={"Click to add " + this.props.config.title}
               />
             </div>
           </div>

@@ -143,7 +143,9 @@ export default class GridTemplate extends React.Component {
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
-          data={typeof this.state.gridData == "object" ? this.state.gridData : []}
+          data={
+            typeof this.state.gridData == "object" ? this.state.gridData : []
+          }
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}
@@ -377,8 +379,10 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
               </React.Fragment>
             ) : null}
             &nbsp; &nbsp;
-            {this.props.dataItem.is_system_role
-              ? this.props.dataItem.is_system_role == "0" && this.deleteButton()
+            {this.props.dataItem.is_system_role || this.props.dataItem.is_admin
+              ? (this.props.dataItem.is_system_role == "0" ||
+                  this.props.dataItem.is_admin == "0") &&
+                this.deleteButton()
               : this.deleteButton()}
           </center>
         </td>

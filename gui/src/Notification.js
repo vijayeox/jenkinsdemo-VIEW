@@ -24,20 +24,6 @@ class Notification extends React.Component {
     });
   }
 
-  uploadImage(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title,
-      message: message,
-      type: "warning",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
   successNotification() {
     this.notificationDOMRef.current.addNotification({
       message: "Operation succesfully completed.",
@@ -51,10 +37,10 @@ class Notification extends React.Component {
     });
   }
 
-  failNotification() {
+  failNotification(title, message) {
     this.notificationDOMRef.current.addNotification({
-      title: "Error",
-      message: "Operation failed.",
+      title: title ? title : "Error",
+      message: message ? message : "Operation failed.",
       type: "danger",
       insert: "top",
       container: "bottom-right",
@@ -67,9 +53,23 @@ class Notification extends React.Component {
 
   customSuccessNotification(title, message) {
     this.notificationDOMRef.current.addNotification({
-      title: title,
-      message: message,
+      title: title ? title : "Success",
+      message: message ? message : "Operation successful.",
       type: "success",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
+      dismissable: { click: true }
+    });
+  }
+
+  customWarningNotification(title, message) {
+    this.notificationDOMRef.current.addNotification({
+      title: title ? title : "Warning",
+      message: message ? message : "Operation failed.",
+      type: "warning",
       insert: "top",
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
@@ -82,8 +82,8 @@ class Notification extends React.Component {
 
   customFailNotification(title, message) {
     this.notificationDOMRef.current.addNotification({
-      title: title,
-      message: message,
+      title: title ? title : "Error",
+      message: message ? message : "Operation failed.",
       type: "danger",
       insert: "top",
       container: "bottom-right",
