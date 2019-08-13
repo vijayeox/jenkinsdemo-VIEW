@@ -155,6 +155,7 @@ class Dashboard extends React.Component {
   };
 
   updateGraph = root => {
+    //please check Dashboard app >> sampleData.js
     console.log("called");
     var widgets = root.getElementsByClassName("oxzion-widget");
     widgets.forEach(widget => {

@@ -1,0 +1,16 @@
+{
+  "type": "application",
+  "name": "Dashboard",
+  "category": null,
+  "server": "server.js",
+  "title": {
+    "en_EN": "Dashboard"
+  },
+  "description": {
+    "en_EN": "Dashboard"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
