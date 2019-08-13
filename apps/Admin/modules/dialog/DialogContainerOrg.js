@@ -129,7 +129,10 @@ export default class DialogContainer extends React.Component {
       ) {
         this.notif.current.duplicateEntry();
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   };

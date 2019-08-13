@@ -152,7 +152,10 @@ export default class DialogContainer extends React.Component {
         ) {
           this.notif.current.duplicateEntry();
         } else {
-          this.notif.current.failNotification();
+          this.notif.current.failNotification(
+            "Error",
+            response.message ? response.message : null
+          );
         }
       });
     } else if (this.props.formAction == "put") {
@@ -181,7 +184,10 @@ export default class DialogContainer extends React.Component {
         ) {
           this.notif.current.duplicateEntry();
         } else {
-          this.notif.current.failNotification();
+          this.notif.current.failNotification(
+            "Error",
+            response.message ? response.message : null
+          );
         }
       });
     }
@@ -390,7 +396,7 @@ export default class DialogContainer extends React.Component {
                   <label className="required-label">Date Of Birth</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_birth}
                       change={e => this.valueChange("date_of_birth", e)}
                       required={true}
@@ -402,7 +408,7 @@ export default class DialogContainer extends React.Component {
                   <label className="required-label">Date Of Join</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_join}
                       change={e => this.valueChange("date_of_join", e)}
                       required={true}
