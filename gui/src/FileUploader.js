@@ -1,6 +1,7 @@
 import React from "react";
 import FileUploadWithPreview from "file-upload-with-preview";
 import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
+import { Notification } from "../index";
 
 class FileUploader extends React.Component {
   constructor(props) {
@@ -10,6 +11,7 @@ class FileUploader extends React.Component {
       render_media_type: this.props.media_type || "image",
       selectedFile: []
     };
+    this.notif = React.createRef();
     this.clearImage = this.clearImage.bind(this);
 
     this.fileSelectedEvent = this.fileSelectedEvent.bind(this);
@@ -21,22 +23,6 @@ class FileUploader extends React.Component {
       false
     );
   }
-
-  fileSelectedEvent = e => {
-    let that = this;
-    that.setState({
-      selectedFile: e.detail.cachedFileArray
-    });
-    if (e.detail.cachedFileArray[0].type.includes("video")) {
-      this.setState({
-        render_media_type: "video"
-      });
-    } else {
-      this.setState({
-        render_media_type: "image"
-      });
-    }
-  };
 
   componentDidUpdate(prevProps) {
     if (this.props.media_type !== prevProps.media_type) {
@@ -58,6 +44,35 @@ class FileUploader extends React.Component {
     }
   }
 
+  fileSelectedEvent = e => {
+    let that = this;
+
+    if (!e.detail.cachedFileArray[0].type.includes(that.props.media_type)) {
+      that.notif.current.customWarningNotification(
+        "Invalid File",
+        "Please choose a " +
+          that.props.media_type +
+          " file or change the media type."
+      );
+      setTimeout(function() {
+        that.clearImage();
+      }, 100);
+    } else {
+      that.setState({
+        selectedFile: e.detail.cachedFileArray
+      });
+      // if (e.detail.cachedFileArray[0].type.includes("video")) {
+      //   that.setState({
+      //     render_media_type: "video"
+      //   });
+      // } else {
+      //   that.setState({
+      //     render_media_type: "image"
+      //   });
+      // }
+    }
+  };
+
   clearImage = () => {
     this.firstUpload.clearPreviewPanel();
     this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
@@ -65,11 +80,15 @@ class FileUploader extends React.Component {
         baseImage: "https://i.ibb.co/Z1Y3tBY/download.png"
       }
     });
+    this.setState({
+      selectedFile: []
+    });
   };
 
   render() {
     return (
       <div className="form-group border-box">
+        <Notification ref={this.notif} />
         <label className={this.props.required ? "required-label" : ""}>
           {this.props.title}
         </label>
