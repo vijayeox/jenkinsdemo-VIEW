@@ -29,7 +29,7 @@ class Group extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroupUsers = await helper.request(
       "v1",
-      "/group/" + dataItem + "/save",
+      "organization/" + this.state.selectedOrg + "/group/" + dataItem + "/save",
       {
         userid: dataObject
       },
@@ -102,7 +102,7 @@ class Group extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
-      selectedOrg:this.state.selectedOrg,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler,
@@ -129,7 +129,7 @@ class Group extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
-      selectedOrg:this.state.selectedOrg,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler

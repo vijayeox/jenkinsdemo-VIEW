@@ -29,7 +29,11 @@ class Project extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addProjectUsers = await helper.request(
       "v1",
-      "/project/" + dataItem + "/save",
+      "organization/" +
+        this.state.selectedOrg +
+        "/project/" +
+        dataItem +
+        "/save",
       {
         userid: dataObject
       },

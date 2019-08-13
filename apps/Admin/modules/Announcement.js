@@ -28,7 +28,11 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem + "/save",
+      "organization/" +
+        this.state.selectedOrg +
+        "/announcement/" +
+        dataItem +
+        "/save",
       {
         groups: dataObject
       },
@@ -52,7 +56,10 @@ class Announcement extends React.Component {
     if (serverResponse == "success") {
       this.notif.current.successNotification();
     } else {
-      this.notif.current.failNotification();
+      this.notif.current.failNotification(
+        "Error",
+        response.message ? response.message : "Announcement not created."
+      );
     }
     this.child.current.child.current.refresh();
   };
@@ -108,6 +115,7 @@ class Announcement extends React.Component {
       cancel: this.cancel,
       formAction: "put",
       action: this.handler,
+      userPreferences: this.props.userProfile.preferences,
       diableField: required.diableField
     });
   };
@@ -138,7 +146,8 @@ class Announcement extends React.Component {
       selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
-      action: this.handler
+      action: this.handler,
+      userPreferences: this.props.userProfile.preferences
     });
   };
 

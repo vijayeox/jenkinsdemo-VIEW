@@ -11,7 +11,6 @@ class Role extends React.Component {
     this.state = {
       roleInEdit: undefined,
       roleToBeEdited: [],
-      action: "",
       permission: {
         canAdd: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
