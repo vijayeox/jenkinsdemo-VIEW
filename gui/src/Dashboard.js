@@ -10,6 +10,9 @@ class Dashboard extends React.Component {
       htmlData: this.props.htmlData ? this.props.htmlData : null
     };
     this.loader = this.core.make("oxzion/splash");
+    this.props.proc.on("destroy", () => {
+      this.removeScriptsFromDom();
+    });
   }
 
   async GetDashboardHtmlDataByUUID(uuid) {
@@ -33,18 +36,19 @@ class Dashboard extends React.Component {
     scripts.forEach((sc, index) => {
       const script = document.createElement("script");
       script.src = sc;
-      script.id = "chartScripts";
+      script.className = "chartScripts";
       script.async = true;
       document.body.appendChild(script);
     });
   }
 
-  componentWillUnmount() {
-    console.log("unmount called");
+  removeScriptsFromDom() {
     function removeElement(element) {
-      element && element.parentNode && element.parentNode.removeChild(element);
+      while (element.length > 0) {
+        element[0].parentNode.removeChild(element[0]);
+      }
     }
-    removeElement(document.getElementById("chartScripts"));
+    removeElement(document.getElementsByClassName("chartScripts"));
   }
 
   componentDidUpdate(prevProps) {
@@ -91,7 +95,7 @@ class Dashboard extends React.Component {
   inlineValue = widget => {
     //Ajax call to get the value
     // widget.attributes.uuid.value;
-    // widget.innerHTML = ajax returened value;
+    widget.innerHTML = "50000";
   };
 
   pieChart = widget => {
