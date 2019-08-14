@@ -69,7 +69,7 @@ class EditProfile extends Component {
     Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
-  onSelect1 = event => {
+  onSelect1 = (event) => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
@@ -88,7 +88,7 @@ class EditProfile extends Component {
     }
   }
 
-  onSelect2 = event => {
+  onSelect2 = (event) => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
@@ -117,22 +117,22 @@ class EditProfile extends Component {
     this.setState({ fields: fields });
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-  };
+  }
 
-  handleChangeAboutField = value => {
+  handleChangeAboutField = (value) => {
     console.log(value);
     let fields = this.state.fields;
-    fields["about"] = value;
+    fields['about'] = value;
     this.setState({
       fields
     });
-  };
+  }
 
   async handleSubmit(event) {
     event.preventDefault();

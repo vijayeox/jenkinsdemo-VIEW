@@ -55,7 +55,7 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushData(
-      "group",
+      "organization/" + this.props.selectedOrg + "/group",
       this.props.formAction,
       this.state.groupInEdit.uuid,
       tempData,
