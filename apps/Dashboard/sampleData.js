@@ -1,4 +1,4 @@
-export const htmlData = `<p>Under this section, the Commercial Contributor then makes performance claims of USD <span style="font-style:bold;font-size:2em;color:red;"><span class="oxzion-widget" id="widget1" uuid="001" type="inlineValue">300,000</span></span>, or offers warranties related to Product X, those performance claims and warranties are such Commercial Contributor&#39;s responsibility alone.</p>
+export const htmlData = `<p>Under this section, the Commercial Contributor then makes performance claims of USD <span style="font-style:bold;font-size:2em;color:red;"><span class="oxzion-widget" id="widget1" uuid="001" type="panel">300,000</span></span>, or offers warranties related to Product X, those performance claims and warranties are such Commercial Contributor&#39;s responsibility alone.</p>
 
 <figure class="oxzion-widget" id="widget2" uuid="002" type="pieChart">
 <div class="oxzion-widget-content" style="width:600px;height:300px;">&nbsp;</div>
