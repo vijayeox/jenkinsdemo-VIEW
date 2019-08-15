@@ -13,7 +13,9 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      ancInEdit: this.props.dataItem || null
+      ancInEdit: this.props.dataItem || {
+        media_type: "image"
+      }
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
@@ -157,7 +159,10 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.customWarningNotification("No Media Selected", "Please select a banner for the Announcement.");
+        this.notif.current.customWarningNotification(
+          "No Media Selected",
+          "Please select a banner for the Announcement."
+        );
       } else {
         this.pushFile().then(response => {
           var addResponse = response.data.filename[0];
@@ -272,6 +277,12 @@ export default class DialogContainer extends React.Component {
                     <DateComponent
                       format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.start_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("start_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
@@ -284,6 +295,12 @@ export default class DialogContainer extends React.Component {
                     <DateComponent
                       format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.end_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("end_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}

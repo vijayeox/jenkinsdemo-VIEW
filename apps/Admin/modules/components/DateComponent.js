@@ -35,6 +35,8 @@ export default class DateComponent extends React.Component {
       <DatePicker
         format={this.props.format}
         value={this.state.value}
+        min={this.props.min}
+        max={this.props.max}
         onChange={this.props.change}
         required={this.props.required}
         disabled={this.props.disabled ? true : false}
