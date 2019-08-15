@@ -10,6 +10,7 @@ export class DataLoader extends React.Component {
     this.state = {
       url: this.props.url
     };
+    this.timeout = null;
   }
 
   async getData(url) {
@@ -54,7 +55,8 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    setTimeout(() => {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
       this.getData(this.state.url).then(response => {
         this.lastSuccess = this.pending;
         this.pending = "";

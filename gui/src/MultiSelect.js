@@ -1,5 +1,5 @@
 import React from "react";
-import { ExcludeUsers, ExistingUsers } from "./components/apiCalls";
+import { ExcludeUsers, ExistingUsers } from "./components/MultiSelect/Requests";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Notification } from "./../index";

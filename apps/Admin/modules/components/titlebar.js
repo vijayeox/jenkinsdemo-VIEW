@@ -31,7 +31,7 @@ export class TitleBar extends React.Component {
               width: "200px"
             }}
           >
-            <DropDown
+            {/* <DropDown
               args={this.props.args}
               mainList={"organization"}
               selectedItem={{
@@ -39,7 +39,8 @@ export class TitleBar extends React.Component {
                 name: "Switch Organization"
               }}
               onDataChange={this.props.orgChange}
-            />
+            /> */}
+            {/* Fix this tommorow */}
           </div>
         ) : null}
       </div>
