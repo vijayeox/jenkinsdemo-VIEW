@@ -20,7 +20,8 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.state = {
       userInEdit: [],
-      roleList: []
+      roleList: [],
+      managerName: []
     };
     this.notif = React.createRef();
   }
@@ -30,6 +31,9 @@ export default class DialogContainer extends React.Component {
       this.getUserDetails(this.props.dataItem.uuid).then(response => {
         this.setState({
           userInEdit: response.data
+        });
+        this.getUserDetails(response.data.managerid).then(response => {
+          this.setState({ managerName: response.data.name });
         });
       });
     }
@@ -85,6 +89,12 @@ export default class DialogContainer extends React.Component {
     return rolesList;
   }
 
+  managerValueChange = (field, event) => {
+    let userInEdit = { ...this.state.userInEdit };
+    userInEdit[field] = event.target.value;
+    this.setState({ userInEdit: userInEdit, managerName: event.target.value });
+  };
+
   valueChange = (field, event) => {
     if (field == "role") {
       let userInEdit = { ...this.state.userInEdit };
@@ -112,9 +122,22 @@ export default class DialogContainer extends React.Component {
     });
   };
 
+  validateEmail(emailText) {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (!pattern.test(emailText)) {
+      this.notif.current.customWarningNotification(
+        "Invalid Email ID",
+        "Please enter a valid email address."
+      );
+      return true;
+    }
+  }
+
   handleSubmit = event => {
     event.preventDefault();
-    this.notif.current.uploadingData();
+    if (this.validateEmail(document.getElementById("email-id").value)) {
+      return;
+    }
     var userRoles = [];
     for (var i = 0; i <= this.state.userInEdit.role.length - 1; i++) {
       var uid = { uuid: this.state.userInEdit.role[i].uuid };
@@ -243,6 +266,7 @@ export default class DialogContainer extends React.Component {
                   <Input
                     type="text"
                     className="form-control"
+                    id="email-id"
                     name="email"
                     value={this.state.userInEdit.email || ""}
                     onChange={this.onDialogInputChange}
@@ -343,8 +367,13 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/users"
                       }
-                      selectedItem={this.state.userInEdit.managerid}
-                      onDataChange={e => this.valueChange("managerid", e)}
+                      selectedItem={{
+                        id: "111",
+                        name: this.state.managerName
+                      }}
+                      //fix this tommorow
+                      selectedEntityType={"object"}
+                      onDataChange={e => this.managerValueChange("managerid", e)}
                       required={true}
                       disableItem={this.props.diableField}
                     />

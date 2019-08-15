@@ -11,8 +11,15 @@ export default class DropDown extends React.Component {
     this.core = this.props.args;
     this.masterUserList = [];
     this.state = {
-      mainList: []
+      mainList: [],
+      selectedEntityType: this.props.selectedEntityType || "object"
     };
+    //can remove selectedEntityType if this works
+    // selectedItem={{
+    //           id: "111",
+    //           name: "Switch Organization"
+    //         }}
+    this.timeout = null;
   }
 
   componentWillMount() {
@@ -21,10 +28,6 @@ export default class DropDown extends React.Component {
         mainList: this.props.rawData
       });
       this.masterUserList = this.props.rawData;
-    } else {
-      let loader = this.core.make("oxzion/splash");
-      loader.show();
-      this.getMainList(null, 20);
     }
   }
 
@@ -37,17 +40,17 @@ export default class DropDown extends React.Component {
         tempUsers.push({ id: userid, name: userName });
       }
       this.setState({
+        selectedEntityType: "object",
         mainList: tempUsers
       });
-      let loader = this.core.make("oxzion/splash");
-      loader.destroy();
     });
   };
 
   filterChangeAPI = e => {
-    setTimeout(() => {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
       this.getMainList(e.filter.value, 20);
-    }, 500);
+    }, 1000);
   };
 
   filterChange = event => {
@@ -83,6 +86,12 @@ export default class DropDown extends React.Component {
             {...this.inputProps}
             textField={"name"}
             valueField={"id"}
+            // textField={
+            //   this.state.selectedEntityType == "object" ? "name" : undefined
+            // }
+            // valueField={
+            //   this.state.selectedEntityType == "object" ? "id" : undefined
+            // }
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}

@@ -2,7 +2,7 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { Notification } from "@oxzion/gui";
-import { PushData } from "../components/apiCalls";
+import { PushData, GetSingleEntityData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
 import { FaUserLock } from "react-icons/fa";
@@ -12,17 +12,43 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      groupInEdit: this.props.dataItem || null
+      groupInEdit: this.props.dataItem || null,
+      managerName: [],
+      parentGroupName: []
     };
     this.notif = React.createRef();
   }
 
+  componentWillMount() {
+    if (this.props.formAction == "put") {
+      GetSingleEntityData("user", this.props.dataItem.manager_id).then(
+        response => {
+          this.setState({ managerName: response.data.name });
+        }
+      );
+      GetSingleEntityData("group", this.props.dataItem.parent_id).then(
+        response => {
+          this.setState({ parentGroupName: response.data.name });
+        }
+      );
+    }
+  }
+
   listOnChange = (event, item) => {
+    console.log(event.target.value);
+    
     const edited = this.state.groupInEdit;
     edited[item] = event.target.value;
     this.setState({
       groupInEdit: edited
     });
+    item == "manager_id"
+      ? this.setState({
+          managerName: event.target.value
+        })
+      : this.setState({
+          parentGroupName: event.target.value
+        });
   };
 
   onDialogInputChange = event => {
@@ -126,7 +152,8 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/users"
                       }
-                      selectedItem={this.state.groupInEdit.manager_id}
+                      selectedItem={this.state.managerName}
+                      selectedEntityType={"text"}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
@@ -143,7 +170,8 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/groups"
                       }
-                      selectedItem={this.state.groupInEdit.parent_id}
+                      selectedItem={this.state.parentGroupName}
+                      selectedEntityType={"text"}
                       onDataChange={event =>
                         this.listOnChange(event, "parent_id")
                       }
