@@ -11,9 +11,10 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
 .Window_Admin {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
+  @import "./node_modules/react-phone-number-input/style.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
-
+  
   .k-grid-norecords {
     width: inherit !important;
   }

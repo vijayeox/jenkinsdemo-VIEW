@@ -6,9 +6,9 @@ import { PushDataPOST } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, TimezonePicker, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
-import IntlTelInput from "react-intl-tel-input";
+import PhoneInput from "react-phone-number-input";
+
 import Codes from "../data/Codes";
-import "react-intl-tel-input/dist/main.css";
 import { FaUserLock } from "react-icons/fa";
 
 import CurrencySelect from "../components/Currency Select/currencySelect.js";
@@ -54,11 +54,11 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
+  onContactPhoneChange = fullNumber => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
-    orgInEdit["contact"]["phone"] = fullNumber.replace(/\s|-/g, "");
-    this.setState({ orgInEdit: orgInEdit, contactValid: inValid });
+    orgInEdit["contact"]["phone"] = fullNumber;
+    this.setState({ orgInEdit: orgInEdit });
   };
 
   dropdownChange = (field, event) => {
@@ -77,7 +77,27 @@ export default class DialogContainer extends React.Component {
     this.setState({ orgInEdit: orgInEdit });
   };
 
+  validateEmail(emailText) {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (!pattern.test(emailText)) {
+      this.notif.current.customWarningNotification(
+        "Invalid Email ID",
+        "Please enter a valid email address."
+      );
+      return true;
+    }
+  }
+
   pushData = () => {
+    if (
+      this.validateEmail(
+        document.getElementById("email-id").value
+          ? document.getElementById("email-id").value
+          : "dummydata@mail.com"
+      )
+    ) {
+      return;
+    }
     this.notif.current.uploadingData();
     if (this.props.formAction == "post") {
       var contactData = JSON.stringify({
@@ -121,13 +141,9 @@ export default class DialogContainer extends React.Component {
       this.state.orgInEdit.uuid,
       tempData
     ).then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
+        this.props.action(response.status);
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
         this.notif.current.failNotification(
           "Error",
@@ -253,6 +269,7 @@ export default class DialogContainer extends React.Component {
                     type="number"
                     value={this.state.orgInEdit.zip || ""}
                     name="zip"
+                    pattern="[0-9]+"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Zip Code"
                     required={true}
@@ -354,7 +371,14 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="form-row" style={{ marginTop: "10px" }}>
                   <div className="col">
-                    <IntlTelInput
+                    <PhoneInput
+                      placeholder="Enter phone number"
+                      value={contactValue}
+                      onChange={phone => this.onContactPhoneChange(phone)}
+                      international={false}
+                      countryOptions={["IN", "US", "CA", "|", "..."]}
+                    />
+                    {/* <IntlTelInput
                       containerClassName="intl-tel-input"
                       inputClassName="form-control contactPhone"
                       value={contactValue}
@@ -369,12 +393,13 @@ export default class DialogContainer extends React.Component {
                         pattern: "++[0-9]"
                       }}
                       format={false}
-                    />
+                    /> */}
                   </div>
                   <div className="col">
                     <Input
                       type="email"
                       name="email"
+                      id="email-id"
                       value={
                         this.state.orgInEdit.contact
                           ? this.state.orgInEdit.contact.email
