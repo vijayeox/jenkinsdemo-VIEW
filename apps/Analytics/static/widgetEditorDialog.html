@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Oxzion widget editor dialog</title>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="/apps/Analytics/main.css"/>
+        <script src="https://www.amcharts.com/lib/4/core.js"></script>
+        <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+        <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+        <!-- <script src="https://www.amcharts.com/lib/4/themes/material.js"></script> -->
+        <script src="https://www.amcharts.com/lib/4/themes/kelly.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script>
+            var oxzionEditor;
+            function onDialogEvent(event) {
+                if (event.name == 'load') {
+                    window.addEventListener('message', function(event) {
+                        console.log('Received message');
+                        console.log(event);
+                    }, false);
+                    window.top.postMessage('register', '*');
+                    oxzionEditor = event.editor;
+                    startWidgetEditor(oxzionEditor);
+                }
+                if (event.name == 'ok') {
+                    var data = window.reactApp.getState();
+                    if (!data) {
+                        data = {
+                            "type":"block",
+                            "id":"f5b8ee95-8da2-409a-8cf0-fa5b4af10667",
+                            "align":"center",
+                        };
+                    }
+                    oxzionEditor.plugins.oxzion.acceptUserData(oxzionEditor, data);
+                }
+            }
+        </script>
+        <script src="/apps/Analytics/widgetEditor.js"></script>
+    </body>
+</html>
+
