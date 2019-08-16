@@ -19,10 +19,17 @@ if (mode === 'production') {
 module.exports = {
   mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
-  entry: [
-    path.resolve(__dirname, 'index.js'),
-    path.resolve(__dirname, 'index.scss')
-  ],
+  entry: {
+    'main':[
+      path.resolve(__dirname, 'index.js'), 
+      path.resolve(__dirname, 'index.scss')
+    ],
+    'widgetEditor':path.resolve(__dirname, 'components/widget/editor/widgetEditor.js')
+  },
+  output: {
+    filename: '[name].js',
+    path:__dirname + '/dist'
+  },
   externals: {
     osjs: 'OSjs'
   },
@@ -30,7 +37,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin(['icon.png','icon_white.png', 'images/']),
+    new CopyWebpackPlugin(['icon.png','icon_white.png', 'images/', {from:'static'}]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -84,9 +91,9 @@ module.exports = {
       {
         test: /\.(svg|png|jpe?g|gif|webp)$/,
         use: [{
-        loader: 'file-loader'
-      }]
-    }
+          loader: 'file-loader'
+        }]
+      }
     ]
   }
 };

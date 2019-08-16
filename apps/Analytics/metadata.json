@@ -28,6 +28,11 @@
       "en_EN":"Visualization"
     }
   },
+  "dashboard": {
+    "title": {
+      "en_EN":"Dashboard"
+     }
+  },
   "files": [
     "main.js",
     "main.css"
