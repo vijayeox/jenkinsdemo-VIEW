@@ -19,6 +19,9 @@ class DashboardEditor extends React.Component {
         };
     }
 
+    //---------------------------------------------------------------------------------------
+    //jsLibraryList is done this way to avoid utility functions modifying the list.
+    //---------------------------------------------------------------------------------------
     getJsLibraryList = () => {
         var thiz = this;
         return [
