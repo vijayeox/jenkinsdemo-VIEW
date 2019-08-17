@@ -93,6 +93,8 @@ class Preferences extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
+    
+    Timezones.sort((a, b) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
   }
 
   getDefaults = () => ({

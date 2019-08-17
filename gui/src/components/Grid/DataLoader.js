@@ -6,8 +6,10 @@ export class DataLoader extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    this.url = this.props.url;
     this.refresh = this.refresh.bind(this);
+    this.state = {
+      url: this.props.url
+    };
   }
 
   async getData(url) {
@@ -21,8 +23,22 @@ export class DataLoader extends React.Component {
     return data;
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.url !== prevProps.url) {
+      this.setState({
+        url: this.props.url
+      });
+      this.getData(this.props.url).then(response => {
+        this.props.onDataRecieved({
+          data: response.data,
+          total: response.total
+        });
+      });
+    }
+  }
+
   refresh = temp => {
-    this.getData(this.url).then(response => {
+    this.getData(this.state.url).then(response => {
       this.props.onDataRecieved({
         data: response.data,
         total: response.total
@@ -39,7 +55,7 @@ export class DataLoader extends React.Component {
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
     setTimeout(() => {
-      this.getData(this.url).then(response => {
+      this.getData(this.state.url).then(response => {
         this.lastSuccess = this.pending;
         this.pending = "";
         if (toODataString(this.props.dataState) === this.lastSuccess) {

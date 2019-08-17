@@ -84,17 +84,21 @@ class Slider extends React.Component {
         </div>
         <div className="Announcement-content col">
           <h5 style={{ paddingTop: "10px" }}> {data.name} </h5>
-          <p> {data.description.slice(0, 150) + "..."} </p>
-          {data.description.length < 150 ? null : (
-            <button
-              className="readMore"
-              onClick={() => {
-                this.setState({ isPaneOpen: true, focusData: data });
-              }}
-            >
-              READ MORE
-            </button>
-          )}
+          {data.description ? (
+            <p> {data.description.slice(0, 150) + "..."} </p>
+          ) : null}
+          {data.description ? (
+            data.description.length < 150 ? null : (
+              <button
+                className="readMore"
+                onClick={() => {
+                  this.setState({ isPaneOpen: true, focusData: data });
+                }}
+              >
+                READ MORE
+              </button>
+            )
+          ) : null}
         </div>
       </div>
     );
@@ -110,9 +114,11 @@ class Slider extends React.Component {
             transition: "transform ease-out 0.45s"
           }}
         >
-          {this.state.announcements.map((announcement, i) =>
-            this.renderCard(announcement)
-          )}
+          {this.state.announcements.length >= 1
+            ? this.state.announcements.map((announcement, i) =>
+                this.renderCard(announcement)
+              )
+            : null}
         </div>
 
         {this.state.announcements.length == 0 ? (
@@ -123,13 +129,13 @@ class Slider extends React.Component {
             media: "https://svgshare.com/i/DqC.svg",
             uuid: "empty"
           })
-        ) : (
+        ) : this.state.announcements.length > 1 ? (
           <div>
             <LeftArrow goToPrevSlide={this.goToPrevSlide} />
 
             <RightArrow goToNextSlide={this.goToNextSlide} />
           </div>
-        )}
+        ) : null}
 
         <SlidingPanel
           type={"bottom"}

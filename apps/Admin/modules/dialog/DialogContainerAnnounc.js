@@ -49,8 +49,8 @@ export default class DialogContainer extends React.Component {
         status: "1",
         description: this.state.ancInEdit.description,
         media_type: this.state.ancInEdit.media_type,
-        start_date: new Moment(this.state.ancInEdit.start_date).format(),
-        end_date: new Moment(this.state.ancInEdit.end_date).format()
+        start_date: new Moment(this.state.ancInEdit.start_date).format("YYYY-MM-DD"),
+        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "post"
     );
@@ -73,6 +73,7 @@ export default class DialogContainer extends React.Component {
       },
       "put"
     );
+    return orgEditData;
   }
 
   sendTheData = () => {
@@ -117,6 +118,7 @@ export default class DialogContainer extends React.Component {
       this.pushFile().then(response => {
         var addResponse = response.data.filename[0];
         this.editAnnouncements(addResponse).then(response => {
+          console.log(response);
           this.props.action(response.status);
           if (response.status == "success") {
             this.props.cancel();

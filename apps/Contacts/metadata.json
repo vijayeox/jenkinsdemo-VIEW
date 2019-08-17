@@ -1,0 +1,20 @@
+{
+  "hidden": true,
+  "type": "application",
+  "name": "Contacts",
+  "category": null,
+  "server": "server.js",
+  "singleton":true,
+  "icon": "icon.png",
+  "icon_white": "icon_white.png",
+  "title": {
+    "en_EN": "Contacts"
+  },
+  "description": {
+    "en_EN": "Contacts"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

@@ -95,7 +95,8 @@
   .rwt__tabpanel {
     width: 100%;
     overflow-y: auto;
-    height: calc(100% - 106px);
+    overflow-x: hidden;
+    height: calc(100% - 109px);
   }
 
   .form {
@@ -457,6 +458,7 @@
   }
 
   .profileImageDiv {
+    margin: auto;
     width: 170px;
     border-radius: 50%;
   }
@@ -498,7 +500,6 @@
   }
 
   .profileImage {
-    text-align: -webkit-center;
     margin: auto;
   }
 
@@ -540,5 +541,10 @@
   .infoDiv {
     padding: 5px
   }
+  .mandatory:after { 
+    content:" *";
+    color: #e02222;
+    font-size: 16px;
+   }
 
 }

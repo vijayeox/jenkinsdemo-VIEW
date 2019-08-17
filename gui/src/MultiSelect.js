@@ -1,5 +1,5 @@
 import React from "react";
-import { GetDataSearch, ExistingUsers } from "./components/apiCalls";
+import { GetDataSearch, ExistingUsers } from "./components/MultiSelect/Requests";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
@@ -36,8 +36,14 @@ class MultiSelect extends React.Component {
         this.props.config.subList,
         this.props.config.dataItem.uuid
       ).then(response => {
+        var tempUsers = [];
+        for (var i = 0; i <= response.data.length - 1; i++) {
+          var userName = response.data[i].name;
+          var userid = response.data[i].uuid;
+          tempUsers.push({ uuid: userid, name: userName });
+        }
         this.setState({
-          selectedUsers: response.data
+          selectedUsers: tempUsers
         });
         let loader = this.core.make("oxzion/splash");
         loader.destroy();
@@ -50,8 +56,8 @@ class MultiSelect extends React.Component {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
-        var userid = response.data[i].id;
-        tempUsers.push({ id: userid, name: userName });
+        var userid = response.data[i].uuid;
+        tempUsers.push({ uuid: userid, name: userName });
       }
       this.setState({
         userList: tempUsers
@@ -143,7 +149,7 @@ class MultiSelect extends React.Component {
 
   deleteRecord = item => {
     const selectedUsers = this.state.selectedUsers.slice();
-    const index = selectedUsers.findIndex(p => p.id === item.id);
+    const index = selectedUsers.findIndex(p => p.uuid === item.uuid);
     if (index !== -1) {
       selectedUsers.splice(index, 1);
       this.setState({
@@ -158,9 +164,10 @@ class MultiSelect extends React.Component {
         <Dialog onClose={this.props.manage.toggleDialog}>
           <nav className="navbar bg-dark">
             <h6 style={{ color: "white", paddingTop: "3px" }}>
-              {this.props.config.title} &nbsp; -&nbsp; {this.props.config.dataItem.name}
+              {this.props.config.title} &nbsp; -&nbsp;
+              {this.props.config.dataItem.name}
               &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage &nbsp;
-              {this.capitalizeFirstLetter(this.props.config.mainList+"'s")}
+              {this.capitalizeFirstLetter(this.props.config.mainList + "'s")}
             </h6>
           </nav>
           <div
@@ -179,7 +186,7 @@ class MultiSelect extends React.Component {
                 autoClose={false}
                 clearButton={false}
                 textField="name"
-                dataItemKey="id"
+                dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
                 placeholder={"Click to add " + this.props.config.mainList}

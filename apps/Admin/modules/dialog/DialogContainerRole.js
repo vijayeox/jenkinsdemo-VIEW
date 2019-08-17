@@ -1,7 +1,7 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { PushData } from "../components/apiCalls";
+import { Notification } from "@oxzion/gui";
 import { SaveCancel } from "../components/index";
 import { FaUserLock } from "react-icons/fa";
 
@@ -18,7 +18,7 @@ export default class DialogContainer extends React.Component {
       roleInEdit: this.props.dataItem || null,
       masterList: [],
       privilegeData: [],
-      sort: [],
+      sort: [{ field: "name", dir: "desc" }],
       isAdmin: null
     };
     this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
@@ -28,7 +28,9 @@ export default class DialogContainer extends React.Component {
       create: ["3", "7"],
       delete: ["7", "15"]
     };
+    this.notif = React.createRef();
   }
+
   componentWillMount() {
     this.props.formAction == "put"
       ? this.getPrivilegeData().then(response => {
@@ -36,10 +38,10 @@ export default class DialogContainer extends React.Component {
             masterList: response.data.masterPrivilege
           });
           let temp = [];
-          for (let i = 0; i < response.data.rolePrivilege.length; i++) {
-            temp[response.data.rolePrivilege[i].privilege_name] =
-              response.data.rolePrivilege[i].permission;
-          }
+          Object.keys(response.data.rolePrivilege).map(currentValue => {
+            temp[response.data.rolePrivilege[currentValue].privilege_name] =
+              response.data.rolePrivilege[currentValue].permission;
+          });
           this.setState({
             privilegeData: temp,
             isAdmin:
@@ -73,35 +75,38 @@ export default class DialogContainer extends React.Component {
 
   async pushData() {
     let helper = this.core.make("oxzion/restClient");
-    console.log(this.state.privilegeInEdit);
-    let roleAddData = await helper.request(
-      "v1",
-      "/role",
-      {
-        name: this.state.roleInEdit.name,
-        description: this.state.roleInEdit.description,
-        privileges: this.state.privilegeInEdit,
-        show: false
-      },
-      "post"
-    );
-    console.log(privileges);
-    console.log(this.state.privilegeInEdit);
-    return roleAddData;
-  }
-
-  async editRole() {
-    let helper = this.core.make("oxzion/restClient");
-    let roleEditData = await helper.request(
-      "v1",
-      "/role/" + this.state.roleInEdit.id,
-      {
-        name: this.state.roleInEdit.name,
-        description: this.state.roleInEdit.description,
-        show: false
-      },
-      "put"
-    );
+    let table = [];
+    Object.keys(this.state.privilegeData).map(currentValue => {
+      table.push({
+        privilege_name: currentValue,
+        permission: this.state.privilegeData[currentValue]
+      });
+    });
+    if (this.props.formAction == "post") {
+      let roleAddData = await helper.request(
+        "v1",
+        "/role",
+        {
+          name: this.state.roleInEdit.name,
+          description: this.state.roleInEdit.description,
+          privileges: table
+        },
+        "post"
+      );
+      return roleAddData;
+    } else if (this.props.formAction == "put") {
+      let roleAddData = await helper.request(
+        "v1",
+        "/role/" + this.props.dataItem.uuid,
+        {
+          name: this.state.roleInEdit.name,
+          description: this.state.roleInEdit.description,
+          privileges: table
+        },
+        "put"
+      );
+      return roleAddData;
+    }
   }
 
   onChangeCheckbox = e => {
@@ -125,25 +130,28 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-  }
-
-  handleSubmit = event => {
-    event.preventDefault();
-    this.submitData();
-  };
-
   submitData = event => {
-    this.props.cancel();
+    event.preventDefault();
+    this.notif.current.uploadingData();
+    this.pushData().then(response => {
+      this.props.action(response.status);
+      if (response.status == "success") {
+        this.props.cancel();
+      } else if (
+        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
+      ) {
+        this.notif.current.duplicateEntry();
+      } else {
+        this.notif.current.failNotification();
+      }
+    });
   };
 
   render() {
     return (
       <Window onClose={this.props.cancel}>
         <div>
+          <Notification ref={this.notif} />
           <form id="roleForm" onSubmit={this.submitData}>
             <div className="form-group">
               <label>Role Name</label>
@@ -175,7 +183,7 @@ export default class DialogContainer extends React.Component {
           </form>
 
           <Ripple>
-            <div className="col-10 pt-3" style={{ margin: "auto" }}>
+            <div className="col-11 pt-3" style={{ margin: "auto" }}>
               <div className="privilegeGrid">
                 <Grid
                   data={orderBy(this.state.masterList, this.state.sort)}
@@ -195,11 +203,7 @@ export default class DialogContainer extends React.Component {
                           fontSize: "20px"
                         }}
                       >
-                        Configure Privileges For&nbsp;
-                        {this.state.roleInEdit.name
-                          ? this.toTitleCase(this.state.roleInEdit.name)
-                          : ""}
-                        &nbsp;
+                        Configure Privileges
                         {this.state.isAdmin ? (
                           <React.Fragment>
                             &nbsp; (READ ONLY MODE)
@@ -219,7 +223,7 @@ export default class DialogContainer extends React.Component {
                   <GridColumn title="App Name" field="name" width="100px" />
                   <GridColumn
                     title="Privilege Name"
-                    width="200px"
+                    width="250px"
                     cell={props => (
                       <td>
                         <label>{props.dataItem.privilege_name.slice(7)}</label>

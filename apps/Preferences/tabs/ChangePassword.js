@@ -146,7 +146,7 @@ class ChangePassword extends Component {
           <div className="row">
             <div className="col s12">
               <div className="password input-field">
-                <label>Old Password *</label>
+                <label className="mandatory">Old Password</label>
                 <input
                   type={this.state.type}
                   className="password_input"
@@ -168,7 +168,7 @@ class ChangePassword extends Component {
           <div className="row">
             <div className="col s12">
               <div className="password input-field">
-                <label>New Password *</label>
+                <label className="mandatory">New Password</label>
                 <input
                   id="new"
                   type={this.state.type1}
@@ -190,7 +190,7 @@ class ChangePassword extends Component {
           <div className="row">
             <div className="col s12">
               <div className="password input-field">
-                <label>Confirm Password *</label>
+                <label className="mandatory">Confirm Password</label>
                 <input
                   id="confirm"
                   type={this.state.type2}

@@ -25,7 +25,7 @@ export default function withValueField(DropDownComponent) {
                 <DropDownComponent
                     {...this.props}
                     value={this.itemFromValue(this.props.value)}
-                    defaultValue={this.itemFromValue(this.props.defaultValue)}
+                    defaultValue={this.props.value}
                     ref={component => this.component = component}
                     {...this.events}
                 />

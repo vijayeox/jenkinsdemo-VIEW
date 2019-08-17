@@ -33,6 +33,10 @@ const logoutIcon = require('../../../../assets/images/logout.png');
 const profileIcon = require('../../../../assets/images/profile.png');
 const settingsIcon = require('../../../../assets/images/settings.png');
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
+
 // const profileIcon = require('../../../../assets/images/profile_pic.png');
 /**
  * Profile
@@ -63,7 +67,7 @@ export default class ProfilePanelItem extends PanelItem {
       this.core.run("Preferences");
     }
     const confirm = () => {
-      Swal.fire({
+      MySwal.fire({
         title: 'Are you sure?',
         text: 'Do you really want to logout now?',
         imageUrl: "https://image.flaticon.com/icons/svg/529/529873.svg",
@@ -72,7 +76,8 @@ export default class ProfilePanelItem extends PanelItem {
         confirmButtonText: 'Logout',
         confirmButtonColor: '#d33',
         showCancelButton: true,
-        cancelButtonColor: '#66bb6a'
+        cancelButtonColor: '#66bb6a',
+        target: ".osjs-root"
       }).then((result) => {
         if (result.value) {
           logout();

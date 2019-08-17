@@ -63,11 +63,11 @@ export async function PushDataPOST(api, method, item, body) {
       "v1",
       "/" + api + "/" + item,
       body,
-      "post" 
+      "filepost" 
     );
     return response;
   } else if (method == "post") {
-    let response = await helper.request("v1", "/" + api, body, method);
+    let response = await helper.request("v1", "/" + api, body, "filepost");
     return response;
   }
 }

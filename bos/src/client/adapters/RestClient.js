@@ -144,46 +144,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 					return resp.json();
 				}
 			}
-			else if (method == 'post') {
-				let parameters = params;
-				if (typeof parameters === 'string') {
-					parameters = JSON.parse(parameters)
-				}
-				let formData = new FormData();
-				for (var k in parameters) {
-					formData.append(k, parameters[k]);
-				}
-				resp = await fetch(urlString, {
-					method: method,
-					credentials: 'include',
-					headers: reqHeaders,
-					body: formData
-				})
-
-				if (resp.status == 400 && resp.statusText == 'Bad Request') {
-					// fall through to refresh handling
-				} else {
-					return resp.json();
-				}
-			}
-			else if (method == 'filepost') {
-				let parameters = params;
-				let formData = new FormData();
-				for (var k in parameters) {
-					formData.append(k, parameters[k]);
-				}
-				return fetch(urlString,
-					{
-						body: formData,
-						method: "post",
-						credentials: 'include',
-						headers: { "Authorization": "Bearer " + this.token }
-					}).then(function (response) {
-						var serverResponse = response.json()
-						return serverResponse
-					})
-			}
-			else if (method == 'put') {
+			else if (method == 'post' || method == 'put') {
 				let parameters = params;
 				if (typeof parameters === 'string') {
 					parameters = JSON.parse(parameters)
@@ -200,6 +161,25 @@ export class RestClientServiceProvider extends ServiceProvider {
 				} else {
 					return resp.json();
 				}
+			}
+			else if (method == 'filepost') {
+				let parameters = params;
+				let formData = new FormData();
+				for (var k in parameters) {
+					formData.append(k, parameters[k]);
+				}
+				resp = await fetch(urlString,
+					{
+						body: formData,
+						method: "post",
+						credentials: 'include',
+						headers: { "Authorization": "Bearer " + this.token }
+					})
+					if (resp.status == 400 && resp.statusText == 'Bad Request') {
+						// fall through to refresh handling
+					} else {
+						return resp.json();
+					}
 			}
 			else if (method == 'delete') {
 				resp = await fetch(urlString, {

@@ -307,3 +307,12 @@ label {
     background: #333333eb;
     color: #fff;
 }
+
+.appmenu {
+    .appcaption {
+      color: #eeeeee !important;
+    }
+    .osjs-icon {
+      filter: brightness(10);
+    }
+  }

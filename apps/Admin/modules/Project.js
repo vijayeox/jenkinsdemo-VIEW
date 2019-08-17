@@ -13,7 +13,12 @@ class Project extends React.Component {
       prjInEdit: undefined,
       projectToBeEdited: [],
       visible: false,
-      permission: "15"
+      permission: {
+        canAdd: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
+        canEdit: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
+        canDelete: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.notif = React.createRef();
@@ -86,10 +91,10 @@ class Project extends React.Component {
       var temp1 = selectedUsers;
       var temp2 = [];
       for (var i = 0; i <= temp1.length - 1; i++) {
-        var uid = { id: temp1[i].id };
+        var uid = { uuid: temp1[i].uuid };
         temp2.push(uid);
       }
-      this.pushProjectUsers(item, JSON.stringify(temp2)).then(response => {
+      this.pushProjectUsers(item,temp2).then(response => {
         this.child.current.refreshHandler(response.status);
       });
       this.toggleDialog();
@@ -103,19 +108,21 @@ class Project extends React.Component {
   }
 
   edit = dataItem => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      prjInEdit: this.cloneProduct(dataItem)
+      prjInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
+      selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler
     });
   };
 
-  cloneProduct(dataItem) {
+  cloneItem(dataItem) {
     return Object.assign({}, dataItem);
   }
 
@@ -134,6 +141,7 @@ class Project extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg:this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler
@@ -145,7 +153,16 @@ class Project extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Projects" menu={this.props.menu}/>
+        <TitleBar
+          title="Manage Projects"
+          menu={this.props.menu}
+          args={this.core}
+          // orgSwitch={
+          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+          //     ? true
+          //     : false
+          // }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}

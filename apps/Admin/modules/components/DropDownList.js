@@ -33,7 +33,7 @@ export default class DropDown extends React.Component {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
-        var userid = response.data[i].id;
+        var userid = response.data[i].uuid;
         tempUsers.push({ id: userid, name: userName });
       }
       this.setState({
@@ -62,29 +62,32 @@ export default class DropDown extends React.Component {
   }
 
   render() {
+    this.props.disableItem ? (this.inputProps = { opened: false }) : [];
     return (
       <div>
         {this.props.rawData ? (
           <DropDownList
             data={this.state.mainList}
+            {...this.inputProps}
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}
             onFilterChange={this.filterChange}
-            style={{ width: this.props.width ? this.props.width : "210px" }}
+            style={{ width: this.props.width ? this.props.width : "100%" }}
             popupSettings={{ height: "160px" }}
             required={this.props.required}
           />
         ) : (
           <DropDownListWithValueField
             data={this.state.mainList}
+            {...this.inputProps}
             textField={"name"}
             valueField={"id"}
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}
             onFilterChange={this.filterChangeAPI}
-            style={{ width: "210px" }}
+            style={{ width: "100%" }}
             popupSettings={{ height: "160px" }}
             required={this.props.required}
           />
