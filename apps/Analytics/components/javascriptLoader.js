@@ -12,14 +12,14 @@ class JavascriptLoader {
     //}
     static loadScript(scriptList) {
         var script = scriptList.shift();
-        var scriptTag = document.querySelector('script#' + script['name']);
+        var scriptTag = document.querySelector(`script#${script['name']}`);
         if (!scriptTag) {
-            console.debug('Loading script ' + script['name'] + ' from ' + script['url']);
+            console.debug(`Loading script ${script['name']} from ${script['url']}`);
             scriptTag = document.createElement('script');
             scriptTag.setAttribute('src', script['url']);
             scriptTag.setAttribute('id', script['name']);
             scriptTag.onload = function() {
-                console.debug('Loaded script ' + script['name'] + ' from ' + script['url']);
+                console.debug(`Loaded script ${script['name']} from ${script['url']}`);
                 var onloadFn = script['onload'];
                 if (onloadFn) {
                     onloadFn();
@@ -29,7 +29,7 @@ class JavascriptLoader {
                 }
             };
             scriptTag.onerror = function() {
-                console.error('Failed to load script ' + script['name'] + ' from ' + script['url']);
+                console.error(`Failed to load script ${script['name']} from ${script['url']}`);
                 var onerrorFn = script['onerror'];
                 if (onerrorFn) {
                     onerrorFn();
@@ -38,7 +38,7 @@ class JavascriptLoader {
             document.body.appendChild(scriptTag);
         }
         else {
-            console.debug('Script ' + script['name'] + ' from ' + script['url'] + ' is already loaded.');
+            console.debug(`Script ${script['name']} from ${script['url']} is already loaded.`);
             var onloadFn = script['onload'];
             if (onloadFn) {
                 onloadFn();
@@ -52,13 +52,13 @@ class JavascriptLoader {
     //Dynamically unloads/removes <script> tags. See loadScript method for the definition of the objects provided in scriptList parameter.
     static unloadScript(scriptList) {
         scriptList.forEach(function(script, index) {
-            var scriptTag = document.querySelector('script#' + script['name']);
+            var scriptTag = document.querySelector(`script#${script['name']}`);
             if (scriptTag) {
                 document.body.removeChild(scriptTag);
-                console.debug('Unloaded script ' + script['name'] + ' from ' + script['url']);
+                console.debug(`Unloaded script ${script['name']} from ${script['url']}`);
             }
             else {
-                console.debug('Script ' + script['name'] + ' from ' + script['url'] + ' was not found loaded; therefore not unloaded.');
+                console.debug(`Script ${script['name']} from ${script['url']} was not found loaded; therefore not unloaded.`);
             }
             var unloadFn = script['onunload'];
             if (unloadFn) {
