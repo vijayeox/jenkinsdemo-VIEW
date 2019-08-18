@@ -17,6 +17,7 @@
     "@progress/kendo-react-grid": "^2.10.0",
     "@progress/kendo-react-inputs": "^2.10.0",
     "@progress/kendo-react-intl": "^2.10.0",
+    "@progress/kendo-react-upload": "^3.2.2",
     "@progress/kendo-theme-default": "^3.7.0",
     "@syncfusion/ej2-react-dropdowns": "^17.2.34",
     "@trendmicro/react-buttons": "^1.3.1",
