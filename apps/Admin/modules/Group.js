@@ -2,7 +2,6 @@ import React from "react";
 import { GridTemplate, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
-import Swal from "sweetalert2";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
 
@@ -49,7 +48,8 @@ class Group extends React.Component {
         dataItem: dataItem,
         title: "Group",
         mainList: "organization/" + this.state.selectedOrg + "/users/list",
-        subList: "group"
+        subList: "group",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -59,28 +59,15 @@ class Group extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the group.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      var temp2 = [];
-      for (var i = 0; i <= selectedUsers.length - 1; i++) {
-        var uid = { uuid: selectedUsers[i].uuid };
-        temp2.push(uid);
-      }
-      this.pushGroupUsers(item, temp2).then(response => {
-        this.child.current.refreshHandler(response.status);
-      });
-      this.toggleDialog();
+    var temp2 = [];
+    for (var i = 0; i <= selectedUsers.length - 1; i++) {
+      var uid = { uuid: selectedUsers[i].uuid };
+      temp2.push(uid);
     }
+    this.pushGroupUsers(item, temp2).then(response => {
+      this.child.current.refreshHandler(response);
+    });
+    this.toggleDialog();
   };
 
   orgChange = event => {
@@ -115,8 +102,11 @@ class Group extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("group", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/group",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 

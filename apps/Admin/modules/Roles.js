@@ -46,8 +46,11 @@ class Role extends React.Component {
   };
 
   remove = dataItem => {
-    DeleteEntry("role", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/role",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 

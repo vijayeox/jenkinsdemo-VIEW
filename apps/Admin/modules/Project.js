@@ -42,24 +42,6 @@ class Project extends React.Component {
     return addProjectUsers;
   }
 
-  saveAndSend = selectedUsers => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the project.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      this.sendTheData(selectedUsers);
-      this.toggleDialog();
-    }
-  };
-
   addProjectUsers = dataItem => {
     this.setState({
       visible: !this.state.visible
@@ -70,7 +52,8 @@ class Project extends React.Component {
         dataItem: dataItem,
         title: "Project",
         mainList: "organization/" + this.state.selectedOrg + "/users/list",
-        subList: "project"
+        subList: "project",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -80,29 +63,16 @@ class Project extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the project.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      var temp1 = selectedUsers;
-      var temp2 = [];
-      for (var i = 0; i <= temp1.length - 1; i++) {
-        var uid = { uuid: temp1[i].uuid };
-        temp2.push(uid);
-      }
-      this.pushProjectUsers(item, temp2).then(response => {
-        this.child.current.refreshHandler(response.status);
-      });
-      this.toggleDialog();
+    var temp1 = selectedUsers;
+    var temp2 = [];
+    for (var i = 0; i <= temp1.length - 1; i++) {
+      var uid = { uuid: temp1[i].uuid };
+      temp2.push(uid);
     }
+    this.pushProjectUsers(item, temp2).then(response => {
+      this.child.current.refreshHandler(response);
+    });
+    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -136,8 +106,11 @@ class Project extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("project", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/project",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
