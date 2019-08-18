@@ -9,6 +9,7 @@ import {
   FaPlusCircle,
   FaPencilAlt,
   FaUserPlus,
+  FaUsers,
   FaTrashAlt,
   FaInfoCircle
 } from "react-icons/fa";
@@ -125,10 +126,13 @@ export default class GridTemplate extends React.Component {
   }
 
   refreshHandler = serverResponse => {
-    if (serverResponse == "success") {
+    if (serverResponse.status == "success") {
       this.notif.current.successNotification();
     } else {
-      this.notif.current.failNotification();
+      this.notif.current.failNotification(
+        "Error",
+        serverResponse.message ? serverResponse.message : null
+      );
     }
     this.child.current.refresh();
   };
@@ -363,7 +367,14 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                 {addUsers && (
                   <React.Fragment>
                     &nbsp; &nbsp;
-                    <abbr title={"Add Users to " + title}>
+                    <abbr
+                      title={
+                        "Add " +
+                        (title == "Announcement" ? "Groups" : "Users") +
+                        " to " +
+                        title
+                      }
+                    >
                       <button
                         type="button"
                         className="btn manage-btn"
@@ -371,7 +382,11 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                           addUsers(this.props.dataItem);
                         }}
                       >
-                        <FaUserPlus className="manageIcons" />
+                        {title == "Announcement" ? (
+                          <FaUsers className="manageIcons" />
+                        ) : (
+                          <FaUserPlus className="manageIcons" />
+                        )}
                       </button>
                     </abbr>
                   </React.Fragment>

@@ -158,7 +158,8 @@ class MultiSelect extends React.Component {
             <h6 style={{ color: "white", paddingTop: "3px" }}>
               {this.props.config.title} &nbsp; -&nbsp;&nbsp;
               {this.props.config.dataItem.name}
-              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage Participants
+              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage
+              {" " + this.props.config.members}
             </h6>
           </nav>
           <div
@@ -192,7 +193,7 @@ class MultiSelect extends React.Component {
               <Grid data={this.state.selectedUsers} scrollable={"scrollable"}>
                 <GridColumn
                   field="name"
-                  title="Selected Users"
+                  title={"Selected " + this.props.config.members}
                   headerCell={this.columnTitle}
                 />
                 <GridColumn
