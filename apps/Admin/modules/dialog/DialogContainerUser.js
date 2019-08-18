@@ -5,8 +5,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaUserLock } from "react-icons/fa";
-
-import { PushData } from "../components/apiCalls";
+import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { Notification } from "@oxzion/gui";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
 
@@ -21,7 +20,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       userInEdit: [],
       roleList: [],
-      managerName: []
+      managerName: undefined
     };
     this.notif = React.createRef();
   }
@@ -32,9 +31,27 @@ export default class DialogContainer extends React.Component {
         this.setState({
           userInEdit: response.data
         });
-        this.getUserDetails(response.data.managerid).then(response => {
-          this.setState({ managerName: response.data.name });
-        });
+
+        GetSingleEntityData(
+          "organization/" +
+            this.props.selectedOrg +
+            "/group/" +
+            this.props.dataItem.parent_id
+        )
+          .GetSingleEntityData(
+            "organization/" +
+              this.props.selectedOrg +
+              "/user/" +
+              response.data.managerid
+          )
+          .then(response => {
+            this.setState({
+              managerName: {
+                id: "111",
+                name: response.data.name
+              }
+            });
+          });
       });
     }
 
@@ -82,7 +99,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "/user/" + uuid + "/role+a",
+      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
       "get"
     );
@@ -168,7 +185,7 @@ export default class DialogContainer extends React.Component {
         }
       ).then(response => {
         if (response.status == "success") {
-          this.props.action(response.status);
+          this.props.action(response);
           this.props.cancel();
         } else {
           this.notif.current.failNotification(
@@ -195,13 +212,9 @@ export default class DialogContainer extends React.Component {
         ),
         country: this.state.userInEdit.country
       }).then(response => {
-        this.props.action(response.status);
         if (response.status == "success") {
+          this.props.action(response);
           this.props.cancel();
-        } else if (
-          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-        ) {
-          this.notif.current.duplicateEntry();
         } else {
           this.notif.current.failNotification(
             "Error",
@@ -237,6 +250,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.firstname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
+                    maxlength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid First Name"}
@@ -251,6 +265,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.lastname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
+                    maxlength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Last Name"}
@@ -271,6 +286,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.email || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Email Address"
+                    maxlength="254"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Email Address"}
@@ -289,6 +305,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.username || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Name"
+                    maxlength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
@@ -304,6 +321,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.designation || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Designation"
+                    maxlength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
@@ -367,13 +385,12 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/users"
                       }
-                      selectedItem={{
-                        id: "111",
-                        name: this.state.managerName
-                      }}
-                      //fix this tommorow
+                      preFetch={true}
+                      selectedItem={this.state.managerName}
                       selectedEntityType={"object"}
-                      onDataChange={e => this.managerValueChange("managerid", e)}
+                      onDataChange={e =>
+                        this.managerValueChange("managerid", e)
+                      }
                       required={true}
                       disableItem={this.props.diableField}
                     />
@@ -386,6 +403,7 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       rawData={Codes}
                       selectedItem={this.state.userInEdit.country}
+                      preFetch={true}
                       onDataChange={e => this.valueChange("country", e)}
                       required={true}
                       disableItem={this.props.diableField}
