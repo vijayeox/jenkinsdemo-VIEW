@@ -21,22 +21,39 @@ export default class DialogContainer extends React.Component {
 
   componentWillMount() {
     if (this.props.formAction == "put") {
-      GetSingleEntityData("user", this.props.dataItem.manager_id).then(
-        response => {
-          this.setState({ managerName: response.data.name });
-        }
-      );
-      GetSingleEntityData("group", this.props.dataItem.parent_id).then(
-        response => {
-          this.setState({ parentGroupName: response.data.name });
-        }
-      );
+      GetSingleEntityData(
+        "organization/" +
+          this.props.selectedOrg +
+          "/user/" +
+          this.props.dataItem.manager_id +
+          "/profile"
+      ).then(response => {
+        this.setState({
+          managerName: {
+            id: "111",
+            name: response.data.name
+          }
+        });
+      });
+      GetSingleEntityData(
+        "organization/" +
+          this.props.selectedOrg +
+          "/group/" +
+          this.props.dataItem.parent_id
+      ).then(response => {
+        this.setState({
+          parentGroupName: {
+            id: "111",
+            name: response.data.name
+          }
+        });
+      });
     }
   }
 
   listOnChange = (event, item) => {
     console.log(event.target.value);
-    
+
     const edited = this.state.groupInEdit;
     edited[item] = event.target.value;
     this.setState({
@@ -84,16 +101,11 @@ export default class DialogContainer extends React.Component {
       "organization/" + this.props.selectedOrg + "/group",
       this.props.formAction,
       this.state.groupInEdit.uuid,
-      tempData,
-      this.props.selectedOrg
+      tempData
     ).then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
+        this.props.action(response);
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
         this.notif.current.failNotification(
           "Error",
@@ -121,6 +133,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="name"
+                maxlength="50"
                 value={this.state.groupInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Name"
@@ -135,6 +148,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
+                maxlength="200"
                 value={this.state.groupInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Description"
@@ -154,6 +168,7 @@ export default class DialogContainer extends React.Component {
                       }
                       selectedItem={this.state.managerName}
                       selectedEntityType={"text"}
+                      preFetch={true}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
@@ -172,6 +187,7 @@ export default class DialogContainer extends React.Component {
                       }
                       selectedItem={this.state.parentGroupName}
                       selectedEntityType={"text"}
+                      preFetch={true}
                       onDataChange={event =>
                         this.listOnChange(event, "parent_id")
                       }
