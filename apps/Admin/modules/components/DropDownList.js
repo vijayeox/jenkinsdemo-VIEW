@@ -2,7 +2,7 @@ import React from "react";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
 import { GetDataSearch } from "../components/apiCalls";
-import withValueField from "../dialog/withValueField";
+import withValueField from "./filterForStaticDropdown";
 const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DropDown extends React.Component {
@@ -11,14 +11,8 @@ export default class DropDown extends React.Component {
     this.core = this.props.args;
     this.masterUserList = [];
     this.state = {
-      mainList: [],
-      selectedEntityType: this.props.selectedEntityType || "object"
+      mainList: []
     };
-    //can remove selectedEntityType if this works
-    // selectedItem={{
-    //           id: "111",
-    //           name: "Switch Organization"
-    //         }}
     this.timeout = null;
   }
 
@@ -28,6 +22,12 @@ export default class DropDown extends React.Component {
         mainList: this.props.rawData
       });
       this.masterUserList = this.props.rawData;
+    } else {
+      if (this.props.preFetch) {
+        let loader = this.core.make("oxzion/splash");
+        loader.show();
+        this.getMainList(null, 20);
+      }
     }
   }
 
@@ -40,9 +40,10 @@ export default class DropDown extends React.Component {
         tempUsers.push({ id: userid, name: userName });
       }
       this.setState({
-        selectedEntityType: "object",
         mainList: tempUsers
       });
+      let loader = this.core.make("oxzion/splash");
+      loader.destroy();
     });
   };
 
@@ -74,6 +75,8 @@ export default class DropDown extends React.Component {
             {...this.inputProps}
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
+            textField={this.props.keyValuePair ? "name" : undefined}
+            valueField={this.props.keyValuePair ? "id" : undefined}
             filterable={true}
             onFilterChange={this.filterChange}
             style={{ width: this.props.width ? this.props.width : "100%" }}
@@ -86,12 +89,6 @@ export default class DropDown extends React.Component {
             {...this.inputProps}
             textField={"name"}
             valueField={"id"}
-            // textField={
-            //   this.state.selectedEntityType == "object" ? "name" : undefined
-            // }
-            // valueField={
-            //   this.state.selectedEntityType == "object" ? "id" : undefined
-            // }
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
             filterable={true}

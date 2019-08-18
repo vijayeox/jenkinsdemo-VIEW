@@ -14,7 +14,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   @import "./node_modules/react-phone-number-input/style.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
-  
+
   .k-grid-norecords {
     width: inherit !important;
   }
@@ -57,20 +57,46 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     }
   }
 
-// ---FileUploader Styles (Start)---
+  // ---FileUploader Styles (Start)---
 
-.fileClearText{
-  display: flex;
-    flex-direction: column;
-    margin: auto;
-}
+  .fileUploaderComponent {
+    .k-upload-selected {
+      display: none;
+    }
 
-.custom-file-container__image-preview {
-  background-size: contain;
-  overflow: hidden;
-}
+    .k-upload {
+      width: inherit;
+    }
 
-// ---FileUploader Styles (End)---
+    .k-upload-status {
+      display: none !important;
+    }
+
+    .k-dropzone {
+      flex-direction: column;
+    }
+
+    .k-upload-button {
+      margin: 30px;
+    }
+    .img-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem;
+
+      img,
+      video {
+        width: 90%;
+      }
+    }
+    .k-file-validation-message {
+      font-size: 12px;
+      color: darkred;
+    }
+  }
+
+  // ---FileUploader Styles (End)---
 
   .manage-btn {
     background-color: #ff6358;
@@ -582,16 +608,16 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     width: 85% !important;
   }
 
-  [type="file"] {
-    border: 0;
-    clip-path: rect(0, 0, 0, 0);
-    height: 1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute !important;
-    white-space: nowrap;
-    width: 1px;
-  }
+  // [type="file"] {
+  //   border: 0;
+  //   clip-path: rect(0, 0, 0, 0);
+  //   height: 1px;
+  //   overflow: hidden;
+  //   padding: 0;
+  //   position: absolute !important;
+  //   white-space: nowrap;
+  //   width: 1px;
+  // }
 
   [type="file"] + .btn-upload {
     background-color: #000;

@@ -42,13 +42,8 @@ export async function GetData(api) {
   return response;
 }
 
-export async function GetSingleEntityData(api, entity) {
-  let response = await helper.request(
-    "v1",
-    "/" + api + "/" + entity,
-    {},
-    "get"
-  );
+export async function GetSingleEntityData(api) {
+  let response = await helper.request("v1", "/" + api, {}, "get");
   return response;
 }
 

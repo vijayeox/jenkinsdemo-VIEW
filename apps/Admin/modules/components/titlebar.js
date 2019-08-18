@@ -31,16 +31,16 @@ export class TitleBar extends React.Component {
               width: "200px"
             }}
           >
-            {/* <DropDown
+            <DropDown
               args={this.props.args}
               mainList={"organization"}
               selectedItem={{
                 id: "111",
                 name: "Switch Organization"
               }}
+              preFetch={true}
               onDataChange={this.props.orgChange}
-            /> */}
-            {/* Fix this tommorow */}
+            />
           </div>
         ) : null}
       </div>
