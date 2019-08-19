@@ -274,7 +274,7 @@ export default class DialogContainer extends React.Component {
                 name="address"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
-                maxLength="200"
+                maxLength="250"
                 style={{ marginTop: "5px" }}
                 required={true}
                 readOnly={this.props.diableField ? true : false}
@@ -391,6 +391,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.firstname
                           : ""
                       }
+                      maxLength="50"
                       onChange={this.onContactIPChange}
                       placeholder="Enter First Name"
                       required={true}
@@ -406,6 +407,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.lastname
                           : ""
                       }
+                      maxLength="50"
                       onChange={this.onContactIPChange}
                       placeholder="Enter Last Name"
                       required={true}
@@ -423,6 +425,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.username
                           : ""
                       }
+                      maxLength="25"
                       onChange={this.onContactIPChange}
                       placeholder="Enter User Name"
                       required={true}
@@ -437,6 +440,7 @@ export default class DialogContainer extends React.Component {
                       value={contactValue}
                       onChange={phone => this.onContactPhoneChange(phone)}
                       international={false}
+                      maxLength="15"
                       required={true}
                       countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
@@ -451,6 +455,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.email
                           : ""
                       }
+                      maxLength="250"
                       onChange={this.onContactIPChange}
                       placeholder="Enter Email ID"
                       required={true}
