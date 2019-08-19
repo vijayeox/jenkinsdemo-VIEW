@@ -25,7 +25,7 @@ export default class DialogContainer extends React.Component {
     this.notif = React.createRef();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       this.getUserDetails(this.props.dataItem.uuid).then(response => {
         this.setState({

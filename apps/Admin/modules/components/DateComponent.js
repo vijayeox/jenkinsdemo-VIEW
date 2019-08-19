@@ -10,7 +10,7 @@ export default class DateComponent extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (Moment(this.props.value, "YYYY-MM-DD", true).isValid()) {
       const tempDate = this.props.value;
       const Dateiso = new Moment(tempDate, "YYYY-MM-DD").format();

@@ -30,7 +30,7 @@ export default class DialogContainer extends React.Component {
     this.imageExists = this.props.dataItem.logo ? true : false;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       this.setState({
         timeZoneValue: {

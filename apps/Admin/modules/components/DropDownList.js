@@ -16,7 +16,7 @@ export default class DropDown extends React.Component {
     this.timeout = null;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (typeof this.props.rawData == "object") {
       this.setState({
         mainList: this.props.rawData

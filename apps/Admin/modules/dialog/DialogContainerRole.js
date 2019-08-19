@@ -31,7 +31,7 @@ export default class DialogContainer extends React.Component {
     this.notif = React.createRef();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.formAction == "put"
       ? this.getPrivilegeData().then(response => {
           this.setState({
