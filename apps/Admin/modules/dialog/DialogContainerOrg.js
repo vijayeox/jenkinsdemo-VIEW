@@ -437,6 +437,7 @@ export default class DialogContainer extends React.Component {
                       value={contactValue}
                       onChange={phone => this.onContactPhoneChange(phone)}
                       international={false}
+                      required={true}
                       countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
                   </div>
