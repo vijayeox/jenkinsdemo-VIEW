@@ -5,11 +5,13 @@ import '../assets/scss/login.scss';
 export default class Login extends defaultLogin {
   render(startHidden) {
     // Set a custom class name
-    this.$container.className = 'ox-login';
+    var queryObj;
+        this.$container.className = 'ox-login';
     var container = this.$container;
     var root = container.parentElement;
     root.className = 'login';
     const login = this.core.config('auth.login', {});
+    const baseUrl = this.core.config('wrapper.url', {});
     const actions = {
       setLoading: loading => state => ({loading}),
       setError: error => state => ({error, hidden: false}),
@@ -33,7 +35,7 @@ export default class Login extends defaultLogin {
       reqData.append("username",username);
         var request = new XMLHttpRequest();
           // call to email API
-        request.open('POST','http://localhost:8080/user/me/forgotpassword',false);
+        request.open('POST', baseUrl + 'user/me/forgotpassword',false);
         request.send(reqData);
         if (request.status === 200) {
           console.log(request.responseText);
@@ -42,11 +44,17 @@ export default class Login extends defaultLogin {
           if(resp["status"]=="success")
           { 
             // return Promise.resolve({id:forgotPasswordUsername,username,groups:['admin']});
-            alert("Verfication Mail Sent");
+           // alert("Verfication Mail Sent");
+           document.getElementById('errorDiv').style.display="block";
+           document.getElementById('resetPasswordError').innerHTML="Verification Mail Sent";
+        
           }
           else
             { 
-              alert("Incorrect Username"); 
+             // alert("Incorrect Username"); 
+             document.getElementById('errorDiv').style.display="block";
+             document.getElementById('resetPasswordError').innerHTML="Incorrect Username";
+          
             }
         }
         else {
@@ -64,7 +72,36 @@ export default class Login extends defaultLogin {
         document.getElementById('resetPasswordPage').style.display="none";
       }
       
-      let error = true;
+      //let error = true;
+     
+      const ResetPasswordService = (password) => {
+    
+        var reqData = new FormData();
+        reqData.append("token",queryObj["resetpassword"]);
+        reqData.append("password",password);
+          var request = new XMLHttpRequest();
+            // call to email API
+          request.open('POST',baseUrl + 'user/me/resetpassword',false);
+          request.send(reqData);
+          if (request.status === 200) {
+            console.log(request.responseText);
+            const resp = JSON.parse(request.responseText);
+            console.log(resp["status"])
+            if(resp["status"]=="success")
+            { 
+              // return Promise.resolve({id:forgotPasswordUsername,username,groups:['admin']});
+              alert("Password has been reset Successfully");
+              window.location.href=window.location.origin;
+            }
+            else
+              { 
+                alert("Error!!"); 
+              }
+          }
+          else {
+            alert("Request status:" + request.status);
+          }
+        }
        
       const verify = () => {
         var newPassword = document.getElementById("enterNewPassword").value;
@@ -72,14 +109,17 @@ export default class Login extends defaultLogin {
         var n = newPassword.localeCompare(reEnterPassword);
         if(n==0)
         {
-         // error = false;
-         alert("Password Reset Successful");
-         cancel();
+           //alert("abc");
+           document.getElementById('errorDiv').style.display="block";
+         document.getElementById('resetPasswordError').innerHTML="password reset successfully";
+      
+           ResetPasswordService(newPassword);
+
          }
         else
         {
-         //  error = true;
-         alert("Password Doesn't Match");
+         document.getElementById('errorDiv').style.display="block";
+         document.getElementById('resetPasswordError').innerHTML="password mismatch";
         
         }
        }
@@ -151,6 +191,11 @@ export default class Login extends defaultLogin {
                 h("input",{type: "password",name:"password",className:'validate',id:'reEnterPassword', placeholder:" Re-enter Password"}),
                 h('label',{for:'password'},'Re-Enter Password'),
                 ]),
+                h('div', {
+                  class: 'osjs-login-error',
+                  id: 'errorDiv',
+                  style: {display: 'none'}
+                }, h('span', {id:"resetPasswordError"}, "Pass")),
           
           
           h('div',{className: 'form-signin__footer'},[
@@ -174,8 +219,8 @@ export default class Login extends defaultLogin {
     });
     this.on('login:error', err => a.setError(err));
     window.onload = () => {
-      var queryString = window.location.search.substr(1);
-        var queryObj = queryString.split("&").reduce(function(prev, curr, i, arr) {
+       queryObj = window.location.search.substr(1);
+      queryObj = queryObj.split("&").reduce(function(prev, curr, i, arr) {
           var p = curr.split("=");
           prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
           return prev;
