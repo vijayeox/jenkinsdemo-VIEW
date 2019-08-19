@@ -9,9 +9,20 @@ const baseUrl = process.env.SERVER;
 class HelpPage extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
+    this.proc = this.props.args.proc;
+    this.win = this.props.args.win;
     this.menuClick = this.menuClick.bind(this);
     this.appClick = this.appClick.bind(this);
-    this.state = { topic: null };
+    let args = this.proc.args && typeof this.proc.args === 'string' ? JSON.parse(this.proc.args) : this.proc.args; 
+    this.state = { topic: args ? args.topic : null };
+    this.proc.on('attention', (args, options) => {
+      console.log('in helpapp received args');
+      this.setState({topic : args.topic});
+      this.win.focus();
+      this.win.raise();
+    });
+  
   }
 
   menuClick() {

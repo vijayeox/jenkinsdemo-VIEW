@@ -139,7 +139,17 @@
                 args: ["OX CRM says hello"]
               })
             );
+            win.on("iframe:get", msg => {
+                console.warn("Message from Iframe", msg);
+                if (msg === "Ping") {
+                  win.emit("iframe:post", "Pong");
+                }else if (
+                  msg instanceof Object &&
+                  msg.message == 'help') {
+                    core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'crm'}});
 
+                }
+              });
             // Send the process ID to our iframe to establish communication
             send({
               method: "init",

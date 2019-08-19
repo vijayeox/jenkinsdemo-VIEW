@@ -11,15 +11,15 @@ const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make('osjs/application', { args, options, metadata });
   // Create  a new Window instance
-  proc.createWindow({
+  const win = proc.createWindow({
     id: 'HelpWindow',
     title: title.en_EN,
-    dimension: { width: 400, height: 400 },
+    dimension: { width: 400, height: 600 },
     position: { left: 300, top: 0 }
-  })
-    .on('destroy', () => proc.destroy())
+  });
+    win.on('destroy', () => proc.destroy())
     .render($content => {
-      const args = { proc };
+      const args = { proc : proc, win : win};
       ReactDOM.render(<HelpPage args={args} />, $content);
     });
 
@@ -29,7 +29,6 @@ const register = (core, args, options, metadata) => {
   //sock.on('open', () => sock.send('Ping'));
 
   // Use the internally core bound websocket
-  //proc.on('ws:message', (...args) => console.log(args))
   //proc.send('Ping')
 
   // Creates a HTTP call (see server.js)
