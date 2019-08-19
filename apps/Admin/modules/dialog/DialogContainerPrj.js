@@ -82,7 +82,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="name"
-                maxlength="50"
+                maxLength="50"
                 value={this.state.prjInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Name"
@@ -96,7 +96,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
-                maxlength="200"
+                maxLength="200"
                 value={this.state.prjInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Description"

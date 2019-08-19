@@ -195,7 +195,7 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="name"
                 value={this.state.ancInEdit.name || ""}
-                maxlength="100"
+                maxLength="100"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
@@ -208,7 +208,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
-                maxlength="500"
+                maxLength="500"
                 value={this.state.ancInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"

@@ -179,7 +179,7 @@ export default class DialogContainer extends React.Component {
                 className="validate"
                 name="name"
                 value={this.state.roleInEdit.name || ""}
-                maxlength="25"
+                maxLength="25"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Role Name"
                 required={true}
@@ -199,7 +199,7 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="description"
                 value={this.state.roleInEdit.description || ""}
-                maxlength="200"
+                maxLength="200"
                 onChange={this.onDialogInputChange}
                 required={true}
                 disabled={this.props.diableField ? true : false}

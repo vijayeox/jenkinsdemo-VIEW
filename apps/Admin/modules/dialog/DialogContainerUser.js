@@ -35,23 +35,16 @@ export default class DialogContainer extends React.Component {
         GetSingleEntityData(
           "organization/" +
             this.props.selectedOrg +
-            "/group/" +
-            this.props.dataItem.parent_id
-        )
-          .GetSingleEntityData(
-            "organization/" +
-              this.props.selectedOrg +
-              "/user/" +
-              response.data.managerid
-          )
-          .then(response => {
-            this.setState({
-              managerName: {
-                id: "111",
-                name: response.data.name
-              }
-            });
+            "/user/" +
+            response.data.managerid
+        ).then(response => {
+          this.setState({
+            managerName: {
+              id: "111",
+              name: response.data.name
+            }
           });
+        });
       });
     }
 
@@ -250,7 +243,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.firstname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
-                    maxlength="50"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid First Name"}
@@ -265,7 +258,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.lastname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
-                    maxlength="50"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Last Name"}
@@ -286,7 +279,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.email || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Email Address"
-                    maxlength="254"
+                    maxLength="254"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Email Address"}
@@ -305,7 +298,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.username || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Name"
-                    maxlength="50"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
@@ -321,7 +314,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.designation || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Designation"
-                    maxlength="50"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}

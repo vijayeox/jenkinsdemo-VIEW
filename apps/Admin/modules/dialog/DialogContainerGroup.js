@@ -133,7 +133,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="name"
-                maxlength="50"
+                maxLength="50"
                 value={this.state.groupInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Name"
@@ -148,7 +148,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
-                maxlength="200"
+                maxLength="200"
                 value={this.state.groupInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Group Description"
