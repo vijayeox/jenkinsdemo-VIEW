@@ -146,7 +146,7 @@
                 }else if (
                   msg instanceof Object &&
                   msg.message == 'help') {
-                    core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'crm'}});
+                  core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'crm'}});
 
                 }
               });
