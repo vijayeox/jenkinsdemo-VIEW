@@ -78,7 +78,7 @@ class Slider extends React.Component {
   renderCard(data) {
     const isImage = data.media_type == "image";
     return (
-      <div className="App row slide" style={{ margin: 0 }} key={data.uuid}>
+      <div className="App row slide" style={{ margin: 0 }} key={Math.random()}>
         <div className="Announcement-visuals col s12">
           {isImage ? <Img data={data} /> : <Video data={data} />}
         </div>
