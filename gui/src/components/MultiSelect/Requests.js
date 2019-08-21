@@ -28,9 +28,22 @@ export async function ExcludeUsers(api, excludeList, term, size) {
 }
 
 export async function ExistingUsers(api, selectedEntity) {
+  var query = {
+    sort: [
+      { field: api == "organization" ? "is_admin" : "is_manager", dir: "desc" }
+    ],
+    skip: 0,
+    take: 1000
+  };
   let response = await helper.request(
     "v1",
-    "/" + api + "/" + selectedEntity + "/users",
+    "/" +
+      api +
+      "/" +
+      selectedEntity +
+      "/users?filter=[" +
+      JSON.stringify(query) +
+      "]",
     {},
     "get"
   );

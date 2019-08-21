@@ -45,7 +45,8 @@ class Organization extends React.Component {
         dataItem: dataItem,
         title: "Organization",
         mainList: "users/list",
-        subList: "organization"
+        subList: "organization",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -61,8 +62,8 @@ class Organization extends React.Component {
       temp2.push(uid);
     }
     this.pushOrgUsers(dataItem, temp2).then(response => {
-        this.child.current.refreshHandler(response.status);
-      });
+      this.child.current.refreshHandler(response);
+    });
     this.toggleDialog();
   };
 
@@ -94,7 +95,7 @@ class Organization extends React.Component {
 
   remove = dataItem => {
     DeleteEntry("organization", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+      this.child.current.refreshHandler(response);
     });
   };
 

@@ -17,7 +17,6 @@ export default class DialogContainer extends React.Component {
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
-    this.imageExists = this.props.dataItem.media ? true : false;
   }
 
   valueChange = (field, event) => {
@@ -27,8 +26,9 @@ export default class DialogContainer extends React.Component {
   };
 
   async pushFile(event) {
-    var files = this.fUpload.current.firstUpload.cachedFileArray[0];
+    var files = this.fUpload.current.state.selectedFile[0].getRawFile();
     let helper = this.core.make("oxzion/restClient");
+
     let ancFile = await helper.request(
       "v1",
       "/attachment",
@@ -100,23 +100,22 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  media_typeChange = event => {
+  media_typeChange = value => {
     let ancInEdit = { ...this.state.ancInEdit };
-    ancInEdit.media_type = event.target.value;
+    ancInEdit.media_type = value;
     this.setState({ ancInEdit: ancInEdit });
   };
 
   editTriggerFunction(file) {
     this.editAnnouncements(file).then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
+        this.props.action(response);
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   }
@@ -137,7 +136,7 @@ export default class DialogContainer extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (this.props.formAction == "put") {
-      if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
+      if (this.fUpload.current.state.selectedFile.length == 0) {
         this.editTriggerFunction(this.props.dataItem.media);
       } else {
         this.pushFile().then(response => {
@@ -146,7 +145,7 @@ export default class DialogContainer extends React.Component {
         });
       }
     } else {
-      if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
+      if (this.fUpload.current.state.selectedFile.length == 0) {
         var elm = document.getElementsByClassName("ancBannerUploader")[0];
         scrollIntoView(elm, {
           scrollMode: "if-needed",
@@ -154,20 +153,22 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.uploadImage();
+        this.notif.current.customWarningNotification(
+          "No Media Selected",
+          "Please select a banner for the Announcement."
+        );
       } else {
         this.pushFile().then(response => {
           var addResponse = response.data.filename[0];
           this.pushData(addResponse).then(response => {
-            this.props.action(response.status);
             if (response.status == "success") {
+              this.props.action(response);
               this.props.cancel();
-            } else if (
-              response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-            ) {
-              this.notif.current.duplicateEntry();
             } else {
-              this.notif.current.failNotification();
+              this.notif.current.failNotification(
+                "Error",
+                response.message ? response.message : null
+              );
             }
           });
         });
@@ -194,6 +195,7 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="name"
                 value={this.state.ancInEdit.name || ""}
+                maxLength="100"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
@@ -206,6 +208,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
+                maxLength="500"
                 value={this.state.ancInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"
@@ -217,67 +220,36 @@ export default class DialogContainer extends React.Component {
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col-6">
-                  <label className="required-label">Media Type</label>
-                  <div className="pt-2">
-                    <span className="col-6">
-                      <input
-                        type="radio"
-                        id="iRadio"
-                        name="media_type"
-                        value="image"
-                        className="k-radio"
-                        onChange={this.media_typeChange}
-                        checked={this.state.ancInEdit.media_type == "image"}
-                        required
-                        disabled={this.props.diableField ? true : false}
-                      />
-                      <label
-                        className="k-radio-label pl-4 radioLabel"
-                        htmlFor="iRadio"
-                      >
-                        Image
-                      </label>
-                    </span>
-                    <span className="col-4">
-                      <input
-                        type="radio"
-                        id="vRadio"
-                        name="media_type"
-                        value="video"
-                        className="k-radio pl-2"
-                        onChange={this.media_typeChange}
-                        checked={this.state.ancInEdit.media_type == "video"}
-                        required
-                        disabled={this.props.diableField ? true : false}
-                      />
-                      <label
-                        className="k-radio-label pl-4 radioLabel"
-                        htmlFor="vRadio"
-                      >
-                        Video
-                      </label>
-                    </span>
-                  </div>
-                </div>
-                <div className="col-3">
+                <div className="col-4 ">
                   <label className="required-label">Start Data</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.start_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("start_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
-                <div className="col-3">
+                <div className="col-4">
                   <label className="required-label">End Date</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.end_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("end_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
@@ -297,6 +269,8 @@ export default class DialogContainer extends React.Component {
                       ? this.url + "resource/" + this.props.dataItem.media
                       : undefined
                   }
+                  acceptFileTypes={"image/*, video/mp4"}
+                  media_typeChange={this.media_typeChange}
                   media_type={this.state.ancInEdit.media_type}
                   title={"Upload Announcement Banner"}
                   uploadID={"announcementLogo"}

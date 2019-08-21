@@ -32,10 +32,11 @@ class User extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
-      selectedOrg:this.state.selectedOrg,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
       action: this.child.current.refreshHandler,
+      userPreferences: this.props.userProfile.preferences,
       diableField: required.diableField
     });
   };
@@ -45,8 +46,11 @@ class User extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry("user", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/user",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
@@ -61,6 +65,8 @@ class User extends React.Component {
       dataItem: [],
       cancel: this.cancel,
       formAction: "post",
+      selectedOrg: this.state.selectedOrg,
+      userPreferences: this.props.userProfile.preferences,
       action: this.child.current.refreshHandler
     });
   };
