@@ -1,20 +1,72 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {dashboard as section} from './metadata.json';
+import {dashboardEditor as section} from './metadata.json';
 import JavascriptLoader from "./components/javascriptLoader";
+import osjs from "osjs";
 
 class DashboardEditor extends React.Component {
     constructor(props) {
         super(props);
+        var thisInstance = this;
         this.core = this.props.args;
         this.state = {
         };
-        this.props.setTitle('Edit dashboard');
-        this.editorDialogMessageHandler = function(e) {
-            console.log('messageFromEditorDialog:');
-            console.log(e);
-            if (e.data === 'register') {
-                e.source.postMessage('success', '*');
+        this.props.setTitle(section.title.en_EN);
+        this.editorDialog = null;
+        this.restClient = osjs.make("oxzion/restClient");
+        this.editorDialogMessageHandler = function(event) {
+            var data = event.data;
+            switch(data.action) {
+                case 'register':
+                    var editorDialog = event.source;
+                    thisInstance.editorDialog = editorDialog;
+                    editorDialog.postMessage({
+                        'status':'success'
+                    }, '*');
+                break;
+                case 'data':
+                    if (!thisInstance.loader) {
+                        thisInstance.loader = thisInstance.core.make('oxzion/splash');
+                    }
+                    thisInstance.loader.show();
+                    let response = thisInstance.restClient.request('v1', 'analytics/widget', {}, 'get');
+                    response.then(function(data) {
+                        if (data.status === 'error') {
+                            thisInstance.editorDialog.postMessage({
+                                'status':'failure', 
+                                'url':data.url, 
+                                'params':data.params, 
+                                'data':{'none':'none'}
+                            }, '*');
+                        }
+                        console.log('Entered then clause:');
+                        console.log(data);
+                    }).
+                    catch(function(data){
+                        console.log('Entered catch clause:');
+                        console.log(data);
+                        thisInstance.editorDialog.postMessage({
+                            'status':'failure', 
+                            'url':data.url, 
+                            'params':data.params, 
+                            'data':{'none':'none'}
+                        }, '*');
+                    }).
+                    finally(function(data){
+                        thisInstance.loader.destroy();
+                    });
+//setTimeout(function() {
+//                    var widgetId = data.params.id;
+//                    var widgetData = {};
+//                    thisInstance.editorDialog.postMessage({
+//                        'status':'success', 
+//                        'url':data.url, 
+//                        'params':data.params, 
+//                        'data':widgetData
+//                    }, '*');
+//
+//}, 2000);
+                break;
             }
         };
     }
@@ -23,13 +75,13 @@ class DashboardEditor extends React.Component {
     //jsLibraryList is done this way to avoid utility functions modifying the list.
     //---------------------------------------------------------------------------------------
     getJsLibraryList = () => {
-        var thiz = this;
+        var self = this;
         return [
             {'name':'amChartsCoreJs','url':'https://www.amcharts.com/lib/4/core.js','onload':function() {},'onerror':function(){}},
             {'name':'amChartsChartsJs','url':'https://www.amcharts.com/lib/4/charts.js','onload':function() {},'onerror':function(){}},
             {'name':'amChartsAnimatedJs','url':'https://www.amcharts.com/lib/4/themes/animated.js','onload':function() {},'onerror':function(){}},
             {'name':'amChartsKellyJs','url':'https://www.amcharts.com/lib/4/themes/kelly.js','onload':function() {},'onerror':function(){}},
-            {'name':'ckEditorJs','url':'/apps/Analytics/ckeditor/ckeditor.js','onload':function() {thiz.setupCkEditor();},'onerror':function(){}}
+            {'name':'ckEditorJs','url':'/apps/Analytics/ckeditor/ckeditor.js','onload':function() {self.setupCkEditor();},'onerror':function(){}}
         ];
     }
 

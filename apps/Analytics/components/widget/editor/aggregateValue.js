@@ -22,9 +22,11 @@ class AggregateValue extends React.Component {
                     <div className="form-group col">
                         <label>Preview</label>
                         <table>
-                            <tr>
-                                <td align="center" valign="middle">300,000</td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td align="center" valign="middle">300,000</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </>

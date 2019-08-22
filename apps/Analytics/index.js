@@ -10,7 +10,6 @@ import Body from "./body"
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make('osjs/application', {args, options, metadata});
-
   // Create  a new Window instance
   const win = proc.createWindow({
     id: applicationName + 'Window',

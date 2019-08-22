@@ -24,7 +24,7 @@ module.exports = {
       path.resolve(__dirname, 'index.js'), 
       path.resolve(__dirname, 'index.scss')
     ],
-    'widgetEditor':path.resolve(__dirname, 'components/widget/editor/widgetEditor.js')
+    'widgetEditor':path.resolve(__dirname, 'components/widget/editor/widgetEditorApp.js')
   },
   output: {
     filename: '[name].js',
