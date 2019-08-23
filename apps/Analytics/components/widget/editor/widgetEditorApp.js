@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import BarChart from "./barChart";
 import AggregateValue from "./aggregateValue";
 
-class App extends React.Component {
+class WidgetEditorApp extends React.Component {
     constructor(props) {
         super(props);
         var editor = props.editor;
@@ -47,9 +47,9 @@ class App extends React.Component {
         });
     }
 
-    //Set the reactApp instance on the window so that the window can call this app to get its state before the window closes.
+    //Set the react app instance on the window so that the window can call this app to get its state before the window closes.
     componentDidMount() {
-        window.reactApp = this;
+        window.widgetEditorApp = this;
     }
 
     getState() {
@@ -58,6 +58,10 @@ class App extends React.Component {
             'type':this.state.widgetType,
             'id':this.state.widgetId
         }
+    }
+
+    validateUserInput() {
+        return true;
     }
 
     render() {
@@ -108,5 +112,9 @@ class App extends React.Component {
     }
 }
 
-export default App;
+export default WidgetEditorApp;
+
+window.startWidgetEditor = function(editor) {
+    ReactDOM.render(<WidgetEditorApp editor={editor}/>, document.getElementById("root"));
+}
 
