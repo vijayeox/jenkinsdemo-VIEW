@@ -65,7 +65,7 @@ class Project extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Project",
-        mainList: "user",
+        mainList: "organization/" + this.state.selectedOrg + "/users/list",
         subList: "project"
       },
       manage: {
@@ -94,7 +94,7 @@ class Project extends React.Component {
         var uid = { uuid: temp1[i].uuid };
         temp2.push(uid);
       }
-      this.pushProjectUsers(item,temp2).then(response => {
+      this.pushProjectUsers(item, temp2).then(response => {
         this.child.current.refreshHandler(response.status);
       });
       this.toggleDialog();
@@ -107,7 +107,11 @@ class Project extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       prjInEdit: dataItem
@@ -115,10 +119,11 @@ class Project extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
-      selectedOrg:this.state.selectedOrg,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 
@@ -141,7 +146,7 @@ class Project extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
-      selectedOrg:this.state.selectedOrg,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler
@@ -157,11 +162,12 @@ class Project extends React.Component {
           title="Manage Projects"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -169,7 +175,7 @@ class Project extends React.Component {
           config={{
             showToolBar: true,
             title: "Project",
-            api: "project",
+            api: "organization/" + this.state.selectedOrg + "/projects",
             column: [
               {
                 title: "Name",

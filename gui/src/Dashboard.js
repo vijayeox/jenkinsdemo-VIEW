@@ -1,12 +1,7 @@
 import React from "react";
 import osjs from "osjs";
 let helper = osjs.make("oxzion/restClient");
-var scripts = [
-  "https://www.amcharts.com/lib/4/core.js",
-  "https://www.amcharts.com/lib/4/charts.js",
-  "https://www.amcharts.com/lib/4/themes/animated.js",
-  "https://www.amcharts.com/lib/4/themes/kelly.js"
-];
+let scriptHelper = osjs.make("oxzion/scriptLoader");
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -32,42 +27,40 @@ class Dashboard extends React.Component {
   }
 
   componentWillMount() {
-    scripts.forEach((sc, index) => {
-      const script = document.createElement("script");
-      script.src = sc;
-      script.className = "chartScripts";
-      script.async = true;
-      document.body.appendChild(script);
-    });
-
-    if (this.props.uuid) {
-      this.loader.show();
-      this.GetDashboardHtmlDataByUUID(this.props.uuid).then(response => {
-        this.loader.destroy();
-        if (response.status == "success") {
-          this.setState({
-            htmlData: response.data.content ? response.data.content : null
-          }).then(() => {
-            this.callUpdateGraph();
+    scriptHelper.loadScript(document.body,"https://www.amcharts.com/lib/4/core.js").then(()=>{
+      scriptHelper.loadScript(document.body,"https://www.amcharts.com/lib/4/charts.js").then(()=>{
+        scriptHelper.loadScript(document.body,"https://www.amcharts.com/lib/4/themes/animated.js").then(()=>{
+          scriptHelper.loadScript(document.body,"https://www.amcharts.com/lib/4/themes/kelly.js").then(()=>{
+            if (this.props.uuid) {
+              this.loader.show();
+              this.GetDashboardHtmlDataByUUID(this.props.uuid).then(response => {
+                this.loader.destroy();
+                if (response.status == "success") {
+                  this.setState({
+                    htmlData: response.data.content ? response.data.content : null
+                  }).then(() => {
+                    this.callUpdateGraph();
+                  });
+                } else {
+                  this.setState({
+                    htmlData: `<p>No Data</p>`
+                  });
+                }
+              });
+            } else if (this.state.htmlData != null) {
+              this.callUpdateGraph();
+            }
           });
-        } else {
-          this.setState({
-            htmlData: `<p>No Data</p>`
-          });
-        }
+        });
       });
-    } else if (this.state.htmlData != null) {
-      this.callUpdateGraph();
-    }
+    });
   }
 
   removeScriptsFromDom() {
-    function removeElement(element) {
-      while (element.length > 0) {
-        element[0].parentNode.removeChild(element[0]);
-      }
-    }
-    removeElement(document.getElementsByClassName("chartScripts"));
+    scriptHelper.unloadScript(document.body,"https://www.amcharts.com/lib/4/core.js");
+    scriptHelper.unloadScript(document.body,"https://www.amcharts.com/lib/4/charts.js");
+    scriptHelper.unloadScript(document.body,"https://www.amcharts.com/lib/4/themes/animated.js");
+    scriptHelper.unloadScript(document.body,"https://www.amcharts.com/lib/4/themes/kelly.js");
   }
 
   componentDidUpdate(prevProps) {
@@ -80,18 +73,24 @@ class Dashboard extends React.Component {
     }
   }
 
+  componentWillUnmount(){
+    this.removeScriptsFromDom();
+  }
+
   callUpdateGraph = () => {
-    var self = this;
-    if (this.state.htmlData != null) {
-      setTimeout(function() {
-        // root = parent document or iframe document
-        var root = document;
-        //   var iframeElement = document.querySelector('iframe');
-        //   var iframeWindow = iframeElement.contentWindow;
-        // var iframeDocument = iframeWindow.contentDocument? iframeWindow.contentDocument: iframeWindow.contentWindow.document;
-        //   var root = iframeWindow.document;
-        self.updateGraph(root);
-      }, 10000);
+    if (document.readyState === 'complete') {
+      var self = this;
+      if (this.state.htmlData != null) {
+        setTimeout(function() {
+          // root = parent document or iframe document
+          var root = document;
+          //   var iframeElement = document.querySelector('iframe');
+          //   var iframeWindow = iframeElement.contentWindow;
+          //   var iframeDocument = iframeWindow.contentDocument? iframeWindow.contentDocument: iframeWindow.contentWindow.document;
+          //   var root = iframeWindow.document;
+          self.updateGraph(root);
+        }, 5000);
+      }
     }
   };
 

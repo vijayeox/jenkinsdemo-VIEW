@@ -56,10 +56,20 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     }
   }
 
-  .custom-file-container__image-preview {
-    background-size: contain;
-    overflow: hidden;
-  }
+// ---FileUploader Styles (Start)---
+
+.fileClearText{
+  display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+.custom-file-container__image-preview {
+  background-size: contain;
+  overflow: hidden;
+}
+
+// ---FileUploader Styles (End)---
 
   .manage-btn {
     background-color: #ff6358;
@@ -571,16 +581,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     width: 85% !important;
   }
 
-  .fileUpload-area {
-    margin: 20px;
-    padding: 10px;
-    padding-bottom: 35px;
-    border-style: solid;
-    border-color: #c5c5c5;
-    border-width: 5px;
-    border-radius: 15px;
-  }
-
   [type="file"] {
     border: 0;
     clip-path: rect(0, 0, 0, 0);
@@ -807,8 +807,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   }
 
   .k-widget.k-state-invalid > .k-picker-wrap {
-    border-color: #949494;
-    color: #9e9e9e;
+    border-color: #f2f2f2;
+    color: #f2f2f2;
+    border: solid 0.5vh;
   }
 
   .radioLabel {
