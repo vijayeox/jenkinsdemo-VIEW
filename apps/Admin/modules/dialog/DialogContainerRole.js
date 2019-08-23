@@ -45,7 +45,9 @@ export default class DialogContainer extends React.Component {
           this.setState({
             privilegeData: temp,
             isAdmin:
-              this.state.roleInEdit.name.toUpperCase() == "ADMIN" ? true : false
+              this.state.roleInEdit.name.toUpperCase() == "ADMIN"
+                ? true
+                : this.props.diableField
           });
         })
       : this.masterList().then(response => {
@@ -60,7 +62,10 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let privilegedata = await helper2.request(
       "v1",
-      "/masterprivilege/" + this.props.dataItem.id,
+      "organization/" +
+        this.props.selectedOrg +
+        "/masterprivilege/" +
+        this.props.dataItem.uuid,
       {},
       "get"
     );
@@ -69,7 +74,12 @@ export default class DialogContainer extends React.Component {
 
   async masterList() {
     let helper2 = this.core.make("oxzion/restClient");
-    let masterData = await helper2.request("v1", "/masterprivilege", {}, "get");
+    let masterData = await helper2.request(
+      "v1",
+      "organization/" + this.props.selectedOrg + "/masterprivilege",
+      {},
+      "get"
+    );
     return masterData;
   }
 
@@ -85,7 +95,7 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "post") {
       let roleAddData = await helper.request(
         "v1",
-        "/role",
+        "organization/" + this.props.selectedOrg + "/role",
         {
           name: this.state.roleInEdit.name,
           description: this.state.roleInEdit.description,
@@ -97,7 +107,10 @@ export default class DialogContainer extends React.Component {
     } else if (this.props.formAction == "put") {
       let roleAddData = await helper.request(
         "v1",
-        "/role/" + this.props.dataItem.uuid,
+        "organization/" +
+          this.props.selectedOrg +
+          "/role/" +
+          this.props.dataItem.uuid,
         {
           name: this.state.roleInEdit.name,
           description: this.state.roleInEdit.description,
@@ -153,8 +166,14 @@ export default class DialogContainer extends React.Component {
         <div>
           <Notification ref={this.notif} />
           <form id="roleForm" onSubmit={this.submitData}>
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
-              <label>Role Name</label>
+              <label className="required-label">Role Name</label>
               <input
                 id="Name"
                 type="text"
@@ -164,11 +183,17 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Role Name"
                 required={true}
+                disabled={
+                  this.state.roleInEdit.is_system_role == "1" ||
+                  this.props.diableField
+                    ? true
+                    : false
+                }
               />
             </div>
 
             <div className="form-group text-area-custom">
-              <label>Role Description</label>
+              <label className="required-label">Role Description</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
@@ -176,6 +201,7 @@ export default class DialogContainer extends React.Component {
                 value={this.state.roleInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 required={true}
+                disabled={this.props.diableField ? true : false}
                 placeholder="Enter Role Description"
                 style={{ marginTop: "5px" }}
               />

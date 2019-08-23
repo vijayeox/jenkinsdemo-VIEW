@@ -48,6 +48,8 @@ const {
 } = require('./../osjs-server');
 
 const WebSocketProvider = require('./providers/WebSocketProvider');
+const TemplateProvider = require('./providers/TemplateProvider');
+const StaticProvider = require('./providers/StaticProvider');
 const AuthAdapter = require('./auth/AuthAdapter.js');
 const config = require('./config.js');
 const localConfig = require('./local.js');
@@ -66,6 +68,8 @@ osjs.register(AuthServiceProvider,{
 });
 osjs.register(SettingsServiceProvider);
 osjs.register(WebSocketProvider);
+osjs.register(TemplateProvider);
+osjs.register(StaticProvider);
 
 process.on('SIGTERM', () => osjs.destroy());
 process.on('SIGINT', () => osjs.destroy());

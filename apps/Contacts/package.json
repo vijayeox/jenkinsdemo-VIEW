@@ -19,7 +19,6 @@
     "bootstrap": "^4.3.1",
     "convert-csv-to-json": "0.0.15",
     "copy-webpack-plugin": "^5.0.3",
-    "export-to-csv-file": "^0.2.2",
     "font-awesome": "^4.7.0",
     "image-to-base64": "^2.0.1",
     "jquery": "^3.4.1",

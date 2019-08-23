@@ -15,9 +15,10 @@ class Announcement extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
-    
+
     this.notif = React.createRef();
     this.child = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);
@@ -58,13 +59,12 @@ class Announcement extends React.Component {
 
   addAncUsers = dataItem => {
     this.getAnnouncementGroups(dataItem.uuid).then(response => {
-      console.log(response);
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
         config: {
           dataItem: dataItem,
           title: "Announcement",
-          mainList: "group",
+          mainList: "organization/" + this.state.selectedOrg + "/groups/list",
           subList: response.data
         },
         manage: {
@@ -96,7 +96,7 @@ class Announcement extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
     dataItem = this.cloneItem(dataItem);
     this.setState({
       ancInEdit: dataItem
@@ -104,15 +104,21 @@ class Announcement extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.handler
+      action: this.handler,
+      diableField: required.diableField
     });
   };
 
   cloneItem(item) {
     return Object.assign({}, item);
   }
+
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
 
   remove = dataItem => {
     DeleteEntry("announcement", dataItem.uuid).then(response => {
@@ -129,6 +135,7 @@ class Announcement extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.handler
@@ -140,14 +147,25 @@ class Announcement extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar title="Manage Announcements" menu={this.props.menu} args={this.core}/>
+        <TitleBar
+          title="Manage Announcements"
+          menu={this.props.menu}
+          args={this.core}
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
+        />
         <GridTemplate
           args={this.core}
           ref={this.child}
           config={{
             showToolBar: true,
             title: "Announcement",
-            api: "announcement/a",
+            api: "organization/" + this.state.selectedOrg + "/announcements",
+
             column: [
               {
                 title: "Banner",
