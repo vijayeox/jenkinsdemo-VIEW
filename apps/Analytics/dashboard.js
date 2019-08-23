@@ -1,7 +1,7 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {dashboard as section} from './metadata.json';
-import JavascriptLoader from "./components/javascriptLoader";
+import JavascriptLoader from './components/javascriptLoader';
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -19,5 +19,6 @@ class Dashboard extends React.Component {
         );
     }
 }
+
 export default Dashboard;
 

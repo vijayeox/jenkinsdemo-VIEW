@@ -1,7 +1,7 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {dataSource as section} from './metadata.json';
-import Pagination from "./pagination"
+import Pagination from './pagination'
 
 class DataSource extends React.Component {
   constructor(props) {
@@ -62,10 +62,11 @@ class DataSource extends React.Component {
                     )}
                 </tbody>
             </table>
-            <Pagination alignment='right' pageSize={11} items={this.state.items} onChangePage={this.onChangePage} />
+            <Pagination alignment="right" pageSize={11} items={this.state.items} onChangePage={this.onChangePage} />
         </div>
     );
   }
 }
+
 export default DataSource;
 

@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {query as section} from './metadata.json';
 
 class Query extends React.Component {
@@ -18,5 +18,6 @@ class Query extends React.Component {
     );
   }
 }
+
 export default Query;
 

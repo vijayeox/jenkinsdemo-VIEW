@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class PieChart extends React.Component {
     constructor(props) {
@@ -8,28 +8,28 @@ class PieChart extends React.Component {
 
     static getTemplate() {
         return {
-            "series":[{
-                "type":"PieSeries",
-                "name":"Economy",
-                "dataFields": {
-                    "value":"economy",
-                    "category":"country"
+            'series':[{
+                'type':'PieSeries',
+                'name':'Economy',
+                'dataFields': {
+                    'value':'economy',
+                    'category':'country'
                 },
-                "slices": {
-                    "template": {
-                        "stroke":"#fff",
-                        "strokeWidth":2,
-                        "strokeOpacity":1,
-                        "cursorOverStyle":[{
-                            "property": "cursor",
-                            "value": "pointer"
+                'slices': {
+                    'template': {
+                        'stroke':'#fff',
+                        'strokeWidth':2,
+                        'strokeOpacity':1,
+                        'cursorOverStyle':[{
+                            'property': 'cursor',
+                            'value': 'pointer'
                         }],
-                        "tooltipText":"{name}:[bold]{category} - {value}[/]"
+                        'tooltipText':'{name}:[bold]{category} - {value}[/]'
                     }
                 }
             }],
-            "cursor": {
-                "type":"XYCursor"
+            'cursor': {
+                'type':'XYCursor'
             }
         };
     }
@@ -40,5 +40,6 @@ class PieChart extends React.Component {
         );
     }
 }
+
 export default PieChart;
 

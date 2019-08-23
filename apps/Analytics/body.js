@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import $ from "jquery";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import $ from 'jquery';
 import {name as applicationName} from './metadata.json';
 import DataSource from './dataSource';
 import Query from './query';
 import Visualization from './visualization';
 import Dashboard from './dashboard';
 import DashboardEditor from './dashboardEditor';
-import { slide as Menu } from "react-burger-menu";
+import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
 const SECTION_QUERY = 'QR'; //QueRy
@@ -132,5 +132,6 @@ class Body extends React.Component {
     );
   }
 }
+
 export default Body;
 

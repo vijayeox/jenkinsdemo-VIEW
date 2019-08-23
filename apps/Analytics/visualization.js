@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {visualization as section} from './metadata.json';
 
 class Visualization extends React.Component {
@@ -18,5 +18,6 @@ class Visualization extends React.Component {
     );
   }
 }
+
 export default Visualization;
 

@@ -26,3 +26,4 @@ module.exports = (core, proc) => ({
     respond('Pong');
   }
 });
+

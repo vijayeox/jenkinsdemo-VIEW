@@ -1,61 +1,68 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class BarChart extends React.Component {
     constructor(props) {
         super(props);
+        this.chart = null;
     }
 
     static getChartTemplate() {
         return {
-            "series":[{
-                "type":"ColumnSeries",
-                "name":"Sales",
-                "dataFields": {
-                    "valueY":"sales",
-                    "categoryX":"person"
+            'series':[{
+                'type':'ColumnSeries',
+                'name':'Sales',
+                'dataFields': {
+                    'valueY':'sales',
+                    'categoryX':'person'
                 },
-                "tooltipText":"{name}:[bold]{categoryX} - {valueY}[/]"
+                'tooltipText':'{name}:[bold]{categoryX} - {valueY}[/]'
             }],
-            "xAxes":[{
-                "type":"CategoryAxis",
-                "dataFields":{
-                    "category":"person"
+            'xAxes':[{
+                'type':'CategoryAxis',
+                'dataFields':{
+                    'category':'person'
                 },
-                "title":{
-                    "text":"Person"
+                'title':{
+                    'text':'Person'
                 },
-                "renderer":{
-                    "grid": {
-                        "template": {
-                            "location":0
+                'renderer':{
+                    'grid': {
+                        'template': {
+                            'location':0
                         }
                     },
-                    "minGridDistance":1
+                    'minGridDistance':1
                 }
             }],
-            "yAxes": [{
-                "type":"ValueAxis",
-                "title":{
-                    "text":"Sales (Million $)"
+            'yAxes': [{
+                'type':'ValueAxis',
+                'title':{
+                    'text':'Sales (Million $)'
                 }
             }],
-            "cursor": {
-                "type":"XYCursor"
+            'cursor': {
+                'type':'XYCursor'
             }
         };
     }
 
     componentDidMount() {
-        var barChart = am4core.createFromConfig(BarChart.getChartTemplate(), document.querySelector('div#chartPreview'), am4charts.XYChart);
-        barChart.data = [
-            {"person": "Bharat", "sales": 4.2},
-            {"person": "Harsha", "sales": 5.2},
-            {"person": "Mehul", "sales": 15.2},
-            {"person": "Rajesh", "sales": 2.9},
-            {"person": "Ravi", "sales": 2.9},
-            {"person": "Yuvraj", "sales": 14.2}
+        this.chart = am4core.createFromConfig(BarChart.getChartTemplate(), document.querySelector('div#chartPreview'), am4charts.XYChart);
+        this.chart.data = [
+            {'person': 'Bharat', 'sales': 4.2},
+            {'person': 'Harsha', 'sales': 5.2},
+            {'person': 'Mehul', 'sales': 15.2},
+            {'person': 'Rajesh', 'sales': 2.9},
+            {'person': 'Ravi', 'sales': 2.9},
+            {'person': 'Yuvraj', 'sales': 14.2}
         ];
+    }
+
+    componentWillUnmount() {
+        if (this.chart) {
+            this.chart.dispose();
+        }
     }
 
     render() {
@@ -82,5 +89,6 @@ class BarChart extends React.Component {
         );
     }
 }
+
 export default BarChart;
 

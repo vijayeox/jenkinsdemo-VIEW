@@ -1,19 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {dashboardEditor as section} from './metadata.json';
-import JavascriptLoader from "./components/javascriptLoader";
-import osjs from "osjs";
+import JavascriptLoader from './components/javascriptLoader';
+import osjs from 'osjs';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
         super(props);
         var thisInstance = this;
+        this.chartList = [];
         this.core = this.props.args;
         this.state = {
         };
         this.props.setTitle(section.title.en_EN);
         this.editorDialog = null;
-        this.restClient = osjs.make("oxzion/restClient");
+        this.restClient = osjs.make('oxzion/restClient');
         this.editorDialogMessageHandler = function(event) {
             var data = event.data;
             switch(data.action) {
@@ -39,12 +40,8 @@ class DashboardEditor extends React.Component {
                                 'data':{'none':'none'}
                             }, '*');
                         }
-                        console.log('Entered then clause:');
-                        console.log(data);
                     }).
                     catch(function(data){
-                        console.log('Entered catch clause:');
-                        console.log(data);
                         thisInstance.editorDialog.postMessage({
                             'status':'failure', 
                             'url':data.url, 
@@ -53,19 +50,10 @@ class DashboardEditor extends React.Component {
                         }, '*');
                     }).
                     finally(function(data){
-                        thisInstance.loader.destroy();
+                        if (thisInstance.loader) {
+                            thisInstance.loader.destroy();
+                        }
                     });
-//setTimeout(function() {
-//                    var widgetId = data.params.id;
-//                    var widgetData = {};
-//                    thisInstance.editorDialog.postMessage({
-//                        'status':'success', 
-//                        'url':data.url, 
-//                        'params':data.params, 
-//                        'data':widgetData
-//                    }, '*');
-//
-//}, 2000);
                 break;
             }
         };
@@ -143,27 +131,28 @@ class DashboardEditor extends React.Component {
         var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
         //categoryAxis.renderer.labels.template.rotation = 270;
-        categoryAxis.dataFields.category = "person";
-        categoryAxis.title.text = "Person";
+        categoryAxis.dataFields.category = 'person';
+        categoryAxis.title.text = 'Person';
         categoryAxis.renderer.grid.template.location = 0;
         categoryAxis.renderer.minGridDistance = 1;
         chart.colors.list = [
-            am4core.color("#0000FF")
+            am4core.color('#0000FF')
         ];
-        valueAxis.title.text = "Sales (Million $)";
+        valueAxis.title.text = 'Sales (Million $)';
         var series = chart.series.push(new am4charts.ColumnSeries());
-        series.name = "Sales";
-        series.dataFields.valueY = "sales";
-        series.dataFields.categoryX = "person";
-        series.tooltipText = "{name}: [bold]{valueY}[/]";
+        series.name = 'Sales';
+        series.dataFields.valueY = 'sales';
+        series.dataFields.categoryX = 'person';
+        series.tooltipText = '{name}: [bold]{valueY}[/]';
         chart.data = [
-            {"person": "Bharat", "sales": 4.2},
-            {"person": "Harsha", "sales": 5.2},
-            {"person": "Mehul", "sales": 15.2},
-            {"person": "Rajesh", "sales": 2.9},
-            {"person": "Ravi", "sales": 2.9},
-            {"person": "Yuvraj", "sales": 14.2}
+            {'person': 'Bharat', 'sales': 4.2},
+            {'person': 'Harsha', 'sales': 5.2},
+            {'person': 'Mehul', 'sales': 15.2},
+            {'person': 'Rajesh', 'sales': 2.9},
+            {'person': 'Ravi', 'sales': 2.9},
+            {'person': 'Yuvraj', 'sales': 14.2}
         ];
+        this.chartList.push(chart);
     }
 
     componentDidMount() {
@@ -172,6 +161,10 @@ class DashboardEditor extends React.Component {
     }
 
     componentWillUnmount() {
+        while(this.chartList.length > 0) {
+            var chart = this.chartList.pop();
+            chart.dispose();
+        }
         window.removeEventListener('message', this.editorDialogMessageHandler, false);
         var ckEditorInstance = CKEDITOR.instances['editor1'];
         if (ckEditorInstance) {
@@ -188,5 +181,6 @@ class DashboardEditor extends React.Component {
         );
     }
 }
+
 export default DashboardEditor;
 

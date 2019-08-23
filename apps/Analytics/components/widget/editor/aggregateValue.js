@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class AggregateValue extends React.Component {
     constructor(props) {
@@ -33,5 +33,6 @@ class AggregateValue extends React.Component {
         );
     }
 }
+
 export default AggregateValue;
 
