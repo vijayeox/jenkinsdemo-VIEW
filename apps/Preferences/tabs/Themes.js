@@ -166,11 +166,11 @@ class Themes extends Component {
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize" >
             <div
-              className="col-md-4"
+              className="col-4"
               >
               <label id="styleLabel">Style:</label>
             </div>
-            <div className="col-md-4 themeStylediv">
+            <div className="col-4 themeStylediv">
               <select
                 value={this.state.themeName}
                 onChange={this.handleChange}
@@ -190,11 +190,11 @@ class Themes extends Component {
 
           <div className="row marginsize" >
             <div
-              className="col-md-4"
+              className="col-4"
               >
               <label id="iconsLabel">Icons:</label>
             </div>
-            <div className="col-md-4 iconsdiv">
+            <div className="col-4 iconsdiv">
               <select
                 value={this.state.iconName}
                 onChange={this.handleChange}
@@ -214,11 +214,11 @@ class Themes extends Component {
 
           <div className="row marginsize">
             <div
-              className="col-md-4"
+              className="col-4"
             >
               <label id="soundsLabel">Sounds:</label>
             </div>
-            <div className="col-md-4 soundsdiv">
+            <div className="col-4 soundsdiv">
               <select
                 value={this.state.soundName}
                 onChange={this.handleChange}
@@ -237,7 +237,7 @@ class Themes extends Component {
           </div>
 
           <div className="row">
-            <div className="col-md-12 input-field" >
+            <div className="col-12 input-field" >
               <button className="k-button k-primary" type="submit">
                 Save
               </button>
