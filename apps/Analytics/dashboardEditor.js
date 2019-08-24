@@ -8,7 +8,7 @@ class DashboardEditor extends React.Component {
     constructor(props) {
         super(props);
         var thisInstance = this;
-        this.chartList = [];
+        this.renderedCharts = {};
         this.core = this.props.args;
         this.state = {
         };
@@ -106,6 +106,31 @@ class DashboardEditor extends React.Component {
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         var editor = CKEDITOR.appendTo( 'ckEditorInstance', config );
         this.setEditorContent(editor);
+        var thisInstance = this;
+        editor.on('oxzionWidgetInitialization', function(event) {
+            try {
+                var elementId = event.data.elementId;
+                thisInstance.drawChart(elementId);
+                console.info(`drawChart called for element id ${elementId}.`);
+            }
+            catch(error) {
+                console.error(error);
+            }
+        });
+        editor.on('oxzionWidgetPrepareToDowncast', function(event) {
+            try {
+                var elementId = event.data.elementId;
+                var chart = thisInstance.renderedCharts[elementId];
+                if (chart) {
+                    chart.dispose();
+                    thisInstance.renderedCharts[elementId] = null;
+                    console.info(`Disposed the chart of element id ${elementId} for downcasting it.`); 
+                }
+            }
+            catch(error) {
+                console.error(error);
+            }
+        });
     }
 
     setEditorContent = (editor) => {
@@ -117,15 +142,15 @@ class DashboardEditor extends React.Component {
             '</figure>' + 
             'Under this section, the Commercial Contributor in writing by the law of the following: accompany any non-standard executables and testcases, giving the users of the Licensed Product, you hereby agree that use of Licensed Product. This License relies on precise definitions for certain terms.</p><p>Those terms are used only in the copyright notice and this permission notice shall be governed by the use or sale of its release under this License will continue in full force and effect.</p>',
             {
-                callback:this.drawCharts
+                callback:function() {} //this.drawCharts
             });
     }
 
-    drawCharts = () => {
+    drawChart = (elementId) => {
         var iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
         var iframeWindow = iframeElement.contentWindow;
         var iframeDocument = iframeWindow.document;
-        var graphElement = iframeDocument.querySelector('figure#widget2>div.oxzion-widget-content');
+        var graphElement = iframeDocument.querySelector('figure#' + elementId + '>div.oxzion-widget-content');
         var chart = am4core.create(graphElement, am4charts.XYChart);
         chart.colors.step = 2;
         var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -152,7 +177,7 @@ class DashboardEditor extends React.Component {
             {'person': 'Ravi', 'sales': 2.9},
             {'person': 'Yuvraj', 'sales': 14.2}
         ];
-        this.chartList.push(chart);
+        this.renderedCharts[elementId] = chart;
     }
 
     componentDidMount() {
@@ -161,9 +186,12 @@ class DashboardEditor extends React.Component {
     }
 
     componentWillUnmount() {
-        while(this.chartList.length > 0) {
-            var chart = this.chartList.pop();
-            chart.dispose();
+        for (var elementId in this.renderedCharts) {
+            var chart = this.renderedCharts[elementId];
+            if (chart) {
+                chart.dispose();
+                this.renderedCharts[elementId] = null;
+            }
         }
         window.removeEventListener('message', this.editorDialogMessageHandler, false);
         var ckEditorInstance = CKEDITOR.instances['editor1'];
