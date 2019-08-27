@@ -7,6 +7,9 @@ import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
 import { Editor, EditorTools } from "@progress/kendo-react-editor";
+import countries from "../public/js/countries";
+import states from "../public/js/states";
+
 const {
   Bold,
   Italic,
@@ -59,7 +62,9 @@ class EditProfile extends Component {
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
-      icon: this.userprofile.key.icon + "?" + new Date()
+      icon: this.userprofile.key.icon + "?" + new Date(),
+      countryWiseStates: [],
+      stateSelection: true
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -69,7 +74,7 @@ class EditProfile extends Component {
     Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
-  onSelect1 = (event) => {
+  onSelect1 = event => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
@@ -88,15 +93,49 @@ class EditProfile extends Component {
     }
   }
 
-  onSelect2 = (event) => {
+  onSelect2 = event => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
   };
 
+  setStateList = () => {
+    var statesList = [];
+    let fields = this.state.fields;
+    countries.forEach(country => {
+      if (country.name == this.state.fields.country) {
+        states.forEach(s => {
+          if (s.country_id == country.id) {
+            statesList.push(s);
+          }
+        });
+        fields["countryState"] = statesList[0];
+        this.setState({
+          stateSelection: false,
+          countryWiseStates: statesList,
+          fields
+        });
+      }
+    });
+  };
+
   componentWillMount() {
     this.state.dateformat = this.state.dateformat.replace(/m/g, "M");
     this.splitPhoneNumber();
+    if (this.state.fields.country) {
+      this.setStateList();
+    } else {
+      let fields = this.state.fields;
+      fields["country"] = countries[0].name;
+      this.setState(
+        {
+          fields
+        },
+        () => {
+          this.setStateList();
+        }
+      );
+    }
     if (Moment(this.state.fields.date_of_birth, "YYYY-MM-DD", true).isValid()) {
       const Dateiso = new Moment(
         this.state.fields.date_of_birth,
@@ -117,22 +156,44 @@ class EditProfile extends Component {
     this.setState({ fields: fields });
   };
 
-  handleChange = (e) => {
+  handleChange = e => {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-  }
+  };
 
-  handleChangeAboutField = (value) => {
+  handleCountryChange = e => {
+    let fields = this.state.fields;
+    fields[e.target.name] = e.target.value;
+    var country_id;
+    var statesList = [];
+    countries.forEach(country => {
+      if (country.name == e.target.value) {
+        country_id = country.id;
+        states.forEach(s => {
+          if (s.country_id == country_id) {
+            statesList.push(s);
+          }
+        });
+        this.setState({
+          stateSelection: false,
+          countryWiseStates: statesList,
+          fields
+        });
+      }
+    });
+  };
+
+  handleChangeAboutField = value => {
     console.log(value);
     let fields = this.state.fields;
-    fields['about'] = value;
+    fields["about"] = value;
     this.setState({
       fields
     });
-  }
+  };
 
   async handleSubmit(event) {
     event.preventDefault();
@@ -227,6 +288,26 @@ class EditProfile extends Component {
     if (!fields["interest"]) {
       formIsValid = false;
       errors["interest"] = "*Please enter your interest";
+    }
+
+    if (!fields["country"]) {
+      formIsValid = false;
+      errors["country"] = "*Please select your country";
+    }
+
+    if (!fields["countryState"]) {
+      formIsValid = false;
+      errors["countryState"] = "*Please select your state";
+    }
+
+    if (!fields["city"]) {
+      formIsValid = false;
+      errors["city"] = "*Please enter your city";
+    }
+
+    if (!fields["zip"]) {
+      formIsValid = false;
+      errors["zip"] = "*Please enter zip code";
     }
 
     this.setState({
@@ -583,7 +664,7 @@ class EditProfile extends Component {
           <label type="hidden" id="joint" ref="phone" name="phone" />
 
           <div className="row">
-            <div className="col-12 input-field">
+            <div className="col-6 input-field">
               <label className="mandatory" style={{ fontSize: "17px" }}>
                 Address
               </label>
@@ -603,29 +684,109 @@ class EditProfile extends Component {
               </div>
               <div className="errorMsg">{this.state.errors["address"]}</div>
             </div>
+            <div className="col-6 input-field">
+              <label className="" style={{ fontSize: "17px" }}>
+                Address1
+              </label>
+              <div>
+                <textarea
+                  rows="3"
+                  className="textareaField"
+                  type="text"
+                  ref="address1"
+                  name="address1"
+                  value={
+                    this.state.fields.address1 ? this.state.fields.address1 : ""
+                  }
+                  onChange={this.handleChange}
+                  required
+                />
+              </div>
+              <div className="errorMsg">{this.state.errors["address1"]}</div>
+            </div>
           </div>
 
           <div className="row">
-            <label className="country mandatory" style={{ marginTop: "" }}>
-              Country
-            </label>
-
-            <div className="col-12">
+            <div className="col-6">
+              <label className="country mandatory" style={{ marginTop: "" }}>
+                Country
+              </label>
               <select
                 value={
                   this.state.fields.country ? this.state.fields.country : ""
                 }
-                onChange={this.handleChange}
+                onChange={this.handleCountryChange}
                 ref="country"
                 id="country"
                 name="country"
               >
-                {Codes.map((country, key) => (
+                {countries.map((country, key) => (
                   <option key={key} value={country.name}>
                     {country.name}
                   </option>
                 ))}
               </select>
+              <div className="errorMsg">{this.state.errors["country"]}</div>
+            </div>
+
+            <div className="col-6">
+              <label className="state mandatory" style={{ marginTop: "" }}>
+                State
+              </label>
+              <select
+                value={
+                  this.state.fields.countryState
+                    ? this.state.fields.countryState
+                    : ""
+                }
+                onChange={this.handleChange}
+                ref="countryState"
+                id="countryState"
+                name="countryState"
+                disabled={this.state.stateSelection}
+              >
+                {this.state.countryWiseStates &&
+                  this.state.countryWiseStates.length > 0 &&
+                  this.state.countryWiseStates.map((state, key) => (
+                    <option key={key} value={state.name}>
+                      {state.name}
+                    </option>
+                  ))}
+              </select>
+              <div className="errorMsg">
+                {this.state.errors["countryState"]}
+              </div>
+            </div>
+          </div>
+
+          <div className="row input-field">
+            <div className="col-6">
+              <label className="city mandatory" style={{ marginTop: "" }}>
+                City
+              </label>
+              <input
+                type="text"
+                value={this.state.fields.city ? this.state.fields.city : ""}
+                onChange={this.handleChange}
+                ref="city"
+                id="city"
+                name="city"
+              />
+              <div className="errorMsg">{this.state.errors["city"]}</div>
+            </div>
+            <div className="col-6">
+              <label className="zip mandatory" style={{ marginTop: "" }}>
+                Zip
+              </label>
+              <input
+                type="text"
+                value={this.state.fields.zip ? this.state.fields.zip : ""}
+                onChange={this.handleChange}
+                ref="zip"
+                id="zip"
+                name="zip"
+              />
+              <div className="errorMsg">{this.state.errors["zip"]}</div>
             </div>
           </div>
 
