@@ -141,7 +141,7 @@ class FileUploader extends React.Component {
                 }
                 restrictions={{
                   allowedExtensions: [".jpg", ".jpeg", ".png", ".mp4"],
-                  maxFileSize: 20000000
+                  maxFileSize: 20971520
                 }}
                 defaultFiles={[]}
                 onAdd={this.fileSelectedEvent}
