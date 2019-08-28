@@ -13,48 +13,45 @@ class DashboardEditor extends React.Component {
         this.state = {
         };
         this.props.setTitle(section.title.en_EN);
-        this.editorDialog = null;
         this.restClient = osjs.make('oxzion/restClient');
         this.editorDialogMessageHandler = function(event) {
-            var data = event.data;
-            switch(data.action) {
-                case 'register':
-                    var editorDialog = event.source;
-                    thisInstance.editorDialog = editorDialog;
-                    editorDialog.postMessage({
-                        'status':'success'
-                    }, '*');
-                break;
+            var editorDialog = event.source;
+            var eventData = event.data;
+            switch(eventData.action) {
                 case 'data':
                     if (!thisInstance.loader) {
                         thisInstance.loader = thisInstance.core.make('oxzion/splash');
                     }
                     thisInstance.loader.show();
-                    let response = thisInstance.restClient.request('v1', 'analytics/widget', {}, 'get');
-                    response.then(function(data) {
-                        if (data.status === 'error') {
-                            thisInstance.editorDialog.postMessage({
-                                'status':'failure', 
-                                'url':data.url, 
-                                'params':data.params, 
-                                'data':{'none':'none'}
-                            }, '*');
+                    let responseObject = {
+                        'url':eventData.url,
+                        'params':eventData.params
+                    };
+                    let restResponse = thisInstance.restClient.request('v1', eventData.url, eventData.params, 'get');
+                    restResponse.
+                    then(function(responseData) {
+                        responseObject['status'] = (responseData.status === 'success') ? 'success' : 'failure';
+                        var dataContent = responseData.data;
+                        for (var property in dataContent) {
+                            if ((property === 'url') || (property === 'params') || (property === 'status')) {
+                                throw `Forbidden property name ${property} used in REST response object.`;
+                            }
+                            responseObject[property] = dataContent[property];
                         }
+                        editorDialog.postMessage(responseObject, '*');
                     }).
-                    catch(function(data){
-                        thisInstance.editorDialog.postMessage({
-                            'status':'failure', 
-                            'url':data.url, 
-                            'params':data.params, 
-                            'data':{'none':'none'}
-                        }, '*');
+                    catch(function(responseData){
+                        responseObject['status'] = 'failure';
+                        editorDialog.postMessage(responseObject, '*');
                     }).
-                    finally(function(data){
+                    finally(function(responseData){
                         if (thisInstance.loader) {
                             thisInstance.loader.destroy();
                         }
                     });
                 break;
+                default:
+                    console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
         };
     }
@@ -140,10 +137,7 @@ class DashboardEditor extends React.Component {
                 '<div class="oxzion-widget-content" style="width:600px;height:300px;"></div>' + 
                 '<figcaption class="oxzion-widget-caption">Sales by sales person</figcaption>' + 
             '</figure>' + 
-            'Under this section, the Commercial Contributor in writing by the law of the following: accompany any non-standard executables and testcases, giving the users of the Licensed Product, you hereby agree that use of Licensed Product. This License relies on precise definitions for certain terms.</p><p>Those terms are used only in the copyright notice and this permission notice shall be governed by the use or sale of its release under this License will continue in full force and effect.</p>',
-            {
-                callback:function() {} //this.drawCharts
-            });
+            'Under this section, the Commercial Contributor in writing by the law of the following: accompany any non-standard executables and testcases, giving the users of the Licensed Product, you hereby agree that use of Licensed Product. This License relies on precise definitions for certain terms.</p><p>Those terms are used only in the copyright notice and this permission notice shall be governed by the use or sale of its release under this License will continue in full force and effect.</p>');
     }
 
     drawChart = (elementId) => {
