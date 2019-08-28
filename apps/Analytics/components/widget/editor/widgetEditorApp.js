@@ -7,19 +7,21 @@ import './globalFunctions';
 class WidgetEditorApp extends React.Component {
     constructor(props) {
         super(props);
-        var editor = props.editor;
-        var widgetData = editor.plugins.oxzion.getWidgetData(editor);
+        this.widgetList = [];
+
+        let editor = props.editor;
+        let widgetConfiguration = editor.plugins.oxzion.getWidgetConfiguration(editor);
         this.state = {
             widget: {
-                align: widgetData ? widgetData.align : null,
-                type: widgetData ? widgetData.type : null,
-                id: widgetData ? widgetData.id : null
+                align: widgetConfiguration ? widgetConfiguration.align : null,
+                type: widgetConfiguration ? widgetConfiguration.type : null,
+                id: widgetConfiguration ? widgetConfiguration.id : null
             }
         };
     }
 
     alignmentChanged = (e) => {
-        var align = e.target.value;
+        let align = e.target.value;
         this.setState((state) => {
             state.widget.align = align;
             return state.widget;
@@ -27,34 +29,43 @@ class WidgetEditorApp extends React.Component {
     }
 
     widgetSelectionChanged = (e) => {
-        var widgetId = e.target.value;
+        let widgetId = e.target.value;
+        if (widgetId === this.state.widget.id) {
+            return;
+        }
 
-        //This code is for testing/demo only. To be removed later when this data is retrieved from the server.
-        var widgetTypeMap = {
-            'f5b8ee95-8da2-409a-8cf0-fa5b4af10667':'inline',
-            'f5b8ee95-8da2-409a-8cf1-fa5b4af10667':'block',
-            'f5b8ee95-8da2-409a-8cf2-fa5b4af10667':'block',
-            'f5b8ee95-8da2-409a-8cf3-fa5b4af10667':'inline',
-            'f5b8ee95-8da2-409a-8cf4-fa5b4af10667':'block'
-        };
-        var newWidgetType = widgetTypeMap[widgetId];
-
-        this.setState((state) => {
-            state.widget.id = widgetId;
-            if (state.widget.type != newWidgetType) {
-                state.widget.type = newWidgetType;
-                state.widget.align = null;
-            }
-            return state.widget;
-        });
+        let thiz = this;
+        window.postDataRequest('analytics/widget/' + widgetId, {}).
+            then(function(responseData) {
+                let widget = responseData.widget;
+                thiz.setState((state) => {
+                    state.widget.id = widget.uuid;
+                    if (state.widget.type != widget.type) {
+                        state.widget.type = widget.type;
+                        state.widget.align = null;
+                    }
+                    return state.widget;
+                });
+            }).
+            catch(function(responseData) {
+            });
     }
 
     //Set the react app instance on the window so that the window can call this app to get its state before the window closes.
     componentDidMount() {
         window.widgetEditorApp = this;
+
+        let thiz = this;
+        window.postDataRequest('analytics/widget', {}).
+            then(function(responseData) {
+                thiz.widgetList = responseData.data;
+                thiz.forceUpdate();
+            }).
+            catch(function(responseData) {
+            });
     }
 
-    getState() {
+    getWidgetState() {
         return this.state.widget;
     }
 
@@ -63,18 +74,20 @@ class WidgetEditorApp extends React.Component {
     }
 
     render() {
+        let htmlWidgetOptions = this.widgetList.map((widget, index) => {
+                return (
+                    <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
+                )
+            }, this);
+
         return (
             <form>
                 <div className="row">
                     <div className="form-group col">
                         <label>Widget</label>
                         <select className="form-control custom-select" placeholder="Select widget" value={this.state.widget.id ? this.state.widget.id : ''} onChange={this.widgetSelectionChanged}>
-                            <option value="">-Select widget-</option>
-                            <option value="f5b8ee95-8da2-409a-8cf0-fa5b4af10667">Sales YTD</option>
-                            <option value="f5b8ee95-8da2-409a-8cf1-fa5b4af10667">Sales by sales person</option>
-                            <option value="f5b8ee95-8da2-409a-8cf2-fa5b4af10667">Quarterly revenue target</option>
-                            <option value="f5b8ee95-8da2-409a-8cf3-fa5b4af10667">Revenue YTD</option>
-                            <option value="f5b8ee95-8da2-409a-8cf4-fa5b4af10667">Product sales</option>
+                            <option key="" value="">-Select widget-</option>
+                            {htmlWidgetOptions}
                         </select>
                     </div>
                     <div className="form-group col">
@@ -99,10 +112,10 @@ class WidgetEditorApp extends React.Component {
                 </div>
                 <div className="row">
                     {(this.state.widget.type === 'block') && 
-                        <BarChart/>
+                        <BarChart widgetId={this.state.widget.id}/>
                     }
                     {(this.state.widget.type === 'inline') && 
-                        <AggregateValue/>
+                        <AggregateValue widgetId={this.state.widget.id}/>
                     }
                 </div>
             </form>

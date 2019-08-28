@@ -7,6 +7,13 @@ class AggregateValue extends React.Component {
     }
 
     componentDidMount() {
+        window.postDataRequest('analytics/widget/' + this.props.widgetId, {}).
+            then(function(responseData) {
+                var previewElement = document.querySelector('span#widgetPreview');
+                previewElement.innerHTML = responseData.data;
+            }).
+            catch(function(responseData) {
+            });
     }
 
     render() {
@@ -24,7 +31,7 @@ class AggregateValue extends React.Component {
                         <table>
                             <tbody>
                                 <tr>
-                                    <td align="center" valign="middle">300,000</td>
+                                    <td align="center" valign="middle"><span id="widgetPreview">300,000</span></td>
                                 </tr>
                             </tbody>
                         </table>

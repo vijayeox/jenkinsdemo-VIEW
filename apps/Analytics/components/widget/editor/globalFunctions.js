@@ -1,10 +1,40 @@
 
 class Deferred {
+    static deferredRegistry = {};
+
     constructor() {
+        this.corrId = Deferred.generateUUID();
         this.promise = new Promise((resolve, reject)=> {
-            this.reject = reject
-            this.resolve = resolve
-        })
+            this.reject = reject;
+            this.resolve = resolve;
+        });
+        Deferred.deferredRegistry[this.corrId] = this;
+        //console.log(Deferred.deferredRegistry);
+    }
+
+    static generateUUID() { // Public Domain/MIT
+        let d = new Date().getTime();//Timestamp
+        let d2 = (performance && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            let r = Math.random() * 16;//random number between 0 and 16
+            if(d > 0){  //Use timestamp until depleted
+                r = (d + r)%16 | 0;
+                d = Math.floor(d/16);
+            } else {    //Use microseconds since page-load if supported
+                r = (d2 + r)%16 | 0;
+                d2 = Math.floor(d2/16);
+            }
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
+    static getFromRegistry(corrId) {
+        let deferred = Deferred.deferredRegistry[corrId];
+        if (deferred) {
+            delete Deferred.deferredRegistry[corrId];
+            //console.log(Deferred.deferredRegistry);
+        }
+        return deferred;
     }
 }
 
@@ -15,48 +45,26 @@ window.onDialogEvent = function(dialogEvent) {
     switch(dialogEvent.name) {
         case 'load':
             window.addEventListener('message', function(event) {
-                handleAsyncResponse(event.data);
+                window.handleDataResponse(event.data);
             }, false);
-            window.top.postMessage({'action':'register'}, '*');
             //Dialog 'load' event contains reference to the editor opening this dialog.
             window.oxzionEditor = dialogEvent.editor;
             window.startWidgetEditorApp(window.oxzionEditor);
-//IMPORTANT: Load available widget list here.
-setTimeout(function() {
-    window.sendAsyncRequest('http://localhost/a/b/c', {'name':'Mickey', 'age':25}).then(
-        function(value) {
- console.log('promise resolved:');
- console.log(value);
-        }).catch(
-        function(value) {
-console.log('promise rejected:');
-console.log(value);
-        });
-}, 5000);
         break;
         case 'ok':
             //Reject 'ok' button click if user input validation fails.
             if (!window.widgetEditorApp.validateUserInput()) {
                 throw 'User input validation failed.';
             }
-            var data = window.widgetEditorApp.getState();
-            if (!data) {
-                data = {
-                    'type':'block',
-                    'id':'f5b8ee95-8da2-409a-8cf0-fa5b4af10667',
-                    'align':'center',
-                };
-            }
+            let data = window.widgetEditorApp.getWidgetState();
             window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
         break;
     }
 }
 
-window.sendAsyncRequest = function(url, params) {
-    if (window.deferred) {
-        throw 'Another request is already in progress. Try later.';
-    }
-    window.deferred = new Deferred();
+window.postDataRequest = function(url, params) {
+    let deferred = new Deferred();
+    params['oxCorrId'] = deferred.corrId;
     window.top.postMessage({
         'action':'data', 
         'url':url, 
@@ -65,8 +73,13 @@ window.sendAsyncRequest = function(url, params) {
     return deferred.promise;
 }
 
-window.handleAsyncResponse = function(response) {
-    if (!window.deferred) {
+window.handleDataResponse = function(response) {
+    let corrId = response.params['oxCorrId'];
+    delete response.params['oxCorrId'];
+    let deferred = Deferred.getFromRegistry(corrId);
+    if (!deferred) {
+        console.warn('No deferred instance found. Unexpected REST response found:');
+        console.warn(response);
         return;
     }
     switch(response.status) {
@@ -77,6 +90,5 @@ window.handleAsyncResponse = function(response) {
             deferred.reject(response);
         break;
     }
-    window.deferred = null;
 }
 

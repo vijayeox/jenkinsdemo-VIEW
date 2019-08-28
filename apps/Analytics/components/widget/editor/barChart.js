@@ -7,24 +7,24 @@ class BarChart extends React.Component {
         this.chart = null;
     }
 
-    static getChartTemplate() {
+    static getChartJsonTemplate() {
         return {
             'series':[{
                 'type':'ColumnSeries',
-                'name':'Sales',
+                'name':'${columnSeriesName}',
                 'dataFields': {
-                    'valueY':'sales',
-                    'categoryX':'person'
+                    'valueY':'${valueColumn}',
+                    'categoryX':'${categoryColumn}'
                 },
                 'tooltipText':'{name}:[bold]{categoryX} - {valueY}[/]'
             }],
             'xAxes':[{
                 'type':'CategoryAxis',
                 'dataFields':{
-                    'category':'person'
+                    'category':'${categoryColumn}'
                 },
                 'title':{
-                    'text':'Person'
+                    'text':'${categoryAxisTitle}'
                 },
                 'renderer':{
                     'grid': {
@@ -38,7 +38,7 @@ class BarChart extends React.Component {
             'yAxes': [{
                 'type':'ValueAxis',
                 'title':{
-                    'text':'Sales (Million $)'
+                    'text':'${valueAxisTitle}'
                 }
             }],
             'cursor': {
@@ -48,15 +48,15 @@ class BarChart extends React.Component {
     }
 
     componentDidMount() {
-        this.chart = am4core.createFromConfig(BarChart.getChartTemplate(), document.querySelector('div#chartPreview'), am4charts.XYChart);
-        this.chart.data = [
-            {'person': 'Bharat', 'sales': 4.2},
-            {'person': 'Harsha', 'sales': 5.2},
-            {'person': 'Mehul', 'sales': 15.2},
-            {'person': 'Rajesh', 'sales': 2.9},
-            {'person': 'Ravi', 'sales': 2.9},
-            {'person': 'Yuvraj', 'sales': 14.2}
-        ];
+        let thiz = this;
+        window.postDataRequest('analytics/widget/' + this.props.widgetId, {}).
+            then(function(responseData) {
+                var chart = am4core.createFromConfig(responseData.configuration, document.querySelector('div#chartPreview'), am4charts.XYChart);
+                chart.data = responseData.data;
+                thiz.chart = chart;
+            }).
+            catch(function(responseData) {
+            });
     }
 
     componentWillUnmount() {
@@ -73,9 +73,10 @@ class BarChart extends React.Component {
                         <div className="form-control">
                             <div className="form-row">
                                 <div className="form-group col">
-                                    
+                                    Column1
                                 </div>
                                 <div className="form-group col">
+                                    Column2
                                 </div>
                             </div>
                         </div>
