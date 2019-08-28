@@ -5,8 +5,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
 import { FaUserLock } from "react-icons/fa";
-
-import { PushData } from "../components/apiCalls";
+import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { Notification } from "@oxzion/gui";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
 
@@ -20,22 +19,35 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.state = {
       userInEdit: [],
-      roleList: []
+      roleList: [],
+      managerName: undefined
     };
     this.notif = React.createRef();
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       this.getUserDetails(this.props.dataItem.uuid).then(response => {
         this.setState({
           userInEdit: response.data
         });
+
+        GetSingleEntityData(
+          "organization/" +
+            this.props.selectedOrg +
+            "/user/" +
+            response.data.managerid
+        ).then(response => {
+          this.setState({
+            managerName: {
+              id: "111",
+              name: response.data.name
+            }
+          });
+        });
       });
     }
-  }
 
-  componentDidMount() {
     this.getRolesList().then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
@@ -47,7 +59,9 @@ export default class DialogContainer extends React.Component {
         roleList: tempUsers
       });
     });
+  }
 
+  componentDidMount() {
     if (this.props.formAction == "put") {
       ReactDOM.render(
         <ReactTooltip
@@ -60,11 +74,6 @@ export default class DialogContainer extends React.Component {
         />,
         document.getElementById("tooltip")
       );
-      this.getUserDetails(this.props.dataItem.uuid).then(response => {
-        this.setState({
-          userInEdit: response.data
-        });
-      });
     }
   }
 
@@ -72,7 +81,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/role",
+      "organization/" + this.props.selectedOrg + "/roles",
       {},
       "get"
     );
@@ -83,12 +92,18 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "/user/" + uuid + "/role+a",
+      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
       "get"
     );
     return rolesList;
   }
+
+  managerValueChange = (field, event) => {
+    let userInEdit = { ...this.state.userInEdit };
+    userInEdit[field] = event.target.value;
+    this.setState({ userInEdit: userInEdit, managerName: event.target.value });
+  };
 
   valueChange = (field, event) => {
     if (field == "role") {
@@ -117,42 +132,59 @@ export default class DialogContainer extends React.Component {
     });
   };
 
+  validateEmail(emailText) {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (!pattern.test(emailText)) {
+      this.notif.current.customWarningNotification(
+        "Invalid Email ID",
+        "Please enter a valid email address."
+      );
+      return true;
+    }
+  }
+
   handleSubmit = event => {
     event.preventDefault();
-    this.notif.current.uploadingData();
+    if (this.validateEmail(document.getElementById("email-id").value)) {
+      return;
+    }
     var userRoles = [];
     for (var i = 0; i <= this.state.userInEdit.role.length - 1; i++) {
       var uid = { uuid: this.state.userInEdit.role[i].uuid };
       userRoles.push(uid);
     }
     if (this.props.formAction == "post") {
-      PushData("user", this.props.formAction, this.props.dataItem.uuid, {
-        username: this.state.userInEdit.username,
-        password: this.state.userInEdit.password,
-        firstname: this.state.userInEdit.firstname,
-        lastname: this.state.userInEdit.lastname,
-        email: this.state.userInEdit.email,
-        date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
-          "YYYY-MM-DD"
-        ),
-        designation: this.state.userInEdit.designation,
-        gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
-        role: userRoles,
-        date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
-          "YYYY-MM-DD"
-        ),
-        country: this.state.userInEdit.country
-      }).then(response => {
-        this.props.action(response.status);
+      PushData(
+        "organization/" + this.props.selectedOrg + "/user",
+        this.props.formAction,
+        this.props.dataItem.uuid,
+        {
+          username: this.state.userInEdit.username,
+          password: this.state.userInEdit.password,
+          firstname: this.state.userInEdit.firstname,
+          lastname: this.state.userInEdit.lastname,
+          email: this.state.userInEdit.email,
+          date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
+            "YYYY-MM-DD"
+          ),
+          designation: this.state.userInEdit.designation,
+          gender: this.state.userInEdit.gender,
+          managerid: this.state.userInEdit.managerid,
+          role: userRoles,
+          date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
+            "YYYY-MM-DD"
+          ),
+          country: this.state.userInEdit.country
+        }
+      ).then(response => {
         if (response.status == "success") {
+          this.props.action(response);
           this.props.cancel();
-        } else if (
-          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-        ) {
-          this.notif.current.duplicateEntry();
         } else {
-          this.notif.current.failNotification();
+          this.notif.current.failNotification(
+            "Error",
+            response.message ? response.message : "Operation failed."
+          );
         }
       });
     } else if (this.props.formAction == "put") {
@@ -173,15 +205,14 @@ export default class DialogContainer extends React.Component {
         ),
         country: this.state.userInEdit.country
       }).then(response => {
-        this.props.action(response.status);
         if (response.status == "success") {
+          this.props.action(response);
           this.props.cancel();
-        } else if (
-          response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-        ) {
-          this.notif.current.duplicateEntry();
         } else {
-          this.notif.current.failNotification();
+          this.notif.current.failNotification(
+            "Error",
+            response.message ? response.message : null
+          );
         }
       });
     }
@@ -212,8 +243,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.firstname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter First Name"
-                    pattern={"[A-Za-z]+"}
-                    minLength={3}
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid First Name"}
@@ -228,8 +258,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.lastname || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Last Name"
-                    pattern={"[A-Za-z]+"}
-                    minLength={2}
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Last Name"}
@@ -245,10 +274,12 @@ export default class DialogContainer extends React.Component {
                   <Input
                     type="text"
                     className="form-control"
+                    id="email-id"
                     name="email"
                     value={this.state.userInEdit.email || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Email Address"
+                    maxLength="254"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid Email Address"}
@@ -267,6 +298,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.username || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter User Name"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
@@ -282,6 +314,7 @@ export default class DialogContainer extends React.Component {
                     value={this.state.userInEdit.designation || ""}
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Designation"
+                    maxLength="50"
                     required={true}
                     readOnly={this.props.diableField ? true : false}
                     validationMessage={"Please enter a valid User Name"}
@@ -345,8 +378,12 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/users"
                       }
-                      selectedItem={this.state.userInEdit.managerid}
-                      onDataChange={e => this.valueChange("managerid", e)}
+                      preFetch={true}
+                      selectedItem={this.state.managerName}
+                      selectedEntityType={"object"}
+                      onDataChange={e =>
+                        this.managerValueChange("managerid", e)
+                      }
                       required={true}
                       disableItem={this.props.diableField}
                     />
@@ -359,6 +396,7 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       rawData={Codes}
                       selectedItem={this.state.userInEdit.country}
+                      preFetch={true}
                       onDataChange={e => this.valueChange("country", e)}
                       required={true}
                       disableItem={this.props.diableField}
@@ -390,7 +428,7 @@ export default class DialogContainer extends React.Component {
                   <label className="required-label">Date Of Birth</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_birth}
                       change={e => this.valueChange("date_of_birth", e)}
                       required={true}
@@ -402,7 +440,7 @@ export default class DialogContainer extends React.Component {
                   <label className="required-label">Date Of Join</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_join}
                       change={e => this.valueChange("date_of_join", e)}
                       required={true}

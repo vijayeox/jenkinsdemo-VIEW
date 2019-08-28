@@ -31,7 +31,7 @@ export default class DialogContainer extends React.Component {
     this.notif = React.createRef();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.formAction == "put"
       ? this.getPrivilegeData().then(response => {
           this.setState({
@@ -147,15 +147,14 @@ export default class DialogContainer extends React.Component {
     event.preventDefault();
     this.notif.current.uploadingData();
     this.pushData().then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
+        this.props.action(response);
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   };
@@ -180,6 +179,7 @@ export default class DialogContainer extends React.Component {
                 className="validate"
                 name="name"
                 value={this.state.roleInEdit.name || ""}
+                maxLength="25"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Role Name"
                 required={true}
@@ -199,6 +199,7 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="description"
                 value={this.state.roleInEdit.description || ""}
+                maxLength="200"
                 onChange={this.onDialogInputChange}
                 required={true}
                 disabled={this.props.diableField ? true : false}

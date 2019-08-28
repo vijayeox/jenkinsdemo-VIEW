@@ -38,6 +38,7 @@ export class TitleBar extends React.Component {
                 id: "111",
                 name: "Switch Organization"
               }}
+              preFetch={true}
               onDataChange={this.props.orgChange}
             />
           </div>

@@ -28,7 +28,11 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "/announcement/" + dataItem + "/save",
+      "organization/" +
+        this.state.selectedOrg +
+        "/announcement/" +
+        dataItem +
+        "/save",
       {
         groups: dataObject
       },
@@ -48,15 +52,6 @@ class Announcement extends React.Component {
     return groupUsers;
   }
 
-  handler = serverResponse => {
-    if (serverResponse == "success") {
-      this.notif.current.successNotification();
-    } else {
-      this.notif.current.failNotification();
-    }
-    this.child.current.child.current.refresh();
-  };
-
   addAncUsers = dataItem => {
     this.getAnnouncementGroups(dataItem.uuid).then(response => {
       this.addUsersTemplate = React.createElement(MultiSelect, {
@@ -65,7 +60,8 @@ class Announcement extends React.Component {
           dataItem: dataItem,
           title: "Announcement",
           mainList: "organization/" + this.state.selectedOrg + "/groups/list",
-          subList: response.data
+          subList: response.data,
+          members: "Groups"
         },
         manage: {
           postSelected: this.sendTheData,
@@ -79,15 +75,28 @@ class Announcement extends React.Component {
   };
 
   sendTheData = (selectedUsers, dataItem) => {
-    var temp2 = [];
-    for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { uuid: selectedUsers[i].uuid };
-      temp2.push(uid);
+    if (selectedUsers.length == 0) {
+      Swal.fire({
+        title: "Action not possible",
+        text: "Please have atleast one group for the Announcement.",
+        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+        imageWidth: 75,
+        imageHeight: 75,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#66bb6a",
+        target: ".Window_Admin"
+      });
+    } else {
+      var temp2 = [];
+      for (var i = 0; i <= selectedUsers.length - 1; i++) {
+        var uid = { uuid: selectedUsers[i].uuid };
+        temp2.push(uid);
+      }
+      this.pushAnnouncementGroups(dataItem, temp2).then(response => {
+        this.child.current.refreshHandler(response);
+      });
+      this.toggleDialog();
     }
-    this.pushAnnouncementGroups(dataItem, temp2).then(response => {
-      this.child.current.refreshHandler(response.status);
-    });
-    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -107,7 +116,8 @@ class Announcement extends React.Component {
       selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.handler,
+      action: this.child.current.refreshHandler,
+      userPreferences: this.props.userProfile.preferences,
       diableField: required.diableField
     });
   };
@@ -121,8 +131,11 @@ class Announcement extends React.Component {
   };
 
   remove = dataItem => {
-    DeleteEntry("announcement", dataItem.uuid).then(response => {
-      this.handler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/announcement",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
@@ -138,7 +151,8 @@ class Announcement extends React.Component {
       selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
-      action: this.handler
+      action: this.child.current.refreshHandler,
+      userPreferences: this.props.userProfile.preferences
     });
   };
 

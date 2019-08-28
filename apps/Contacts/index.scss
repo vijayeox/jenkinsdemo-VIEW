@@ -113,6 +113,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     border: 1px solid #cdcdcd;
     border-radius: 6px;
     height: 55vh;
+    overflow: hidden;
 
     .contactDetailsImage {
       width: 80px;
@@ -326,7 +327,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     transform: scale(1.2);
 
     .checkbox {
-        cursor: pointer;
+      cursor: pointer;
     }
   }
 }

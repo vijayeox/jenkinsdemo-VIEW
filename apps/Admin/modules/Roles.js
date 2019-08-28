@@ -11,7 +11,6 @@ class Role extends React.Component {
     this.state = {
       roleInEdit: undefined,
       roleToBeEdited: [],
-      action: "",
       permission: {
         canAdd: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
@@ -47,8 +46,11 @@ class Role extends React.Component {
   };
 
   remove = dataItem => {
-    DeleteEntry("role", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/role",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 

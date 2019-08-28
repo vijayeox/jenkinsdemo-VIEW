@@ -52,8 +52,8 @@ export default class DialogContainer extends React.Component {
       },
       this.props.selectedOrg
     ).then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
+        this.props.action(response);
         this.props.cancel();
       } else {
         this.notif.current.failNotification(
@@ -82,6 +82,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="name"
+                maxLength="50"
                 value={this.state.prjInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Name"
@@ -95,6 +96,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
+                maxLength="200"
                 value={this.state.prjInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Description"
@@ -114,6 +116,7 @@ export default class DialogContainer extends React.Component {
                         "organization/" + this.props.selectedOrg + "/users"
                       }
                       selectedItem={this.state.prjInEdit.manager_id}
+                      preFetch={true}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }

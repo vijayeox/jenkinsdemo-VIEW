@@ -42,6 +42,11 @@ export async function GetData(api) {
   return response;
 }
 
+export async function GetSingleEntityData(api) {
+  let response = await helper.request("v1", "/" + api, {}, "get");
+  return response;
+}
+
 export async function PushData(api, method, item, body, selectedORG) {
   if (method == "put") {
     let response = await helper.request(
