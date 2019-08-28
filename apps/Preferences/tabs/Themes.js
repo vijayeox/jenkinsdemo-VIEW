@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../components/Notification"
+import Notification from "../public/js/Notification"
 
 class Themes extends Component {
   constructor(props) {

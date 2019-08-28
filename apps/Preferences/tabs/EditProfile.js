@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import Codes from "./Codes";
+import Codes from "../public/js/Codes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Notification from "../components/Notification";
+import Notification from "../public/js/Notification";
 import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
