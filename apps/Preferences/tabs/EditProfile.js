@@ -109,7 +109,7 @@ class EditProfile extends Component {
             statesList.push(s);
           }
         });
-        fields["countryState"] = statesList[0];
+        fields["state"] = statesList[0];
         this.setState({
           stateSelection: false,
           countryWiseStates: statesList,
@@ -295,9 +295,9 @@ class EditProfile extends Component {
       errors["country"] = "*Please select your country";
     }
 
-    if (!fields["countryState"]) {
+    if (!fields["state"]) {
       formIsValid = false;
-      errors["countryState"] = "*Please select your state";
+      errors["state"] = "*Please select your state";
     }
 
     if (!fields["city"]) {
@@ -431,11 +431,21 @@ class EditProfile extends Component {
     }
   };
 
+  errorHandler = type => {
+    this.notif.current.failNotification(
+      "The image must be less than 2MB."
+    );
+  };
+
   chooseImageData = () => {
     if (this.state.showImageDiv == 2) {
       return (
         <div className="chooseImageDiv">
-          <AvatarImageCropper apply={this.apply} isBack={true} />
+          <AvatarImageCropper
+            apply={this.apply}
+            isBack={true}
+            errorHandler={this.errorHandler}
+          />
           <p
             className="btn-sm btn-danger imgBtn"
             onClick={() => {
@@ -734,15 +744,11 @@ class EditProfile extends Component {
                 State
               </label>
               <select
-                value={
-                  this.state.fields.countryState
-                    ? this.state.fields.countryState
-                    : ""
-                }
+                value={this.state.fields.state ? this.state.fields.state : ""}
                 onChange={this.handleChange}
-                ref="countryState"
-                id="countryState"
-                name="countryState"
+                ref="state"
+                id="state"
+                name="state"
                 disabled={this.state.stateSelection}
               >
                 {this.state.countryWiseStates &&
@@ -753,9 +759,7 @@ class EditProfile extends Component {
                     </option>
                   ))}
               </select>
-              <div className="errorMsg">
-                {this.state.errors["countryState"]}
-              </div>
+              <div className="errorMsg">{this.state.errors["state"]}</div>
             </div>
           </div>
 
