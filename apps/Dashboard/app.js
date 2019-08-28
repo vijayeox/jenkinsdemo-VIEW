@@ -1,5 +1,5 @@
 import React from "react";
-import { Dashboard } from "@oxzion/gui";
+import { Dashboard1 } from "@oxzion/gui";
 import { htmlData } from "./sampleData";
 
 class App extends React.Component {
@@ -10,7 +10,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Dashboard
+      <Dashboard1
         htmlData={htmlData}
         args={this.props.args}
         proc={this.props.proc}

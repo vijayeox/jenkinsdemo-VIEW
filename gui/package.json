@@ -9,6 +9,7 @@
     "prepublishOnly": "npm run eslint && rm ./dist/* && npm run build"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.5.15",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@progress/kendo-data-query": "^1.5.1",
     "@progress/kendo-react-dateinputs": "^2.10.0",
