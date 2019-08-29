@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Timezones from "../public/js/Timezones";
+import Timezones from "./Timezones";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../public/js/Notification";
-import DateFormats from "../public/js/DateFormats";
+import Notification from "../components/Notification";
+import DateFormats from "./DateFormats";
 
 class Preferences extends Component {
   constructor(props) {

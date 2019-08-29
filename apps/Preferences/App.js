@@ -42,7 +42,7 @@ async changePassword(formData){
   render() {
     return (
       <Tabs defaultTab="vertical-tab-one">
-        <TabList style={{width:"100%",backgroundColor:"#000"}}>
+        <TabList style={{width:"100%",backgroundImage:"url(./apps/Preferences/bg3.jpg)"}}>
           <div id="click1">
             <Tab tabFor="vertical-tab-one" style={{color:"white"}}>
               <i className="fa fa-user-circle" id="iconj" />
