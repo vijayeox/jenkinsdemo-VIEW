@@ -10,7 +10,6 @@ class Organization extends React.Component {
     this.core = this.props.args;
     this.state = {
       orgInEdit: undefined,
-      orgToBeEdited: [],
       action: "",
       visible: false,
       permission: {
@@ -45,8 +44,9 @@ class Organization extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Organization",
-        mainList: "user",
-        subList: "organization"
+        mainList: "users/list",
+        subList: "organization",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -62,8 +62,8 @@ class Organization extends React.Component {
       temp2.push(uid);
     }
     this.pushOrgUsers(dataItem, temp2).then(response => {
-        this.child.current.refreshHandler(response.status);
-      });
+      this.child.current.refreshHandler(response);
+    });
     this.toggleDialog();
   };
 
@@ -95,7 +95,7 @@ class Organization extends React.Component {
 
   remove = dataItem => {
     DeleteEntry("organization", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+      this.child.current.refreshHandler(response);
     });
   };
 

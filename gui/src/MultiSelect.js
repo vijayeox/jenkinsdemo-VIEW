@@ -1,9 +1,9 @@
 import React from "react";
-import { GetDataSearch, ExistingUsers } from "./components/apiCalls";
+import { ExcludeUsers, ExistingUsers } from "./components/MultiSelect/Requests";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
+import { Notification } from "./../index";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
-import "./public/css/syncfusion.css";
 import { Grid, GridColumn, GridCell } from "@progress/kendo-react-grid";
 import Swal from "sweetalert2";
 import $ from "jquery";
@@ -15,8 +15,9 @@ class MultiSelect extends React.Component {
     this.state = {
       userList: [],
       selectedUsers: [],
-      showHelp: false
+      filterValue: false
     };
+    this.notif = React.createRef();
     this.handleChange = this.handleChange.bind(this);
     this.getMainList = this.getMainList.bind(this);
   }
@@ -40,7 +41,13 @@ class MultiSelect extends React.Component {
         for (var i = 0; i <= response.data.length - 1; i++) {
           var userName = response.data[i].name;
           var userid = response.data[i].uuid;
-          tempUsers.push({ uuid: userid, name: userName });
+          var is_manager =
+            response.data[i].is_manager || response.data[i].is_admin;
+          tempUsers.push({
+            uuid: userid,
+            name: userName,
+            is_manager: is_manager
+          });
         }
         this.setState({
           selectedUsers: tempUsers
@@ -52,7 +59,16 @@ class MultiSelect extends React.Component {
   }
 
   getMainList = (query, size) => {
-    GetDataSearch(this.props.config.mainList, query, size).then(response => {
+    var excludeUsersList = [];
+    this.state.selectedUsers.map(dataItem => {
+      excludeUsersList.push(dataItem.uuid);
+    });
+    ExcludeUsers(
+      this.props.config.mainList,
+      excludeUsersList,
+      query,
+      size
+    ).then(response => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
@@ -70,17 +86,30 @@ class MultiSelect extends React.Component {
   }
 
   filterChange = e => {
+    this.setState({
+      filterValue: e.filter.value.length > 0
+    });
     if (e.filter.value.length > 0) {
       setTimeout(() => {
         this.getMainList(e.filter.value, 20);
       }, 500);
+    } else {
+      this.setState({
+        userList: []
+      });
     }
   };
 
   handleChange(e) {
-    this.setState({
-      selectedUsers: e.target.value
-    });
+    if (this.state.filterValue) {
+      this.notif.current.customSuccessNotification(
+        "Success",
+        e.target.value[e.target.value.length - 1].name + " Added"
+      );
+      this.setState({
+        selectedUsers: e.target.value
+      });
+    }
   }
 
   listNoDataRender = element => {
@@ -98,53 +127,15 @@ class MultiSelect extends React.Component {
     return React.cloneElement(element, { ...element.props }, noData);
   };
 
-  tagRender = (tagData, li) => {
-    const self = this;
+  tagRender = () => {
     $(document).ready(function(item) {
       $(".k-searchbar")
         .children()
         .attr({
-          placeholder:
-            "Search For " +
-            self.capitalizeFirstLetter(self.props.config.mainList) +
-            "'s"
+          placeholder: "Search - Type The Name"
         })
         .css("min-width", "387px");
     });
-  };
-
-  onOpen = () => {
-    const self = this;
-    $(document).ready(function() {
-      $(".k-searchbar")
-        .children()
-        .attr({
-          placeholder:
-            "Search For " +
-            self.capitalizeFirstLetter(self.props.config.mainList) +
-            "'s"
-        })
-        .css("min-width", "387px");
-    });
-  };
-
-  onClose = () => {
-    const self = this;
-    $(document).ready(function() {
-      $(".k-searchbar")
-        .children()
-        .attr({
-          placeholder:
-            "Search For " +
-            self.capitalizeFirstLetter(self.props.config.mainList) +
-            "'s"
-        })
-        .css("min-width", "387px");
-    });
-  };
-
-  onHelpClick = () => {
-    this.setState({ showHelp: !this.state.showHelp });
   };
 
   deleteRecord = item => {
@@ -162,12 +153,13 @@ class MultiSelect extends React.Component {
     return (
       <div className="multiselectWindow">
         <Dialog onClose={this.props.manage.toggleDialog}>
+          <Notification ref={this.notif} />
           <nav className="navbar bg-dark">
             <h6 style={{ color: "white", paddingTop: "3px" }}>
-              {this.props.config.title} &nbsp; -&nbsp;
+              {this.props.config.title} &nbsp; -&nbsp;&nbsp;
               {this.props.config.dataItem.name}
-              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage &nbsp;
-              {this.capitalizeFirstLetter(this.props.config.mainList + "'s")}
+              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage
+              {" " + this.props.config.members}
             </h6>
           </nav>
           <div
@@ -181,15 +173,15 @@ class MultiSelect extends React.Component {
                 value={this.state.selectedUsers}
                 filterable={true}
                 onFilterChange={this.filterChange}
-                onOpen={this.onOpen}
-                onClose={this.onClose}
+                onOpen={this.tagRender}
+                onClose={this.tagRender}
                 autoClose={false}
                 clearButton={false}
                 textField="name"
                 dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
-                placeholder={"Click to add " + this.props.config.mainList}
+                placeholder={"Click to add " + this.props.config.title}
               />
             </div>
           </div>
@@ -198,16 +190,19 @@ class MultiSelect extends React.Component {
               className="col-10 justify-content-center"
               style={{ margin: "auto" }}
             >
-              <Grid data={this.state.selectedUsers}>
+              <Grid data={this.state.selectedUsers} scrollable={"scrollable"}>
                 <GridColumn
                   field="name"
-                  title="Selected Users"
+                  title={"Selected " + this.props.config.members}
                   headerCell={this.columnTitle}
                 />
                 <GridColumn
-                  title="Edit"
-                  width="100px"
-                  cell={cellWithEditing(this.deleteRecord)}
+                  title="Manage"
+                  width="110px"
+                  cell={cellWithEditing(
+                    this.deleteRecord,
+                    this.props.config.title
+                  )}
                 />
               </Grid>
             </div>
@@ -237,36 +232,50 @@ class MultiSelect extends React.Component {
   }
 }
 
-function cellWithEditing(remove) {
+function cellWithEditing(remove, title) {
   return class extends GridCell {
     render() {
       return (
         <td>
-          <button
-            className="k-primary k-button k-grid-edit-command"
-            onClick={() => {
-              Swal.fire({
-                title: "Are you sure?",
-                text:
-                  "You are about to remove " + this.props.dataItem.name + ".",
-                imageUrl:
-                  "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-                imageWidth: 75,
-                imageHeight: 75,
-                confirmButtonText: "OK",
-                confirmButtonColor: "#d33",
-                showCancelButton: true,
-                cancelButtonColor: "#3085d6",
-                target: ".Window_Admin"
-              }).then(result => {
-                if (result.value) {
-                  remove(this.props.dataItem);
-                }
-              });
-            }}
-          >
-            Remove
-          </button>
+          {this.props.dataItem.is_manager !== "1" ? (
+            <center>
+              <button
+                className="k-primary k-button k-grid-edit-command"
+                onClick={() => {
+                  Swal.fire({
+                    title: "Are you sure?",
+                    text:
+                      "You are about to remove " +
+                      this.props.dataItem.name +
+                      ".",
+                    imageUrl:
+                      "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+                    imageWidth: 75,
+                    imageHeight: 75,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#d33",
+                    showCancelButton: true,
+                    cancelButtonColor: "#3085d6",
+                    target: ".Window_Admin"
+                  }).then(result => {
+                    if (result.value) {
+                      remove(this.props.dataItem);
+                    }
+                  });
+                }}
+              >
+                Remove
+              </button>
+            </center>
+          ) : title == "Organization" ? (
+            <center>
+              <b>Admin</b>
+            </center>
+          ) : (
+            <center>
+              <b>Manager</b>
+            </center>
+          )}
         </td>
       );
     }

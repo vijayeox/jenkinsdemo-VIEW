@@ -8,10 +8,7 @@
     .osjs-window-icon > div {
         cursor: auto!important;
     }
+    .osjs-window-icon{
+      background-color: #fab131;
+    }
  }
-.osjs-window[data-id=CalendarWindow] {
-
-.osjs-window-icon{
-  background-color: #fab131;
-}
-}

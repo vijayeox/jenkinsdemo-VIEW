@@ -2,13 +2,14 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
-import { PushDataPOST } from "../components/apiCalls";
+import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel, TimezonePicker, DropDown } from "../components/index";
+import { SaveCancel, DropDown } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
-import IntlTelInput from "react-intl-tel-input";
+import PhoneInput from "react-phone-number-input";
+
 import Codes from "../data/Codes";
-import "react-intl-tel-input/dist/main.css";
+import timezoneCode from "../../public/js/timezones.js";
 import { FaUserLock } from "react-icons/fa";
 
 import CurrencySelect from "../components/Currency Select/currencySelect.js";
@@ -19,12 +20,39 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      orgInEdit: this.props.dataItem || null
+      orgInEdit: this.props.dataItem || null,
+      contactName: [],
+      timeZoneValue: []
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
     this.imageExists = this.props.dataItem.logo ? true : false;
+  }
+
+  UNSAFE_componentWillMount() {
+    if (this.props.formAction == "put") {
+      this.setState({
+        timeZoneValue: {
+          id: "111",
+          name: this.state.orgInEdit.preferences.timezone
+        }
+      });
+      GetSingleEntityData(
+        "organization/" +
+          this.props.dataItem.uuid +
+          "/user/" +
+          this.props.dataItem.contactid +
+          "/profile"
+      ).then(response => {
+        this.setState({
+          contactName: {
+            id: "111",
+            name: response.data.name
+          }
+        });
+      });
+    }
   }
 
   onDialogInputChange = event => {
@@ -54,17 +82,20 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onContactPhoneChange = (inValid, newNumber, data, fullNumber) => {
+  onContactPhoneChange = fullNumber => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
-    orgInEdit["contact"]["phone"] = fullNumber.replace(/\s|-/g, "");
-    this.setState({ orgInEdit: orgInEdit, contactValid: inValid });
+    orgInEdit["contact"]["phone"] = fullNumber;
+    this.setState({ orgInEdit: orgInEdit });
   };
 
   dropdownChange = (field, event) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit[field] = event.target.value;
     this.setState({ orgInEdit: orgInEdit });
+    if (field == "contactid") {
+      this.setState({ contactName: event.target.value });
+    }
   };
 
   valueChange = (field, event) => {
@@ -73,11 +104,51 @@ export default class DialogContainer extends React.Component {
       ? orgInEdit["preferences"]
       : {};
     orgInEdit["preferences"][field] = event;
-
     this.setState({ orgInEdit: orgInEdit });
+    if (field == "timezone") {
+      this.setState({
+        timeZoneValue: {
+          id: "111",
+          name: event
+        }
+      });
+    }
   };
 
+  validateEmail(emailText) {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (!pattern.test(emailText)) {
+      this.notif.current.customWarningNotification(
+        "Invalid Email ID",
+        "Please enter a valid email address."
+      );
+      return true;
+    }
+  }
+
   pushData = () => {
+    if (
+      document.getElementById("select-currency").value !==
+      this.state.orgInEdit.preferences.currency
+    ) {
+      this.notif.current.customWarningNotification(
+        "Invalid Currency",
+        "Please choose a valid currency from the list."
+      );
+      return;
+    }
+    if (this.props.formAction == "post") {
+      if (
+        this.validateEmail(
+          document.getElementById("email-id").value
+            ? document.getElementById("email-id").value
+            : "dummydata@mail.com"
+        )
+      ) {
+        return;
+      }
+    }
+
     this.notif.current.uploadingData();
     if (this.props.formAction == "post") {
       var contactData = JSON.stringify({
@@ -85,44 +156,54 @@ export default class DialogContainer extends React.Component {
         lastname: this.state.orgInEdit.contact.lastname,
         username: this.state.orgInEdit.contact.username,
         email: this.state.orgInEdit.contact.email,
-        phone: "+" + this.state.orgInEdit.contact.phone
+        phone: this.state.orgInEdit.contact.phone
       });
-      var contact_id = this.state.orgInEdit.contactid;
+      var logoFile = this.fUpload.current.state.selectedFile[0].getRawFile();
     } else {
       var contactData = [];
-      var contact_id = [];
+      var contact_id = this.state.orgInEdit.contactid;
+      var logoFile = this.fUpload.current.state.selectedFile[0]
+        ? this.fUpload.current.state.selectedFile[0].getRawFile()
+        : undefined;
     }
 
+    let tempData = {
+      name: this.state.orgInEdit.name,
+      address: this.state.orgInEdit.address,
+      city: this.state.orgInEdit.city,
+      state: this.state.orgInEdit.state,
+      country: this.state.orgInEdit.country,
+      zip: this.state.orgInEdit.zip,
+      logo: logoFile,
+      contact: contactData,
+      contactid: contact_id || null,
+      preferences: JSON.stringify({
+        dateformat: this.state.orgInEdit.preferences.dateformat,
+        currency: this.state.orgInEdit.preferences.currency,
+        timezone: this.state.orgInEdit.preferences.timezone
+      })
+    };
+
+    for (var i = 0; i <= Object.keys(tempData).length; i++) {
+      let propertyName = Object.keys(tempData)[i];
+      if (tempData[propertyName] == undefined) {
+        delete tempData[propertyName];
+      }
+    }
     PushDataPOST(
       "organization",
       this.props.formAction,
       this.state.orgInEdit.uuid,
-      {
-        name: this.state.orgInEdit.name,
-        address: this.state.orgInEdit.address,
-        city: this.state.orgInEdit.city,
-        state: this.state.orgInEdit.state,
-        country: this.state.orgInEdit.country,
-        zip: this.state.orgInEdit.zip,
-        logo: this.fUpload.current.firstUpload.cachedFileArray[0],
-        contact: contactData,
-        contact_id: contact_id || undefined,
-        preferences: JSON.stringify({
-          dateformat: this.state.orgInEdit.preferences.dateformat,
-          currency: this.state.orgInEdit.preferences.currency,
-          timezone: this.state.orgInEdit.preferences.timezone
-        })
-      }
+      tempData
     ).then(response => {
-      this.props.action(response.status);
       if (response.status == "success") {
+        this.props.action(response);
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   };
@@ -132,7 +213,7 @@ export default class DialogContainer extends React.Component {
     if (this.imageExists) {
       this.pushData();
     } else {
-      if (this.fUpload.current.firstUpload.cachedFileArray.length == 0) {
+      if (this.fUpload.current.state.selectedFile.length == 0) {
         var elm = document.getElementsByClassName("orgFileUploader")[0];
         scrollIntoView(elm, {
           scrollMode: "if-needed",
@@ -140,7 +221,10 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.uploadImage();
+        this.notif.current.customWarningNotification(
+          "No image selected",
+          "Please choose a logo for the Organization."
+        );
       } else {
         this.pushData();
       }
@@ -175,6 +259,7 @@ export default class DialogContainer extends React.Component {
                 name="name"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Name"
+                maxLength="100"
                 required={true}
                 validationMessage={"Please enter a valid Organization Name"}
                 readOnly={this.props.diableField ? true : false}
@@ -189,6 +274,7 @@ export default class DialogContainer extends React.Component {
                 name="address"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
+                maxLength="250"
                 style={{ marginTop: "5px" }}
                 required={true}
                 readOnly={this.props.diableField ? true : false}
@@ -207,6 +293,7 @@ export default class DialogContainer extends React.Component {
                       name="city"
                       onChange={this.onDialogInputChange}
                       placeholder="Enter City"
+                      maxLength="50"
                       required={true}
                       validationMessage={"Please enter the city name."}
                       readOnly={this.props.diableField ? true : false}
@@ -223,6 +310,7 @@ export default class DialogContainer extends React.Component {
                       name="state"
                       onChange={this.onDialogInputChange}
                       placeholder="Enter State"
+                      maxLength="50"
                       required={true}
                       validationMessage={"Please enter the state name."}
                       readOnly={this.props.diableField ? true : false}
@@ -237,13 +325,15 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <label className="required-label">Zip Code</label>
                   <Input
-                    type="number"
+                    type="text"
                     value={this.state.orgInEdit.zip || ""}
                     name="zip"
+                    pattern="[0-9]+"
+                    maxLength="6"
                     onChange={this.onDialogInputChange}
                     placeholder="Enter Zip Code"
                     required={true}
-                    validationMessage={"Please enter the Zip Code."}
+                    validationMessage={"Please enter a valid Zip Code."}
                     readOnly={this.props.diableField ? true : false}
                   />
                 </div>
@@ -277,7 +367,8 @@ export default class DialogContainer extends React.Component {
                           this.props.dataItem.uuid +
                           "/adminusers"
                         }
-                        selectedItem={this.state.orgInEdit.contactid}
+                        preFetch={true}
+                        selectedItem={this.state.contactName}
                         onDataChange={e => this.dropdownChange("contactid", e)}
                         required={true}
                       />
@@ -300,6 +391,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.firstname
                           : ""
                       }
+                      maxLength="50"
                       onChange={this.onContactIPChange}
                       placeholder="Enter First Name"
                       required={true}
@@ -315,6 +407,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.lastname
                           : ""
                       }
+                      maxLength="50"
                       onChange={this.onContactIPChange}
                       placeholder="Enter Last Name"
                       required={true}
@@ -332,6 +425,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.contact.username
                           : ""
                       }
+                      maxLength="25"
                       onChange={this.onContactIPChange}
                       placeholder="Enter User Name"
                       required={true}
@@ -341,32 +435,27 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="form-row" style={{ marginTop: "10px" }}>
                   <div className="col">
-                    <IntlTelInput
-                      containerClassName="intl-tel-input"
-                      inputClassName="form-control contactPhone"
+                    <PhoneInput
+                      placeholder="Enter phone number"
                       value={contactValue}
-                      preferredCountries={["in", "us"]}
-                      onPhoneNumberChange={this.onContactPhoneChange}
-                      placeholder="Enter Phone Number"
-                      autoHideDialCode={true}
-                      formatOnInit={false}
-                      formatFull={false}
-                      telInputProps={{
-                        required: true,
-                        pattern: "++[0-9]"
-                      }}
-                      format={false}
+                      onChange={phone => this.onContactPhoneChange(phone)}
+                      international={false}
+                      maxLength="15"
+                      required={true}
+                      countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
                   </div>
                   <div className="col">
                     <Input
                       type="email"
                       name="email"
+                      id="email-id"
                       value={
                         this.state.orgInEdit.contact
                           ? this.state.orgInEdit.contact.email
                           : ""
                       }
+                      maxLength="250"
                       onChange={this.onContactIPChange}
                       placeholder="Enter Email ID"
                       required={true}
@@ -437,21 +526,20 @@ export default class DialogContainer extends React.Component {
               <div className="form-row" style={{ marginTop: "5px" }}>
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
-                  <TimezonePicker
-                    onChange={e => this.valueChange("timezone", e)}
+                  <DropDown
+                    args={this.core}
                     disableItem={this.props.diableField}
-                    value={
+                    rawData={timezoneCode}
+                    onDataChange={e =>
+                      this.valueChange("timezone", e.target.value.id)
+                    }
+                    keyValuePair={true}
+                    selectedItem={
                       this.state.orgInEdit.preferences
-                        ? this.state.orgInEdit.preferences.timezone
+                        ? this.state.timeZoneValue
                         : ""
                     }
-                    inputProps={{
-                      placeholder: "Select Organization Timezone",
-                      name: "timezone",
-                      required: true,
-                      readOnly: this.props.diableField ? true : false,
-                      autoComplete: "off"
-                    }}
+                    required={true}
                   />
                 </div>
               </div>
@@ -463,9 +551,10 @@ export default class DialogContainer extends React.Component {
               <div className="orgFileUploader">
                 <FileUploader
                   ref={this.fUpload}
-                  url={this.url}
                   required={true}
-                  media={this.props.dataItem.logo}
+                  media_type={"image"}
+                  acceptFileTypes={"image/*"}
+                  media_URL={this.props.dataItem.logo}
                   title={"Upload Organization Logo"}
                   uploadID={"organizationLogo"}
                 />

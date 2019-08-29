@@ -47,6 +47,11 @@ export async function DeleteContact(uuid) {
   return response;
 }
 
+export async function DeleteSelectedContacts(UUIDlist) {
+  let response = await helper.request("v1", "/contacts/delete", UUIDlist, "post");
+  return response;
+}
+
 export async function ImportContacts(data) {
   let response = await helper.request(
     "v1",

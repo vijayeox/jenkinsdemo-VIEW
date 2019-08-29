@@ -42,6 +42,7 @@ class ContactListWidget extends React.Component {
             args={this.core}
             contact={contact}
             handleSelected={this.props.handleSelected}
+            handleChecked={this.props.handleChecked}
             key={key}
           />
         );

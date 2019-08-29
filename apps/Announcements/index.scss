@@ -1,5 +1,5 @@
 .Window_Announcements {
-  @import "./node_modules/bootstrap/dist/css/bootstrap.css";
+  @import "~bootstrap/scss/bootstrap.scss";
   @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
   $primary: rgb(182, 157, 230);
 
@@ -88,6 +88,7 @@
     margin-left: 6%;
     margin-right: 6%;
     margin-bottom: 1%;
+    word-break: break-word;
   }
 
   .slider-wrapper {

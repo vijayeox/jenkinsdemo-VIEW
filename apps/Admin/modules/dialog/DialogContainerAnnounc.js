@@ -1,9 +1,11 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
+import scrollIntoView from "scroll-into-view-if-needed";
 import { FileUploader, Notification } from "@oxzion/gui";
 import { SaveCancel, DateComponent } from "../components/index";
 import Moment from "moment";
+import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -24,8 +26,9 @@ export default class DialogContainer extends React.Component {
   };
 
   async pushFile(event) {
-    var files = this.fUpload.current.firstUpload.cachedFileArray[0];
+    var files = this.fUpload.current.state.selectedFile[0].getRawFile();
     let helper = this.core.make("oxzion/restClient");
+
     let ancFile = await helper.request(
       "v1",
       "/attachment",
@@ -42,14 +45,16 @@ export default class DialogContainer extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
-      "/announcement",
+      "organization/" + this.props.selectedOrg + "/announcement",
       {
         name: this.state.ancInEdit.name,
         media: fileCode,
         status: "1",
         description: this.state.ancInEdit.description,
         media_type: this.state.ancInEdit.media_type,
-        start_date: new Moment(this.state.ancInEdit.start_date).format("YYYY-MM-DD"),
+        start_date: new Moment(this.state.ancInEdit.start_date).format(
+          "YYYY-MM-DD"
+        ),
         end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "post"
@@ -68,8 +73,10 @@ export default class DialogContainer extends React.Component {
         status: "1",
         description: this.state.ancInEdit.description,
         media_type: this.state.ancInEdit.media_type,
-        start_date: new Moment(this.state.ancInEdit.start_date).format(),
-        end_date: new Moment(this.state.ancInEdit.end_date).format()
+        start_date: new Moment(this.state.ancInEdit.start_date).format(
+          "YYYY-MM-DD"
+        ),
+        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "put"
     );
@@ -93,11 +100,25 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  media_typeChange = event => {
+  media_typeChange = value => {
     let ancInEdit = { ...this.state.ancInEdit };
-    ancInEdit.media_type = event.target.value;
+    ancInEdit.media_type = value;
     this.setState({ ancInEdit: ancInEdit });
   };
+
+  editTriggerFunction(file) {
+    this.editAnnouncements(file).then(response => {
+      if (response.status == "success") {
+        this.props.action(response);
+        this.props.cancel();
+      } else {
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
+      }
+    });
+  }
 
   onDialogInputChange = event => {
     let target = event.target;
@@ -115,38 +136,43 @@ export default class DialogContainer extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     if (this.props.formAction == "put") {
-      this.pushFile().then(response => {
-        var addResponse = response.data.filename[0];
-        this.editAnnouncements(addResponse).then(response => {
-          console.log(response);
-          this.props.action(response.status);
-          if (response.status == "success") {
-            this.props.cancel();
-          } else if (
-            response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-          ) {
-            this.notif.current.duplicateEntry();
-          } else {
-            this.notif.current.failNotification();
-          }
+      if (this.fUpload.current.state.selectedFile.length == 0) {
+        this.editTriggerFunction(this.props.dataItem.media);
+      } else {
+        this.pushFile().then(response => {
+          var addResponse = response.data.filename[0];
+          this.editTriggerFunction(addResponse);
         });
-      });
+      }
     } else {
-      this.pushFile().then(response => {
-        var addResponse = response.data.filename[0];
-        this.pushData(addResponse).then(response => {
-          this.props.action(response.status);
-          if (response.status == "success") {
-            this.props.cancel();
-          } else if (
-            response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-          ) {
-            this.notif.current.duplicateEntry();
-          } else {
-            this.notif.current.failNotification();
-          }
+      if (this.fUpload.current.state.selectedFile.length == 0) {
+        var elm = document.getElementsByClassName("ancBannerUploader")[0];
+        scrollIntoView(elm, {
+          scrollMode: "if-needed",
+          block: "center",
+          behavior: "smooth",
+          inline: "nearest"
         });
-      });
+        this.notif.current.customWarningNotification(
+          "No Media Selected",
+          "Please select a banner for the Announcement."
+        );
+      } else {
+        this.pushFile().then(response => {
+          var addResponse = response.data.filename[0];
+          this.pushData(addResponse).then(response => {
+            if (response.status == "success") {
+              this.props.action(response);
+              this.props.cancel();
+            } else {
+              this.notif.current.failNotification(
+                "Error",
+                response.message ? response.message : null
+              );
+            }
+          });
+        });
+      }
     }
   };
 
@@ -156,109 +182,108 @@ export default class DialogContainer extends React.Component {
         <Notification ref={this.notif} />
         <div className="container-fluid">
           <form onSubmit={this.handleSubmit} id="ancForm">
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <FaUserLock />
+              </div>
+            ) : null}
             <div className="form-group">
-              <label>Announcement Title</label>
+              <label className="required-label">Announcement Title</label>
               <input
                 type="text"
                 className="form-control"
                 name="name"
                 value={this.state.ancInEdit.name || ""}
+                maxLength="100"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group text-area-custom">
-              <label>Description</label>
+              <label className="required-label">Description</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
                 name="description"
+                maxLength="500"
                 value={this.state.ancInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"
                 style={{ marginTop: "5px", minHeight: "100px" }}
                 required={true}
+                readOnly={this.props.diableField ? true : false}
               />
             </div>
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col-6">
-                  <label>Media Type</label>
-                  <div className="pt-2">
-                    <span className="col-6">
-                      <input
-                        type="radio"
-                        id="iRadio"
-                        name="media_type"
-                        value="image"
-                        className="k-radio"
-                        onChange={this.media_typeChange}
-                        checked={this.state.ancInEdit.media_type == "image"}
-                        required
-                      />
-                      <label
-                        className="k-radio-label pl-4 radioLabel"
-                        htmlFor="iRadio"
-                      >
-                        Image
-                      </label>
-                    </span>
-                    <span className="col-4">
-                      <input
-                        type="radio"
-                        id="vRadio"
-                        name="media_type"
-                        value="video"
-                        className="k-radio pl-2"
-                        onChange={this.media_typeChange}
-                        checked={this.state.ancInEdit.media_type == "video"}
-                        required
-                      />
-                      <label
-                        className="k-radio-label pl-4 radioLabel"
-                        htmlFor="vRadio"
-                      >
-                        Video
-                      </label>
-                    </span>
-                  </div>
-                </div>
-                <div className="col-3">
-                  <label>Start Data</label>
+                <div className="col-4 ">
+                  <label className="required-label">Start Data</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.start_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("start_date", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
-                <div className="col-3">
-                  <label>End Date</label>
+                <div className="col-4">
+                  <label className="required-label">End Date</label>
                   <div>
                     <DateComponent
-                      format={"dd-MMM-yyyy"}
+                      format={this.props.userPreferences.dateformat}
                       value={this.state.ancInEdit.end_date}
+                      min={new Date()}
+                      max={
+                        new Date(
+                          new Date().getTime() + 365 * 24 * 60 * 60 * 1000
+                        )
+                      }
                       change={e => this.valueChange("end_date", e)}
                       required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
               </div>
             </div>
-            <FileUploader
-              ref={this.fUpload}
-              url={this.url}
-              media={this.props.dataItem.media}
-              title={"Upload Announcement Banner"}
-              uploadID={"announcementLogo"}
-            />
+            {this.props.diableField ? (
+              <div style={{ margin: "50px" }} />
+            ) : (
+              <div className="ancBannerUploader">
+                <FileUploader
+                  ref={this.fUpload}
+                  media_URL={
+                    this.props.dataItem.media
+                      ? this.url + "resource/" + this.props.dataItem.media
+                      : undefined
+                  }
+                  acceptFileTypes={"image/*, video/mp4"}
+                  media_typeChange={this.media_typeChange}
+                  media_type={this.state.ancInEdit.media_type}
+                  title={"Upload Announcement Banner"}
+                  uploadID={"announcementLogo"}
+                />
+              </div>
+            )}
           </form>
         </div>
-        <SaveCancel save="ancForm" cancel={this.props.cancel} />
+        <SaveCancel
+          save="ancForm"
+          cancel={this.props.cancel}
+          hideSave={this.props.diableField}
+        />
       </Window>
     );
   }
