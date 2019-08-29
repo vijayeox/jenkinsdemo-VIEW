@@ -36,7 +36,8 @@ export default class DialogContainer extends React.Component {
           "organization/" +
             this.props.selectedOrg +
             "/user/" +
-            response.data.managerid
+            response.data.managerid +
+            "/profile"
         ).then(response => {
           this.setState({
             managerName: {
