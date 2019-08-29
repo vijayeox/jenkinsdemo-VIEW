@@ -35,19 +35,21 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
-      GetSingleEntityData(
-        "organization/" +
-          this.props.selectedOrg +
-          "/group/" +
-          this.props.dataItem.parent_id
-      ).then(response => {
-        this.setState({
-          parentGroupName: {
-            id: "111",
-            name: response.data.name
-          }
-        });
-      });
+      this.props.dataItem.parent_id
+        ? GetSingleEntityData(
+            "organization/" +
+              this.props.selectedOrg +
+              "/group/" +
+              this.props.dataItem.parent_id
+          ).then(response => {
+            this.setState({
+              parentGroupName: {
+                id: "111",
+                name: response.data.name
+              }
+            });
+          })
+        : null;
     }
   }
 
