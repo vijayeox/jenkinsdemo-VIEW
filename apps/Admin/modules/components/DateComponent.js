@@ -8,6 +8,7 @@ export default class DateComponent extends React.Component {
     this.state = {
       value: null
     };
+    this.dateformat = this.props.format.replace(/m/g, "M");
   }
 
   UNSAFE_componentWillMount() {
@@ -33,7 +34,7 @@ export default class DateComponent extends React.Component {
   render() {
     return (
       <DatePicker
-        format={this.props.format}
+        format={this.dateformat}
         value={this.state.value}
         min={this.props.min}
         max={this.props.max}
