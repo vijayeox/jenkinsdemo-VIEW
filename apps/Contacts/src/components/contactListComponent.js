@@ -18,6 +18,7 @@ class ContactListComponent extends React.Component {
                 className="checkbox"
                 value={this.props.contact.uuid}
                 onChange={this.props.handleChecked}
+                key={this.props.contact.uuid}
               />
             </div>
           ) : null}
