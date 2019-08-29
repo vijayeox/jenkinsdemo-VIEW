@@ -1,5 +1,4 @@
 import React from "react";
-import { ExcludeUsers, ExistingUsers } from "./components/MultiSelect/Requests";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
 import { Notification } from "./../index";
@@ -17,10 +16,45 @@ class MultiSelect extends React.Component {
       selectedUsers: [],
       filterValue: false
     };
+    this.helper = this.core.make("oxzion/restClient");
     this.notif = React.createRef();
     this.handleChange = this.handleChange.bind(this);
     this.getMainList = this.getMainList.bind(this);
   }
+  async ExcludeUsers(api, excludeList, term, size) {
+  if (term) {
+    var query = {
+      filter: {
+        logic: "and",
+        filters: [{ field: "name", operator: "contains", value: term }]
+      },
+      skip: 0,
+      take: size
+    };
+  } else {
+    var query = {
+      skip: 0,
+      take: size
+    };
+  }
+
+  let response = await this.helper.request(
+    "v1",
+    "/" + api,
+    { exclude: excludeList, filter: "[" + JSON.stringify(query) + "]" },
+    "post"
+  );
+  return response;
+}
+async ExistingUsers(api, selectedEntity) {
+  let response = await this.helper.request(
+    "v1",
+    "/" + api + "/" + selectedEntity + "/users",
+    {},
+    "get"
+  );
+  return response;
+}
 
   componentDidMount() {
     let loader = this.core.make("oxzion/splash");
@@ -33,7 +67,7 @@ class MultiSelect extends React.Component {
       let loader = this.core.make("oxzion/splash");
       loader.destroy();
     } else {
-      ExistingUsers(
+      this.ExistingUsers(
         this.props.config.subList,
         this.props.config.dataItem.uuid
       ).then(response => {
@@ -63,7 +97,7 @@ class MultiSelect extends React.Component {
     this.state.selectedUsers.map(dataItem => {
       excludeUsersList.push(dataItem.uuid);
     });
-    ExcludeUsers(
+    this.ExcludeUsers(
       this.props.config.mainList,
       excludeUsersList,
       query,

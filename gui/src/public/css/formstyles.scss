@@ -1,0 +1,9 @@
+.form-render{
+	all: initial;
+	@import "~bootswatch/dist/materia/_variables.scss";
+	@import "~bootstrap/scss/bootstrap.scss";
+	@import "~bootswatch/dist/materia/_bootswatch.scss";
+	$fa-font-path: '../../../node_modules/font-awesome/fonts';
+	@import '~font-awesome/scss/font-awesome';
+	@import '~formiojs/dist/formio.full.css';
+}

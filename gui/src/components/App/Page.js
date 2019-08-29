@@ -2,7 +2,8 @@ import React from "react";
 import FormRender from "./FormRender";
 import ReactDOM from "react-dom";
 import Document from "./Document.js";
-import Loader from "./Loader";
+import Loader from 'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
 class Page extends React.Component {
     constructor(props) {
@@ -11,16 +12,17 @@ class Page extends React.Component {
         this.appId = this.props.app;
         this.state = {
             pageContent: [],
-            pageId: this.props.pageId
+            pageId: this.props.pageId,
+            submission: this.props.submission
         }
+        this.contentDiv = "root_"+this.appId+"_"+this.state.pageId;
         this.loadPage(this.props.pageId);
     }
     loadPage(pageId){
         this.getPageContent(pageId).then(response => {
             if(response.status == 'success'){
-                this.setState({ pageContent: this.renderContent(response.data) }); 
+                this.setState({ pageContent: this.renderContent(response.data.content) }); 
             } else {
-                console.log(response.message);
                 this.setState({ pageContent: this.renderContent([]) });
             }
         });
@@ -45,10 +47,10 @@ class Page extends React.Component {
         for (var i = 0; i < data.length; i++) {
             switch(data[i].type) {
               case 'Form':
-                content.push(<FormRender content={data[i].content} config={this.menu} core={this.config}/>);
+                content.push(<FormRender core={this.core} appId={this.appId} content={data[i].content} formId={data[i].form_id} config={this.menu}/>);
                 break;
               default:
-                content.push(<Document content={data[i].content} config={this.menu} core={this.config}/>);
+                content.push(<Document core={this.core} key={i} appId={this.appId} content={data[i].content} config={this.menu}/>);
                 break;
             }
         }
@@ -59,14 +61,14 @@ class Page extends React.Component {
         }
         return content;
     }
-      
+
     render() {
         if(this.state.pageContent && this.state.pageContent.length > 0 ){
-            return <div id="root_{this.appId}_{this.pageId}">
+            return <div id={this.contentDiv}>
             {this.state.pageContent}
             </div>
         }
-        return (<Loader />);
+        return (<Loader type="Circles" color="#00BFFF" height={100} width={100} />);
     }
 }
 

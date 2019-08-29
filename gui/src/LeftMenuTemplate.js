@@ -9,7 +9,7 @@ import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 class LeftMenuTemplate extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.args;
+    this.core = this.props.core;
     this.appId = this.props.appId;
     this.state = {
       menus: [],
@@ -47,7 +47,7 @@ render() {
   const { expanded ,selected} = this.state;
   let selection;
   if (this.state.selected.page_id) {
-    selection = <Page pageId={this.state.selected.page_id} config={this.props.config} app={this.props.appId} core={this.props.args}/>
+    selection = <Page pageId={this.state.selected.page_id} config={this.props.config} app={this.props.appId} core={this.core}/>
   }
   return (
     <div
