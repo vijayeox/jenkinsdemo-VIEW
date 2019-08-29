@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Timezones from "../public/js/Timezones";
+import Timezones from "./Timezones";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../public/js/Notification";
-import DateFormats from "../public/js/DateFormats";
+import Notification from "../components/Notification";
+import DateFormats from "./DateFormats";
 
 class Preferences extends Component {
   constructor(props) {
@@ -204,10 +204,10 @@ class Preferences extends Component {
         <Notification ref={this.notif} />
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-4" id="sound">
+            <div className="col-md-4" id="sound">
               <label id="labelname">Sound Notification:</label>
             </div>
-            <div className="col-8">
+            <div className="col-md-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -233,10 +233,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-4" id="emailalert">
+            <div className="col-md-4" id="emailalert">
               <label id="labelname">Email Alerts:</label>
             </div>
-            <div className="col-8">
+            <div className="col-md-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -262,10 +262,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-4" id="localtimezone">
+            <div className="col-md-4" id="localtimezone">
               <label id="labelname">Local Time Zone:</label>
             </div>
-            <div className="col-4 timezonediv">
+            <div className="col-md-4 timezonediv">
               <select
                 value={this.state.fields["timezone"]}
                 onChange={this.handleChange}
@@ -284,10 +284,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="input-field col-4" id="datef">
+            <div className="input-field col-md-4" id="datef">
               <label id="labelname">Date Format:</label>
             </div>
-            <div className="input-field col-4">
+            <div className="input-field col-md-4">
               <select
                 value={this.state.fields["dateformat"]}
                 onChange={this.handleChange}
@@ -306,10 +306,10 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize" style={{ paddingTop: "5px" }}>
-            <div className="col-4" id="locallanguage">
+            <div className="col-md-4" id="locallanguage">
               <label id="labelname">Language:</label>
             </div>
-            <div className="col-4 languagediv">
+            <div className="col-md-4 languagediv">
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
@@ -329,7 +329,7 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <button className="k-button k-primary" type="submit">
                 Submit
               </button>
