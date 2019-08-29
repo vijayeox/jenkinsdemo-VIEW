@@ -443,6 +443,11 @@ export default class DialogContainer extends React.Component {
                     <DateComponent
                       format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_join}
+                      min={
+                        this.state.userInEdit.date_of_birth
+                          ? this.state.userInEdit.date_of_birth
+                          : undefined
+                      }
                       change={e => this.valueChange("date_of_join", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
