@@ -1,31 +1,17 @@
 import React, { Component } from "react";
-import Codes from "../public/js/Codes";
+import Codes from "./Codes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Notification from "../public/js/Notification";
+import Notification from "../components/Notification";
 import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
-import { Editor, EditorTools } from "@progress/kendo-react-editor";
-import countries from "../public/js/countries";
-import states from "../public/js/states";
-
-const {
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignRight,
-  AlignCenter,
-  Indent,
-  Outdent,
-  OrderedList,
-  UnorderedList,
-  Undo,
-  Redo,
-  Link,
-  Unlink
-} = EditorTools;
+import { Editor, EditorTools } from '@progress/kendo-react-editor';
+const { Bold, Italic, Underline,
+  AlignLeft, AlignRight, AlignCenter,
+  Indent, Outdent,
+  OrderedList, UnorderedList,
+  Undo, Redo, Link, Unlink } = EditorTools;
 
 class EditProfile extends Component {
   constructor(props) {
@@ -62,9 +48,7 @@ class EditProfile extends Component {
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
-      icon: this.userprofile.key.icon + "?" + new Date(),
-      countryWiseStates: [],
-      stateSelection: true
+      icon: this.userprofile.key.icon + "?" + new Date()
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -74,11 +58,11 @@ class EditProfile extends Component {
     Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
-  onSelect1 = event => {
+  onSelect1 = (event) => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
-  };
+  }
 
   splitPhoneNumber() {
     if (this.state.fields.phone == (null || undefined)) {
@@ -93,49 +77,15 @@ class EditProfile extends Component {
     }
   }
 
-  onSelect2 = event => {
+  onSelect2 = (event) => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
-  };
-
-  setStateList = () => {
-    var statesList = [];
-    let fields = this.state.fields;
-    countries.forEach(country => {
-      if (country.name == this.state.fields.country) {
-        states.forEach(s => {
-          if (s.country_id == country.id) {
-            statesList.push(s);
-          }
-        });
-        fields["state"] = statesList[0];
-        this.setState({
-          stateSelection: false,
-          countryWiseStates: statesList,
-          fields
-        });
-      }
-    });
-  };
+  }
 
   componentWillMount() {
     this.state.dateformat = this.state.dateformat.replace(/m/g, "M");
     this.splitPhoneNumber();
-    if (this.state.fields.country) {
-      this.setStateList();
-    } else {
-      let fields = this.state.fields;
-      fields["country"] = countries[0].name;
-      this.setState(
-        {
-          fields
-        },
-        () => {
-          this.setStateList();
-        }
-      );
-    }
     if (Moment(this.state.fields.date_of_birth, "YYYY-MM-DD", true).isValid()) {
       const Dateiso = new Moment(
         this.state.fields.date_of_birth,
@@ -156,44 +106,22 @@ class EditProfile extends Component {
     this.setState({ fields: fields });
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-  };
+  }
 
-  handleCountryChange = e => {
-    let fields = this.state.fields;
-    fields[e.target.name] = e.target.value;
-    var country_id;
-    var statesList = [];
-    countries.forEach(country => {
-      if (country.name == e.target.value) {
-        country_id = country.id;
-        states.forEach(s => {
-          if (s.country_id == country_id) {
-            statesList.push(s);
-          }
-        });
-        this.setState({
-          stateSelection: false,
-          countryWiseStates: statesList,
-          fields
-        });
-      }
-    });
-  };
-
-  handleChangeAboutField = value => {
+  handleChangeAboutField = (value) => {
     console.log(value);
     let fields = this.state.fields;
-    fields["about"] = value;
+    fields['about'] = value;
     this.setState({
       fields
     });
-  };
+  }
 
   async handleSubmit(event) {
     event.preventDefault();
@@ -207,9 +135,7 @@ class EditProfile extends Component {
         fields: fields
       });
 
-      let date_of_birth = new Moment(this.state.fields.date_of_birth).format(
-        "YYYY-MM-DD"
-      );
+      let date_of_birth = new Moment(this.state.fields.date_of_birth).format("YYYY-MM-DD");
 
       Object.keys(this.state.fields).map(key => {
         if (key == "date_of_birth") {
@@ -244,7 +170,8 @@ class EditProfile extends Component {
         );
         this.core.make("oxzion/profile").update();
       }
-    } else {
+    }
+    else{
       this.notif.current.failNotification(
         "Please fill all the mandatory fields."
       );
@@ -288,26 +215,6 @@ class EditProfile extends Component {
     if (!fields["interest"]) {
       formIsValid = false;
       errors["interest"] = "*Please enter your interest";
-    }
-
-    if (!fields["country"]) {
-      formIsValid = false;
-      errors["country"] = "*Please select your country";
-    }
-
-    if (!fields["state"]) {
-      formIsValid = false;
-      errors["state"] = "*Please select your state";
-    }
-
-    if (!fields["city"]) {
-      formIsValid = false;
-      errors["city"] = "*Please enter your city";
-    }
-
-    if (!fields["zip"]) {
-      formIsValid = false;
-      errors["zip"] = "*Please enter zip code";
     }
 
     this.setState({
@@ -431,21 +338,11 @@ class EditProfile extends Component {
     }
   };
 
-  errorHandler = type => {
-    this.notif.current.failNotification(
-      "The image must be less than 2MB."
-    );
-  };
-
   chooseImageData = () => {
     if (this.state.showImageDiv == 2) {
       return (
         <div className="chooseImageDiv">
-          <AvatarImageCropper
-            apply={this.apply}
-            isBack={true}
-            errorHandler={this.errorHandler}
-          />
+          <AvatarImageCropper apply={this.apply} isBack={true} />
           <p
             className="btn-sm btn-danger imgBtn"
             onClick={() => {
@@ -460,24 +357,11 @@ class EditProfile extends Component {
   };
 
   profileImageData = () => {
-    let displayImage, middle;
-    if (this.state.icon == null || this.state.icon == "") {
-      displayImage = {
-        opacity: 0.5
-      };
-      middle = {
-        opacity: 1
-      };
-    }
     if (this.state.showImageDiv == 1) {
       return (
         <div className="profileImageDiv">
-          <img
-            src={this.state.icon}
-            className="rounded-circle displayImage"
-            style={displayImage}
-          />
-          <div className="middle" style={middle}>
+          <img src={this.state.icon} className="rounded-circle displayImage" />
+          <div className="middle">
             <div className="text">
               <p
                 className="btn-sm btn-success imgBtn"
@@ -508,8 +392,8 @@ class EditProfile extends Component {
         <Notification ref={this.notif} />
         <div className="formmargin">
           <div className="row">
-            <div className="col-6 firstLastNameDiv">
-              <div className="col-12">
+            <div className="col-md-6 firstLastNameDiv">
+              <div className="col-md-12">
                 <label className="firstNameLabel mandatory">First Name</label>
                 <input
                   type="text"
@@ -528,7 +412,7 @@ class EditProfile extends Component {
                 />
                 <div className="errorMsg">{this.state.errors["firstname"]}</div>
               </div>
-              <div className="col-12">
+              <div className="col-md-12">
                 <label className="firstNameLabel mandatory">Last Name</label>
                 <input
                   type="text"
@@ -546,7 +430,7 @@ class EditProfile extends Component {
                 <div className="errorMsg">{this.state.errors["lastname"]}</div>
               </div>
             </div>
-            <div className="col-6 profileImage">
+            <div className="col-md-6 profileImage">
               {this.profileImageData()}
               {this.chooseImageData()}
               {this.chooseWebCamData()}
@@ -554,7 +438,7 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label className="mandatory" htmlFor="email">
                 Email
               </label>
@@ -596,11 +480,15 @@ class EditProfile extends Component {
             </div>
 
             <div className="col input-field">
-              <label id="name" className="active" style={{ fontSize: "16px" }}>
+              <label
+                id="name"
+                className="active"
+                style={{ fontSize: "16px" }}
+              >
                 Gender
               </label>
               <div className="row gender">
-                <div className="col-3 input-field">
+                <div className="col-md-3 input-field">
                   <label>
                     <input
                       type="radio"
@@ -615,7 +503,7 @@ class EditProfile extends Component {
                     <span id="gender">Male</span>
                   </label>
                 </div>
-                <div className="col-5 input-field">
+                <div className="col-md-5 input-field">
                   <label>
                     <input
                       type="radio"
@@ -636,11 +524,11 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 mandatory" style={{ fontSize: "17px" }}>
+            <div className="col-md-12 mandatory" style={{ fontSize: "17px" }}>
               Contact Number
             </div>
             <div className="row">
-              <div className="col-5">
+              <div className="col-md-5">
                 <select
                   className="dropdownstyle"
                   value={this.state.dial_code ? this.state.dial_code : ""}
@@ -657,7 +545,7 @@ class EditProfile extends Component {
                 </select>
               </div>
 
-              <div className="col-7">
+              <div className="col-md-7">
                 <input
                   id="phoneno"
                   type="text"
@@ -674,7 +562,7 @@ class EditProfile extends Component {
           <label type="hidden" id="joint" ref="phone" name="phone" />
 
           <div className="row">
-            <div className="col-6 input-field">
+            <div className="col-md-12 input-field">
               <label className="mandatory" style={{ fontSize: "17px" }}>
                 Address
               </label>
@@ -694,108 +582,34 @@ class EditProfile extends Component {
               </div>
               <div className="errorMsg">{this.state.errors["address"]}</div>
             </div>
-            <div className="col-6 input-field">
-              <label className="" style={{ fontSize: "17px" }}>
-                Address1
-              </label>
-              <div>
-                <textarea
-                  rows="3"
-                  className="textareaField"
-                  type="text"
-                  ref="address1"
-                  name="address1"
-                  value={
-                    this.state.fields.address1 ? this.state.fields.address1 : ""
-                  }
-                  onChange={this.handleChange}
-                  required
-                />
-              </div>
-              <div className="errorMsg">{this.state.errors["address1"]}</div>
-            </div>
           </div>
 
           <div className="row">
-            <div className="col-6">
-              <label className="country mandatory" style={{ marginTop: "" }}>
-                Country
-              </label>
+            <label className="country mandatory" style={{ marginTop: "" }}>
+              Country
+            </label>
+
+            <div className="col-md-12">
               <select
                 value={
                   this.state.fields.country ? this.state.fields.country : ""
                 }
-                onChange={this.handleCountryChange}
+                onChange={this.handleChange}
                 ref="country"
                 id="country"
                 name="country"
               >
-                {countries.map((country, key) => (
+                {Codes.map((country, key) => (
                   <option key={key} value={country.name}>
                     {country.name}
                   </option>
                 ))}
               </select>
-              <div className="errorMsg">{this.state.errors["country"]}</div>
-            </div>
-
-            <div className="col-6">
-              <label className="state mandatory" style={{ marginTop: "" }}>
-                State
-              </label>
-              <select
-                value={this.state.fields.state ? this.state.fields.state : ""}
-                onChange={this.handleChange}
-                ref="state"
-                id="state"
-                name="state"
-                disabled={this.state.stateSelection}
-              >
-                {this.state.countryWiseStates &&
-                  this.state.countryWiseStates.length > 0 &&
-                  this.state.countryWiseStates.map((state, key) => (
-                    <option key={key} value={state.name}>
-                      {state.name}
-                    </option>
-                  ))}
-              </select>
-              <div className="errorMsg">{this.state.errors["state"]}</div>
-            </div>
-          </div>
-
-          <div className="row input-field">
-            <div className="col-6">
-              <label className="city mandatory" style={{ marginTop: "" }}>
-                City
-              </label>
-              <input
-                type="text"
-                value={this.state.fields.city ? this.state.fields.city : ""}
-                onChange={this.handleChange}
-                ref="city"
-                id="city"
-                name="city"
-              />
-              <div className="errorMsg">{this.state.errors["city"]}</div>
-            </div>
-            <div className="col-6">
-              <label className="zip mandatory" style={{ marginTop: "" }}>
-                Zip
-              </label>
-              <input
-                type="text"
-                value={this.state.fields.zip ? this.state.fields.zip : ""}
-                onChange={this.handleChange}
-                ref="zip"
-                id="zip"
-                name="zip"
-              />
-              <div className="errorMsg">{this.state.errors["zip"]}</div>
             </div>
           </div>
 
           <div className="row marginsize2">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label htmlFor="website">Website</label>
               <input
                 id="website"
@@ -810,35 +624,29 @@ class EditProfile extends Component {
             </div>
           </div>
           <div className="row about">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label>About Me</label>
               <div>
                 <Editor
-                  style={{ height: "20vh", overflow: "auto" }}
+                  style={{height:'20vh', overflow:'auto'}}
                   name="about"
                   tools={[
-                    [Bold, Italic, Underline],
-                    [Undo, Redo],
-                    [Link, Unlink],
-                    [AlignLeft, AlignCenter, AlignRight],
-                    [OrderedList, UnorderedList, Indent, Outdent]
+                      [ Bold, Italic, Underline ],
+                      [ Undo, Redo ],
+                      [ Link, Unlink ],
+                      [ AlignLeft, AlignCenter, AlignRight ],
+                      [ OrderedList, UnorderedList, Indent, Outdent ]
                   ]}
                   contentStyle={{ height: 320 }}
-                  defaultContent={
-                    this.state.fields.about ? this.state.fields.about : ""
-                  }
-                  onExecute={event =>
-                    this.handleChangeAboutField(
-                      event.target._contentElement.innerHTML
-                    )
-                  }
+                  defaultContent={this.state.fields.about ? this.state.fields.about : ""}
+                  onExecute={(event) => this.handleChangeAboutField(event.target._contentElement.innerHTML)}
                 />
               </div>
             </div>
           </div>
 
           <div className="row">
-            <div className="col-12 input-field interest">
+            <div className="col-md-12 input-field interest">
               <label className="mandatory" htmlFor="interest">
                 Interest
               </label>

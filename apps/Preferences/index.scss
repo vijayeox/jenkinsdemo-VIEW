@@ -284,12 +284,14 @@
     padding: 0% !important;
   }
 
-  .country, .state, .city, .zip{
+  .country {
+    margin-left: 16px;
     font-size: 16px;
-    color: #333 !important;
-    margin-bottom: 10px !important;
+    color: #343a40;
+    margin-bottom: 20px !important;
     margin-top: 8px !important;
   }
+
 
   .dropdownstyle {
     margin-top: 15px !important;
@@ -506,7 +508,6 @@
   .imgBtn2 {
     background-color: black;
     cursor: pointer;
-    text-align: center;
   }
 
   .imgBtn1,
@@ -538,8 +539,7 @@
   }
 
   .infoDiv {
-    padding: 5px;
-    border-radius: 5px;
+    padding: 5px
   }
   .mandatory:after { 
     content:" *";
