@@ -103,10 +103,12 @@ class FileUploader extends React.Component {
             ) : (
               <div className={"img-preview static-url"}>
                 {this.state.render_media_type == "image" ? (
-                  <img src={this.state.filePreviewSourceURL} />
+                  <img
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
+                  />
                 ) : (
                   <video
-                    src={this.state.filePreviewSourceURL}
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
                     alt={"image preview"}
                     controls
                     id="video"
