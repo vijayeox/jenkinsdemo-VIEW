@@ -109,7 +109,7 @@ class EditProfile extends Component {
             statesList.push(s);
           }
         });
-        fields["state"] = statesList[0];
+        fields["state"] = statesList[0].name;
         this.setState({
           stateSelection: false,
           countryWiseStates: statesList,
@@ -280,9 +280,9 @@ class EditProfile extends Component {
       errors["phoneno"] = "*Please enter Phone Number";
     }
 
-    if (!fields["address"]) {
+    if (!fields["address1"]) {
       formIsValid = false;
-      errors["address"] = "*Please enter your address";
+      errors["address1"] = "*Please enter Address line 1";
     }
 
     if (!fields["interest"]) {
@@ -676,27 +676,7 @@ class EditProfile extends Component {
           <div className="row">
             <div className="col-6 input-field">
               <label className="mandatory" style={{ fontSize: "17px" }}>
-                Address
-              </label>
-              <div>
-                <textarea
-                  rows="3"
-                  className="textareaField"
-                  type="text"
-                  ref="address"
-                  name="address"
-                  value={
-                    this.state.fields.address ? this.state.fields.address : ""
-                  }
-                  onChange={this.handleChange}
-                  required
-                />
-              </div>
-              <div className="errorMsg">{this.state.errors["address"]}</div>
-            </div>
-            <div className="col-6 input-field">
-              <label className="" style={{ fontSize: "17px" }}>
-                Address1
+                Address line 1
               </label>
               <div>
                 <textarea
@@ -713,6 +693,26 @@ class EditProfile extends Component {
                 />
               </div>
               <div className="errorMsg">{this.state.errors["address1"]}</div>
+            </div>
+            <div className="col-6 input-field">
+              <label className="" style={{ fontSize: "17px" }}>
+                Address line 2
+              </label>
+              <div>
+                <textarea
+                  rows="3"
+                  className="textareaField"
+                  type="text"
+                  ref="address2"
+                  name="address2"
+                  value={
+                    this.state.fields.address2 ? this.state.fields.address2 : ""
+                  }
+                  onChange={this.handleChange}
+                  required
+                />
+              </div>
+              <div className="errorMsg">{this.state.errors["address2"]}</div>
             </div>
           </div>
 
