@@ -3,16 +3,13 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
-import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel, DropDown } from "../components/index";
+import { FileUploader, Notification } from "../../GUIComponents";
+import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 import PhoneInput from "react-phone-number-input";
-
 import Codes from "../data/Codes";
 import timezoneCode from "../../public/js/timezones.js";
-import { FaUserLock } from "react-icons/fa";
 
-import CurrencySelect from "../components/Currency Select/currencySelect.js";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -247,7 +244,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i class="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">
