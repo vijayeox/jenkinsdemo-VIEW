@@ -10,7 +10,6 @@ import PhoneInput from "react-phone-number-input";
 import Codes from "../data/Codes";
 import timezoneCode from "../../public/js/timezones.js";
 
-
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -21,6 +20,7 @@ export default class DialogContainer extends React.Component {
       contactName: [],
       timeZoneValue: []
     };
+    this.countryByIP= undefined;
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
@@ -49,6 +49,8 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
+    } else {
+      getCountryByIP().then(data => (this.countryByIP = data.country));
     }
   }
 
@@ -439,7 +441,7 @@ export default class DialogContainer extends React.Component {
                       international={false}
                       maxLength="15"
                       required={true}
-                      country={"IN"}
+                      country={this.countryByIP? this.countryByIP : "IN" }
                       countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
                   </div>
@@ -568,4 +570,10 @@ export default class DialogContainer extends React.Component {
       </Window>
     );
   }
+}
+
+async function getCountryByIP() {
+  let response = await fetch(`https://get.geojs.io/v1/ip/country.json`);
+  let data = await response.json();
+  return data;
 }
