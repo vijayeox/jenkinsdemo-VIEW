@@ -5,15 +5,7 @@ import {
   GridToolbar,
   GridNoRecords
 } from "@progress/kendo-react-grid";
-import {
-  FaPlusCircle,
-  FaPencilAlt,
-  FaUserPlus,
-  FaUsers,
-  FaTrashAlt,
-  FaInfoCircle
-} from "react-icons/fa";
-import { Notification } from "../index";
+import Notification from "./Notification";
 import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./components/Grid/DataLoader";
 import Swal from "sweetalert2";
@@ -177,7 +169,7 @@ export default class GridTemplate extends React.Component {
                   }}
                 >
                   <div style={{ marginLeft: "10px" }}>
-                    <FaInfoCircle />
+                    <i className="fas fa-info-circle"></i>
                   </div>
                   <div
                     style={{ fontSize: "medium", paddingLeft: "30px" }}
@@ -235,7 +227,7 @@ class AddButton extends React.Component {
         className="k-button"
         style={{ position: "absolute", top: "8px", right: "16px" }}
       >
-        <FaPlusCircle style={{ fontSize: "20px" }} />
+        <i className="fas fa-plus-circle" style={{ fontSize: "20px" }}></i>
 
         <p style={{ margin: "0px", paddingLeft: "10px" }}>
           Add {this.props.label}
@@ -341,7 +333,7 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
               });
             }}
           >
-            <FaTrashAlt className="manageIcons" />
+            <i className="fas fa-trash-alt manageIcons"></i>
           </button>
         </abbr>
       ) : null;
@@ -361,7 +353,7 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                       edit(this.props.dataItem, { diableField: false });
                     }}
                   >
-                    <FaPencilAlt className="manageIcons" />
+                    <i className="fas fa-pencil-alt manageIcons"></i>
                   </button>
                 </abbr>
                 {addUsers && (
@@ -383,9 +375,9 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                         }}
                       >
                         {title == "Announcement" ? (
-                          <FaUsers className="manageIcons" />
+                          <i className="fas fa-users manageIcons"></i>
                         ) : (
-                          <FaUserPlus className="manageIcons" />
+                          <i className="fas fa-user-plus manageIcons"></i>
                         )}
                       </button>
                     </abbr>
