@@ -93,15 +93,7 @@ module.exports = {
               [
                 require.resolve("@babel/plugin-proposal-class-properties"),
                 { loose: false }
-              ],
-              [require('babel-plugin-transform-imports'), {
-                '@oxzion/gui': {
-                  transform: function(importName, matches) {
-                    return '@oxzion/gui/' + importName;
-                  },
-                  preventFullImport: true
-                }
-              }]
+              ]
             ]
           }
         }
