@@ -186,10 +186,10 @@ class Background extends Component {
         <Notification ref={this.notif} />
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <label id="imageLabel">Image:</label>
             </div>
-            <div className="col-4 imagediv">
+            <div className="col-md-4 imagediv">
               <div className="image" id="image">
                 {this.state.imageSrc}{" "}
                 <button
@@ -203,10 +203,10 @@ class Background extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <label id="styleLabel">Style:</label>
             </div>
-            <div className="col-4 backgroundStylediv">
+            <div className="col-md-4 backgroundStylediv">
               <select
                 value={this.state.styleName}
                 onChange={this.handleChange}
@@ -224,10 +224,10 @@ class Background extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <label id="colorLabel">Color:</label>
             </div>
-            <div className="col-4 colordiv">
+            <div className="col-md-4 colordiv">
               <input
                 type="color"
                 value={this.state.colorCode}
@@ -240,7 +240,7 @@ class Background extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <button className="k-button k-primary" type="submit">
                 Save
               </button>

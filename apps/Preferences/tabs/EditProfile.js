@@ -417,8 +417,8 @@ class EditProfile extends Component {
         <Notification ref={this.notif} />
         <div className="formmargin">
           <div className="row">
-            <div className="col-6 firstLastNameDiv">
-              <div className="col-12">
+            <div className="col-md-6 firstLastNameDiv">
+              <div className="col-md-12">
                 <label className="firstNameLabel mandatory">First Name</label>
                 <input
                   type="text"
@@ -437,7 +437,7 @@ class EditProfile extends Component {
                 />
                 <div className="errorMsg">{this.state.errors["firstname"]}</div>
               </div>
-              <div className="col-12">
+              <div className="col-md-12">
                 <label className="firstNameLabel mandatory">Last Name</label>
                 <input
                   type="text"
@@ -455,7 +455,7 @@ class EditProfile extends Component {
                 <div className="errorMsg">{this.state.errors["lastname"]}</div>
               </div>
             </div>
-            <div className="col-6 profileImage">
+            <div className="col-md-6 profileImage">
               {this.profileImageData()}
               {this.chooseImageData()}
               {this.chooseWebCamData()}
@@ -463,7 +463,7 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label className="mandatory" htmlFor="email">
                 Email
               </label>
@@ -509,7 +509,7 @@ class EditProfile extends Component {
                 Gender
               </label>
               <div className="row gender">
-                <div className="col-3 input-field">
+                <div className="col-md-3 input-field">
                   <label>
                     <input
                       type="radio"
@@ -524,7 +524,7 @@ class EditProfile extends Component {
                     <span id="gender">Male</span>
                   </label>
                 </div>
-                <div className="col-5 input-field">
+                <div className="col-md-5 input-field">
                   <label>
                     <input
                       type="radio"
@@ -545,11 +545,11 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 mandatory" style={{ fontSize: "17px" }}>
+            <div className="col-md-12 mandatory" style={{ fontSize: "17px" }}>
               Contact Number
             </div>
             <div className="row">
-              <div className="col-5">
+              <div className="col-md-5">
                 <select
                   className="dropdownstyle"
                   value={this.state.dial_code ? this.state.dial_code : ""}
@@ -566,7 +566,7 @@ class EditProfile extends Component {
                 </select>
               </div>
 
-              <div className="col-7">
+              <div className="col-md-7">
                 <input
                   id="phoneno"
                   type="text"
@@ -583,7 +583,7 @@ class EditProfile extends Component {
           <label type="hidden" id="joint" ref="phone" name="phone" />
 
           <div className="row">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label className="mandatory" style={{ fontSize: "17px" }}>
                 Address
               </label>
@@ -610,7 +610,7 @@ class EditProfile extends Component {
               Country
             </label>
 
-            <div className="col-12">
+            <div className="col-md-12">
               <select
                 value={
                   this.state.fields.country ? this.state.fields.country : ""
@@ -630,7 +630,7 @@ class EditProfile extends Component {
           </div>
 
           <div className="row marginsize2">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label htmlFor="website">Website</label>
               <input
                 id="website"
@@ -645,7 +645,7 @@ class EditProfile extends Component {
             </div>
           </div>
           <div className="row about">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <label>About Me</label>
               <div>
                 <Editor
@@ -673,7 +673,7 @@ class EditProfile extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 input-field interest">
+            <div className="col-md-12 input-field interest">
               <label className="mandatory" htmlFor="interest">
                 Interest
               </label>
