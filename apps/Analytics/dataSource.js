@@ -25,11 +25,9 @@ class DataSource extends React.Component {
   }
 
   editDataSource = (e) => {
-      console.log(e);
   }
 
   deleteDataSource = (e) => {
-      console.log(e);
   }
 
   render() {

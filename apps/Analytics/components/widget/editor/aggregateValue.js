@@ -11,8 +11,6 @@ class AggregateValue extends React.Component {
             then(function(responseData) {
                 var previewElement = document.querySelector('span#widgetPreview');
                 previewElement.innerHTML = responseData.data;
-            }).
-            catch(function(responseData) {
             });
     }
 

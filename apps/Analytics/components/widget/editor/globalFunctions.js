@@ -62,9 +62,10 @@ window.onDialogEvent = function(dialogEvent) {
     }
 }
 
+const OXZION_CORRELATION_ID = 'OX_CORR_ID';
 window.postDataRequest = function(url, params) {
     let deferred = new Deferred();
-    params['oxCorrId'] = deferred.corrId;
+    params[OXZION_CORRELATION_ID] = deferred.corrId;
     window.top.postMessage({
         'action':'data', 
         'url':url, 
@@ -74,8 +75,11 @@ window.postDataRequest = function(url, params) {
 }
 
 window.handleDataResponse = function(response) {
-    let corrId = response.params['oxCorrId'];
-    delete response.params['oxCorrId'];
+    let corrId = response.params[OXZION_CORRELATION_ID];
+    if (!corrId) {
+        throw `Response object does not contain ${OXZION_CORRELATION_ID} parameter.`;
+    }
+    delete response.params[OXZION_CORRELATION_ID];
     let deferred = Deferred.getFromRegistry(corrId);
     if (!deferred) {
         console.warn('No deferred instance found. Unexpected REST response found:');
@@ -86,6 +90,7 @@ window.handleDataResponse = function(response) {
         case 'success':
             deferred.resolve(response);
         break;
+        case 'error':
         case 'failure':
             deferred.reject(response);
         break;

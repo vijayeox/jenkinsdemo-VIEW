@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import BarChart from './barChart';
 import AggregateValue from './aggregateValue';
 import './globalFunctions';
+import Swal from "sweetalert2";
+import '../../../../../gui/src/public/css/sweetalert.css';
 
 class WidgetEditorApp extends React.Component {
     constructor(props) {
@@ -57,11 +59,16 @@ class WidgetEditorApp extends React.Component {
 
         let thiz = this;
         window.postDataRequest('analytics/widget', {}).
-            then(function(responseData) {
-                thiz.widgetList = responseData.data;
+            then(function(response) {
+                thiz.widgetList = response.data;
                 thiz.forceUpdate();
             }).
-            catch(function(responseData) {
+            catch(function(response) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Widgets not found',
+                    text: 'Please configure few widget(s) and try again.'
+                });
             });
     }
 

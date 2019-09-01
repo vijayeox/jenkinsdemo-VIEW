@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Swal from "sweetalert2";
+import '../../../../../gui/src/public/css/sweetalert.css';
 
 class BarChart extends React.Component {
     constructor(props) {
@@ -50,12 +52,17 @@ class BarChart extends React.Component {
     componentDidMount() {
         let thiz = this;
         window.postDataRequest('analytics/widget/' + this.props.widgetId, {}).
-            then(function(responseData) {
-                var chart = am4core.createFromConfig(responseData.configuration, document.querySelector('div#chartPreview'), am4charts.XYChart);
-                chart.data = responseData.data;
+            then(function(response) {
+                var chart = am4core.createFromConfig(response.configuration, document.querySelector('div#chartPreview'), am4charts.XYChart);
+                chart.data = response.data;
                 thiz.chart = chart;
             }).
-            catch(function(responseData) {
+            catch(function(response) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops ...',
+                    text: 'Could not load widget. Please try after some time.'
+                });
             });
     }
 
