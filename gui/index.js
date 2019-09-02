@@ -5,7 +5,7 @@ import MultiSelect from "./src/MultiSelect";
 import FileUploader from "./src/FileUploader";
 import FormRender from "./src/components/App/FormRender";
 import Document from "./src/components/App/Document";
-import './index.scss';
+import ListingTemplate from "./src/ListingTemplate";
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -13,5 +13,6 @@ export {
   MultiSelect,
   FileUploader,
   Document,
-  FormRender
+  FormRender,
+  ListingTemplate
 };
