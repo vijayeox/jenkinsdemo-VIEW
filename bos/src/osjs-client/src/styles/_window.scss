@@ -38,7 +38,7 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
 .osjs-window-resize {
   z-index: 10;
   position: absolute;
-  min-width: 1em;
+  min-width: 0.5em;
   min-height: 1em;
 
   &[data-direction^="n"] {
