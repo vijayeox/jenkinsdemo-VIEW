@@ -5,7 +5,7 @@ import MultiSelect from "./src/MultiSelect";
 import FileUploader from "./src/FileUploader";
 import FormRender from "./src/components/App/FormRender";
 import Document from "./src/components/App/Document";
-import ListingTemplate from "./src/ListingTemplate";
+import OX_Grid from "./src/OX_Grid";
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -14,5 +14,5 @@ export {
   FileUploader,
   Document,
   FormRender,
-  ListingTemplate
+  OX_Grid
 };

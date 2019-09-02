@@ -14,10 +14,9 @@ import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
 
 import "./components/Grid/customStyles.scss";
-// import "@fortawesome/fontawesome-free/js/all";
 import "@progress/kendo-theme-default/dist/all.css";
 
-export default class ListingTemplate extends React.Component {
+export default class OX_Grid extends React.Component {
   constructor(props) {
     super(props);
     this.child = React.createRef();
@@ -232,9 +231,9 @@ class DetailComponent extends GridDetailRow {
   }
 }
 
-ListingTemplate.defaultProps = {};
+OX_Grid.defaultProps = {};
 
-ListingTemplate.propTypes = {
+OX_Grid.propTypes = {
   data: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   checkBoxSelection: PropTypes.func,
   columnConfig: PropTypes.array.isRequired,
