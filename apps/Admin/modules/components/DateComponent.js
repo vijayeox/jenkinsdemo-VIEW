@@ -9,7 +9,9 @@ export default class DateComponent extends React.Component {
       value: undefined,
       minValue: undefined
     };
-    this.dateformat = this.props.format.replace(/m/g, "M");
+    this.dateformat = this.props.format
+      ? this.props.format.replace(/m/g, "M")
+      : "dd-MM-yyy";
   }
 
   UNSAFE_componentWillMount() {
@@ -32,7 +34,7 @@ export default class DateComponent extends React.Component {
         this.setState({ value: getDate });
       }
     }
-    if (this.props.min !== prevProps.min) {      
+    if (this.props.min !== prevProps.min) {
       if (Moment(this.props.min, "YYYY-MM-DD", true).isValid()) {
         var getDate = this.convertToDate(this.props.min);
         this.setState({ minValue: getDate });
