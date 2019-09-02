@@ -124,29 +124,33 @@ export default class OX_Grid extends React.Component {
   noRecordsJSX() {
     return (
       <GridNoRecords>
-        <div className="grid-no-records">
-          <ul className="list-group" style={{ listStyle: "disc" }}>
-            <div
-              href="#"
-              className="list-group-item list-group-item-action bg-warning"
-              style={{
-                display: "flex",
-                width: "110%",
-                alignItems: "center"
-              }}
-            >
-              <div style={{ marginLeft: "10px" }}>
-              <i className="fas fa-info-circle"></i>
-              </div>
+        {this.props.gridNoRecords ? (
+          this.props.gridNoRecords
+        ) : (
+          <div className="grid-no-records">
+            <ul className="list-group" style={{ listStyle: "disc" }}>
               <div
-                style={{ fontSize: "medium", paddingLeft: "30px" }}
-                className="noRecords"
+                href="#"
+                className="list-group-item list-group-item-action bg-warning"
+                style={{
+                  display: "flex",
+                  width: "110%",
+                  alignItems: "center"
+                }}
               >
-                No Records Available
+                <div style={{ marginLeft: "10px" }}>
+                  <i className="fas fa-info-circle"></i>
+                </div>
+                <div
+                  style={{ fontSize: "medium", paddingLeft: "30px" }}
+                  className="noRecords"
+                >
+                  No Records Available
+                </div>
               </div>
-            </div>
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
       </GridNoRecords>
     );
   }
@@ -231,7 +235,9 @@ class DetailComponent extends GridDetailRow {
   }
 }
 
-OX_Grid.defaultProps = {};
+OX_Grid.defaultProps = {
+  data: []
+};
 
 OX_Grid.propTypes = {
   data: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
