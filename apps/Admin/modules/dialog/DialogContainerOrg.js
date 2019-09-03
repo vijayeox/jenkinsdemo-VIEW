@@ -3,16 +3,12 @@ import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import { Input } from "@progress/kendo-react-inputs";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
-import { FileUploader, Notification } from "@oxzion/gui";
-import { SaveCancel, DropDown } from "../components/index";
+import { FileUploader, Notification } from "../../GUIComponents";
+import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
 import PhoneInput from "react-phone-number-input";
-
 import Codes from "../data/Codes";
 import timezoneCode from "../../public/js/timezones.js";
-import { FaUserLock } from "react-icons/fa";
-
-import CurrencySelect from "../components/Currency Select/currencySelect.js";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -24,6 +20,7 @@ export default class DialogContainer extends React.Component {
       contactName: [],
       timeZoneValue: []
     };
+    this.countryByIP= undefined;
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
@@ -52,6 +49,8 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
+    } else {
+      getCountryByIP().then(data => (this.countryByIP = data.country));
     }
   }
 
@@ -247,7 +246,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i class="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">
@@ -442,6 +441,7 @@ export default class DialogContainer extends React.Component {
                       international={false}
                       maxLength="15"
                       required={true}
+                      country={this.countryByIP? this.countryByIP : "IN" }
                       countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
                   </div>
@@ -570,4 +570,10 @@ export default class DialogContainer extends React.Component {
       </Window>
     );
   }
+}
+
+async function getCountryByIP() {
+  let response = await fetch(`https://get.geojs.io/v1/ip/country.json`);
+  let data = await response.json();
+  return data;
 }

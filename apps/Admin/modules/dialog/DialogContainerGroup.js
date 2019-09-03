@@ -1,11 +1,10 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "@oxzion/gui";
+import { Notification } from "../../GUIComponents";
 import { PushData, GetSingleEntityData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
-import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -126,7 +125,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i className="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">

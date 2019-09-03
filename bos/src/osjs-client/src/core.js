@@ -36,6 +36,9 @@ import {fetch} from './utils/fetch';
 import {urlResolver} from './utils/url';
 import merge from 'deepmerge';
 import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
+
+//Added scriot for font-awesome icons 
+import "@fortawesome/fontawesome-free/js/all";
 /**
  * Core
  *
@@ -458,6 +461,7 @@ export default class Core extends CoreBase {
         }
       });
     }
+    //OXZION CHANGE END
     return this.make('osjs/packages').launch(name, args, options);
   }
 
