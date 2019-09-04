@@ -57,6 +57,7 @@ class Page extends React.Component {
         case "Form":
           content.push(
             <FormRender
+              key={i}
               core={this.core}
               appId={this.appId}
               content={data[i].content}
@@ -69,6 +70,7 @@ class Page extends React.Component {
           var itemContent = JSON.parse(data[i].content);
           content.push(
             <OX_Grid
+              key={i}
               osjsCore={this.core}
               data={itemContent.data}
               filterable={itemContent.filterable}
@@ -83,6 +85,7 @@ class Page extends React.Component {
         default:
           content.push(
             <Document
+              key={i}
               core={this.core}
               key={i}
               appId={this.appId}
