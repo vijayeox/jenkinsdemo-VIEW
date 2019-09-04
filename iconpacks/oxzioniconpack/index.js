@@ -28,4 +28,7 @@
  * @licence Simplified BSD License
  */
 
+ //Added scriot for font-awesome icons 
+import "@fortawesome/fontawesome-free/js/all";
+
 import './index.scss';
