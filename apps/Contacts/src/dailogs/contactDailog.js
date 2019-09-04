@@ -1,6 +1,6 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { ContactTypes, CountryList } from "../data";
+import { ContactTypes, CountryList, Countries, States } from "../data";
 import { ProfilePictureWidget } from "../widgets";
 import { SaveContact } from "../services/services";
 import { Notification } from "../components";
@@ -17,7 +17,8 @@ class ContactDailog extends React.Component {
       icon: null,
       errors: {
         first_name: true
-      }
+      },
+      countryWiseStates: []
     };
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
@@ -39,12 +40,33 @@ class ContactDailog extends React.Component {
             });
           }
         }
+        if (this.state.contactDetails.country) {
+          this.setStateList();
+        }
       }
     );
   }
 
   cloneContact = contactDetails => {
     return Object.assign({}, contactDetails);
+  };
+
+  setStateList = () => {
+    var statesList = [];
+    let contactDetails = { ...this.state.contactDetails };
+    Countries.forEach(country => {
+      if (country.name == this.state.contactDetails.country) {
+        States.forEach(s => {
+          if (s.country_id == country.id) {
+            statesList.push(s);
+          }
+        });
+        this.setState({
+          countryWiseStates: statesList,
+          contactDetails
+        });
+      }
+    });
   };
 
   handleUserInput = e => {
@@ -55,18 +77,32 @@ class ContactDailog extends React.Component {
     this.setState({ contactDetails: contactDetails });
     if (name == "first_name") {
       let { errors } = this.state;
-      if (value.length > 0) {
-        errors.first_name = false;
-        this.setState({
-          errors
+      errors.first_name = value.length > 0 ? false : true;
+      this.setState({
+        errors
+      });
+    }
+  };
+
+  handleCountryChange = e => {
+    const name = e.target.name;
+    const value = e.target.value;
+    var statesList = [];
+    let contactDetails = { ...this.state.contactDetails };
+    contactDetails[name] = value;
+    Countries.forEach(country => {
+      if (country.name == value) {
+        States.forEach(s => {
+          if (s.country_id == country.id) {
+            statesList.push(s);
+          }
         });
-      } else {
-        errors.first_name = true;
         this.setState({
-          errors
+          contactDetails,
+          countryWiseStates: statesList
         });
       }
-    }
+    });
   };
 
   removeItem = (key, type) => {
@@ -409,12 +445,15 @@ class ContactDailog extends React.Component {
                           ? this.state.contactDetails.country
                           : ""
                       }
-                      onChange={this.handleUserInput}
+                      onChange={this.handleCountryChange}
                     >
-                      {CountryList.map((country, key) => {
+                      <option disabled value="">
+                        Select country
+                      </option>
+                      {Countries.map((country, key) => {
                         return (
-                          <option key={key} value={country}>
-                            {country}
+                          <option key={key} value={country.name}>
+                            {country.name}
                           </option>
                         );
                       })}
@@ -430,6 +469,68 @@ class ContactDailog extends React.Component {
                       args={this.core}
                       contactDetails={this.state.contactDetails}
                       handleProfilePic={this.handleProfilePic}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="row">
+                  <div className="col-4 form-group">
+                    <label htmlFor="state">State</label>
+                    <select
+                      className="form-control inputHeight"
+                      name="state"
+                      placeholder="Select state."
+                      value={
+                        this.state.contactDetails.state
+                          ? this.state.contactDetails.state
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
+                    >
+                      <option disabled value="">
+                        Select city
+                      </option>
+                      {this.state.countryWiseStates.map((state, key) => {
+                        return (
+                          <option key={key} value={state.name}>
+                            {state.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+                  <div className="col-4 form-group">
+                    <label htmlFor="city">City</label>
+                    <input
+                      type="text"
+                      className="form-control inputHeight"
+                      name="city"
+                      placeholder="Enter city."
+                      value={
+                        this.state.contactDetails.city
+                          ? this.state.contactDetails.city
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
+                    />
+                  </div>
+
+                  <div className="col-4 form-group">
+                    <label htmlFor="zip">Zip</label>
+                    <input
+                      type="text"
+                      className="form-control inputHeight"
+                      name="zip"
+                      placeholder="Enter zip."
+                      value={
+                        this.state.contactDetails.zip
+                          ? this.state.contactDetails.zip
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
                     />
                   </div>
                 </div>
@@ -512,15 +613,15 @@ class ContactDailog extends React.Component {
               <div className="col-12">
                 <div className="row">
                   <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address 1</label>
+                    <label htmlFor="phone_1">Address line 1</label>
                     <textarea
                       row={4}
                       className="form-control"
-                      name="address_1"
+                      name="address1"
                       placeholder="Enter address."
                       value={
-                        this.state.contactDetails.address_1
-                          ? this.state.contactDetails.address_1
+                        this.state.contactDetails.address1
+                          ? this.state.contactDetails.address1
                           : ""
                       }
                       onChange={this.handleUserInput}
@@ -528,15 +629,15 @@ class ContactDailog extends React.Component {
                   </div>
 
                   <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address 2</label>
+                    <label htmlFor="phone_1">Address line 2</label>
                     <textarea
                       row={4}
                       className="form-control"
-                      name="address_2"
+                      name="address2"
                       placeholder="Enter address."
                       value={
-                        this.state.contactDetails.address_2
-                          ? this.state.contactDetails.address_2
+                        this.state.contactDetails.address2
+                          ? this.state.contactDetails.address2
                           : ""
                       }
                       onChange={this.handleUserInput}

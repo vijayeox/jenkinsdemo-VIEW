@@ -108,25 +108,45 @@ class ContactDetailsWidget extends React.Component {
                     })
                   : null}
 
-                {this.props.contact.address_1 ? (
-                  <div className="col-md-12 paddingBottom">
-                    <i className="fa fa-location-arrow" />{" "}
-                    <span>{this.props.contact.address_1}</span>
-                  </div>
-                ) : null}
-
-                {this.props.contact.address_2 ? (
-                  <div className="col-md-12 paddingBottom">
-                    <span>
-                      <i className="fa fa-location-arrow" />{" "}
-                      {this.props.contact.address_2}
-                    </span>
-                  </div>
-                ) : null}
                 {this.props.contact.country ? (
                   <div className="col-md-12 paddingBottom">
                     <span>
                       <i className="fa fa-globe" /> {this.props.contact.country}
+                      {this.props.contact.state
+                        ? ", " + this.props.contact.state
+                        : null}
+                    </span>
+                  </div>
+                ) : null}
+
+                {this.props.contact.city ? (
+                  <div className="col-md-12 paddingBottom">
+                    <span>
+                      <i className="fa fa-building" /> {this.props.contact.city}
+                    </span>
+                  </div>
+                ) : null}
+
+                {this.props.contact.zip ? (
+                  <div className="col-md-12 paddingBottom">
+                    <span>
+                      <i className="fa fa-map-marker" /> {this.props.contact.zip}
+                    </span>
+                  </div>
+                ) : null}
+
+                {this.props.contact.address1 ? (
+                  <div className="col-md-12 paddingBottom">
+                    <i className="fa fa-location-arrow" />{" "}
+                    <span>{this.props.contact.address1}</span>
+                  </div>
+                ) : null}
+
+                {this.props.contact.address2 ? (
+                  <div className="col-md-12 paddingBottom">
+                    <span>
+                      <i className="fa fa-location-arrow" />{" "}
+                      {this.props.contact.address2}
                     </span>
                   </div>
                 ) : null}
