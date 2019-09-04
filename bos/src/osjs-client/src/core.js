@@ -37,8 +37,6 @@ import {urlResolver} from './utils/url';
 import merge from 'deepmerge';
 import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 
-//Added scriot for font-awesome icons 
-import "@fortawesome/fontawesome-free/js/all";
 /**
  * Core
  *
