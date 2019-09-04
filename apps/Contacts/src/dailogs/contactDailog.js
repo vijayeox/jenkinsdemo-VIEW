@@ -538,6 +538,42 @@ class ContactDailog extends React.Component {
 
               <div className="col-12">
                 <div className="row">
+                  <div className="col-6 form-group">
+                    <label htmlFor="phone_1">Address line 1</label>
+                    <textarea
+                      row={4}
+                      className="form-control"
+                      name="address_1"
+                      placeholder="Enter address."
+                      value={
+                        this.state.contactDetails.address_1
+                          ? this.state.contactDetails.address_1
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
+                    />
+                  </div>
+
+                  <div className="col-6 form-group">
+                    <label htmlFor="phone_1">Address line 2</label>
+                    <textarea
+                      row={4}
+                      className="form-control"
+                      name="address_2"
+                      placeholder="Enter address."
+                      value={
+                        this.state.contactDetails.address_2
+                          ? this.state.contactDetails.address_2
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="row">
                   <div className="form-group col-6">
                     <label htmlFor="company_name">Company Name</label>
                     <input
@@ -608,42 +644,6 @@ class ContactDailog extends React.Component {
                   />
                 </div>
                 {this.additionalEmailData()}
-              </div>
-
-              <div className="col-12">
-                <div className="row">
-                  <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address line 1</label>
-                    <textarea
-                      row={4}
-                      className="form-control"
-                      name="address1"
-                      placeholder="Enter address."
-                      value={
-                        this.state.contactDetails.address1
-                          ? this.state.contactDetails.address1
-                          : ""
-                      }
-                      onChange={this.handleUserInput}
-                    />
-                  </div>
-
-                  <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address line 2</label>
-                    <textarea
-                      row={4}
-                      className="form-control"
-                      name="address2"
-                      placeholder="Enter address."
-                      value={
-                        this.state.contactDetails.address2
-                          ? this.state.contactDetails.address2
-                          : ""
-                      }
-                      onChange={this.handleUserInput}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>

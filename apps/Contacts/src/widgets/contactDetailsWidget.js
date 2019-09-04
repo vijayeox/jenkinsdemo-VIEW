@@ -135,18 +135,18 @@ class ContactDetailsWidget extends React.Component {
                   </div>
                 ) : null}
 
-                {this.props.contact.address1 ? (
+                {this.props.contact.address_1 ? (
                   <div className="col-md-12 paddingBottom">
                     <i className="fa fa-location-arrow" />{" "}
-                    <span>{this.props.contact.address1}</span>
+                    <span>{this.props.contact.address_1}</span>
                   </div>
                 ) : null}
 
-                {this.props.contact.address2 ? (
+                {this.props.contact.address_2 ? (
                   <div className="col-md-12 paddingBottom">
                     <span>
                       <i className="fa fa-location-arrow" />{" "}
-                      {this.props.contact.address2}
+                      {this.props.contact.address_2}
                     </span>
                   </div>
                 ) : null}

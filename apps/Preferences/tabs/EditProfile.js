@@ -187,7 +187,6 @@ class EditProfile extends Component {
   };
 
   handleChangeAboutField = value => {
-    console.log(value);
     let fields = this.state.fields;
     fields["about"] = value;
     this.setState({
@@ -225,7 +224,6 @@ class EditProfile extends Component {
         }
       });
 
-      console.log(formData);
       let helper = this.core.make("oxzion/restClient");
 
       let editresponse = await helper.request(
@@ -432,9 +430,7 @@ class EditProfile extends Component {
   };
 
   errorHandler = type => {
-    this.notif.current.failNotification(
-      "The image must be less than 2MB."
-    );
+    this.notif.current.failNotification("The image must be less than 2MB.");
   };
 
   chooseImageData = () => {
@@ -709,7 +705,6 @@ class EditProfile extends Component {
                     this.state.fields.address2 ? this.state.fields.address2 : ""
                   }
                   onChange={this.handleChange}
-                  required
                 />
               </div>
               <div className="errorMsg">{this.state.errors["address2"]}</div>
@@ -775,6 +770,7 @@ class EditProfile extends Component {
                 ref="city"
                 id="city"
                 name="city"
+                required
               />
               <div className="errorMsg">{this.state.errors["city"]}</div>
             </div>
@@ -789,6 +785,7 @@ class EditProfile extends Component {
                 ref="zip"
                 id="zip"
                 name="zip"
+                required
               />
               <div className="errorMsg">{this.state.errors["zip"]}</div>
             </div>
