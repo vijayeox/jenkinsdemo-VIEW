@@ -6,14 +6,14 @@
             "icon": "Apps/HelpApp/crm.png"
         },
         {
-            "id": null,
+            "id": "task",
             "name": "Task",
             "icon": "Apps/HelpApp/task.png"
         },
         {
             "id": "chat",
             "name": "Chat",
-            "icon": "Apps/HelpApp/task.png"
+            "icon": "Apps/HelpApp/chat.png"
         }
     ]
 }
