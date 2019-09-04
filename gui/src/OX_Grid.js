@@ -207,7 +207,7 @@ export default class OX_Grid extends React.Component {
           onHeaderSelectionChange={this.headerSelectionChange}
           onSelectionChange={this.selectionChange}
           onRowClick={e => {
-            this.props.onRowClick(e);
+            this.props.onRowClick ? this.props.onRowClick(e) : null;
           }}
           selectedField="selected"
           expandField="expanded"
