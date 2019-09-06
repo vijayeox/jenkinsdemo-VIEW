@@ -44,7 +44,6 @@
 
       proc.createWindow({
           id: "EDMSApplicationWindow",
-          icon: proc.resource(proc.metadata.icon),
           title: metadata.title.en_EN,
           dimension: {
             width: 400,
@@ -67,7 +66,7 @@
           const iframe = document.createElement('iframe');
           iframe.style.width = '100%';
           iframe.style.height = '100%';
-          iframe.src = proc.resource(baseUrl + 'authentication/login/?next=&oxauth=' + user.jwt + "&un=" + user.username);
+          iframe.src = proc.resource(baseUrl + '/authentication/login/?next=&oxauth=' + user.jwt + "&un=" + user.username);
 
           iframe.setAttribute('border', '0');
 
