@@ -1,6 +1,6 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate } from "@oxzion/gui";
+import { GridTemplate } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerRole";
 
@@ -11,26 +11,29 @@ class Role extends React.Component {
     this.state = {
       roleInEdit: undefined,
       roleToBeEdited: [],
-      action: "",
       permission: {
         canAdd: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_ROLE_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.child = React.createRef();
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      roleInEdit: this.cloneItem(dataItem)
+      roleInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 
@@ -38,9 +41,16 @@ class Role extends React.Component {
     return Object.assign({}, item);
   }
 
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
   remove = dataItem => {
-    DeleteEntry("role", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/role",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
@@ -55,7 +65,8 @@ class Role extends React.Component {
       dataItem: [],
       cancel: this.cancel,
       formAction: "post",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      selectedOrg: this.state.selectedOrg
     });
   };
 
@@ -66,11 +77,12 @@ class Role extends React.Component {
           title="Manage User Roles"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -79,6 +91,7 @@ class Role extends React.Component {
             showToolBar: true,
             title: "Role",
             api: "role",
+            api: "organization/" + this.state.selectedOrg + "/roles",
             column: [
               {
                 title: "Name",
@@ -89,7 +102,8 @@ class Role extends React.Component {
                 title: "Description",
                 field: "description"
               }
-            ]
+            ],
+            sortMode: [{ field: "is_system_role", dir: "desc" }]
           }}
           manageGrid={{
             add: this.insert,

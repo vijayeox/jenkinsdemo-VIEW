@@ -1,8 +1,8 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "@oxzion/gui";
-import { PushData } from "../components/apiCalls";
+import { Notification } from "../../GUIComponents";
+import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
 
@@ -11,9 +11,29 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      prjInEdit: this.props.dataItem || null
+      prjInEdit: this.props.dataItem || null,
+      managerName: undefined
     };
     this.notif = React.createRef();
+  }
+
+  UNSAFE_componentWillMount() {
+    if (this.props.formAction == "put") {
+      GetSingleEntityData(
+        "organization/" +
+          this.props.selectedOrg +
+          "/user/" +
+          this.props.dataItem.manager_id +
+          "/profile"
+      ).then(response => {
+        this.setState({
+          managerName: {
+            id: "111",
+            name: response.data.name
+          }
+        });
+      });
+    }
   }
 
   onDialogInputChange = event => {
@@ -35,25 +55,35 @@ export default class DialogContainer extends React.Component {
     this.setState({
       prjInEdit: edited
     });
+    item == "manager_id"
+      ? this.setState({
+          managerName: event.target.value
+        })
+      : null;
   };
 
   sendData = e => {
     e.preventDefault();
     this.notif.current.uploadingData();
-    PushData("project", this.props.formAction, this.props.dataItem.uuid, {
-      name: this.state.prjInEdit.name,
-      description: this.state.prjInEdit.description,
-      manager_id: this.state.prjInEdit.manager_id
-    }).then(response => {
-      this.props.action(response.status);
+    PushData(
+      "project",
+      this.props.formAction,
+      this.props.dataItem.uuid,
+      {
+        name: this.state.prjInEdit.name,
+        description: this.state.prjInEdit.description,
+        manager_id: this.state.prjInEdit.manager_id
+      },
+      this.props.selectedOrg
+    ).then(response => {
       if (response.status == "success") {
+        this.props.action(response);
         this.props.cancel();
-      } else if (
-        response.errors[0].exception.message.indexOf("name_UNIQUE") >= 0
-      ) {
-        this.notif.current.duplicateEntry();
       } else {
-        this.notif.current.failNotification();
+        this.notif.current.failNotification(
+          "Error",
+          response.message ? response.message : null
+        );
       }
     });
   };
@@ -64,15 +94,23 @@ export default class DialogContainer extends React.Component {
         <Notification ref={this.notif} />
         <div>
           <form id="prjForm" onSubmit={this.sendData}>
+            {this.props.diableField ? (
+              <div className="read-only-mode">
+                <h5>(READ ONLY MODE)</h5>
+                <i class="fas fa-user-lock"></i>
+              </div>
+            ) : null}
             <div className="form-group">
               <label className="required-label">Project Name</label>
               <Input
                 type="text"
                 className="form-control"
                 name="name"
+                maxLength="50"
                 value={this.state.prjInEdit.name || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Name"
+                readOnly={this.props.diableField ? true : false}
                 required={true}
               />
             </div>
@@ -82,10 +120,12 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
+                maxLength="200"
                 value={this.state.prjInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Project Description"
                 style={{ marginTop: "5px" }}
+                readOnly={this.props.diableField ? true : false}
                 required={true}
               />
             </div>
@@ -96,12 +136,16 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      mainList={"user"}
-                      selectedItem={this.state.prjInEdit.manager_id}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/users"
+                      }
+                      selectedItem={this.state.managerName}
+                      preFetch={true}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")
                       }
                       required={true}
+                      disableItem={this.props.diableField}
                       validationMessage={"Please select a Project Manager."}
                     />
                   </div>
@@ -110,7 +154,11 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
         </div>
-        <SaveCancel save="prjForm" cancel={this.props.cancel} />
+        <SaveCancel
+          save="prjForm"
+          cancel={this.props.cancel}
+          hideSave={this.props.diableField}
+        />
       </Window>
     );
   }

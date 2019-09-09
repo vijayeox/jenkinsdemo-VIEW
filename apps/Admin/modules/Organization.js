@@ -1,6 +1,6 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerOrg";
 
@@ -10,7 +10,6 @@ class Organization extends React.Component {
     this.core = this.props.args;
     this.state = {
       orgInEdit: undefined,
-      orgToBeEdited: [],
       action: "",
       visible: false,
       permission: {
@@ -45,8 +44,9 @@ class Organization extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Organization",
-        mainList: "user",
-        subList: "organization"
+        mainList: "users/list",
+        subList: "organization",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -58,10 +58,12 @@ class Organization extends React.Component {
   sendTheData = (selectedUsers, dataItem) => {
     var temp2 = [];
     for (var i = 0; i <= selectedUsers.length - 1; i++) {
-      var uid = { id: selectedUsers[i].id };
+      var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushOrgUsers(dataItem, temp2);
+    this.pushOrgUsers(dataItem, temp2).then(response => {
+      this.child.current.refreshHandler(response);
+    });
     this.toggleDialog();
   };
 
@@ -72,8 +74,9 @@ class Organization extends React.Component {
   }
 
   edit = (dataItem, required) => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      orgInEdit: this.cloneItem(dataItem)
+      orgInEdit: dataItem
     });
 
     this.inputTemplate = React.createElement(DialogContainer, {
@@ -92,7 +95,7 @@ class Organization extends React.Component {
 
   remove = dataItem => {
     DeleteEntry("organization", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+      this.child.current.refreshHandler(response);
     });
   };
 

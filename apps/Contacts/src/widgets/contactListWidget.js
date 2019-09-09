@@ -7,18 +7,10 @@ class ContactListWidget extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      contactList: [
-        {
-          title: "My Contacts",
-          data: this.props.myContacts,
-          expanded: false
-        },
-        {
-          title: "Organization Contacts",
-          data: this.props.orgContacts,
-          expanded: true
-        }
-      ]
+      myContacts: this.props.myContacts,
+      orgContacts: this.props.orgContacts,
+      orgContactsTempData: [],
+      myContactsTempData: []
     };
   }
 
@@ -27,12 +19,18 @@ class ContactListWidget extends React.Component {
       this.props.myContacts !== prevProps.myContacts ||
       this.props.orgContacts !== prevProps.orgContacts
     ) {
-      let contactList = this.state.contactList;
-      contactList[0].data = this.props.myContacts;
-      contactList[1].data = this.props.orgContacts;
-      this.setState({
-        contactList
-      });
+      this.setState(
+        {
+          myContacts: this.props.myContacts,
+          orgContacts: this.props.orgContacts
+        },
+        () => {
+          this.setState({
+            myContactsTempData: this.state.myContacts.splice(0, 20),
+            orgContactsTempData: this.state.orgContacts.splice(0, 20)
+          });
+        }
+      );
     }
   }
 
@@ -44,6 +42,7 @@ class ContactListWidget extends React.Component {
             args={this.core}
             contact={contact}
             handleSelected={this.props.handleSelected}
+            handleChecked={this.props.handleChecked}
             key={key}
           />
         );
@@ -53,23 +52,54 @@ class ContactListWidget extends React.Component {
     }
   };
 
+  scrollHandler = (event, scrollType) => {
+    const e = event.nativeEvent;
+    if (
+      e.target.scrollTop + 10 >=
+      e.target.scrollHeight - e.target.clientHeight
+    ) {
+      if (scrollType == "orgContacts") {
+        const moreData = this.state.orgContacts.splice(0, 10);
+        if (moreData.length > 0) {
+          this.setState({
+            orgContactsTempData: this.state.orgContactsTempData.concat(moreData)
+          });
+        }
+      } else {
+        const moreData = this.state.myContacts.splice(0, 10);
+        if (moreData.length > 0) {
+          this.setState({
+            myContactsTempData: this.state.myContactsTempData.concat(moreData)
+          });
+        }
+      }
+    }
+  };
+
   render() {
     return (
       <div className="panelbar-wrapper">
         <PanelBar expandMode={"single"}>
-          {this.state.contactList.map((contactListItem, key) => {
-            return (
-              <PanelBarItem
-                expanded={contactListItem.expanded}
-                title={contactListItem.title}
-                key={key}
-              >
-                <div className="contactList">
-                  {this.contactListComponentData(contactListItem.data)}
-                </div>
-              </PanelBarItem>
-            );
-          })}
+          <PanelBarItem expanded={true} title={"My Contacts"}>
+            <div
+              className="contactList"
+              onScroll={event => {
+                this.scrollHandler(event, "myContacts");
+              }}
+            >
+              {this.contactListComponentData(this.state.myContactsTempData)}
+            </div>
+          </PanelBarItem>
+          <PanelBarItem expanded={true} title={"Organization Contacts"}>
+            <div
+              className="contactList"
+              onScroll={event => {
+                this.scrollHandler(event, "orgContacts");
+              }}
+            >
+              {this.contactListComponentData(this.state.orgContactsTempData)}
+            </div>
+          </PanelBarItem>
         </PanelBar>
       </div>
     );

@@ -12,8 +12,8 @@ class ContactDailog extends React.Component {
     this.core = this.props.args;
     this.state = {
       contactDetails: {},
-      tempPhoneData: { type: "other", value: "" },
-      tempEmailData: { type: "other", value: "" },
+      tempPhoneData: { type: "Other", value: "" },
+      tempEmailData: { type: "Other", value: "" },
       icon: null,
       errors: {
         first_name: true
@@ -128,7 +128,7 @@ class ContactDailog extends React.Component {
       }
       this.setState({
         contactDetails,
-        tempPhoneData: { type: "other", value: "" }
+        tempPhoneData: { type: "Other", value: "" }
       });
     } else if (type == "addNewEmail") {
       let contactDetails = this.state.contactDetails;
@@ -141,7 +141,7 @@ class ContactDailog extends React.Component {
 
       this.setState({
         contactDetails,
-        tempEmailData: { type: "other", value: "" }
+        tempEmailData: { type: "Other", value: "" }
       });
     }
   };
@@ -171,7 +171,7 @@ class ContactDailog extends React.Component {
       }
       this.loader.destroy();
     });
-  }
+  };
 
   saveContact = () => {
     const { contactDetails, errors } = this.state;
@@ -180,6 +180,18 @@ class ContactDailog extends React.Component {
       return;
     }
     let data = {};
+    if (contactDetails.phone_1 || contactDetails.email) {
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (contactDetails.email && !re.test(contactDetails.email)) {
+        this.notif.current.failNotification("Primary email is not valid.");
+        return;
+      }
+    } else {
+      this.notif.current.failNotification(
+        "Either primary phone or email is mandatory."
+      );
+      return;
+    }
     if (Object.keys(contactDetails).length != 0) {
       for (var i = 0; i < Object.keys(contactDetails).length; i++) {
         if ([Object.keys(contactDetails)[i]] == "icon") {
@@ -245,15 +257,15 @@ class ContactDailog extends React.Component {
   additionalContactListData = (data, key, type) => {
     return (
       <span key={key}>
-        <div className="col-md-3 displayInline ">
+        <div className="col-3 displayInline ">
           <p>
             <b>{data.type}:</b>
           </p>
         </div>
-        <div className="col-md-7 displayInline">
+        <div className="col-7 displayInline">
           <p>{data.value}</p>
         </div>
-        <div className="col-md-2 displayInline paddingNone">
+        <div className="col-2 displayInline paddingNone">
           <button
             className="btn btn-danger"
             onClick={() => this.removeItem(key, type)}
@@ -274,13 +286,13 @@ class ContactDailog extends React.Component {
           this.state.contactDetails.phone_list.map((phone, key) => {
             return this.additionalContactListData(phone, key, "phone");
           })}
-        <div className="col-md-3 displayInline paddingNone">
+        <div className="col-3 displayInline paddingNone">
           {this.contactTypeDropDown(
             "newPhoneType",
             this.state.tempPhoneData.type
           )}
         </div>
-        <div className="col-md-7 displayInline">
+        <div className="col-7 displayInline">
           <input
             type="text"
             className="form-control inputHeight"
@@ -290,7 +302,7 @@ class ContactDailog extends React.Component {
             onChange={this.handleChange}
           />
         </div>
-        <div className="col-md-2 displayInline paddingNone">
+        <div className="col-2 displayInline paddingNone">
           <button
             className="btn btn-primary"
             onClick={e => this.handleAdd(e, "addNewPhone")}
@@ -311,13 +323,13 @@ class ContactDailog extends React.Component {
           this.state.contactDetails.email_list.map((email, key) => {
             return this.additionalContactListData(email, key, "email");
           })}
-        <div className="col-md-3 displayInline paddingNone">
+        <div className="col-3 displayInline paddingNone">
           {this.contactTypeDropDown(
             "newEmailType",
             this.state.tempEmailData.type
           )}
         </div>
-        <div className="col-md-7 displayInline">
+        <div className="col-7 displayInline">
           <input
             type="text"
             className="form-control inputHeight"
@@ -327,7 +339,7 @@ class ContactDailog extends React.Component {
             onChange={this.handleChange}
           />
         </div>
-        <div className="col-md-2 displayInline paddingNone">
+        <div className="col-2 displayInline paddingNone">
           <button
             className="btn btn-primary"
             onClick={e => this.handleAdd(e, "addNewEmail")}
@@ -346,9 +358,9 @@ class ContactDailog extends React.Component {
         <div className="contactPanel addEditPanel">
           <div className="contactForm">
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-6">
                 <div className="row">
-                  <div className="col-md-12 form-group">
+                  <div className="col-12 form-group">
                     <label htmlFor="first_name">First Name *</label>
                     <input
                       type="text"
@@ -370,7 +382,7 @@ class ContactDailog extends React.Component {
                     )}
                   </div>
 
-                  <div className="col-md-12 form-group">
+                  <div className="col-12 form-group">
                     <label htmlFor="last_name">Last Name</label>
                     <input
                       type="text"
@@ -386,7 +398,7 @@ class ContactDailog extends React.Component {
                     />
                   </div>
 
-                  <div className="col-md-12 form-group">
+                  <div className="col-12 form-group">
                     <label htmlFor="country">Country</label>
                     <select
                       className="form-control inputHeight"
@@ -411,9 +423,9 @@ class ContactDailog extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-6">
                 <div className="row">
-                  <div className="col-md-6 profileImage">
+                  <div className="col-6 profileImage">
                     <ProfilePictureWidget
                       args={this.core}
                       contactDetails={this.state.contactDetails}
@@ -423,9 +435,9 @@ class ContactDailog extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-12">
+              <div className="col-12">
                 <div className="row">
-                  <div className="form-group col-md-6">
+                  <div className="form-group col-6">
                     <label htmlFor="company_name">Company Name</label>
                     <input
                       type="text"
@@ -441,7 +453,7 @@ class ContactDailog extends React.Component {
                     />
                   </div>
 
-                  <div className="col-md-6 form-group">
+                  <div className="col-6 form-group">
                     <label htmlFor="designation">Designation</label>
                     <input
                       type="text"
@@ -459,9 +471,9 @@ class ContactDailog extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-6">
                 <label htmlFor="phone_1">Primary Phone</label>
-                <div className="col-md-12 form-group paddingNone">
+                <div className="col-12 form-group paddingNone">
                   <input
                     type="text"
                     className="form-control inputHeight"
@@ -478,9 +490,9 @@ class ContactDailog extends React.Component {
                 {this.additionalPhoneNumberData()}
               </div>
 
-              <div className="col-md-6">
+              <div className="col-6">
                 <label htmlFor="email">Primary Email</label>
-                <div className="col-md-12 form-group paddingNone">
+                <div className="col-12 form-group paddingNone">
                   <input
                     type="email"
                     className="form-control inputHeight"
@@ -497,9 +509,9 @@ class ContactDailog extends React.Component {
                 {this.additionalEmailData()}
               </div>
 
-              <div className="col-md-12">
+              <div className="col-12">
                 <div className="row">
-                  <div className="col-md-6 form-group">
+                  <div className="col-6 form-group">
                     <label htmlFor="phone_1">Address 1</label>
                     <textarea
                       row={4}
@@ -515,7 +527,7 @@ class ContactDailog extends React.Component {
                     />
                   </div>
 
-                  <div className="col-md-6 form-group">
+                  <div className="col-6 form-group">
                     <label htmlFor="phone_1">Address 2</label>
                     <textarea
                       row={4}

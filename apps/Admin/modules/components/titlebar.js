@@ -1,5 +1,4 @@
 import React from "react";
-import { FaBars } from "react-icons/fa";
 import { DropDown } from "./index.js";
 import { Button } from "@progress/kendo-react-buttons";
 
@@ -15,7 +14,7 @@ export class TitleBar extends React.Component {
             primary={true}
             style={{ width: "45px", height: "45px" }}
           >
-            <FaBars />
+            <i className="fas fa-bars"></i>
           </Button>
         </div>
         <div className="col text-center" id="pageTitle">
@@ -38,6 +37,7 @@ export class TitleBar extends React.Component {
                 id: "111",
                 name: "Switch Organization"
               }}
+              preFetch={true}
               onDataChange={this.props.orgChange}
             />
           </div>

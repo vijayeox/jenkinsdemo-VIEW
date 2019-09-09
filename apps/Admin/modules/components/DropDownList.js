@@ -2,7 +2,7 @@ import React from "react";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { filterBy } from "@progress/kendo-data-query";
 import { GetDataSearch } from "../components/apiCalls";
-import withValueField from "../dialog/withValueField";
+import withValueField from "./filterForStaticDropdown";
 const DropDownListWithValueField = withValueField(DropDownList);
 
 export default class DropDown extends React.Component {
@@ -13,18 +13,21 @@ export default class DropDown extends React.Component {
     this.state = {
       mainList: []
     };
+    this.timeout = null;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (typeof this.props.rawData == "object") {
       this.setState({
         mainList: this.props.rawData
       });
       this.masterUserList = this.props.rawData;
     } else {
-      let loader = this.core.make("oxzion/splash");
-      loader.show();
-      this.getMainList(null, 20);
+      if (this.props.preFetch) {
+        let loader = this.core.make("oxzion/splash");
+        loader.show();
+        this.getMainList(null, 20);
+      }
     }
   }
 
@@ -45,9 +48,10 @@ export default class DropDown extends React.Component {
   };
 
   filterChangeAPI = e => {
-    setTimeout(() => {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
       this.getMainList(e.filter.value, 20);
-    }, 500);
+    }, 1000);
   };
 
   filterChange = event => {
@@ -71,6 +75,8 @@ export default class DropDown extends React.Component {
             {...this.inputProps}
             value={this.props.selectedItem}
             onChange={this.props.onDataChange}
+            textField={this.props.keyValuePair ? "name" : undefined}
+            valueField={this.props.keyValuePair ? "id" : undefined}
             filterable={true}
             onFilterChange={this.filterChange}
             style={{ width: this.props.width ? this.props.width : "100%" }}
