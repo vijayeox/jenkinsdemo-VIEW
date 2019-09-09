@@ -7,10 +7,10 @@
   "hidden": true,
   "icon_white": "icon_white.png",
   "title": {
-    "en_EN": "Task"
+    "en_EN": "Project Management"
   },
   "description": {
-    "en_EN": "Task"
+    "en_EN": "Project Management"
   },
   "files": [
     "main.js"
