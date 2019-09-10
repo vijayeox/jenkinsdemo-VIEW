@@ -14,7 +14,7 @@ const register = (core, args, options, metadata) => {
   const win = proc.createWindow({
     id: 'HelpWindow',
     title: title.en_EN,
-    dimension: { width: 400, height: 600 },
+    dimension: { width: document.body.clientWidth, height: document.body.clientHeight },
     position: { left: 300, top: 0 }
   });
     win.on('destroy', () => proc.destroy())
