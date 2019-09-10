@@ -3,6 +3,7 @@ import FormRender from "./FormRender";
 import ReactDOM from "react-dom";
 import Document from "./Document.js";
 import OX_Grid from "../../OX_Grid";
+import DocumentViewer from "../../DocumentViewer";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
@@ -79,6 +80,17 @@ class Page extends React.Component {
               pageable={itemContent.pageable}
               sortable={itemContent.sortable}
               columnConfig={itemContent.columnConfig}
+            />
+          );
+          break;
+        case "Document":
+          var itemContent = JSON.parse(data[i].content);
+          console.log(itemContent);
+          content.push(
+            <DocumentViewer
+              key={i}
+              osjsCore={this.core}
+              // url={itemContent.url}
             />
           );
           break;

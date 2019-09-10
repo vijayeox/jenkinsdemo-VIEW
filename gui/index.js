@@ -6,6 +6,7 @@ import FileUploader from "./src/FileUploader";
 import FormRender from "./src/components/App/FormRender";
 import Document from "./src/components/App/Document";
 import OX_Grid from "./src/OX_Grid";
+import DocumentViewer from "./src/DocumentViewer";
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -14,5 +15,6 @@ export {
   FileUploader,
   Document,
   FormRender,
-  OX_Grid
+  OX_Grid,
+  DocumentViewer
 };

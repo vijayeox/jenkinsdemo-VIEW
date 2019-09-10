@@ -7,6 +7,7 @@ const minimize = mode === "production";
 const plugins = [];
 const pkg = require("./package.json");
 const libraryName = pkg.name;
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 if (mode === "production") {
   plugins.push(
@@ -41,7 +42,14 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    ...plugins
+    ...plugins,
+    new CopyWebpackPlugin([
+      {
+        from: 'node_modules/pdfjs-dist/cmaps/',
+        to: 'cmaps/'
+      },
+      "ViewerJS/"
+    ]),
   ],
   resolve: {
     alias: {
@@ -52,16 +60,18 @@ module.exports = {
     rules: [
       {
         test: /\.(svg|png|jpe?g|gif|webp)$/,
-        use: [{
-          loader: "file-loader",
-        }]
+        use: [
+          {
+            loader: "file-loader"
+          }
+        ]
       },
-       { 
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
-        loader: "url-loader?limit=10000&mimetype=application/font-woff" 
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "url-loader?limit=10000&mimetype=application/font-woff"
       },
-      { 
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: "file-loader"
       },
       {
@@ -69,13 +79,13 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               minimize,
               sourceMap: true
