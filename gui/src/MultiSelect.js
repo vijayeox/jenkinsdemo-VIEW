@@ -1,7 +1,6 @@
 import React from "react";
 import { MultiSelect as MSelect } from "@progress/kendo-react-dropdowns";
-import { FaArrowRight, FaSearch } from "react-icons/fa";
-import { Notification } from "./../index";
+import Notification from "./Notification";
 import { Dialog, DialogActionsBar } from "@progress/kendo-react-dialogs";
 import { Grid, GridColumn, GridCell } from "@progress/kendo-react-grid";
 import Swal from "sweetalert2";
@@ -150,7 +149,7 @@ async ExistingUsers(api, selectedEntity) {
     const noData = (
       <h4 style={{ fontSize: "1em" }}>
         <span style={{ fontSize: "2.5em" }}>
-          <FaSearch />
+          <i className="fas fa-search"></i>
         </span>
         <br />
         <br />
@@ -192,7 +191,7 @@ async ExistingUsers(api, selectedEntity) {
             <h6 style={{ color: "white", paddingTop: "3px" }}>
               {this.props.config.title} &nbsp; -&nbsp;&nbsp;
               {this.props.config.dataItem.name}
-              &nbsp;&nbsp; <FaArrowRight /> &nbsp; Manage
+              &nbsp;&nbsp; <i className="fas fa-arrow-right"></i> &nbsp; Manage
               {" " + this.props.config.members}
             </h6>
           </nav>

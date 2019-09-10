@@ -4,9 +4,8 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
-import { FaUserLock } from "react-icons/fa";
 import { GetSingleEntityData, PushData } from "../components/apiCalls";
-import { Notification } from "@oxzion/gui";
+import { Notification } from "../../GUIComponents";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
 
 import Codes from "../data/Codes";
@@ -36,7 +35,8 @@ export default class DialogContainer extends React.Component {
           "organization/" +
             this.props.selectedOrg +
             "/user/" +
-            response.data.managerid
+            response.data.managerid +
+            "/profile"
         ).then(response => {
           this.setState({
             managerName: {
@@ -228,7 +228,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i class="fas fa-user-lock"></i>
               </div>
             ) : null}
 
@@ -442,6 +442,11 @@ export default class DialogContainer extends React.Component {
                     <DateComponent
                       format={this.props.userPreferences.dateformat}
                       value={this.state.userInEdit.date_of_join}
+                      min={
+                        this.state.userInEdit.date_of_birth
+                          ? this.state.userInEdit.date_of_birth
+                          : undefined
+                      }
                       change={e => this.valueChange("date_of_join", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}

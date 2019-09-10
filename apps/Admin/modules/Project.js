@@ -1,8 +1,7 @@
 import React from "react";
-import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
-import Swal from "sweetalert2";
 import DialogContainer from "./dialog/DialogContainerPrj";
 
 class Project extends React.Component {

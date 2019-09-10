@@ -1,11 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import AutoSuggest from "react-autosuggest";
 import LocaleCurrency from "locale-currency";
 import cc from "country-code";
 import _ from "lodash";
-
 import "./style.css";
 
 const debug = require("debug")("select-currency:info");
