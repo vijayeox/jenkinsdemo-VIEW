@@ -21,10 +21,9 @@ html {
 }
 
 .osjs-window {
-  @include window;
-  background: #275261;
-
-  border-radius: 0;
+  // @include window;
+  // background: #275261;
+  // padding :0px;
 
   &[data-focused="false"] {
     opacity: 0.5;
@@ -175,14 +174,14 @@ html {
 
 .osjs-panel-item[data-name="windows"] {
   .osjs-panel-item--clickable:hover img {
-    -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1.1);
-    -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.1);
-    -moz-transition: all 200ms ease-in;
-    -moz-transform: scale(1.1);
-    transition: all 200ms ease-in;
-    transform: scale(1.1);
+    // -webkit-transition: all 200ms ease-in;
+    // -webkit-transform: scale(1.1);
+    // -ms-transition: all 200ms ease-in;
+    // -ms-transform: scale(1.1);
+    // -moz-transition: all 200ms ease-in;
+    // -moz-transform: scale(1.1);
+    // transition: all 200ms ease-in;
+    // transform: scale(1.1);
   }
 
   .osjs-panel-item--clickable:hover {
@@ -191,14 +190,14 @@ html {
 }
 
 .osjs-panel-item--clickable:hover img {
-  -webkit-transition: all 200ms ease-in;
-  -webkit-transform: scale(1.1);
-  -ms-transition: all 200ms ease-in;
-  -ms-transform: scale(1.1);
-  -moz-transition: all 200ms ease-in;
-  -moz-transform: scale(1.1);
-  transition: all 200ms ease-in;
-  transform: scale(1.1);
+  // -webkit-transition: all 200ms ease-in;
+  // -webkit-transform: scale(1.1);
+  // -ms-transition: all 200ms ease-in;
+  // -ms-transform: scale(1.1);
+  // -moz-transition: all 200ms ease-in;
+  // -moz-transform: scale(1.1);
+  // transition: all 200ms ease-in;
+  // transform: scale(1.1);
 }
 
 .osjs-panel {
@@ -220,11 +219,17 @@ html {
   color: white;
 }
 .osjs-panel-item[data-name="windows"] > div {
-  border-right: 1px solid #fff;
-  color: #fff;
-  border-radius: 0px;
-  margin-left: 0;
-  margin-right: 0;
+
+  font-size: 12px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 5px 10px;
+  align-self: center;
+
+  img {
+    max-height: 20px;
+  }
 }
 
 input:not([type]),
@@ -304,8 +309,8 @@ label {
   margin-bottom: 8px;
 }
 .osjs-search-container {
-  box-shadow: 0 11px 1em rgba(0, 0, 0, 0.5);
-  background: #333333eb;
+  // box-shadow: 0 11px 1em rgba(0, 0, 0, 0.5);
+  // background: #333333eb;
   color: #fff;
 }
 .appmenu .app-bar .app {
@@ -317,3 +322,6 @@ label {
 .profile-dropdown-div:hover {
   color: #275261;
 }
+
+@import "variables.scss";
+@import "eox.scss";

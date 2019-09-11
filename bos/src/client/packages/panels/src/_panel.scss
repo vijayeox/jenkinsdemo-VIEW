@@ -165,10 +165,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 18px !important;
-  color: #fff !important;
-  font-weight: unset !important;
-  line-height: 20px;
+  // font-size: 18px !important;
+  // color: #fff !important;
+  // font-weight: unset !important;
+  // line-height: 20px;
   text-align: left;
   padding-left: 0px;
   margin-bottom: 5px;
@@ -289,9 +289,9 @@
 .appmenu .app-bar .app:hover {
   background: #ffffff4d;
   transition: all 200ms ease-in;
-  transform: scale(1.1);
+  // transform: scale(1.1);
   background-size: cover !important;
-  background-color: transparent !important;
+  // background-color: transparent !important;
 }
 
 .osjs-panel-logout img {
