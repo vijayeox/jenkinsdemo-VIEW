@@ -5,6 +5,7 @@ import AggregateValue from './aggregateValue';
 import './globalFunctions';
 import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';
+import './widgetEditorApp.scss';
 
 class WidgetEditorApp extends React.Component {
     constructor(props) {
@@ -17,17 +18,10 @@ class WidgetEditorApp extends React.Component {
             widget: {
                 align: widgetConfiguration ? widgetConfiguration.align : null,
                 type: widgetConfiguration ? widgetConfiguration.type : null,
-                id: widgetConfiguration ? widgetConfiguration.id : null
+                id: widgetConfiguration ? widgetConfiguration.id : null,
+                readOnly: true
             }
         };
-    }
-
-    alignmentChanged = (e) => {
-        let align = e.target.value;
-        this.setState((state) => {
-            state.widget.align = align;
-            return state.widget;
-        });
     }
 
     widgetSelectionChanged = (e) => {
@@ -45,12 +39,22 @@ class WidgetEditorApp extends React.Component {
                     if (state.widget.type != widget.type) {
                         state.widget.type = widget.type;
                         state.widget.align = null;
+                        state.widget.readOnly = true;
                     }
                     return state.widget;
                 });
             }).
             catch(function(responseData) {
             });
+    }
+
+    copyWidget = (e) => {
+        this.setState((state, props) => {
+            this.state.widget.readOnly = false;
+            return this.state.widget;
+        },
+        () => {
+        });
     }
 
     //Set the react app instance on the window so that the window can call this app to get its state before the window closes.
@@ -73,7 +77,19 @@ class WidgetEditorApp extends React.Component {
     }
 
     getWidgetState() {
-        return this.state.widget;
+        let widget = this.state.widget;
+        return {
+            align: widget.align,
+            type: widget.type === 'aggregate' ? 'inline' : 'block',
+            id: widget.id
+        };
+    }
+
+    updateState = (name, value) => {
+console.log(value);
+//        this.setState({
+//            [name]:value
+//        });
     }
 
     validateUserInput() {
@@ -85,41 +101,43 @@ class WidgetEditorApp extends React.Component {
                 return (
                     <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                 )
-            }, this);
+            });
 
         return (
-            <form>
-                <div className="row">
-                    <div className="form-group col">
-                        <label>Widget</label>
-                        <select className="form-control custom-select" placeholder="Select widget" value={this.state.widget.id ? this.state.widget.id : ''} onChange={this.widgetSelectionChanged}>
+            <form className="widget-editor-form">
+                <div className="form-group row">
+                    <div className="col-1 right-align">
+                        <label htmlFor="selectWidget" className="right-align col-form-label form-control-sm">Widget</label>
+                    </div>
+                    <div className="col-4">
+                        <select id="selectWidget" name="selectWidget" className="form-control form-control-sm" placeholder="Select widget" 
+                            value={this.state.widget.id ? this.state.widget.id : ''} onChange={this.widgetSelectionChanged}>
                             <option key="" value="">-Select widget-</option>
                             {htmlWidgetOptions}
                         </select>
                     </div>
-                    <div className="form-group col">
-                        <label>Alignment</label>
-                        <div className="form-control">
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">Left</label>&nbsp;&nbsp;
-                                <input className="form-check-input" type="radio" id="leftAlignCheckbox" name="alignment" value="left" checked={!this.state.widget.align || (this.state.widget.align === 'left') || (this.state.widget.align === '')} onChange={this.alignmentChanged} disabled={this.state.widget.type != 'block'}/>
-                            </div>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">Center</label>&nbsp;&nbsp;
-                                <input className="form-check-input" type="radio" id="centerAlignCheckbox" name="alignment" value="center" checked={this.state.widget.align === 'center'} onChange={this.alignmentChanged} disabled={this.state.widget.type != 'block'}/>
-                            </div>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <div className="form-check form-check-inline">
-                                <label className="form-check-label">Right</label>&nbsp;&nbsp;
-                                <input className="form-check-input" type="radio" id="rightAlignCheckbox" name="alignment" value="right" checked={this.state.widget.align === 'right'} onChange={this.alignmentChanged} disabled={this.state.widget.type != 'block'}/>
-                            </div>
-                        </div>
+                    <div className="col-1">
+                        {this.state.widget.id && (this.state.widget.type !== 'inline') && 
+                        <button type="button" className="btn btn-primary add-series-button" title="Copy widget" onClick={this.copyWidget}>
+                            <span className="fa fa-copy" aria-hidden="true"></span>
+                        </button>
+                        }
+                    </div>
+                    <div className="col-2 right-align">
+                    {!this.state.widget.readOnly && this.state.widget.id && 
+                            <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
+                    }
+                    </div>
+                    <div className="col-4">
+                    {!this.state.widget.readOnly && this.state.widget.id && 
+                        <input type="text" id="widgetName" name="widgetName" className="form-control form-control-sm" 
+                            onChange={this.inputChanged} value="Widget name"/>
+                    }
                     </div>
                 </div>
                 <div className="row">
                     {(this.state.widget.type === 'block') && 
-                        <BarChart widgetId={this.state.widget.id}/>
+                        <BarChart widget={this.state.widget} updateParentState={this.updateState}/>
                     }
                     {(this.state.widget.type === 'inline') && 
                         <AggregateValue widgetId={this.state.widget.id}/>

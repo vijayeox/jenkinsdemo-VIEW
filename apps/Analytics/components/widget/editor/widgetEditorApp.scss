@@ -1,0 +1,31 @@
+
+@import '~bootstrap/dist/css/bootstrap.css';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+
+.widget-editor-form > div.row {
+    margin-right:0px;
+    margin-left:0px;
+}
+
+.widget-editor-form #chartPreview {
+    height:325px;
+    max-height:325px;
+}
+
+.widget-editor-form #widgetTypeEditArea > div > .card {
+    height:415px;
+}
+
+.widget-editor-form .right-align, 
+.widget-editor-form .card .card-body label {
+    text-align:right;
+}
+
+.widget-editor-form #displayToolTip {
+    margin-top:8px;
+}
+
+.widget-editor-form #chartProperty .card-body {
+    overflow:auto;
+}
+

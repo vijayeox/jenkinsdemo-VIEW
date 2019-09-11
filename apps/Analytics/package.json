@@ -9,12 +9,14 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
   "dependencies": {
+    "bootstrap": "^4.3.1",
+    "ckeditor4-react": "1.0.0-beta",
+    "file-loader": "^4.2.0",
     "jquery": "^3.4.1",
     "react": "^16.8.6",
+    "react-burger-menu": "2.6.10",
     "react-dom": "^16.8.6",
     "react-icons": "^3.6.1",
-    "ckeditor4-react": "1.0.0-beta",
-    "react-burger-menu": "2.6.10",
     "sweetalert2": "^8.12.1"
   },
   "devDependencies": {
@@ -25,24 +27,25 @@
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.2.0",
-    "@progress/kendo-react-buttons": "^2.10.0",
+    "@fortawesome/fontawesome-free": "^5.10.2",
     "@oxzion/gui": "file:../../gui",
+    "@progress/kendo-react-buttons": "^2.10.0",
     "babel-loader": "^8.0.5",
+    "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
     "dotenv-webpack": "^1.7.0",
-    "copy-webpack-plugin": "^4.6.0",
     "eslint": "^5.12.1",
     "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "prop-types": "^15.6.1",
     "sass-loader": "^7.1.0",
     "stylelint": "^10.0.1",
     "stylelint-config-standard": "^18.2.0",
     "stylelint-scss": "^3.5.1",
+    "url-loader": "^2.1.0",
     "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1",
-    "bootstrap": "^4.3.1",
-    "prop-types": "^15.6.1"
+    "webpack-cli": "^3.2.1"
   },
   "osjs": {
     "type": "package"

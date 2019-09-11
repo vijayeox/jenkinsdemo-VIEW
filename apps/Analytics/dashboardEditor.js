@@ -5,6 +5,7 @@ import JavascriptLoader from './components/javascriptLoader';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
+import './components/widget/editor/widgetEditorApp.scss';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
@@ -320,7 +321,8 @@ class DashboardEditor extends React.Component {
                     Save
                 </button>
                 <br/><br/><br/>
-                <div id="ckEditorInstance" style={{height:'calc(100%)'}}></div>
+                <div id="ckEditorInstance" style={{height:'calc(100%)'}}>
+                </div>
             </div>
         );
     }
