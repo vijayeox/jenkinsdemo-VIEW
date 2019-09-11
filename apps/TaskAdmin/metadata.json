@@ -1,0 +1,17 @@
+{
+  "type": "application",
+  "name": "TaskAdmin",
+  "category": null,
+  "server": "server.js",
+  "icon": "icon.png",
+  "hidden": true,
+  "title": {
+    "en_EN": "TaskAdmin"
+  },
+  "description": {
+    "en_EN": "TaskAdmin"
+  },
+  "files": [
+    "main.js"
+  ]
+}
