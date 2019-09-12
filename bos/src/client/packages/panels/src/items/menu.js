@@ -224,7 +224,7 @@ export default class MenuPanelItem extends PanelItem {
       h('div', {
         onclick,
         oncreate: el => this.attachKeybindings(el),
-        className: 'osjs-panel-item--clickable osjs-panel-item--icon'
+        className: 'logo-here'
       }, [
         h('img', {
           src: menuIcon,
