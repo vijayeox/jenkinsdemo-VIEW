@@ -88,6 +88,17 @@
 //.osjs-notifications
     .osjs-notification { border-radius: 4px; @extend .box-shadow;}
 
+//Resizers
+    .osjs-window-resize[data-direction="n"]  { cursor: n-resize;  top: 0; }
+    .osjs-window-resize[data-direction="w"]  { cursor: w-resize; left: 0; }
+    .osjs-window-resize[data-direction="s"]  { cursor: s-resize; bottom: 0; }
+    .osjs-window-resize[data-direction="se"] { cursor: se-resize; bottom: 0; right: 0; }
+    .osjs-window-resize[data-direction="e"]  { cursor: e-resize; right: 0; }
+
+    .osjs-window-resize[data-direction="ne"],
+    .osjs-window-resize[data-direction="nw"],
+    .osjs-window-resize[data-direction="sw"] { cursor: sw-resize; display:none;}
+
 //Do not use - for mockups only
 
     .app-menu-not-req { position: absolute; top:45px; left: 0; }
