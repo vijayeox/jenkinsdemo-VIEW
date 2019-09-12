@@ -5,6 +5,7 @@
   "server": "server.js",
   "icon": "icon.png",
   "hidden": true,
+  "icon_white": "icon_white.png",
   "title": {
     "en_EN": "TaskAdmin"
   },

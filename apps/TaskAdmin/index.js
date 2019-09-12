@@ -42,7 +42,7 @@
         metadata
       });
 
-  proc.createWindow({ id: "TaskAdminApplicationWindow", icon: proc.resource(proc.metadata.icon),
+  proc.createWindow({ id: "TaskAdminApplicationWindow", icon: proc.resource(proc.metadata.icon_white),
   title: metadata.title.en_EN, dimension: {width: 400, height: 400},  state: {
     maximized : true
   },})
