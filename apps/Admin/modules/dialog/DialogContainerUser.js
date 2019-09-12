@@ -33,10 +33,10 @@ export default class DialogContainer extends React.Component {
 
         GetSingleEntityData(
           "organization/" +
-            this.props.selectedOrg +
-            "/user/" +
-            response.data.managerid +
-            "/profile"
+          this.props.selectedOrg +
+          "/user/" +
+          response.data.managerid +
+          "/profile"
         ).then(response => {
           this.setState({
             managerName: {
@@ -135,6 +135,17 @@ export default class DialogContainer extends React.Component {
   validateEmail(emailText) {
     var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
     if (!pattern.test(emailText)) {
+      this.notif.current.customWarningNotification(
+        "Invalid Email ID",
+        "Please enter a valid email address."
+      );
+      return true;
+    }
+  }
+
+  validateUserName(username) {
+    var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
+    if (!pattern.test(username)) {
       this.notif.current.customWarningNotification(
         "Invalid Email ID",
         "Please enter a valid email address."
@@ -371,7 +382,7 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-4">
-                  <label className="required-label">Manager Assigned</label>
+                  <label>Manager Assigned</label>
                   <div>
                     <DropDown
                       args={this.core}
@@ -384,7 +395,6 @@ export default class DialogContainer extends React.Component {
                       onDataChange={e =>
                         this.managerValueChange("managerid", e)
                       }
-                      required={true}
                       disableItem={this.props.diableField}
                     />
                   </div>

@@ -451,10 +451,10 @@ export default class Core extends CoreBase {
     this.on(`osjs/application:launched`, app => {
       splash.destroy();
     });
-    if (name == "Admin") {
+    if (name == "Admin" || name == "Preferences") {
       var runningApps = this.make("osjs/packages").running();
       runningApps.forEach(app => {
-        if (app === "Admin") {
+        if (app === "Admin" || app === "Preferences") {
           splash.destroy();
         }
       });

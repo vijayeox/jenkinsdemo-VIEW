@@ -32,7 +32,9 @@
     "react-phone-number-input": "^2.3.21",
     "react-textarea-autosize": "^7.1.0",
     "react-tooltip": "^3.10.0",
-    "scroll-into-view-if-needed": "^2.2.20"
+    "scroll-into-view-if-needed": "^2.2.20",
+    "sweetalert2": "^8.15.3",
+    "sweetalert2-react-content": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

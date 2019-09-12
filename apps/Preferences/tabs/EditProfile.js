@@ -36,7 +36,7 @@ class EditProfile extends Component {
     ) {
       this.userprofile.key.preferences["dateformat"] =
         this.userprofile.key.preferences["dateformat"] &&
-        this.userprofile.key.preferences["dateformat"] != ""
+          this.userprofile.key.preferences["dateformat"] != ""
           ? this.userprofile.key.preferences["dateformat"]
           : "dd-MM-yyyy";
     } else {
@@ -69,7 +69,7 @@ class EditProfile extends Component {
     Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
-  onSelect1 = (event) => {
+  onSelect1 = event => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
@@ -88,7 +88,7 @@ class EditProfile extends Component {
     }
   }
 
-  onSelect2 = (event) => {
+  onSelect2 = event => {
     const field = {};
     field[event.target.name] = event.target.value;
     this.setState(field);
@@ -103,7 +103,7 @@ class EditProfile extends Component {
         "YYYY-MM-DD"
       ).format();
       const Datekendo = new Date(Dateiso);
-      let fields = { ...this.state.fields };
+      let fields = this.state.fields;
       fields["date_of_birth"] = Datekendo;
       this.setState({
         fields
@@ -112,27 +112,27 @@ class EditProfile extends Component {
   }
 
   handleDOBChange = event => {
-    let fields = { ...this.state.fields };
+    let fields = this.state.fields;
     fields.date_of_birth = event.target.value;
     this.setState({ fields: fields });
   };
 
-  handleChange = (e) => {
+  handleChange = e => {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
       fields
     });
-  }
+  };
 
-  handleChangeAboutField = (value) => {
+  handleChangeAboutField = value => {
     console.log(value);
     let fields = this.state.fields;
-    fields['about'] = value;
+    fields["about"] = value;
     this.setState({
       fields
     });
-  }
+  };
 
   async handleSubmit(event) {
     event.preventDefault();
@@ -140,7 +140,7 @@ class EditProfile extends Component {
     if (this.validateForm()) {
       const formData = {};
 
-      let fields = { ...this.state.fields };
+      let fields = this.state.fields;
       fields.phone = this.state.dial_code + "-" + this.state.phoneno;
       this.setState({
         fields: fields
@@ -693,7 +693,6 @@ class EditProfile extends Component {
               <div className="errorMsg">{this.state.errors["interest"]}</div>
             </div>
           </div>
-
           <div className="row">
             <div className="col s12 input-field">
               <button

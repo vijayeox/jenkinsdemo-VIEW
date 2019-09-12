@@ -10,6 +10,10 @@ import PhoneInput from "react-phone-number-input";
 import Codes from "../data/Codes";
 import timezoneCode from "../../public/js/timezones.js";
 
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
+
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -20,7 +24,7 @@ export default class DialogContainer extends React.Component {
       contactName: [],
       timeZoneValue: []
     };
-    this.countryByIP= undefined;
+    this.countryByIP = undefined;
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
@@ -125,6 +129,41 @@ export default class DialogContainer extends React.Component {
     }
   }
 
+  activateOrganization(tempData) {
+    MySwal.fire({
+      title: "Organization already exists",
+      text: "Do you want to reactivate the Organization?",
+      imageUrl: "apps/Admin/091-email-1.svg",
+      imageWidth: 75,
+      imageHeight: 75,
+      confirmButtonText: "Reactivate",
+      confirmButtonColor: "#d33",
+      showCancelButton: true,
+      cancelButtonColor: "#66bb6a",
+      target: ".Window_Admin"
+    }).then(result => {
+      if (result.value) {
+        tempData.reactivate = "1";
+        PushDataPOST(
+          "organization",
+          this.props.formAction,
+          this.state.orgInEdit.uuid,
+          tempData
+        ).then(response => {
+          if (response.status == "success") {
+            this.props.action(response);
+            this.props.cancel();
+          } else {
+            this.notif.current.failNotification(
+              "Error",
+              response.message ? response.message : null
+            );
+          }
+        });
+      }
+    });
+  }
+
   pushData = () => {
     if (
       document.getElementById("select-currency").value !==
@@ -198,6 +237,11 @@ export default class DialogContainer extends React.Component {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
+      } else if (
+        response.message ==
+        "Organization already exists would you like to reactivate?"
+      ) {
+        this.activateOrganization(tempData);
       } else {
         this.notif.current.failNotification(
           "Error",
@@ -441,7 +485,7 @@ export default class DialogContainer extends React.Component {
                       international={false}
                       maxLength="15"
                       required={true}
-                      country={this.countryByIP? this.countryByIP : "IN" }
+                      country={this.countryByIP ? this.countryByIP : "IN"}
                       countryOptions={["IN", "US", "CA", "|", "..."]}
                     />
                   </div>
