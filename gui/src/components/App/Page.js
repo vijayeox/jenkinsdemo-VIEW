@@ -6,7 +6,6 @@ import OX_Grid from "../../OX_Grid";
 import DocumentViewer from "../../DocumentViewer";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-
 class Page extends React.Component {
   constructor(props) {
     super(props);
@@ -19,7 +18,9 @@ class Page extends React.Component {
     };
     this.contentDiv = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
+    this.itemClick = this.itemClick.bind(this);
   }
+
   loadPage(pageId) {
     this.getPageContent(pageId).then(response => {
       if (response.status == "success") {
@@ -32,6 +33,36 @@ class Page extends React.Component {
     });
   }
 
+  itemClick = (dataItem, itemContent) => {
+    this.props.updatePage(itemContent);
+  };
+
+  renderEmpty() {
+    return [<div key={1} />];
+  }
+
+  renderButtons = (e, action) => {
+    var actionButtons = [];
+    Object.keys(action).map(function(key, index) {
+      actionButtons.push(
+        <abbr title={action[key].name} key={index}>
+          <button
+            type="button"
+            className=" btn manage-btn k-grid-edit-command"
+            onClick={() => this.itemClick(undefined, action[key])}
+          >
+            {action[key].icon ? (
+              <i className={action[key].icon + " manageIcons"}></i>
+            ) : (
+              action[key].name
+            )}
+          </button>
+        </abbr>
+      );
+    }, this);
+    return actionButtons;
+  };
+
   async getPageContent(pageId) {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
@@ -43,6 +74,7 @@ class Page extends React.Component {
     );
     return pageContent;
   }
+
   componentDidUpdate(prevProps) {
     if (this.props.pageId !== prevProps.pageId) {
       this.setState({ pageContent: [] });
@@ -68,24 +100,36 @@ class Page extends React.Component {
           );
           break;
         case "List":
-          var itemContent = JSON.parse(data[i].content);
+          var itemContent = data[i].content;
+          var columnConfig = itemContent.columnConfig;
+          itemContent.actions
+            ? columnConfig.push({
+                title: "Actions",
+                cell: e => this.renderButtons(e, itemContent.actions),
+                filterCell: e => this.renderEmpty()
+              })
+            : null;
           content.push(
             <OX_Grid
               key={i}
               osjsCore={this.core}
               data={itemContent.data}
+              // onRowClick={dataItem => {
+              //   itemContent.actions
+              //     ? this.itemClick(dataItem, itemContent.actions.view)
+              //     : null;
+              // }}
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}
               pageable={itemContent.pageable}
               sortable={itemContent.sortable}
-              columnConfig={itemContent.columnConfig}
+              columnConfig={columnConfig}
             />
           );
           break;
-        case "Document":
-          var itemContent = JSON.parse(data[i].content);
-          console.log(itemContent);
+        case "DocumentViewer":
+          var itemContent = data[i].content;
           content.push(
             <DocumentViewer
               key={i}
