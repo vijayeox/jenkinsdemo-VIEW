@@ -18,10 +18,10 @@ export class BosAdapter extends ServiceProvider {
 
 	async init() {
 		this.core.on('osjs/core:started', () => {
+            document.body.classList.add('osjs-root');
             var queryString = window.location.search.substr(1);
             console.log(queryString);   
             if (queryString) {
-
                 var queryObj = queryString.split("&").reduce(function(prev, curr, i, arr) {
                     var p = curr.split("=");
                     prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
