@@ -103,7 +103,7 @@ class FormRender extends React.Component  {
   createForm(){
     let that =this
     if(this.state.content && !this.state.form){
-      var formCreated = Formio.createForm(document.getElementById(this.formDivID), JSON.parse(this.state.content)).then(function(form){
+      var formCreated = Formio.createForm(document.getElementById(this.formDivID), this.state.content).then(function(form){
        form.on('render', function(){
         if(that.state.data){
           form.setSubmission(that.state.data);
