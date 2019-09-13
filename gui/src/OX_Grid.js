@@ -89,6 +89,16 @@ export default class OX_Grid extends React.Component {
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
           filterable={dataItem.filterable ? dataItem.filterable : undefined}
+          filterCell={
+            dataItem.filterCell
+              ? item => (
+                  <CustomCell
+                    cellTemplate={dataItem.filterCell}
+                    dataItem={item.dataItem}
+                  />
+                )
+              : undefined
+          }
           groupable={dataItem.groupable ? dataItem.groupable : undefined}
           headerClassName={
             dataItem.headerClassName ? dataItem.headerClassName : undefined
@@ -223,9 +233,13 @@ export default class OX_Grid extends React.Component {
 
 class CustomCell extends GridCell {
   render() {
-    const dataItem = this.props.dataItem;
-    var testForButton = this.props.cellTemplate(dataItem);
-    var useEvenSpace = testForButton[1].type == "button" ? true : false;
+    var cellTemplate = this.props.cellTemplate(this.props.dataItem);
+    var useEvenSpace =
+      cellTemplate[0].type == "button" || cellTemplate[0].props.children
+        ? cellTemplate[0].props.children.type == "button"
+        : false
+        ? true
+        : false;
     return (
       <td
         style={
@@ -237,7 +251,7 @@ class CustomCell extends GridCell {
             : null
         }
       >
-        {this.props.cellTemplate(dataItem)}
+        {cellTemplate}
       </td>
     );
   }

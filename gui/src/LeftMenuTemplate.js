@@ -57,6 +57,7 @@ class LeftMenuTemplate extends React.Component {
       selection = (
         <Page
           pageId={this.state.selected.page_id}
+          updatePage={this.onSelect}
           config={this.props.config}
           app={this.props.appId}
           core={this.core}
