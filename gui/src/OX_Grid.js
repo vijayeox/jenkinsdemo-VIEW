@@ -224,7 +224,22 @@ export default class OX_Grid extends React.Component {
 class CustomCell extends GridCell {
   render() {
     const dataItem = this.props.dataItem;
-    return <td>{this.props.cellTemplate(dataItem)}</td>;
+    var testForButton = this.props.cellTemplate(dataItem);
+    var useEvenSpace = testForButton[1].type == "button" ? true : false;
+    return (
+      <td
+        style={
+          useEvenSpace
+            ? {
+                display: "flex",
+                justifyContent: "space-evenly"
+              }
+            : null
+        }
+      >
+        {this.props.cellTemplate(dataItem)}
+      </td>
+    );
   }
 }
 
