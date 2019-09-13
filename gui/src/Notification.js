@@ -19,7 +19,21 @@ class Notification extends React.Component {
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
+      dismiss: { duration: 2000 },
+      dismissable: { click: true }
+    });
+  }
+
+  uploadImage() {
+    this.notificationDOMRef.current.addNotification({
+      title: "Warning",
+      message: "Please choose an image.",
+      type: "warning",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 5000 },
       dismissable: { click: true }
     });
   }
@@ -37,53 +51,10 @@ class Notification extends React.Component {
     });
   }
 
-  failNotification(title, message) {
+  failNotification() {
     this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Error",
-      message: message ? message : "Operation failed.",
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  customSuccessNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Success",
-      message: message ? message : "Operation successful.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  customWarningNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Warning",
-      message: message ? message : "Operation failed.",
-      type: "warning",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-
-  customFailNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Error",
-      message: message ? message : "Operation failed.",
+      title: "Error",
+      message: "Operation failed.",
       type: "danger",
       insert: "top",
       container: "bottom-right",

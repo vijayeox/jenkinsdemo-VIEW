@@ -60,7 +60,7 @@
     const iframe = document.createElement('iframe');
     iframe.style.width = '100%';
     iframe.style.height = '100%';
-    iframe.src = proc.resource(baseUrl+ "/oxadminindex");
+    iframe.src = proc.resource(baseUrl+ "/login");
   
     iframe.setAttribute('border', '0');
 

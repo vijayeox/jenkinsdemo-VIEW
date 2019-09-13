@@ -1,5 +1,5 @@
 import React from "react";
-import { SelectContactTypeEnum, ContactTypeEnum } from "../enums";
+import { SelectContactTypeEnum } from "../enums";
 
 class ContactListComponent extends React.Component {
   constructor(props) {
@@ -10,45 +10,34 @@ class ContactListComponent extends React.Component {
   render() {
     if (this.props.contact) {
       return (
-        <span>
-          {this.props.contact.contact_type == ContactTypeEnum.myContact ? (
-            <div className="checkBoxIndividual">
-              <input
-                type="checkbox"
-                className="checkbox"
-                value={this.props.contact.uuid}
-                onChange={this.props.handleChecked}
-                key={this.props.contact.uuid}
-              />
-            </div>
-          ) : null}
-          <div
-            className="teamMate"
-            onClick={() =>
-              this.props.handleSelected(
-                this.props.contact,
-                SelectContactTypeEnum.SELECT
-              )
+        <div
+          className="teamMate"
+          onClick={() =>
+            this.props.handleSelected(
+              this.props.contact,
+              SelectContactTypeEnum.SELECT
+            )
+          }
+        >
+          <img
+            src={
+              this.props.contact.icon
+                ? this.props.contact.icon + "?" + new Date()
+                : ""
             }
-          >
-            <div className="teamMateIcon">
-              <img
-                src={
-                  this.props.contact.icon
-                    ? this.props.contact.icon + "?" + new Date()
-                    : ""
-                }
-                key={this.props.contact.icon ? this.props.contact.icon : ""}
-              />
-            </div>
-            <div className="mate-info teamMateInfo">
-              <h2>
-                {this.props.contact.first_name} {this.props.contact.last_name}{" "}
-              </h2>
-              <p>{this.props.contact.email} </p>
-            </div>
-          </div>
-        </span>
+            key={
+              this.props.contact.icon
+                ? this.props.contact.icon
+                : ""
+            }
+          />
+          <span className="mate-info">
+            <h2>
+              {this.props.contact.first_name} {this.props.contact.last_name}{" "}
+            </h2>
+            <p>{this.props.contact.email} </p>
+          </span>
+        </div>
       );
     }
   }

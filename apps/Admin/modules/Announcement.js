@@ -1,9 +1,8 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
+import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerAnnounc";
-import Swal from 'sweetalert2';
 
 class Announcement extends React.Component {
   constructor(props) {
@@ -16,28 +15,25 @@ class Announcement extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
-      },
-      selectedOrg: this.props.userProfile.orgid
+      }
     };
-
+    console.log(this.props.userProfile.privileges);
+    
     this.notif = React.createRef();
     this.child = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);
   }
 
   async pushAnnouncementGroups(dataItem, dataObject) {
+    console.log(dataObject);
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "organization/" +
-      this.state.selectedOrg +
-      "/announcement/" +
-      dataItem +
-      "/save",
+      "/announcement/" + dataItem,
       {
         groups: dataObject
       },
-      "post"
+      "put"
     );
     return addGroups;
   }
@@ -53,16 +49,25 @@ class Announcement extends React.Component {
     return groupUsers;
   }
 
+  handler = serverResponse => {
+    if (serverResponse == "success") {
+      this.notif.current.successNotification();
+    } else {
+      this.notif.current.failNotification();
+    }
+    this.child.current.child.current.refresh();
+  };
+
   addAncUsers = dataItem => {
     this.getAnnouncementGroups(dataItem.uuid).then(response => {
+      console.log(response);
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
         config: {
           dataItem: dataItem,
           title: "Announcement",
-          mainList: "organization/" + this.state.selectedOrg + "/groups/list",
-          subList: response.data,
-          members: "Groups"
+          mainList: "group",
+          subList: response.data
         },
         manage: {
           postSelected: this.sendTheData,
@@ -76,28 +81,13 @@ class Announcement extends React.Component {
   };
 
   sendTheData = (selectedUsers, dataItem) => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one group for the Announcement.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      var temp2 = [];
-      for (var i = 0; i <= selectedUsers.length - 1; i++) {
-        var uid = { uuid: selectedUsers[i].uuid };
-        temp2.push(uid);
-      }
-      this.pushAnnouncementGroups(dataItem, temp2).then(response => {
-        this.child.current.refreshHandler(response);
-      });
-      this.toggleDialog();
+    var temp2 = [];
+    for (var i = 0; i <= selectedUsers.length - 1; i++) {
+      var uid = { id: selectedUsers[i].id };
+      temp2.push(uid);
     }
+    this.pushAnnouncementGroups(dataItem, JSON.stringify(temp2));
+    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -106,20 +96,16 @@ class Announcement extends React.Component {
     });
   }
 
-  edit = (dataItem, required) => {
-    dataItem = this.cloneItem(dataItem);
+  edit = dataItem => {
     this.setState({
-      ancInEdit: dataItem
+      ancInEdit: this.cloneItem(dataItem)
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
-      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler,
-      userPreferences: this.props.userProfile.preferences,
-      diableField: required.diableField
+      action: this.handler
     });
   };
 
@@ -127,16 +113,9 @@ class Announcement extends React.Component {
     return Object.assign({}, item);
   }
 
-  orgChange = event => {
-    this.setState({ selectedOrg: event.target.value });
-  };
-
   remove = dataItem => {
-    DeleteEntry(
-      "organization/" + this.state.selectedOrg + "/announcement",
-      dataItem.uuid
-    ).then(response => {
-      this.child.current.refreshHandler(response);
+    DeleteEntry("announcement", dataItem.uuid).then(response => {
+      this.handler(response.status);
     });
   };
 
@@ -149,11 +128,9 @@ class Announcement extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
-      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
-      action: this.child.current.refreshHandler,
-      userPreferences: this.props.userProfile.preferences
+      action: this.handler
     });
   };
 
@@ -162,25 +139,14 @@ class Announcement extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <Notification ref={this.notif} />
-        <TitleBar
-          title="Manage Announcements"
-          menu={this.props.menu}
-          args={this.core}
-          orgChange={this.orgChange}
-          orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-              ? true
-              : false
-          }
-        />
+        <TitleBar title="Manage Announcements" menu={this.props.menu} args={this.core}/>
         <GridTemplate
           args={this.core}
           ref={this.child}
           config={{
             showToolBar: true,
             title: "Announcement",
-            api: "organization/" + this.state.selectedOrg + "/announcements",
-
+            api: "announcement/a",
             column: [
               {
                 title: "Banner",

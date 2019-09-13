@@ -119,9 +119,8 @@ class Packages {
     //The apps whose internal parameter is set true in metadata.json are not allowed for editing 
     for(var i=0;i<manifest.length;i++){
       if(!manifest[i].internal){
-        apps.push({uuid: manifest[i].uuid ? manifest[i].uuid : 'NULL',
-                   name : manifest[i].name,
-                   category : manifest[i].category ? manifest[i].category : 'NULL',
+        apps.push({name : manifest[i].name,
+                   category : manifest[i].category ? manifest[i].category : "null",
                    isdefault : manifest[i].defaultAppforOrgs ? 1 : 0,
                    options : {autostart : manifest[i].autostart ? "true" : "false",
                               hidden : manifest[i].hidden ? "true" : "false"}})
@@ -130,10 +129,6 @@ class Packages {
     const baseUrl = URL['parsed']['SERVER'];
     http.post(baseUrl+'/app/register', { applist : JSON.stringify(apps) }, function(res){
       res.setEncoding('utf8');
-   //To display the response..
-     //  res.on("data", function(chunk) {
-     //     logger.info(chunk);
-     // });
     });
 
     return new Promise((resolve, reject) => {

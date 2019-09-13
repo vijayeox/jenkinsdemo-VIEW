@@ -27,7 +27,7 @@ class ContactDetailsWidget extends React.Component {
             onClick={() => this.props.deleteContact(this.props.contact.uuid)}
           >
             {" "}
-            | <b>DELETE</b> <i className="fa fa-trash" />
+            | <b>Delete</b> <i className="fa fa-trash" />
           </span>
         ) : null}
       </p>
@@ -39,14 +39,12 @@ class ContactDetailsWidget extends React.Component {
       return (
         <div className="panelbar-wrapper contactInfoDiv">
           <div className="teamMate teamMatetopDiv">
-            <div className="teamMateIcon">
-              <img
-                className="contactDetailsImage"
-                src={this.props.contact.icon}
-                key={this.props.contact.icon + "?" + new Date()}
-              />
-            </div>
-            <div className="mate-info teamMateInfo">
+            <img
+              className="contactDetailsImage"
+              src={this.props.contact.icon + "?" + new Date()}
+              key={this.props.contact.icon + "?" + new Date()}
+            />
+            <span className="mate-info">
               <h2>
                 {this.props.contact.first_name} {this.props.contact.last_name}{" "}
               </h2>
@@ -57,7 +55,7 @@ class ContactDetailsWidget extends React.Component {
                 <p>({this.props.contact.company_name})</p>
               ) : null}
               {this.permissions()}
-            </div>
+            </span>
           </div>
           <div className="panelbar-wrapper generalInfoDiv">
             <p>

@@ -1,0 +1,20 @@
+{
+  "type": "application",
+  "name": "ImageUploader",
+  "category": null,
+  "autostart":false,
+  "server": "server.js",
+  "internal": true,
+  "hidden": true,
+  "singleton":"true",
+  "title": {
+    "en_EN": "Upload Profile Picture"
+  },
+  "description": {
+    "en_EN": "Upload Profile Picture"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

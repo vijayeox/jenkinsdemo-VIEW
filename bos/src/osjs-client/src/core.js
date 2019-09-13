@@ -36,7 +36,6 @@ import {fetch} from './utils/fetch';
 import {urlResolver} from './utils/url';
 import merge from 'deepmerge';
 import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
-
 /**
  * Core
  *
@@ -445,20 +444,13 @@ export default class Core extends CoreBase {
    * @return {Application}
    */
   run(name, args = {}, options = {}) {
+    console.log('Core::run()', name, args, options);
     //OXZION CHANGE START
-    const splash = this.make("oxzion/splash");
+    const splash = this.make('oxzion/splash');
     splash.show();
-    this.on(`osjs/application:launched`, app => {
+    this.on(`osjs/application:launched`, (app) => {
       splash.destroy();
     });
-    if (name == "Admin" || name == "Preferences") {
-      var runningApps = this.make("osjs/packages").running();
-      runningApps.forEach(app => {
-        if (app === "Admin" || app === "Preferences") {
-          splash.destroy();
-        }
-      });
-    }
     //OXZION CHANGE END
     return this.make('osjs/packages').launch(name, args, options);
   }

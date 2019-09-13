@@ -35,7 +35,7 @@ class Slider extends React.Component {
 
   async getAnnouncements() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement", {}, "get");
+    let announ = await helper.request("v1", "/announcement/a", {}, "get");
     return announ;
   }
 
@@ -78,7 +78,7 @@ class Slider extends React.Component {
   renderCard(data) {
     const isImage = data.media_type == "image";
     return (
-      <div className="App row slide" style={{ margin: 0 }} key={Math.random()}>
+      <div className="App row slide" style={{ margin: 0 }} key={data.uuid}>
         <div className="Announcement-visuals col s12">
           {isImage ? <Img data={data} /> : <Video data={data} />}
         </div>

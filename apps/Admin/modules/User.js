@@ -1,6 +1,6 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import {GridTemplate} from "../GUIComponents";
+import { GridTemplate } from "@oxzion/gui";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerUser";
 
@@ -24,20 +24,16 @@ class User extends React.Component {
     this.setState({ selectedOrg: event.target.value });
   };
 
-  edit = (dataItem, required) => {
-    dataItem = this.cloneItem(dataItem);
+  edit = dataItem => {
     this.setState({
-      userInEdit: dataItem
+      userInEdit: this.cloneItem(dataItem)
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
-      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler,
-      userPreferences: this.props.userProfile.preferences,
-      diableField: required.diableField
+      action: this.child.current.refreshHandler
     });
   };
 
@@ -46,11 +42,8 @@ class User extends React.Component {
   }
 
   remove = dataItem => {
-    DeleteEntry(
-      "organization/" + this.state.selectedOrg + "/user",
-      dataItem.uuid
-    ).then(response => {
-      this.child.current.refreshHandler(response);
+    DeleteEntry("user", dataItem.uuid).then(response => {
+      this.child.current.refreshHandler(response.status);
     });
   };
 
@@ -65,8 +58,6 @@ class User extends React.Component {
       dataItem: [],
       cancel: this.cancel,
       formAction: "post",
-      selectedOrg: this.state.selectedOrg,
-      userPreferences: this.props.userProfile.preferences,
       action: this.child.current.refreshHandler
     });
   };

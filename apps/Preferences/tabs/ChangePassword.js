@@ -11,7 +11,7 @@ class ChangePassword extends Component {
       fields: {},
       errors: {}
     };
-    this.changePassword = this.changePassword.bind(this);
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.showHide = this.showHide.bind(this);
     this.showHide1 = this.showHide1.bind(this);
@@ -20,15 +20,9 @@ class ChangePassword extends Component {
     this.notif = React.createRef();
   }
 
-  async changePassword(formData) {
-    let helper = this.core.make("oxzion/restClient");
-    let response = await helper.request(
-      "v1",
-      "/user/me/changepassword",
-      formData,
-      "post"
-    );
-    return response;
+  componentDidMount() {
+    // var selectElems1 = document.querySelectorAll(".tooltipped");
+    // var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
   }
 
   handleChange(e) {
@@ -47,7 +41,7 @@ class ChangePassword extends Component {
         formData[key] = this.state.fields[key];
       });
 
-      this.changePassword(formData).then(response => {
+      this.props.changePassword(formData).then(response => {
         if (response.status == "error") {
           this.notif.current.failNotification(response.message);
         } else {

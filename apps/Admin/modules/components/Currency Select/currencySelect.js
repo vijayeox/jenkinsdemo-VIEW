@@ -1,9 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 import AutoSuggest from "react-autosuggest";
 import LocaleCurrency from "locale-currency";
 import cc from "country-code";
 import _ from "lodash";
+
 import "./style.css";
 
 const debug = require("debug")("select-currency:info");
@@ -110,7 +112,7 @@ export default class CurrencySelect extends React.Component {
     const inputProps = {
       ...passProps,
       value,
-      placeholder: "Enter Country Name or Currency Code",
+      placeholder: "Search By Country Name or Currency Code",
       onChange: this.onChange,
       required: true,
       readOnly: this.props.readOnly ? true : false
