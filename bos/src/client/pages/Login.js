@@ -478,7 +478,7 @@ export default class Login extends defaultLogin {
             h(
               "div",
               { className: "login-copyright" },
-              "Copyright © 2019 Vantage Agora. All rights reserved."
+              "Copyright © 2019 EOX Vantage. All rights reserved."
             )
           ])
         ]
