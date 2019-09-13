@@ -56,7 +56,7 @@ export default class Login extends defaultLogin {
       h('div',{className:'footer-links'},[
         h('a',{href:'https://www.vantageagora.com'},'About Us'),
       ]),
-      h('div',{className:'login-copyright'},'Copyright © 2019 Vantage Agora. All rights reserved.'),
+      h('div',{className:'login-copyright'},'Copyright © 2019 EOX Vantage. All rights reserved.'),
       ])
     ])
     const a = app(Object.assign({hidden: startHidden},login),actions,view,document.body);
