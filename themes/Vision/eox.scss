@@ -50,7 +50,17 @@
 
     img.profileicon { width: 36px !important; height: 36px !important; margin-top: 4px !important;}
     .profile-content:before { 
-        bottom: 100%; right: 24px; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-color: rgba(255, 255, 255, 0); border-bottom-color: #fff; border-width: 8px; margin-left: -8px;
+        right: 24px; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-color: rgba(255, 255, 255, 0);  border-width: 8px; margin-left: -8px;
+    }
+
+    .osjs-panel[data-position=top] .profile-content:before{
+        bottom: 100%;
+        border-bottom-color: #fff;
+    }
+
+    .osjs-panel[data-position=bottom] .profile-content:before{
+        top: 100%;
+        border-top-color: #fff;
     }
 
     .profile-dropdown-text { font-size: 16px; font-size: 16px;}
@@ -77,6 +87,17 @@
 
 //.osjs-notifications
     .osjs-notification { border-radius: 4px; @extend .box-shadow;}
+
+//Resizers
+    .osjs-window-resize[data-direction="n"]  { cursor: n-resize;  top: 0; }
+    .osjs-window-resize[data-direction="w"]  { cursor: w-resize; left: 0; }
+    .osjs-window-resize[data-direction="s"]  { cursor: s-resize; bottom: 0; }
+    .osjs-window-resize[data-direction="se"] { cursor: se-resize; bottom: 0; right: 0; }
+    .osjs-window-resize[data-direction="e"]  { cursor: e-resize; right: 0; }
+
+    .osjs-window-resize[data-direction="ne"],
+    .osjs-window-resize[data-direction="nw"],
+    .osjs-window-resize[data-direction="sw"] { cursor: sw-resize; display:none;}
 
 //Do not use - for mockups only
 

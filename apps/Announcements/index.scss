@@ -122,24 +122,26 @@
 
   .nextArrow {
     position: absolute;
-    top: 40%;
+    bottom: 40%;
     right: 0;
     z-index: 999;
     color: #fff;
     opacity: 0.3;
     background-color: white;
     margin-right: 1%;
+    margin-bottom: 20%;
   }
 
   .backArrow {
     position: absolute;
-    top: 40%;
+    bottom: 40%;
     left: 0;
     z-index: 999;
     color: #fff;
     opacity: 0.3;
     background-color: white;
     margin-left: 1%;
+    margin-bottom: 20%;
   }
 
   .fa-arrow-right:before,
