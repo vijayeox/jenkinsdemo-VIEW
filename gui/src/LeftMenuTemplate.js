@@ -52,18 +52,6 @@ class LeftMenuTemplate extends React.Component {
 
   render() {
     const { expanded, selected } = this.state;
-    let selection;
-    if (this.state.selected.page_id) {
-      selection = (
-        <Page
-          pageId={this.state.selected.page_id}
-          updatePage={this.onSelect}
-          config={this.props.config}
-          app={this.props.appId}
-          core={this.core}
-        />
-      );
-    }
     return (
       <div
         style={{
@@ -74,10 +62,19 @@ class LeftMenuTemplate extends React.Component {
         <div
           style={{
             marginLeft: expanded ? 240 : 64,
-            padding: "15px 20px 0 20px"
+            padding: "15px 20px 0 20px",
+            height: "100%"
           }}
         >
-          {selection}
+          {this.state.selected.page_id ? (
+            <Page
+              pageId={this.state.selected.page_id}
+              updatePage={this.onSelect}
+              config={this.props.config}
+              app={this.props.appId}
+              core={this.core}
+            />
+          ) : null}
         </div>
         <SideNav
           onSelect={this.onSelect}

@@ -1,11 +1,12 @@
 import React from "react";
 import FormRender from "./FormRender";
-import ReactDOM from "react-dom";
 import Document from "./Document.js";
 import OX_Grid from "../../OX_Grid";
 import DocumentViewer from "../../DocumentViewer";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import "./Styles/PageComponentStyles.scss";
+
 class Page extends React.Component {
   constructor(props) {
     super(props);
@@ -162,9 +163,13 @@ class Page extends React.Component {
 
   render() {
     if (this.state.pageContent && this.state.pageContent.length > 0) {
-      return <div id={this.contentDiv}>{this.state.pageContent}</div>;
+      return <div id={this.contentDiv} className="AppBuilderPage">{this.state.pageContent}</div>;
     }
-    return <Loader type="Circles" color="#00BFFF" height={100} width={100} />;
+    return (
+      <div className="loaderAnimation">
+        <Loader type="Circles" color="#00BFFF" height={100} width={100} />
+      </div>
+    );
   }
 }
 
