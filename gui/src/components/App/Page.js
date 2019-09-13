@@ -20,6 +20,7 @@ class Page extends React.Component {
     this.contentDiv = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
     this.itemClick = this.itemClick.bind(this);
+    this.getFormContents = this.getFormContents.bind(this);
   }
 
   loadPage(pageId) {
@@ -33,6 +34,14 @@ class Page extends React.Component {
       }
     });
   }
+
+  buttonAction = (action, key) => {
+    action[key].page_id
+      ? this.itemClick(undefined, action[key])
+      : this.setState({
+          pageContent: this.renderContent(action[key].content)
+        });
+  };
 
   itemClick = (dataItem, itemContent) => {
     this.props.updatePage(itemContent);
@@ -50,7 +59,7 @@ class Page extends React.Component {
           <button
             type="button"
             className=" btn manage-btn k-grid-edit-command"
-            onClick={() => this.itemClick(undefined, action[key])}
+            onClick={() => this.buttonAction(action, key)}
           >
             {action[key].icon ? (
               <i className={action[key].icon + " manageIcons"}></i>
@@ -63,6 +72,30 @@ class Page extends React.Component {
     }, this);
     return actionButtons;
   };
+
+  prepareDataRoute = data => {
+    if (typeof data == "string") {
+      var result = data.replace("{{app_id}}", this.appId);
+      return result;
+    } else {
+      return data;
+    }
+  };
+
+  async getFormContents(form_data) {
+    if (form_data.content) {
+      return form_data.content;
+    } else {
+      let helper = this.core.make("oxzion/restClient");
+      let formData = await helper.request(
+        "v1",
+        "/app/" + this.appId + "/form/" + form_data.form_id,
+        {},
+        "get"
+      );
+      return formData;
+    }
+  }
 
   async getPageContent(pageId) {
     // call to api using wrapper
@@ -110,11 +143,12 @@ class Page extends React.Component {
                 filterCell: e => this.renderEmpty()
               })
             : null;
+          var dataString = this.prepareDataRoute(itemContent.data);
           content.push(
             <OX_Grid
               key={i}
               osjsCore={this.core}
-              data={itemContent.data}
+              data={dataString}
               // onRowClick={dataItem => {
               //   itemContent.actions
               //     ? this.itemClick(dataItem, itemContent.actions.view)
@@ -163,7 +197,11 @@ class Page extends React.Component {
 
   render() {
     if (this.state.pageContent && this.state.pageContent.length > 0) {
-      return <div id={this.contentDiv} className="AppBuilderPage">{this.state.pageContent}</div>;
+      return (
+        <div id={this.contentDiv} className="AppBuilderPage">
+          {this.state.pageContent}
+        </div>
+      );
     }
     return (
       <div className="loaderAnimation">
