@@ -18,7 +18,6 @@ class ProfilePictureWidget extends React.Component {
   }
 
   componentWillMount() {
-    console.log(this.props.contactDetails);
     this.setState({
       icon: this.props.contactDetails.icon,
       iconType:
@@ -40,16 +39,19 @@ class ProfilePictureWidget extends React.Component {
       u8arr[n] = bstr.charCodeAt(n);
     }
     return new File([u8arr], filename, { type: mime });
-  }
+  };
 
   submitProfilePic = imageData => {
     let profilePicFile = this.dataURLtoFile(imageData, "profilePic.jpeg");
-    this.setState({
-      icon: imageData,
-      iconType: false
-    }, () => {
+    this.setState(
+      {
+        icon: imageData,
+        iconType: false
+      },
+      () => {
         this.props.handleProfilePic(profilePicFile, this.state.iconType);
-    });
+      }
+    );
   };
 
   setRef = webcam => {
@@ -125,18 +127,24 @@ class ProfilePictureWidget extends React.Component {
     }
   };
 
-  submitSelectedProfilePic= (file, imageData) => {
-    this.setState({
-      icon: imageData,
-      iconType: false
-    }, () => {
+  submitSelectedProfilePic = (file, imageData) => {
+    this.setState(
+      {
+        icon: imageData,
+        iconType: false
+      },
+      () => {
         this.props.handleProfilePic(file, this.state.iconType);
-    });
-  }
+      }
+    );
+  };
 
   apply = file => {
     if (file) {
-      var newfile = new File([file], "profile.png", {type: file.type, lastModified: Date.now()});
+      var newfile = new File([file], "profile.png", {
+        type: file.type,
+        lastModified: Date.now()
+      });
       var base64Data;
       var src = window.URL.createObjectURL(file);
       image2base64(src)
@@ -194,11 +202,24 @@ class ProfilePictureWidget extends React.Component {
   };
 
   profileImageData = () => {
+    let displayImage, middle;
+    if (this.state.icon == null || this.state.icon == "") {
+      displayImage = {
+        opacity: 0.5
+      };
+      middle = {
+        opacity: 1
+      };
+    }
     if (this.state.showImageDiv == 1) {
       return (
         <div className="profileImageDiv">
-          <img src={this.state.icon} className="rounded-circle displayImage" />
-          <div className="middle">
+          <img
+            src={this.state.icon}
+            className="rounded-circle displayImage"
+            style={displayImage}
+          />
+          <div className="middle" style={middle}>
             <div className="text">
               {!this.state.iconType || this.state.userId == null ? (
                 <span>

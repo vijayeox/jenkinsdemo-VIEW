@@ -1,8 +1,9 @@
 const ContactTypes = [
-    {label:"Home",value:"home"},
-    {label:"Work",value:"work"},
-    {label:"Office",value:"office"},
-    {label:"Other",value:"other"}
+  { label: "Home", value: "Home" },
+  { label: "Work", value: "Work" },
+  { label: "Office", value: "Office" },
+  { label: "Personal", value: "Personal" },
+  { label: "Other", value: "Other" }
 ];
 
 export default ContactTypes;

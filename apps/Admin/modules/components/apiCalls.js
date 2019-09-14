@@ -42,7 +42,12 @@ export async function GetData(api) {
   return response;
 }
 
-export async function PushData(api, method, item, body) {
+export async function GetSingleEntityData(api) {
+  let response = await helper.request("v1", "/" + api, {}, "get");
+  return response;
+}
+
+export async function PushData(api, method, item, body, selectedORG) {
   if (method == "put") {
     let response = await helper.request(
       "v1",
@@ -52,7 +57,10 @@ export async function PushData(api, method, item, body) {
     );
     return response;
   } else if (method == "post") {
-    let response = await helper.request("v1", "/" + api, body, method);
+    var route = selectedORG
+      ? "organization/" + selectedORG + "/" + api
+      : "/" + api;
+    let response = await helper.request("v1", route, body, method);
     return response;
   }
 }
@@ -63,7 +71,7 @@ export async function PushDataPOST(api, method, item, body) {
       "v1",
       "/" + api + "/" + item,
       body,
-      "filepost" 
+      "filepost"
     );
     return response;
   } else if (method == "post") {

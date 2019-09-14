@@ -1,8 +1,7 @@
 import React from "react";
-import { GridTemplate, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
-import Swal from "sweetalert2";
 
 import DialogContainer from "./dialog/DialogContainerGroup";
 
@@ -18,7 +17,8 @@ class Group extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_GROUP_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();
@@ -28,7 +28,7 @@ class Group extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroupUsers = await helper.request(
       "v1",
-      "/group/" + dataItem + "/save",
+      "organization/" + this.state.selectedOrg + "/group/" + dataItem + "/save",
       {
         userid: dataObject
       },
@@ -47,8 +47,9 @@ class Group extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Group",
-        mainList: "user",
-        subList: "group"
+        mainList: "organization/" + this.state.selectedOrg + "/users/list",
+        subList: "group",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -58,26 +59,19 @@ class Group extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the group.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      var temp2 = [];
-      for (var i = 0; i <= selectedUsers.length - 1; i++) {
-        var uid = { id: selectedUsers[i].id };
-        temp2.push(uid);
-      }
-      this.pushGroupUsers(item, temp2);
-      this.toggleDialog();
+    var temp2 = [];
+    for (var i = 0; i <= selectedUsers.length - 1; i++) {
+      var uid = { uuid: selectedUsers[i].uuid };
+      temp2.push(uid);
     }
+    this.pushGroupUsers(item, temp2).then(response => {
+      this.child.current.refreshHandler(response);
+    });
+    this.toggleDialog();
+  };
+
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
   };
 
   toggleDialog() {
@@ -87,26 +81,32 @@ class Group extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  edit = (dataItem, required) => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      groupInEdit: this.cloneProduct(dataItem)
+      groupInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem || null,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 
-  cloneProduct(product) {
+  cloneItem(product) {
     return Object.assign({}, product);
   }
 
   remove = dataItem => {
-    DeleteEntry("group", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/group",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
@@ -119,6 +119,7 @@ class Group extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler
@@ -133,11 +134,12 @@ class Group extends React.Component {
           title="Manage Groups"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -145,7 +147,8 @@ class Group extends React.Component {
           config={{
             showToolBar: true,
             title: "Group",
-            api: "group",
+            api: "organization/" + this.state.selectedOrg + "/groups",
+
             column: [
               {
                 title: "Name",

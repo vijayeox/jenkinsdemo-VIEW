@@ -5,24 +5,14 @@ import {
   GridToolbar,
   GridNoRecords
 } from "@progress/kendo-react-grid";
-import {
-  FaPlusCircle,
-  FaPencilAlt,
-  FaUserPlus,
-  FaTrashAlt,
-  FaArrowCircleRight,
-  FaInfoCircle,
-  FaUserLock
-} from "react-icons/fa";
-import { Notification } from "../index";
+import Notification from "./Notification";
 import { GridCell } from "@progress/kendo-react-grid";
-import DataLoader from "./DataLoader";
+import DataLoader from "./components/Grid/DataLoader";
 import Swal from "sweetalert2";
+import $ from "jquery";
 import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
-
-import $ from "jquery";
 
 // import "@progress/kendo-theme-default/dist/all.css";
 
@@ -35,7 +25,8 @@ export default class GridTemplate extends React.Component {
     this.state = {
       dataState: {
         take: 20,
-        skip: 0
+        skip: 0,
+        sort: this.props.config.sortMode
       },
       gridData: this.props.gridData,
       api: this.props.config.api
@@ -127,10 +118,13 @@ export default class GridTemplate extends React.Component {
   }
 
   refreshHandler = serverResponse => {
-    if (serverResponse == "success") {
+    if (serverResponse.status == "success") {
       this.notif.current.successNotification();
     } else {
-      this.notif.current.failNotification();
+      this.notif.current.failNotification(
+        "Error",
+        serverResponse.message ? serverResponse.message : null
+      );
     }
     this.child.current.refresh();
   };
@@ -145,7 +139,9 @@ export default class GridTemplate extends React.Component {
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
-          data={this.state.gridData == undefined ? [] : this.state.gridData}
+          data={
+            typeof this.state.gridData == "object" ? this.state.gridData : []
+          }
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}
@@ -173,7 +169,7 @@ export default class GridTemplate extends React.Component {
                   }}
                 >
                   <div style={{ marginLeft: "10px" }}>
-                    <FaInfoCircle />
+                    <i className="fas fa-info-circle"></i>
                   </div>
                   <div
                     style={{ fontSize: "medium", paddingLeft: "30px" }}
@@ -231,7 +227,7 @@ class AddButton extends React.Component {
         className="k-button"
         style={{ position: "absolute", top: "8px", right: "16px" }}
       >
-        <FaPlusCircle style={{ fontSize: "20px" }} />
+        <i className="fas fa-plus-circle" style={{ fontSize: "20px" }}></i>
 
         <p style={{ margin: "0px", paddingLeft: "10px" }}>
           Add {this.props.label}
@@ -243,15 +239,40 @@ class AddButton extends React.Component {
 
 class LogoCell extends React.Component {
   render() {
-    return this.props.dataItem.media ? (
-      <td>
-        <img
-          src={this.props.url + "resource/" + this.props.dataItem.media}
-          alt="Logo"
-          className="text-center circle gridBanner"
-        />
-      </td>
-    ) : null;
+    if (this.props.dataItem.media_type == "image") {
+      return this.props.dataItem.media ? (
+        <td>
+          <img
+            src={
+              this.props.url +
+              "resource/" +
+              this.props.dataItem.media +
+              "?" +
+              new Date()
+            }
+            alt="Logo"
+            className="text-center circle gridBanner"
+          />
+        </td>
+      ) : null;
+    } else {
+      return this.props.dataItem.media ? (
+        <td>
+          <video className="text-center circle gridBanner">
+            <source
+              src={
+                this.props.url +
+                "resource/" +
+                this.props.dataItem.media +
+                "?" +
+                new Date()
+              }
+              type="video/mp4"
+            />
+          </video>
+        </td>
+      ) : null;
+    }
   }
 }
 
@@ -277,14 +298,7 @@ class LogoCell2 extends React.Component {
   }
 }
 
-function CellWithEditing(
-  title,
-  edit,
-  remove,
-  addUsers,
-  permission,
-  setPrivileges
-) {
+function CellWithEditing(title, edit, remove, addUsers, permission) {
   return class extends GridCell {
     constructor(props) {
       super(props);
@@ -319,7 +333,7 @@ function CellWithEditing(
               });
             }}
           >
-            <FaTrashAlt className="manageIcons" />
+            <i className="fas fa-trash-alt manageIcons"></i>
           </button>
         </abbr>
       ) : null;
@@ -339,13 +353,20 @@ function CellWithEditing(
                       edit(this.props.dataItem, { diableField: false });
                     }}
                   >
-                    <FaPencilAlt className="manageIcons" />
+                    <i className="fas fa-pencil-alt manageIcons"></i>
                   </button>
                 </abbr>
                 {addUsers && (
                   <React.Fragment>
                     &nbsp; &nbsp;
-                    <abbr title={"Add Users to " + title}>
+                    <abbr
+                      title={
+                        "Add " +
+                        (title == "Announcement" ? "Groups" : "Users") +
+                        " to " +
+                        title
+                      }
+                    >
                       <button
                         type="button"
                         className="btn manage-btn"
@@ -353,7 +374,11 @@ function CellWithEditing(
                           addUsers(this.props.dataItem);
                         }}
                       >
-                        <FaUserPlus className="manageIcons" />
+                        {title == "Announcement" ? (
+                          <i className="fas fa-users manageIcons"></i>
+                        ) : (
+                          <i className="fas fa-user-plus manageIcons"></i>
+                        )}
                       </button>
                     </abbr>
                   </React.Fragment>
@@ -361,7 +386,11 @@ function CellWithEditing(
               </React.Fragment>
             ) : null}
             &nbsp; &nbsp;
-            {this.deleteButton()}
+            {this.props.dataItem.is_system_role || this.props.dataItem.is_admin
+              ? (this.props.dataItem.is_system_role == "0" ||
+                  this.props.dataItem.is_admin == "0") &&
+                this.deleteButton()
+              : this.deleteButton()}
           </center>
         </td>
       );

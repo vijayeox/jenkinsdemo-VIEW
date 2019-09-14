@@ -1,56 +1,126 @@
 import React from "react";
-import FileUploadWithPreview from "file-upload-with-preview";
-import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
+import { Upload } from "@progress/kendo-react-upload";
+import Notification  from "./Notification";
 
 class FileUploader extends React.Component {
   constructor(props) {
     super(props);
-    this.clearImage = this.clearImage.bind(this);
+    this.state = {
+      media_type: this.props.media_type || "image",
+      render_media_type: this.props.media_type || "image",
+      selectedFile: [],
+      filePreviews: undefined,
+      filePreviewSourceURL: []
+    };
+    this.notif = React.createRef();
+    this.fileSelectedEvent = this.fileSelectedEvent.bind(this);
   }
 
   componentDidMount() {
-    if (this.props.media == undefined) {
-      this.firstUpload = new FileUploadWithPreview(this.props.uploadID);
+    if (this.props.media_URL) {
+      this.setState({
+        filePreviewSourceURL: this.props.media_URL
+      });
     } else {
-      if (this.props.uploadID == "organizationLogo") {
-        this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
-          images: {
-            baseImage: this.props.media + "?" + new Date()
-          }
-        });
-      } else {
-        this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
-          images: {
-            baseImage: this.props.url + "resource/" + this.props.media
-          }
-        });
-      }
+      this.setState({
+        filePreviewSourceURL: "https://i.ibb.co/Z1Y3tBY/download.png"
+      });
     }
   }
 
+  fileSelectedEvent = e => {
+    if (e.affectedFiles[0].validationErrors) {
+      this.notif.current.customWarningNotification(
+        "Invalid File",
+        "Please check the selected file"
+      );
+    } else {
+      e.affectedFiles
+        .filter(file => !file.validationErrors)
+        .forEach(file => {
+          const reader = new FileReader();
+          reader.onloadend = ev => {
+            this.setState({
+              filePreviews: {
+                [file.uid]: ev.target.result
+              }
+            });
+          };
+
+          reader.readAsDataURL(file.getRawFile());
+        });
+
+      this.setState({
+        selectedFile: e.affectedFiles
+      });
+      var fileType = e.affectedFiles[0].extension.includes("mp4")
+        ? "video"
+        : "image";
+      this.props.media_typeChange
+        ? this.props.media_typeChange(fileType)
+        : null;
+    }
+  };
+
   clearImage = () => {
-    this.firstUpload = new FileUploadWithPreview(this.props.uploadID, {
-      images: {
-        baseImage: "https://i.ibb.co/Z1Y3tBY/download.png"
-      }
+    this.setState({
+      selectedFile: [],
+      filePreviews: undefined
     });
   };
 
   render() {
     return (
-      <div className="form-group border-box">
+      <div className="form-group border-box fileUploaderComponent">
+        <Notification ref={this.notif} />
         <label className={this.props.required ? "required-label" : ""}>
           {this.props.title}
         </label>
-        <div
-          className="form-row custom-file-container"
-          data-upload-id={this.props.uploadID}
-        >
-          <div className="col">
-            <div className="custom-file-container__image-preview" />
+        <div className="form-row">
+          <div className="col-6">
+            {this.state.filePreviews ? (
+              <div className={"img-preview"}>
+                {Object.keys(this.state.filePreviews).map(fileKey =>
+                  this.state.filePreviews[fileKey].includes("video") ? (
+                    <video
+                      src={this.state.filePreviews[fileKey]}
+                      alt={"image preview"}
+                      key={fileKey}
+                      controls
+                      id="video"
+                      autoPlay={true}
+                      muted={true}
+                    />
+                  ) : (
+                    <img
+                      src={this.state.filePreviews[fileKey]}
+                      alt={"image preview"}
+                      key={fileKey}
+                    />
+                  )
+                )}
+              </div>
+            ) : (
+              <div className={"img-preview static-url"}>
+                {this.state.render_media_type == "image" ? (
+                  <img
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
+                  />
+                ) : (
+                  <video
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
+                    alt={"image preview"}
+                    controls
+                    id="video"
+                    autoPlay={true}
+                    muted={true}
+                  />
+                )}
+              </div>
+            )}
           </div>
           <div
-            className="col"
+            className="col-6"
             style={{
               display: "flex",
               justifyContent: "center"
@@ -61,35 +131,31 @@ class FileUploader extends React.Component {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
+                width: "inherit"
               }}
             >
-              <label className="custom-file-container__custom-file">
-                <input
-                  type="file"
-                  className="custom-file-container__custom-file__custom-file-input"
-                  id="customFile"
-                  accept="image/*"
-                  aria-label="Choose File"
-                />
-                <span className="custom-file-container__custom-file__custom-file-control" />
-              </label>
-              <label className="pt-4">
-                <p className="lead" onClick={this.clearImage}>
-                  Clear Selected Image
-                  <a
-                    href="javascript:void(0)"
-                    className="pl-5 custom-file-container__image-clear"
-                    title="Clear Image"
-                    style={{ outline: "none" }}
-                  >
-                    <img
-                      style={{ width: "50px" }}
-                      src="https://img.icons8.com/color/64/000000/cancel.png"
-                    />
-                  </a>
-                </p>
-              </label>
+              <Upload
+                accept={
+                  this.props.acceptFileTypes
+                    ? this.props.acceptFileTypes
+                    : undefined
+                }
+                restrictions={{
+                  allowedExtensions: [".jpg", ".jpeg", ".png", ".mp4"],
+                  maxFileSize: 20971520
+                }}
+                defaultFiles={[]}
+                onAdd={this.fileSelectedEvent}
+                onRemove={this.clearImage}
+                multiple={false}
+                autoUpload={false}
+              />
+              <ul>
+                <li className="pt-3 pr-4">Image Formats supported: JPG, PNG</li>
+                <li className="pt-3 pr-4">Video Format supported: MP4</li>
+                <li className="pt-3 pr-4">Max file size allowed: 20 MB</li>
+              </ul>
             </div>
           </div>
         </div>

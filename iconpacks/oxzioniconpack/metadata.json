@@ -10,6 +10,7 @@
     "en_EN": "OX Zion Icons"
   },
   "files": [
+    "main.js",
     "main.css"
   ]
 }

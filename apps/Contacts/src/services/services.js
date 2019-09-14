@@ -46,3 +46,28 @@ export async function DeleteContact(uuid) {
   let response = await helper.request("v1", "/contact/" + uuid, {}, "delete");
   return response;
 }
+
+export async function DeleteSelectedContacts(UUIDlist) {
+  let response = await helper.request("v1", "/contacts/delete", UUIDlist, "post");
+  return response;
+}
+
+export async function ImportContacts(data) {
+  let response = await helper.request(
+    "v1",
+    "/contact/import",
+    data,
+    "filepost"
+  );
+  return response;
+}
+
+export async function ExportContacts(data) {
+  let response = await helper.request(
+    "v1",
+    "/contact/export",
+    data,
+    "post"
+  );
+  return response;
+}

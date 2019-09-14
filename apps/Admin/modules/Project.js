@@ -1,8 +1,7 @@
 import React from "react";
-import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
-import Swal from "sweetalert2";
 import DialogContainer from "./dialog/DialogContainerPrj";
 
 class Project extends React.Component {
@@ -17,7 +16,8 @@ class Project extends React.Component {
         canAdd: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_PROJECT_WRITE
-      }
+      },
+      selectedOrg: this.props.userProfile.orgid
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.notif = React.createRef();
@@ -28,7 +28,11 @@ class Project extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addProjectUsers = await helper.request(
       "v1",
-      "/project/" + dataItem + "/save",
+      "organization/" +
+        this.state.selectedOrg +
+        "/project/" +
+        dataItem +
+        "/save",
       {
         userid: dataObject
       },
@@ -36,24 +40,6 @@ class Project extends React.Component {
     );
     return addProjectUsers;
   }
-
-  saveAndSend = selectedUsers => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the project.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      this.sendTheData(selectedUsers);
-      this.toggleDialog();
-    }
-  };
 
   addProjectUsers = dataItem => {
     this.setState({
@@ -64,8 +50,9 @@ class Project extends React.Component {
       config: {
         dataItem: dataItem,
         title: "Project",
-        mainList: "user",
-        subList: "project"
+        mainList: "organization/" + this.state.selectedOrg + "/users/list",
+        subList: "project",
+        members: "Users"
       },
       manage: {
         postSelected: this.sendTheData,
@@ -75,29 +62,16 @@ class Project extends React.Component {
   };
 
   sendTheData = (selectedUsers, item) => {
-    if (selectedUsers.length == 0) {
-      Swal.fire({
-        title: "Action not possible",
-        text: "Please have atleast one user for the project.",
-        imageUrl: "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: "OK",
-        confirmButtonColor: "#66bb6a",
-        target: ".Window_Admin"
-      });
-    } else {
-      var temp1 = selectedUsers;
-      var temp2 = [];
-      for (var i = 0; i <= temp1.length - 1; i++) {
-        var uid = { id: temp1[i].id };
-        temp2.push(uid);
-      }
-      this.pushProjectUsers(item, JSON.stringify(temp2)).then(response => {
-        this.child.current.refreshHandler(response.status);
-      });
-      this.toggleDialog();
+    var temp1 = selectedUsers;
+    var temp2 = [];
+    for (var i = 0; i <= temp1.length - 1; i++) {
+      var uid = { uuid: temp1[i].uuid };
+      temp2.push(uid);
     }
+    this.pushProjectUsers(item, temp2).then(response => {
+      this.child.current.refreshHandler(response);
+    });
+    this.toggleDialog();
   };
 
   toggleDialog() {
@@ -106,26 +80,36 @@ class Project extends React.Component {
     });
   }
 
-  edit = dataItem => {
+  orgChange = event => {
+    this.setState({ selectedOrg: event.target.value });
+  };
+
+  edit = (dataItem, required) => {
+    dataItem = this.cloneItem(dataItem);
     this.setState({
-      prjInEdit: this.cloneProduct(dataItem)
+      prjInEdit: dataItem
     });
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: dataItem,
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "put",
-      action: this.child.current.refreshHandler
+      action: this.child.current.refreshHandler,
+      diableField: required.diableField
     });
   };
 
-  cloneProduct(dataItem) {
+  cloneItem(dataItem) {
     return Object.assign({}, dataItem);
   }
 
   remove = dataItem => {
-    DeleteEntry("project", dataItem.uuid).then(response => {
-      this.child.current.refreshHandler(response.status);
+    DeleteEntry(
+      "organization/" + this.state.selectedOrg + "/project",
+      dataItem.uuid
+    ).then(response => {
+      this.child.current.refreshHandler(response);
     });
   };
 
@@ -138,6 +122,7 @@ class Project extends React.Component {
     this.inputTemplate = React.createElement(DialogContainer, {
       args: this.core,
       dataItem: [],
+      selectedOrg: this.state.selectedOrg,
       cancel: this.cancel,
       formAction: "post",
       action: this.child.current.refreshHandler
@@ -153,11 +138,12 @@ class Project extends React.Component {
           title="Manage Projects"
           menu={this.props.menu}
           args={this.core}
-          // orgSwitch={
-          //   this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
-          //     ? true
-          //     : false
-          // }
+          orgChange={this.orgChange}
+          orgSwitch={
+            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+              ? true
+              : false
+          }
         />
         <GridTemplate
           args={this.core}
@@ -165,7 +151,7 @@ class Project extends React.Component {
           config={{
             showToolBar: true,
             title: "Project",
-            api: "project",
+            api: "organization/" + this.state.selectedOrg + "/projects",
             column: [
               {
                 title: "Name",
