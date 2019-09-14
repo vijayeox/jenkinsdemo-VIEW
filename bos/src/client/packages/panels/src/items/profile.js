@@ -32,10 +32,7 @@ import PanelItem from '../panel-item';
 const logoutIcon = require('../../../../assets/images/logout.png');
 const profileIcon = require('../../../../assets/images/profile.png');
 const settingsIcon = require('../../../../assets/images/settings.png');
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-
-const MySwal = withReactContent(Swal);
+const editIcon = require('../../../../assets/images/edit.svg');
 
 // const profileIcon = require('../../../../assets/images/profile_pic.png');
 /**
@@ -58,31 +55,8 @@ export default class ProfilePanelItem extends PanelItem {
     let profileDetails = this.core.make('oxzion/profile').get();
     let profileIcon = profileDetails['key'];
     console.log(profileIcon);
-    const logout = async () => {
-      await this.core.make('osjs/session').save();
-      await this.core.make('oxzion/usersession').set();
-      this.core.make('osjs/auth').logout();
-    };
     const openProfile= () =>{
       this.core.run("Preferences");
-    }
-    const confirm = () => {
-      MySwal.fire({
-        title: 'Are you sure?',
-        text: 'Do you really want to logout now?',
-        imageUrl: "https://image.flaticon.com/icons/svg/529/529873.svg",
-        imageWidth: 75,
-        imageHeight: 75,
-        confirmButtonText: 'Logout',
-        confirmButtonColor: '#d33',
-        showCancelButton: true,
-        cancelButtonColor: '#66bb6a',
-        target: ".osjs-root"
-      }).then((result) => {
-        if (result.value) {
-          logout();
-        }
-      })  
     }
     return super.render('profile', [
       h('div', {
@@ -103,30 +77,39 @@ export default class ProfilePanelItem extends PanelItem {
             className: 'profile-dropdown-image',
             title: 'My Profile'
           }),
-          h('span', {
-            title: 'Profile',
-            innerHTML : 'My Profile',
-            className: 'profile-dropdown-text'
-          })
+          h('div', {
+            className: 'profile-dropdown-block'
+          },[
+          h('div', {
+            title: profileIcon.name,
+            innerHTML : profileIcon.name,
+            className: 'profile-dropdown-name'
+          }),
+          h('div', {
+            title: profileIcon.designation?profileIcon.designation:'No designation provided',
+            innerHTML : profileIcon.designation?profileIcon.designation:null,
+            className: 'profile-dropdown-designation'
+          }),
+          ])
           ]
           )
         ]
       ),
       h('a', {
-        className: 'logout'},[
+        className: 'editprofile'},[
         h('div', {
-        onclick: confirm,
-        className: 'profile-dropdown-div'
+        onclick: openProfile,
+        className: 'profile-dropdown-edit'
       }, [
           h('img', {
-            src: logoutIcon,
-            alt: 'Log Out',
-            className: 'profile-dropdown-image',
-            title: 'Logout'
+            src: editIcon,
+            alt: 'Edit Profile',
+            className: 'profile-dropdown-editicon',
+            title: 'Edit Profile'
           }),
           h('span', {
-            title: 'Logout',
-            innerHTML : 'Log out',
+            title: 'Edit Profile',
+            innerHTML : 'Edit Profile',
             className: 'profile-dropdown-text'
           })
           ]
