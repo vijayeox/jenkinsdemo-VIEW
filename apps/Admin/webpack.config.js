@@ -2,9 +2,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const webpack = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-const CompressionPlugin = require('compression-webpack-plugin');
 
 const mode = process.env.NODE_ENV || "development";
 const minimize = mode === "production";
@@ -30,15 +28,17 @@ module.exports = {
   externals: {
     osjs: "OSjs"
   },
+  resolve: {
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
+    }
+  },
   optimization: {
     minimize
   },
   plugins: [
-    new CompressionPlugin(),
-  //  new BundleAnalyzerPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),
-    new CopyWebpackPlugin(["icon.svg",'icon_white.svg', "images/"]),
-    new webpack.HotModuleReplacementPlugin(),
+    // new BundleAnalyzerPlugin(),
+    new CopyWebpackPlugin(["icon.png", "icon_white.png", "images/"]),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"
