@@ -3,9 +3,9 @@
   "name": "TaskAdmin",
   "category": null,
   "server": "server.js",
-  "icon": "icon.png",
+  "icon": "icon.svg",
   "hidden": true,
-  "icon_white": "icon_white.png",
+  "icon_white": "icon_white.svg",
   "title": {
     "en_EN": "TaskAdmin"
   },

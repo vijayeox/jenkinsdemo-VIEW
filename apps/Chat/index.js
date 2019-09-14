@@ -219,7 +219,7 @@
           if (core.has('osjs/tray') && !trayInitialized) {
             trayInitialized = true;
             trayOptions.title = "Chat";
-            trayOptions.icon = proc.resource(metadata.icon);
+            trayOptions.icon = proc.resource(metadata.icon_white);
             trayOptions.onclick = () => {
                       console.log(proc);
                       win.raise();

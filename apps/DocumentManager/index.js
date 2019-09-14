@@ -44,7 +44,7 @@
 
       proc.createWindow({
           id: "EDMSApplicationWindow",
-          icon: proc.resource(proc.metadata.icon),
+          icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
           dimension: {
             width: 400,

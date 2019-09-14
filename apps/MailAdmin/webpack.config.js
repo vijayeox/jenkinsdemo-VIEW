@@ -35,7 +35,7 @@ module.exports = {
       chunkFilename: '[id].css'
     }),
     new CopyWebpackPlugin([
-      'icon.png','icon_white.png'
+      'icon.svg','icon_white.svg'
     ]),
     new Dotenv({
       path: './.env',
