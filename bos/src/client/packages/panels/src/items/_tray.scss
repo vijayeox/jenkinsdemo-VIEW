@@ -36,8 +36,6 @@
     flex: 1 1;
     padding: .5em;
     margin: 4px 1px;
-    background: #e1eff4;
-    border-radius: 50%;
 
     & > img {
       margin-right: 0;
@@ -51,8 +49,8 @@
 .badge {
 color:white;
   position: absolute;
-    right: unset;
-    left: unset;
+    right: 5px;
+    bottom: -10px;
 }
 
 @media all {
@@ -63,8 +61,6 @@ color:white;
       flex: 1 1;
       padding: .5em;
       margin: 4px 1px;
-      background: #e1eff4;
-      border-radius: 50%;
       padding: 0px;
       height:45px;
       width:45px;
@@ -81,16 +77,14 @@ color:white;
   
   .osjs-panel-item[data-name=profile] {
     display: flex;
+    width: 3.5em;
     padding: 0;
-    width: 50px;
     & > div {
-      flex: 1 1;
-      margin: 4px 1px;
       & > img {
-        margin-right: 0;
+        padding: 5px;
         vertical-align: middle;
-        height: 102%;
         width: 100%;
+        height: auto;
       }
     }
   }
@@ -104,8 +98,6 @@ color:white;
       flex: 1 1;
       padding: .5em;
       margin: 4px 1px;
-      background: #e1eff4;
-      border-radius: 50%;
       padding: 0px;
       height:45px;
       width:45px;
@@ -147,8 +139,6 @@ color:white;
     flex: 1 1;
     padding: .5em;
     margin: 4px 1px;
-    background: #e1eff4;
-    border-radius: 50%;
     padding: 0px;
     height:45px;
     width:45px;
@@ -181,19 +171,20 @@ color:white;
 
 }
 
-
 .badgeCheck {
-    height: 15px;
-    width: 15px;
-    border-radius: 14px;
-    background-color: red;
-    font-size: 12px;
-    padding: 3px;
-    display: inline-block;
-    text-align: center;
-    position: absolute;
-    bottom: 5px;
-    z-index: 100;
+  border-radius: 14px;
+  background-color: red;
+  font-size: 12px;
+  padding: 3px;
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  bottom: 5px;
+  z-index: 100;
+  height: 16px;
+  min-width: 16px;
+  padding: 0 3px;
+  line-height: 16px;
 }
 
 .osjs-root[data-dir="rtl"] {
@@ -208,7 +199,7 @@ color:white;
   padding: 0;
   & > div {
     flex: 1 1;
-    margin: 4px 1px;
+    margin: 4px 5px;
     & > img {
       margin-right: 0;
       vertical-align: middle;
@@ -219,19 +210,67 @@ color:white;
 }*/
 .osjs-panel-item[data-name=logout] {
   display: flex;
-  padding: 0;
-  height: auto;
-
-
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    margin: 4px 1px;
+    border-radius: 50%;
   & > div {
     flex: 1 1;
-    padding: 0 $base-margin / 3;
-
     & > img {
       margin-right: 0;
       vertical-align: middle;
-      height:2.8em;
-      width:2.8em;
+      height:24px;
+      width:24px;
     }
   }
+}
+.window-tray-close-button{
+padding: 5px;
+background-color: #275262;
+border-radius: 50%;
+vertical-align: middle;
+display: flex;
+flex-grow: 0.25;
+margin-left: 10px;
+}
+.osjs-panel-item[data-name="windows"] > .window-tray-close-button img{
+      width: 7px;
+    height: 7px;
+}
+.window-tray-close-button:hover{
+transition: all 0.5s cubic-bezier(0, 0.105, 0.035, 1.57);
+transform: scale(1.1);
+background-color: #0b242d;
+}
+img.profile-dropdown-editicon {
+    width: 25px;
+    height: auto;
+}
+.profile-dropdown-edit {
+    display: flex;
+}
+.profile-dropdown-edit{
+    display: flex;
+    padding: 10px;
+}
+.osjs-panel-item[data-name=tray] > div > img{
+  height: 24px;
+}
+
+.osjs-panel-item[data-name=tray] > div { 
+  height: 3.5em;
+  width: 3.5em;
+}
+.profile-content:before {
+    right: 10px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(255, 255, 255, 0);
+    border-width: 8px;
+    margin-left: -8px;
 }
