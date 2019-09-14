@@ -22,7 +22,7 @@ html {
 
 .osjs-window {
   // @include window;
-  // background: #275261;
+  // background: #275362;
   // padding :0px;
 
   &[data-focused="false"] {
@@ -33,7 +33,7 @@ html {
     pointer-events: none;
 
     &::after {
-      background: #275261;
+      background: #275362;
     }
   }
 }
@@ -64,12 +64,25 @@ html {
     // transform: scale(1.2);
   }
 
-  &[data-action="maximize"] > div {
-    background-image: url("./src/images/maximize.png");
+  &[data-action="minimize"] {
+  & > div {
+      background-position: 50% 50%;
+      background-size: 14px;
+    background-image: url("./src/images/minimize.svg");
   }
-
-  &[data-action="minimize"] > div {
-    background-image: url("./src/images/minimize.png");
+    &:hover{
+     transform: scale(1.2);
+    }
+  }
+  &[data-action="maximize"] {
+  & > div {
+      background-position: 50% 50%;
+      background-size: 14px;
+    background-image: url("./src/images/maximize.svg");
+  }
+    &:hover{
+     transform: scale(1.2);
+    }
   }
 
   &[data-action="close"] {
@@ -77,12 +90,12 @@ html {
 
     & > div {
       background-position: 50% 50%;
-      background-color: #c75050;
-      background-image: url("./src/images/close.png");
+      background-size: 14px;
+      background-image: url("./src/images/close.svg");
     }
 
-    &:hover > div {
-      background-color: lighten(#c75050, 10%);
+    &:hover{
+     transform: scale(1.2);
     }
   }
 }
@@ -98,7 +111,7 @@ html {
 .osjs-window-title {
   padding: 0;
   padding-left: 0;
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .osjs-window-icon {
@@ -153,7 +166,7 @@ html {
 .osjs-window-icon > div {
   width: 3em;
   height: 3em;
-  background-color: #275261;
+  background-color: #275362;
 }
 
 .osjs-panel-item[data-name="windows"] > div {
@@ -314,13 +327,13 @@ label {
   color: #fff;
 }
 .appmenu .app-bar .app {
-  border-bottom: 1px solid #275261;
+  border-bottom: 1px solid #275362;
 }
 .appmenu .app-bar .app .appcaption {
-  color: #275261;
+  color: #275362;
 }
 .profile-dropdown-div:hover {
-  color: #275261;
+  color: #275362;
 }
 
 @import "variables.scss";
