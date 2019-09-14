@@ -10,7 +10,9 @@ html{
 body {
     height: 100%;
     margin: 0;
-    background-image: url('../images/OX_Background_WallPaper.jpg');
+}
+body.login{
+    background-image: url('../images/wallpaper.png');
     background-repeat: no-repeat;
     background-size: cover;
     font-family: Arial,Helvetica,sans-serif;
@@ -95,7 +97,7 @@ button {
   text-align:  center; 
   padding:  15px 40px;
   margin-top:  5px; 
-  background-color: #b08bf8; 
+  background-color: #275362; 
   color:  #fff; 
   font-size:  14px;
   margin-left:  auto; 
@@ -106,7 +108,7 @@ button {
   outline: 0; 
   &:hover {
     transform:  translateY(-3px);
-    background-color:#6a42b9;
+    background-color:#275362;
     box-shadow:  0 2px 6px -1px rgba($primary, .65);
     &:active {
       transform:  scale(.99);

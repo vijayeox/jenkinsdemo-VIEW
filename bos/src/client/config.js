@@ -40,7 +40,7 @@ module.exports = {
       title: 'Welcome to OX Zion',
       logo: {
         position: 'top',
-        src: require('./assets/images/OXZion.png')
+        src: require('./assets/images/wallpaper.png')
       }
     }
   },
@@ -62,7 +62,8 @@ module.exports = {
           {name: 'menu'},
           {name: 'windows'},
           {name: 'tray'},
-          {name: 'profile'}
+          {name: 'profile'},
+          {name:'logout'}
         ]
       }],
     }
