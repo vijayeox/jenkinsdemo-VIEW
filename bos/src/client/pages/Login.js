@@ -245,8 +245,8 @@ export default class Login extends defaultLogin {
                       ),
                       h(
                         "a",
-                        { href: "#", onclick: () => showForgotPassScreen() },
-                        "Forgot your password?"
+                        { href: "#",className: "forgotpasswordLink", onclick: () => showForgotPassScreen() },
+                        "Forgot password?"
                       )
                     ])
                   ]
@@ -471,15 +471,16 @@ export default class Login extends defaultLogin {
                 )
               ]
             ),
-
+            h("div", { className: "footer" }, [
             h("div", { className: "footer-links" }, [
-              h("a", { href: "https://www.eoxvantage.com" }, "About Us")
+              h("a", { href: "https://www.eoxvantage.com",className:'footer-link' }, "About Us")
             ]),
             h(
               "div",
               { className: "login-copyright" },
               "Copyright © 2019 EOX Vantage. All rights reserved."
             )
+            ]),
           ])
         ]
       );
