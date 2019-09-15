@@ -43,7 +43,7 @@ background-color: rgba(255,255,255,0.4);
 
 //Profile Menu
     .profile-content { background-color: white; padding: 5px 15px 5px; @extend .box-shadow; min-width: 220px; }
-    .profile-dropdown-div { border-bottom: 1px dashed rgba($grey,0.5); padding: 0px 0 15px 0; height: auto; }
+    .profile-dropdown-div { border-bottom: 1px dashed rgba($grey,0.5);  }
     .profile-dropdown-image {width: 60px; height: 60px; display: inline-block; vertical-align: middle;}
     .profile-dropdown-text { display: inline-block; vertical-align: middle; }
 

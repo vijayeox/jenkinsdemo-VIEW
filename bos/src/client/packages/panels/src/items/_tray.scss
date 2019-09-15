@@ -78,18 +78,21 @@ color:white;
   .osjs-panel-item[data-name=profile] {
     display: flex;
     width: 3.5em;
-    padding: 0;    
+    padding: 0;
     margin-left: 10px;
     margin-right: 5px;
     & > div {
       & > img {
-        padding: 5px;
+        padding: 10px;
         vertical-align: middle;
         width: 100%;
         height: auto;
       }
     }
   }
+}
+a.editprofile{
+  cursor: pointer;
 }
 
 @supports (-ms-ime-align:auto) {
@@ -212,6 +215,7 @@ color:white;
 }*/
 .osjs-panel-item[data-name=logout] {
   display: flex;
+  cursor: pointer;
     height: 36px;
     width: 36px;
     padding: 8px;
@@ -275,4 +279,10 @@ img.profile-dropdown-editicon {
     border-color: rgba(255, 255, 255, 0);
     border-width: 8px;
     margin-left: -8px;
+}
+.profile-dropdown-div{
+      padding: 0;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
