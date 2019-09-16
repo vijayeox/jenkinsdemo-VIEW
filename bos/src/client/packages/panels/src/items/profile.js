@@ -65,10 +65,9 @@ export default class ProfilePanelItem extends PanelItem {
       h('div', {
         className: 'profile-content'
       },[
-      h('a', {
+      h('div', {
         className: 'myprofile'},[
         h('div', {
-        onclick: openProfile,
         className: 'profile-dropdown-div'
       }, [
           h('img', {

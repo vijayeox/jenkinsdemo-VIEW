@@ -2,7 +2,11 @@
 @import "~@osjs/gui/dist/main.css";
 @import "~@osjs/dialogs/dist/main.css";
 @import "~@osjs/panels/dist/main.css";
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,900');
 
+html{
+    font-family: 'Lato';
+}
 .osjs-window-header{
 	height:3em;
 }
