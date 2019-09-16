@@ -55,7 +55,7 @@ export default class Login extends defaultLogin {
         ]),
       ]),
       h('div',{className:'footer-links'},[
-        h('a',{href:'https://www.eoxvantage.com'},'About Us'),
+        h('a',{href:'https://eoxvantage.com', target:'_blank'},'About Us'),
       ]),
       h('div',{className:'login-copyright'},'Copyright © 2019 EOX Vantage. All rights reserved.'),
       ])
