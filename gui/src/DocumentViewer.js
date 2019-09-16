@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 import osjs from "osjs";
 let helper = osjs.make("oxzion/restClient");
 import "./public/css/documentViewer.scss";
@@ -139,55 +137,10 @@ export default class DocumentViewer extends Component {
     var url = documentData.url;
     if (documentData.type == "pdf") {
       url =
-        "http://localhost:8081/apps/DiveInsurance/ViewerJS/#" +
+        "http://localhost:8081/ViewerJS/#" +
         documentData.url;
     }
     return <iframe src={url} className="iframeDoc" key={url}></iframe>;
-    // if (documentData.type == "pdf") {
-    // const { numPages } = this.state;
-    // var pageData = [];
-    // for (var page = 1; page <= numPages; page++) {
-    //   pageData.push(
-    //     <span key={page}>
-    //       <Page pageNumber={page} scale={this.state.scale} />
-    //       <p>Page: {page}</p>
-    //       <hr></hr>
-    //     </span>
-    //   );
-    // }
-    // return (
-    //   <span>
-    //     <div className="zoomInOutDiv">
-    //       <span
-    //         className="zoomElement"
-    //         onClick={() => this.handleDocumentScale(0.5)}
-    //       >
-    //         {" "}
-    //         +{" "}
-    //       </span>
-    //       <span
-    //         className="zoomElement"
-    //         onClick={() => this.handleDocumentScale(-0.5)}
-    //       >
-    //         {" "}
-    //         -{" "}
-    //       </span>
-    //     </div>
-    //     <Document
-    //       file={documentData.url}
-    //       onLoadSuccess={this.onDocumentLoadSuccess}
-    //     >
-    //       {pageData}
-    //     </Document>
-    //   </span>
-    // );
-    //   var url = "http://localhost:8081/apps/DiveInsurance/ViewerJS/#"+documentData.url;
-    //   return(
-    //     <iframe src={url} className="iframeDoc" key={url}></iframe>
-    //   )
-    // } else {
-    //   return <iframe src={documentData.url} className="iframeDoc"></iframe>;
-    // }
   };
 
   render() {
@@ -196,7 +149,7 @@ export default class DocumentViewer extends Component {
       if (documentsList.length > 1) {
         return (
           <div className="row">
-            <div className="col-2 docListDiv">
+            <div className="col-md-2 docListDiv">
               {documentsList.map((doc, index) => {
                 return (
                   <div className="card docList" key={index}>
@@ -227,7 +180,7 @@ export default class DocumentViewer extends Component {
                 );
               })}
             </div>
-            <div className="col-10 border">
+            <div className="col-md-10 border">
               {this.displayDocumentData(this.state.selectedDocument)}
             </div>
           </div>
@@ -235,7 +188,7 @@ export default class DocumentViewer extends Component {
       } else if (documentsList.length == 1) {
         return (
           <div className="row">
-            <div className="col-12 border">
+            <div className="col-md-12 border">
               {this.displayDocumentData(this.state.selectedDocument)}
             </div>
           </div>

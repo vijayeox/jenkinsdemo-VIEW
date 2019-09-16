@@ -7,7 +7,6 @@ const minimize = mode === "production";
 const plugins = [];
 const pkg = require("./package.json");
 const libraryName = pkg.name;
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 if (mode === "production") {
   plugins.push(
@@ -42,14 +41,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    ...plugins,
-    new CopyWebpackPlugin([
-      {
-        from: 'node_modules/pdfjs-dist/cmaps/',
-        to: 'cmaps/'
-      },
-      "ViewerJS/"
-    ]),
+    ...plugins
   ],
   resolve: {
     alias: {

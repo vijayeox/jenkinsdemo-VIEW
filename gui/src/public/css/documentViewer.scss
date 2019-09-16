@@ -14,6 +14,13 @@
   top: 10px;
 }
 
+@media only screen and (max-width: 770px) {
+  .docListDiv {
+    position: inherit;
+    height: auto;
+  }
+}
+
 .docList {
   margin-bottom: 10px;
   cursor: pointer;

@@ -48,7 +48,8 @@ module.exports = {
       OSJS_VERSION: npm.version
     }),
     new CopyWebpackPlugin([
-      'src/client/assets/images/load.svg'
+      'src/client/assets/images/load.svg',
+      './ViewerJS'
     ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
