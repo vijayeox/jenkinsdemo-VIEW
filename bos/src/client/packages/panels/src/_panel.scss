@@ -413,6 +413,11 @@ img.profile-dropdown-image {
   z-index: 1;
 }
 
+@-moz-document url-prefix() {
+  .profile-content {
+    right: 190px;
+  }
+}
 .osjs-panel[data-position=top] .profile-content{
     top: 3.5em;
   }
