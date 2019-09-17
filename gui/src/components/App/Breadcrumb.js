@@ -37,8 +37,6 @@ class Breadcrumb extends React.Component {
 
   updateBreadCrumb = e => {
     var data = this.state.breadcrumbConfig;
-    console.log(e);
-
     data.push(e.detail);
     this.setState({
       breadcrumbConfig: data
@@ -47,7 +45,6 @@ class Breadcrumb extends React.Component {
 
   renderBreadcrumbs = () => {
     var content = [];
-    console.log(this.state.breadcrumbConfig);
     this.state.breadcrumbConfig.map((currentValue, index) => {
       var clickable = false;
       if (currentValue.content) {

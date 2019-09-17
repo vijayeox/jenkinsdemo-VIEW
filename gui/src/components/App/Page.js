@@ -51,7 +51,7 @@ class Page extends React.Component {
     });
   }
 
-  buttonAction = (action) => {
+  buttonAction = action => {
     if (action.page_id) {
       this.itemClick(undefined, action.page_id);
     } else if (action.content) {
@@ -169,13 +169,17 @@ class Page extends React.Component {
         case "List":
           var itemContent = data[i].content;
           var columnConfig = itemContent.columnConfig;
-          itemContent.actions
-            ? columnConfig.push({
+          if (itemContent.actions) {
+            if (columnConfig[columnConfig.length - 1].title == "Actions") {
+              null;
+            } else {
+              columnConfig.push({
                 title: "Actions",
                 cell: e => this.renderButtons(e, itemContent.actions),
                 filterCell: e => this.renderEmpty()
-              })
-            : null;
+              });
+            }
+          }
           var dataString = this.prepareDataRoute(itemContent.data);
           content.push(
             <OX_Grid
