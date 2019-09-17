@@ -7,7 +7,7 @@ export class SplashServiceProvider extends ServiceProvider {
 		this.core = core;
 		this.$loading = document.createElement('div');
     	this.$loading.className = 'osjs-boot-splash';
-    	this.$loading.innerHTML = '<img src="./load.svg" height="500" width="500" align="center">';
+    	this.$loading.innerHTML = '<img src="./load.svg" height="300" width="300" align="center">';
     }
 	providers() {
 		return [
