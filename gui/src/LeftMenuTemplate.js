@@ -9,6 +9,7 @@ import SideNav, {
 import { Button, ButtonGroup } from "@trendmicro/react-buttons";
 import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
 import Page from "./components/App/Page";
+import Breadcrumb from "./components/App/Breadcrumb";
 // Be sure to include styles at some point, probably during your bootstraping
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 
@@ -28,11 +29,11 @@ class LeftMenuTemplate extends React.Component {
         menus: response["data"]
       });
     });
-
     this.onSelect = this.onSelect.bind(this);
     this.onToggle = this.onToggle.bind(this);
+    this.child = React.createRef();
   }
-  // REMOVE THE HARD CODED APP ID
+
   async getMenulist() {
     let helper = this.core.make("oxzion/restClient");
     let menulist = await helper.request(
@@ -43,11 +44,16 @@ class LeftMenuTemplate extends React.Component {
     );
     return menulist;
   }
+
   onToggle(expanded) {
     this.setState({ expanded: expanded });
   }
+
   onSelect(selected) {
     this.setState({ selected: selected, expanded: false });
+    if (this.state.selected !== selected) {
+      this.child.current.clearBreadcrumb();
+    }
   }
 
   render() {
@@ -60,12 +66,14 @@ class LeftMenuTemplate extends React.Component {
         }}
       >
         <div
+          className="PageRender"
           style={{
             marginLeft: expanded ? 240 : 64,
-            padding: "15px 20px 0 20px",
+            padding: "0px 20px 0 20px",
             height: "100%"
           }}
         >
+          <Breadcrumb ref={this.child} />
           {this.state.selected.page_id ? (
             <Page
               pageId={this.state.selected.page_id}

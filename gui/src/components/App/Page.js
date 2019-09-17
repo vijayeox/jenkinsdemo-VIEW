@@ -20,8 +20,19 @@ class Page extends React.Component {
     this.contentDiv = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
     this.itemClick = this.itemClick.bind(this);
-    this.getFormContents = this.getFormContents.bind(this);
   }
+
+  componentDidMount() {
+    document
+      .getElementsByClassName("PageRender")[0]
+      .addEventListener("updatePageView", this.updatePageView, false);
+  }
+
+  updatePageView = e => {
+    this.setState({
+      pageContent: this.renderContent(e.detail)
+    });
+  };
 
   loadPage(pageId) {
     this.getPageContent(pageId).then(response => {
@@ -29,18 +40,44 @@ class Page extends React.Component {
         this.setState({
           pageContent: this.renderContent(response.data.content)
         });
+        event = new CustomEvent("updateBreadcrumb", {
+          detail: response.data,
+          bubbles: true
+        });
+        document.getElementsByClassName("PageRender")[0].dispatchEvent(event);
       } else {
         this.setState({ pageContent: this.renderContent([]) });
       }
     });
   }
 
-  buttonAction = (action, key) => {
-    action[key].page_id
-      ? this.itemClick(undefined, action[key])
-      : this.setState({
-          pageContent: this.renderContent(action[key].content)
+  buttonAction = (action) => {
+    if (action.page_id) {
+      this.itemClick(undefined, action.page_id);
+    } else if (action.content) {
+      if (action.content[0].form_id) {
+        this.getFormContents(action.content[0].form_id).then(response => {
+          this.setState({
+            pageContent: this.renderContent([
+              {
+                form_id: action.content[0].form_id,
+                content: response,
+                type: "Form"
+              }
+            ])
+          });
         });
+      } else {
+        this.setState({
+          pageContent: this.renderContent(action.content)
+        });
+      }
+    }
+    event = new CustomEvent("updateBreadcrumb", {
+      detail: action,
+      bubbles: true
+    });
+    document.getElementsByClassName("PageRender")[0].dispatchEvent(event);
   };
 
   itemClick = (dataItem, itemContent) => {
@@ -48,7 +85,7 @@ class Page extends React.Component {
   };
 
   renderEmpty() {
-    return [<div key={1} />];
+    return [<React.Fragment key={1} />];
   }
 
   renderButtons = (e, action) => {
@@ -59,7 +96,7 @@ class Page extends React.Component {
           <button
             type="button"
             className=" btn manage-btn k-grid-edit-command"
-            onClick={() => this.buttonAction(action, key)}
+            onClick={() => this.buttonAction(action[key])}
           >
             {action[key].icon ? (
               <i className={action[key].icon + " manageIcons"}></i>
@@ -82,19 +119,15 @@ class Page extends React.Component {
     }
   };
 
-  async getFormContents(form_data) {
-    if (form_data.content) {
-      return form_data.content;
-    } else {
-      let helper = this.core.make("oxzion/restClient");
-      let formData = await helper.request(
-        "v1",
-        "/app/" + this.appId + "/form/" + form_data.form_id,
-        {},
-        "get"
-      );
-      return formData;
-    }
+  async getFormContents(form_id) {
+    let helper = this.core.make("oxzion/restClient");
+    let formData = await helper.request(
+      "v1",
+      "/app/" + this.appId + "/form/" + form_id,
+      {},
+      "get"
+    );
+    return JSON.parse(formData.data.template);
   }
 
   async getPageContent(pageId) {
