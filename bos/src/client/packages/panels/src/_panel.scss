@@ -405,19 +405,14 @@ img.profile-dropdown-image {
 
 .profile-content {
   display: none;
-  position: absolute;
-  right: 0;
+  position: fixed;
+  right: 50px;
   width: 200px;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
-@-moz-document url-prefix() {
-  .profile-content {
-    right: 190px;
-  }
-}
 .osjs-panel[data-position=top] .profile-content{
     top: 3.5em;
   }
