@@ -1,15 +1,15 @@
 {
   "type": "application",
-  "name": "TaskAdmin",
+  "name": "Project Management Admin",
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
-  "hidden": true,
+  "hidden": false,
   "title": {
-    "en_EN": "TaskAdmin"
+    "en_EN": "Project Management Admin"
   },
   "description": {
-    "en_EN": "TaskAdmin"
+    "en_EN": "Project Management Admin"
   },
   "files": [
     "main.js"
