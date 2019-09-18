@@ -1,15 +1,15 @@
 {
   "type": "application",
-  "name": "Project Management Admin",
+  "name": "PPM Admin",
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
   "hidden": false,
   "title": {
-    "en_EN": "Project Management Admin"
+    "en_EN": "PPM Admin"
   },
   "description": {
-    "en_EN": "Project Management Admin"
+    "en_EN": "PPM Admin"
   },
   "files": [
     "main.js"
