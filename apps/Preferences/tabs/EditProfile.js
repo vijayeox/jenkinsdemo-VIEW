@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Codes from "./Codes";
+import Codes from "../public/js/Codes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Notification from "../components/Notification";
