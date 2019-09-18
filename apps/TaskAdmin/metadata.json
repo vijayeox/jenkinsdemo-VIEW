@@ -1,6 +1,6 @@
 {
   "type": "application",
-  "name": "PPM Admin",
+  "name": "TaskAdmin",
   "category": null,
   "server": "server.js",
   "icon": "icon.svg",

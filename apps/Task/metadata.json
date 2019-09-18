@@ -1,6 +1,6 @@
 {
   "type": "application",
-  "name": "PPM",
+  "name": "Task",
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
