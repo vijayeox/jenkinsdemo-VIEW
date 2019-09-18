@@ -7,10 +7,10 @@
   "hidden": false,
   "icon_white": "icon_white.png",
   "title": {
-    "en_EN": "Project Management"
+    "en_EN": "Project Portfolio Management"
   },
   "description": {
-    "en_EN": "Project Management"
+    "en_EN": "Project Portfolio Management"
   },
   "files": [
     "main.js"
