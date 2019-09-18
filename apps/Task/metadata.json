@@ -1,16 +1,16 @@
 {
   "type": "application",
-  "name": "Task",
+  "name": "PPM",
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
   "hidden": false,
   "icon_white": "icon_white.png",
   "title": {
-    "en_EN": "Task"
+    "en_EN": "PPM"
   },
   "description": {
-    "en_EN": "Task"
+    "en_EN": "PPM"
   },
   "files": [
     "main.js"

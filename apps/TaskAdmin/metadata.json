@@ -1,16 +1,16 @@
 {
   "type": "application",
-  "name": "TaskAdmin",
+  "name": "PPM Admin",
   "category": null,
   "server": "server.js",
   "icon": "icon.svg",
   "hidden": false,
   "icon_white": "icon_white.svg",
   "title": {
-    "en_EN": "TaskAdmin"
+    "en_EN": "PPM Admin"
   },
   "description": {
-    "en_EN": "TaskAdmin"
+    "en_EN": "PPM Admin"
   },
   "files": [
     "main.js"
