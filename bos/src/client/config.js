@@ -51,7 +51,7 @@ module.exports = {
     settings: {
       theme: "Vision",
       icons: "oxzioniconpack",
-      font: "Century Gothic",
+      font: "Lato",
       background: {
         src: undefined,
         style: 'cover'
