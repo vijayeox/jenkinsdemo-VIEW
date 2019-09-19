@@ -29,3 +29,11 @@
  */
 
 @import "src/icons";
+
+body.swal2-height-auto {
+  height: initial !important;
+}
+
+body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
+  overflow: initial !important;
+}
