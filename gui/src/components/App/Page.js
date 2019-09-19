@@ -202,12 +202,11 @@ class Page extends React.Component {
           break;
         case "DocumentViewer":
           var itemContent = data[i].content;
+          var url =
+            "app/" + this.appId + "/file/" + itemContent.fileId + "/document";
+          console.log(url);
           content.push(
-            <DocumentViewer
-              key={i}
-              osjsCore={this.core}
-              // url={itemContent.url}
-            />
+            <DocumentViewer key={i} osjsCore={this.core} url={url} />
           );
           break;
         default:

@@ -11,65 +11,7 @@ export default class DocumentViewer extends Component {
       pageNumber: 1,
       scale: 1.0,
       selectedDocument: "",
-      documentsList: [
-        {
-          name: "sample doc 1",
-          url: "https://www.jianjunchen.com/papers/CORS-USESEC18.slides.pdf",
-          type: "pdf"
-        },
-        {
-          name: "sample doc 2",
-          url:
-            "https://buildmedia.readthedocs.org/media/pdf/flask-cors/latest/flask-cors.pdf",
-          type: "pdf"
-        },
-        {
-          name: "sample image 1",
-          url: "https://mdn.mozillademos.org/files/14295/CORS_principle.png",
-          type: "image"
-        },
-        {
-          name: "sample image 2",
-          url:
-            "https://image.shutterstock.com/image-photo/sample-wood-chipboard-wooden-laminate-600w-1343662607.jpg",
-          type: "image"
-        },
-        {
-          name: "sample image 3",
-          url:
-            "https://image.shutterstock.com/image-photo/sample-colorful-wood-laminate-veneer-260nw-1344802439.jpg",
-          type: "image"
-        },
-        {
-          name: "sample image 1",
-          url: "https://mdn.mozillademos.org/files/14295/CORS_principle.png",
-          type: "image"
-        },
-        ,
-        {
-          name: "sample doc 2",
-          url:
-            "https://buildmedia.readthedocs.org/media/pdf/flask-cors/latest/flask-cors.pdf",
-          type: "pdf"
-        },
-        {
-          name: "sample image 1",
-          url: "https://mdn.mozillademos.org/files/14295/CORS_principle.png",
-          type: "image"
-        },
-        {
-          name: "sample image 2",
-          url:
-            "https://image.shutterstock.com/image-photo/sample-wood-chipboard-wooden-laminate-600w-1343662607.jpg",
-          type: "image"
-        },
-        {
-          name: "sample image 3",
-          url:
-            "https://image.shutterstock.com/image-photo/sample-colorful-wood-laminate-veneer-260nw-1344802439.jpg",
-          type: "image"
-        }
-      ]
+      documentsList: []
     };
     this.getDocumentsList = this.getDocumentsList.bind(this);
   }
@@ -80,32 +22,24 @@ export default class DocumentViewer extends Component {
   }
 
   getDocumentsList = () => {
-    // if (this.props.url) {
-    //   this.getDocumentsListService(this.props.url).then(response => {
-    //     this.setState(
-    //       {
-    //         documentsList: response.data
-    //       },
-    //       () => {
-    //         if (this.state.documentsList.length > 0) {
-    //           this.setState({
-    //             selectedDocument: this.state.documentsList[0]
-    //           });
-    //         }
-    //       }
-    //     );
-    //   });
-    // }
-    if (this.state.documentsList.length > 0) {
-      this.setState({
-        selectedDocument: this.state.documentsList[0]
+    if (this.props.url) {
+      this.getDocumentsListService(this.props.url).then(response => {
+        this.setState(
+          {
+            documentsList:
+              response.data && response.data.length > 0 ? response.data : []
+          },
+          () => {
+            if (this.state.documentsList.length > 0) {
+              this.setState({
+                selectedDocument: this.state.documentsList[0]
+              });
+            }
+          }
+        );
       });
     }
   };
-
-  componentDidMount() {
-    this.getDocumentsList();
-  }
 
   componentDidUpdate(prevProps) {
     if (this.props.url !== prevProps.url) {
@@ -113,9 +47,9 @@ export default class DocumentViewer extends Component {
     }
   }
 
-  onDocumentLoadSuccess = ({ numPages }) => {
-    this.setState({ numPages });
-  };
+  componentDidMount() {
+    this.getDocumentsList();
+  }
 
   handleDocumentClick = doc => {
     this.setState({
@@ -123,29 +57,22 @@ export default class DocumentViewer extends Component {
     });
   };
 
-  handleDocumentScale = value => {
-    var scale = this.state.scale;
-    scale += value;
-    if (scale >= 0.5) {
-      this.setState({
-        scale: scale
-      });
-    }
-  };
-
   displayDocumentData = documentData => {
-    var url = documentData.url;
+    console.log(documentData);
+    var url;
     if (documentData.type == "pdf") {
-      url =
-        "http://localhost:8081/ViewerJS/#" +
-        documentData.url;
+      url = "http://localhost:8081/ViewerJS/#" + documentData.fieldvalue;
+    } else if (documentData.type == "image") {
+      url = documentData.fieldvalue;
+    } else {
+      url = "http://localhost:8081/ViewerJS/#" + documentData.fieldvalue;
     }
     return <iframe src={url} className="iframeDoc" key={url}></iframe>;
   };
 
   render() {
     const { documentsList } = this.state;
-    if (documentsList.length > 0) {
+    if (documentsList && documentsList.length > 0) {
       if (documentsList.length > 1) {
         return (
           <div className="row">
@@ -194,8 +121,8 @@ export default class DocumentViewer extends Component {
           </div>
         );
       } else {
-        return "";
+        return null;
       }
-    }
+    } else return null;
   }
 }
