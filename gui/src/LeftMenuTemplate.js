@@ -26,7 +26,8 @@ class LeftMenuTemplate extends React.Component {
 
     this.getMenulist().then(response => {
       this.setState({
-        menus: response["data"]
+        menus: response["data"],
+        selected: response["data"][0]
       });
     });
     this.onSelect = this.onSelect.bind(this);
