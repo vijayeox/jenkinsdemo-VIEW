@@ -7,9 +7,8 @@
 // Osjs Window
     .osjs-window            {   
         border-width: 0 !important;  
-        box-shadow :0 0 4px rgba(0,0,0,0.15) !important;
-        border-radius: 6px;}
-    .osjs-window-inner      { background-color: $white; border-radius: $bdr-rad; overflow:hidden;}
+        box-shadow :0 0 4px rgba(0,0,0,0.15) !important;}
+    .osjs-window-inner      { background-color: $white; overflow:hidden;}
     .osjs-window-header     { background-color: $primary; color: $white;}
     .osjs-window-title      {  }
 
