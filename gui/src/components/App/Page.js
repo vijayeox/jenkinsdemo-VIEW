@@ -205,9 +205,7 @@ class Page extends React.Component {
           var url =
             "app/" + this.appId + "/file/" + itemContent.fileId + "/document";
           console.log(url);
-          content.push(
-            <DocumentViewer key={i} core={this.core} url={url} />
-          );
+          content.push(<DocumentViewer key={i} core={this.core} url={url} />);
           break;
         default:
           content.push(
@@ -234,7 +232,13 @@ class Page extends React.Component {
   render() {
     if (this.state.pageContent && this.state.pageContent.length > 0) {
       return (
-        <div id={this.contentDiv} className="AppBuilderPage">
+        <div
+          id={this.contentDiv}
+          className="AppBuilderPage"
+          style={{
+            height: "inherit"
+          }}
+        >
           {this.state.pageContent}
         </div>
       );

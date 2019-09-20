@@ -1,5 +1,9 @@
 .GridCustomStyle {
 
+  .k-grid{
+    height: inherit;
+  }
+
   .k-grid-content {
     overflow-y: scroll;
     cursor: pointer;
