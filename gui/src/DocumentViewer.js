@@ -14,6 +14,7 @@ export default class DocumentViewer extends Component {
       documentsList: []
     };
     this.getDocumentsList = this.getDocumentsList.bind(this);
+    this.loader = this.props.core.make("oxzion/splash");
   }
 
   async getDocumentsListService(url) {
@@ -23,7 +24,9 @@ export default class DocumentViewer extends Component {
 
   getDocumentsList = () => {
     if (this.props.url) {
+      this.loader.show();
       this.getDocumentsListService(this.props.url).then(response => {
+        this.loader.destroy();
         this.setState(
           {
             documentsList:
@@ -97,7 +100,7 @@ export default class DocumentViewer extends Component {
                             ? "fas fa-file-pdf"
                             : doc.type == "image"
                             ? "far fa-file-image"
-                            : "far fa-file")
+                            : "far fa-file-pdf")
                         }
                       ></i>
                       <br></br>
@@ -121,8 +124,8 @@ export default class DocumentViewer extends Component {
           </div>
         );
       } else {
-        return null;
+        return <p>No files to display.</p>;
       }
-    } else return null;
+    } else return <p>No files to display.</p>;
   }
 }

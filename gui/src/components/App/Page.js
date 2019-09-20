@@ -206,7 +206,7 @@ class Page extends React.Component {
             "app/" + this.appId + "/file/" + itemContent.fileId + "/document";
           console.log(url);
           content.push(
-            <DocumentViewer key={i} osjsCore={this.core} url={url} />
+            <DocumentViewer key={i} core={this.core} url={url} />
           );
           break;
         default:
