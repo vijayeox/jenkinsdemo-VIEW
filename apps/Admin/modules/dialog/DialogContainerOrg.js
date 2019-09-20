@@ -21,8 +21,8 @@ export default class DialogContainer extends React.Component {
     this.url = this.core.config("wrapper.url");
     this.state = {
       orgInEdit: this.props.dataItem || null,
-      contactName: [],
-      timeZoneValue: []
+      contactName: null,
+      timeZoneValue: null
     };
     this.countryByIP = undefined;
     this.fUpload = React.createRef();

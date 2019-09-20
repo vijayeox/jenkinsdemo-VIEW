@@ -12,8 +12,8 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.state = {
       groupInEdit: this.props.dataItem || null,
-      managerName: [],
-      parentGroupName: []
+      managerName: null,
+      parentGroupName: null
     };
     this.notif = React.createRef();
   }
