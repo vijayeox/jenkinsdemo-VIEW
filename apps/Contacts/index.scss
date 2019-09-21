@@ -217,7 +217,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .profileImage {
     text-align: -webkit-center;
     text-align: -moz-center;
-    margin: auto;
+    margin: auto !important;
   }
 
   .profileImageDiv {
@@ -325,9 +325,14 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     margin-left: 1vw;
     margin-top: 4vh;
     transform: scale(1.2);
+    z-index: 1;
 
     .checkbox {
       cursor: pointer;
     }
+  }
+
+  .form-group{
+    margin-left: auto !important;
   }
 }

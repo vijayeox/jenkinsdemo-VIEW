@@ -233,14 +233,15 @@ export default class DialogContainer extends React.Component {
                         {this.state.isAdmin ? (
                           <React.Fragment>
                             &nbsp; (READ ONLY MODE)
-                            <FaUserLock
+                            <i
+                              className="fas fa-user-lock"
                               style={{
-                                fontSize: "2.5rem",
+                                fontSize: "2.4rem",
                                 right: "2%",
                                 top: "2px",
                                 position: "absolute"
                               }}
-                            />
+                            ></i>
                           </React.Fragment>
                         ) : null}
                       </div>

@@ -926,7 +926,7 @@ export default [
   },
   {
     label: 'India Standard Time',
-    name: 'Asia/Calcutta',
+    name: 'Asia/Kolkata',
     offset: 5.5,
   },
   {
