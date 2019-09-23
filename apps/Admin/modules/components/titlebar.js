@@ -5,9 +5,9 @@ import { Button } from "@progress/kendo-react-buttons";
 export class TitleBar extends React.Component {
   render() {
     return (
-      <div style={{ paddingTop: "12px", marginLeft: "0px" }} className="row">
+      <div style={{ paddingTop: "12px", marginLeft: "0px" }}>
         <div
-          style={{ marginLeft: "16px", position: "absolute", zIndex: "101" }}
+          style={{ marginLeft: "15px", position: "absolute", zIndex: "101" }}
         >
           <Button
             onClick={this.props.menu}
@@ -23,8 +23,8 @@ export class TitleBar extends React.Component {
         {this.props.orgSwitch ? (
           <div
             style={{
-              right: "2%",
-              top: "3%",
+              right: "15px",
+              top: "15px",
               position: "absolute",
               zIndex: "100",
               width: "200px"
