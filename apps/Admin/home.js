@@ -147,7 +147,7 @@ class Home extends React.Component {
           </div>
         ) : null}
 
-        {this.userProfile.privileges.MANAGE_CRM_READ ? (
+        {this.userProfile.privileges.MANAGE_CRM_WRITE ? (
           <div onClick={this.crmAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/crm-icon.svg" />
