@@ -76,6 +76,17 @@ class EditProfile extends Component {
         fields
       });
     }
+    if (
+      this.state.fields.country == "" ||
+      this.state.fields.country == undefined ||
+      this.state.fields.country == null
+    ) {
+      let fields = this.state.fields;
+      fields["country"] = "United States of America";
+      this.setState({
+        fields
+      });
+    }
   }
 
   handleDOBChange = event => {
