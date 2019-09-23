@@ -27,6 +27,11 @@ module.exports = {
     osjs: 'OSjs',
     jqyery : 'jQuery'
   },
+  resolve: {
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
+    }
+  },
   optimization: {
     minimize,
   },
