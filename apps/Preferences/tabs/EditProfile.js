@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Codes from "../public/js/Codes";
+import CountryCodes from "OxzionGUI/public/js/CountryCodes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Notification from "../components/Notification";
@@ -66,7 +66,7 @@ class EditProfile extends Component {
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
 
-    Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    CountryCodes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
   }
 
   onSelect1 = event => {
@@ -558,7 +558,7 @@ class EditProfile extends Component {
                   name="dial_code"
                   ref="dial_code"
                 >
-                  {Codes.map((dial_code, key) => (
+                  {CountryCodes.map((dial_code, key) => (
                     <option key={key} value={dial_code.dial_code}>
                       {dial_code.name} {dial_code.dial_code}
                     </option>
@@ -620,7 +620,7 @@ class EditProfile extends Component {
                 id="country"
                 name="country"
               >
-                {Codes.map((country, key) => (
+                {CountryCodes.map((country, key) => (
                   <option key={key} value={country.name}>
                     {country.name}
                   </option>
