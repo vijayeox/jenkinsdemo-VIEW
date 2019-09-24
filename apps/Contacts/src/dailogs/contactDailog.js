@@ -5,6 +5,7 @@ import { ProfilePictureWidget } from "../widgets";
 import { SaveContact } from "../services/services";
 import { Notification } from "../components";
 import { ContactTypeEnum, IconTypeEnum } from "../enums";
+import PhoneInput from "react-phone-number-input";
 
 class ContactDailog extends React.Component {
   constructor(props) {
@@ -114,6 +115,12 @@ class ContactDailog extends React.Component {
         tempEmailData
       });
     }
+  };
+
+  handlePhoneChange = phone => {
+    let contactDetails = { ...this.state.contactDetails };
+    contactDetails["phone_1"] = phone;
+    this.setState({ contactDetails: contactDetails });
   };
 
   handleAdd = (e, type) => {
@@ -267,7 +274,7 @@ class ContactDailog extends React.Component {
         </div>
         <div className="col-2 displayInline paddingNone">
           <button
-            className="btn btn-danger"
+            className="btn btn-danger trashButton"
             onClick={() => this.removeItem(key, type)}
           >
             <i className="fa fa-trash" />
@@ -474,17 +481,17 @@ class ContactDailog extends React.Component {
               <div className="col-6">
                 <label htmlFor="phone_1">Primary Phone</label>
                 <div className="col-12 form-group paddingNone">
-                  <input
-                    type="text"
-                    className="form-control inputHeight"
+                  <PhoneInput
                     name="phone_1"
                     placeholder="Enter primary phone."
+                    maxLength="15"
+                    countryOptions={["IN", "US", "CA", "|", "..."]}
                     value={
                       this.state.contactDetails.phone_1
                         ? this.state.contactDetails.phone_1
                         : ""
                     }
-                    onChange={this.handleUserInput}
+                    onChange={phone => this.handlePhoneChange(phone)}
                   />
                 </div>
                 {this.additionalPhoneNumberData()}

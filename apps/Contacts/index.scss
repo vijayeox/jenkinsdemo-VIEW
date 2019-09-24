@@ -13,9 +13,10 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
   @import "./public/scss/notifTheme.css";
+  @import "./node_modules/react-phone-number-input/style.css";
 
   .contactPanelMainDiv {
-    overflow-y: auto;
+    overflow: inherit;
     height: inherit;
   }
 
@@ -112,7 +113,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .contactInfoDiv {
     border: 1px solid #cdcdcd;
     border-radius: 6px;
-    height: 55vh;
+    height: 90%;
     overflow: hidden;
 
     .contactDetailsImage {
@@ -254,7 +255,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .middle {
     transition: 0.5s ease;
     opacity: 0;
-    position: absolute;
+    position: absolute !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -332,7 +333,25 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     }
   }
 
-  .form-group{
+  .form-group {
     margin-left: auto !important;
+  }
+
+  .react-phone-number-input__icon {
+    width: 29px;
+    height: 21px;
+  }
+
+  .react-phone-number-input__phone {
+    @extend .form-control;
+    @extend .inputHeight;
+  }
+
+  div.profileImage * {
+    position: unset;
+  }
+
+  .trashButton{
+    padding: 1px 12px;
   }
 }

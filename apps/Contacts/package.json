@@ -26,6 +26,7 @@
     "react-avatar-image-cropper": "^1.3.3",
     "react-bootstrap": "^1.0.0-beta.9",
     "react-notifications-component": "^1.1.1",
+    "react-phone-number-input": "^2.3.22",
     "react-webcam": "^1.1.1",
     "sweetalert2": "^8.13.0",
     "webpack-bundle-analyzer": "^3.3.2"
