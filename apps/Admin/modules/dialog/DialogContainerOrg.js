@@ -5,10 +5,13 @@ import { Input } from "@progress/kendo-react-inputs";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
+import { filterBy } from "@progress/kendo-data-query";
 import scrollIntoView from "scroll-into-view-if-needed";
 import PhoneInput from "react-phone-number-input";
 import Codes from "../data/Codes";
-import timezoneCode from "../../public/js/timezones.js";
+import timezoneCode from "OxzionGUI/public/js/Timezones.js";
+
+import { DropDownList } from "@progress/kendo-react-dropdowns";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -22,7 +25,8 @@ export default class DialogContainer extends React.Component {
     this.state = {
       orgInEdit: this.props.dataItem || null,
       contactName: null,
-      timeZoneValue: null
+      timeZoneValue: [],
+      timezoneList: timezoneCode
     };
     this.countryByIP = undefined;
     this.fUpload = React.createRef();
@@ -35,10 +39,12 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "put") {
       this.setState({
         timeZoneValue: {
-          id: "111",
-          name: this.state.orgInEdit.preferences.timezone
+          label: this.state.orgInEdit.preferences.timezone,
+          name: this.state.orgInEdit.preferences.timezone,
+          offset: 100
         }
       });
+
       GetSingleEntityData(
         "organization/" +
           this.props.dataItem.uuid +
@@ -102,19 +108,23 @@ export default class DialogContainer extends React.Component {
   };
 
   valueChange = (field, event) => {
-    let orgInEdit = { ...this.state.orgInEdit };
-    orgInEdit["preferences"] = orgInEdit["preferences"]
-      ? orgInEdit["preferences"]
-      : {};
-    orgInEdit["preferences"][field] = event;
-    this.setState({ orgInEdit: orgInEdit });
     if (field == "timezone") {
       this.setState({
-        timeZoneValue: {
-          id: "111",
-          name: event
-        }
+        timeZoneValue: event
       });
+      let orgInEdit = { ...this.state.orgInEdit };
+      orgInEdit["preferences"] = orgInEdit["preferences"]
+        ? orgInEdit["preferences"]
+        : {};
+      orgInEdit["preferences"][field] = event.name;
+      this.setState({ orgInEdit: orgInEdit });
+    } else {
+      let orgInEdit = { ...this.state.orgInEdit };
+      orgInEdit["preferences"] = orgInEdit["preferences"]
+        ? orgInEdit["preferences"]
+        : {};
+      orgInEdit["preferences"][field] = event;
+      this.setState({ orgInEdit: orgInEdit });
     }
   };
 
@@ -218,7 +228,9 @@ export default class DialogContainer extends React.Component {
       preferences: JSON.stringify({
         dateformat: this.state.orgInEdit.preferences.dateformat,
         currency: this.state.orgInEdit.preferences.currency,
-        timezone: this.state.orgInEdit.preferences.timezone
+        timezone: this.state.orgInEdit.preferences.timezone.name
+          ? this.state.orgInEdit.preferences.timezone.name
+          : this.state.orgInEdit.preferences.timezone
       })
     };
 
@@ -570,21 +582,26 @@ export default class DialogContainer extends React.Component {
               <div className="form-row" style={{ marginTop: "5px" }}>
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
-                  <DropDown
-                    args={this.core}
-                    disableItem={this.props.diableField}
-                    rawData={timezoneCode}
-                    onDataChange={e =>
-                      this.valueChange("timezone", e.target.value.id)
-                    }
-                    keyValuePair={true}
-                    selectedItem={
-                      this.state.orgInEdit.preferences
-                        ? this.state.timeZoneValue
-                        : ""
-                    }
-                    required={true}
-                  />
+                  <div>
+                    <DropDownList
+                      data={this.state.timezoneList}
+                      textField="name"
+                      dataItemKey="name"
+                      value={this.state.timeZoneValue}
+                      onChange={e =>
+                        this.valueChange("timezone", e.target.value)
+                      }
+                      style={{ width: "100%" }}
+                      popupSettings={{ height: "160px" }}
+                      filterable={true}
+                      onFilterChange={e => {
+                        this.setState({
+                          timezoneList: filterBy(timezoneCode, e.filter)
+                        });
+                      }}
+                      required={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

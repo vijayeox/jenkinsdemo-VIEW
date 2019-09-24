@@ -3,6 +3,7 @@
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
   @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
+  @import "./node_modules/react-phone-number-input/style.css";
   font-family: "Roboto";
 
   .input-field > label {
@@ -46,7 +47,7 @@
       span {
         font-size: 1rem;
         padding-left: 0.5rem;
-        font-family: 'Raleway', Arial, sans-serif;
+        font-family: "Raleway", Arial, sans-serif;
       }
     }
   }
@@ -565,5 +566,10 @@
     content: " *";
     color: #e02222;
     font-size: 16px;
+  }
+
+  .k-toolbar {
+    top: 0px;
+    position: sticky;
   }
 }

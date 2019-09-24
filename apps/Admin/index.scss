@@ -59,11 +59,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   // ---- react-phone-number
 
-  .react-phone-number-input__icon-image {
-    width: 27px;
-    position: absolute;
-    right: 8px;
-    top: 18px;
+  .react-phone-number-input__icon {
+    width: 29px;
+    height: 22px;
   }
 
   // ---FileUploader Styles (Start)---
