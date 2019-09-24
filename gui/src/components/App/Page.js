@@ -15,7 +15,8 @@ class Page extends React.Component {
     this.state = {
       pageContent: [],
       pageId: this.props.pageId,
-      submission: this.props.submission
+      submission: this.props.submission,
+      activateViewAction: false
     };
     this.contentDiv = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
@@ -51,7 +52,7 @@ class Page extends React.Component {
     });
   }
 
-  buttonAction = action => {
+  buttonAction = (action, e) => {
     if (action.page_id) {
       this.itemClick(undefined, action.page_id);
     } else if (action.content) {
@@ -91,12 +92,17 @@ class Page extends React.Component {
   renderButtons = (e, action) => {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
+      if (action[key].name.toUpperCase() == "VIEW") {
+        setState({
+          activateViewAction: action[key]
+        });
+      }
       actionButtons.push(
         <abbr title={action[key].name} key={index}>
           <button
             type="button"
             className=" btn manage-btn k-grid-edit-command"
-            onClick={() => this.buttonAction(action[key])}
+            onClick={() => this.buttonAction(action[key], e)}
           >
             {action[key].icon ? (
               <i className={action[key].icon + " manageIcons"}></i>
@@ -186,11 +192,11 @@ class Page extends React.Component {
               key={i}
               osjsCore={this.core}
               data={dataString}
-              // onRowClick={dataItem => {
-              //   itemContent.actions
-              //     ? this.itemClick(dataItem, itemContent.actions.view)
-              //     : null;
-              // }}
+              onRowClick={dataItem => {
+                this.state.activateViewAction
+                  ? this.buttonAction(this.state.activateViewAction, dataItem)
+                  : null;
+              }}
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}
