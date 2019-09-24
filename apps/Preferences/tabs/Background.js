@@ -211,8 +211,6 @@ class Background extends Component {
                 value={this.state.styleName}
                 onChange={this.handleChange}
                 name="desktop.background.style"
-                className="backgroundStyle"
-                id="backgroundStyle"
               >
                 {this.styleList.map((style, key) => (
                   <option key={key} value={style.value}>
@@ -233,8 +231,7 @@ class Background extends Component {
                 value={this.state.colorCode}
                 onChange={this.handleChange}
                 name="desktop.background.color"
-                className="color"
-                id="color"
+                className="colorPicker"
               />
             </div>
           </div>

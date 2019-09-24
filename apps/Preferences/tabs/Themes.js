@@ -175,8 +175,6 @@ class Themes extends Component {
                 value={this.state.themeName}
                 onChange={this.handleChange}
                 name="desktop.theme"
-                className="themeStyle"
-                id="themeStyle"
               >
                 {" "}
                 {this.initialState.themes.styles.map((style, key) => (
@@ -199,8 +197,6 @@ class Themes extends Component {
                 value={this.state.iconName}
                 onChange={this.handleChange}
                 name="desktop.icons"
-                className="icons"
-                id="icons"
               >
                 {" "}
                 {this.initialState.themes.icons.map((icon, key) => (
@@ -223,8 +219,6 @@ class Themes extends Component {
                 value={this.state.soundName}
                 onChange={this.handleChange}
                 name="desktop.sounds"
-                className="sounds"
-                id="sounds"
               >
                 {" "}
                 {this.initialState.themes.sounds.map((sound, key) => (

@@ -517,6 +517,8 @@ class EditProfile extends Component {
               <PhoneInput
                 name="phone"
                 placeholder="Enter phone number"
+                maxLength="15"
+                countryOptions={["IN", "US", "CA", "|", "..."]}
                 value={this.state.fields.phone ? this.state.fields.phone : ""}
                 onChange={phone => this.handlePhoneChange(phone)}
               />
