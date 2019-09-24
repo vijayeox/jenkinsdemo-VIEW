@@ -155,9 +155,7 @@ class ChangePassword extends Component {
                 <label className="mandatory">Old Password</label>
                 <input
                   type={this.state.type}
-                  className="password_input"
                   name="old_password"
-                  ref="old_password"
                   onChange={this.handleChange}
                 />
                 <span
@@ -176,10 +174,8 @@ class ChangePassword extends Component {
               <div className="password input-field">
                 <label className="mandatory">New Password</label>
                 <input
-                  id="new"
                   type={this.state.type1}
                   name="new_password"
-                  ref="new_password"
                   onChange={this.handleChange}
                 />
                 <span
@@ -198,10 +194,8 @@ class ChangePassword extends Component {
               <div className="password input-field">
                 <label className="mandatory">Confirm Password</label>
                 <input
-                  id="confirm"
                   type={this.state.type2}
                   name="confirm_password"
-                  ref="confirm_password"
                   onChange={this.handleChange}
                 />
 
