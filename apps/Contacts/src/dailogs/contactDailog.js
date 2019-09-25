@@ -482,10 +482,11 @@ class ContactDailog extends React.Component {
                 <label htmlFor="phone_1">Primary Phone</label>
                 <div className="col-12 form-group paddingNone">
                   <PhoneInput
+                    country="US"
                     name="phone_1"
                     placeholder="Enter primary phone."
                     maxLength="15"
-                    countryOptions={["IN", "US", "CA", "|", "..."]}
+                    countryOptions={["US", "IN", "CA", "|", "..."]}
                     value={
                       this.state.contactDetails.phone_1
                         ? this.state.contactDetails.phone_1

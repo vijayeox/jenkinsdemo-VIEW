@@ -515,10 +515,11 @@ class EditProfile extends Component {
             </div>
             <div className="col-md-12">
               <PhoneInput
+                country="US"
                 name="phone"
                 placeholder="Enter phone number"
                 maxLength="15"
-                countryOptions={["IN", "US", "CA", "|", "..."]}
+                countryOptions={["US", "IN", "CA", "|", "..."]}
                 value={this.state.fields.phone ? this.state.fields.phone : ""}
                 onChange={phone => this.handlePhoneChange(phone)}
               />
