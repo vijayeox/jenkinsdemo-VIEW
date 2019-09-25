@@ -225,7 +225,7 @@ class AddButton extends React.Component {
       <button
         onClick={this.props.args}
         className="k-button"
-        style={{ position: "absolute", top: "8px", right: "16px" }}
+        style={{ position: "absolute", top: "-1px", right: "3px" }}
       >
         <i className="fas fa-plus-circle" style={{ fontSize: "20px" }}></i>
 
