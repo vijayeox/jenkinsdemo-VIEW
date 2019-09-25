@@ -495,10 +495,11 @@ export default class DialogContainer extends React.Component {
                       value={contactValue}
                       onChange={phone => this.onContactPhoneChange(phone)}
                       international={false}
+                      country="US"
                       maxLength="15"
                       required={true}
                       country={this.countryByIP ? this.countryByIP : "IN"}
-                      countryOptions={["IN", "US", "CA", "|", "..."]}
+                      countryOptions={["US", "IN", "CA", "|", "..."]}
                     />
                   </div>
                   <div className="col">
