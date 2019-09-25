@@ -52,27 +52,16 @@ class Page extends React.Component {
     });
   }
 
-  buttonAction = (action, e) => {
+  buttonAction = (action, data) => {
     if (action.page_id) {
       this.itemClick(undefined, action.page_id);
-    } else if (action.content) {
-      if (action.content[0].form_id) {
-        this.getFormContents(action.content[0].form_id).then(response => {
-          this.setState({
-            pageContent: this.renderContent([
-              {
-                form_id: action.content[0].form_id,
-                content: response,
-                type: "Form"
-              }
-            ])
-          });
-        });
-      } else {
-        this.setState({
-          pageContent: this.renderContent(action.content)
-        });
-      }
+    } else if (action.details) {
+      action.details.map(details => {
+        var response = this.processDetails(details, data);
+
+        console.log("Respon from map");
+        console.log(typeof response);
+      });
     }
     event = new CustomEvent("updateBreadcrumb", {
       detail: action,
@@ -116,14 +105,85 @@ class Page extends React.Component {
     return actionButtons;
   };
 
-  prepareDataRoute = data => {
-    if (typeof data == "string") {
-      var result = data.replace("{{app_id}}", this.appId);
+  prepareDataRoute = (route, params) => {
+    if (typeof route == "string") {
+      var result = this.replaceParams(route, params);
+      result = "app/" + this.appId  + result;
       return result;
     } else {
-      return data;
+      return route;
     }
   };
+
+  async processDetails(content, data) {
+
+    console.log(1);
+    console.log(content);
+    if (content.type == "Update") {
+      let resultedRoute = this.replaceParams(content.params.url, data);
+      this.claimActivity(resultedRoute).then(response => {
+        console.log(response);
+        console.log("claimActivity resp");
+        if(response.status == "error"){
+            console.log("Already claimed");
+        }
+        if(response.status == "success"){
+          this.setState({
+            pageContent: this.renderContent(response)
+          });
+      }
+        console.log(response.status);
+        // this.setState({
+        //   pageContent: this.renderContent([
+        //     {
+        //       form_id: content,
+        //       content: response,
+        //       type: "Form"
+        //     }
+        //   ])
+        // });
+      });
+    } else {
+      this.setState({
+        pageContent: this.renderContent(content)
+      });
+    }
+  }
+
+  replaceParams = (route, params) => {
+    if (!params) {
+      return route;
+    }
+    console.log(params);
+    var regex = /\{\{.*?\}\}/g;
+    let m;
+    while ((m = regex.exec(route)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+
+      // The result can be accessed through the `m`-variable.
+      m.forEach((match, groupIndex) => {
+        // console.log(`Found match, group ${groupIndex}: ${match}`);
+        route = route.replace(match, params[match.replace(/\{\{|\}\}/g, "")]);
+      });
+    }
+    console.log(route);
+    return route;
+  };
+
+  async claimActivity(resultedRoute) {
+    console.log("Inside Activity Post API");
+    let helper = this.core.make("oxzion/restClient");
+    let activityData = await helper.request(
+      "v1",
+      "/app/" + this.appId + resultedRoute,
+      {},
+      "post"
+    );
+    return activityData;
+  }
 
   async getFormContents(form_id) {
     let helper = this.core.make("oxzion/restClient");
@@ -186,7 +246,7 @@ class Page extends React.Component {
               });
             }
           }
-          var dataString = this.prepareDataRoute(itemContent.data);
+          var dataString = this.prepareDataRoute(itemContent.route);
           content.push(
             <OX_Grid
               key={i}
