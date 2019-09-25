@@ -515,6 +515,7 @@ class EditProfile extends Component {
             </div>
             <div className="col-md-12">
               <PhoneInput
+                international={false}
                 country="US"
                 name="phone"
                 placeholder="Enter phone number"
