@@ -717,6 +717,10 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .k-grid {
     margin: 15px;
     width: 100%;
+    
+    .k-pager-wrap .k-pager-sizes > select {
+    width: 5rem;
+    }
   }
 
   .k-tooltip-validation {
