@@ -11,7 +11,7 @@ class Breadcrumb extends React.Component {
 
   componentDidMount() {
     document
-      .getElementsByClassName("PageRender")[0]
+      .getElementsByClassName("breadcrumbParent")[0]
       .addEventListener("updateBreadcrumb", this.updateBreadCrumb, false);
   }
 
@@ -26,7 +26,7 @@ class Breadcrumb extends React.Component {
         detail: currentValue.content,
         bubbles: true
       });
-      document.getElementsByClassName("PageRender")[0].dispatchEvent(event);
+      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
     }
     let data = this.state.breadcrumbConfig.slice();
     data.splice(index + 1, data.length);

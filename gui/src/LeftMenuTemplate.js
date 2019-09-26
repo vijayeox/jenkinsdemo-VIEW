@@ -74,7 +74,9 @@ class LeftMenuTemplate extends React.Component {
             height: "100%"
           }}
         >
+          <div className="breadcrumbParent">
           <Breadcrumb ref={this.child} />
+          </div>
           {this.state.selected.page_id ? (
             <Page
               pageId={this.state.selected.page_id}

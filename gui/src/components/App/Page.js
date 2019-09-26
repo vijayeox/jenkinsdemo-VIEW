@@ -25,7 +25,7 @@ class Page extends React.Component {
 
   componentDidMount() {
     document
-      .getElementsByClassName("PageRender")[0]
+      .getElementsByClassName("breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
   }
 
@@ -45,7 +45,7 @@ class Page extends React.Component {
           detail: response.data,
           bubbles: true
         });
-        document.getElementsByClassName("PageRender")[0].dispatchEvent(event);
+        document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
       } else {
         this.setState({ pageContent: this.renderContent([]) });
       }
@@ -67,7 +67,7 @@ class Page extends React.Component {
       detail: action,
       bubbles: true
     });
-    document.getElementsByClassName("PageRender")[0].dispatchEvent(event);
+    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
   };
 
   itemClick = (dataItem, itemContent) => {
@@ -82,7 +82,7 @@ class Page extends React.Component {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
       if (action[key].name.toUpperCase() == "VIEW") {
-        setState({
+        this.setState({
           activateViewAction: action[key]
         });
       }
@@ -108,7 +108,7 @@ class Page extends React.Component {
   prepareDataRoute = (route, params) => {
     if (typeof route == "string") {
       var result = this.replaceParams(route, params);
-      result = "app/" + this.appId  + result;
+      result = "app/" + this.appId + "/" + result;
       return result;
     } else {
       return route;
@@ -116,22 +116,20 @@ class Page extends React.Component {
   };
 
   async processDetails(content, data) {
-
-    console.log(1);
     console.log(content);
     if (content.type == "Update") {
       let resultedRoute = this.replaceParams(content.params.url, data);
       this.claimActivity(resultedRoute).then(response => {
         console.log(response);
         console.log("claimActivity resp");
-        if(response.status == "error"){
-            console.log("Already claimed");
+        if (response.status == "error") {
+          console.log("Already claimed");
         }
-        if(response.status == "success"){
+        if (response.status == "success") {
           this.setState({
             pageContent: this.renderContent(response)
           });
-      }
+        }
         console.log(response.status);
         // this.setState({
         //   pageContent: this.renderContent([
