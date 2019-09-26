@@ -90,13 +90,7 @@ class ContactDailog extends React.Component {
 
   handleChange = e => {
     e.preventDefault();
-    if (e.target.name == "newPhoneValue") {
-      let tempPhoneData = this.state.tempPhoneData;
-      tempPhoneData.value = e.target.value;
-      this.setState({
-        tempPhoneData
-      });
-    } else if (e.target.name == "newEmailValue") {
+    if (e.target.name == "newEmailValue") {
       let tempEmailData = this.state.tempEmailData;
       tempEmailData.value = e.target.value;
       this.setState({
@@ -117,10 +111,18 @@ class ContactDailog extends React.Component {
     }
   };
 
-  handlePhoneChange = phone => {
-    let contactDetails = { ...this.state.contactDetails };
-    contactDetails["phone_1"] = phone;
-    this.setState({ contactDetails: contactDetails });
+  handlePhoneChange = (phone, name) => {
+    if (name == "phone_1") {
+      let contactDetails = { ...this.state.contactDetails };
+      contactDetails["phone_1"] = phone;
+      this.setState({ contactDetails: contactDetails });
+    } else if (name == "newPhoneValue") {
+      let tempPhoneData = this.state.tempPhoneData;
+      tempPhoneData.value = phone;
+      this.setState({
+        tempPhoneData
+      });
+    }
   };
 
   handleAdd = (e, type) => {
@@ -300,13 +302,15 @@ class ContactDailog extends React.Component {
           )}
         </div>
         <div className="col-7 displayInline">
-          <input
-            type="text"
-            className="form-control inputHeight"
+          <PhoneInput
+            international={false}
+            country="US"
             name="newPhoneValue"
             placeholder="Enter phone."
+            maxLength="15"
+            countryOptions={["US", "IN", "CA", "|", "..."]}
             value={this.state.tempPhoneData.value}
-            onChange={this.handleChange}
+            onChange={phone => this.handlePhoneChange(phone, "newPhoneValue")}
           />
         </div>
         <div className="col-2 displayInline paddingNone">
@@ -493,7 +497,7 @@ class ContactDailog extends React.Component {
                         ? this.state.contactDetails.phone_1
                         : ""
                     }
-                    onChange={phone => this.handlePhoneChange(phone)}
+                    onChange={phone => this.handlePhoneChange(phone, "phone_1")}
                   />
                 </div>
                 {this.additionalPhoneNumberData()}
