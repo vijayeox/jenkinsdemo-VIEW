@@ -466,9 +466,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
     svg {
       font-size: 2.5rem;
-      right: 65px;
-      top: 33px;
-      position: absolute;
     }
   }
 
@@ -717,6 +714,10 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .k-grid {
     margin: 15px;
     width: 100%;
+    
+    .k-pager-wrap .k-pager-sizes > select {
+    width: 5rem;
+    }
   }
 
   .k-tooltip-validation {
