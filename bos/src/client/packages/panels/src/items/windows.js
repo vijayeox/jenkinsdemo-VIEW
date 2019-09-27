@@ -30,6 +30,7 @@
 
 import {h} from 'hyperapp';
 import PanelItem from '../panel-item';
+const closeIcon = require('../close.png');
 
 const mapWindow = win => {
   return {
@@ -172,13 +173,21 @@ export default class WindowsPanelItem extends PanelItem {
           ]
         });
       },
-      className: 'osjs-panel-item--clickable osjs-panel-item--icon'
+      className: 'osjs-panel-item--clickable osjs-panel-item--icon in-window'
     }, [
       h('img', {
         src: w.icon,
         alt: w.title || '(window)',
       }),
       h('span', {}, w.title || '(window)'),
+      h('div', {
+        className: 'window-tray-close-button',
+      },
+      [h('img', {
+        src: closeIcon,
+        alt: 'close',
+        onclick: () => w.close(),
+      })]),
     ]));
 
     const special = state.launchers.map(name => h('div', {

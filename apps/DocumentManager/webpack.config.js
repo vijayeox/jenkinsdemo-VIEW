@@ -1,19 +1,16 @@
+const Dotenv = require('dotenv-webpack')
 const path = require('path');
-const mode = process.env.NODE_ENV || 'development';
-const minimize = mode === 'production';
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+const mode = process.env.NODE_ENV || 'development';
+const minimize = mode === 'production';
 const plugins = [];
 
 if (mode === 'production') {
   plugins.push(new OptimizeCSSAssetsPlugin({
     cssProcessorOptions: {
-      discardComments: true,
-      map: {
-        inline: false
-      }
+      discardComments: true
     },
   }));
 }
@@ -23,6 +20,7 @@ module.exports = {
   devtool: 'source-map',
   entry: [
     path.resolve(__dirname, 'index.js'),
+    path.resolve(__dirname, 'index.scss')
   ],
   externals: {
     osjs: 'OSjs'
@@ -31,12 +29,14 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin([
-      path.resolve(__dirname, 'icon.png'),'icon_white.png'
-    ]),
+    new CopyWebpackPlugin(['icon.svg','icon_white.svg']),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
+    }),
+    new Dotenv({
+      path: './.env',
+      safe: true
     }),
     ...plugins
   ],
@@ -64,7 +64,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules\/(?!@osjs)/,
+        exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader'
         }

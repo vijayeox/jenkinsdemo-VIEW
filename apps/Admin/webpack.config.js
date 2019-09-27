@@ -38,7 +38,7 @@ module.exports = {
   },
   plugins: [
     // new BundleAnalyzerPlugin(),
-    new CopyWebpackPlugin(["icon.png", "icon_white.png", "images/"]),
+    new CopyWebpackPlugin(["icon.svg", "icon_white.svg", "images/"]),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"

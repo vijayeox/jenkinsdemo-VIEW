@@ -7,40 +7,41 @@ export class BosAdapter extends ServiceProvider {
 		super(core, options || {});
 		this.core = core;
         this.metadata = [];
-    }
+	}
 
 
-    providers() {
-      return [
-      'oxzion/core'
-      ];
-  }
+	providers() {
+		return [
+			'oxzion/core'
+		];
+	}
 
-  async init() {
-      this.core.on('osjs/core:started', () => {
-        var queryString = window.location.search.substr(1);
-        console.log(queryString);
-        if (queryString) {
+	async init() {
+		this.core.on('osjs/core:started', () => {
+            document.body.classList.add('osjs-root');
+            var queryString = window.location.search.substr(1);
+            console.log(queryString);   
+            if (queryString) {
+                var queryObj = queryString.split("&").reduce(function(prev, curr, i, arr) {
+                    var p = curr.split("=");
+                    prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+                    return prev;
+                }, {});
+                
+				var appName = queryObj.app;
 
-            var queryObj = queryString.split("&").reduce(function(prev, curr, i, arr) {
-                var p = curr.split("=");
-                prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
-                return prev;
-            }, {});
+            	var userDetails = this.core.make('oxzion/profile').get();
+            	var appList = userDetails.key.blackListedApps;
 
-            var appName = queryObj.app;
+            	if (!(appName in userDetails.key.blackListedApps)){
 
-            var userDetails = this.core.make('oxzion/profile').get();
-            var appList = userDetails.key.blackListedApps;
-
-            if (!(appName in userDetails.key.blackListedApps)){
-
-                this.core.request(this.core.config('packages.manifest'), {}, 'json')
-                .then(metadata => {
-                    this.addPackages(metadata);
-                    this.launch(queryObj);
-                })
-                .catch(error => console.error(error));
+	                this.core.request(this.core.config('packages.manifest'), {}, 'json')
+	                .then(metadata => {
+	                    this.addPackages(metadata);
+	                    this.launch(queryObj);
+	                })
+	                .catch(error => console.error(error));
+	            }
             }
         }
     });
