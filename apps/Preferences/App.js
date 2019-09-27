@@ -62,7 +62,7 @@ class App extends Component {
         <TabPanel
           tabId="vertical-tab-two"
           className="tab1"
-          render={({ selected }) => (selected ? <ChangePassword /> : null)}
+          render={({ selected }) => (selected ? <ChangePassword args={this.core}/> : null)}
         ></TabPanel>
         <TabPanel
           tabId="vertical-tab-three"

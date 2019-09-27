@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import Notification from "../components/Notification";
 
 class ChangePassword extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.core = this.props.args;
     this.state = {
       type: "password",
       type1: "password",
