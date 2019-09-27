@@ -52,7 +52,7 @@ class ChangePassword extends Component {
           this.notif.current.failNotification(response.message);
         } else {
           this.notif.current.successNotification(
-            "Password update successfull."
+            "Password updated successfully."
           );
         }
       });
@@ -87,22 +87,22 @@ class ChangePassword extends Component {
 
     if (!fields["old_password"]) {
       formIsValid = false;
-      errors["old_password"] = "*Please enter your Old Password";
+      errors["old_password"] = "*Please enter your Old Password.";
     }
 
     if (!fields["new_password"]) {
       formIsValid = false;
-      errors["new_password"] = "*Please enter your New Password";
+      errors["new_password"] = "*Please enter your New Password.";
     }
 
     if (!fields["confirm_password"]) {
       formIsValid = false;
-      errors["confirm_password"] = "*Please confirm your password";
+      errors["confirm_password"] = "*Please confirm your password.";
     }
 
     if (fields["new_password"] != fields["confirm_password"]) {
       formIsValid = false;
-      errors["confirm_password"] = "*Password does not match";
+      errors["confirm_password"] = "*Password does not match.";
     }
     if (fields["new_password"].length < 8) {
       formIsValid = false;
