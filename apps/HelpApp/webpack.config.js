@@ -29,7 +29,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin(["icon.png", "icon_white.png","crm.png","task.png"]),
+    new CopyWebpackPlugin(["icon.png", "icon_white.png","crm.png","task.png","chat.png"]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

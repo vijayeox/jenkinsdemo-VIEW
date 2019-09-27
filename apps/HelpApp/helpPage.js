@@ -47,7 +47,7 @@ class HelpPage extends Component {
 
   render() {
     if (this.state.topic) {
-      const styles = { width: '100%', height: '100%', border: 0 };
+      const styles = { width: '100%', height: 'calc(100% - 50px)', border: 0 };
       return (
         <div style={styles}>
           <Nav className="justify-content-end" activeKey="/home" >
@@ -73,16 +73,17 @@ class HelpPage extends Component {
     } else {
       return (
         <div className="container">
-          <h3 className="topic-title">Help Topics</h3>
+          <h3 className="topic-title">Help Topics</h3><hr/>
           {myObj.map((CurrentValue, index) => {
             return (
-              <div className="help-menu" key={index}  >
+              <div className="help-menu" key={index} >
+              <img src={CurrentValue.icon} />
                 <h4 onClick={this.appClick} id={CurrentValue.id}>{CurrentValue.name}</h4>
               </div>
             )
           })}
         </div>
-      )
+      );
     };
   }
 }

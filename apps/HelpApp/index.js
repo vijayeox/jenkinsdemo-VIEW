@@ -14,6 +14,7 @@ const register = (core, args, options, metadata) => {
   const win = proc.createWindow({
     id: 'HelpWindow',
     title: title.en_EN,
+    icon: proc.resource(proc.metadata.icon_white),
     dimension: { width: document.body.clientWidth, height: document.body.clientHeight },
     position: { left: 300, top: 0 }
   });

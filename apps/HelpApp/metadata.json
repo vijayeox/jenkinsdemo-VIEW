@@ -7,10 +7,10 @@
   "icon_white": "icon_white.png",
   "server": "server.js",
   "title": {
-    "en_EN": "Oxzion Help"
+    "en_EN": "Help"
   },
   "description": {
-    "en_EN": "Oxzion Help"
+    "en_EN": "Help"
   },
   "files": [
     "main.js",

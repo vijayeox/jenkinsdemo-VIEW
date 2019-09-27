@@ -3,17 +3,17 @@
         {
             "id": "crm",
             "name": "CRM",
-            "icon": "Apps/HelpApp/crm.png"
+            "icon": "apps/HelpApp/crm.png"
         },
         {
             "id": "task",
             "name": "Project Portfolio Management",
-            "icon": "Apps/HelpApp/task.png"
+            "icon": "apps/HelpApp/task.png"
         },
         {
             "id": "chat",
             "name": "Chat",
-            "icon": "Apps/HelpApp/chat.png"
+            "icon": "apps/HelpApp/chat.png"
         }
     ]
 }
