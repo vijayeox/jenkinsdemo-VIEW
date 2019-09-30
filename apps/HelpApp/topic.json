@@ -3,7 +3,7 @@
         {
             "id": "crm",
             "name": "CRM",
-            "icon": "apps/HelpApp/crm.png"
+            "icon": "apps/HelpApp/crm.svg"
         },
         {
             "id": "task",
@@ -13,7 +13,7 @@
         {
             "id": "chat",
             "name": "Chat",
-            "icon": "apps/HelpApp/chat.png"
+            "icon": "apps/HelpApp/chat.svg"
         }
     ]
 }
