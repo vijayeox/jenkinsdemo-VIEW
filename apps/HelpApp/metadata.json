@@ -1,19 +1,19 @@
 {
   "type": "application",
-  "name": "Task",
+  "name": "HelpApp",
   "category": null,
-  "server": "server.js",
+  "singleton":true,
   "icon": "icon.png",
-  "hidden": true,
   "icon_white": "icon_white.png",
+  "server": "server.js",
   "title": {
-    "en_EN": "Project Portfolio Management"
+    "en_EN": "Help"
   },
   "description": {
-    "en_EN": "Project Portfolio Management"
+    "en_EN": "Help"
   },
   "files": [
-    "main.js"
+    "main.js",
+    "main.css"
   ]
 }
-
