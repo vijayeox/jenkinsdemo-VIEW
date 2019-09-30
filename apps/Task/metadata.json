@@ -4,7 +4,7 @@
   "category": null,
   "server": "server.js",
   "icon": "icon.png",
-  "hidden": true,
+  "hidden": false,
   "icon_white": "icon_white.png",
   "title": {
     "en_EN": "Project Portfolio Management"
