@@ -53,7 +53,9 @@ class HelpPage extends Component {
           <Nav className="justify-content-end" activeKey="/home" >
             <div className="topnav active" >
               <div className="font-2_5em home">
-                <i className="fa fa-home" onClick={this.appClick}></i>
+                <span class="pointer" onClick={this.appClick}>
+                  <i className="fa fa-home"></i>
+                </span>
               </div>
               <div className="links" id="myLinks">
                 {myObj.map((CurrentValue, index) => {
