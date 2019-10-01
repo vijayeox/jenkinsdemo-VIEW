@@ -1,6 +1,0 @@
-{
-  "extends": "plugin:bpmn-io/es5",
-  "env": {
-    "browser": true
-  }
-}
