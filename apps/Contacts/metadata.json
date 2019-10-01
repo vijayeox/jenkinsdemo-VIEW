@@ -1,8 +1,8 @@
 {
-  "hidden": true,
+  "hidden": false,
   "type": "application",
   "name": "Contacts",
-  "category": null,
+  "category": "utilities",
   "server": "server.js",
   "singleton":true,
   "icon": "icon.png",
