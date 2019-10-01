@@ -108,10 +108,10 @@ class ContactDetailsWidget extends React.Component {
                     })
                   : null}
 
-                {this.props.contact.address1 ? (
+                {this.props.contact.address_1 ? (
                   <div className="col-md-12 paddingBottom">
                     <i className="fa fa-location-arrow" />{" "}
-                    <span>{this.props.contact.address1}</span>
+                    <span>{this.props.contact.address_1}</span>
                   </div>
                 ) : null}
 
