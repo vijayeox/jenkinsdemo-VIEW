@@ -22,7 +22,9 @@ export default class OX_Grid extends React.Component {
     this.child = React.createRef();
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
-      gridData: this.rawDataPresent ? this.props.data : [],
+      gridData: this.rawDataPresent
+        ? this.props.data
+        : { data: [], total: "0" },
       api: this.rawDataPresent ? undefined : this.props.data,
       dataState: {
         take: 20,
