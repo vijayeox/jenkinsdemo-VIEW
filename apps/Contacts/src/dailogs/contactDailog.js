@@ -529,11 +529,11 @@ class ContactDailog extends React.Component {
                     <textarea
                       row={4}
                       className="form-control"
-                      name="address_1"
+                      name="address1"
                       placeholder="Enter address."
                       value={
-                        this.state.contactDetails.address_1
-                          ? this.state.contactDetails.address_1
+                        this.state.contactDetails.address1
+                          ? this.state.contactDetails.address1
                           : ""
                       }
                       onChange={this.handleUserInput}
