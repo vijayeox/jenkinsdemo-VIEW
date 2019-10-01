@@ -197,7 +197,11 @@ export default class OX_Grid extends React.Component {
           />
         )}
         <Grid
-          data={this.state.gridData}
+          data={
+            this.state.gridData.data
+              ? this.state.gridData
+              : { data: [], total: "0" }
+          }
           detail={
             this.props.rowTemplate
               ? dataItem => (
