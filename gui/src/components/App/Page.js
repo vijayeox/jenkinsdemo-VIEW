@@ -16,11 +16,10 @@ class Page extends React.Component {
       pageContent: [],
       pageId: this.props.pageId,
       submission: this.props.submission,
-      activateViewAction: false
+      showLoader: false
     };
-    this.contentDiv = "root_" + this.appId + "_" + this.state.pageId;
+    this.contentDivID = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
-    this.itemClick = this.itemClick.bind(this);
   }
 
   componentDidMount() {
@@ -29,9 +28,16 @@ class Page extends React.Component {
       .addEventListener("updatePageView", this.updatePageView, false);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.pageId !== prevProps.pageId) {
+      this.setState({ pageContent: [], pageId: this.props.pageId });
+      this.loadPage(this.props.pageId);
+    }
+  }
+
   updatePageView = e => {
     this.setState({
-      pageContent: this.renderContent(e.detail)
+      pageContent: e.detail
     });
   };
 
@@ -39,40 +45,20 @@ class Page extends React.Component {
     this.getPageContent(pageId).then(response => {
       if (response.status == "success") {
         this.setState({
-          pageContent: this.renderContent(response.data.content)
+          pageContent: response.data.content
         });
         event = new CustomEvent("updateBreadcrumb", {
           detail: response.data,
           bubbles: true
         });
-        document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
+        document
+          .getElementsByClassName("breadcrumbParent")[0]
+          .dispatchEvent(event);
       } else {
-        this.setState({ pageContent: this.renderContent([]) });
+        this.setState({ pageContent: [] });
       }
     });
   }
-
-  buttonAction = (action, data) => {
-    if (action.page_id) {
-      this.itemClick(undefined, action.page_id);
-    } else if (action.details) {
-      action.details.map(details => {
-        var response = this.processDetails(details, data);
-
-        console.log("Respon from map");
-        console.log(typeof response);
-      });
-    }
-    event = new CustomEvent("updateBreadcrumb", {
-      detail: action,
-      bubbles: true
-    });
-    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
-  };
-
-  itemClick = (dataItem, itemContent) => {
-    this.props.updatePage(itemContent);
-  };
 
   renderEmpty() {
     return [<React.Fragment key={1} />];
@@ -81,11 +67,6 @@ class Page extends React.Component {
   renderButtons = (e, action) => {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
-      if (action[key].name.toUpperCase() == "VIEW") {
-        this.setState({
-          activateViewAction: action[key]
-        });
-      }
       actionButtons.push(
         <abbr title={action[key].name} key={index}>
           <button
@@ -105,54 +86,68 @@ class Page extends React.Component {
     return actionButtons;
   };
 
-  prepareDataRoute = (route, params) => {
-    if (typeof route == "string") {
-      var result = this.replaceParams(route, params);
-      result = "app/" + this.appId + "/" + result;
-      return result;
-    } else {
-      return route;
+  buttonAction = async (action, rowData) => {
+    if (action.page_id) {
+      this.loadPage(action.page_id);
+    } else if (action.details) {
+      this.setState({
+        pageContent: []
+      });
+      var that = this;
+      setTimeout(function() {
+        action.details.every(async (item, index) => {
+          if (item.type == "Update") {
+            that.setState({
+              showLoader: true
+            });
+            const response = await that.updateActionHandler(item, rowData);
+            if (response.status == "success") {
+              console.log(response);
+            } else {
+              that.setState({
+                pageContent: action.details.slice(0, index)
+              });
+              return false;
+            }
+          } else {
+            let pageContent = that.state.pageContent;
+            pageContent.push(item);
+            that.setState({
+              pageContent: pageContent
+            });
+          }
+        });
+      }, 500);
+      event = new CustomEvent("updateBreadcrumb", {
+        detail: action,
+        bubbles: true
+      });
+      document
+        .getElementsByClassName("breadcrumbParent")[0]
+        .dispatchEvent(event);
     }
+    this.setState({
+      showLoader: false
+    });
   };
 
-  async processDetails(content, data) {
-    console.log(content);
-    if (content.type == "Update") {
-      let resultedRoute = this.replaceParams(content.params.url, data);
-      this.claimActivity(resultedRoute).then(response => {
-        console.log(response);
-        console.log("claimActivity resp");
-        if (response.status == "error") {
-          console.log("Already claimed");
-        }
-        if (response.status == "success") {
-          this.setState({
-            pageContent: this.renderContent(response)
-          });
-        }
-        console.log(response.status);
-        // this.setState({
-        //   pageContent: this.renderContent([
-        //     {
-        //       form_id: content,
-        //       content: response,
-        //       type: "Form"
-        //     }
-        //   ])
-        // });
+  updateActionHandler = (details, rowData) => {
+    var that = this;
+    return new Promise(resolve => {
+      var queryRoute = that.replaceParams(details.params.url, rowData);
+      that.updateCall(queryRoute, rowData).then(response => {
+        that.setState({
+          showLoader: false
+        });
+        resolve(response);
       });
-    } else {
-      this.setState({
-        pageContent: this.renderContent(content)
-      });
-    }
-  }
+    });
+  };
 
   replaceParams = (route, params) => {
     if (!params) {
       return route;
     }
-    console.log(params);
     var regex = /\{\{.*?\}\}/g;
     let m;
     while ((m = regex.exec(route)) !== null) {
@@ -167,21 +162,18 @@ class Page extends React.Component {
         route = route.replace(match, params[match.replace(/\{\{|\}\}/g, "")]);
       });
     }
-    console.log(route);
     return route;
   };
 
-  async claimActivity(resultedRoute) {
-    console.log("Inside Activity Post API");
-    let helper = this.core.make("oxzion/restClient");
-    let activityData = await helper.request(
-      "v1",
-      "/app/" + this.appId + resultedRoute,
-      {},
-      "post"
-    );
-    return activityData;
-  }
+  prepareDataRoute = (route, params) => {
+    if (typeof route == "string") {
+      var result = this.replaceParams(route, params);
+      result = "app/" + this.appId + "/" + result;
+      return result;
+    } else {
+      return route;
+    }
+  };
 
   async getFormContents(form_id) {
     let helper = this.core.make("oxzion/restClient");
@@ -194,6 +186,17 @@ class Page extends React.Component {
     return JSON.parse(formData.data.template);
   }
 
+  async updateCall(route, body) {
+    let helper = this.core.make("oxzion/restClient");
+    let formData = await helper.request(
+      "v1",
+      "/app/" + this.appId + "/" + route,
+      body,
+      "post"
+    );
+    return formData;
+  }
+
   async getPageContent(pageId) {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
@@ -204,14 +207,6 @@ class Page extends React.Component {
       "get"
     );
     return pageContent;
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.pageId !== prevProps.pageId) {
-      this.setState({ pageContent: [] });
-      this.setState({ pageId: this.props.pageId });
-      this.loadPage(this.props.pageId);
-    }
   }
 
   renderContent(data) {
@@ -250,11 +245,6 @@ class Page extends React.Component {
               key={i}
               osjsCore={this.core}
               data={dataString}
-              onRowClick={dataItem => {
-                this.state.activateViewAction
-                  ? this.buttonAction(this.state.activateViewAction, dataItem)
-                  : null;
-              }}
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}
@@ -268,7 +258,6 @@ class Page extends React.Component {
           var itemContent = data[i].content;
           var url =
             "app/" + this.appId + "/file/" + itemContent.fileId + "/document";
-          console.log(url);
           content.push(<DocumentViewer key={i} core={this.core} url={url} />);
           break;
         default:
@@ -294,16 +283,15 @@ class Page extends React.Component {
   }
 
   render() {
-    if (this.state.pageContent && this.state.pageContent.length > 0) {
+    if (
+      this.state.pageContent &&
+      this.state.pageContent.length > 0 &&
+      !this.state.showLoader
+    ) {
+      var pageRender = this.renderContent(this.state.pageContent);
       return (
-        <div
-          id={this.contentDiv}
-          className="AppBuilderPage"
-          style={{
-            height: "inherit"
-          }}
-        >
-          {this.state.pageContent}
+        <div id={this.contentDivID} className="AppBuilderPage">
+          {pageRender}
         </div>
       );
     }
