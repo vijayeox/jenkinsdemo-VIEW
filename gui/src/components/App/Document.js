@@ -3,8 +3,8 @@ import React from "react";
 class Document extends React.Component {
     constructor(props) {
         super(props);
-        this.config = this.props.args;
-        this.args = this.props.config;
+        this.config = this.props.config ;
+        this.args = this.props.args;
         this.core = this.props.core;
         this.state = {
             content: this.props.content

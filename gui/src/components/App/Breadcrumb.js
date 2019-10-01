@@ -20,6 +20,7 @@ class Breadcrumb extends React.Component {
       breadcrumbConfig: []
     })
   }
+
   breadcrumbClick = (currentValue, index) => {
     if (currentValue.content) {
       event = new CustomEvent("updatePageView", {
@@ -47,7 +48,7 @@ class Breadcrumb extends React.Component {
     var content = [];
     this.state.breadcrumbConfig.map((currentValue, index) => {
       var clickable = false;
-      if (currentValue.content) {
+      if (currentValue.content ) {
         var clickable = true;
         if (this.state.breadcrumbConfig.length == index+1) {
           var clickable = false;
