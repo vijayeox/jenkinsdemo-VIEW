@@ -2,7 +2,6 @@ import "../../public/css/formstyles.scss";
 import {Formio} from 'formiojs';
 import {getComponent,flattenComponents} from 'formiojs/utils/formUtils'
 import React from 'react';
-// import ConvergePayCheckoutComponent from './Form/Payment/ConvergePayCheckoutComponent';
 import 'bootstrap';
 
 class FormRender extends React.Component  {
@@ -72,6 +71,9 @@ class FormRender extends React.Component  {
         if(response.status == 'success' && response.data.workflow_id){
           this.setState({ workflowId: response.data.workflow_id });
           this.setState({ activityId: response.data.activity_id });
+          if(!this.state.content){
+            this.setState({ content: response.data.template });
+          }
           this.createForm();
         }
       });
@@ -104,7 +106,6 @@ class FormRender extends React.Component  {
   createForm(){
     let that =this
     if(this.state.content && !this.state.form){
-      // Formio.registerComponent('convergepay', ConvergePayCheckoutComponent);
       var formCreated = Formio.createForm(document.getElementById(this.formDivID), this.state.content,{}).then(function(form){
        form.on('render', function(){
         if(that.state.data){
@@ -179,17 +180,21 @@ class FormRender extends React.Component  {
         }
       }
     });
-       form.on('callDelegate', function(data) {
+       form.on('callDelegate', (changed) => {
+        console.log(event);
         var component = form.getComponent(event.target.id);
+        if(component){
         var properties = component.component.properties;
         if(properties){
           if(properties['delegate']){
-            that.callDelegate(properties['delegate'],data).then(response => {
+            that.callDelegate(properties['delegate'],changed).then(response => {
               if(response.data){
                 form.submission = { data: response.data };
+                  form.triggerChange();
               }
             });
           }
+        }
         }
       });
      });
