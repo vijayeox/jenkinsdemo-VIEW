@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {dashboardEditor as section} from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
+import ChartRenderer from './components/chartRenderer';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
@@ -13,7 +14,10 @@ class DashboardEditor extends React.Component {
         this.core = this.props.args;
         this.state = {
             dashboardId : (props.dashboardId ? props.dashboardId : null),
-            contentChanged : false
+            version: -1,
+            contentChanged : false,
+            keyPressed : false,
+            editorMode : 'initial'
         };
         let thisInstance = this;
         this.renderedCharts = {};        
@@ -85,8 +89,10 @@ class DashboardEditor extends React.Component {
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo( 'ckEditorInstance', config );
-        this.setEditorContent(editor);
         let thisInstance = this;
+        editor.on('instanceReady', function(event) {
+            thisInstance.getDashboard(editor);
+        });
         editor.on('oxzionWidgetInitialization', function(event) {
             try {
                 let elementId = event.data.elementId;
@@ -111,9 +117,35 @@ class DashboardEditor extends React.Component {
                 console.error(error);
             }
         });
-        editor.on('change', function() { 
+        editor.on('key', function(event) {
+            if (thisInstance.state.editorMode === 'source') {
+                thisInstance.setState({
+                    contentChanged:true
+                });
+            }
             thisInstance.setState({
-                contentChanged : true
+                keyPressed : true
+            });
+        });
+        editor.on('oxzionWidgetChanged', function(event) {
+            thisInstance.setState({
+                contentChanged:true
+            });
+        });
+
+        editor.on('change', function(event) {
+            if (((thisInstance.state.editorMode === 'wysiwyg') && (thisInstance.state.keyPressed)) || (thisInstance.state.editorMode === 'source')) {
+                thisInstance.setState({
+                    contentChanged : true
+                });
+            }
+            thisInstance.setState({
+                keyPressed : false
+            });
+        });
+        editor.on('mode', function(event) {
+            thisInstance.setState({
+                editorMode : this.mode
             });
         });
     }
@@ -121,7 +153,9 @@ class DashboardEditor extends React.Component {
     saveDashboard = () => {
         let ckEditorInstance = CKEDITOR.instances['editor1'];
         let params = {
-            'content':ckEditorInstance.getData()
+            'content':ckEditorInstance.getData(),
+            'uuid':this.state.dashboardId,
+            'version':this.state.version
         };
         let url = 'analytics/dashboard';
         let method = '';
@@ -136,29 +170,45 @@ class DashboardEditor extends React.Component {
         this.doRestRequest(url, params, method, 
             function(response) {
                 thisInstance.setState({
+                    keyPressed : false,
                     contentChanged : false
                 });
                 if (!thisInstance.state.dashboardId) {
                     thisInstance.setState({
-                        dashboardId : response.uuid
+                        dashboardId : response.dashboard.uuid
                     });
                 }
+                thisInstance.setState({
+                    version : response.dashboard.version
+                });
             }, 
             function(response) {
+                let versionChanged = false;
+                if (response.data && response.data.reasonCode) {
+                    if (response.data.reasonCode === 'VERSION_CHANGED') {
+                        versionChanged = true;
+                    }
+                }
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: 'Could not save dashboard. Please try after some time.'
+                    text: versionChanged ? 
+                        'Dashboard has been modified by another user. Please reload the data and try again.' : 
+                        'Could not save dashboard. Please try after some time.'
                 });
             }
         );
     }
 
-    setEditorContent = (editor) => {
+    getDashboard = (editor) => {
+        var thisInstance = this;
         if (this.state.dashboardId) {
             this.doRestRequest('analytics/dashboard/' + this.state.dashboardId, {}, 'get', 
                 function(response) {
-                    editor.setData(response.content);
+                    thisInstance.setState({
+                        version:response.dashboard.version
+                    });
+                    editor.setData(response.dashboard.content);
                 }, 
                 function(response) {
                     Swal.fire({
@@ -179,14 +229,19 @@ class DashboardEditor extends React.Component {
         let thisInstance = this;
         let restResponse = thisInstance.restClient.request('v1', url, params ? params : {}, method ? method : 'get');
         function handleNonSuccessResponse(response) {
-            console.info(`Received a non-success status from server. Status:${JSON.stringify(response)}.`);
+            console.info(`Received a non-success status from server for URL ${url}. JSON:${JSON.stringify(response)}.`);
             if (thisInstance.loader) {
                 thisInstance.loader.destroy();
             }
             if (failureHandler) {
                 response.url = url;
                 response.params = params;
-                failureHandler(response);
+                try {
+                    failureHandler(response);
+                }
+                catch(e) {
+                    console.error(e);
+                }
             }
             else {
                 Swal.fire({
@@ -215,7 +270,12 @@ class DashboardEditor extends React.Component {
                             }
                             responseObject[property] = dataContent[property];
                         }
-                        successHandler(responseObject);
+                        try {
+                            successHandler(responseObject);
+                        }
+                        catch(e) {
+                            console.error(e);
+                        }
                     }
                 }
             }).
@@ -234,54 +294,17 @@ class DashboardEditor extends React.Component {
         let iframeWindow = iframeElement.contentWindow;
         let iframeDocument = iframeWindow.document;
         let widgetElement = iframeDocument.querySelector('#' + elementId);
-        switch(widgetElement.tagName.toUpperCase()) {
-            case 'SPAN':
-                this.updateInlineWidget(widgetElement, widgetId);
-            break;
-            case 'FIGURE':
-                this.updateBlockWidget(widgetElement, widgetId);
-            break;
-            default:
-                throw `Unexpected Oxzion widget tag ${widgetElement.tagName}`;
-        }
-    }
 
-    updateInlineWidget = (element, widgetId) => {
         if (!widgetId) {
             let widgetIdAttribute = element.attributes.getNamedItem('data-oxzion-widget-id');
             if (widgetIdAttribute) {
                 widgetId = widgetIdAttribute.nodeValue;
             }
         }
-        this.doRestRequest('analytics/widget/' + widgetId, {}, 'get', 
-            function(response) {
-                element.innerHTML = response.data;
-            }, 
-            function(response) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: 'Could not fetch contents of a widget. Please try after some time.'
-                });
-            }
-        );
-    }
 
-    updateBlockWidget = (element, widgetId) => {
-        let thiz = this;
-        if (!widgetId) {
-            let widgetIdAttribute = element.attributes.getNamedItem('data-oxzion-widget-id');
-            if (widgetIdAttribute) {
-                widgetId = widgetIdAttribute.nodeValue;
-            }
-        }
-        this.doRestRequest('analytics/widget/' + widgetId, {}, 'get', 
+        this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get', 
             function(response) {
-                let graphElement = element.querySelector('div.oxzion-widget-content');
-                let chart = am4core.createFromConfig(response.configuration, graphElement, am4charts.XYChart);
-                chart.data = response.data;
-                let elementId = element.attributes.getNamedItem('id');
-                thiz.renderedCharts[elementId] = chart;
+                ChartRenderer.render(widgetElement, response.widget);
             },
             function(response) {
                 Swal.fire({

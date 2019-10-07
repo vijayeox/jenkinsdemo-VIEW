@@ -1,111 +1,111 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Swal from "sweetalert2";
-import '../../../../../gui/src/public/css/sweetalert.css';
+import BaseChart from './baseChart';
 
-class BarChart extends React.Component {
+class BarChart extends BaseChart {
     constructor(props) {
         super(props);
-        this.state = props.widget;
-        this.chart = null;
-    }
-
-    static getChartJsonTemplate() {
-        return {
-            'series':[{
-                'type':'ColumnSeries',
-                'name':'${columnSeriesName}',
-                'dataFields': {
-                    'valueY':'${valueColumn}',
-                    'categoryX':'${categoryColumn}'
-                },
-                'tooltipText':'{name}:[bold]{categoryX} - {valueY}[/]'
-            }],
-            'xAxes':[{
-                'type':'CategoryAxis',
-                'dataFields':{
-                    'category':'${categoryColumn}'
-                },
-                'title':{
-                    'text':'${categoryAxisTitle}'
-                },
-                'renderer':{
-                    'grid': {
-                        'template': {
-                            'location':0
-                        }
-                    },
-                    'minGridDistance':1
-                }
-            }],
-            'yAxes': [{
-                'type':'ValueAxis',
-                'title':{
-                    'text':'${valueAxisTitle}'
-                }
-            }],
-            'cursor': {
-                'type':'XYCursor'
-            }
-        };
-    }
-
-    alignmentChanged = (e) => {
-        let thiz = this;
-        let align = e.target.value;
-//        this.setState((state, props) => {
-//            return {align:align};
-//        },
-//        () => {
-//        });
-        this.setState({
-            align: align
-        },
-        () => {
-            thiz.props.updateParentState('widget', thiz.state);
-        });
-    }
-
-    inputChanged = (e) => {
-        let thiz = this;
-        let value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        this.setState({
-            [e.target.name]:value,
-            modified:true
-        },
-        () => {
-            thiz.props.updateParentState('widget', thiz.state);
-        });
-    }
-
-    componentDidMount() {
-        let thiz = this;
-        window.postDataRequest('analytics/widget/' + this.state.id, {}).
-            then(function(response) {
-                var chart = am4core.createFromConfig(response.configuration, document.querySelector('div#chartPreview'), am4charts.XYChart);
-                chart.data = response.data;
-                thiz.chart = chart;
-            }).
-            catch(function(response) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Could not load widget. Please try after some time.'
-                });
-            });
-    }
-
-    componentWillUnmount() {
-        if (this.chart) {
-            this.chart.dispose();
+        if (this.state.configuration) {
+            this.graphConfigurationToState();
+            this.state.seriesCount = this.state.configuration.yAxes.length;
+        }
+        else {
+            this.state.seriesCount = 1;
         }
     }
 
+    graphConfigurationToState = () => {
+        var configuration = this.state.configuration;
+        //this.state.chartTitle = configuration.series[0].name;
+        this.state.chartTitle = configuration.titles[0].text;
+        this.state.categoryColumn = configuration.series[0].dataFields.categoryX;
+        //configuration.xAxes[0].dataFields.category;
+        this.state.categoryLabel = configuration.xAxes[0].title.text;
+        this.state.valueColumn0 = configuration.series[0].dataFields.valueY;
+        this.state.valueLabel0 = configuration.yAxes[0].title.text;
+        this.state.chartFooter = configuration.chartContainer.children[0].text;
+        this.setState({
+            state:this.state
+        });
+    }
+
+    stateToGraphConfiguration = () => {
+        var configuration = this.state.configuration;
+        configuration.series[0].name = this.state.chartTitle;
+        configuration.titles[0].text = this.state.chartTitle;
+        configuration.series[0].dataFields.categoryX = this.state.categoryColumn;
+        configuration.xAxes[0].dataFields.category = this.state.categoryColumn;
+        configuration.xAxes[0].title.text = this.state.categoryLabel;
+        configuration.series[0].dataFields.valueY = this.state.valueColumn0;
+        configuration.yAxes[0].title.text = this.state.valueLabel0;
+        configuration.chartContainer.children[0].text = this.state.chartFooter;
+    }
+
+    addValueSeries = (e) => {
+        //this.setState({
+        //    seriesCount:this.state.seriesCount+1
+        //});
+    }
+
+    removeValueSeries = (e) => {
+        this.setState({
+            seriesCount:this.state.seriesCount-1
+        });
+    }
+
     render() {
+        let thiz = this;
+        function getValueSeriesContent() {
+            let valueSeriesContent = [];
+            for (let i=0; i < thiz.state.seriesCount; i++) {
+                valueSeriesContent.push(
+                    <div key={'00-' + i}>
+                        <div className="form-group row" key={'01-' + i}>
+                            <label htmlFor={'valueColumn' + i} className="col-4 col-form-label form-control-sm" key={'02-' + i}>Value series column</label>
+                            <div className="col-6" key={'03-' + i}>
+                                <select id={'valueColumn' + i} name={'valueColumn' + i} className="form-control form-control-sm" 
+                                    onChange={thiz.selectionChanged} disabled={thiz.state.readOnly} 
+                                    value={thiz.state['valueColumn' + i] ? thiz.state['valueColumn' + 0] : ''} key={'04-' + i}>
+                                    <option value="" key={'05-' + i}>-Select value column-</option>
+                                    <option value="person" key={'06-' + i}>person</option>
+                                    <option value="sales" key={'07-' + i}>sales</option>
+                                </select>
+                            </div>
+                            { (i === 0) && 
+                            <div className="col-2" key={'08-' + i}>
+                                <button type="button" className="btn btn-primary add-series-button" title="Add value series" 
+                                    onClick={thiz.addValueSeries} key={'09-' + i}>
+                                    <span className="fa fa-plus-square" aria-hidden="true" key={'10-' + i}></span>
+                                </button>
+                            </div>
+                            }
+                            { (i > 0) &&
+                            <div className="col-2" key={'08-' + i}>
+                                <button type="button" className="btn btn-primary remove-series-button" title="Remove value series" 
+                                    onClick={() => thiz.removeValueSeries(i)} key={'09-' + i}>
+                                    <span className="fa fa-minus-square" aria-hidden="true" key={'10-' + i}></span>
+                                </button>
+                            </div>
+                            }
+                        </div>
+                        <div className="form-group row" key={'11-' + i}>
+                            <label htmlFor={'valueLabel' + i} className="col-4 col-form-label form-control-sm" key={'12-' + i}>Value series label</label>
+                            <div className="col-8" key={'13-' + i}>
+                                <input type="text" id={'valueLabel' + i} name={'valueLabel' + i} className="form-control form-control-sm" 
+                                    onChange={thiz.inputChanged} readOnly={thiz.state.readOnly} onBlur={thiz.textFieldChanged} 
+                                    value={thiz.state['valueLabel' + i] ? thiz.state['valueLabel' + i] : ''} key={'14-' + i}/>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            return valueSeriesContent;
+        }
+
         return (
             <>
                 <div className="form-group col">
-                    <div className="card" id="chartProperty">
+                    <div className="card" id="chartPropertyBox">
                         <div className="card-header">
                             Bar chart properties
                         </div>
@@ -116,17 +116,19 @@ class BarChart extends React.Component {
                                     <div className="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
                                         <label className={'btn btn-info' + 
                                             ((!this.state.align || this.state.align === 'left' || this.state.align === '') ? ' active' : '')}>
-                                            <input type="radio" name="chartAlignment" value="left" autoComplete="off" 
-                                                checked={!this.state.align || (this.state.align === 'left') || (this.state.align === '')} 
-                                                onChange={this.alignmentChanged} disabled={this.state.readOnly}/> Left
+                                            <input type="radio" name="align" value="left" autoComplete="off" 
+                                                checked={this.state.align ? ((this.state.align === 'left') || (this.state.align === '')) : false} 
+                                                onChange={this.selectionChanged}/> Left
                                         </label>
                                         <label className={'btn btn-info' + ((this.state.align === 'center') ? ' active' : '')}>
-                                            <input type="radio" name="chartAlignment" value="center" autoComplete="off" 
-                                                checked={this.state.align === 'center'} onChange={this.alignmentChanged} disabled={this.state.readOnly}/> Center
+                                            <input type="radio" name="align" value="center" autoComplete="off" 
+                                                checked={this.state.align ? (this.state.align === 'center') : false} 
+                                                onChange={this.selectionChanged}/> Center
                                         </label>
                                         <label className={'btn btn-info' + ((this.state.align === 'right') ? ' active' : '')}>
-                                            <input type="radio" name="chartAlignment" value="right" autoComplete="off" 
-                                                checked={this.state.align === 'right'} onChange={this.alignmentChanged} disabled={this.state.readOnly}/> Right
+                                            <input type="radio" name="align" value="right" autoComplete="off" 
+                                                checked={this.state.align ? (this.state.align === 'right') : false} 
+                                                onChange={this.selectionChanged}/> Right
                                         </label>
                                     </div>
                                 </div>
@@ -135,24 +137,27 @@ class BarChart extends React.Component {
                                 <label htmlFor="chartTitle" className="col-4 col-form-label form-control-sm">Chart title</label>
                                 <div className="col-8">
                                     <input type="text" id="chartTitle" name="chartTitle" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} value="Chart title" readOnly={this.state.readOnly}/>
+                                        onChange={this.inputChanged} readOnly={this.state.readOnly} onBlur={this.textFieldChanged}
+                                        value={this.state.chartTitle ? this.state.chartTitle : ''}/>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="chartFooter" className="col-4 col-form-label form-control-sm">Chart footer</label>
                                 <div className="col-8">
                                     <input type="text" id="chartFooter" name="chartFooter" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} value="Chart footer" readOnly={this.state.readOnly}/>
+                                        onChange={this.inputChanged} readOnly={this.state.readOnly} onBlur={this.textFieldChanged} 
+                                        value={this.state.chartFooter ? this.state.chartFooter : ''}/>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="categoryColumn" className="col-4 col-form-label form-control-sm">Category series column</label>
                                 <div className="col-8">
                                     <select id="categoryColumn" name="categoryColumn" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} readOnly={this.state.readOnly}>
+                                        onChange={this.selectionChanged} disabled={this.state.readOnly} 
+                                        value={this.state.categoryColumn ? this.state.categoryColumn : ''}>
                                         <option value="">-Select category column-</option>
-                                        <option value="">Column A</option>
-                                        <option value="">Column B</option>
+                                        <option value="person">person</option>
+                                        <option value="sales">sales</option>
                                     </select>
                                 </div>
                             </div>
@@ -160,45 +165,23 @@ class BarChart extends React.Component {
                                 <label htmlFor="categoryLabel" className="col-4 col-form-label form-control-sm">Category series label</label>
                                 <div className="col-8">
                                     <input type="text" id="categoryLabel" name="categoryLabel" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} value="Category label" readOnly={this.state.readOnly}/>
+                                        onChange={this.inputChanged} readOnly={this.state.readOnly} onBlur={this.textFieldChanged} 
+                                        value={this.state.categoryLabel ? this.state.categoryLabel : ''}/>
                                 </div>
                             </div>
-                            <div className="form-group row">
-                                <label htmlFor="valueColumn0" className="col-4 col-form-label form-control-sm">Value series column</label>
-                                <div className="col-6">
-                                    <select id="valueColumn0" name="valueColumn0" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} readOnly={this.state.readOnly}>
-                                        <option value="">-Select value column-</option>
-                                        <option value="">Column A</option>
-                                        <option value="">Column B</option>
-                                    </select>
-                                </div>
-                                <div className="col-2">
-                                    <button type="button" className="btn btn-primary add-series-button" title="Add value series">
-                                        <span className="fa fa-plus-square" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label htmlFor="valueLabel0" className="col-4 col-form-label form-control-sm">Value series label</label>
-                                <div className="col-8">
-                                    <input type="text" id="valueLabel0" name="valueLabel0" className="form-control form-control-sm" 
-                                        onChange={this.inputChanged} value="Value series label" readOnly={this.state.readOnly}/>
-                                </div>
-                            </div>
-                            { /* Begin add value series. */ }
-                            { /* End add value series. */ }
+                            { getValueSeriesContent() }
                             <div className="form-group row">
                                 <label className="form-check-label col-4 col-form-label form-control-sm" htmlFor="displayToolTip">Display tool-tip</label>
                                 <div className="col-8">
-                                    <input type="checkbox" id="displayToolTip" name="displayToolTip" onChange={this.inputChanged} disabled={this.state.readOnly}/>
+                                    <input type="checkbox" id="displayToolTip" name="displayToolTip" onChange={this.selectionChanged} 
+                                        disabled={this.state.readOnly} checked={this.state.displayToolTip ? this.state.displayToolTip : false}/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="form-group col">
-                    <div className="card">
+                    <div className="card" id="chartPreviewBox">
                         <div className="card-header">
                             Preview
                         </div>

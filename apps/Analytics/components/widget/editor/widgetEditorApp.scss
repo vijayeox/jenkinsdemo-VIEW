@@ -2,18 +2,30 @@
 @import '~bootstrap/dist/css/bootstrap.css';
 @import '~@fortawesome/fontawesome-free/css/all.css';
 
+#widgetEditorDialog {
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+
 .widget-editor-form > div.row {
     margin-right:0px;
     margin-left:0px;
 }
 
-.widget-editor-form #chartPreview {
-    height:325px;
-    max-height:325px;
+.widget-editor-form #chartPropertyBox .card-body,
+.widget-editor-form #chartPreviewBox .card-body {
+    height:380px;
+    max-height:380px;
+    overflow:auto;
 }
 
-.widget-editor-form #widgetTypeEditArea > div > .card {
-    height:415px;
+.widget-editor-form #chartPreview {
+    width:100%;
+    height:100%;
+}
+
+.widget-editor-form > div:first-child {
+    padding:3px;
 }
 
 .widget-editor-form .right-align, 
@@ -23,9 +35,5 @@
 
 .widget-editor-form #displayToolTip {
     margin-top:8px;
-}
-
-.widget-editor-form #chartProperty .card-body {
-    overflow:auto;
 }
 

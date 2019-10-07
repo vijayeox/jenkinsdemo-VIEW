@@ -109,7 +109,7 @@ class Body extends React.Component {
         sectionContent = <Dashboard args={this.core} setTitle={this.setTitle}/>;
       break;
       case SECTION_EDIT_DASHBOARD:
-        sectionContent = <DashboardEditor args={this.core} setTitle={this.setTitle}/>;
+        sectionContent = <DashboardEditor args={this.core} setTitle={this.setTitle} dashboardId={'c6318742-b9f9-4a18-abce-7a7fbbac8c8b'}/>;
       break;
     }
 

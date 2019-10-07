@@ -56,7 +56,7 @@ window.onDialogEvent = function(dialogEvent) {
             if (!window.widgetEditorApp.validateUserInput()) {
                 throw 'User input validation failed.';
             }
-            let data = window.widgetEditorApp.getWidgetState();
+            let data = window.widgetEditorApp.getWidgetStateForCkEditorPlugin();
             window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
         break;
     }
@@ -65,12 +65,16 @@ window.onDialogEvent = function(dialogEvent) {
 const OXZION_CORRELATION_ID = 'OX_CORR_ID';
 window.postDataRequest = function(url, params) {
     let deferred = new Deferred();
+    if (!params) {
+        params = {};
+    }
     params[OXZION_CORRELATION_ID] = deferred.corrId;
-    window.top.postMessage({
+    var message = {
         'action':'data', 
-        'url':url, 
+        'url':url,
         'params':params
-    });
+    };
+    window.top.postMessage(message);
     return deferred.promise;
 }
 
