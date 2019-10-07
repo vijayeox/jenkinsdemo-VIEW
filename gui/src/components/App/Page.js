@@ -35,7 +35,7 @@ class Page extends React.Component {
     }
   }
 
-  updatePageView = e => {
+  updatePageView(e) {
     this.setState({
       pageContent: e.detail
     });
@@ -64,7 +64,7 @@ class Page extends React.Component {
     return [<React.Fragment key={1} />];
   }
 
-  renderButtons = (e, action) => {
+  renderButtons(e, action){
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
       actionButtons.push(
@@ -86,7 +86,7 @@ class Page extends React.Component {
     return actionButtons;
   };
 
-  buttonAction = async (action, rowData) => {
+  async buttonAction (action, rowData) {
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
@@ -131,7 +131,7 @@ class Page extends React.Component {
     });
   };
 
-  updateActionHandler = (details, rowData) => {
+  updateActionHandler (details, rowData) {
     var that = this;
     return new Promise(resolve => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
@@ -144,7 +144,7 @@ class Page extends React.Component {
     });
   };
 
-  replaceParams = (route, params) => {
+  replaceParams (route, params) {
     if (!params) {
       return route;
     }
@@ -165,7 +165,7 @@ class Page extends React.Component {
     return route;
   };
 
-  prepareDataRoute = (route, params) => {
+  prepareDataRoute (route, params) {
     if (typeof route == "string") {
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
