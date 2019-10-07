@@ -63,6 +63,9 @@ class FormRender extends React.Component  {
       }
     }
     let response = await helper.request("v1", route, data, method);
+    if(response.status == 'success'){
+      this.props.postSubmitCallback(data);
+    }
     return response;
   }
   loadWorkflow(){
