@@ -18,6 +18,9 @@
     ],
     "devDependencies": {},
     "dependencies": {
+        "@babel/core": "^7.6.2",
+        "@babel/preset-env": "^7.6.2",
+        "@babel/preset-react": "^7.0.0",
         "consola": "^2.9.0",
         "deepmerge": "^4.0.0",
         "express": "^4.17.1",
