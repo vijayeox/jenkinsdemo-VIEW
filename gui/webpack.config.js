@@ -89,7 +89,16 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: "babel-loader"
+          loader: "babel-loader",
+          options: {
+            presets: [
+              '@babel/react', '@babel/env'
+            ],
+            plugins: [
+              require.resolve("@babel/plugin-transform-runtime"),
+              '@babel/proposal-class-properties'
+            ]
+          }
         }
       }
     ]
