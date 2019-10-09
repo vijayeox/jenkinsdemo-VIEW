@@ -1,6 +1,6 @@
 Follow instructions given in the readme files under the specific apps.
 
-To build te complete view run the following command
+To build the complete view run the following command
 $ npm run build
 
 To clean all view project
