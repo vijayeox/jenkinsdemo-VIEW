@@ -37,7 +37,7 @@ module.exports = {
   development:"production",
   auth: {
     ui: {
-      title: 'Welcome to OX Zion',
+      title: 'Welcome to EOS',
       logo: {
         position: 'top',
         src: require('./assets/images/wallpaper.png')
