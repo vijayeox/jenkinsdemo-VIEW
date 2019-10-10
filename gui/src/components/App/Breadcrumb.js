@@ -23,11 +23,11 @@ class Breadcrumb extends React.Component {
 
   breadcrumbClick = (currentValue, index) => {
     if (currentValue.content) {
-      event = new CustomEvent("updatePageView", {
+      let ev = new CustomEvent("updatePageView", {
         detail: currentValue.content,
         bubbles: true
       });
-      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(event);
+      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
     }
     let data = this.state.breadcrumbConfig.slice();
     data.splice(index + 1, data.length);

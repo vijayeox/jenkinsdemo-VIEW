@@ -47,13 +47,13 @@ class Page extends React.Component {
         this.setState({
           pageContent: response.data.content
         });
-        event = new CustomEvent("updateBreadcrumb", {
+        let ev = new CustomEvent("updateBreadcrumb", {
           detail: response.data,
           bubbles: true
         });
         document
           .getElementsByClassName("breadcrumbParent")[0]
-          .dispatchEvent(event);
+          .dispatchEvent(ev);
       } else {
         this.setState({ pageContent: [] });
       }
@@ -118,13 +118,13 @@ class Page extends React.Component {
           }
         });
       }, 500);
-      event = new CustomEvent("updateBreadcrumb", {
+      let ev = new CustomEvent("updateBreadcrumb", {
         detail: action,
         bubbles: true
       });
       document
         .getElementsByClassName("breadcrumbParent")[0]
-        .dispatchEvent(event);
+        .dispatchEvent(ev);
     }
     this.setState({
       showLoader: false
