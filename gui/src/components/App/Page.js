@@ -16,10 +16,12 @@ class Page extends React.Component {
       pageContent: [],
       pageId: this.props.pageId,
       submission: this.props.submission,
-      showLoader: false
+      showLoader: false,
+      currentRow: []
     };
     this.contentDivID = "root_" + this.appId + "_" + this.state.pageId;
     this.loadPage(this.props.pageId);
+    this.updatePageView = this.updatePageView.bind(this);
   }
 
   componentDidMount() {
@@ -39,7 +41,7 @@ class Page extends React.Component {
     this.setState({
       pageContent: e.detail
     });
-  };
+  }
 
   loadPage(pageId) {
     this.getPageContent(pageId).then(response => {
@@ -64,7 +66,7 @@ class Page extends React.Component {
     return [<React.Fragment key={1} />];
   }
 
-  renderButtons(e, action){
+  renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
       actionButtons.push(
@@ -84,9 +86,9 @@ class Page extends React.Component {
       );
     }, this);
     return actionButtons;
-  };
+  }
 
-  async buttonAction (action, rowData) {
+  async buttonAction(action, rowData) {
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
@@ -113,7 +115,8 @@ class Page extends React.Component {
             let pageContent = that.state.pageContent;
             pageContent.push(item);
             that.setState({
-              pageContent: pageContent
+              pageContent: pageContent,
+              currentRow: rowData
             });
           }
         });
@@ -122,16 +125,14 @@ class Page extends React.Component {
         detail: action,
         bubbles: true
       });
-      document
-        .getElementsByClassName("breadcrumbParent")[0]
-        .dispatchEvent(ev);
+      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
     }
     this.setState({
       showLoader: false
     });
-  };
+  }
 
-  updateActionHandler (details, rowData) {
+  updateActionHandler(details, rowData) {
     var that = this;
     return new Promise(resolve => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
@@ -142,9 +143,9 @@ class Page extends React.Component {
         resolve(response);
       });
     });
-  };
+  }
 
-  replaceParams (route, params) {
+  replaceParams(route, params) {
     if (!params) {
       return route;
     }
@@ -163,9 +164,9 @@ class Page extends React.Component {
       });
     }
     return route;
-  };
+  }
 
-  prepareDataRoute (route, params) {
+  prepareDataRoute(route, params) {
     if (typeof route == "string") {
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
@@ -173,17 +174,6 @@ class Page extends React.Component {
     } else {
       return route;
     }
-  };
-
-  async getFormContents(form_id) {
-    let helper = this.core.make("oxzion/restClient");
-    let formData = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/form/" + form_id,
-      {},
-      "get"
-    );
-    return JSON.parse(formData.data.template);
   }
 
   async updateCall(route, body) {
@@ -214,9 +204,14 @@ class Page extends React.Component {
     for (var i = 0; i < data.length; i++) {
       switch (data[i].type) {
         case "Form":
+          var dataString = this.prepareDataRoute(
+            data[i].url,
+            this.state.currentRow
+          );
           content.push(
             <FormRender
               key={i}
+              url={dataString}
               core={this.core}
               appId={this.appId}
               content={data[i].content}
