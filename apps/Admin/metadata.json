@@ -2,6 +2,7 @@
   "type": "application",
   "name": "Admin",
   "category": "utilities",
+  "hidden":true,
   "autostart": false,
   "server": "server.js",
   "icon": "icon.svg",
