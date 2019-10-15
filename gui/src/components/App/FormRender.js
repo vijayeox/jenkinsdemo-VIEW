@@ -2,7 +2,7 @@ import "../../public/css/formstyles.scss";
 import { Formio } from "formiojs";
 import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
 import React from "react";
-import "bootstrap";
+import ConvergePayCheckoutComponent from './Form/Payment/ConvergePayCheckoutComponent';
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -153,10 +153,26 @@ class FormRender extends React.Component {
   createForm() {
     let that = this;
     if (this.state.content && !this.state.form) {
+      Formio.registerComponent('convergepay', ConvergePayCheckoutComponent);
+      var options = {};
+      if(this.state.content['properties']){
+        if(this.state.content['properties']['clickable']){
+          options.breadcrumbSettings = {clickable: eval(this.state.content['properties']['clickable'])};  
+        }
+        if(this.state.content['properties']['showPrevious']){
+          options.buttonSettings ={showPrevious: eval(this.state.content['properties']['showPrevious'])};  
+        }
+        if(this.state.content['properties']['showNext']){
+          options.buttonSettings = {showNext: eval(this.state.content['properties']['showNext'])};  
+        }
+        if(this.state.content['properties']['showCancel']){
+          options.buttonSettings = {showCancel: eval(this.state.content['properties']['showCancel'])};  
+        }
+      }
       var formCreated = Formio.createForm(
         document.getElementById(this.formDivID),
         this.state.content,
-        {}
+        options
       ).then(function(form) {
         form.on("render", function() {
           if (that.state.data) {
