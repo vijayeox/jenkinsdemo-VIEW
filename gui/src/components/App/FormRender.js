@@ -105,7 +105,7 @@ class FormRender extends React.Component {
   async getFormContents(url) {
     let helper = this.core.make("oxzion/restClient");
     let formData = await helper.request("v1", url, {}, "get");
-    return JSON.parse(formData.data.template);
+    return formData.data;
   }
 
   loadWorkflow() {
@@ -174,23 +174,15 @@ class FormRender extends React.Component {
         this.state.content,
         options
       ).then(function(form) {
-        form.on("render", function() {
-          if (that.state.data) {
-            form.setSubmission(that.state.data);
-          }
-          if (that.state.page) {
-            form.setPage(that.state.page);
-          }
-        });
-        form.on("prevPage", function(prevPage, submission) {
-          that.setState({ page: prevPage });
-        });
-        form.on("nextPage", function(nextPage, submission) {
-          that.setState({ page: nextPage });
-        });
-        form.on("submit", function(submission) {
-          that.saveForm(submission.data);
-        });
+        if (that.state.page) {
+          form.setPage(that.state.page);
+        }
+        form.submission = { data: that.state.data };
+        form.on("prevPage", changed => that.setState({ page: changed.page }));
+        form.on("nextPage", changed => that.setState({ page: changed.page }));
+        form.on("submit", submission => that.saveForm(submission.data));
+        form.on("render", () => console.log(form));
+
         form.on("change", function(changed) {
           console.log("Form was changed", changed);
           var formdata = changed;
@@ -284,7 +276,8 @@ class FormRender extends React.Component {
       ? this.getFormContents(this.props.url).then(response => {
           console.log(response);
           this.setState({
-            content: response
+            content: JSON.parse(response.template),
+            data: response.data
           });
           this.createForm();
         })
