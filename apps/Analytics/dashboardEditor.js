@@ -16,7 +16,6 @@ class DashboardEditor extends React.Component {
             dashboardId : (props.dashboardId ? props.dashboardId : null),
             version: -1,
             contentChanged : false,
-            keyPressed : false,
             editorMode : 'initial'
         };
         let thisInstance = this;
@@ -117,30 +116,21 @@ class DashboardEditor extends React.Component {
                 console.error(error);
             }
         });
-        editor.on('key', function(event) {
-            if (thisInstance.state.editorMode === 'source') {
-                thisInstance.setState({
-                    contentChanged:true
-                });
-            }
-            thisInstance.setState({
-                keyPressed : true
-            });
-        });
+        //editor.on('key', function(event) {
+        //    if (thisInstance.state.editorMode === 'source') {
+        //        thisInstance.setState({
+        //            contentChanged:true
+        //        });
+        //    }
+        //});
         editor.on('oxzionWidgetChanged', function(event) {
             thisInstance.setState({
                 contentChanged:true
             });
         });
-
         editor.on('change', function(event) {
-            if (((thisInstance.state.editorMode === 'wysiwyg') && (thisInstance.state.keyPressed)) || (thisInstance.state.editorMode === 'source')) {
-                thisInstance.setState({
-                    contentChanged : true
-                });
-            }
             thisInstance.setState({
-                keyPressed : false
+                contentChanged : true
             });
         });
         editor.on('mode', function(event) {
@@ -170,7 +160,6 @@ class DashboardEditor extends React.Component {
         this.doRestRequest(url, params, method, 
             function(response) {
                 thisInstance.setState({
-                    keyPressed : false,
                     contentChanged : false
                 });
                 if (!thisInstance.state.dashboardId) {
@@ -240,7 +229,7 @@ class DashboardEditor extends React.Component {
                     failureHandler(response);
                 }
                 catch(e) {
-                    console.error(e);
+                    console.error(response);
                 }
             }
             else {
@@ -294,9 +283,8 @@ class DashboardEditor extends React.Component {
         let iframeWindow = iframeElement.contentWindow;
         let iframeDocument = iframeWindow.document;
         let widgetElement = iframeDocument.querySelector('#' + elementId);
-
         if (!widgetId) {
-            let widgetIdAttribute = element.attributes.getNamedItem('data-oxzion-widget-id');
+            let widgetIdAttribute = widgetElement.attributes.getNamedItem('data-oxzion-widget-id');
             if (widgetIdAttribute) {
                 widgetId = widgetIdAttribute.nodeValue;
             }

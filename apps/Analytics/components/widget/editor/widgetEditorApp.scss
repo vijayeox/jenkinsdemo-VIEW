@@ -37,3 +37,25 @@
     margin-top:8px;
 }
 
+/* Begin - Error display tooltip color. */
+.error-tooltip.bs-tooltip-bottom .arrow::before {
+    border-bottom-color:red;
+}
+
+.error-tooltip.bs-tooltip-left .arrow::before {
+    border-left-color:red;
+}
+
+.error-tooltip.bs-tooltip-right .arrow::before {
+    border-right-color:red;
+}
+
+.error-tooltip.bs-tooltip-top .arrow::before {
+    border-top-color:red;
+}
+
+.error-tooltip .tooltip-inner {
+    background-color:red;
+}
+/* End - Error display tooltip color. */
+

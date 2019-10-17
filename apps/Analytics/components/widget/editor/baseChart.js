@@ -8,6 +8,7 @@ class BaseChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = props.widget;
+        this.state.errors = {};
         this.chart = null;
     }
 
@@ -17,24 +18,54 @@ class BaseChart extends React.Component {
     stateToGraphConfiguration = () => {
     }
 
+    validateUserInput = (field, value) => {
+    }
+
+    //Called by widgetEditorApp.hasUserInputErrors
+    hasUserInputErrors = () => {
+        var errors = this.state.errors;
+        var errorsFound = false;
+        for (let [key, value] of Object.entries(errors)) {
+            if (value) {
+                errorsFound = true;
+                break;
+            }
+        }
+        return errorsFound;
+    }
+
+    setErrorMessage = (key, message) => {
+        this.setState((state) => {
+            if (!message || ('' === message)) {
+                delete state.errors[key];
+            }
+            else {
+                state.errors[key] = message;
+            }
+            return state;
+        });
+    }
+
     makeReadOnly = (flag) => {
         this.setState({
             readOnly : flag
         });
     }
 
-    updateParentState = () => {
-        this.props.updateParentState('widget', this.state);
+    updateWidgetState = () => {
+        this.props.updateWidgetState(this.state);
     }
 
     textFieldChanged = (e) => {
         let thiz = this;
+        let name = e.target.name;
+        let value = e.target.value;
         this.setState({
-            [e.target.name]:e.target.value,
+            [name]:value,
             modified:true
         },
         () => {
-            thiz.updateParentState();
+            thiz.updateWidgetState();
             thiz.stateToGraphConfiguration();
             thiz.draw();
         });
@@ -43,26 +74,31 @@ class BaseChart extends React.Component {
 
     selectionChanged = (e) => {
         let thiz = this;
+        let name = e.target.name;
         let value = (e.target.type === 'checkbox') ? e.target.checked : e.target.value;
         this.setState({
-            [e.target.name]:value,
+            [name]:value,
             modified:true
         },
         () => {
-            thiz.updateParentState();
+            thiz.updateWidgetState();
             thiz.stateToGraphConfiguration();
+            thiz.validateUserInput(name, value);
             thiz.draw();
         });
     }
 
     inputChanged = (e) => {
         let thiz = this;
+        let name = e.target.name;
+        let value = e.target.value;
         this.setState({
-            [e.target.name]:e.target.value,
+            [name]:value,
             modified:true
         },
         () => {
-            thiz.updateParentState();
+            thiz.updateWidgetState();
+            thiz.validateUserInput(name, value);
         });
     }
 

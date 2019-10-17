@@ -1,3 +1,5 @@
+import Swal from "sweetalert2";
+import '../../../../../gui/src/public/css/sweetalert.css';
 
 class Deferred {
     static deferredRegistry = {};
@@ -53,17 +55,37 @@ window.onDialogEvent = function(dialogEvent) {
         break;
         case 'ok':
             //Reject 'ok' button click if user input validation fails.
-            if (!window.widgetEditorApp.validateUserInput()) {
-                throw 'User input validation failed.';
+            if (window.widgetEditorApp.hasUserInputErrors()) {
+                throw 'There are validation errors in the input fields. Request the user to correct the errors before clicking "OK" to close the dialog.';
             }
-            let data = window.widgetEditorApp.getWidgetStateForCkEditorPlugin();
-            window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
+            let widgetEditorApp = window.widgetEditorApp;
+            if (widgetEditorApp.isEdited()) {
+                widgetEditorApp.saveWidget().
+                    then(function(response) {
+                        let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
+                        data['id'] = response.newWidgetUuid;
+                        window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
+                    }).
+                    catch(function(response) {
+                        console.error(response);
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops ...',
+                            text: 'Could not save the widget. Please try after some time.'
+                        });
+                        throw 'Could not save the widget. Please try after some time.';
+                    });
+            }
+            else {
+                let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
+                window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
+            }
         break;
     }
 }
 
 const OXZION_CORRELATION_ID = 'OX_CORR_ID';
-window.postDataRequest = function(url, params) {
+window.postDataRequest = function(url, params, method) {
     let deferred = new Deferred();
     if (!params) {
         params = {};
@@ -74,6 +96,9 @@ window.postDataRequest = function(url, params) {
         'url':url,
         'params':params
     };
+    if (method) {
+        message['method'] = method;
+    }
     window.top.postMessage(message);
     return deferred.promise;
 }

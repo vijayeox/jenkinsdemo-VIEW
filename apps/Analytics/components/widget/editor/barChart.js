@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Overlay, Tooltip} from 'react-bootstrap';
 import BaseChart from './baseChart';
 
 class BarChart extends BaseChart {
     constructor(props) {
         super(props);
         if (this.state.configuration) {
-            this.graphConfigurationToState();
+            this.graphConfigurationToState(true);
             this.state.seriesCount = this.state.configuration.yAxes.length;
         }
         else {
@@ -14,7 +15,7 @@ class BarChart extends BaseChart {
         }
     }
 
-    graphConfigurationToState = () => {
+    graphConfigurationToState = (dontCallSetState) => {
         var configuration = this.state.configuration;
         //this.state.chartTitle = configuration.series[0].name;
         this.state.chartTitle = configuration.titles[0].text;
@@ -24,9 +25,12 @@ class BarChart extends BaseChart {
         this.state.valueColumn0 = configuration.series[0].dataFields.valueY;
         this.state.valueLabel0 = configuration.yAxes[0].title.text;
         this.state.chartFooter = configuration.chartContainer.children[0].text;
-        this.setState({
-            state:this.state
-        });
+        this.state.displayToolTip = configuration['cursor'] ? true : false;
+        if (!dontCallSetState) {
+            this.setState((state) => {
+                return this.state;
+            });
+        }
     }
 
     stateToGraphConfiguration = () => {
@@ -39,6 +43,54 @@ class BarChart extends BaseChart {
         configuration.series[0].dataFields.valueY = this.state.valueColumn0;
         configuration.yAxes[0].title.text = this.state.valueLabel0;
         configuration.chartContainer.children[0].text = this.state.chartFooter;
+        if (this.state.displayToolTip) {
+            configuration['cursor'] = {'type':'XYCursor'};
+            configuration.series[0]['tooltipText'] = "{name}:[bold]{categoryX} - {valueY}[/]";
+        }
+        else {
+            delete configuration['cursor'];
+            delete configuration.series[0]['tooltipText'];
+        }
+    }
+
+    validateUserInput = (field, value) => {
+        if (value && (typeof value === 'string')) {
+            value = value.trim();
+        }
+        let errorMessage = null;
+        switch(field) {
+            case 'chartTitle':
+                if (!value || ('' === value)) {
+                    errorMessage = 'Chart title is needed';
+                }
+            break;
+
+            case 'categoryColumn':
+                if (!value || ('' === value)) {
+                    errorMessage = 'Category series column is needed';
+                }
+            break;
+
+            case 'categoryLabel':
+                if (!value || ('' === value)) {
+                    errorMessage = 'Category series label is needed';
+                }
+            break;
+
+            default:
+                if (field.substring(0, 11) == 'valueColumn') {
+                    if (!value || ('' === value)) {
+                        errorMessage = 'Value series column is needed';
+                    }
+                }
+                else if (field.substring(0, 10) == 'valueLabel') {
+                    if (!value || ('' === value)) {
+                        errorMessage = 'Value series label is needed';
+                    }
+                }
+            break;
+        }
+        this.setErrorMessage(field, errorMessage);
     }
 
     addValueSeries = (e) => {
@@ -63,13 +115,20 @@ class BarChart extends BaseChart {
                         <div className="form-group row" key={'01-' + i}>
                             <label htmlFor={'valueColumn' + i} className="col-4 col-form-label form-control-sm" key={'02-' + i}>Value series column</label>
                             <div className="col-6" key={'03-' + i}>
-                                <select id={'valueColumn' + i} name={'valueColumn' + i} className="form-control form-control-sm" 
+                                <select id={'valueColumn' + i} name={'valueColumn' + i} ref={'valueColumn' + i} className="form-control form-control-sm" 
                                     onChange={thiz.selectionChanged} disabled={thiz.state.readOnly} 
                                     value={thiz.state['valueColumn' + i] ? thiz.state['valueColumn' + 0] : ''} key={'04-' + i}>
                                     <option value="" key={'05-' + i}>-Select value column-</option>
                                     <option value="person" key={'06-' + i}>person</option>
                                     <option value="sales" key={'07-' + i}>sales</option>
                                 </select>
+                                <Overlay target={thiz.refs['valueColumn' + i]} show={thiz.state.errors['valueColumn' + i] != null} placement="left">
+                                    {props => (
+                                    <Tooltip id={'valueColumn' + i + '-tooltip'} {...props} className="error-tooltip">
+                                        {thiz.state.errors['valueColumn' + i]}
+                                    </Tooltip>
+                                    )}
+                                </Overlay>
                             </div>
                             { (i === 0) && 
                             <div className="col-2" key={'08-' + i}>
@@ -91,9 +150,16 @@ class BarChart extends BaseChart {
                         <div className="form-group row" key={'11-' + i}>
                             <label htmlFor={'valueLabel' + i} className="col-4 col-form-label form-control-sm" key={'12-' + i}>Value series label</label>
                             <div className="col-8" key={'13-' + i}>
-                                <input type="text" id={'valueLabel' + i} name={'valueLabel' + i} className="form-control form-control-sm" 
+                                <input type="text" id={'valueLabel' + i} name={'valueLabel' + i} ref={'valueLabel' + i} className="form-control form-control-sm" 
                                     onChange={thiz.inputChanged} readOnly={thiz.state.readOnly} onBlur={thiz.textFieldChanged} 
                                     value={thiz.state['valueLabel' + i] ? thiz.state['valueLabel' + i] : ''} key={'14-' + i}/>
+                                <Overlay target={thiz.refs['valueLabel' + i]} show={thiz.state.errors['valueLabel' + i] != null} placement="left">
+                                    {props => (
+                                    <Tooltip id={'valueLabel' + i + '-tooltip'} {...props} className="error-tooltip">
+                                        {thiz.state.errors['valueLabel' + i]}
+                                    </Tooltip>
+                                    )}
+                                </Overlay>
                             </div>
                         </div>
                     </div>
@@ -152,21 +218,35 @@ class BarChart extends BaseChart {
                             <div className="form-group row">
                                 <label htmlFor="categoryColumn" className="col-4 col-form-label form-control-sm">Category series column</label>
                                 <div className="col-8">
-                                    <select id="categoryColumn" name="categoryColumn" className="form-control form-control-sm" 
+                                    <select id="categoryColumn" name="categoryColumn" ref="categoryColumn" className="form-control form-control-sm" 
                                         onChange={this.selectionChanged} disabled={this.state.readOnly} 
                                         value={this.state.categoryColumn ? this.state.categoryColumn : ''}>
                                         <option value="">-Select category column-</option>
                                         <option value="person">person</option>
                                         <option value="sales">sales</option>
                                     </select>
+                                    <Overlay target={this.refs.categoryColumn} show={this.state.errors.categoryColumn != null} placement="left">
+                                        {props => (
+                                        <Tooltip id="categoryColumn-tooltip" {...props} className="error-tooltip">
+                                            {this.state.errors.categoryColumn}
+                                        </Tooltip>
+                                        )}
+                                    </Overlay>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="categoryLabel" className="col-4 col-form-label form-control-sm">Category series label</label>
                                 <div className="col-8">
-                                    <input type="text" id="categoryLabel" name="categoryLabel" className="form-control form-control-sm" 
+                                    <input type="text" id="categoryLabel" name="categoryLabel" ref="categoryLabel" className="form-control form-control-sm" 
                                         onChange={this.inputChanged} readOnly={this.state.readOnly} onBlur={this.textFieldChanged} 
                                         value={this.state.categoryLabel ? this.state.categoryLabel : ''}/>
+                                    <Overlay target={this.refs.categoryLabel} show={this.state.errors.categoryLabel != null} placement="left">
+                                        {props => (
+                                        <Tooltip id="categoryLabel-tooltip" {...props} className="error-tooltip">
+                                            {this.state.errors.categoryLabel}
+                                        </Tooltip>
+                                        )}
+                                    </Overlay>
                                 </div>
                             </div>
                             { getValueSeriesContent() }
