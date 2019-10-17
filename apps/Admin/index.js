@@ -34,32 +34,32 @@ const register = (core, args, options, metadata) => {
     })
     .on("destroy", () => proc.destroy())
     .on("resized", config => {
-        event = new CustomEvent("windowResize", {
-          detail: config,
-          bubbles: true,
-          cancelable: true
-        });
-        window.setTimeout(
-          () =>
-            document
-              .getElementsByClassName("Window_Admin")[0]
-              .dispatchEvent(event),
-          0
-        );
+      event = new CustomEvent("windowResize", {
+        detail: config,
+        bubbles: true,
+        cancelable: true
+      });
+      window.setTimeout(
+        () =>
+          document
+            .getElementsByClassName("Window_Admin")[0]
+            .dispatchEvent(event),
+        0
+      );
     })
     .on("maximize", config => {
-        event = new CustomEvent("windowResize", {
-          detail: config.state.dimension,
-          bubbles: true,
-          cancelable: true
-        });
-        window.setTimeout(
-          () =>
-            document
-              .getElementsByClassName("Window_Admin")[0]
-              .dispatchEvent(event),
-          0
-        );
+      event = new CustomEvent("windowResize", {
+        detail: config.state.dimension,
+        bubbles: true,
+        cancelable: true
+      });
+      window.setTimeout(
+        () =>
+          document
+            .getElementsByClassName("Window_Admin")[0]
+            .dispatchEvent(event),
+        0
+      );
     })
     .render($content => ReactDOM.render(<Home args={core} />, $content));
 
