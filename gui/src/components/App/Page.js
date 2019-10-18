@@ -69,21 +69,25 @@ class Page extends React.Component {
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
-      actionButtons.push(
-        <abbr title={action[key].name} key={index}>
-          <button
-            type="button"
-            className=" btn manage-btn k-grid-edit-command"
-            onClick={() => this.buttonAction(action[key], e)}
-          >
-            {action[key].icon ? (
-              <i className={action[key].icon + " manageIcons"}></i>
-            ) : (
-              action[key].name
-            )}
-          </button>
-        </abbr>
-      );
+      var string = this.replaceParams(action[key].rule, e);
+      var showButton = eval(string);
+      showButton
+        ? actionButtons.push(
+            <abbr title={action[key].name} key={index}>
+              <button
+                type="button"
+                className=" btn manage-btn k-grid-edit-command"
+                onClick={() => this.buttonAction(action[key], e)}
+              >
+                {action[key].icon ? (
+                  <i className={action[key].icon + " manageIcons"}></i>
+                ) : (
+                  action[key].name
+                )}
+              </button>
+            </abbr>
+          )
+        : null;
     }, this);
     return actionButtons;
   }
