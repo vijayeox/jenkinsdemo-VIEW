@@ -55,7 +55,7 @@ window.onDialogEvent = function(dialogEvent) {
         break;
         case 'ok':
             //Reject 'ok' button click if user input validation fails.
-            if (window.widgetEditorApp.hasUserInputErrors()) {
+            if (window.widgetEditorApp.hasUserInputErrors(true)) {
                 throw 'There are validation errors in the input fields. Request the user to correct the errors before clicking "OK" to close the dialog.';
             }
             let widgetEditorApp = window.widgetEditorApp;

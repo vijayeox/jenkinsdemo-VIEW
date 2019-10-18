@@ -14,6 +14,7 @@ class WidgetEditorApp extends React.Component {
     constructor(props) {
         super(props);
         this.widgetList = [];
+        this.queryList = [];
         let editor = props.editor;
         let widgetConfiguration = editor.plugins.oxzion.getWidgetConfiguration(editor);
         this.state = {
@@ -23,10 +24,11 @@ class WidgetEditorApp extends React.Component {
                 type: null
             },
             widgetName:'',
+            querySelection:'',
             errors : {
             },
             readOnly:true,
-            disableWidgetSelection: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
+            isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
     }
 
@@ -79,6 +81,14 @@ class WidgetEditorApp extends React.Component {
         this.loadWidget(widgetId);
     }
 
+    querySelectionChanged = (queryUuid) => {
+        this.setState((state) => {
+            state.querySelection = queryUuid;
+            return state;
+        });
+        this.refs.widget.queryChanged(queryUuid);
+    }
+
     copyWidget = (e) => {
         this.makeReadOnly(false);
     }
@@ -96,8 +106,21 @@ class WidgetEditorApp extends React.Component {
             catch(function(response) {
                 Swal.fire({
                     type: 'error',
-                    title: 'Widgets not found',
-                    text: 'Please configure few widget(s) and try again.'
+                    title: 'Oops ...',
+                    text: 'Failed to load widgets. Please try after some time.'
+                });
+            });
+
+        window.postDataRequest('analytics/query').
+            then(function(response) {
+                thiz.queryList = response.data;
+                thiz.forceUpdate();
+            }).
+            catch(function(response) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops ...',
+                    text: 'Failed to load queries. Please try after some time.'
                 });
             });
 
@@ -124,8 +147,8 @@ class WidgetEditorApp extends React.Component {
         });
     }
 
-    validateWidgetName = (e) => {
-        let widgetName = e.target.value;
+    validateWidgetName = () => {
+        let widgetName = this.state.widgetName;
         if (widgetName) {
             widgetName = widgetName.trim();
         }
@@ -158,6 +181,22 @@ class WidgetEditorApp extends React.Component {
         }
     }
 
+    validateQuerySelection = () => {
+        let querySelection = this.state.querySelection;
+        if (!querySelection || ('' === querySelection)) {
+            this.setErrorMessage('querySelection', 'Query should be selected');
+        }
+        else {
+            this.setErrorMessage('querySelection', null);
+        }
+    }
+
+    validateAllFields = () => {
+        this.validateWidgetName();
+        this.validateQuerySelection();
+        this.refs.widget.validateAllFields();
+    }
+
     //Called in globalFunctions.js
     getWidgetStateForCkEditorPlugin() {
         let widget = this.state.widget;
@@ -170,16 +209,21 @@ class WidgetEditorApp extends React.Component {
 
     //Called in globalFunctions.js
     saveWidget = () => {
+        let state = this.state;
         let params = {
-            'uuid':this.state.widget.uuid,
-            'configuration':JSON.stringify(this.state.widget.configuration),
-            'name':this.state.widgetName
+            'uuid':state.widget.uuid,
+            'configuration':JSON.stringify(state.widget.configuration),
+            'name':state.widgetName
         };
+        if (state.querySelection && ('' != state.querySelection)) {
+            params['query_uuid'] = state.querySelection;
+        }
         return window.postDataRequest('analytics/widget', params, 'post');
     }
 
     //Called in globalFunctions.js to ensure data is clean when the user clicks "Ok" button of dialog.
-    hasUserInputErrors = () => {
+    hasUserInputErrors = (displayMessageOnError) => {
+        this.validateAllFields();
         var errors = this.state.errors;
         var errorsFound = false;
         for (let [key, value] of Object.entries(errors)) {
@@ -188,12 +232,17 @@ class WidgetEditorApp extends React.Component {
                 break;
             }
         }
+        if (!errorsFound) {
+            errorsFound = this.refs.widget.hasUserInputErrors();
+        }
         if (errorsFound) {
-            return true;
+            Swal.fire({
+                type: 'info',
+                title: 'Input error',
+                text: 'Form fields have errors. Please resolve errors and try again.'
+            });
         }
-        else {
-            return this.refs.widget.hasUserInputErrors();
-        }
+        return errorsFound;
     }
 
     //Called in globalFunctions.js to detect whether the chart has been edited.
@@ -203,10 +252,16 @@ class WidgetEditorApp extends React.Component {
 
     render() {
         let htmlWidgetOptions = this.widgetList.map((widget, index) => {
-                return (
-                    <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
-                )
-            });
+            return (
+                <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
+            )
+        });
+
+        let htmlQueryOptions = this.queryList.map((query, index) => {
+            return (
+                <option key={query.uuid} value={query.uuid}>{query.name}</option>
+            )
+        });
 
         return (
             <form className="widget-editor-form">
@@ -217,7 +272,7 @@ class WidgetEditorApp extends React.Component {
                     <div className="col-4">
                         <select id="selectWidget" name="selectWidget" className="form-control form-control-sm" placeholder="Select widget" 
                             value={this.state.widget.uuid ? this.state.widget.uuid : ''} onChange={this.widgetSelectionChanged} 
-                            disabled={this.state.disableWidgetSelection}>
+                            disabled={this.state.isPreLoadedWidget}>
                             <option key="" value="">-Select widget-</option>
                             {htmlWidgetOptions}
                         </select>
@@ -229,16 +284,36 @@ class WidgetEditorApp extends React.Component {
                         </button>
                         }
                     </div>
-                    <div className="col-2 right-align">
-                    {!this.state.readOnly && this.state.widget.uuid && 
-                            <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
-                    }
+                    <div className="col-6">&nbsp;</div>
+                </div>
+                <div className="form-group row">
+                    <div className="col-1 right-align">
+                        <label htmlFor="selectQuery" className="right-align col-form-label form-control-sm">Query</label>
                     </div>
                     <div className="col-4">
-                    {!this.state.readOnly && this.state.widget.uuid && 
+                        <select id="querySelection" name="querySelection" ref="querySelection" className="form-control form-control-sm" placeholder="Select query" 
+                            value={this.state.querySelection ? this.state.querySelection : ''} onChange={(e) => {this.querySelectionChanged(e.target.value)}}
+                            onBlur={this.validateQuerySelection} disabled={this.state.readOnly}>
+                            <option key="" value="">-Select query-</option>
+                            {htmlQueryOptions}
+                        </select>
+                        <Overlay target={this.refs.querySelection} show={this.state.errors.querySelection != null} placement="bottom">
+                            {props => (
+                            <Tooltip id="querySelection-tooltip" {...props} className="error-tooltip">
+                                {this.state.errors.querySelection}
+                            </Tooltip>
+                            )}
+                        </Overlay>
+                    </div>
+                    <div className="col-1">&nbsp;</div>
+                    <div className="col-2 right-align">
+                        <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
+                    </div>
+                    <div className="col-4">
                         <>
                         <input type="text" id="widgetName" name="widgetName"  ref="widgetName" className="form-control form-control-sm" 
-                            onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.validateWidgetName}/>
+                            onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.validateWidgetName}
+                            disabled={this.state.readOnly}/>
                         <Overlay target={this.refs.widgetName} show={this.state.errors.widgetName != null} placement="bottom">
                             {props => (
                             <Tooltip id="widgetName-tooltip" {...props} className="error-tooltip">
@@ -247,21 +322,24 @@ class WidgetEditorApp extends React.Component {
                             )}
                         </Overlay>
                         </>
-                    }
                     </div>
                 </div>
                 <div className="row">
                     {(this.state.widget.type === 'barChart') && 
-                        <BarChart ref="widget" widget={this.state.widget} updateWidgetState={this.updateWidgetState}/>
+                        <BarChart ref="widget" widget={this.state.widget} 
+                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
                     }
                     {(this.state.widget.type === 'lineChart') && 
-                        <LineChart ref="widget" widget={this.state.widget} updateWidgetState={this.updateWidgetState}/>
+                        <LineChart ref="widget" widget={this.state.widget} 
+                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
                     }
                     {(this.state.widget.type === 'pieChart') && 
-                        <PieChart ref="widget" widget={this.state.widget} updateWidgetState={this.updateWidgetState}/>
+                        <PieChart ref="widget" widget={this.state.widget} 
+                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
                     }
                     {(this.state.widget.type === 'inline') && 
-                        <AggregateValue ref="widget" widget={this.state.widget} updateWidgetState={this.updateWidgetState}/>
+                        <AggregateValue ref="widget" widget={this.state.widget} 
+                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
                     }
                 </div>
             </form>

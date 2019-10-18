@@ -107,6 +107,18 @@ class BarChart extends BaseChart {
 
     render() {
         let thiz = this;
+
+        function dataSetColumns(keySeed) {
+            let i=0;
+            let options = [];
+            thiz.state.dataSetColumns.map((item, key) => {
+                options.push(
+                    <option key={'' + keySeed + '-' + i++} value={item.value}>{item.label}</option>
+                );
+            });
+            return options;
+        }
+
         function getValueSeriesContent() {
             let valueSeriesContent = [];
             for (let i=0; i < thiz.state.seriesCount; i++) {
@@ -119,8 +131,7 @@ class BarChart extends BaseChart {
                                     onChange={thiz.selectionChanged} disabled={thiz.state.readOnly} 
                                     value={thiz.state['valueColumn' + i] ? thiz.state['valueColumn' + 0] : ''} key={'04-' + i}>
                                     <option value="" key={'05-' + i}>-Select value column-</option>
-                                    <option value="person" key={'06-' + i}>person</option>
-                                    <option value="sales" key={'07-' + i}>sales</option>
+                                    { dataSetColumns('series-' + i) }
                                 </select>
                                 <Overlay target={thiz.refs['valueColumn' + i]} show={thiz.state.errors['valueColumn' + i] != null} placement="left">
                                     {props => (
@@ -222,8 +233,7 @@ class BarChart extends BaseChart {
                                         onChange={this.selectionChanged} disabled={this.state.readOnly} 
                                         value={this.state.categoryColumn ? this.state.categoryColumn : ''}>
                                         <option value="">-Select category column-</option>
-                                        <option value="person">person</option>
-                                        <option value="sales">sales</option>
+                                        { dataSetColumns('category') }
                                     </select>
                                     <Overlay target={this.refs.categoryColumn} show={this.state.errors.categoryColumn != null} placement="left">
                                         {props => (

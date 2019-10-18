@@ -9,7 +9,9 @@ class BaseChart extends React.Component {
         super(props);
         this.state = props.widget;
         this.state.errors = {};
+        this.state.dataSetColumns = [];
         this.chart = null;
+        this.queryUuid = null;
     }
 
     graphConfigurationToState = () => {
@@ -32,6 +34,29 @@ class BaseChart extends React.Component {
             }
         }
         return errorsFound;
+    }
+
+    validateAllFields = () => {
+        if (!this.refs) {
+            return;
+        }
+        for (let [key, value] of Object.entries(this.refs)) {
+            if ((value.tagName === 'INPUT') || 
+                (value.tagName === 'SELECT')) {
+                this.validateUserInput(value.name, value.value);
+            }
+            else {
+                console.debug(`Did not validate ref "${key}" having tag name "${value.tagName}"`);
+            }
+        }
+    }
+
+    //Called by widgetEditorApp when the user selects a query.
+    queryChanged = (queryUuid) => {
+        if (this.queryUuid != queryUuid) {
+            this.queryUuid = queryUuid;
+            this.loadQuery();
+        }
     }
 
     setErrorMessage = (key, message) => {
@@ -69,7 +94,6 @@ class BaseChart extends React.Component {
             thiz.stateToGraphConfiguration();
             thiz.draw();
         });
-
     }
 
     selectionChanged = (e) => {
@@ -102,6 +126,46 @@ class BaseChart extends React.Component {
         });
     }
 
+    detectDataSetColumns = (dataSet) => {
+        if (!dataSet) {
+            this.setState((state) => {
+                state.dataSetColumns = [];
+                return state;
+            });
+            return;
+        }
+        let columnsMap = {};
+        if (dataSet && dataSet.forEach) { //dataSet.forEach checks whether dataSet is an array.
+            dataSet.forEach(function(item, index, array) {
+                if (item) {
+                    for (let [column, value] of Object.entries(item)) {
+                        columnsMap[column] = true;
+                    }
+                }
+            });
+        }
+        let options = [];
+        for (let[column, flag] of Object.entries(columnsMap)) {
+            options.push({
+                value:column, 
+                label:column
+            });
+        }
+        options.sort(function(a, b) {
+            if (a.label < b.label) {
+                return -1;
+            }
+            if (a.label > b.label) {
+                return 1;
+            }
+            return 0;
+        });
+        this.setState((state) => {
+            state.dataSetColumns = options;
+            return state;
+        });
+    }
+
     draw = () => {
         if (this.chart) {
             this.chart.dispose();
@@ -118,11 +182,29 @@ class BaseChart extends React.Component {
         }
 
         let thiz = this;
+        //IMPORTANT: We cannot look at this.queryUuid and decide to load/not load the data with widget
+        //because it depends on the widget's query_uuid value. Therefore we should always load data 
+        //with the widget and then decide to separately load query data only if this.queryUuid does not
+        //match widget.query_uuid.
         window.postDataRequest(`analytics/widget/${this.state.uuid}?data=true`).
             then(function(response) {
-                thiz.state = response.widget;
+                //We don't want ReactJs to detect state change and invoke render cycle. We draw widget preview ourselves.
+                //That is why state is assigned like this (instead of calling this.setState).
+                thiz.state = response.widget; 
                 thiz.graphConfigurationToState();
-                thiz.draw();
+                let queryUuid = response.widget.query_uuid;
+                if (!thiz.queryUuid || ('' === thiz.queryUuid)) {
+                    thiz.queryUuid = queryUuid; //Assigned here to avoid thiz.queryChanged to invoke loadQuery.
+                    thiz.props.querySelectionChanged(queryUuid);
+                }
+                if (thiz.queryUuid === queryUuid) {
+                    let widgetData = response.widget.data;
+                    thiz.detectDataSetColumns(widgetData);
+                    thiz.draw();
+                }
+                else {
+                    thiz.loadQuery();
+                }
             }).
             catch(function(response) {
                 console.error(response);
@@ -130,6 +212,31 @@ class BaseChart extends React.Component {
                     type: 'error',
                     title: 'Oops ...',
                     text: 'Could not load widget. Please try after some time.'
+                });
+            });
+    }
+
+    loadQuery = () => {
+        if (!this.queryUuid || ('' === this.queryUuid)) {
+            this.state.data = null;
+            this.detectDataSetColumns(null);
+            this.draw();            
+            return;
+        }
+        let thiz = this;
+        window.postDataRequest(`analytics/query/${this.queryUuid}?data=true`).
+            then(function(response) {
+                let queryData = response.query.data;
+                thiz.state.data = queryData;
+                thiz.detectDataSetColumns(queryData);
+                thiz.draw();
+            }).
+            catch(function(response) {
+                console.error(response);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops ...',
+                    text: 'Could not load query data. Please try after some time.'
                 });
             });
     }
