@@ -119,7 +119,7 @@ class Packages {
     //The apps whose internal parameter is set true in metadata.json are not allowed for editing 
     for(var i=0;i<manifest.length;i++){
       if(!manifest[i].internal){
-        apps.push({uuid: manifest[i].uuid ? manifest[i].uuid : 'NULL',
+        apps.push({uuid: manifest[i].appId ? manifest[i].appId : 'NULL',
                    name : manifest[i].name,
                    category : manifest[i].category ? manifest[i].category : 'NULL',
                    isdefault : manifest[i].defaultAppforOrgs ? 1 : 0,

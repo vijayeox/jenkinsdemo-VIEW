@@ -21,7 +21,8 @@ class FormRender extends React.Component {
       data: this.props.data,
       page: this.props.page
     };
-    this.formDivID = "formio_" + this.props.formId ? this.props.formId : "123";
+    var formID= this.props.formId ? this.props.formId : "123";
+    this.formDivID = "formio_" + formID;
   }
 
   async callDelegate(delegate, params) {
@@ -80,6 +81,17 @@ class FormRender extends React.Component {
           method = "put";
         }
       }
+    } else if(this.state.workflowInstanceId){
+      route = "/workflowinstance/" + this.state.workflowInstanceId;
+      if (this.state.activityInstanceId) {
+        route =
+          "/workflowinstance/" +
+          this.state.workflowInstanceId +
+          "/activity/" +
+          this.state.activityInstanceId;
+        method = "post";
+      }
+      route = route + "/submit"
     } else {
       route =
         "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
@@ -277,7 +289,10 @@ class FormRender extends React.Component {
           console.log(response);
           this.setState({
             content: JSON.parse(response.template),
-            data: response.data
+            data: JSON.parse(response.data),
+            workflowInstanceId: response.workflow_instance_id,
+            activityInstanceId: response.activity_instance_id,
+            formId: response.form_id
           });
           this.createForm();
         })
