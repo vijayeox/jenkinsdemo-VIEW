@@ -59,7 +59,6 @@
     "@osjs/client": "^3.1.5",
     "@osjs/common": "^3.0.3",
     "@osjs/dialogs": "^3.0.15",
-    "@osjs/example-application": "^1.1.11",
     "@osjs/freedesktop-sounds": "^3.0.1",
     "@osjs/gui": "^4.0.25",
     "@osjs/panels": "^3.0.19",
