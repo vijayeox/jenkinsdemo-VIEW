@@ -1,5 +1,6 @@
 import "../../public/css/formstyles.scss";
 import { Formio } from "formiojs";
+import Notification from "../../Notification";
 import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
 import React from "react";
 import ConvergePayCheckoutComponent from './Form/Payment/ConvergePayCheckoutComponent';
@@ -17,10 +18,13 @@ class FormRender extends React.Component {
       activityId: this.props.activityId,
       instanceId: this.props.instanceId,
       formId: this.props.formId,
+      paymentDetails : null,
+      hasPayment: false,
       content: this.props.content,
       data: this.props.data,
       page: this.props.page
     };
+    this.notif = React.createRef();
     var formID= this.props.formId ? this.props.formId : "123";
     this.formDivID = "formio_" + formID;
   }
@@ -32,6 +36,37 @@ class FormRender extends React.Component {
       "/app/" + this.state.appId + "/delegate/" + delegate,
       params,
       "post"
+    );
+    return delegateData;
+  }
+  async callPayment(params) {
+    let helper = this.core.make("oxzion/restClient");
+    let delegateData = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/paymentgateway/initiate",
+      params,
+      "post"
+    );
+    return delegateData;
+  }
+  async storePayment(params) {
+    let helper = this.core.make("oxzion/restClient");
+    let delegateData = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/transaction/"+params.transaction_id+"/status",
+      params.data,
+      "post"
+      );
+    return delegateData;
+  }
+
+  async getPayment() {
+    let helper = this.core.make("oxzion/restClient");
+    let delegateData = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/paymentgateway",
+      {},
+      "get"
     );
     return delegateData;
   }
@@ -181,6 +216,38 @@ class FormRender extends React.Component {
           options.buttonSettings = {showCancel: eval(this.state.content['properties']['showCancel'])};  
         }
       }
+      var hooks = {
+        beforeNext: (currentPage, submission, next) => {
+          if(currentPage['properties']){
+            if(currentPage['properties']['payment_confirmation_page']){
+              that.getPayment()
+                  .then(response => {
+                    console.log(response);
+                    var responseArray = [];
+                    for (var responseDataItem in response.data) {
+                      if (response.data.hasOwnProperty(responseDataItem)) {
+                        responseArray[responseDataItem] =
+                          response.data[responseDataItem];
+                      }
+                    }
+                    if (response.data) {
+                      submission = { data: response.data };
+                    }
+                    next(null);
+                  });
+            } else {
+              next(null);
+            }
+          } else {
+            next(null);
+          }
+        },
+        beforeSubmit: (submission, next) => {
+          console.log(next)
+          next();
+        }
+      };
+      options.hooks = hooks;
       var formCreated = Formio.createForm(
         document.getElementById(this.formDivID),
         this.state.content,
@@ -193,7 +260,40 @@ class FormRender extends React.Component {
         form.on("prevPage", changed => that.setState({ page: changed.page }));
         form.on("nextPage", changed => that.setState({ page: changed.page }));
         form.on("submit", submission => that.saveForm(submission.data));
-        form.on("render", () => console.log(form));
+        form.on("render", () =>{
+          if(form._form['properties']){
+            if(form._form['properties']['payment_confirmation_page']){
+              var elements = document.getElementsByClassName("btn-wizard-nav-submit");
+              if(elements.length > 0){
+                elements[0].classList.add('invisible')
+              }
+              that.getPayment(form.submission.data).then(response => {
+                var responseArray = [];
+                if(response.data){
+                  var evt = new CustomEvent('paymentDetails', {detail: response.data[0]});
+                  window.dispatchEvent(evt);
+                }
+              });
+              window.addEventListener("requestPaymentToken", function(e){
+                e.preventDefault();
+                that.core.make('oxzion/splash').show();
+                that.callPayment({firstname:e.detail.firstname,lastname:e.detail.lastname,amount:e.detail.amount}).then(response => {
+                  var evt = new CustomEvent('getPaymentToken', {detail: response.data});
+                  window.dispatchEvent(evt);
+                  that.core.make('oxzion/splash').destroy();
+                });
+              });
+              window.addEventListener("paymentSuccess", function(e){
+                e.preventDefault();
+                that.core.make('oxzion/splash').show();
+                that.storePayment({transaction_id:e.detail.transaction_id,data:e.detail.data}).then(response => {
+                  that.saveForm(form.submission.data);
+                  that.core.make('oxzion/splash').destroy();
+                });
+              });
+            }
+          }
+        });
 
         form.on("change", function(changed) {
           console.log("Form was changed", changed);
@@ -262,7 +362,6 @@ class FormRender extends React.Component {
           }
         });
         form.on("callDelegate", changed => {
-          console.log(event);
           var component = form.getComponent(event.target.id);
           if (component) {
             var properties = component.component.properties;
@@ -315,7 +414,9 @@ class FormRender extends React.Component {
     }
   }
   render() {
-    return <div className="form-render" id={this.formDivID}></div>;
+    return <div>
+          <Notification ref={this.notif} />
+          <div className="form-render" id={this.formDivID}></div></div>;
   }
 }
 export default FormRender;
