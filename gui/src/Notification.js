@@ -78,6 +78,19 @@ class Notification extends React.Component {
       dismissable: { click: true }
     });
   }
+  stockNotification(title,message){
+    this.notificationDOMRef.current.addNotification({
+      title: title ? title : null,
+      message: message ? message : "Operation failed.",
+      type: "default",
+      insert: "top",
+      container: "bottom-right",
+      animationIn: ["animated", "bounceIn"],
+      animationOut: ["animated", "bounceOut"],
+      dismiss: { duration: 1000 },
+      dismissable: { click: true }
+    });
+  }
 
 
   customFailNotification(title, message) {

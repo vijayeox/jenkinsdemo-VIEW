@@ -13,6 +13,7 @@ class FormRender extends React.Component {
       form: null,
       appId: this.props.appId,
       workflowId: null,
+      cacheId: null,
       workflowInstanceId: this.props.workflowInstanceId,
       activityInstanceId: this.props.activityInstanceId,
       activityId: this.props.activityId,
@@ -93,6 +94,7 @@ class FormRender extends React.Component {
     return formContent;
   }
   async saveForm(data) {
+    this.core.make('oxzion/splash').show();
     let helper = this.core.make("oxzion/restClient");
     let route = "";
     let method = "post";
@@ -142,11 +144,14 @@ class FormRender extends React.Component {
         method = "put";
       }
     }
-    let response = await helper.request("v1", route, data, method);
-    if (response.status == "success") {
-      this.props.postSubmitCallback(data);
-    }
-    return response;
+    await helper.request("v1", route, data, method).then(response => {
+        that.core.make('oxzion/splash').destroy();
+      if (response.status == "success") {
+        return response;
+      } else {
+        return;
+      }
+    });
   }
 
   async getFormContents(url) {
@@ -258,8 +263,13 @@ class FormRender extends React.Component {
         }
         form.submission = { data: that.state.data };
         form.on("prevPage", changed => that.setState({ page: changed.page }));
-        form.on("nextPage", changed => that.setState({ page: changed.page }));
-        form.on("submit", submission => that.saveForm(submission.data));
+        form.on("nextPage", (changed) => {
+          console.log(that.state);
+          that.setState({ page: changed.page });
+        });
+        form.on("submit", submission => {
+          that.saveForm(submission.data)
+        });
         form.on("render", () =>{
           if(form._form['properties']){
             if(form._form['properties']['payment_confirmation_page']){
@@ -287,9 +297,28 @@ class FormRender extends React.Component {
                 e.preventDefault();
                 that.core.make('oxzion/splash').show();
                 that.storePayment({transaction_id:e.detail.transaction_id,data:e.detail.data}).then(response => {
-                  that.saveForm(form.submission.data);
-                  that.core.make('oxzion/splash').destroy();
+                that.notif.current.customSuccessNotification("Payment has been Successfully completed!","Please wait while we get things ready!");
+                  var formsave = that.saveForm(form.submission.data);
+                  if(formsave){
+                    that.notif.current.customSuccessNotification("Success!","Application Has been Successfully Submitted!");
+                    that.core.make('oxzion/splash').destroy();
+                  } else {
+                    that.notif.current.customFailNotification("Error",e.detail.message);
+                  }
                 });
+              });
+              window.addEventListener("paymentDeclined", function(e){
+                e.preventDefault();
+                that.notif.current.customFailNotification("Error",e.detail.message);
+              });
+              window.addEventListener("paymentError", function(e){
+                e.preventDefault();
+                that.notif.current.customFailNotification("Error",e.detail.message);
+              });
+              window.addEventListener("paymentPending", function(e){
+                that.core.make('oxzion/splash').show();
+                e.preventDefault();
+                that.notif.current.stockNotification("Information",e.detail.message);
               });
             }
           }
@@ -309,6 +338,7 @@ class FormRender extends React.Component {
             var properties = component.properties;
             if (properties) {
               if (properties["delegate"]) {
+                that.core.make('oxzion/splash').show();
                 that
                   .callDelegate(properties["delegate"], formdata.data)
                   .then(response => {
@@ -323,6 +353,7 @@ class FormRender extends React.Component {
                       form.submission = { data: response.data };
                       form.triggerChange();
                     }
+                    that.core.make('oxzion/splash').destroy();
                   });
               }
               if (properties["target"]) {
@@ -362,6 +393,7 @@ class FormRender extends React.Component {
           }
         });
         form.on("callDelegate", changed => {
+          that.core.make('oxzion/splash').show();
           var component = form.getComponent(event.target.id);
           if (component) {
             var properties = component.component.properties;
@@ -370,6 +402,7 @@ class FormRender extends React.Component {
                 that
                   .callDelegate(properties["delegate"], changed)
                   .then(response => {
+                    that.core.make('oxzion/splash').destroy();
                     if (response.data) {
                       form.submission = { data: response.data };
                       form.triggerChange();

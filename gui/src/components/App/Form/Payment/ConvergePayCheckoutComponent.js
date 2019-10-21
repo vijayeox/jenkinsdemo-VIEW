@@ -180,6 +180,7 @@ export default class ConvergePayCheckoutComponent extends BaseComponent {
       disableOnInvalid: false,
       action: 'button',
       block: 'false',
+      style: 'display:block',
       text: 'Confirm Order'
     }, this.t("Confirm Order"));
     confirmOrder.addEventListener("click",function(event){
@@ -259,11 +260,18 @@ export default class ConvergePayCheckoutComponent extends BaseComponent {
     paymentPanel.appendChild(convergepayToken);
     paymentPanel.appendChild(transactionId);
     paymentPanel.appendChild(merchanttxnid);
+    const successLabel = 'Payment successful';
+    var convergePaySuccess = this.ce('div', {
+      class: 'convergepay-success',
+      style: 'display: none'
+    }, this.t(successLabel));
+    paymentPanel.appendChild(convergePaySuccess);
     var paymentButton = this.ce('button', {
       class: 'btn btn-success',
       id: 'confirmOrder',
       label: 'Pay',
       action: 'submit',
+      style: 'display:block',
       text: 'Pay'
     }, this.t("Complete Application"));
     paymentButton.addEventListener("click",function(event){
@@ -290,11 +298,24 @@ export default class ConvergePayCheckoutComponent extends BaseComponent {
       };
       var callback = {
         onError: function (error) {
-          console.log("error"+error);
+          document.getElementById('cardPayment').style.display = 'none';
+          document.getElementById('confirmOrder').style.display = 'block';
+          document.getElementById('convergepay-firstname').disabled = false;
+          document.getElementById('convergepay-lastname').disabled = false;
+          document.getElementById('convergepay-token').value = "";
+          document.getElementById('transaction_id').value = "";
+          var evt = new CustomEvent('paymentError', {detail:{message: error}});
+          window.dispatchEvent(evt);
         },
         onDeclined: function (response) {
-          console.log("Result Message=" + response['ssl_result_message']);
-          console.log("declined"+JSON.stringify(response));
+          document.getElementById('cardPayment').style.display = 'none';
+          document.getElementById('confirmOrder').style.display = 'block';
+          document.getElementById('convergepay-firstname').disabled = false;
+          document.getElementById('convergepay-lastname').disabled = false;
+          document.getElementById('convergepay-token').value = "";
+          document.getElementById('transaction_id').value = "";
+          var evt = new CustomEvent('paymentDeclined', {detail:{message: response}});
+          window.dispatchEvent(evt);
         },
         onApproval: function (response) {
           console.log("Approval Code=" + response['ssl_approval_code']);
@@ -303,6 +324,8 @@ export default class ConvergePayCheckoutComponent extends BaseComponent {
           window.dispatchEvent(evt);
         }
       };
+      var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
+      window.dispatchEvent(evt);
       ConvergeEmbeddedPayment.pay(paymentData, callback);
     });
     var cardPayment = this.ce('div', {
