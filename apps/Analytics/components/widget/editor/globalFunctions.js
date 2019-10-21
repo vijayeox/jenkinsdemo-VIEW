@@ -7,8 +7,8 @@ class Deferred {
     constructor() {
         this.corrId = Deferred.generateUUID();
         this.promise = new Promise((resolve, reject)=> {
-            this.reject = reject;
-            this.resolve = resolve;
+            this.reject = reject; //Here this refers to Deferred instance's this, not Promise instance's this.
+            this.resolve = resolve; //Here this refers to Deferred instance's this, not Promise instance's this.
         });
         Deferred.deferredRegistry[this.corrId] = this;
         //console.log(Deferred.deferredRegistry);
@@ -52,33 +52,58 @@ window.onDialogEvent = function(dialogEvent) {
             //Dialog 'load' event contains reference to the editor opening this dialog.
             window.oxzionEditor = dialogEvent.editor;
             window.startWidgetEditorApp(window.oxzionEditor);
+            window.validationCompleted = false;
         break;
         case 'ok':
-            //Reject 'ok' button click if user input validation fails.
-            if (window.widgetEditorApp.hasUserInputErrors(true)) {
-                throw 'There are validation errors in the input fields. Request the user to correct the errors before clicking "OK" to close the dialog.';
+            console.debug(`window.validationCompleted : ${window.validationCompleted}`);
+            function closeDialogWindow(data) {
+                window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
+                window.validationCompleted = true;
+                let buttons = window.parent.document.getElementsByClassName('cke_dialog_ui_button_ok');
+                if (!buttons || (0 === buttons.length)) {
+                    console.error('Failed to locate CkEditor dialog close button.');
+                }
+                let button = buttons[0];
+                button.click();
             }
-            let widgetEditorApp = window.widgetEditorApp;
-            if (widgetEditorApp.isEdited()) {
-                widgetEditorApp.saveWidget().
-                    then(function(response) {
-                        let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
-                        data['id'] = response.newWidgetUuid;
-                        window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
-                    }).
-                    catch(function(response) {
-                        console.error(response);
-                        Swal.fire({
-                            type: 'error',
-                            title: 'Oops ...',
-                            text: 'Could not save the widget. Please try after some time.'
-                        });
-                        throw 'Could not save the widget. Please try after some time.';
-                    });
+
+            if (window.validationCompleted) {
+                return;
             }
             else {
-                let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
-                window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
+                let widgetEditorApp = window.widgetEditorApp;
+                widgetEditorApp.hasUserInputErrors(true).then(function(hasErrors) {
+                    console.debug(`hasUserInputErrors promise fulfilled with '${hasErrors}'`);
+                    if (hasErrors) {
+                        console.debug('User input has errors. Dont close the dialog.');
+                    }
+                    else {
+                        if (widgetEditorApp.isEdited()) {
+                            console.debug('Save widget and close the dialog if widget save is successful.');
+                            widgetEditorApp.saveWidget().
+                                then(function(response) {
+                                    let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
+                                    data['id'] = response.newWidgetUuid;
+                                    closeDialogWindow(data);
+                                }).
+                                catch(function(response) {
+                                    console.error(response);
+                                    Swal.fire({
+                                        type: 'error',
+                                        title: 'Oops ...',
+                                        text: 'Could not save the widget. Please try after some time.'
+                                    });
+                                    throw 'Could not save the widget. Please try after some time.';
+                                });
+                        }
+                        else {
+                            console.debug('No changes made in dialog. Just update widget state in the dashboard and close dialog.');
+                            let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
+                            closeDialogWindow(data);
+                        }
+                    }
+                });
+                throw 'Waiting for validation to complete and save widget. Threw exception to prevent dialog window closure.';
             }
         break;
     }

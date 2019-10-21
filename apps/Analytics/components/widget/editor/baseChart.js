@@ -11,20 +11,25 @@ class BaseChart extends React.Component {
         this.state.errors = {};
         this.state.dataSetColumns = [];
         this.chart = null;
-        this.queryUuid = null;
     }
 
     graphConfigurationToState = () => {
+        throw 'Abstract method. Child class should provide implementation.';
     }
-
+    
     stateToGraphConfiguration = () => {
+        throw 'Abstract method. Child class should provide implementation.';
     }
 
-    validateUserInput = (field, value) => {
+    isUserInputValid = (field, value) => {
+        throw 'Abstract method. Child class should provide implementation.';
     }
 
     //Called by widgetEditorApp.hasUserInputErrors
     hasUserInputErrors = () => {
+        if (this.areAllFieldsValid()) {
+            return false;
+        }
         var errors = this.state.errors;
         var errorsFound = false;
         for (let [key, value] of Object.entries(errors)) {
@@ -36,27 +41,23 @@ class BaseChart extends React.Component {
         return errorsFound;
     }
 
-    validateAllFields = () => {
+    areAllFieldsValid = () => {
         if (!this.refs) {
-            return;
+            console.debug('No field with "ref" attribute. Validation success.');
+            return true;
         }
+        let valid = true;
         for (let [key, value] of Object.entries(this.refs)) {
             if ((value.tagName === 'INPUT') || 
                 (value.tagName === 'SELECT')) {
-                this.validateUserInput(value.name, value.value);
+                valid = valid & this.isUserInputValid(value.name, value.value);
             }
             else {
                 console.debug(`Did not validate ref "${key}" having tag name "${value.tagName}"`);
             }
         }
-    }
-
-    //Called by widgetEditorApp when the user selects a query.
-    queryChanged = (queryUuid) => {
-        if (this.queryUuid != queryUuid) {
-            this.queryUuid = queryUuid;
-            this.loadQuery();
-        }
+        console.debug('Validation of all widget fields result:' + valid);
+        return valid;
     }
 
     setErrorMessage = (key, message) => {
@@ -107,7 +108,7 @@ class BaseChart extends React.Component {
         () => {
             thiz.updateWidgetState();
             thiz.stateToGraphConfiguration();
-            thiz.validateUserInput(name, value);
+            thiz.isUserInputValid(name, value);
             thiz.draw();
         });
     }
@@ -122,7 +123,7 @@ class BaseChart extends React.Component {
         },
         () => {
             thiz.updateWidgetState();
-            thiz.validateUserInput(name, value);
+            thiz.isUserInputValid(name, value);
         });
     }
 
@@ -173,80 +174,32 @@ class BaseChart extends React.Component {
         this.chart = ChartRenderer.render(document.querySelector('div#chartPreview'), this.state);
     }
 
-    loadWidget = () => {
-        //If state has widget and widget data we can assume parent had loaded the widget.
-        if (this.state && this.state.widget && this.state.widget.data) {
-            console.info('Widget data is already loaded.');
-            this.graphConfigurationToState();
+    setWidget = (widget) => {
+        if (!widget) {
             return;
         }
-
-        let thiz = this;
-        //IMPORTANT: We cannot look at this.queryUuid and decide to load/not load the data with widget
-        //because it depends on the widget's query_uuid value. Therefore we should always load data 
-        //with the widget and then decide to separately load query data only if this.queryUuid does not
-        //match widget.query_uuid.
-        window.postDataRequest(`analytics/widget/${this.state.uuid}?data=true`).
-            then(function(response) {
-                //We don't want ReactJs to detect state change and invoke render cycle. We draw widget preview ourselves.
-                //That is why state is assigned like this (instead of calling this.setState).
-                thiz.state = response.widget; 
-                thiz.graphConfigurationToState();
-                let queryUuid = response.widget.query_uuid;
-                if (!thiz.queryUuid || ('' === thiz.queryUuid)) {
-                    thiz.queryUuid = queryUuid; //Assigned here to avoid thiz.queryChanged to invoke loadQuery.
-                    thiz.props.querySelectionChanged(queryUuid);
-                }
-                if (thiz.queryUuid === queryUuid) {
-                    let widgetData = response.widget.data;
-                    thiz.detectDataSetColumns(widgetData);
-                    thiz.draw();
-                }
-                else {
-                    thiz.loadQuery();
-                }
-            }).
-            catch(function(response) {
-                console.error(response);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Could not load widget. Please try after some time.'
-                });
-            });
+        this.setState((state) => {
+            for (let[key, value] of Object.entries(widget)) {
+                state[key] = value;
+            }
+            return state;
+        },
+        () => {
+            this.graphConfigurationToState();
+        });
     }
 
-    loadQuery = () => {
-        if (!this.queryUuid || ('' === this.queryUuid)) {
-            this.state.data = null;
-            this.detectDataSetColumns(null);
-            this.draw();            
-            return;
-        }
-        let thiz = this;
-        window.postDataRequest(`analytics/query/${this.queryUuid}?data=true`).
-            then(function(response) {
-                let queryData = response.query.data;
-                thiz.state.data = queryData;
-                thiz.detectDataSetColumns(queryData);
-                thiz.draw();
-            }).
-            catch(function(response) {
-                console.error(response);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Could not load query data. Please try after some time.'
-                });
-            });
+    setWidgetData = (data) => {
+        this.state.data = data;
+        this.detectDataSetColumns(data);
+        this.draw();            
     }
 
     componentDidMount() {
-        this.loadWidget();
     }
 
     componentWillUnmount() {
-        if (this.chart) {
+        if (this.chart && this.chart.dispose) {
             this.chart.dispose();
         }
     }
