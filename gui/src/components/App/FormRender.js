@@ -3,6 +3,7 @@ import { Formio } from "formiojs";
 import Notification from "../../Notification";
 import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
 import React from "react";
+import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from './Form/Payment/ConvergePayCheckoutComponent';
 
 class FormRender extends React.Component {
@@ -269,6 +270,15 @@ class FormRender extends React.Component {
         });
         form.on("submit", submission => {
           that.saveForm(submission.data)
+        });
+        form.on("error", errors => {		
+          var elm = document.getElementsByClassName("alert-danger")[0];		
+          scrollIntoView(elm, {		
+            scrollMode: "if-needed",		
+            block: "center",		
+            behavior: "smooth",		
+            inline: "nearest"		
+          });		
         });
         form.on("render", () =>{
           if(form._form['properties']){
