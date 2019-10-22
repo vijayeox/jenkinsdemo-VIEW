@@ -11,7 +11,7 @@ class LineChart extends CategoryValueChart {
 
     graphConfigurationToState = () => {
         this.setState((state) => {
-            var configuration = this.state.configuration;
+            let configuration = this.state.configuration;
             //state.chartTitle = configuration.series[0].name;
             state.chartTitle = configuration.titles[0].text;
             state.categoryColumn = configuration.series[0].dataFields.categoryX;
@@ -27,7 +27,7 @@ class LineChart extends CategoryValueChart {
     }
 
     stateToGraphConfiguration = () => {
-        var configuration = this.state.configuration;
+        let configuration = this.state.configuration;
         configuration.series[0].name = this.state.chartTitle;
         configuration.titles[0].text = this.state.chartTitle;
         configuration.series[0].dataFields.categoryX = this.state.categoryColumn;
