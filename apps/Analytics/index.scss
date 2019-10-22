@@ -1,5 +1,6 @@
-.Window_AnalyticsWindow {
-	@import "./node_modules/bootstrap/dist/css/bootstrap.css";
+.Window_Analytics {
+    @import '~bootstrap/dist/css/bootstrap.css';
+    @import '~@fortawesome/fontawesome-free/css/all.css';
     @import "./components/burger-menu.css";
 }
 

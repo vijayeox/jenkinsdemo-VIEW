@@ -16,7 +16,6 @@ class DataSource extends React.Component {
     };
 
     this.props.setTitle(section.title.en_EN);
-    //this.onChangePage = this.onChangePage.bind(this);
   }
 
   onChangePage = (pageOfItems) => {

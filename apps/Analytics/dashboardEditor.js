@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Overlay, Tooltip} from 'react-bootstrap';
 import {dashboardEditor as section} from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 import ChartRenderer from './components/chartRenderer';
@@ -14,14 +15,19 @@ class DashboardEditor extends React.Component {
         this.core = this.props.args;
         this.state = {
             dashboardId : (props.dashboardId ? props.dashboardId : null),
+            dashboardName: '',
+            dashboardDescription:'',
             version: -1,
             contentChanged : false,
-            editorMode : 'initial'
+            editorMode : 'initial',
+            errors: {}
         };
-        let thisInstance = this;
         this.renderedCharts = {};        
         this.props.setTitle(section.title.en_EN);
         this.restClient = osjs.make('oxzion/restClient');
+        this.editor = null;
+
+        let thisInstance = this;
         this.editorDialogMessageHandler = function(event) {
             let editorDialog = event.source;
             let eventData = event.data;
@@ -40,6 +46,16 @@ class DashboardEditor extends React.Component {
                     console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
         };
+    }
+
+    inputChanged = (e) => {
+        let thiz = this;
+        let name = e.target.name;
+        let value = e.target.value;
+        this.setState({
+            [name]:value,
+            contentChanged:true
+        });
     }
 
     //---------------------------------------------------------------------------------------
@@ -88,6 +104,7 @@ class DashboardEditor extends React.Component {
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo( 'ckEditorInstance', config );
+        this.editor = editor;
         let thisInstance = this;
         editor.on('instanceReady', function(event) {
             thisInstance.getDashboard(editor);
@@ -141,11 +158,11 @@ class DashboardEditor extends React.Component {
     }
 
     saveDashboard = () => {
-        let ckEditorInstance = CKEDITOR.instances['editor1'];
         let params = {
-            'content':ckEditorInstance.getData(),
-            'uuid':this.state.dashboardId,
-            'version':this.state.version
+            'content':this.editor.getData(),
+            'version':this.state.version,
+            'name':this.state.dashboardName,
+            'description':this.state.dashboardDescription
         };
         let url = 'analytics/dashboard';
         let method = '';
@@ -159,17 +176,17 @@ class DashboardEditor extends React.Component {
         let thisInstance = this;
         this.doRestRequest(url, params, method, 
             function(response) {
-                thisInstance.setState({
+                let updateState = {
                     contentChanged : false
-                });
-                if (!thisInstance.state.dashboardId) {
-                    thisInstance.setState({
-                        dashboardId : response.dashboard.uuid
-                    });
+                };
+                if (thisInstance.state.dashboardId) { //Case of updating existing dashboard.
+                    updateState.version = response.dashboard.version;
                 }
-                thisInstance.setState({
-                    version : response.dashboard.version
-                });
+                if (!thisInstance.state.dashboardId) {
+                    updateState.version = 0;
+                    updateState.dashboardId = response.dashboard.uuid;
+                }
+                thisInstance.setState(updateState);
             }, 
             function(response) {
                 let versionChanged = false;
@@ -194,8 +211,11 @@ class DashboardEditor extends React.Component {
         if (this.state.dashboardId) {
             this.doRestRequest('analytics/dashboard/' + this.state.dashboardId, {}, 'get', 
                 function(response) {
+                    let dashboard = response.dashboard;
                     thisInstance.setState({
-                        version:response.dashboard.version
+                        version:dashboard.version,
+                        dashboardName:dashboard.name,
+                        dashboardDescription:dashboard.description
                     });
                     editor.setData(response.dashboard.content);
                 }, 
@@ -318,23 +338,57 @@ class DashboardEditor extends React.Component {
             }
         }
         window.removeEventListener('message', this.editorDialogMessageHandler, false);
-        let ckEditorInstance = CKEDITOR.instances['editor1'];
-        if (ckEditorInstance) {
-            ckEditorInstance.destroy();
+        if (this.editor) {
+            this.editor.destroy();
         }
         JavascriptLoader.unloadScript(this.getJsLibraryList());
     }
 
     render() {
         return(
-            <div className="dashboard">
-                <button type="button" className="btn btn-primary" style={{float:'right'}} onClick={this.saveDashboard} disabled={!this.state.contentChanged}>
-                    Save
-                </button>
-                <br/><br/><br/>
-                <div id="ckEditorInstance" style={{height:'calc(100%)'}}>
+            <form className="dashboard-editor-form">
+                <div className="form-group row">
+                    <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
+                    <div className="col-2">
+                        <>
+                        <input type="text" id="dashboardName" name="dashboardName"  ref="dashboardName" className="form-control form-control-sm" 
+                            onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
+                            disabled={false}/>
+                        <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
+                            {props => (
+                            <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
+                                {this.state.errors.dashboardName}
+                            </Tooltip>
+                            )}
+                        </Overlay>
+                        </>
+                    </div>
+                    <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
+                    <div className="col-4">
+                        <>
+                        <input type="text" id="dashboardDescription" name="dashboardDescription"  ref="dashboardDescription" className="form-control form-control-sm" 
+                            onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
+                            disabled={false}/>
+                        <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
+                            {props => (
+                            <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
+                                {this.state.errors.dashboardDescription}
+                            </Tooltip>
+                            )}
+                        </Overlay>
+                        </>
+                    </div>
+                    <div className="col-1">
+                        <button type="button" className="btn btn-primary" style={{float:'right'}} onClick={this.saveDashboard} disabled={!this.state.contentChanged}>
+                            Save
+                        </button>
+                    </div>
                 </div>
-            </div>
+                <div className="dashboard">
+                    <div id="ckEditorInstance" style={{height:'calc(100%)'}}>
+                    </div>
+                </div>
+            </form>
         );
     }
 }

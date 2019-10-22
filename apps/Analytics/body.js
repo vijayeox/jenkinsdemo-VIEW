@@ -21,44 +21,22 @@ class Body extends React.Component {
     this.core = this.props.args;
     this.state = {
       isMenuOpen: false,
-      displaySection: SECTION_EDIT_DASHBOARD,
+      displaySection: SECTION_DASHBOARD,
+      sectionData: null,
       title:''
     };
   }
 
-  dataSourceClicked = (e) => {
+  switchSection = (section, data) => {
     this.hideMenu();
     this.setState({
-        displaySection: SECTION_DATA_SOURCE
-    });
-  };
-
-  queryClicked = (e) => {
-    this.hideMenu();
-    this.setState({
-        displaySection: SECTION_QUERY
+        displaySection: section,
+        sectionData: data
     });
   }
 
-  visualizationClicked = (e) => {
-    this.hideMenu();
-    this.setState({
-        displaySection: SECTION_VISUALIZATION
-    });
-  }
-
-  dashboardClicked = (e) => {
-    this.hideMenu();
-    this.setState({
-      displaySection: SECTION_DASHBOARD
-    })
-  }
-
-  editDashboardClicked = (e) => {
-    this.hideMenu();
-    this.setState({
-      displaySection: SECTION_EDIT_DASHBOARD
-    })
+  editDashboard = (data) => {
+    this.switchSection(SECTION_EDIT_DASHBOARD, data);
   }
 
   hideMenu = () => {
@@ -106,10 +84,10 @@ class Body extends React.Component {
         sectionContent = <Visualization args={this.core} setTitle={this.setTitle}/>;
       break;
       case SECTION_DASHBOARD:
-        sectionContent = <Dashboard args={this.core} setTitle={this.setTitle}/>;
+        sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard}/>;
       break;
       case SECTION_EDIT_DASHBOARD:
-        sectionContent = <DashboardEditor args={this.core} setTitle={this.setTitle} dashboardId={'c6318742-b9f9-4a18-abce-7a7fbbac8c8b'}/>;
+        sectionContent = <DashboardEditor args={this.core} setTitle={this.setTitle} dashboardId={this.state.sectionData}/>;
       break;
     }
 
@@ -118,11 +96,11 @@ class Body extends React.Component {
             <Menu isOpen={this.state.isMenuOpen} onStateChange={this.handleMenuStateChange} 
                 disableAutoFocus width="20%" 
                 outerContainerId="page-body" pageWrapId="page-content">
-                <a className="menu-item" onClick={this.dataSourceClicked}>Data Source</a>
-                <a className="menu-item" onClick={this.queryClicked}>Query</a>
-                <a className="menu-item" onClick={this.visualizationClicked}>Visualization</a>
-                <a className="menu-item" onClick={this.dashboardClicked}>Dashboard</a>
-                <a className="menu-item" onClick={this.editDashboardClicked}>Dashboard Editor</a>
+                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_DATA_SOURCE, null)}}>Data Source</a>
+                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_QUERY, null)}}>Query</a>
+                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_VISUALIZATION, null)}}>Visualization</a>
+                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_DASHBOARD, null)}}>Dashboard</a>
+                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_EDIT_DASHBOARD, null)}}>Dashboard Editor</a>
             </Menu>
             <div className="page-title full-width">{this.state.title}</div>
             <div className="page-content full-width" id="page-content">
