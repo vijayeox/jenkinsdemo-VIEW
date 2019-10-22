@@ -169,22 +169,7 @@ class AggregateValue extends React.Component {
                         </div>
                         <div className="card-body">
                             <div className="form-group row">
-                                <label htmlFor="dataColumn" className="col-4 col-form-label form-control-sm">Data column</label>
-                                <div className="col-8">
-                                    <select id="dataColumn" name="dataColumn" ref="dataColumn" className="form-control form-control-sm" 
-                                        onChange={this.selectionChanged} disabled={this.state.readOnly} 
-                                        value={this.state.dataColumn ? this.state.dataColumn : ''}>
-                                        <option value="">-Select data column-</option>
-                                        { dataSetColumns() }
-                                    </select>
-                                    <Overlay target={this.refs.dataColumn} show={this.state.errors.dataColumn != null} placement="left">
-                                        {props => (
-                                        <Tooltip id="dataColumn-tooltip" {...props} className="error-tooltip">
-                                            {this.state.errors.dataColumn}
-                                        </Tooltip>
-                                        )}
-                                    </Overlay>
-                                </div>
+                                <em>No editable properties for this widget.</em>
                             </div>
                         </div>
                     </div>
