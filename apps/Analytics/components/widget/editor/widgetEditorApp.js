@@ -64,23 +64,12 @@ class WidgetEditorApp extends React.Component {
                     }
                 });
 
-                let queryUuid = widget.query_uuid;
-                if (!thiz.state.querySelection || ('' === thiz.state.querySelection)) {
-                    thiz.setState({
-                        querySelection : queryUuid
-                    },
-                    () => {
-                        thiz.refs.widget.setWidgetData(widget.data);
-                    });
-                }
-                else {
-                    if (thiz.state.querySelection === queryUuid) {
-                        thiz.refs.widget.setWidgetData(widget.data);
-                    }
-                    else {
-                        thiz.loadQuery();
-                    }
-                }
+                thiz.setState({
+                    querySelection : widget.query_uuid
+                },
+                () => {
+                    thiz.refs.widget.setWidgetData(widget.data);
+                });
                 thiz.makeReadOnly(true);
             }).
             catch(function(responseData) {
