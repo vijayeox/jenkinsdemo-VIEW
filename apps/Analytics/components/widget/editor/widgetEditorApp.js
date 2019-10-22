@@ -84,6 +84,8 @@ class WidgetEditorApp extends React.Component {
                 thiz.makeReadOnly(true);
             }).
             catch(function(responseData) {
+                console.error('Could not load widget.');
+                console.error(responseData);
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',
@@ -288,7 +290,7 @@ class WidgetEditorApp extends React.Component {
         let widget = this.state.widget;
         return {
             align: widget.align,
-            type: widget.type === 'aggregate' ? 'inline' : 'block',
+            type: (widget.type === 'aggregate' || widget.type === 'inline') ? 'inline' : 'block',
             id: widget.uuid
         };
     }
@@ -373,7 +375,7 @@ class WidgetEditorApp extends React.Component {
                         </select>
                     </div>
                     <div className="col-1">
-                        {this.state.widget.uuid && (this.state.widget.type !== 'inline') && 
+                        {this.state.widget.uuid && 
                         <button type="button" className="btn btn-primary add-series-button" title="Copy widget" onClick={this.copyWidget}>
                             <span className="fa fa-copy" aria-hidden="true"></span>
                         </button>
