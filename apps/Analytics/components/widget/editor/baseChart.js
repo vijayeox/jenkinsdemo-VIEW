@@ -168,7 +168,7 @@ class BaseChart extends React.Component {
     }
 
     draw = () => {
-        if (this.chart) {
+        if (this.chart && this.chart.dispose) {
             this.chart.dispose();
         }
         this.chart = ChartRenderer.render(document.querySelector('div#chartPreview'), this.state);
