@@ -28,6 +28,9 @@ class FormRender extends React.Component {
     };
     this.notif = React.createRef();
     var formID= this.props.formId ? this.props.formId : "123";
+    if(this.props.cacheId){
+      this.setState({ cacheId: this.props.cacheId });
+    }
     this.formDivID = "formio_" + formID;
   }
 
@@ -60,6 +63,49 @@ class FormRender extends React.Component {
       "post"
       );
     return delegateData;
+  }
+  async getCacheData() {
+    let cacheData = await this.helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/cache",
+      {},
+      "get"
+    );
+    return cacheData;
+  }
+
+  async storeCache(params) {
+    let helper = this.core.make("oxzion/restClient");
+    var route = "/app/" + this.state.appId + "/storecache";
+    if(this.state.cacheId){
+      route = route + "/" + this.state.cacheId;
+    }
+    params.formId = this.state.formId;
+    await helper.request(
+      "v1",
+      route,
+      params,
+      "post"
+      ).then(response => {
+        this.setState({ cacheId: response.data.id});
+        return response;
+      });
+  }
+  async deleteCacheData() {
+    var route = "/app/" + this.state.appId + "/deletecache";
+    if(this.state.cacheId){
+      route = route + "/" + this.state.cacheId;
+    }
+    let cacheData = await this.helper.request(
+      "v1",
+      route,
+      {},
+      "delete"
+    ).then(response => {
+        this.setState({ cacheId: null});
+        return response;
+      });
+    return cacheData;
   }
 
   async getPayment() {
@@ -146,8 +192,9 @@ class FormRender extends React.Component {
       }
     }
     await helper.request("v1", route, data, method).then(response => {
-        that.core.make('oxzion/splash').destroy();
+      this.core.make('oxzion/splash').destroy();
       if (response.status == "success") {
+        this.deleteCacheData;
         return response;
       } else {
         return;
@@ -224,32 +271,12 @@ class FormRender extends React.Component {
       }
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
-          if(currentPage['properties']){
-            if(currentPage['properties']['payment_confirmation_page']){
-              that.getPayment()
-                  .then(response => {
-                    console.log(response);
-                    var responseArray = [];
-                    for (var responseDataItem in response.data) {
-                      if (response.data.hasOwnProperty(responseDataItem)) {
-                        responseArray[responseDataItem] =
-                          response.data[responseDataItem];
-                      }
-                    }
-                    if (response.data) {
-                      submission = { data: response.data };
-                    }
-                    next(null);
-                  });
-            } else {
-              next(null);
-            }
-          } else {
-            next(null);
-          }
+          console.log(submission.data)
+          that.storeCache(submission.data);
+          next(null);
         },
         beforeSubmit: (submission, next) => {
-          console.log(next)
+          console.log(next);
           next();
         }
       };
@@ -271,16 +298,24 @@ class FormRender extends React.Component {
         form.on("submit", submission => {
           that.saveForm(submission.data)
         });
-        form.on("error", errors => {		
+        form.on("error", errors => {
+          console.log(errors);
           var elm = document.getElementsByClassName("alert-danger")[0];		
           scrollIntoView(elm, {		
-            scrollMode: "if-needed",		
-            block: "center",		
-            behavior: "smooth",		
-            inline: "nearest"		
-          });		
+            scrollMode: "if-needed",
+            block: "center",
+            behavior: "smooth",
+            inline: "nearest"
+          });
         });
         form.on("render", () =>{
+          var elm = document.getElementsByClassName("breadcrumbParent")[0];   
+          scrollIntoView(elm, {   
+            scrollMode: "if-needed",
+            block: "center",
+            behavior: "smooth",
+            inline: "nearest"
+          });
           if(form._form['properties']){
             if(form._form['properties']['payment_confirmation_page']){
               var elements = document.getElementsByClassName("btn-wizard-nav-submit");
@@ -290,25 +325,31 @@ class FormRender extends React.Component {
               that.getPayment(form.submission.data).then(response => {
                 var responseArray = [];
                 if(response.data){
+                  console.log(response.data[0])
                   var evt = new CustomEvent('paymentDetails', {detail: response.data[0]});
                   window.dispatchEvent(evt);
                 }
               });
               window.addEventListener("requestPaymentToken", function(e){
-                e.preventDefault();
+                e.stopPropagation();
                 that.core.make('oxzion/splash').show();
                 that.callPayment({firstname:e.detail.firstname,lastname:e.detail.lastname,amount:e.detail.amount}).then(response => {
+                  var transactionIdComponent = form.getComponent("transaction_id");
+                  transactionIdComponent.setValue(response.data.transaction.id);
                   var evt = new CustomEvent('getPaymentToken', {detail: response.data});
                   window.dispatchEvent(evt);
                   that.core.make('oxzion/splash').destroy();
                 });
-              });
+              },true);
               window.addEventListener("paymentSuccess", function(e){
-                e.preventDefault();
+                e.stopPropagation();
                 that.core.make('oxzion/splash').show();
-                that.storePayment({transaction_id:e.detail.transaction_id,data:e.detail.data}).then(response => {
+                var transactionIdComponent = form.getComponent("transaction_id");
+                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data,status:e.detail.status}).then(response => {
                 that.notif.current.customSuccessNotification("Payment has been Successfully completed!","Please wait while we get things ready!");
                   var formsave = that.saveForm(form.submission.data);
+                  var transactionStatusComponent = form.getComponent("transaction_status");
+                  transactionStatusComponent.setValue(e.detail.status);
                   if(formsave){
                     that.notif.current.customSuccessNotification("Success!","Application Has been Successfully Submitted!");
                     that.core.make('oxzion/splash').destroy();
@@ -316,20 +357,31 @@ class FormRender extends React.Component {
                     that.notif.current.customFailNotification("Error",e.detail.message);
                   }
                 });
-              });
+              },true);
               window.addEventListener("paymentDeclined", function(e){
-                e.preventDefault();
-                that.notif.current.customFailNotification("Error",e.detail.message);
-              });
+                e.stopPropagation();
+                console.log(e.detail);
+                var transactionIdComponent = form.getComponent("transaction_id");
+                console.log
+                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data}).then(response => {
+                  that.notif.current.customFailNotification("Error",e.detail.message);
+                  that.core.make('oxzion/splash').destroy();
+                });
+              },true);
               window.addEventListener("paymentError", function(e){
-                e.preventDefault();
-                that.notif.current.customFailNotification("Error",e.detail.message);
-              });
+                e.stopPropagation();
+                console.log(e.detail);
+                var transactionIdComponent = form.getComponent("transaction_id");
+                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data}).then(response => {
+                  that.notif.current.customFailNotification("Error",e.detail.message);
+                  that.core.make('oxzion/splash').destroy();
+                });
+              },true);
               window.addEventListener("paymentPending", function(e){
                 that.core.make('oxzion/splash').show();
-                e.preventDefault();
+                e.stopPropagation();
                 that.notif.current.stockNotification("Information",e.detail.message);
-              });
+              },true);
             }
           }
         });
