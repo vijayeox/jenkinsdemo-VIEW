@@ -71,6 +71,16 @@ class Page extends React.Component {
     Object.keys(action).map(function(key, index) {
       var string = this.replaceParams(action[key].rule, e);
       var showButton = eval(string);
+      var buttonStyles = action[key].icon
+        ? {
+            width: "2.2rem"
+          }
+        : {
+            width: "auto",
+            paddingTop: "5px",
+            color:"white",
+            fontWeight:"600"
+          };
       showButton
         ? actionButtons.push(
             <abbr title={action[key].name} key={index}>
@@ -78,6 +88,7 @@ class Page extends React.Component {
                 type="button"
                 className=" btn manage-btn k-grid-edit-command"
                 onClick={() => this.buttonAction(action[key], e)}
+                style={buttonStyles}
               >
                 {action[key].icon ? (
                   <i className={action[key].icon + " manageIcons"}></i>
