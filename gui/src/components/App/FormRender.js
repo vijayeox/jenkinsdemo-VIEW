@@ -26,6 +26,7 @@ class FormRender extends React.Component {
       data: this.props.data,
       page: this.props.page
     };
+    this.helper= this.core.make("oxzion/restClient");
     this.notif = React.createRef();
     var formID= this.props.formId ? this.props.formId : "123";
     if(this.props.cacheId){
@@ -192,10 +193,14 @@ class FormRender extends React.Component {
       }
     }
     await helper.request("v1", route, data, method).then(response => {
-      this.core.make('oxzion/splash').destroy();
+      this.core.make("oxzion/splash").destroy();
       if (response.status == "success") {
-        this.deleteCacheData;
-        return response;
+        this.deleteCacheData().then(response2 => {
+          if(response2.status=="success"){
+            this.props.postSubmitCallback();
+          }
+          return response;
+        });
       } else {
         return;
       }
@@ -309,13 +314,17 @@ class FormRender extends React.Component {
           });
         });
         form.on("render", () =>{
-          var elm = document.getElementsByClassName("breadcrumbParent")[0];   
-          scrollIntoView(elm, {   
-            scrollMode: "if-needed",
-            block: "center",
-            behavior: "smooth",
-            inline: "nearest"
-          });
+          var elm = document.getElementsByClassName("breadcrumbParent");
+          if(elm.length > 0){
+            console.log(elm[0]);
+            
+            scrollIntoView(elm[0], {   
+              scrollMode: "if-needed",
+              block: "center",
+              behavior: "smooth",
+              inline: "nearest"
+            });
+          }
           if(form._form['properties']){
             if(form._form['properties']['payment_confirmation_page']){
               var elements = document.getElementsByClassName("btn-wizard-nav-submit");
