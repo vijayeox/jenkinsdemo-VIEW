@@ -223,6 +223,11 @@ class Page extends React.Component {
             data[i].url,
             this.state.currentRow
           );
+          // This workflow instance id corresponds to completed workflow instance
+          var workflowInstanceId = this.replaceParams(
+            data[i].workflow_instance_id,
+            this.state.currentRow
+          );          
           content.push(
             <FormRender
               key={i}
@@ -232,6 +237,7 @@ class Page extends React.Component {
               content={data[i].content}
               formId={data[i].form_id}
               config={this.menu}
+              parentWorkflowInstanceId={workflowInstanceId}
             />
           );
           break;
