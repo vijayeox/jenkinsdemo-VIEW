@@ -16,6 +16,7 @@ class FormRender extends React.Component {
       workflowId: null,
       cacheId: null,
       workflowInstanceId: this.props.workflowInstanceId,
+      parentWorkflowInstanceId:this.props.parentWorkflowInstanceId,
       activityInstanceId: this.props.activityInstanceId,
       activityId: this.props.activityId,
       instanceId: this.props.instanceId,
@@ -130,6 +131,19 @@ class FormRender extends React.Component {
     );
     return pageContent;
   }
+
+  async getFileData() {
+    // call to api using wrapper
+    let helper = this.core.make("oxzion/restClient");
+    let fileData = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/workflowInstance/" + this.props.parentWorkflowInstanceId,
+      {},
+      "get"
+    );
+    return fileData;
+  }
+
   async getActivity() {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
@@ -142,7 +156,7 @@ class FormRender extends React.Component {
     return formContent;
   }
   async saveForm(data) {
-    this.core.make('oxzion/splash').show();
+    // this.core.make('oxzion/splash').show();
     let helper = this.core.make("oxzion/restClient");
     let route = "";
     let method = "post";
@@ -218,10 +232,29 @@ class FormRender extends React.Component {
       this.getWorkflow().then(response => {
         if (response.status == "success" && response.data.workflow_id) {
           this.setState({ workflowId: response.data.workflow_id });
-          this.setState({ activityId: response.data.activity_id });
-          if (!this.state.content) {
-            this.setState({ content: response.data.template });
+          if(response.data.activity_id){
+            this.setState({ activityId: response.data.activity_id });
           }
+          if (!this.state.content) {
+            console.log(response.data);
+            this.setState({ content: JSON.parse(response.data.template)});
+          }
+          // this.setState({ data: JSON.parse(response.data.data) });
+          this.setState({ formDivID:'formio_'+this.state.formId});
+          this.createForm();
+        }
+      });
+    }
+    if(this.props.parentWorkflowInstanceId){
+      this.getFileData().then(response => {
+        if (response.status == "success") {
+          let fileData = JSON.parse(response.data.data);
+          console.log(fileData.workflowInstanceId);
+          fileData.parentWorkflowInstanceId = fileData.workflowInstanceId;
+          fileData.workflowInstanceId = undefined;
+          fileData.activityId = undefined;
+          this.setState({ data:  fileData});
+          this.setState({ formDivID:'formio_'+this.state.formId});
           this.createForm();
         }
       });
@@ -291,7 +324,7 @@ class FormRender extends React.Component {
         this.state.content,
         options
       ).then(function(form) {
-        if (that.state.page) {
+        if (that.state.page && form.type=='Wizard') {
           form.setPage(that.state.page);
         }
         form.submission = { data: that.state.data };
