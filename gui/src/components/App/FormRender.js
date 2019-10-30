@@ -359,6 +359,19 @@ class FormRender extends React.Component {
             });
           }
           if(form._form['properties']){
+            if(form._form['properties']['delegate']){
+              if (form._form['properties']['delegate']) {
+                that
+                .callDelegate(form._form['properties']['delegate'], form.data)
+                .then(response => {
+                  that.core.make('oxzion/splash').destroy();
+                  if (response.data) {
+                    form.submission = { data: response.data };
+                    form.triggerChange();
+                  }
+                });
+              }
+            }
             if(form._form['properties']['payment_confirmation_page']){
               var elements = document.getElementsByClassName("btn-wizard-nav-submit");
               if(elements.length > 0){
