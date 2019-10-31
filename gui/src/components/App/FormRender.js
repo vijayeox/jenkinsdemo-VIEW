@@ -330,8 +330,21 @@ class FormRender extends React.Component {
         form.submission = { data: that.state.data };
         form.on("prevPage", changed => that.setState({ page: changed.page }));
         form.on("nextPage", (changed) => {
-          console.log(that.state);
           that.setState({ page: changed.page });
+          console.log(form.pages[changed.page])
+          if(form.pages[changed.page]['properties']['delegate']){
+            if (form.pages[changed.page]['properties']['delegate']) {
+              that
+              .callDelegate(form.pages[changed.page]['properties']['delegate'], form.data)
+              .then(response => {
+                that.core.make('oxzion/splash').destroy();
+                if (response.data) {
+                  form.submission = { data: response.data };
+                  form.triggerChange();
+                }
+              });
+            }
+          }
         });
         form.on("submit", submission => {
           that.saveForm(submission.data)
