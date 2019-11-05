@@ -324,8 +324,10 @@ class FormRender extends React.Component {
         this.state.content,
         options
       ).then(function(form) {
-        if (that.state.page && form.type=='Wizard') {
-          form.setPage(that.state.page);
+        if (that.state.page && form.wizard) {
+          if(form.wizard.display=='wizard'){
+            form.setPage(that.state.page);
+          }
         }
         form.submission = { data: that.state.data };
         form.on("prevPage", changed => that.setState({ page: changed.page }));
