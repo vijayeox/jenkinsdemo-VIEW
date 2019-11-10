@@ -225,7 +225,7 @@ class Page extends React.Component {
           );
           // This workflow instance id corresponds to completed workflow instance
           var workflowInstanceId = this.replaceParams(
-            data[i].workflow_instance_id,
+            data[i].workflowInstanceId,
             this.state.currentRow
           );          
           content.push(

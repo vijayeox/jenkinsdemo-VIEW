@@ -250,7 +250,7 @@ class FormRender extends React.Component {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
           console.log(fileData.workflowInstanceId);
-          fileData.parentWorkflowInstanceId = fileData.workflowInstanceId;
+          fileData.parentWorkflowInstanceId = this.props.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
           this.setState({ data:  fileData});
@@ -389,9 +389,9 @@ class FormRender extends React.Component {
             }
             if(form._form['properties']['payment_confirmation_page']){
               var elements = document.getElementsByClassName("btn-wizard-nav-submit");
-              if(elements.length > 0){
-                elements[0].classList.add('invisible')
-              }
+              // if(elements.length > 0){
+              //   elements[0].classList.add('invisible')
+              // }
               that.getPayment(form.submission.data).then(response => {
                 var responseArray = [];
                 if(response.data){
