@@ -93,6 +93,15 @@ class FormRender extends React.Component {
         return response;
       });
   }
+  async storeError(data) {
+    let helper = this.core.make("oxzion/restClient");
+    let route = "/app/" + this.state.appId + "/error";
+    let params = {};
+    params.type='form';
+    params.payload = JSON.stringify({cache_id:this.state.cacheId,app_id:this.state.appId,formId:this.state.formId,workflowId:this.state.workflowId});
+    let response = await helper.request("v1",route,params,"post");
+    return 
+  }
   async deleteCacheData() {
     var route = "/app/" + this.state.appId + "/deletecache";
     if(this.state.cacheId){
@@ -216,6 +225,12 @@ class FormRender extends React.Component {
           return response;
         });
       } else {
+        this.storeCache(data).then(response =>{
+          this.storeError(data).then(response => {
+            console.log(data);
+          });
+        });
+        this.notif.current.customFailNotification("Error","Form Submission Failed");
         return;
       }
     });
@@ -405,9 +420,13 @@ class FormRender extends React.Component {
                 that.core.make('oxzion/splash').show();
                 that.callPayment({firstname:e.detail.firstname,lastname:e.detail.lastname,amount:e.detail.amount}).then(response => {
                   var transactionIdComponent = form.getComponent("transaction_id");
-                  transactionIdComponent.setValue(response.data.transaction.id);
-                  var evt = new CustomEvent('getPaymentToken', {detail: response.data});
-                  window.dispatchEvent(evt);
+                  if(response.data.transaction.id && response.data.token){
+                    transactionIdComponent.setValue(response.data.transaction.id);
+                    var evt = new CustomEvent('getPaymentToken', {detail: response.data});
+                    window.dispatchEvent(evt);
+                  } else {
+                    that.notif.current.customFailNotification("Error",'Transaction Token Failed!');
+                  }
                   that.core.make('oxzion/splash').destroy();
                 });
               },true);
