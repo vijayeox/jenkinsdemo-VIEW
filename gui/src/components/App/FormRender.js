@@ -93,11 +93,12 @@ class FormRender extends React.Component {
         return response;
       });
   }
-  async storeError(data) {
+  async storeError(data,error) {
     let helper = this.core.make("oxzion/restClient");
-    let route = "/app/" + this.state.appId + "/error";
+    let route = "/error";
     let params = {};
     params.type='form';
+    params.errorTrace = JSON.stringify(error);
     params.payload = JSON.stringify({cache_id:this.state.cacheId,app_id:this.state.appId,formId:this.state.formId,workflowId:this.state.workflowId});
     let response = await helper.request("v1",route,params,"post");
     return 
@@ -225,12 +226,13 @@ class FormRender extends React.Component {
           return response;
         });
       } else {
-        this.storeCache(data).then(response =>{
-          this.storeError(data).then(response => {
-            console.log(data);
-          });
+        this.storeCache(data).then(cacheResponse =>{
+          if(response.data.errors){
+            this.storeError(data,response.data.errors).then(storeErrorResponse => {
+              this.notif.current.customFailNotification("Error","Form Submission Failed");
+            });
+          }
         });
-        this.notif.current.customFailNotification("Error","Form Submission Failed");
         return;
       }
     });
