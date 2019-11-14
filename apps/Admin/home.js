@@ -7,6 +7,7 @@ import User from "./modules/User";
 import Group from "./modules/Group";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
+import Errorlog from "./modules/Errorlog";
 import { slide as Menu } from "react-burger-menu";
 
 class Home extends React.Component {
@@ -110,6 +111,7 @@ class Home extends React.Component {
     ];
     let table = [];
 
+
     appsList.map((currentValue, index) => {
       table.push(
         this.userProfile.privileges["MANAGE_" + currentValue.api + "_READ"] ? (
@@ -138,6 +140,12 @@ class Home extends React.Component {
     });
     table.push(
       <React.Fragment key={15}>
+          <div onClick={this.errorLogAdminClick}>
+            <div className="block d1">
+              <img src="apps/Admin/org.svg" />
+            </div>
+            <div className="titles">Errorlog</div>
+          </div>
         {this.userProfile.privileges.MANAGE_EMAIL_READ ? (
           <div key={10} onClick={this.mailAdminClick}>
             <div className="block d1">
@@ -169,6 +177,18 @@ class Home extends React.Component {
     this.hideMenu();
     this.core.run("CRMAdmin");
   };
+
+  errorLogAdminClick = e => {
+    this.hideMenu();
+    ReactDOM.render(
+    React.createElement(Errorlog, {
+      args: this.core,
+      userProfile: this.userProfile,
+      menu: this.showMenu
+    }),
+    document.getElementById("componentsBox")
+    );
+  }
 
   render() {
     return (
