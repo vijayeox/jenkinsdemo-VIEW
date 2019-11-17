@@ -1,8 +1,7 @@
 .osjs-window[data-id=CalendarWindow] {
     .osjs-window-button[data-action=minimize] > div {
         background-position: 50% 50%;
-        background-color: #c75050;
-        background-image: url('./close.png');
+        background-image: url('./close.svg');
     }
     // Changing the Icon cursor from Pointer to Auto
     .osjs-window-icon > div {
@@ -12,6 +11,6 @@
 .osjs-window[data-id=CalendarWindow] {
 
 .osjs-window-icon{
-  background-color: #fab131;
+//   background-color: #fab131;
 }
 }

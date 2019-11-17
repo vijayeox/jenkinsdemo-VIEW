@@ -1,6 +1,6 @@
 import React from "react";
 import { Upload } from "@progress/kendo-react-upload";
-import { Notification } from "../index";
+import Notification  from "./Notification";
 
 class FileUploader extends React.Component {
   constructor(props) {
@@ -103,10 +103,12 @@ class FileUploader extends React.Component {
             ) : (
               <div className={"img-preview static-url"}>
                 {this.state.render_media_type == "image" ? (
-                  <img src={this.state.filePreviewSourceURL} />
+                  <img
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
+                  />
                 ) : (
                   <video
-                    src={this.state.filePreviewSourceURL}
+                    src={this.state.filePreviewSourceURL +"?" + new Date()}
                     alt={"image preview"}
                     controls
                     id="video"
@@ -141,7 +143,7 @@ class FileUploader extends React.Component {
                 }
                 restrictions={{
                   allowedExtensions: [".jpg", ".jpeg", ".png", ".mp4"],
-                  maxFileSize: 20000000
+                  maxFileSize: 20971520
                 }}
                 defaultFiles={[]}
                 onAdd={this.fileSelectedEvent}
@@ -151,7 +153,9 @@ class FileUploader extends React.Component {
               />
               <ul>
                 <li className="pt-3 pr-4">Image Formats supported: JPG, PNG</li>
+                 {this.props.media_type !== "image" ? (
                 <li className="pt-3 pr-4">Video Format supported: MP4</li>
+              ) : null}
                 <li className="pt-3 pr-4">Max file size allowed: 20 MB</li>
               </ul>
             </div>

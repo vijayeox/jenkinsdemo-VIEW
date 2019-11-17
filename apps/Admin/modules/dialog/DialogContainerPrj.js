@@ -1,20 +1,39 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "@oxzion/gui";
-import { PushData } from "../components/apiCalls";
+import { Notification } from "../../GUIComponents";
+import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
-import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
     this.state = {
-      prjInEdit: this.props.dataItem || null
+      prjInEdit: this.props.dataItem || null,
+      managerName: undefined
     };
     this.notif = React.createRef();
+  }
+
+  UNSAFE_componentWillMount() {
+    if (this.props.formAction == "put") {
+      GetSingleEntityData(
+        "organization/" +
+          this.props.selectedOrg +
+          "/user/" +
+          this.props.dataItem.manager_id +
+          "/profile"
+      ).then(response => {
+        this.setState({
+          managerName: {
+            id: "111",
+            name: response.data.name
+          }
+        });
+      });
+    }
   }
 
   onDialogInputChange = event => {
@@ -36,6 +55,11 @@ export default class DialogContainer extends React.Component {
     this.setState({
       prjInEdit: edited
     });
+    item == "manager_id"
+      ? this.setState({
+          managerName: event.target.value
+        })
+      : null;
   };
 
   sendData = e => {
@@ -73,7 +97,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i class="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">
@@ -115,7 +139,7 @@ export default class DialogContainer extends React.Component {
                       mainList={
                         "organization/" + this.props.selectedOrg + "/users"
                       }
-                      selectedItem={this.state.prjInEdit.manager_id}
+                      selectedItem={this.state.managerName}
                       preFetch={true}
                       onDataChange={event =>
                         this.listOnChange(event, "manager_id")

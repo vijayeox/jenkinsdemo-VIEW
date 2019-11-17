@@ -45,11 +45,11 @@ export const en_EN = {
   ERR_WINDOW_ID_EXISTS: 'Window with ID \'{0}\' already exists',
   ERR_INVALID_LOCALE: 'Invalid locale \'{0}\'',
   LBL_CONNECTION_LOST: 'Connection Lost',
-  LBL_CONNECTION_LOST_MESSAGE: 'The connection to the OX Zion was lost. Reconnecting...',
+  LBL_CONNECTION_LOST_MESSAGE: 'The connection to EOS was lost. Reconnecting...',
   LBL_CONNECTION_RESTORED: 'Connection Restored',
-  LBL_CONNECTION_RESTORED_MESSAGE: 'The connection to the OX Zion server was restored.',
+  LBL_CONNECTION_RESTORED_MESSAGE: 'The connection to EOS server was restored.',
   LBL_CONNECTION_FAILED: 'Connection Failed',
-  LBL_CONNECTION_FAILED_MESSAGE: 'The connection to the OX Zion could not be established. Some features might not work properly.',
+  LBL_CONNECTION_FAILED_MESSAGE: 'The connection to EOS could not be established. Some features might not work properly.',
 
   // Application categories
   LBL_APP_CAT_DEVELOPMENT: 'Development',

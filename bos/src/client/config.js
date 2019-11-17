@@ -37,21 +37,24 @@ module.exports = {
   development:"production",
   auth: {
     ui: {
-      title: 'Welcome to OX Zion',
+      title: 'Welcome to EOS',
       logo: {
         position: 'top',
-        src: require('./assets/images/OXZion.png')
+        src: require('./assets/images/wallpaper.png')
       }
     }
   },
   wrapper: {
       url: "http://localhost:8080/",
   },
+  search:{
+    enabled: false
+  },
   desktop: {
     settings: {
       theme: "Vision",
       icons: "oxzioniconpack",
-      font: "Century Gothic",
+      font: "Lato",
       background: {
         src: undefined,
         style: 'cover'
@@ -62,7 +65,8 @@ module.exports = {
           {name: 'menu'},
           {name: 'windows'},
           {name: 'tray'},
-          {name: 'profile'}
+          {name: 'profile'},
+          {name:'logout'}
         ]
       }],
     }

@@ -186,10 +186,10 @@ class Background extends Component {
         <Notification ref={this.notif} />
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-md-4">
+            <div className="col-4">
               <label id="imageLabel">Image:</label>
             </div>
-            <div className="col-md-4 imagediv">
+            <div className="col-4 imagediv">
               <div className="image" id="image">
                 {this.state.imageSrc}{" "}
                 <button
@@ -203,16 +203,14 @@ class Background extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-md-4">
+            <div className="col-4">
               <label id="styleLabel">Style:</label>
             </div>
-            <div className="col-md-4 backgroundStylediv">
+            <div className="col-4 backgroundStylediv">
               <select
                 value={this.state.styleName}
                 onChange={this.handleChange}
                 name="desktop.background.style"
-                className="backgroundStyle"
-                id="backgroundStyle"
               >
                 {this.styleList.map((style, key) => (
                   <option key={key} value={style.value}>
@@ -224,23 +222,22 @@ class Background extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-md-4">
+            <div className="col-4">
               <label id="colorLabel">Color:</label>
             </div>
-            <div className="col-md-4 colordiv">
+            <div className="col-4 colordiv">
               <input
                 type="color"
                 value={this.state.colorCode}
                 onChange={this.handleChange}
                 name="desktop.background.color"
-                className="color"
-                id="color"
+                className="colorPicker"
               />
             </div>
           </div>
 
           <div className="row">
-            <div className="col-md-12 input-field">
+            <div className="col-12 input-field">
               <button className="k-button k-primary" type="submit">
                 Save
               </button>

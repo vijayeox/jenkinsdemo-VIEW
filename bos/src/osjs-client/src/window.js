@@ -260,7 +260,7 @@ const transformVectors = (rect, {width, height}, {top, left}) => {
  * Default window template
  */
 const TEMPLATE = `<div class="osjs-window-inner">
-  <div class="osjs-window-header">
+  <div class="osjs-window-header pl10">
     <div class="osjs-window-icon">
       <div></div>
     </div>

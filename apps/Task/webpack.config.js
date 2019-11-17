@@ -66,8 +66,14 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader'
-        }
+          loader: 'babel-loader',        
+          options: {
+            presets: [
+              require.resolve("@babel/preset-react"),
+              require.resolve("@babel/preset-env")
+            ]
+	  }
+      	}
       }
     ]
   }

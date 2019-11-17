@@ -130,7 +130,7 @@ OSjs.make('osjs/packages').register('Calendar', (core, args, options, metadata) 
         if (core.has('osjs/tray') && !trayInitialized) {
           trayInitialized = true;
           trayOptions.title = "Calendar";
-          trayOptions.icon = proc.resource(metadata.icon);
+          trayOptions.icon = proc.resource(metadata.icon_white);
           trayOptions.onclick = () => {
             win.raise();
             HeaderIcon();

@@ -1,8 +1,9 @@
 import React from "react";
 import { TitleBar } from "./components/titlebar";
-import { GridTemplate, Notification, MultiSelect } from "@oxzion/gui";
+import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerAnnounc";
+import Swal from 'sweetalert2';
 
 class Announcement extends React.Component {
   constructor(props) {
@@ -29,10 +30,10 @@ class Announcement extends React.Component {
     let addGroups = await helper.request(
       "v1",
       "organization/" +
-        this.state.selectedOrg +
-        "/announcement/" +
-        dataItem +
-        "/save",
+      this.state.selectedOrg +
+      "/announcement/" +
+      dataItem +
+      "/save",
       {
         groups: dataObject
       },

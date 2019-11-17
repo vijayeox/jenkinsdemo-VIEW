@@ -1,11 +1,10 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "@oxzion/gui";
+import { Notification } from "../../GUIComponents";
 import { PushData, GetSingleEntityData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
 import { Input } from "@progress/kendo-react-inputs";
-import { FaUserLock } from "react-icons/fa";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -13,8 +12,8 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.state = {
       groupInEdit: this.props.dataItem || null,
-      managerName: [],
-      parentGroupName: []
+      managerName: null,
+      parentGroupName: null
     };
     this.notif = React.createRef();
   }
@@ -35,19 +34,21 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
-      GetSingleEntityData(
-        "organization/" +
-          this.props.selectedOrg +
-          "/group/" +
-          this.props.dataItem.parent_id
-      ).then(response => {
-        this.setState({
-          parentGroupName: {
-            id: "111",
-            name: response.data.name
-          }
-        });
-      });
+      this.props.dataItem.parent_id
+        ? GetSingleEntityData(
+            "organization/" +
+              this.props.selectedOrg +
+              "/group/" +
+              this.props.dataItem.parent_id
+          ).then(response => {
+            this.setState({
+              parentGroupName: {
+                id: "111",
+                name: response.data.name
+              }
+            });
+          })
+        : null;
     }
   }
 
@@ -124,7 +125,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i className="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">

@@ -184,6 +184,10 @@ class App extends React.Component {
       DeleteSelectedContacts(this.state.selectedContactsUUID).then(response => {
         if (response.status == "success") {
           this.notif.current.successNotification("Contacts deleted.");
+          this.setState({
+            selectedContactsUUID: []
+          });
+          this.getContact();
         } else {
           this.notif.current.failNotification(
             "Operation failed" + response.message

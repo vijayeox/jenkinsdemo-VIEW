@@ -1,11 +1,12 @@
 .Window_Preferences {
   @import "./public/scss/notifTheme.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
-  @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+  @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
-  font-family: 'Roboto';
+  @import "./node_modules/react-phone-number-input/style.css";
+  font-family: "Roboto";
 
-  .input-field>label {
+  .input-field > label {
     font-size: 16px;
     color: #333 !important;
     margin-top: 3px !important;
@@ -22,14 +23,37 @@
     margin-top: 5px;
   }
 
+  .tabLayout {
+    width: 100%;
+    // border-bottom: solid 10px #333333;
+    // border-top: solid 10px #333333;
+    background-color: #333333;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    button:hover {
+      color: #f3b340;
+    }
+    button {
+      flex-grow: 1;
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      border: solid 3px #333333;
+      border-bottom: solid 10px #333333;
+      border-top: solid 10px #333333;
+      flex-direction: row;
+      align-items: center;
+      span {
+        font-size: 1rem;
+        padding-left: 0.5rem;
+        font-family: "Raleway", Arial, sans-serif;
+      }
+    }
+  }
 
   .rwt__tabs[data-rwt-vertical="true"] {
     display: flex;
-  }
-
-  .rwt__tablist:not([aria-orientation="vertical"]) {
-    border-bottom: 1px solid #ddd;
-    position: relative;
   }
 
   .rwt__tablist[aria-orientation="vertical"] {
@@ -50,7 +74,7 @@
     padding-left: 5px;
     transition: background 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 
-    >i {
+    > i {
       padding-left: 10px;
       padding-right: 10px;
     }
@@ -72,23 +96,26 @@
     position: absolute;
   }
 
-  .rwt__tablist:not([aria-orientation="vertical"]) .rwt__tab[aria-selected="true"]:after {
-    bottom: -1px;
+  .rwt__tablist:not([aria-orientation="vertical"])
+    .rwt__tab[aria-selected="true"]:after {
+    bottom: -9px;
+    // border-radius: 55px;
     left: 0;
     width: 100%;
-    border-bottom: 3px solid #FFFFFF;
+    border-bottom: 2.5px solid #ecececfc;
+    transform: scaleY(1.5);
   }
 
-  .rwt__tablist[aria-orientation="vertical"] .rwt__tab[aria-selected="true"]:after {
+  .rwt__tablist[aria-orientation="vertical"]
+    .rwt__tab[aria-selected="true"]:after {
     right: -1px;
     top: 0;
     height: 100%;
-    border-right: 3px solid #FFFFFF;
+    border-right: 3px solid #ffffff;
   }
 
   .rwt__tabs {
     height: 100%;
-    position: fixed;
     width: 100%;
   }
 
@@ -217,7 +244,6 @@
     margin-bottom: 20px;
   }
 
-
   .errorMsg {
     color: #cc0000;
     margin-bottom: 12px;
@@ -292,7 +318,6 @@
     margin-top: 8px !important;
   }
 
-
   .dropdownstyle {
     margin-top: 15px !important;
     width: 100%;
@@ -350,8 +375,6 @@
     margin-top: 4px;
   }
 
-
-
   div.datetooltip span {
     display: none;
     position: absolute;
@@ -369,7 +392,6 @@
     display: block;
   }
 
-
   #dateicon {
     margin-top: 15px !important;
   }
@@ -378,7 +400,6 @@
     font-size: 16px;
     color: black !important;
   }
-
 
   .timezone {
     font-size: 16px;
@@ -477,9 +498,9 @@
   }
 
   .middle {
-    transition: .5s ease;
+    transition: 0.5s ease;
     opacity: 0;
-    position: absolute;
+    position: absolute !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -503,11 +524,16 @@
     margin: auto;
   }
 
+  div.profileImage * {
+    position: unset;
+  }
+
   .imgBtn,
   .imgBtn1,
   .imgBtn2 {
     background-color: black;
     cursor: pointer;
+    text-align: center;
   }
 
   .imgBtn1,
@@ -539,12 +565,36 @@
   }
 
   .infoDiv {
-    padding: 5px
+    padding: 5px;
   }
-  .mandatory:after { 
-    content:" *";
+  .mandatory:after {
+    content: " *";
     color: #e02222;
     font-size: 16px;
-   }
+  }
 
+  .k-toolbar {
+    top: 0px;
+    position: sticky;
+    z-index: 1;
+  }
+
+  .colorPicker {
+    height: 25px;
+    padding: 1px;
+  }
+
+  .react-phone-number-input__icon {
+    width: 29px;
+    height: 21px;
+  }
+  
+  .k-editor {
+    height: unset;
+    overflow: unset;
+  }
+  
+  .k-content {
+    height: 15vh;
+  }
 }

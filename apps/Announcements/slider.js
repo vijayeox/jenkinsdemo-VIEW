@@ -92,7 +92,7 @@ class Slider extends React.Component {
               <button
                 className="readMore"
                 onClick={() => {
-                  this.setState({ isPaneOpen: true, focusData: data });
+                 this.setState({ isPaneOpen: true, focusData: data });
                 }}
               >
                 READ MORE
@@ -173,7 +173,7 @@ class Slider extends React.Component {
 }
 
 const Img = ({ data }) => {
-  return <img id="Announ-visual" src={data.media} alt="Visuals go here" />;
+  return <img id="Announ-visual" src={data.media} alt="Announcement Banner" />;
 };
 
 const Video = ({ data }) => {

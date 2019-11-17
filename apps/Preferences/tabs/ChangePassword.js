@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import Notification from "../components/Notification";
 
 class ChangePassword extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.core = this.props.args;
     this.state = {
       type: "password",
       type1: "password",
@@ -11,7 +12,7 @@ class ChangePassword extends Component {
       fields: {},
       errors: {}
     };
-
+    this.changePassword = this.changePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.showHide = this.showHide.bind(this);
     this.showHide1 = this.showHide1.bind(this);
@@ -20,9 +21,15 @@ class ChangePassword extends Component {
     this.notif = React.createRef();
   }
 
-  componentDidMount() {
-    // var selectElems1 = document.querySelectorAll(".tooltipped");
-    // var instances1 = M.Tooltip.init(selectElems1, { position: 'right' });
+  async changePassword(formData) {
+    let helper = this.core.make("oxzion/restClient");
+    let response = await helper.request(
+      "v1",
+      "/user/me/changepassword",
+      formData,
+      "post"
+    );
+    return response;
   }
 
   handleChange(e) {
@@ -41,12 +48,12 @@ class ChangePassword extends Component {
         formData[key] = this.state.fields[key];
       });
 
-      this.props.changePassword(formData).then(response => {
+      this.changePassword(formData).then(response => {
         if (response.status == "error") {
           this.notif.current.failNotification(response.message);
         } else {
           this.notif.current.successNotification(
-            "Password update successfull."
+            "Password updated successfully."
           );
         }
       });
@@ -81,22 +88,22 @@ class ChangePassword extends Component {
 
     if (!fields["old_password"]) {
       formIsValid = false;
-      errors["old_password"] = "*Please enter your Old Password";
+      errors["old_password"] = "*Please enter your Old Password.";
     }
 
     if (!fields["new_password"]) {
       formIsValid = false;
-      errors["new_password"] = "*Please enter your New Password";
+      errors["new_password"] = "*Please enter your New Password.";
     }
 
     if (!fields["confirm_password"]) {
       formIsValid = false;
-      errors["confirm_password"] = "*Please confirm your password";
+      errors["confirm_password"] = "*Please confirm your password.";
     }
 
     if (fields["new_password"] != fields["confirm_password"]) {
       formIsValid = false;
-      errors["confirm_password"] = "*Password does not match";
+      errors["confirm_password"] = "*Password does not match.";
     }
     if (fields["new_password"].length < 8) {
       formIsValid = false;
@@ -149,9 +156,7 @@ class ChangePassword extends Component {
                 <label className="mandatory">Old Password</label>
                 <input
                   type={this.state.type}
-                  className="password_input"
                   name="old_password"
-                  ref="old_password"
                   onChange={this.handleChange}
                 />
                 <span
@@ -170,10 +175,8 @@ class ChangePassword extends Component {
               <div className="password input-field">
                 <label className="mandatory">New Password</label>
                 <input
-                  id="new"
                   type={this.state.type1}
                   name="new_password"
-                  ref="new_password"
                   onChange={this.handleChange}
                 />
                 <span
@@ -192,10 +195,8 @@ class ChangePassword extends Component {
               <div className="password input-field">
                 <label className="mandatory">Confirm Password</label>
                 <input
-                  id="confirm"
                   type={this.state.type2}
                   name="confirm_password"
-                  ref="confirm_password"
                   onChange={this.handleChange}
                 />
 

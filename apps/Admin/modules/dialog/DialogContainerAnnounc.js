@@ -2,11 +2,9 @@ import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
 import scrollIntoView from "scroll-into-view-if-needed";
-import { FileUploader, Notification } from "@oxzion/gui";
+import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DateComponent } from "../components/index";
 import Moment from "moment";
-import { FaUserLock } from "react-icons/fa";
-
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -185,7 +183,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i className="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">
@@ -208,7 +206,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 name="description"
-                maxLength="500"
+                maxLength="2000"
                 value={this.state.ancInEdit.description || ""}
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"

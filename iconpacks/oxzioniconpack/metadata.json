@@ -4,12 +4,13 @@
   "category": null,
   "internal": true,
   "title": {
-    "en_EN": "OX Zion Icons"
+    "en_EN": "EOS Icons"
   },
   "description": {
-    "en_EN": "OX Zion Icons"
+    "en_EN": "EOS Icons"
   },
   "files": [
+    "main.js",
     "main.css"
   ]
 }

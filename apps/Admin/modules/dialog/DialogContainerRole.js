@@ -1,9 +1,8 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "@oxzion/gui";
+import { Notification } from "../../GUIComponents";
 import { SaveCancel } from "../components/index";
-import { FaUserLock } from "react-icons/fa";
 
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
@@ -168,7 +167,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <FaUserLock />
+                <i class="fas fa-user-lock"></i>
               </div>
             ) : null}
             <div className="form-group">
@@ -234,14 +233,15 @@ export default class DialogContainer extends React.Component {
                         {this.state.isAdmin ? (
                           <React.Fragment>
                             &nbsp; (READ ONLY MODE)
-                            <FaUserLock
+                            <i
+                              className="fas fa-user-lock"
                               style={{
-                                fontSize: "2.5rem",
+                                fontSize: "2.4rem",
                                 right: "2%",
                                 top: "2px",
                                 position: "absolute"
                               }}
-                            />
+                            ></i>
                           </React.Fragment>
                         ) : null}
                       </div>

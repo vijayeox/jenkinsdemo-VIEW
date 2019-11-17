@@ -4,8 +4,8 @@
   "category": "utilities",
   "autostart": false,
   "server": "server.js",
-  "icon": "icon.png",
-  "icon_white": "icon_white.png",
+  "icon": "icon.svg",
+  "icon_white": "icon_white.svg",
   "defaultAppforOrgs" : true,
   "singleton": true,
   "title": {

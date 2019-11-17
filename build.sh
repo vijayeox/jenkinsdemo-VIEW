@@ -40,7 +40,7 @@ build_project() {
             npm install
             npm audit fix
         fi    
-        npm run build
+        npm run build --prod
         cd ..
     fi 
 }

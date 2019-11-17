@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Timezones from "./Timezones";
 import merge from "deepmerge";
 import osjs from "osjs";
 import Notification from "../components/Notification";
-import DateFormats from "./DateFormats";
+import DateFormats from "OxzionGUI/public/js/DateFormats";
+import Timezones from "OxzionGUI/public/js/Timezones";
 
 class Preferences extends Component {
   constructor(props) {
@@ -204,10 +204,10 @@ class Preferences extends Component {
         <Notification ref={this.notif} />
         <form className="formmargin" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-md-4" id="sound">
+            <div className="col-4" id="sound">
               <label id="labelname">Sound Notification:</label>
             </div>
-            <div className="col-md-8">
+            <div className="col-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -215,7 +215,6 @@ class Preferences extends Component {
                   name="soundnotification"
                   value="true"
                   onChange={this.handleChange}
-                  ref="soundnotification"
                   checked={this.state.fields["soundnotification"] == "true"}
                 />
                 <span className="m-2 radioLabel">On</span>
@@ -225,7 +224,6 @@ class Preferences extends Component {
                   name="soundnotification"
                   value="false"
                   onChange={this.handleChange}
-                  ref="soundnotification"
                   checked={this.state.fields["soundnotification"] == "false"}
                 />
                 <span className="m-2 radioLabel">Off</span>
@@ -233,10 +231,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-md-4" id="emailalert">
+            <div className="col-4" id="emailalert">
               <label id="labelname">Email Alerts:</label>
             </div>
-            <div className="col-md-8">
+            <div className="col-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -244,7 +242,6 @@ class Preferences extends Component {
                   name="emailalerts"
                   value="true"
                   onChange={this.handleChange}
-                  ref="emailalerts"
                   checked={this.state.fields["emailalerts"] == "true"}
                 />
                 <span className="m-2 radioLabel">On</span>
@@ -254,7 +251,6 @@ class Preferences extends Component {
                   name="emailalerts"
                   value="false"
                   onChange={this.handleChange}
-                  ref="emailalerts"
                   checked={this.state.fields["emailalerts"] == "false"}
                 />
                 <span className="m-2 radioLabel">Off</span>
@@ -262,17 +258,15 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-md-4" id="localtimezone">
+            <div className="col-4" id="localtimezone">
               <label id="labelname">Local Time Zone:</label>
             </div>
-            <div className="col-md-4 timezonediv">
+            <div className="col-4 timezonediv">
               <select
                 value={this.state.fields["timezone"]}
                 onChange={this.handleChange}
-                ref="timezone"
                 name="timezone"
                 className="timezone"
-                id="timezone"
               >
                 {" "}
                 {Timezones.map((timezone, key) => (
@@ -284,16 +278,14 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="input-field col-md-4" id="datef">
+            <div className="input-field col-4" id="datef">
               <label id="labelname">Date Format:</label>
             </div>
-            <div className="input-field col-md-4">
+            <div className="input-field col-4">
               <select
                 value={this.state.fields["dateformat"]}
                 onChange={this.handleChange}
-                ref="dateformat"
                 name="dateformat"
-                className="validate"
               >
                 {" "}
                 {DateFormats.map((dateFormat, key) => (
@@ -306,17 +298,14 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize" style={{ paddingTop: "5px" }}>
-            <div className="col-md-4" id="locallanguage">
+            <div className="col-4" id="locallanguage">
               <label id="labelname">Language:</label>
             </div>
-            <div className="col-md-4 languagediv">
+            <div className="col-4 languagediv">
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
-                ref="language"
                 name="locale.language"
-                className="language"
-                id="language"
               >
                 {" "}
                 {this.languagesList.map((language, key) => (
@@ -329,7 +318,7 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-md-12 input-field">
+            <div className="col-12 input-field">
               <button className="k-button k-primary" type="submit">
                 Submit
               </button>

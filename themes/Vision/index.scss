@@ -21,10 +21,9 @@ html {
 }
 
 .osjs-window {
-  @include window;
-  background: #275261;
-
-  border-radius: 0;
+  // @include window;
+  // background: #275362;
+  // padding :0px;
 
   &[data-focused="false"] {
     opacity: 0.5;
@@ -34,7 +33,7 @@ html {
     pointer-events: none;
 
     &::after {
-      background: #275261;
+      background: #275362;
     }
   }
 }
@@ -56,21 +55,34 @@ html {
 
   &:hover > div {
     -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1.2);
+    // -webkit-transform: scale(1.2);
     -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.2);
+    // -ms-transform: scale(1.2);
     -moz-transition: all 200ms ease-in;
-    -moz-transform: scale(1.2);
+    // -moz-transform: scale(1.2);
     transition: all 200ms ease-in;
-    transform: scale(1.2);
+    // transform: scale(1.2);
   }
 
-  &[data-action="maximize"] > div {
-    background-image: url("./src/images/maximize.png");
+  &[data-action="minimize"] {
+  & > div {
+      background-position: 50% 50%;
+      background-size: 14px;
+    background-image: url("./src/images/minimize.svg");
   }
-
-  &[data-action="minimize"] > div {
-    background-image: url("./src/images/minimize.png");
+    &:hover{
+     transform: scale(1.2);
+    }
+  }
+  &[data-action="maximize"] {
+  & > div {
+      background-position: 50% 50%;
+      background-size: 14px;
+    background-image: url("./src/images/maximize.svg");
+  }
+    &:hover{
+     transform: scale(1.2);
+    }
   }
 
   &[data-action="close"] {
@@ -78,12 +90,12 @@ html {
 
     & > div {
       background-position: 50% 50%;
-      background-color: #c75050;
-      background-image: url("./src/images/close.png");
+      background-size: 14px;
+      background-image: url("./src/images/close.svg");
     }
 
-    &:hover > div {
-      background-color: lighten(#c75050, 10%);
+    &:hover{
+     transform: scale(1.2);
     }
   }
 }
@@ -99,7 +111,7 @@ html {
 .osjs-window-title {
   padding: 0;
   padding-left: 0;
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .osjs-window-icon {
@@ -154,7 +166,7 @@ html {
 .osjs-window-icon > div {
   width: 3em;
   height: 3em;
-  background-color: #275261;
+  background-color: #275362;
 }
 
 .osjs-panel-item[data-name="windows"] > div {
@@ -175,14 +187,14 @@ html {
 
 .osjs-panel-item[data-name="windows"] {
   .osjs-panel-item--clickable:hover img {
-    -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1.1);
-    -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.1);
-    -moz-transition: all 200ms ease-in;
-    -moz-transform: scale(1.1);
-    transition: all 200ms ease-in;
-    transform: scale(1.1);
+    // -webkit-transition: all 200ms ease-in;
+    // -webkit-transform: scale(1.1);
+    // -ms-transition: all 200ms ease-in;
+    // -ms-transform: scale(1.1);
+    // -moz-transition: all 200ms ease-in;
+    // -moz-transform: scale(1.1);
+    // transition: all 200ms ease-in;
+    // transform: scale(1.1);
   }
 
   .osjs-panel-item--clickable:hover {
@@ -191,14 +203,14 @@ html {
 }
 
 .osjs-panel-item--clickable:hover img {
-  -webkit-transition: all 200ms ease-in;
-  -webkit-transform: scale(1.1);
-  -ms-transition: all 200ms ease-in;
-  -ms-transform: scale(1.1);
-  -moz-transition: all 200ms ease-in;
-  -moz-transform: scale(1.1);
-  transition: all 200ms ease-in;
-  transform: scale(1.1);
+  // -webkit-transition: all 200ms ease-in;
+  // -webkit-transform: scale(1.1);
+  // -ms-transition: all 200ms ease-in;
+  // -ms-transform: scale(1.1);
+  // -moz-transition: all 200ms ease-in;
+  // -moz-transform: scale(1.1);
+  // transition: all 200ms ease-in;
+  // transform: scale(1.1);
 }
 
 .osjs-panel {
@@ -220,11 +232,17 @@ html {
   color: white;
 }
 .osjs-panel-item[data-name="windows"] > div {
-  border-right: 1px solid #fff;
-  color: #fff;
-  border-radius: 0px;
-  margin-left: 0;
-  margin-right: 0;
+
+  font-size: 12px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 5px 10px;
+  align-self: center;
+
+  img {
+    max-height: 20px;
+  }
 }
 
 input:not([type]),
@@ -304,16 +322,19 @@ label {
   margin-bottom: 8px;
 }
 .osjs-search-container {
-  box-shadow: 0 11px 1em rgba(0, 0, 0, 0.5);
-  background: #333333eb;
+  // box-shadow: 0 11px 1em rgba(0, 0, 0, 0.5);
+  // background: #333333eb;
   color: #fff;
 }
 .appmenu .app-bar .app {
-  border-bottom: 1px solid #275261;
+  border-bottom: 1px solid #275362;
 }
 .appmenu .app-bar .app .appcaption {
-  color: #275261;
+  color: #275362;
 }
 .profile-dropdown-div:hover {
-  color: #275261;
+  color: #275362;
 }
+
+@import "variables.scss";
+@import "eox.scss";
