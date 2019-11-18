@@ -1,0 +1,19 @@
+{
+    "myObj": [
+        {
+            "id": "crm",
+            "name": "CRM",
+            "icon": "apps/HelpApp/crm.svg"
+        },
+        {
+            "id": "task",
+            "name": "PPM",
+            "icon": "apps/HelpApp/task.png"
+        },
+        {
+            "id": "chat",
+            "name": "Chat",
+            "icon": "apps/HelpApp/chat.svg"
+        }
+    ]
+}

@@ -3,6 +3,7 @@
   @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
   @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
+  @import "./node_modules/react-phone-number-input/style.css";
   font-family: "Roboto";
 
   .input-field > label {
@@ -22,13 +23,37 @@
     margin-top: 5px;
   }
 
-  .rwt__tabs[data-rwt-vertical="true"] {
+  .tabLayout {
+    width: 100%;
+    // border-bottom: solid 10px #333333;
+    // border-top: solid 10px #333333;
+    background-color: #333333;
     display: flex;
+    flex-direction: row;
+    margin: auto;
+    button:hover {
+      color: #f3b340;
+    }
+    button {
+      flex-grow: 1;
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      border: solid 3px #333333;
+      border-bottom: solid 10px #333333;
+      border-top: solid 10px #333333;
+      flex-direction: row;
+      align-items: center;
+      span {
+        font-size: 1rem;
+        padding-left: 0.5rem;
+        font-family: "Raleway", Arial, sans-serif;
+      }
+    }
   }
 
-  .rwt__tablist:not([aria-orientation="vertical"]) {
-    border-bottom: 1px solid #ddd;
-    position: relative;
+  .rwt__tabs[data-rwt-vertical="true"] {
+    display: flex;
   }
 
   .rwt__tablist[aria-orientation="vertical"] {
@@ -73,10 +98,12 @@
 
   .rwt__tablist:not([aria-orientation="vertical"])
     .rwt__tab[aria-selected="true"]:after {
-    bottom: -1px;
+    bottom: -9px;
+    // border-radius: 55px;
     left: 0;
     width: 100%;
-    border-bottom: 3px solid #ffffff;
+    border-bottom: 2.5px solid #ecececfc;
+    transform: scaleY(1.5);
   }
 
   .rwt__tablist[aria-orientation="vertical"]
@@ -89,7 +116,6 @@
 
   .rwt__tabs {
     height: 100%;
-    position: fixed;
     width: 100%;
   }
 
@@ -284,13 +310,11 @@
     padding: 0% !important;
   }
 
-  .country,
-  .state,
-  .city,
-  .zip {
+  .country {
+    margin-left: 16px;
     font-size: 16px;
-    color: #333 !important;
-    margin-bottom: 10px !important;
+    color: #343a40;
+    margin-bottom: 20px !important;
     margin-top: 8px !important;
   }
 
@@ -476,7 +500,7 @@
   .middle {
     transition: 0.5s ease;
     opacity: 0;
-    position: absolute;
+    position: absolute !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -498,6 +522,10 @@
 
   .profileImage {
     margin: auto;
+  }
+
+  div.profileImage * {
+    position: unset;
   }
 
   .imgBtn,
@@ -538,7 +566,6 @@
 
   .infoDiv {
     padding: 5px;
-    border-radius: 5px;
   }
   .mandatory:after {
     content: " *";
@@ -547,7 +574,27 @@
   }
 
   .k-toolbar {
-    position: sticky;
     top: 0px;
+    position: sticky;
+    z-index: 1;
+  }
+
+  .colorPicker {
+    height: 25px;
+    padding: 1px;
+  }
+
+  .react-phone-number-input__icon {
+    width: 29px;
+    height: 21px;
+  }
+  
+  .k-editor {
+    height: unset;
+    overflow: unset;
+  }
+  
+  .k-content {
+    height: 15vh;
   }
 }

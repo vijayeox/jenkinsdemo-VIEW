@@ -39,7 +39,10 @@
   line-height: normal;
 
   &[data-ontop=true] {
-    z-index: 16777271;
+    /* Begin Oxzion customization. */
+    /* z-index: 16777271; */
+    z-index: 10009;
+    /* End Oxzion customization. */
   }
 
   &[data-position=top] {
@@ -165,10 +168,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 18px !important;
-  color: #fff !important;
-  font-weight: unset !important;
-  line-height: 20px;
+  // font-size: 18px !important;
+  // color: #fff !important;
+  // font-weight: unset !important;
+  // line-height: 20px;
   text-align: left;
   padding-left: 0px;
   margin-bottom: 5px;
@@ -208,7 +211,7 @@
 
 .appmenu .app-bar .app .appcaption {
   box-sizing: border-box;
-  color: #275261;
+  color: #275362;
   font-size: 16px;
   line-height: 48px;
   display: inline-block;
@@ -289,9 +292,9 @@
 .appmenu .app-bar .app:hover {
   background: #ffffff4d;
   transition: all 200ms ease-in;
-  transform: scale(1.1);
+  // transform: scale(1.1);
   background-size: cover !important;
-  background-color: transparent !important;
+  // background-color: transparent !important;
 }
 
 .osjs-panel-logout img {
@@ -299,8 +302,7 @@
 }
 
 .osjs-panel-item[data-name=logout]:hover {
-  background: #c75050;
-  margin: 0px;
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .osjs-panel-item[data-name=logout] {
@@ -382,7 +384,6 @@ margin-left:85px;
 }
 
 .profileicon {
-  border-radius: 50%;
   cursor: pointer;
 }
 .osjs-panel-item[data-name=profile]:hover .profile-content {
@@ -396,7 +397,6 @@ margin-left:85px;
 img.profile-dropdown-image {
   max-height: 45px;
   max-width: 45px;
-  border-radius: 50%;
 }
 .profile-dropdown-div {
   position: relative;
@@ -408,22 +408,42 @@ img.profile-dropdown-image {
 
 .profile-content {
   display: none;
-  position: absolute;
-  right: 0;
-  top: 50px;
+  position: fixed;
+  right: 50px;
   width: 200px;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
+.osjs-panel[data-position=top] .profile-content{
+    top: 3.5em;
+  }
+
+.osjs-panel[data-position=bottom] .profile-content{
+    bottom: 3.5em;
+  }
+
+
 .profile-dropdown-text {
-    line-height: 45px;
-    font-size: 20px;
     padding-left: 10px;
 }
 .profile-dropdown-div:hover {
     background-color: white;
-    color: #275261;
-    cursor: pointer;
+    color: #275362;
 }
+.profile-dropdown-image{
+  flex: 0.3;
+}
+.profile-dropdown-block{
+flex: 0.7;
+padding-left: 12px;
+}
+.profile-dropdown-name {
+    font-weight: bold;
+    line-height: 25px;
+}
+.profile-dropdown-designation {
+    font-weight: 300;
+    font-size: 13px;
+    color: grey;

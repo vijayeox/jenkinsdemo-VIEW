@@ -1,10 +1,11 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { ContactTypes, CountryList, Countries, States } from "../data";
+import { ContactTypes, CountryList } from "../data";
 import { ProfilePictureWidget } from "../widgets";
 import { SaveContact } from "../services/services";
 import { Notification } from "../components";
 import { ContactTypeEnum, IconTypeEnum } from "../enums";
+import PhoneInput from "react-phone-number-input";
 
 class ContactDailog extends React.Component {
   constructor(props) {
@@ -17,8 +18,7 @@ class ContactDailog extends React.Component {
       icon: null,
       errors: {
         first_name: true
-      },
-      countryWiseStates: []
+      }
     };
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
@@ -40,33 +40,12 @@ class ContactDailog extends React.Component {
             });
           }
         }
-        if (this.state.contactDetails.country) {
-          this.setStateList();
-        }
       }
     );
   }
 
   cloneContact = contactDetails => {
     return Object.assign({}, contactDetails);
-  };
-
-  setStateList = () => {
-    var statesList = [];
-    let contactDetails = { ...this.state.contactDetails };
-    Countries.forEach(country => {
-      if (country.name == this.state.contactDetails.country) {
-        States.forEach(s => {
-          if (s.country_id == country.id) {
-            statesList.push(s);
-          }
-        });
-        this.setState({
-          countryWiseStates: statesList,
-          contactDetails
-        });
-      }
-    });
   };
 
   handleUserInput = e => {
@@ -77,32 +56,18 @@ class ContactDailog extends React.Component {
     this.setState({ contactDetails: contactDetails });
     if (name == "first_name") {
       let { errors } = this.state;
-      errors.first_name = value.length > 0 ? false : true;
-      this.setState({
-        errors
-      });
-    }
-  };
-
-  handleCountryChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    var statesList = [];
-    let contactDetails = { ...this.state.contactDetails };
-    contactDetails[name] = value;
-    Countries.forEach(country => {
-      if (country.name == value) {
-        States.forEach(s => {
-          if (s.country_id == country.id) {
-            statesList.push(s);
-          }
-        });
+      if (value.length > 0) {
+        errors.first_name = false;
         this.setState({
-          contactDetails,
-          countryWiseStates: statesList
+          errors
+        });
+      } else {
+        errors.first_name = true;
+        this.setState({
+          errors
         });
       }
-    });
+    }
   };
 
   removeItem = (key, type) => {
@@ -125,13 +90,7 @@ class ContactDailog extends React.Component {
 
   handleChange = e => {
     e.preventDefault();
-    if (e.target.name == "newPhoneValue") {
-      let tempPhoneData = this.state.tempPhoneData;
-      tempPhoneData.value = e.target.value;
-      this.setState({
-        tempPhoneData
-      });
-    } else if (e.target.name == "newEmailValue") {
+    if (e.target.name == "newEmailValue") {
       let tempEmailData = this.state.tempEmailData;
       tempEmailData.value = e.target.value;
       this.setState({
@@ -148,6 +107,20 @@ class ContactDailog extends React.Component {
       tempEmailData.type = e.target.value;
       this.setState({
         tempEmailData
+      });
+    }
+  };
+
+  handlePhoneChange = (phone, name) => {
+    if (name == "phone_1") {
+      let contactDetails = { ...this.state.contactDetails };
+      contactDetails["phone_1"] = phone;
+      this.setState({ contactDetails: contactDetails });
+    } else if (name == "newPhoneValue") {
+      let tempPhoneData = this.state.tempPhoneData;
+      tempPhoneData.value = phone;
+      this.setState({
+        tempPhoneData
       });
     }
   };
@@ -303,7 +276,7 @@ class ContactDailog extends React.Component {
         </div>
         <div className="col-2 displayInline paddingNone">
           <button
-            className="btn btn-danger"
+            className="btn btn-danger trashButton"
             onClick={() => this.removeItem(key, type)}
           >
             <i className="fa fa-trash" />
@@ -329,13 +302,15 @@ class ContactDailog extends React.Component {
           )}
         </div>
         <div className="col-7 displayInline">
-          <input
-            type="text"
-            className="form-control inputHeight"
+          <PhoneInput
+            international={false}
+            country="US"
             name="newPhoneValue"
             placeholder="Enter phone."
+            maxLength="15"
+            countryOptions={["US", "IN", "CA", "|", "..."]}
             value={this.state.tempPhoneData.value}
-            onChange={this.handleChange}
+            onChange={phone => this.handlePhoneChange(phone, "newPhoneValue")}
           />
         </div>
         <div className="col-2 displayInline paddingNone">
@@ -611,17 +586,19 @@ class ContactDailog extends React.Component {
               <div className="col-6">
                 <label htmlFor="phone_1">Primary Phone</label>
                 <div className="col-12 form-group paddingNone">
-                  <input
-                    type="text"
-                    className="form-control inputHeight"
+                  <PhoneInput
+                    international={false}
+                    country="US"
                     name="phone_1"
                     placeholder="Enter primary phone."
+                    maxLength="15"
+                    countryOptions={["US", "IN", "CA", "|", "..."]}
                     value={
                       this.state.contactDetails.phone_1
                         ? this.state.contactDetails.phone_1
                         : ""
                     }
-                    onChange={this.handleUserInput}
+                    onChange={phone => this.handlePhoneChange(phone, "phone_1")}
                   />
                 </div>
                 {this.additionalPhoneNumberData()}
@@ -644,6 +621,26 @@ class ContactDailog extends React.Component {
                   />
                 </div>
                 {this.additionalEmailData()}
+              </div>
+
+              <div className="col-12">
+                <div className="row">
+                  <div className="col-12 form-group">
+                    <label htmlFor="phone_1">Address</label>
+                    <textarea
+                      row={4}
+                      className="form-control"
+                      name="address_1"
+                      placeholder="Enter address."
+                      value={
+                        this.state.contactDetails.address_1
+                          ? this.state.contactDetails.address_1
+                          : ""
+                      }
+                      onChange={this.handleUserInput}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

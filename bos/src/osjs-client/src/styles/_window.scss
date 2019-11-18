@@ -28,7 +28,7 @@
  * @licence Simplified BSD License
  */
 
-$direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
+$direction-list: "nw""sw""ne""se""n""s""w""e";
 
 .osjs-window-behavior-lofi {
   position: absolute;
@@ -92,13 +92,13 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
   flex: 0 0;
   min-height: 2.2em;
 
-  & > div {
+  &>div {
     height: 100%;
   }
 }
 
 .osjs-window-icon {
-  & > div {
+  &>div {
     width: $base-margin;
     height: $base-margin;
     background: url('src/styles/logo-blue-32x32.png') no-repeat 50% 50%;
@@ -125,7 +125,7 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
     pointer-events: none;
   }
 
-  & > div {
+  &>div {
     width: $base-margin;
     height: $base-margin;
   }
@@ -160,6 +160,7 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
   user-select: none;
   visibility: visible;
   touch-action: none;
+  
 
   /* This actually increases performance */
   -webkit-transform: translate3d(0, 0, 0);
@@ -221,6 +222,7 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
 
 .osjs-root[data-window-action="true"] {
   .osjs-window {
+
     /* FIXME: Maybe limit this as to increase perf ? */
     * {
       pointer-events: none;

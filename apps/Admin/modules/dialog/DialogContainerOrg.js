@@ -5,10 +5,17 @@ import { Input } from "@progress/kendo-react-inputs";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
+import { filterBy } from "@progress/kendo-data-query";
 import scrollIntoView from "scroll-into-view-if-needed";
 import PhoneInput from "react-phone-number-input";
 import Codes from "../data/Codes";
-import timezoneCode from "../../public/js/timezones.js";
+import timezoneCode from "OxzionGUI/public/js/Timezones.js";
+
+import { DropDownList } from "@progress/kendo-react-dropdowns";
+
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -17,10 +24,11 @@ export default class DialogContainer extends React.Component {
     this.url = this.core.config("wrapper.url");
     this.state = {
       orgInEdit: this.props.dataItem || null,
-      contactName: [],
-      timeZoneValue: []
+      contactName: null,
+      timeZoneValue: [],
+      timezoneList: timezoneCode
     };
-    this.countryByIP= undefined;
+    this.countryByIP = undefined;
     this.fUpload = React.createRef();
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
@@ -31,10 +39,12 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "put") {
       this.setState({
         timeZoneValue: {
-          id: "111",
-          name: this.state.orgInEdit.preferences.timezone
+          label: this.state.orgInEdit.preferences.timezone,
+          name: this.state.orgInEdit.preferences.timezone,
+          offset: 100
         }
       });
+
       GetSingleEntityData(
         "organization/" +
           this.props.dataItem.uuid +
@@ -98,19 +108,23 @@ export default class DialogContainer extends React.Component {
   };
 
   valueChange = (field, event) => {
-    let orgInEdit = { ...this.state.orgInEdit };
-    orgInEdit["preferences"] = orgInEdit["preferences"]
-      ? orgInEdit["preferences"]
-      : {};
-    orgInEdit["preferences"][field] = event;
-    this.setState({ orgInEdit: orgInEdit });
     if (field == "timezone") {
       this.setState({
-        timeZoneValue: {
-          id: "111",
-          name: event
-        }
+        timeZoneValue: event
       });
+      let orgInEdit = { ...this.state.orgInEdit };
+      orgInEdit["preferences"] = orgInEdit["preferences"]
+        ? orgInEdit["preferences"]
+        : {};
+      orgInEdit["preferences"][field] = event.name;
+      this.setState({ orgInEdit: orgInEdit });
+    } else {
+      let orgInEdit = { ...this.state.orgInEdit };
+      orgInEdit["preferences"] = orgInEdit["preferences"]
+        ? orgInEdit["preferences"]
+        : {};
+      orgInEdit["preferences"][field] = event;
+      this.setState({ orgInEdit: orgInEdit });
     }
   };
 
@@ -123,6 +137,41 @@ export default class DialogContainer extends React.Component {
       );
       return true;
     }
+  }
+
+  activateOrganization(tempData) {
+    MySwal.fire({
+      title: "Organization already exists",
+      text: "Do you want to reactivate the Organization?",
+      imageUrl: "apps/Admin/091-email-1.svg",
+      imageWidth: 75,
+      imageHeight: 75,
+      confirmButtonText: "Reactivate",
+      confirmButtonColor: "#d33",
+      showCancelButton: true,
+      cancelButtonColor: "#66bb6a",
+      target: ".Window_Admin"
+    }).then(result => {
+      if (result.value) {
+        tempData.reactivate = "1";
+        PushDataPOST(
+          "organization",
+          this.props.formAction,
+          this.state.orgInEdit.uuid,
+          tempData
+        ).then(response => {
+          if (response.status == "success") {
+            this.props.action(response);
+            this.props.cancel();
+          } else {
+            this.notif.current.failNotification(
+              "Error",
+              response.message ? response.message : null
+            );
+          }
+        });
+      }
+    });
   }
 
   pushData = () => {
@@ -179,7 +228,9 @@ export default class DialogContainer extends React.Component {
       preferences: JSON.stringify({
         dateformat: this.state.orgInEdit.preferences.dateformat,
         currency: this.state.orgInEdit.preferences.currency,
-        timezone: this.state.orgInEdit.preferences.timezone
+        timezone: this.state.orgInEdit.preferences.timezone.name
+          ? this.state.orgInEdit.preferences.timezone.name
+          : this.state.orgInEdit.preferences.timezone
       })
     };
 
@@ -198,6 +249,11 @@ export default class DialogContainer extends React.Component {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
+      } else if (
+        response.message ==
+        "Organization already exists would you like to reactivate?"
+      ) {
+        this.activateOrganization(tempData);
       } else {
         this.notif.current.failNotification(
           "Error",
@@ -439,10 +495,11 @@ export default class DialogContainer extends React.Component {
                       value={contactValue}
                       onChange={phone => this.onContactPhoneChange(phone)}
                       international={false}
+                      country="US"
                       maxLength="15"
                       required={true}
-                      country={this.countryByIP? this.countryByIP : "IN" }
-                      countryOptions={["IN", "US", "CA", "|", "..."]}
+                      country={this.countryByIP ? this.countryByIP : "IN"}
+                      countryOptions={["US", "IN", "CA", "|", "..."]}
                     />
                   </div>
                   <div className="col">
@@ -526,21 +583,26 @@ export default class DialogContainer extends React.Component {
               <div className="form-row" style={{ marginTop: "5px" }}>
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
-                  <DropDown
-                    args={this.core}
-                    disableItem={this.props.diableField}
-                    rawData={timezoneCode}
-                    onDataChange={e =>
-                      this.valueChange("timezone", e.target.value.id)
-                    }
-                    keyValuePair={true}
-                    selectedItem={
-                      this.state.orgInEdit.preferences
-                        ? this.state.timeZoneValue
-                        : ""
-                    }
-                    required={true}
-                  />
+                  <div>
+                    <DropDownList
+                      data={this.state.timezoneList}
+                      textField="name"
+                      dataItemKey="name"
+                      value={this.state.timeZoneValue}
+                      onChange={e =>
+                        this.valueChange("timezone", e.target.value)
+                      }
+                      style={{ width: "100%" }}
+                      popupSettings={{ height: "160px" }}
+                      filterable={true}
+                      onFilterChange={e => {
+                        this.setState({
+                          timezoneList: filterBy(timezoneCode, e.filter)
+                        });
+                      }}
+                      required={true}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

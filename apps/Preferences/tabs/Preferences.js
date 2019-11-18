@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Timezones from "../public/js/Timezones";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../public/js/Notification";
-import DateFormats from "../public/js/DateFormats";
+import Notification from "../components/Notification";
+import DateFormats from "OxzionGUI/public/js/DateFormats";
+import Timezones from "OxzionGUI/public/js/Timezones";
 
 class Preferences extends Component {
   constructor(props) {
@@ -215,7 +215,6 @@ class Preferences extends Component {
                   name="soundnotification"
                   value="true"
                   onChange={this.handleChange}
-                  ref="soundnotification"
                   checked={this.state.fields["soundnotification"] == "true"}
                 />
                 <span className="m-2 radioLabel">On</span>
@@ -225,7 +224,6 @@ class Preferences extends Component {
                   name="soundnotification"
                   value="false"
                   onChange={this.handleChange}
-                  ref="soundnotification"
                   checked={this.state.fields["soundnotification"] == "false"}
                 />
                 <span className="m-2 radioLabel">Off</span>
@@ -244,7 +242,6 @@ class Preferences extends Component {
                   name="emailalerts"
                   value="true"
                   onChange={this.handleChange}
-                  ref="emailalerts"
                   checked={this.state.fields["emailalerts"] == "true"}
                 />
                 <span className="m-2 radioLabel">On</span>
@@ -254,7 +251,6 @@ class Preferences extends Component {
                   name="emailalerts"
                   value="false"
                   onChange={this.handleChange}
-                  ref="emailalerts"
                   checked={this.state.fields["emailalerts"] == "false"}
                 />
                 <span className="m-2 radioLabel">Off</span>
@@ -269,10 +265,8 @@ class Preferences extends Component {
               <select
                 value={this.state.fields["timezone"]}
                 onChange={this.handleChange}
-                ref="timezone"
                 name="timezone"
                 className="timezone"
-                id="timezone"
               >
                 {" "}
                 {Timezones.map((timezone, key) => (
@@ -291,9 +285,7 @@ class Preferences extends Component {
               <select
                 value={this.state.fields["dateformat"]}
                 onChange={this.handleChange}
-                ref="dateformat"
                 name="dateformat"
-                className="validate"
               >
                 {" "}
                 {DateFormats.map((dateFormat, key) => (
@@ -313,10 +305,7 @@ class Preferences extends Component {
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
-                ref="language"
                 name="locale.language"
-                className="language"
-                id="language"
               >
                 {" "}
                 {this.languagesList.map((language, key) => (

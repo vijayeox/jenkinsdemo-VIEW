@@ -1,0 +1,21 @@
+{
+  "type": "application",
+  "name": "HelpApp",
+  "category": null,
+  "singleton":true,
+  "hidden": false,
+  "icon": "icon.png",
+  "icon_white": "icon_white.png",
+  "defaultAppforOrgs" : true,
+  "server": "server.js",
+  "title": {
+    "en_EN": "Help"
+  },
+  "description": {
+    "en_EN": "Help"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

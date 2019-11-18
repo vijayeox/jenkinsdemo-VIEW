@@ -5,8 +5,7 @@
     }
     .osjs-window-button[data-action=minimize] > div {
         background-position: 50% 50%;
-        background-color: #c75050;
-        background-image: url('./close.png');
+        background-image: url('./close.svg');
     }
     .osjs-window-button[data-action=minimize] {
         min-width: 3em;

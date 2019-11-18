@@ -26,11 +26,19 @@ module.exports = {
     osjs: 'OSjs',
     jqyery : 'jQuery'
   },
+  resolve: {
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
+    }
+  },
   optimization: {
     minimize,
   },
   plugins: [
     // new BundleAnalyzerPlugin(),
+    new CopyWebpackPlugin([
+      'icon.svg','icon_white.svg'
+    ]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'

@@ -7,6 +7,9 @@ import FormRender from "./src/components/App/FormRender";
 import Document from "./src/components/App/Document";
 import OX_Grid from "./src/OX_Grid";
 import DocumentViewer from "./src/DocumentViewer";
+import Dashboard from "./src/Dashboard";
+import Dashboard1 from "./src/Dashboard1";
+
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -16,5 +19,7 @@ export {
   Document,
   FormRender,
   OX_Grid,
-  DocumentViewer
+  DocumentViewer,
+  Dashboard,
+  Dashboard1
 };

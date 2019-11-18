@@ -42,7 +42,7 @@ module.exports = {
         }]
       },
       {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
           loader: 'file-loader',
 

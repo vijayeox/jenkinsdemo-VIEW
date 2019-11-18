@@ -54,7 +54,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
       favicon: path.resolve(__dirname, 'src/client/favicon.ico'),
-      title: 'OX Zion'
+      title: 'EOX Vantage'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
@@ -69,7 +69,7 @@ module.exports = {
         }]
       },
       {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        test: /\.(ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
           loader: 'file-loader',
 

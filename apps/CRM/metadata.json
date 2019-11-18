@@ -3,8 +3,8 @@
   "name": "CRM",
   "category": "organization",
   "singleton":true,
-  "icon": "icon.png",
-  "icon_white": "icon_white.png",
+  "icon": "icon.svg",
+  "icon_white": "icon_white.svg",
   "title": {
     "en_EN": "CRM"
   },

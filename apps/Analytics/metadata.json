@@ -1,0 +1,45 @@
+{
+  "type": "application",
+  "name": "Analytics",
+  "category": "organization",
+  "singleton": true,
+  "defaultAppforOrgs" : true,
+  "icon": "icon.png", 
+  "icon_white":"icon_white.png",
+  "server": "server.js",
+  "title": {
+    "en_EN": "Analytics"
+  },
+  "description": {
+    "en_EN": "Analytics"
+  },
+  "dataSource": {
+    "title": {
+      "en_EN":"Data Source"
+    }
+  },
+  "query": {
+    "title": {
+      "en_EN":"Query"
+    }
+  },
+  "visualization": {
+    "title": {
+      "en_EN":"Visualization"
+    }
+  },
+  "dashboard": {
+    "title": {
+      "en_EN":"Dashboard"
+     }
+  },
+  "dashboardEditor": {
+    "title": {
+      "en_EN":"Edit dashboard"
+    }
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

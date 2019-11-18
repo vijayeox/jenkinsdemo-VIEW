@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import Codes from "../public/js/Codes";
+import CountryCodes from "OxzionGUI/public/js/CountryCodes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Notification from "../public/js/Notification";
+import Notification from "../components/Notification";
 import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
+import PhoneInput from "react-phone-number-input";
 import { Editor, EditorTools } from "@progress/kendo-react-editor";
 import countries from "../public/js/countries";
 import states from "../public/js/states";
@@ -46,18 +47,8 @@ class EditProfile extends Component {
       this.userprofile.key.preferences = { dateformat: "dd-MM-yyyy" };
     }
 
-    this.dob = null;
-    this.doj = null;
     this.state = {
-      DOBInEdit: undefined,
-      phoneno: "",
-      heightSet: 0,
-      selectedCountry: [],
-      country: "India",
-      dial_code: "+91",
       errors: {},
-      initialized: -1,
-      phonenumber: {},
       dateformat: this.userprofile.key.preferences["dateformat"],
       fields: this.userprofile.key,
       showImageDiv: 1,
@@ -71,79 +62,32 @@ class EditProfile extends Component {
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
 
-    Codes.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    CountryCodes.sort((a, b) =>
+      a.name < b.name ? -1 : a.name > b.name ? 1 : 0
+    );
   }
-
-  onSelect1 = event => {
-    const field = {};
-    field[event.target.name] = event.target.value;
-    this.setState(field);
-  };
-
-  splitPhoneNumber() {
-    if (this.state.fields.phone == (null || undefined)) {
-      return;
-    } else if (this.state.fields.phone) {
-      const phoneno = this.state.fields.phone;
-      const phone1 = phoneno.indexOf("-");
-      this.setState({
-        dial_code: phoneno.substring(0, phone1),
-        phoneno: phoneno.substring(phone1 + 1)
-      });
-    }
-  }
-
-  onSelect2 = event => {
-    const field = {};
-    field[event.target.name] = event.target.value;
-    this.setState(field);
-  };
-
-  setStateList = () => {
-    var statesList = [];
-    let fields = this.state.fields;
-    countries.forEach(country => {
-      if (country.name == this.state.fields.country) {
-        states.forEach(s => {
-          if (s.country_id == country.id) {
-            statesList.push(s);
-          }
-        });
-        fields["state"] = statesList[0].name;
-        this.setState({
-          stateSelection: false,
-          countryWiseStates: statesList,
-          fields
-        });
-      }
-    });
-  };
 
   componentWillMount() {
     this.state.dateformat = this.state.dateformat.replace(/m/g, "M");
-    this.splitPhoneNumber();
-    if (this.state.fields.country) {
-      this.setStateList();
-    } else {
-      let fields = this.state.fields;
-      fields["country"] = countries[0].name;
-      this.setState(
-        {
-          fields
-        },
-        () => {
-          this.setStateList();
-        }
-      );
-    }
     if (Moment(this.state.fields.date_of_birth, "YYYY-MM-DD", true).isValid()) {
       const Dateiso = new Moment(
         this.state.fields.date_of_birth,
         "YYYY-MM-DD"
       ).format();
       const Datekendo = new Date(Dateiso);
-      let fields = { ...this.state.fields };
+      let fields = this.state.fields;
       fields["date_of_birth"] = Datekendo;
+      this.setState({
+        fields
+      });
+    }
+    if (
+      this.state.fields.country == "" ||
+      this.state.fields.country == undefined ||
+      this.state.fields.country == null
+    ) {
+      let fields = this.state.fields;
+      fields["country"] = "United States of America";
       this.setState({
         fields
       });
@@ -151,7 +95,7 @@ class EditProfile extends Component {
   }
 
   handleDOBChange = event => {
-    let fields = { ...this.state.fields };
+    let fields = this.state.fields;
     fields.date_of_birth = event.target.value;
     this.setState({ fields: fields });
   };
@@ -164,25 +108,11 @@ class EditProfile extends Component {
     });
   };
 
-  handleCountryChange = e => {
+  handlePhoneChange = phone => {
     let fields = this.state.fields;
-    fields[e.target.name] = e.target.value;
-    var country_id;
-    var statesList = [];
-    countries.forEach(country => {
-      if (country.name == e.target.value) {
-        country_id = country.id;
-        states.forEach(s => {
-          if (s.country_id == country_id) {
-            statesList.push(s);
-          }
-        });
-        this.setState({
-          stateSelection: false,
-          countryWiseStates: statesList,
-          fields
-        });
-      }
+    fields["phone"] = phone;
+    this.setState({
+      fields
     });
   };
 
@@ -199,12 +129,6 @@ class EditProfile extends Component {
 
     if (this.validateForm()) {
       const formData = {};
-
-      let fields = { ...this.state.fields };
-      fields.phone = this.state.dial_code + "-" + this.state.phoneno;
-      this.setState({
-        fields: fields
-      });
 
       let date_of_birth = new Moment(this.state.fields.date_of_birth).format(
         "YYYY-MM-DD"
@@ -224,6 +148,7 @@ class EditProfile extends Component {
         }
       });
 
+      console.log(formData);
       let helper = this.core.make("oxzion/restClient");
 
       let editresponse = await helper.request(
@@ -273,9 +198,9 @@ class EditProfile extends Component {
       formIsValid = false;
       errors["gender"] = "*Please select Gender";
     }
-    if (!this.state.phoneno) {
+    if (!fields["phone"]) {
       formIsValid = false;
-      errors["phoneno"] = "*Please enter Phone Number";
+      errors["phone"] = "*Please enter Phone Number";
     }
 
     if (!fields["address1"]) {
@@ -510,9 +435,6 @@ class EditProfile extends Component {
                 <input
                   type="text"
                   name="firstname"
-                  ref="firstname"
-                  id="firstname"
-                  pattern={"[A-Za-z ]+"}
                   value={
                     this.state.fields.firstname
                       ? this.state.fields.firstname
@@ -520,7 +442,6 @@ class EditProfile extends Component {
                   }
                   onChange={this.handleChange}
                   required
-                  className="validate"
                 />
                 <div className="errorMsg">{this.state.errors["firstname"]}</div>
               </div>
@@ -529,15 +450,11 @@ class EditProfile extends Component {
                 <input
                   type="text"
                   name="lastname"
-                  ref="lastname"
-                  id="lastname"
-                  pattern={"[A-Za-z ]+"}
                   value={
                     this.state.fields.lastname ? this.state.fields.lastname : ""
                   }
                   onChange={this.handleChange}
                   required
-                  className="validate"
                 />
                 <div className="errorMsg">{this.state.errors["lastname"]}</div>
               </div>
@@ -558,8 +475,6 @@ class EditProfile extends Component {
                 name="email"
                 type="text"
                 value={this.state.fields.email ? this.state.fields.email : ""}
-                ref="email"
-                id="email"
                 readOnly={true}
               />
             </div>
@@ -574,8 +489,6 @@ class EditProfile extends Component {
                 <DatePicker
                   format={this.state.dateformat}
                   name="date_of_birth"
-                  id="date_of_birth"
-                  ref="date_of_birth"
                   value={
                     this.state.fields.date_of_birth
                       ? this.state.fields.date_of_birth
@@ -603,7 +516,6 @@ class EditProfile extends Component {
                       name="gender"
                       value="Male"
                       onChange={this.handleChange}
-                      ref="gender"
                       checked={this.state.fields.gender == "Male"}
                       className="validate preferencesRadio"
                       required
@@ -618,7 +530,6 @@ class EditProfile extends Component {
                       name="gender"
                       value="Female"
                       onChange={this.handleChange}
-                      ref="gender"
                       checked={this.state.fields.gender == "Female"}
                       className="validate preferencesRadio"
                       required
@@ -635,159 +546,62 @@ class EditProfile extends Component {
             <div className="col-12 mandatory" style={{ fontSize: "17px" }}>
               Contact Number
             </div>
-            <div className="row">
-              <div className="col-5">
-                <select
-                  className="dropdownstyle"
-                  value={this.state.dial_code ? this.state.dial_code : ""}
-                  onChange={this.onSelect1}
-                  id="dial_code"
-                  name="dial_code"
-                  ref="dial_code"
-                >
-                  {Codes.map((dial_code, key) => (
-                    <option key={key} value={dial_code.dial_code}>
-                      {dial_code.name} {dial_code.dial_code}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="col-7">
-                <input
-                  id="phoneno"
-                  type="text"
-                  ref="phoneno"
-                  name="phoneno"
-                  required
-                  value={this.state.phoneno ? this.state.phoneno : ""}
-                  onChange={this.onSelect2}
-                />
-                <div className="errorMsg">{this.state.errors["phoneno"]}</div>
-              </div>
+            <div className="col-12">
+              <PhoneInput
+                international={false}
+                country="US"
+                name="phone"
+                placeholder="Enter phone number"
+                maxLength="15"
+                countryOptions={["US", "IN", "CA", "|", "..."]}
+                value={this.state.fields.phone ? this.state.fields.phone : ""}
+                onChange={phone => this.handlePhoneChange(phone)}
+              />
+              <div className="errorMsg">{this.state.errors["phone"]}</div>
             </div>
           </div>
-          <label type="hidden" id="joint" ref="phone" name="phone" />
 
           <div className="row">
-            <div className="col-6 input-field">
+            <div className="col-12 input-field">
               <label className="mandatory" style={{ fontSize: "17px" }}>
-                Address line 1
+                Address
               </label>
               <div>
                 <textarea
                   rows="3"
                   className="textareaField"
                   type="text"
-                  ref="address1"
-                  name="address1"
+                  name="address"
                   value={
-                    this.state.fields.address1 ? this.state.fields.address1 : ""
+                    this.state.fields.address ? this.state.fields.address : ""
                   }
                   onChange={this.handleChange}
                   required
                 />
               </div>
-              <div className="errorMsg">{this.state.errors["address1"]}</div>
-            </div>
-            <div className="col-6 input-field">
-              <label className="" style={{ fontSize: "17px" }}>
-                Address line 2
-              </label>
-              <div>
-                <textarea
-                  rows="3"
-                  className="textareaField"
-                  type="text"
-                  ref="address2"
-                  name="address2"
-                  value={
-                    this.state.fields.address2 ? this.state.fields.address2 : ""
-                  }
-                  onChange={this.handleChange}
-                />
-              </div>
-              <div className="errorMsg">{this.state.errors["address2"]}</div>
+              <div className="errorMsg">{this.state.errors["address"]}</div>
             </div>
           </div>
 
           <div className="row">
-            <div className="col-6">
-              <label className="country mandatory" style={{ marginTop: "" }}>
-                Country
-              </label>
+            <label className="country mandatory" style={{ marginTop: "" }}>
+              Country
+            </label>
+
+            <div className="col-12">
               <select
                 value={
                   this.state.fields.country ? this.state.fields.country : ""
                 }
-                onChange={this.handleCountryChange}
-                ref="country"
-                id="country"
+                onChange={this.handleChange}
                 name="country"
               >
-                {countries.map((country, key) => (
+                {CountryCodes.map((country, key) => (
                   <option key={key} value={country.name}>
                     {country.name}
                   </option>
                 ))}
               </select>
-              <div className="errorMsg">{this.state.errors["country"]}</div>
-            </div>
-
-            <div className="col-6">
-              <label className="state mandatory" style={{ marginTop: "" }}>
-                State
-              </label>
-              <select
-                value={this.state.fields.state ? this.state.fields.state : ""}
-                onChange={this.handleChange}
-                ref="state"
-                id="state"
-                name="state"
-                disabled={this.state.stateSelection}
-              >
-                {this.state.countryWiseStates &&
-                  this.state.countryWiseStates.length > 0 &&
-                  this.state.countryWiseStates.map((state, key) => (
-                    <option key={key} value={state.name}>
-                      {state.name}
-                    </option>
-                  ))}
-              </select>
-              <div className="errorMsg">{this.state.errors["state"]}</div>
-            </div>
-          </div>
-
-          <div className="row input-field">
-            <div className="col-6">
-              <label className="city mandatory" style={{ marginTop: "" }}>
-                City
-              </label>
-              <input
-                type="text"
-                value={this.state.fields.city ? this.state.fields.city : ""}
-                onChange={this.handleChange}
-                ref="city"
-                id="city"
-                name="city"
-                required
-              />
-              <div className="errorMsg">{this.state.errors["city"]}</div>
-            </div>
-            <div className="col-6">
-              <label className="zip mandatory" style={{ marginTop: "" }}>
-                Zip
-              </label>
-              <input
-                type="text"
-                value={this.state.fields.zip ? this.state.fields.zip : ""}
-                onChange={this.handleChange}
-                ref="zip"
-                id="zip"
-                name="zip"
-                required
-              />
-              <div className="errorMsg">{this.state.errors["zip"]}</div>
             </div>
           </div>
 
@@ -795,9 +609,7 @@ class EditProfile extends Component {
             <div className="col-12 input-field">
               <label htmlFor="website">Website</label>
               <input
-                id="website"
                 type="text"
-                ref="website"
                 name="website"
                 value={
                   this.state.fields.website ? this.state.fields.website : ""
@@ -841,11 +653,8 @@ class EditProfile extends Component {
               </label>
 
               <input
-                id="interest"
                 type="text"
-                ref="interest"
                 required
-                className="validate"
                 name="interest"
                 value={
                   this.state.fields.interest ? this.state.fields.interest : ""
@@ -855,7 +664,6 @@ class EditProfile extends Component {
               <div className="errorMsg">{this.state.errors["interest"]}</div>
             </div>
           </div>
-
           <div className="row">
             <div className="col s12 input-field">
               <button

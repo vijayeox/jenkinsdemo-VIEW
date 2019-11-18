@@ -1,0 +1,61 @@
+
+@import '~bootstrap/dist/css/bootstrap.css';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+
+#widgetEditorDialog {
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+
+.widget-editor-form > div.row {
+    margin-right:0px;
+    margin-left:0px;
+}
+
+.widget-editor-form #chartPropertyBox .card-body,
+.widget-editor-form #chartPreviewBox .card-body {
+    height:380px;
+    max-height:380px;
+    overflow:auto;
+}
+
+.widget-editor-form #chartPreview {
+    width:100%;
+    height:100%;
+}
+
+.widget-editor-form > div:first-child {
+    padding:3px;
+}
+
+.widget-editor-form .right-align, 
+.widget-editor-form .card .card-body label {
+    text-align:right;
+}
+
+.widget-editor-form #displayToolTip {
+    margin-top:8px;
+}
+
+/* Begin - Error display tooltip color. */
+.error-tooltip.bs-tooltip-bottom .arrow::before {
+    border-bottom-color:red;
+}
+
+.error-tooltip.bs-tooltip-left .arrow::before {
+    border-left-color:red;
+}
+
+.error-tooltip.bs-tooltip-right .arrow::before {
+    border-right-color:red;
+}
+
+.error-tooltip.bs-tooltip-top .arrow::before {
+    border-top-color:red;
+}
+
+.error-tooltip .tooltip-inner {
+    background-color:red;
+}
+/* End - Error display tooltip color. */
+

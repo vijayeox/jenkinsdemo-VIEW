@@ -42,7 +42,6 @@
   background-size: cover;
   background-position: 50% 50%;
   background-repeat: no-repeat;
-  background-image: url('src/styles/wallpaper.png');
   position: fixed;
   top: 0;
   left: 0;
@@ -74,11 +73,11 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999999999;
-  background-color:rgba(0, 0, 0,0.4);
-  background-size:contain;
-  height:100%;
-  width:100%;
-  padding: $base-margin;
+  background-color: rgba(255, 255, 255, 0.84);
+  height: 100%;
+  width: 100%;
   text-align: center;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -35,7 +35,7 @@ const register = (core, args, options, metadata) => {
     // win.minimize();
     const getAnnouncements = async () => {
         let helper = core.make('oxzion/restClient');
-        let announ = await helper.request('v1','/announcement/a', {}, 'get' );
+        let announ = await helper.request('v1','/announcement', {}, 'get' );
         return announ;
     };
     
@@ -45,7 +45,7 @@ const register = (core, args, options, metadata) => {
       
       if (core.has('osjs/tray')) {
         const tray = core.make('osjs/tray').create({
-          icon: proc.resource(metadata.icon),
+          icon: proc.resource(metadata.icon_white),
           title: applicationName,
           badge: 'badgeCheck',
           count: announcementsCount,
