@@ -51,7 +51,7 @@
     "serve": "^11.1.0",
     "sweetalert2": "^8.9.0",
     "sweetalert2-react-content": "^1.1.0",
-    "url-loader": "^2.1.0"
+    "url-loader": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

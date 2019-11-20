@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../public/js/Notification";
+import Notification from "../components/Notification";
 
 class Background extends Component {
   constructor(props) {

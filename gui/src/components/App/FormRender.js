@@ -95,12 +95,11 @@ class FormRender extends React.Component {
   }
   async storeError(data,error,route) {
     let helper = this.core.make("oxzion/restClient");
-    let route = "/error";
     let params = {};
     params.type='form';
     params.errorTrace = JSON.stringify(error);
     params.params = JSON.stringify({cache_id:this.state.cacheId,app_id:this.state.appId,formId:this.state.formId,workflowId:this.state.workflowId,route:route});
-    let response = await helper.request("v1",route,params,"post");
+    let response = await helper.request("v1","/error",params,"post");
     return 
   }
   async deleteCacheData() {

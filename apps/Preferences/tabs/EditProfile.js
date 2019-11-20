@@ -8,9 +8,6 @@ import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
 import PhoneInput from "react-phone-number-input";
 import { Editor, EditorTools } from "@progress/kendo-react-editor";
-import countries from "../public/js/countries";
-import states from "../public/js/states";
-
 const {
   Bold,
   Italic,
@@ -53,9 +50,7 @@ class EditProfile extends Component {
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
-      icon: this.userprofile.key.icon + "?" + new Date(),
-      countryWiseStates: [],
-      stateSelection: true
+      icon: this.userprofile.key.icon + "?" + new Date()
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -203,34 +198,14 @@ class EditProfile extends Component {
       errors["phone"] = "*Please enter Phone Number";
     }
 
-    if (!fields["address1"]) {
+    if (!fields["address"]) {
       formIsValid = false;
-      errors["address1"] = "*Please enter Address line 1";
+      errors["address"] = "*Please enter your address";
     }
 
     if (!fields["interest"]) {
       formIsValid = false;
       errors["interest"] = "*Please enter your interest";
-    }
-
-    if (!fields["country"]) {
-      formIsValid = false;
-      errors["country"] = "*Please select your country";
-    }
-
-    if (!fields["state"]) {
-      formIsValid = false;
-      errors["state"] = "*Please select your state";
-    }
-
-    if (!fields["city"]) {
-      formIsValid = false;
-      errors["city"] = "*Please enter your city";
-    }
-
-    if (!fields["zip"]) {
-      formIsValid = false;
-      errors["zip"] = "*Please enter zip code";
     }
 
     this.setState({
@@ -354,19 +329,11 @@ class EditProfile extends Component {
     }
   };
 
-  errorHandler = type => {
-    this.notif.current.failNotification("The image must be less than 2MB.");
-  };
-
   chooseImageData = () => {
     if (this.state.showImageDiv == 2) {
       return (
         <div className="chooseImageDiv">
-          <AvatarImageCropper
-            apply={this.apply}
-            isBack={true}
-            errorHandler={this.errorHandler}
-          />
+          <AvatarImageCropper apply={this.apply} isBack={true} />
           <p
             className="btn-sm btn-danger imgBtn"
             onClick={() => {

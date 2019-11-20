@@ -123,8 +123,8 @@ class Slider extends React.Component {
 
         {this.state.announcements.length == 0 ? (
           this.renderCard({
-            name: "No Announcements available!",
-            description: "Please use the Admin app to add a new Announcement.",
+            name: "No Announcements have been posted for you right now!",
+            description: "Stay Tuned for updates!",
             media_type: "image",
             media: "https://svgshare.com/i/DqC.svg",
             uuid: "empty"

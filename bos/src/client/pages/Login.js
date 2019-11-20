@@ -69,3 +69,4 @@ export default class Login extends defaultLogin {
     });
     this.on('login:error', err => a.setError(err));
    }
+}
