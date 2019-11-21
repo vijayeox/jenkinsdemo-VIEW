@@ -1,5 +1,6 @@
 const Dotenv = require('dotenv-webpack')
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
