@@ -4,8 +4,6 @@ APPS="apps"
 BOS="bos"
 ICON_PACKS="iconpacks"
 THEMES="themes"
-GUI="gui"
-BUILD_GUI=false
 BUILD_ICON_PACKS=false
 BUILD_THEMES=false
 BUILD_BOS=false
@@ -61,9 +59,6 @@ while [ "$1" != "" ]; do
         bos )           BUILD_BOS=true
                         BUILD_ALL=false
                         ;;
-        gui )           BUILD_GUI=true
-                        BUILD_ALL=false
-                        ;;
         iconpacks )     BUILD_ICON_PACKS=true
                         BUILD_ALL=false
                         ;;
@@ -85,10 +80,7 @@ while [ "$1" != "" ]; do
     esac
     shift
 done
-
-if [ "$BUILD_GUI" = true ] || [ "$BUILD_ALL" = true ] ; then
-    build_project $GUI
-fi
+npm install
 if [ "$BUILD_APPS" = true ] || [ "$BUILD_ALL" = true ] ; then
     if [ ${#APPS_TO_BUILD[@]} -eq 0 ]; then
         build_projects $APPS

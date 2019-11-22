@@ -9,6 +9,8 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
   "dependencies": {
+    "@progress/kendo-react-animation": "^3.7.0",
+    "@progress/kendo-react-popup": "^3.7.0",
     "@progress/kendo-data-query": "^1.5.2",
     "@progress/kendo-react-buttons": "^2.10.0",
     "@progress/kendo-react-dateinputs": "^2.10.0",
