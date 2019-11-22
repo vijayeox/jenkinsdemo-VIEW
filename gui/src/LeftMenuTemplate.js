@@ -71,7 +71,7 @@ class LeftMenuTemplate extends React.Component {
           style={{
             marginLeft: expanded ? 240 : 64,
             padding: "0px 20px 0 20px",
-            height: "100%"
+            height: "98%"
           }}
         >
           <div className="breadcrumbParent">
