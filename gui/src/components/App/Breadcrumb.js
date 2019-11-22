@@ -75,7 +75,7 @@ class Breadcrumb extends React.Component {
         ? content.push(
             <span className="breadcrumbs-item" key={index}>
               {index == "0" ? null : (
-                <i className="fas fa-chevron-right seperator"></i>
+                "/"
               )}
               {currentValue.icon ? <i className={currentValue.icon}></i> : null}
               <a

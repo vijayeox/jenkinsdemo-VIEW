@@ -1,13 +1,10 @@
 .PageRender {
   .breadcrumbs {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    background-color: #d9d9d9;
-    margin-bottom: 0.6rem;
-    margin-top: 0.6rem;
     border-radius: 1rem;
   }
 
@@ -17,20 +14,23 @@
     align-items: center;
     margin-right: 5px;
     margin-left: 5px;
-    font-size: 0.9rem;
     padding-left: 5px;
-    color: #36c;
+    color: #0c84a3;
     a {
-      color: #36c;
+      color: #0c84a3;
       padding-left: 5px;
-      font-size: 1rem;
+      font-size: 24px;
     }
     .seperator {
       margin-right: 0.5rem;
-      color: #9098a5;
-      font-size: 1.1rem;
+      color: #bababb;
+      font-size: 24px;
     }
   }
+}
+.breadcrumbParent{
+  border-bottom: 1px solid #0c84a3;
+  margin-bottom: 0.8rem;
 }
 
 .loaderAnimation {
