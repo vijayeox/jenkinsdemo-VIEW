@@ -78,8 +78,8 @@ class Page extends React.Component {
         : {
             width: "auto",
             paddingTop: "5px",
-            color:"white",
-            fontWeight:"600"
+            color: "white",
+            fontWeight: "600"
           };
       showButton
         ? actionButtons.push(
@@ -214,6 +214,14 @@ class Page extends React.Component {
     return pageContent;
   }
 
+  stepBackBreadcrumb = () => {
+    let ev = new CustomEvent("stepDownPage", {
+      detail: {},
+      bubbles: true
+    });
+    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+  };
+
   renderContent(data) {
     var content = [];
     for (var i = 0; i < data.length; i++) {
@@ -227,7 +235,7 @@ class Page extends React.Component {
           var workflowInstanceId = this.replaceParams(
             data[i].workflowInstanceId,
             this.state.currentRow
-          );          
+          );
           content.push(
             <FormRender
               key={i}
@@ -238,6 +246,7 @@ class Page extends React.Component {
               formId={data[i].form_id}
               config={this.menu}
               parentWorkflowInstanceId={workflowInstanceId}
+              postSubmitCallback={this.stepBackBreadcrumb}
             />
           );
           break;
@@ -261,6 +270,7 @@ class Page extends React.Component {
               key={i}
               osjsCore={this.core}
               data={dataString}
+              gridDefaultFilters={this.replaceParams(itemContent.defaultFilter)}
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}

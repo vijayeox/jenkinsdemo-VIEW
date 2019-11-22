@@ -7,19 +7,36 @@ class Breadcrumb extends React.Component {
       breadcrumbConfig: []
     };
     this.updateBreadCrumb = this.updateBreadCrumb.bind(this);
+    this.stepDownPage = this.stepDownPage.bind(this);
   }
 
   componentDidMount() {
     document
       .getElementsByClassName("breadcrumbParent")[0]
       .addEventListener("updateBreadcrumb", this.updateBreadCrumb, false);
+    document
+      .getElementsByClassName("breadcrumbParent")[0]
+      .addEventListener("stepDownPage", this.stepDownPage, false);
   }
 
-  clearBreadcrumb(){
+  clearBreadcrumb() {
     this.setState({
       breadcrumbConfig: []
-    })
+    });
   }
+
+  stepDownPage = () => {
+    let data = this.state.breadcrumbConfig.slice();
+    data.length=1;
+    this.setState({
+      breadcrumbConfig: data
+    });
+    let ev = new CustomEvent("updatePageView", {
+      detail: data[0].content,
+      bubbles: true
+    });
+    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+  };
 
   breadcrumbClick = (currentValue, index) => {
     if (currentValue.content) {
@@ -48,9 +65,9 @@ class Breadcrumb extends React.Component {
     var content = [];
     this.state.breadcrumbConfig.map((currentValue, index) => {
       var clickable = false;
-      if (currentValue.content ) {
+      if (currentValue.content) {
         var clickable = true;
-        if (this.state.breadcrumbConfig.length == index+1) {
+        if (this.state.breadcrumbConfig.length == index + 1) {
           var clickable = false;
         }
       }
