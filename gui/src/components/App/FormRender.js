@@ -255,7 +255,6 @@ class FormRender extends React.Component {
             console.log(response.data);
             this.setState({ content: JSON.parse(response.data.template)});
           }
-          // this.setState({ data: JSON.parse(response.data.data) });
           this.setState({ formDivID:'formio_'+this.state.formId});
           this.createForm();
         }
@@ -405,13 +404,9 @@ class FormRender extends React.Component {
             }
             if(form._form['properties']['payment_confirmation_page']){
               var elements = document.getElementsByClassName("btn-wizard-nav-submit");
-              // if(elements.length > 0){
-              //   elements[0].classList.add('invisible')
-              // }
               that.getPayment(form.submission.data).then(response => {
                 var responseArray = [];
                 if(response.data){
-                  console.log(response.data[0])
                   var evt = new CustomEvent('paymentDetails', {detail: response.data[0]});
                   window.dispatchEvent(evt);
                 }

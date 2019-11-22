@@ -35,7 +35,7 @@
     "file-upload-with-preview": "^4.0.2",
     "font-awesome": "^4.7.0",
     "formiojs": "^3.28.2",
-    "history": "^4.9.0",
+    "history": "^4.10.1",
     "jquery": "^3.4.0",
     "lodash": "^4.17.15",
     "npm": "^6.10.0",

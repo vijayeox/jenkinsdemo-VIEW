@@ -8,43 +8,27 @@ import SideNav, {
 } from "@trendmicro/react-sidenav";
 import { Button, ButtonGroup } from "@trendmicro/react-buttons";
 import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
-import Page from "./components/App/Page";
-import Breadcrumb from "./components/App/Breadcrumb";
 // Be sure to include styles at some point, probably during your bootstraping
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
+import Navigation from "./Navigation";
+import "./public/css/LeftMenuTemplate.scss";
 
 class LeftMenuTemplate extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.core;
     this.appId = this.props.appId;
+    this.params = this.props.params;
+    this.config = this.props.config;
     this.state = {
       menus: [],
       selected: "",
       expanded: false
     };
-
-    this.getMenulist().then(response => {
-      this.setState({
-        menus: response["data"],
-        selected: response["data"][0]
-      });
-    });
     this.onSelect = this.onSelect.bind(this);
     this.onToggle = this.onToggle.bind(this);
-    this.child = React.createRef();
   }
 
-  async getMenulist() {
-    let helper = this.core.make("oxzion/restClient");
-    let menulist = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/menu",
-      {},
-      "get"
-    );
-    return menulist;
-  }
 
   onToggle(expanded) {
     this.setState({ expanded: expanded });
@@ -52,41 +36,24 @@ class LeftMenuTemplate extends React.Component {
 
   onSelect(selected) {
     this.setState({ selected: selected, expanded: false });
-    if (this.state.selected !== selected) {
-      this.child.current.clearBreadcrumb();
-    }
+  }
+  menuLoad(menus){
+    this.setState({
+      menus: menus
+    });
+  }
+  selectLoad(selected){
+    this.setState({
+      selected: selected
+    });
   }
 
   render() {
     const { expanded, selected } = this.state;
     return (
       <div
-        style={{
-          height: "100%",
-          overflow: "auto"
-        }}
+      className='LeftMenuTemplate'
       >
-        <div
-          className="PageRender"
-          style={{
-            marginLeft: expanded ? 240 : 64,
-            padding: "0px 20px 0 20px",
-            height: "98%"
-          }}
-        >
-          <div className="breadcrumbParent">
-          <Breadcrumb ref={this.child} />
-          </div>
-          {this.state.selected.page_id ? (
-            <Page
-              pageId={this.state.selected.page_id}
-              updatePage={this.onSelect}
-              config={this.props.config}
-              app={this.props.appId}
-              core={this.core}
-            />
-          ) : null}
-        </div>
         <SideNav
           onSelect={this.onSelect}
           onToggle={this.onToggle}
@@ -112,6 +79,7 @@ class LeftMenuTemplate extends React.Component {
             })}
           </SideNav.Nav>
         </SideNav>
+        <Navigation core={this.core} params={this.params} config={this.config} menuLoad={this.menuLoad.bind(this)} selectLoad={this.selectLoad.bind(this)} onSelect={this.onSelect} appId={this.appId} selected={this.state.selected} />
       </div>
     );
   }

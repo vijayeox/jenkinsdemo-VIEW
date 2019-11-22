@@ -30,9 +30,7 @@ export class BosAdapter extends ServiceProvider {
             var appName = queryObj.app;
             var userDetails = this.core.make('oxzion/profile').get();
             var appList = userDetails.key.blackListedApps;
-
             if (!(appName in userDetails.key.blackListedApps)){
-
                this.core.request(this.core.config('packages.manifest'), {}, 'json')
                .then(metadata => {
                    this.addPackages(metadata);
@@ -77,7 +75,17 @@ export class BosAdapter extends ServiceProvider {
 
     launch(app) {
         var found = this.metadata.find(pkg => pkg.name === app.app);
-        if (found != undefined)
-            this.core.make('osjs/packages').launch(app.app, ((app.args) ? app.args : {}), ((app.options) ? app.options : {}));
+        if (found != 'undefined' && found !=undefined ){
+            var appName = app.app;
+            var params = app;
+            delete params.app;
+            if(app.params){
+                params = app.params;
+            }
+            if(app.args){
+                params = app.args;
+            }
+            this.core.make('osjs/packages').launch(appName, params, ((app.options) ? app.options : {}));
+        }
     }
 }
