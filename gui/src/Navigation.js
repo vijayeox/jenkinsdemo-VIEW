@@ -14,8 +14,10 @@ class Navigation extends React.Component {
       selected: this.props.selected
     };
     this.child = React.createRef();
+    this.homepage = null;
     this.getMenulist().then(response => {
-      this.props.menuLoad(response['data'])
+      this.props.menuLoad(response['data']);
+      this.homepage = response['data'][0];
       if(this.params.page){
         this.child.current.clearBreadcrumb();
         this.setState({selected:{page_id:this.params.page}});
@@ -23,7 +25,7 @@ class Navigation extends React.Component {
       } else if(this.params.activityId){
         this.setState({selected:{activity_id:this.params.activityId}});
       } else {
-        this.props.selectLoad(response['data'][0]);
+        this.props.selectLoad(this.homepage);
       }
     });
   }
@@ -44,6 +46,9 @@ class Navigation extends React.Component {
       if(props.selected !== this.state.selected)
         this.child.current.clearBreadcrumb();
       }
+  }
+  postSubmitCallback(){
+    this.props.selectLoad(this.homepage);
   }
 
   render() {
@@ -73,7 +78,7 @@ class Navigation extends React.Component {
             <FormRender
               postSubmitCallback={this.postSubmitCallback}
               core={this.core}
-              appId={application_id}
+              appId={this.props.appId}
               activityInstanceId={this.state.selected.activity_id}
             />
           </div>
