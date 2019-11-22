@@ -7,6 +7,7 @@
   .k-grid-content {
     overflow-y: scroll;
     cursor: pointer;
+    min-height: 200px;
   }
 
   input {
@@ -35,6 +36,7 @@
 
   .k-grid-norecords {
     width: inherit !important;
+    background-color: #ededed;
   }
 
   .grid-no-records {
@@ -85,6 +87,7 @@
     //manage icons style and style
     background-color: #ff6358;
     border-radius: 10px;
+    font-family: Roboto;
     padding: 0.5rem;
     width: 2.2rem;
     height: 2.2rem;

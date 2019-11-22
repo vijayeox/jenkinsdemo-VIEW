@@ -26,11 +26,9 @@ export default class OX_Grid extends React.Component {
         ? this.props.data
         : { data: [], total: "0" },
       api: this.rawDataPresent ? undefined : this.props.data,
-      dataState: {
-        take: 20,
-        skip: 0,
-        sort: this.props.sortMode
-      }
+      dataState: this.props.gridDefaultFilters
+        ? this.props.gridDefaultFilters
+        : {}
     };
   }
 
@@ -230,7 +228,7 @@ export default class OX_Grid extends React.Component {
           {...this.state.dataState}
         >
           {this.createColumns()}
-          {this.noRecordsJSX()}
+          {/* {this.noRecordsJSX()} */}
         </Grid>
       </div>
     );
@@ -278,6 +276,7 @@ OX_Grid.propTypes = {
   data: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   checkBoxSelection: PropTypes.func,
   columnConfig: PropTypes.array.isRequired,
+  gridDefaultFilters: PropTypes.object,
   gridToolbar: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   gridNoRecords: PropTypes.element,
   gridStyles: PropTypes.object,
@@ -288,8 +287,7 @@ OX_Grid.propTypes = {
   resizable: PropTypes.bool,
   reorderable: PropTypes.bool,
   rowTemplate: PropTypes.func,
-  sortable: PropTypes.bool,
-  sortMode: PropTypes.array
+  sortable: PropTypes.bool
 };
 
 // Send selected value as true in data array to enable selected field css background
@@ -298,4 +296,26 @@ OX_Grid.propTypes = {
 //   name: "prajwal",
 //   address: "test",
 //   selected: true
+// }
+//
+// Send gridDefaultFilters in the following format
+// {
+//   "filter":{
+//   "logic":"and",
+//   "filters":[
+//   {
+//   "field":"workflow_name",
+//   "operator":"contains",
+//   "value":"ipl"
+//   }
+//   ]
+//   },
+//   "sort":[
+//   {
+//   "field":"workflow_name",
+//   "dir":"desc"
+//   }
+//   ],
+//   "skip":0,
+//   "take":50
 // }
