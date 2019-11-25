@@ -1,34 +1,43 @@
 
-class ChartRenderer {
+class WidgetRenderer {
     static render(element, widget) {
         let widgetTagName = element.tagName.toUpperCase();
         switch(widget.renderer) {
-            case 'html':
+            case 'JsAggregate':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     console.error(`Unexpected inline widget tag "${widgetTagName}"`);
                 }
                 element.innerHTML = widget.data;
+                return null;
             break;
 
             case 'amCharts':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
                     console.error(`Unexpected inline widget tag "${widgetTagName}"`);
+                    return null;
                 }
-                return ChartRenderer.renderAmCharts(element, widget.configuration, widget.data);
+                try {
+                    return WidgetRenderer.renderAmCharts(element, widget.configuration, widget.data);
+                }
+                catch(e) {
+                    console.error(e);
+                    return null;
+                }
             break;
 
             default:
                 console.error(`Unexpected widget renderer "${widget.renderer}"`);
+                return null;
         }
     }
 
     static renderAmCharts(element, configuration, data) {
         let series = configuration.series;
         if (!Array.isArray(series)) {
-            console.error('Chart series should be array.');
+            throw 'Chart series should be array.';
         }
         if (0 === series.length) {
-            console.error('Chart series is empty.');
+            throw 'Chart series is empty.';
         }
         let type = series[0].type;
         let am4ChartType;
@@ -55,23 +64,19 @@ class ChartRenderer {
                 canvasElement = element.querySelector('div.oxzion-widget-content');
             break;
             default:
-                console.error(`Unexpected chart element "${elementTagName}"`);
+                throw `Unexpected chart element "${elementTagName}"`;
         }
         if (!canvasElement) {
-            console.error('Canvas element not found for drawing the chart.');
+            throw 'Canvas element not found for drawing the chart.';
         }
-        try {
-            let chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
-            if (chart && data) {
-                chart.data = data;
-            }
-            return chart;
+
+        let chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
+        if (chart && data) {
+            chart.data = data;
         }
-        catch(e) {
-            console.error(e);
-        }
+        return chart;
     }
 }
 
-export default ChartRenderer;
+export default WidgetRenderer;
 

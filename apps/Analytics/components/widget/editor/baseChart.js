@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from "sweetalert2";
-import ChartRenderer from '../../../components/chartRenderer';
+import WidgetRenderer from '../../../components/widgetRenderer';
 import '../../../../../gui/src/public/css/sweetalert.css';
 
 class BaseChart extends React.Component {
@@ -171,7 +171,10 @@ class BaseChart extends React.Component {
         if (this.chart && this.chart.dispose) {
             this.chart.dispose();
         }
-        this.chart = ChartRenderer.render(document.querySelector('div#chartPreview'), this.state);
+        let chartElement = document.querySelector('div#chartPreview');
+        if (chartElement) {
+            this.chart = WidgetRenderer.render(chartElement, this.state);
+        }
     }
 
     setWidget = (widget) => {

@@ -83,7 +83,7 @@ class AmChartEditor extends React.Component {
         }
 
         this.setState((state) => {
-            state.errors.chartConfiguration = errorMessage;
+            state.errors.chartConfiguration = state.readOnly ? null : errorMessage;
             return state;
         });
     }

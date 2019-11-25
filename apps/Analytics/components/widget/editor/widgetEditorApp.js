@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Overlay, Tooltip} from 'react-bootstrap';
-import BarChart from './barChart';
-import PieChart from './pieChart';
-import LineChart from './lineChart';
-import AggregateValue from './aggregateValue';
+import AmChartEditor from './amChartEditor';
+import AggregateValueEditor from './aggregateValueEditor';
 import './globalFunctions';
 import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';
@@ -24,7 +22,6 @@ class WidgetEditorApp extends React.Component {
                 type: null
             },
             widgetName:'',
-            querySelection:'',
             errors : {
             },
             readOnly:true,
@@ -44,7 +41,7 @@ class WidgetEditorApp extends React.Component {
         this.setState({
             readOnly:flag
         });
-        this.refs.widget.makeReadOnly(flag);
+        this.refs.editor.makeReadOnly(flag);
     }
 
     loadWidget = (uuid) => {
@@ -59,16 +56,10 @@ class WidgetEditorApp extends React.Component {
                     return state;
                 },
                 () => {
-                    if (thiz.refs.widget) {
-                        thiz.refs.widget.setWidget(widget);
+                    if (thiz.refs.editor) {
+                        thiz.refs.editor.setWidgetData(widget.data);
+                        thiz.refs.editor.setWidgetQueries(widget.queries);
                     }
-                });
-
-                thiz.setState({
-                    querySelection : widget.query_uuid
-                },
-                () => {
-                    thiz.refs.widget.setWidgetData(widget.data);
                 });
                 thiz.makeReadOnly(true);
             }).
@@ -83,27 +74,6 @@ class WidgetEditorApp extends React.Component {
             });
     }
 
-    loadQuery = () => {
-        if (!this.state.querySelection || ('' === this.state.querySelection)) {
-            thiz.refs.widget.setWidgetData(null);
-            return;
-        }
-        let thiz = this;
-        window.postDataRequest(`analytics/query/${this.state.querySelection}?data=true`).
-            then(function(response) {
-                let queryData = response.query.data;
-                thiz.refs.widget.setWidgetData(queryData);
-            }).
-            catch(function(response) {
-                console.error(response);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Could not load query data. Please try after some time.'
-                });
-            });
-    }
-
     widgetSelectionChanged = (e) => {
         let widgetId = e.target.value;
         if (widgetId === this.state.widget.uuid) {
@@ -114,16 +84,6 @@ class WidgetEditorApp extends React.Component {
             return state;
         });
         this.loadWidget(widgetId);
-    }
-
-    querySelectionChanged = (queryUuid) => {
-        this.setState((state) => {
-            state.querySelection = queryUuid;
-            return state;
-        },
-        () => {
-            this.loadQuery();
-        });
     }
 
     copyWidget = (e) => {
@@ -241,20 +201,6 @@ class WidgetEditorApp extends React.Component {
         return promise;
     }
 
-    isQuerySelectionValid = () => {
-        let querySelection = this.state.querySelection;
-        if (!querySelection || ('' === querySelection)) {
-            this.setErrorMessage('querySelection', 'Query should be selected');
-            console.debug('Query selection is invalid.');
-            return false;
-        }
-        else {
-            this.setErrorMessage('querySelection', null);
-            console.debug('Query selection is valid.');
-            return true;
-        }
-    }
-
     areAllFieldsValid = () => {
         let resolvePromise;
         let promise = new Promise((resolve, reject)=> {
@@ -265,8 +211,7 @@ class WidgetEditorApp extends React.Component {
         this.isWidgetNameValid().then(function(isNameValid) {
             console.debug(`Widget name valid? ${isNameValid}`);
             let result = isNameValid & 
-                thiz.isQuerySelectionValid() & 
-                thiz.refs.widget.areAllFieldsValid();
+                thiz.refs.editor.areAllFieldsValid();
             console.debug(`Overall validation result:${result}`);
             resolvePromise(result);
         });
@@ -287,14 +232,13 @@ class WidgetEditorApp extends React.Component {
     //Called in globalFunctions.js
     saveWidget = () => {
         let state = this.state;
+        let editorState = this.refs.editor.getState();
         let params = {
-            'uuid':state.widget.uuid,
-            'configuration':JSON.stringify(state.widget.configuration),
-            'name':state.widgetName
+            'uuid' : state.widget.uuid,
+            'configuration' : editorState.configuration,
+            'queries' : editorState.queries,
+            'name' : state.widgetName
         };
-        if (state.querySelection && ('' != state.querySelection)) {
-            params['query_uuid'] = state.querySelection;
-        }
         return window.postDataRequest('analytics/widget', params, 'post');
     }
 
@@ -321,17 +265,17 @@ class WidgetEditorApp extends React.Component {
                     title: 'Input error',
                     text: 'Form fields have errors. Please resolve errors and try again.'
                 });
-                resolvePromise(true);
+                resolvePromise(true); //true indicates there are errors.
             }
             else {
-                resolvePromise(false);
+                resolvePromise(false); //false indicates there are no errors.
             }
         });
 
         return promise;
     }
 
-    //Called in globalFunctions.js to detect whether the chart has been edited.
+    //Called in globalFunctions.js to detect whether the widget has been edited.
     isEdited = () => {
         return !this.state.readOnly;
     }
@@ -343,15 +287,9 @@ class WidgetEditorApp extends React.Component {
             )
         });
 
-        let htmlQueryOptions = this.queryList.map((query, index) => {
-            return (
-                <option key={query.uuid} value={query.uuid}>{query.name}</option>
-            )
-        });
-
         return (
             <form className="widget-editor-form">
-                <div className="form-group row">
+                <div className="form-group row no-left-margin no-right-margin">
                     <div className="col-1 right-align">
                         <label htmlFor="selectWidget" className="right-align col-form-label form-control-sm">Widget</label>
                     </div>
@@ -365,38 +303,18 @@ class WidgetEditorApp extends React.Component {
                     </div>
                     <div className="col-1">
                         {this.state.widget.uuid && 
-                        <button type="button" className="btn btn-primary add-series-button" title="Copy widget" onClick={this.copyWidget}>
+                        <button type="button" className="btn btn-primary add-series-button" title="Copy widget" 
+                            onClick={this.copyWidget} disabled={!this.state.readOnly}>
                             <span className="fa fa-copy" aria-hidden="true"></span>
                         </button>
                         }
                     </div>
-                    <div className="col-6">&nbsp;</div>
-                </div>
-                <div className="form-group row">
-                    <div className="col-1 right-align">
-                        <label htmlFor="selectQuery" className="right-align col-form-label form-control-sm">Query</label>
-                    </div>
-                    <div className="col-4">
-                        <select id="querySelection" name="querySelection" ref="querySelection" className="form-control form-control-sm" placeholder="Select query" 
-                            value={this.state.querySelection ? this.state.querySelection : ''} onChange={(e) => {this.querySelectionChanged(e.target.value)}}
-                            onBlur={this.isQuerySelectionValid} disabled={this.state.readOnly}>
-                            <option key="" value="">-Select query-</option>
-                            {htmlQueryOptions}
-                        </select>
-                        <Overlay target={this.refs.querySelection} show={this.state.errors.querySelection != null} placement="bottom">
-                            {props => (
-                            <Tooltip id="querySelection-tooltip" {...props} className="error-tooltip">
-                                {this.state.errors.querySelection}
-                            </Tooltip>
-                            )}
-                        </Overlay>
-                    </div>
-                    <div className="col-1">&nbsp;</div>
+                    { !this.state.readOnly && 
+                    <>
                     <div className="col-2 right-align">
                         <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
                     </div>
                     <div className="col-4">
-                        <>
                         <input type="text" id="widgetName" name="widgetName"  ref="widgetName" className="form-control form-control-sm" 
                             onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.isWidgetNameValid}
                             disabled={this.state.readOnly}/>
@@ -407,25 +325,16 @@ class WidgetEditorApp extends React.Component {
                             </Tooltip>
                             )}
                         </Overlay>
-                        </>
                     </div>
+                    </>
+                    }
                 </div>
                 <div className="row">
-                    {(this.state.widget.type === 'barChart') && 
-                        <BarChart ref="widget" widget={this.state.widget} 
-                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
-                    }
-                    {(this.state.widget.type === 'lineChart') && 
-                        <LineChart ref="widget" widget={this.state.widget} 
-                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
-                    }
-                    {(this.state.widget.type === 'pieChart') && 
-                        <PieChart ref="widget" widget={this.state.widget} 
-                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
+                    {(this.state.widget.type === 'chart') && 
+                        <AmChartEditor ref="editor" widget={this.state.widget}/>
                     }
                     {(this.state.widget.type === 'inline') && 
-                        <AggregateValue ref="widget" widget={this.state.widget} 
-                            updateWidgetState={this.updateWidgetState} querySelectionChanged={this.querySelectionChanged}/>
+                        <AggregateValueEditor ref="editor" widget={this.state.widget}/>
                     }
                 </div>
             </form>

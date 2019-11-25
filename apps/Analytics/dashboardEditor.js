@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Overlay, Tooltip} from 'react-bootstrap';
 import {dashboardEditor as section} from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
-import ChartRenderer from './components/chartRenderer';
+import WidgetRenderer from './components/widgetRenderer';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
@@ -214,8 +214,8 @@ class DashboardEditor extends React.Component {
                     let dashboard = response.dashboard;
                     thisInstance.setState({
                         version:dashboard.version,
-                        dashboardName:dashboard.name,
-                        dashboardDescription:dashboard.description
+                        dashboardName:dashboard.name ? dashboard.name : '',
+                        dashboardDescription:dashboard.description ? dashboard.description : ''
                     });
                     editor.setData(response.dashboard.content);
                 }, 
@@ -312,7 +312,7 @@ class DashboardEditor extends React.Component {
 
         this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get', 
             function(response) {
-                ChartRenderer.render(widgetElement, response.widget);
+                WidgetRenderer.render(widgetElement, response.widget);
             },
             function(response) {
                 Swal.fire({
