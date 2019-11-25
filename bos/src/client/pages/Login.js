@@ -1,5 +1,5 @@
 import { Login as defaultLogin } from "../../osjs-client/index.js";
-import { h, app } from "hyperapp";
+import { h, app } from "hyperapp"; 
 import "../assets/scss/login.scss";
 
 export default class Login extends defaultLogin {
@@ -198,7 +198,7 @@ export default class Login extends defaultLogin {
                       h("img", {
                         id: "ox-logo",
                         className: "ox-img",
-                        src: require("../assets/images/OXZion.png")
+                        src: require("../assets/images/eox.png")
                       })
                     ]),
                     h("div", { className: "floating-label" }, [
@@ -275,7 +275,7 @@ export default class Login extends defaultLogin {
                       h("img", {
                         id: "ox-logo",
                         className: "ox-img",
-                        src: require("../assets/images/OXZion.png")
+                        src: require("../assets/images/eox.png")
                       })
                     ]),
                     h("div", { className: "floating-label" }, [
@@ -349,7 +349,7 @@ export default class Login extends defaultLogin {
                       h("img", {
                         id: "ox-logo",
                         className: "ox-img",
-                        src: require("../assets/images/OXZion.png")
+                        src: require("../assets/images/eox.png")
                       })
                     ]),
                     h(
