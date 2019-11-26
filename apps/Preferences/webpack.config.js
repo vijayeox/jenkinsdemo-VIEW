@@ -48,6 +48,9 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery'
     }),
+new webpack.NormalModuleReplacementPlugin(
+    /\/iconv-loader$/, 'node-noop',
+  ),
     ...plugins
   ],
   module: {
