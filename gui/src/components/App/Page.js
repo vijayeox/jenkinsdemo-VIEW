@@ -77,7 +77,7 @@ class Page extends React.Component {
           }
         : {
             width: "auto",
-            paddingTop: "5px",
+            // paddingTop: "5px",
             color: "white",
             fontWeight: "600"
           };

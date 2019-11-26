@@ -250,7 +250,9 @@ class CustomCell extends GridCell {
           useEvenSpace
             ? {
                 display: "flex",
-                justifyContent: "space-evenly"
+                justifyContent: "space-evenly",
+                cursor:"default"
+                
               }
             : null
         }

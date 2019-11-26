@@ -27,7 +27,7 @@ class Breadcrumb extends React.Component {
 
   stepDownPage = () => {
     let data = this.state.breadcrumbConfig.slice();
-    data.length=1;
+    data.length = 1;
     this.setState({
       breadcrumbConfig: data
     });
@@ -75,19 +75,31 @@ class Breadcrumb extends React.Component {
         ? content.push(
             <span className="breadcrumbs-item" key={index}>
               {index == "0" ? null : (
-                "/"
+                // "/"
+                <i
+                  class="fas fa-chevron-right"
+                  style={{
+                    fontSize: "17px",
+                    marginRight: "10px"
+                  }}
+                />
               )}
-              {currentValue.icon ? <i className={currentValue.icon}></i> : null}
-              <a
-                style={{
-                  cursor: clickable ? "pointer" : null
-                }}
-                onClick={() =>
-                  clickable ? this.breadcrumbClick(currentValue, index) : null
-                }
-              >
-                {currentValue.name}
-              </a>
+                {currentValue.icon ? (
+                  <i
+                    className={currentValue.icon}
+                    style={{ fontSize: "1rem" }}
+                  ></i>
+                ) : null}
+                <a
+                  style={{
+                    cursor: clickable ? "pointer" : null
+                  }}
+                  onClick={() =>
+                    clickable ? this.breadcrumbClick(currentValue, index) : null
+                  }
+                >
+                  {currentValue.name}
+                </a>
             </span>
           )
         : null;
