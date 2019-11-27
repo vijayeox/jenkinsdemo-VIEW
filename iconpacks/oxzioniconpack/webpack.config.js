@@ -32,7 +32,7 @@ module.exports = {
   ],
   module: {
     rules: [{
-        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        test: /\.(png|jpe?g|gif|webp)$/,
         exclude: /(node_modules|bower_components)/,
         use: [{
           loader: 'file-loader',
@@ -63,6 +63,12 @@ module.exports = {
           }
         ]
       },
+      {
+         test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+         use: [{
+           loader: 'file-loader'
+         }]
+       },
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
