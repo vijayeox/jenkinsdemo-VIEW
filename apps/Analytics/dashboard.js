@@ -50,9 +50,6 @@ class Dashboard extends React.Component {
         }
         restResponse.
             then(function(response) {
-console.log('--------------------->>>>');
-console.log(response);
-
                 if (response.status !== 'success') {
                     handleNonSuccessResponse(response);
                 }
