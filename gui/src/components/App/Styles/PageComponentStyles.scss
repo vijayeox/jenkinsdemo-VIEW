@@ -22,6 +22,9 @@
       padding-left: 5px;
       font-size: 24px;
     }
+    a:focus, a:hover{
+      text-decoration: none;
+    }
     .seperator {
       margin-right: 0.5rem;
       color: #bababb;
