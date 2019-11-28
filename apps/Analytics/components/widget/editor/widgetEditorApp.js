@@ -57,8 +57,11 @@ class WidgetEditorApp extends React.Component {
                 },
                 () => {
                     if (thiz.refs.editor) {
-                        thiz.refs.editor.setWidgetData(widget.data);
-                        thiz.refs.editor.setWidgetQueries(widget.queries);
+                        thiz.refs.editor.setWidgetData({
+                            data: widget.data,
+                            configuration: widget.configuration,
+                            queries: widget.queries
+                        });
                     }
                 });
                 thiz.makeReadOnly(true);

@@ -11,9 +11,9 @@ class AmChartEditor extends React.Component {
             selectedTab: 'chart',
             readOnly: true,
             queries: [],
-            chartConfiguration: '',
+            configuration: '',
             errors:{
-                chartConfiguration:null,
+                configuration:null,
                 queries: []
             }
         };
@@ -28,21 +28,40 @@ class AmChartEditor extends React.Component {
     }
 
     getState = () => {
+        //IMPORTANT: query object in the array this.state.queries is a mixed mode object.
+        //    query.uuid, query.configuration are objects. JSON data in query.configuration.filter,
+        //    query.configuration.grouping and query.configuration.sort are JSON strings coming from 
+        //    form fields. Here we convert those JSON strings to java objects.
+        let queries = [];
+        if (this.state.queries) {
+            this.state.queries.forEach(function(query, index) {
+                let configuration = query['configuration'];
+                queries.push({
+                    'uuid':query['uuid'],
+                    'configuration':{
+                        'filter': configuration.filter ? JSON.parse(configuration.filter) : null,
+                        'grouping': configuration.grouping ? JSON.parse(configuration.grouping) : null,
+                        'sort': configuration.sort ? JSON.parse(configuration.sort) : null
+                    }
+                });
+            });
+        }
+        
         return {
-            configuration:this.state.chartConfiguration,
-            queries:this.state.queries
+            configuration:JSON.parse(this.state.configuration),
+            queries:queries
         }
     }
 
-    chartConfigurationChanged = (evt) => {
+    configurationChanged = (evt) => {
         let thiz = this;
         let value = evt.target.value;
         this.setState((state) => {
-            state.chartConfiguration = value;
-            state.errors.chartConfiguration = ('' === value) ? thiz.ERRORS.CHART_CONFIGURATION_NEEDED : null;
+            state.configuration = value;
+            state.errors.configuration = ('' === value) ? thiz.ERRORS.CHART_CONFIGURATION_NEEDED : null;
             return state;
         });
-        //IMPORTANT: Don't refresh chart preview when chartConfigurationChanged method is called. 
+        //IMPORTANT: Don't refresh chart preview when configurationChanged method is called. 
         //           It is too much to update preview for every key stroke when the user is typing the configuration.
         //           Therefore chart preview is updated when the configuration field loses focus OR when the "chart" tab comes back to focus.
     }
@@ -52,9 +71,10 @@ class AmChartEditor extends React.Component {
         let value = evt.target.value;
         this.setState((state) => {
             let queryObject = state.queries[index];
-            queryObject.query = value;
+            queryObject.uuid = value;
             queryObject.configuration.filter = '';
             queryObject.configuration.grouping = '';
+            queryObject.configuration.sort = '';
             state.errors.queries[index] = (value === '') ? thiz.ERRORS.QUERY_NEEDED : null;
             return state;
         },
@@ -64,11 +84,13 @@ class AmChartEditor extends React.Component {
     }
 
     refreshChartPreview = () => {
+        let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {
             //Make sure chart configuratio is valid JSON
-            let jsonChartConfiguration = JSON.parse(this.state.chartConfiguration);
+            let jsonChartConfiguration = JSON.parse(this.state.configuration);
             let previewElement = document.querySelector('div#chartPreview');
+            previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
             try {
                 this.amChart = WidgetRenderer.renderAmCharts(previewElement, jsonChartConfiguration, this.data);
             }
@@ -83,22 +105,43 @@ class AmChartEditor extends React.Component {
         }
 
         this.setState((state) => {
-            state.errors.chartConfiguration = state.readOnly ? null : errorMessage;
+            state.errors.configuration = state.readOnly ? null : errorMessage;
             return state;
         });
     }
 
     refreshQueryPreview = () => {
-        let previewElement = document.querySelector('div#queryPreview');
-        previewElement.innerHTML = '' + new Date();
+        let cardBody = document.querySelector('div#previewBox div.card-body');
+        let textArea = document.querySelector('textarea#queryPreviewText');
+        textArea.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around textarea.
+        let value = '';
+        if (this.data) {
+            value = JSON.stringify(this.data, null, '    ');
+        }
+        textArea.value = value;
     }
 
-    setWidgetData = (data) => {
-        this.data = data;
-    }
-
-    setWidgetQueries = (queries) => {
-        //TODO: Method body
+    setWidgetData = (widgetData) => {
+        this.data = widgetData.data;
+        let queries = [];
+        if (widgetData.queries) {
+            widgetData.queries.forEach(function(query, index) {
+                let configuration = query.configuration;
+                queries.push({
+                    'uuid':query.uuid,
+                    'configuration':{
+                        'filter': configuration.filter ? JSON.stringify(configuration.filter, null, '    ') : '',
+                        'grouping': configuration.grouping ? JSON.stringify(configuration.grouping, null, '') : '',
+                        'sort': configuration.sort ? JSON.stringify(configuration.sort, null, '') : ''
+                    }
+                });
+            });
+        }
+        this.setState((state) => {
+            state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
+            state.queries = queries;
+            return state;
+        });
     }
 
     makeReadOnly = (flag) => {
@@ -133,22 +176,22 @@ class AmChartEditor extends React.Component {
                 }
             break;
         }
-        return !(chartTabHasErrors || queryTabHasErrors);
+        return (isChartTabValid && isQueryTabValid);
     }
 
     isChartTabValid = (state, setErrorState = true) => {
         let isValid = true;
 
-        let chartConfiguration = this.state.chartConfiguration;
+        let configuration = this.state.configuration;
         let errorMessage = null;
-        if ('' === chartConfiguration) {
+        if ('' === configuration) {
             isValid = false;
             errorMessage = this.ERRORS.CHART_CONFIGURATION_NEEDED;
         }
         else {
             try {
                 //Make sure chart configuratio is valid JSON
-                JSON.parse(chartConfiguration);
+                JSON.parse(configuration);
             }
             catch(jsonParseError) {
                 isValid = false;
@@ -158,10 +201,7 @@ class AmChartEditor extends React.Component {
         }
 
         if (setErrorState) {
-            this.setState((state) => {
-                state.errors.chartConfiguration = state.readOnly ? null : errorMessage;
-                return state;
-            });
+            state.errors.configuration = state.readOnly ? null : errorMessage;
         }
         return isValid;
     }
@@ -171,7 +211,7 @@ class AmChartEditor extends React.Component {
         let queries = state.queries;
         let isValid = true;
         for (let i=0; i < queries.length; i++) {
-            if (queries[i].query === '') {
+            if (queries[i].uuid === '') {
                 if (setErrorState) {
                     queryErrors[i] = state.readOnly ? null : this.ERRORS.QUERY_NEEDED;
                 }
@@ -185,7 +225,7 @@ class AmChartEditor extends React.Component {
         var thiz = this;
         return new Promise((resolve) => {
             thiz.setState((state) => {
-                state.errors.chartConfiguration = null;
+                state.errors.configuration = null;
                 let queryErrors = state.errors.queries;
                 for (let i=0; i < queryErrors.length; i++) {
                     queryErrors[i] = null;
@@ -204,6 +244,11 @@ class AmChartEditor extends React.Component {
                 this.amChart.dispose();
                 this.amChart = null;
             }
+        }
+        if (eventKey === 'chart') {
+            let cardBody = document.querySelector('div#propertyBox div.card-body');
+            let textArea = document.querySelector('textarea#configuration');
+            textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
         }
 
         let thiz = this;
@@ -244,7 +289,10 @@ class AmChartEditor extends React.Component {
             onOpen:function(element) {
                 let query = thiz.state.queries[index];
                 if (query) {
-                    element.querySelector('textarea').value = query.configuration.filter;
+                    let value = query.configuration.filter;
+                    let inputbox = element.querySelector('textarea');
+                    inputbox.value = value ? value : '';
+                    inputbox.disabled = thiz.state.readOnly;
                 }
             },
             inputValidator: (value) => {
@@ -267,7 +315,7 @@ class AmChartEditor extends React.Component {
         }).then((result) => {
             if (!result.dismiss) {
                 thiz.setState((state) => {
-                    state.queries[index].configuration.filter = result.value;
+                    state.queries[index].configuration.filter = (result.value === '') ? null : result.value;
                     return state;
                 },
                 () => {
@@ -281,14 +329,17 @@ class AmChartEditor extends React.Component {
         let thiz = this;
         Swal.fire({
             title: 'Query column grouping',
-            input: 'textarea',
+            input: 'text',
             showCloseButton: true,
             showCancelButton: true,
             focusConfirm: false,
             onOpen:function(element) {
                 let query = thiz.state.queries[index];
                 if (query) {
-                    element.querySelector('textarea').value = query.configuration.grouping;
+                    let value = query.configuration.grouping;
+                    let inputbox = element.querySelector('input[type="text"]');
+                    inputbox.value = value ? value : '';
+                    inputbox.disabled = thiz.state.readOnly;
                 }
             },
             inputValidator: (value) => {
@@ -311,7 +362,54 @@ class AmChartEditor extends React.Component {
         }).then((result) => {
             if (!result.dismiss) {
                 thiz.setState((state) => {
-                    state.queries[index].configuration.grouping = result.value;
+                    state.queries[index].configuration.grouping = (result.value === '') ? null : result.value;
+                    return state;
+                },
+                () => {
+                    thiz.refreshQueryPreview();
+                });
+            }
+        });
+    }
+
+    applySortingToQuery = (index) => {
+        let thiz = this;
+        Swal.fire({
+            title: 'Query sorting',
+            input: 'text',
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+            onOpen:function(element) {
+                let query = thiz.state.queries[index];
+                if (query) {
+                    let value = query.configuration.sort;
+                    let inputbox = element.querySelector('input[type="text"]');
+                    inputbox.value = value ? value : '';
+                    inputbox.disabled = thiz.state.readOnly;
+                }
+            },
+            inputValidator: (value) => {
+                return new Promise((resolve) => {
+                    if (value === '') {
+                        resolve();
+                    }
+                    else {
+                        try {
+                            //Parse to ensure JSON is valid.
+                            JSON.parse(value);
+                            resolve();
+                        }
+                        catch(error) {
+                            resolve('Invalid JSON');
+                        }
+                    }
+                });
+            }
+        }).then((result) => {
+            if (!result.dismiss) {
+                thiz.setState((state) => {
+                    state.queries[index].configuration.sort = (result.value === '') ? null : result.value;
                     return state;
                 },
                 () => {
@@ -323,10 +421,11 @@ class AmChartEditor extends React.Component {
 
     addQueryToGivenState = (state, value) => {
         state.queries.push({
-            query: value ? value : '', 
+            uuid: value ? value : '', 
             configuration: {
                 filter:'', 
-                grouping:''
+                grouping:'',
+                sort:''
             }
         });
         state.errors.queries.push(null);
@@ -349,12 +448,40 @@ class AmChartEditor extends React.Component {
         });
     }
 
+    loadData = () => {
+        let thiz = this;
+        let params = {
+            'queries':this.queries
+        };
+        window.postDataRequest('analytics/query/data', params).
+            then(function(responseData) {
+                thiz.data = responseData.data;
+            }).
+            catch(function(responseData) {
+                console.error('Could not load data.');
+                console.error(responseData);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops ...',
+                    text: 'Could not load data. Please try after some time.'
+                });
+            });
+    }
+
+    componentWillUnmount() {
+        if (this.amChart) {
+            this.amChart.dispose();
+            this.amChart = null;
+        }
+    }
+
     componentDidMount() {
         let thiz = this;
         window.postDataRequest('analytics/query').
             then(function(response) {
                 thiz.queryList = response.data;
                 thiz.forceUpdate();
+                thiz.configurationTabSelected('chart');
             }).
             catch(function(response) {
                 Swal.fire({
@@ -387,10 +514,10 @@ class AmChartEditor extends React.Component {
             for (let i=0; i < count; i++) {
                 querySelections.push(
                     <div className="form-group row" key={'qs-00-' + i}>
-                        <div className="col-8" key={'qs-01-' + i}>
+                        <div className="col-7" key={'qs-01-' + i}>
                             <select id={'query' + i} name={'query' + i} ref={'query' + i} className="form-control form-control-sm" 
                                 onChange={(e) => {thiz.querySelectionChanged(e, i)}} disabled={thiz.state.readOnly} 
-                                value={thiz.state.queries[i] ? thiz.state.queries[i].query : ''} key={'qs-02-' + i}>
+                                value={thiz.state.queries[i] ? thiz.state.queries[i].uuid : ''} key={'qs-02-' + i}>
                                 { getQuerySelectOptoins('qs-03-' + i) }
                             </select>
                             <Overlay id={'query-overlay' + i} target={thiz.refs['query' + i]} show={thiz.state.errors.queries[i] != null} placement="right">
@@ -402,24 +529,31 @@ class AmChartEditor extends React.Component {
                             </Overlay>
                         </div>
                         <div className="col-1" key={'qs-04-' + i}>
-                            <button type="button" className="btn btn-primary filter-query-button" title="Apply filter to query" 
+                            <button type="button" className="btn btn-primary query-customization-button filter-query-button" title="Apply filter to query" 
                                 onClick={() => thiz.applyFilterToQuery(i)} key={'qs-05-' + i} 
-                                disabled={thiz.state.readOnly || (thiz.state.queries[i] ? (thiz.state.queries[i].query ? false : true) : true)}>
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
                                 <span className="fa fa-filter" aria-hidden="true" key={'qs-06-' + i}></span>
                             </button>
                         </div>
                         <div className="col-1" key={'qs-07-' + i}>
-                            <button type="button" className="btn btn-primary group-query-button" title="Apply grouping to query" 
+                            <button type="button" className="btn btn-primary query-customization-button group-query-button" title="Apply grouping to query" 
                                 onClick={() => thiz.applyGroupingToQuery(i)} key={'qs-08-' + i}
-                                disabled={thiz.state.readOnly || (thiz.state.queries[i] ? (thiz.state.queries[i].query ? false : true) : true)}>
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
                                 <span className="fa fa-users" aria-hidden="true" key={'qs-09-' + i}></span>
                             </button>
                         </div>
+                        <div className="col-1" key={'qs-10-' + i}>
+                            <button type="button" className="btn btn-primary query-customization-button sort-query-button" title="Sort query result" 
+                                onClick={() => thiz.applySortingToQuery(i)} key={'qs-11-' + i}
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
+                                <span className="fa fa-sort" aria-hidden="true" key={'qs-12-' + i}></span>
+                            </button>
+                        </div>
                         {(thiz.state.queries.length > 1) && 
-                            <div className="col-1" key={'qs-10-' + i}>
-                                <button type="button" className="btn btn-primary delete-query-button" title="Delete query" 
-                                    onClick={() => thiz.deleteQuery(i)} key={'qs-11-' + i} disabled={thiz.state.readOnly}>
-                                    <span className="fa fa-minus" aria-hidden="true" key={'qs-12-' + i}></span>
+                            <div className="col-1" key={'qs-13-' + i}>
+                                <button type="button" className="btn btn-primary query-customization-button delete-query-button" title="Delete query" 
+                                    onClick={() => thiz.deleteQuery(i)} key={'qs-14-' + i} disabled={thiz.state.readOnly}>
+                                    <span className="fa fa-minus" aria-hidden="true" key={'qs-15-' + i}></span>
                                 </button>
                             </div>
                         }
@@ -442,16 +576,15 @@ class AmChartEditor extends React.Component {
                                     <Tab eventKey="chart" title="Chart">
                                         <div className="form-group row" style={{marginLeft:'0px', marginRight:'0px'}}>
                                             <div className="col-12 no-left-padding no-right-padding">
-                                                <br/>
-                                                <textarea id="chartConfiguration" name="chartConfiguration"  ref="chartConfiguration" 
-                                                    className="form-control form-control-sm" style={{height:'260px', fontFamily:'Monospace'}} 
-                                                    onChange={this.chartConfigurationChanged} value={this.state.chartConfiguration} 
+                                                <textarea id="configuration" name="configuration"  ref="configuration" 
+                                                    className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
+                                                    onChange={this.configurationChanged} value={this.state.configuration} 
                                                     onBlur={this.refreshChartPreview} disabled={this.state.readOnly}/>
-                                                <Overlay id="chartConfiguration-overlay" target={this.refs.chartConfiguration} 
-                                                    show={this.state.errors.chartConfiguration != null} placement="top">
+                                                <Overlay id="configuration-overlay" target={this.refs.configuration} 
+                                                    show={this.state.errors.configuration != null} placement="top">
                                                     {props => (
-                                                    <Tooltip id="chartConfiguration-tooltip" {...props} className="error-tooltip">
-                                                        {this.state.errors.chartConfiguration}
+                                                    <Tooltip id="configuration-tooltip" {...props} className="error-tooltip">
+                                                        {this.state.errors.configuration}
                                                     </Tooltip>
                                                     )}
                                                 </Overlay>
@@ -486,7 +619,9 @@ class AmChartEditor extends React.Component {
                             }
                             {(this.state.selectedTab === 'query') && 
                                 <div id="queryPreview">
-                                    <b>Query preview</b>
+                                    <textarea id="queryPreviewText" name="queryPreviewText" 
+                                        className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
+                                        value="" disabled={true}/>
                                 </div>
                             }
                         </div>
