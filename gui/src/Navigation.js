@@ -56,11 +56,6 @@ class Navigation extends React.Component {
     return (
       <div
           className="PageRender"
-          style={{
-            padding: "0px 20px 0 20px",
-            height: "100%",
-            width: "100%"
-          }}
         >
           <div className="breadcrumbParent">
           <Breadcrumb ref={this.child} />
