@@ -4,7 +4,7 @@ import Notification from "../../Notification";
 import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
 import React from "react";
 import scrollIntoView from "scroll-into-view-if-needed";
-import ConvergePayCheckoutComponent from './Form/Payment/ConvergePayCheckoutComponent';
+import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -16,21 +16,21 @@ class FormRender extends React.Component {
       workflowId: null,
       cacheId: null,
       workflowInstanceId: this.props.workflowInstanceId,
-      parentWorkflowInstanceId:this.props.parentWorkflowInstanceId,
+      parentWorkflowInstanceId: this.props.parentWorkflowInstanceId,
       activityInstanceId: this.props.activityInstanceId,
       activityId: this.props.activityId,
       instanceId: this.props.instanceId,
       formId: this.props.formId,
-      paymentDetails : null,
+      paymentDetails: null,
       hasPayment: false,
       content: this.props.content,
       data: this.props.data,
       page: this.props.page
     };
-    this.helper= this.core.make("oxzion/restClient");
+    this.helper = this.core.make("oxzion/restClient");
     this.notif = React.createRef();
-    var formID= this.props.formId ? this.props.formId : "123";
-    if(this.props.cacheId){
+    var formID = this.props.formId ? this.props.formId : "123";
+    if (this.props.cacheId) {
       this.setState({ cacheId: this.props.cacheId });
     }
     this.formDivID = "formio_" + formID;
@@ -60,10 +60,14 @@ class FormRender extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let delegateData = await helper.request(
       "v1",
-      "/app/" + this.state.appId + "/transaction/"+params.transaction_id+"/status",
+      "/app/" +
+        this.state.appId +
+        "/transaction/" +
+        params.transaction_id +
+        "/status",
       params.data,
       "post"
-      );
+    );
     return delegateData;
   }
   async getCacheData() {
@@ -77,43 +81,44 @@ class FormRender extends React.Component {
   }
 
   async storeCache(params) {
+    if (this.state.page) {
+      params.page = this.state.page;
+    }
     let helper = this.core.make("oxzion/restClient");
     var route = "/app/" + this.state.appId + "/storecache";
-    if(this.state.cacheId){
+    if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
     params.formId = this.state.formId;
-    await helper.request(
-      "v1",
-      route,
-      params,
-      "post"
-      ).then(response => {
-        this.setState({ cacheId: response.data.id});
-        return response;
-      });
+    await helper.request("v1", route, params, "post").then(response => {
+      this.setState({ cacheId: response.data.id });
+      return response;
+    });
   }
-  async storeError(data,error,route) {
+  async storeError(data, error, route) {
     let helper = this.core.make("oxzion/restClient");
     let params = {};
-    params.type='form';
+    params.type = "form";
     params.errorTrace = JSON.stringify(error);
-    params.params = JSON.stringify({cache_id:this.state.cacheId,app_id:this.state.appId,formId:this.state.formId,workflowId:this.state.workflowId,route:route});
-    let response = await helper.request("v1","/error",params,"post");
-    return 
+    params.params = JSON.stringify({
+      cache_id: this.state.cacheId,
+      app_id: this.state.appId,
+      formId: this.state.formId,
+      workflowId: this.state.workflowId,
+      route: route
+    });
+    let response = await helper.request("v1", "/error", params, "post");
+    return;
   }
   async deleteCacheData() {
     var route = "/app/" + this.state.appId + "/deletecache";
-    if(this.state.cacheId){
+    if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
-    let cacheData = await this.helper.request(
-      "v1",
-      route,
-      {},
-      "delete"
-    ).then(response => {
-        this.setState({ cacheId: null});
+    let cacheData = await this.helper
+      .request("v1", route, {}, "delete")
+      .then(response => {
+        this.setState({ cacheId: null });
         return response;
       });
     return cacheData;
@@ -146,7 +151,10 @@ class FormRender extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let fileData = await helper.request(
       "v1",
-      "/app/" + this.state.appId + "/workflowInstance/" + this.props.parentWorkflowInstanceId,
+      "/app/" +
+        this.state.appId +
+        "/workflowInstance/" +
+        this.props.parentWorkflowInstanceId,
       {},
       "get"
     );
@@ -189,7 +197,7 @@ class FormRender extends React.Component {
           method = "put";
         }
       }
-    } else if(this.state.workflowInstanceId){
+    } else if (this.state.workflowInstanceId) {
       route = "/workflowinstance/" + this.state.workflowInstanceId;
       if (this.state.activityInstanceId) {
         route =
@@ -199,7 +207,7 @@ class FormRender extends React.Component {
           this.state.activityInstanceId;
         method = "post";
       }
-      route = route + "/submit"
+      route = route + "/submit";
     } else {
       route =
         "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
@@ -219,17 +227,22 @@ class FormRender extends React.Component {
       this.core.make("oxzion/splash").destroy();
       if (response.status == "success") {
         this.deleteCacheData().then(response2 => {
-          if(response2.status=="success"){
+          if (response2.status == "success") {
             this.props.postSubmitCallback();
           }
           return response;
         });
       } else {
-        this.storeCache(data).then(cacheResponse =>{
-          if(response.data.errors){
-            this.storeError(data,response.data.errors,route).then(storeErrorResponse => {
-              this.notif.current.customFailNotification("Error","Form Submission Failed");
-            });
+        this.storeCache(data).then(cacheResponse => {
+          if (response.data.errors) {
+            this.storeError(data, response.data.errors, route).then(
+              storeErrorResponse => {
+                this.notif.current.customFailNotification(
+                  "Error",
+                  "Form Submission Failed"
+                );
+              }
+            );
           }
         });
         return;
@@ -248,19 +261,19 @@ class FormRender extends React.Component {
       this.getWorkflow().then(response => {
         if (response.status == "success" && response.data.workflow_id) {
           this.setState({ workflowId: response.data.workflow_id });
-          if(response.data.activity_id){
+          if (response.data.activity_id) {
             this.setState({ activityId: response.data.activity_id });
           }
           if (!this.state.content) {
             console.log(response.data);
-            this.setState({ content: JSON.parse(response.data.template)});
+            this.setState({ content: JSON.parse(response.data.template) });
           }
-          this.setState({ formDivID:'formio_'+this.state.formId});
+          this.setState({ formDivID: "formio_" + this.state.formId });
           this.createForm();
         }
       });
     }
-    if(this.props.parentWorkflowInstanceId){
+    if (this.props.parentWorkflowInstanceId) {
       this.getFileData().then(response => {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
@@ -268,8 +281,8 @@ class FormRender extends React.Component {
           fileData.parentWorkflowInstanceId = this.props.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
-          this.setState({ data:  fileData});
-          this.setState({ formDivID:'formio_'+this.state.formId});
+          this.setState({ data: fileData });
+          this.setState({ formDivID: "formio_" + this.state.formId });
           this.createForm();
         }
       });
@@ -306,25 +319,33 @@ class FormRender extends React.Component {
   createForm() {
     let that = this;
     if (this.state.content && !this.state.form) {
-      Formio.registerComponent('convergepay', ConvergePayCheckoutComponent);
+      Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
       var options = {};
-      if(this.state.content['properties']){
-        if(this.state.content['properties']['clickable']){
-          options.breadcrumbSettings = {clickable: eval(this.state.content['properties']['clickable'])};  
+      if (this.state.content["properties"]) {
+        if (this.state.content["properties"]["clickable"]) {
+          options.breadcrumbSettings = {
+            clickable: eval(this.state.content["properties"]["clickable"])
+          };
         }
-        if(this.state.content['properties']['showPrevious']){
-          options.buttonSettings ={showPrevious: eval(this.state.content['properties']['showPrevious'])};  
+        if (this.state.content["properties"]["showPrevious"]) {
+          options.buttonSettings = {
+            showPrevious: eval(this.state.content["properties"]["showPrevious"])
+          };
         }
-        if(this.state.content['properties']['showNext']){
-          options.buttonSettings = {showNext: eval(this.state.content['properties']['showNext'])};  
+        if (this.state.content["properties"]["showNext"]) {
+          options.buttonSettings = {
+            showNext: eval(this.state.content["properties"]["showNext"])
+          };
         }
-        if(this.state.content['properties']['showCancel']){
-          options.buttonSettings = {showCancel: eval(this.state.content['properties']['showCancel'])};  
+        if (this.state.content["properties"]["showCancel"]) {
+          options.buttonSettings = {
+            showCancel: eval(this.state.content["properties"]["showCancel"])
+          };
         }
       }
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
-          console.log(submission.data)
+          console.log(submission.data);
           that.storeCache(submission.data);
           next(null);
         },
@@ -340,133 +361,217 @@ class FormRender extends React.Component {
         options
       ).then(function(form) {
         if (that.state.page && form.wizard) {
-          if(form.wizard.display=='wizard'){
+          if (form.wizard.display == "wizard") {
             form.setPage(that.state.page);
           }
         }
         form.submission = { data: that.state.data };
         form.on("prevPage", changed => that.setState({ page: changed.page }));
-        form.on("nextPage", (changed) => {
+        form.on("nextPage", changed => {
           that.setState({ page: changed.page });
-          console.log(form.pages[changed.page])
-          if(form.pages[changed.page]['properties']['delegate']){
-            if (form.pages[changed.page]['properties']['delegate']) {
+          console.log(form.pages[changed.page]);
+          if (form.pages[changed.page]["properties"]["delegate"]) {
+            if (form.pages[changed.page]["properties"]["delegate"]) {
               that
-              .callDelegate(form.pages[changed.page]['properties']['delegate'], form.data)
-              .then(response => {
-                that.core.make('oxzion/splash').destroy();
-                if (response.data) {
-                  form.submission = { data: response.data };
-                  form.triggerChange();
-                }
-              });
+                .callDelegate(
+                  form.pages[changed.page]["properties"]["delegate"],
+                  form.data
+                )
+                .then(response => {
+                  that.core.make("oxzion/splash").destroy();
+                  if (response.data) {
+                    form.submission = { data: response.data };
+                    form.triggerChange();
+                  }
+                });
             }
           }
         });
         form.on("submit", submission => {
-          that.saveForm(submission.data)
+          that.saveForm(submission.data);
         });
         form.on("error", errors => {
           console.log(errors);
-          var elm = document.getElementsByClassName("alert-danger")[0];		
-          scrollIntoView(elm, {		
+          var elm = document.getElementsByClassName("alert-danger")[0];
+          scrollIntoView(elm, {
             scrollMode: "if-needed",
             block: "center",
             behavior: "smooth",
             inline: "nearest"
           });
         });
-        form.on("render", () =>{
+        form.on("render", () => {
           var elm = document.getElementsByClassName("breadcrumbParent");
-          if(elm.length > 0){
+          if (elm.length > 0) {
             console.log(elm[0]);
-            
-            scrollIntoView(elm[0], {   
+
+            scrollIntoView(elm[0], {
               scrollMode: "if-needed",
               block: "center",
               behavior: "smooth",
               inline: "nearest"
             });
           }
-          if(form._form['properties']){
-            if(form._form['properties']['delegate']){
-              if (form._form['properties']['delegate']) {
+          if (form._form["properties"]) {
+            if (form._form["properties"]["delegate"]) {
+              if (form._form["properties"]["delegate"]) {
                 that
-                .callDelegate(form._form['properties']['delegate'], form.data)
-                .then(response => {
-                  that.core.make('oxzion/splash').destroy();
-                  if (response.data) {
-                    form.submission = { data: response.data };
-                    form.triggerChange();
-                  }
-                });
+                  .callDelegate(form._form["properties"]["delegate"], form.data)
+                  .then(response => {
+                    that.core.make("oxzion/splash").destroy();
+                    if (response.data) {
+                      form.submission = { data: response.data };
+                      form.triggerChange();
+                    }
+                  });
               }
             }
-            if(form._form['properties']['payment_confirmation_page']){
-              var elements = document.getElementsByClassName("btn-wizard-nav-submit");
+            if (form._form["properties"]["payment_confirmation_page"]) {
+              var elements = document.getElementsByClassName(
+                "btn-wizard-nav-submit"
+              );
               that.getPayment(form.submission.data).then(response => {
                 var responseArray = [];
-                if(response.data){
-                  var evt = new CustomEvent('paymentDetails', {detail: response.data[0]});
+                if (response.data) {
+                  var evt = new CustomEvent("paymentDetails", {
+                    detail: response.data[0]
+                  });
                   window.dispatchEvent(evt);
                 }
               });
-              window.addEventListener("requestPaymentToken", function(e){
-                e.stopPropagation();
-                that.core.make('oxzion/splash').show();
-                that.callPayment({firstname:e.detail.firstname,lastname:e.detail.lastname,amount:e.detail.amount}).then(response => {
-                  var transactionIdComponent = form.getComponent("transaction_id");
-                  if(response.data.transaction.id && response.data.token){
-                    transactionIdComponent.setValue(response.data.transaction.id);
-                    var evt = new CustomEvent('getPaymentToken', {detail: response.data});
-                    window.dispatchEvent(evt);
-                  } else {
-                    that.notif.current.customFailNotification("Error",'Transaction Token Failed!');
-                  }
-                  that.core.make('oxzion/splash').destroy();
-                });
-              },true);
-              window.addEventListener("paymentSuccess", function(e){
-                e.stopPropagation();
-                that.core.make('oxzion/splash').show();
-                var transactionIdComponent = form.getComponent("transaction_id");
-                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data,status:e.detail.status}).then(response => {
-                that.notif.current.customSuccessNotification("Payment has been Successfully completed!","Please wait while we get things ready!");
-                  var formsave = that.saveForm(form.submission.data);
-                  var transactionStatusComponent = form.getComponent("transaction_status");
-                  transactionStatusComponent.setValue(e.detail.status);
-                  if(formsave){
-                    that.notif.current.customSuccessNotification("Success!","Application Has been Successfully Submitted!");
-                    that.core.make('oxzion/splash').destroy();
-                  } else {
-                    that.notif.current.customFailNotification("Error",e.detail.message);
-                  }
-                });
-              },true);
-              window.addEventListener("paymentDeclined", function(e){
-                e.stopPropagation();
-                console.log(e.detail);
-                var transactionIdComponent = form.getComponent("transaction_id");
-                console.log
-                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data}).then(response => {
-                  that.notif.current.customFailNotification("Error",e.detail.message);
-                  that.core.make('oxzion/splash').destroy();
-                });
-              },true);
-              window.addEventListener("paymentError", function(e){
-                e.stopPropagation();
-                console.log(e.detail);
-                var transactionIdComponent = form.getComponent("transaction_id");
-                that.storePayment({transaction_id:transactionIdComponent.getValue(),data:e.detail.data}).then(response => {
-                  that.notif.current.customFailNotification("Error",e.detail.message);
-                  that.core.make('oxzion/splash').destroy();
-                });
-              },true);
-              window.addEventListener("paymentPending", function(e){
-                that.core.make('oxzion/splash').show();
-                e.stopPropagation();
-                that.notif.current.stockNotification("Information",e.detail.message);
-              },true);
+              window.addEventListener(
+                "requestPaymentToken",
+                function(e) {
+                  e.stopPropagation();
+                  that.core.make("oxzion/splash").show();
+                  that
+                    .callPayment({
+                      firstname: e.detail.firstname,
+                      lastname: e.detail.lastname,
+                      amount: e.detail.amount
+                    })
+                    .then(response => {
+                      var transactionIdComponent = form.getComponent(
+                        "transaction_id"
+                      );
+                      if (response.data.transaction.id && response.data.token) {
+                        transactionIdComponent.setValue(
+                          response.data.transaction.id
+                        );
+                        var evt = new CustomEvent("getPaymentToken", {
+                          detail: response.data
+                        });
+                        window.dispatchEvent(evt);
+                      } else {
+                        that.notif.current.customFailNotification(
+                          "Error",
+                          "Transaction Token Failed!"
+                        );
+                      }
+                      that.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentSuccess",
+                function(e) {
+                  e.stopPropagation();
+                  that.core.make("oxzion/splash").show();
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  that
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data,
+                      status: e.detail.status
+                    })
+                    .then(response => {
+                      that.notif.current.customSuccessNotification(
+                        "Payment has been Successfully completed!",
+                        "Please wait while we get things ready!"
+                      );
+                      var formsave = that.saveForm(form.submission.data);
+                      var transactionStatusComponent = form.getComponent(
+                        "transaction_status"
+                      );
+                      transactionStatusComponent.setValue(e.detail.status);
+                      if (formsave) {
+                        that.notif.current.customSuccessNotification(
+                          "Success!",
+                          "Application Has been Successfully Submitted!"
+                        );
+                        that.core.make("oxzion/splash").destroy();
+                      } else {
+                        that.notif.current.customFailNotification(
+                          "Error",
+                          e.detail.message
+                        );
+                      }
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentDeclined",
+                function(e) {
+                  e.stopPropagation();
+                  console.log(e.detail);
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  console.log;
+                  that
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data
+                    })
+                    .then(response => {
+                      that.notif.current.customFailNotification(
+                        "Error",
+                        e.detail.message
+                      );
+                      that.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentError",
+                function(e) {
+                  e.stopPropagation();
+                  console.log(e.detail);
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  that
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data
+                    })
+                    .then(response => {
+                      that.notif.current.customFailNotification(
+                        "Error",
+                        e.detail.message
+                      );
+                      that.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentPending",
+                function(e) {
+                  that.core.make("oxzion/splash").show();
+                  e.stopPropagation();
+                  that.notif.current.stockNotification(
+                    "Information",
+                    e.detail.message
+                  );
+                },
+                true
+              );
             }
           }
         });
@@ -485,7 +590,7 @@ class FormRender extends React.Component {
             var properties = component.properties;
             if (properties) {
               if (properties["delegate"]) {
-                that.core.make('oxzion/splash').show();
+                that.core.make("oxzion/splash").show();
                 that
                   .callDelegate(properties["delegate"], formdata.data)
                   .then(response => {
@@ -500,7 +605,7 @@ class FormRender extends React.Component {
                       form.submission = { data: response.data };
                       form.triggerChange();
                     }
-                    that.core.make('oxzion/splash').destroy();
+                    that.core.make("oxzion/splash").destroy();
                   });
               }
               if (properties["target"]) {
@@ -540,7 +645,7 @@ class FormRender extends React.Component {
           }
         });
         form.on("callDelegate", changed => {
-          that.core.make('oxzion/splash').show();
+          that.core.make("oxzion/splash").show();
           var component = form.getComponent(event.target.id);
           if (component) {
             var properties = component.component.properties;
@@ -549,7 +654,7 @@ class FormRender extends React.Component {
                 that
                   .callDelegate(properties["delegate"], changed)
                   .then(response => {
-                    that.core.make('oxzion/splash').destroy();
+                    that.core.make("oxzion/splash").destroy();
                     if (response.data) {
                       form.submission = { data: response.data };
                       form.triggerChange();
@@ -594,9 +699,12 @@ class FormRender extends React.Component {
     }
   }
   render() {
-    return <div>
-          <Notification ref={this.notif} />
-          <div className="form-render" id={this.formDivID}></div></div>;
+    return (
+      <div>
+        <Notification ref={this.notif} />
+        <div className="form-render" id={this.formDivID}></div>
+      </div>
+    );
   }
 }
 export default FormRender;
