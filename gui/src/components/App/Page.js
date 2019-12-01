@@ -1,7 +1,8 @@
 import React from "react";
 import FormRender from "./FormRender";
-import Document from "./Document.js";
+import Document from "./Document";
 import OX_Grid from "../../OX_Grid";
+import SearchPage from "./SearchPage";
 import DocumentViewer from "../../DocumentViewer";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
@@ -276,6 +277,32 @@ class Page extends React.Component {
               resizable={itemContent.resizable}
               pageable={itemContent.pageable}
               sortable={itemContent.sortable}
+              columnConfig={columnConfig}
+            />
+          );
+          break;
+        case "Search":
+          var itemContent = JSON.parse(data[i].content);
+          var columnConfig = itemContent.columnConfig;
+          if (itemContent.actions) {
+            if (columnConfig[columnConfig.length - 1].title == "Actions") {
+              null;
+            } else {
+              columnConfig.push({
+                title: "Actions",
+                cell: e => this.renderButtons(e, itemContent.actions),
+                filterCell: e => this.renderEmpty()
+              });
+            }
+          }
+          content.push(
+            <SearchPage
+              key={i}
+              core={this.core}
+              content={itemContent}
+              filterColumns={itemContent.filterColumns}
+              appId={this.appId}
+              entityId={itemContent.entityId}
               columnConfig={columnConfig}
             />
           );

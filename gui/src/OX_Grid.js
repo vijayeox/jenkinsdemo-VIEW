@@ -28,7 +28,8 @@ export default class OX_Grid extends React.Component {
       api: this.rawDataPresent ? undefined : this.props.data,
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
-        : {}
+        : {},
+      gridDefaultFilters: this.props.gridDefaultFilters?this.props.gridDefaultFilters : {}
     };
   }
 
@@ -39,6 +40,9 @@ export default class OX_Grid extends React.Component {
   }
 
   dataStateChange = e => {
+    if(this.state.gridDefaultFilters){
+
+    }
     this.setState({
       ...this.state,
       dataState: e.data
@@ -50,6 +54,11 @@ export default class OX_Grid extends React.Component {
       gridData: data
     });
   };
+  componentWillReceiveProps(props){
+    if(props.gridDefaultFilters){
+      this.setState({dataState:props.gridDefaultFilters});
+    }
+  }
 
   createColumns = () => {
     let table = [];
@@ -88,7 +97,7 @@ export default class OX_Grid extends React.Component {
           className={dataItem.className ? dataItem.className : undefined}
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
-          filterable={dataItem.filterable ? dataItem.filterable : undefined}
+          filterable={dataItem.filterable}
           filterCell={
             dataItem.filterCell
               ? item => (
