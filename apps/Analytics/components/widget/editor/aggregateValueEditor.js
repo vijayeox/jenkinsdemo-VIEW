@@ -1,26 +1,15 @@
+
 import WidgetRenderer from '../../widgetRenderer';
+import AbstractEditor from './abstractEditor';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
 import {Tabs, Tab, Overlay, Tooltip} from 'react-bootstrap';
 
-class AggregateValueEditor extends React.Component {
+class AggregateValueEditor extends AbstractEditor {
     constructor(props) {
         super(props);
-        this.state = {
-            selectedTab: 'widget',
-            readOnly: true,
-            queries: [],
-            configuration: '',
-            expression: '',
-            errors:{
-                configuration:null,
-                expression:null,
-                queries: []
-            }
-        };
-        this.queryList = [];
-        this.data = null;
+        this.state.selectedTab = 'widget';
         this.ERRORS = {
             WIDGET_CONFIGURATION_INVALID_JSON : 'Widget configuration JSON is invalid',
             QUERY_NEEDED : 'Query should be selected',
@@ -28,68 +17,9 @@ class AggregateValueEditor extends React.Component {
         };
     }
 
-    getState = () => {
-        //IMPORTANT: query object in the array this.state.queries is a mixed mode object.
-        //    query.uuid, query.configuration are objects. JSON data in query.configuration.filter,
-        //    query.configuration.grouping and query.configuration.sort are JSON strings coming from 
-        //    form fields. Here we convert those JSON strings to java objects.
-        let queries = [];
-        if (this.state.queries) {
-            this.state.queries.forEach(function(query, index) {
-                let configuration = query['configuration'];
-                queries.push({
-                    'uuid':query['uuid'],
-                    'configuration':{
-                        'filter': configuration.filter ? JSON.parse(configuration.filter) : null,
-                        'grouping': configuration.grouping ? JSON.parse(configuration.grouping) : null,
-                        'sort': configuration.sort ? JSON.parse(configuration.sort) : null
-                    }
-                });
-            });
-        }
-        
-        return {
-            configuration:JSON.parse(this.state.configuration),
-            expression:JSON.parse(this.state.expression),
-            queries:queries
-        }
-    }
-
-    configurationChanged = (evt) => {
-        let value = evt.target.value;
-        this.setState((state) => {
-            state.configuration = value;
-            return state;
-        });
-        //IMPORTANT: Don't refresh preview when configurationChanged method is called. 
-        //           It is too much to update preview for every key stroke when the user is typing the configuration.
-        //           Therefore preview is updated when the configuration field loses focus OR when the "widget" tab comes back to focus.
-    }
-
-    expressionChanged = (evt) => {
-        let thiz = this;
-        let value = evt.target.value;
-        this.setState((state) => {
-            state.expression = value;
-            return state;
-        });
-    }
-
-    querySelectionChanged = (evt, index) => {
-        let thiz = this;
-        let value = evt.target.value;
-        this.setState((state) => {
-            let queryObject = state.queries[index];
-            queryObject.uuid = value;
-            queryObject.configuration.filter = '';
-            queryObject.configuration.grouping = '';
-            queryObject.configuration.sort = '';
-            state.errors.queries[index] = (value === '') ? thiz.ERRORS.QUERY_NEEDED : null;
-            return state;
-        },
-        () => {
-            thiz.refreshQueryPreview();
-        });
+    expressionBlurred = (evt) => {
+        this.validateExpression();
+        this.refreshQueryPreview();
     }
 
     refreshWidgetPreview = () => {
@@ -134,67 +64,6 @@ class AggregateValueEditor extends React.Component {
         textArea.value = value;
     }
 
-    setWidgetData = (widgetData) => {
-        this.data = widgetData.data;
-        let queries = [];
-        if (widgetData.queries) {
-            widgetData.queries.forEach(function(query, index) {
-                let configuration = query.configuration;
-                queries.push({
-                    'uuid':query.uuid,
-                    'configuration':{
-                        'filter': configuration.filter ? JSON.stringify(configuration.filter, null, '    ') : '',
-                        'grouping': configuration.grouping ? JSON.stringify(configuration.grouping, null, '') : '',
-                        'sort': configuration.sort ? JSON.stringify(configuration.sort, null, '') : ''
-                    }
-                });
-            });
-        }
-        this.setState((state) => {
-            state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
-            state.expression = widgetData.expression ? widgetData.expression : '';
-            state.queries = queries;
-            return state;
-        });
-    }
-
-    makeReadOnly = (flag) => {
-        this.setState({
-            readOnly:flag
-        });
-    }
-
-    areAllFieldsValid = () => {
-        let isWidgetTabValid = this.isWidgetTabValid(this.state, false);
-        let isQueryTabValid = this.isQueryTabValid(this.state, false);
-        let thiz = this;
-        switch(this.state.selectedTab) {
-            case 'widget':
-                if (isWidgetTabValid && !isQueryTabValid) {
-                    this.configurationTabSelected('query', null);
-                }
-                else {
-                    this.setState((state) => {
-                        thiz.isWidgetTabValid(state);
-                    });
-                }
-            break;
-            case 'query':
-                if (isQueryTabValid && !isWidgetTabValid) {
-                    this.configurationTabSelected('widget', null);
-                }
-                else {
-                    this.setState((state) => {
-                        thiz.isQueryTabValid(state);
-                    });
-                }
-            break;
-            case 'expression':
-            break;
-        }
-        return (isWidgetTabValid && isQueryTabValid);
-    }
-
     isWidgetTabValid = (state, setErrorState = true) => {
         let isValid = true;
         return isValid;
@@ -218,25 +87,100 @@ class AggregateValueEditor extends React.Component {
         return isValid;
     }
 
-    clearAllErrors = () => {
-        var thiz = this;
-        return new Promise((resolve) => {
-            thiz.setState((state) => {
-                state.errors.configuration = null;
-                state.errors.expression = null;
-                let queryErrors = state.errors.queries;
-                for (let i=0; i < queryErrors.length; i++) {
-                    queryErrors[i] = null;
+    isExpressionTabValid = (state, setErrorState = true) => {
+        let isValid = true;
+        let errorMessage = null;
+        let expression = state.expression;
+        if (expression) {
+            try {
+                //Make sure expression is valid JSON
+                JSON.parse(expression);
+            }
+            catch(jsonParseError) {
+                isValid = false;
+                console.error(jsonParseError);
+                errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
+            }
+        }
+
+        if (setErrorState) {
+            state.errors.expression = errorMessage;
+        }
+
+        return isValid;
+    }
+
+    areAllFieldsValid = () => {
+        function findInvalidTab(tabs) {
+            let foundTab = null;
+            tabs.forEach(function(tab) {
+                let tabName = Object.keys(tab)[0];
+                if (!tab[tabName]) {
+                    foundTab = tabName;
                 }
-                return state;
-            },
-            () => {
-                resolve();
             });
-        });
+            return foundTab;
+        }
+
+        let isWidgetTabValid = this.isWidgetTabValid(this.state, false);
+        let isQueryTabValid = this.isQueryTabValid(this.state, false);
+        let isExpressionTabValid = this.isExpressionTabValid(this.state, false);
+        let thiz = this;
+        let switchToTab = null;
+        switch(this.state.selectedTab) {
+            case 'chart':
+                if (!isWidgetTabValid) {
+                    this.setState((state) => {
+                        thiz.isWidgetTabValid(state);
+                    });
+                }
+                else {
+                    switchToTab = findInvalidTab([{'widget':isWidgetTabValid}, {'expression':isExpressionTabValid}]);
+                }
+            break;
+            case 'query':
+                if (!isQueryTabValid) {
+                    this.setState((state) => {
+                        thiz.isQueryTabValid(state);
+                    });
+                }
+                else {
+                    switchToTab = findInvalidTab([{'expression':isExpressionTabValid}, {'widget':isWidgetTabValid}]);
+                }
+            break;
+            case 'expression':
+                if (!isExpressionTabValid) {
+                    this.setState((state) => {
+                        thiz.isExpressionTabValid(state);
+                    });
+                }
+                else {
+                    switchToTab = findInvalidTab([{'widget':isWidgetTabValid}, {'query':isQueryTabValid}]);
+                }
+            break;
+        }
+        if (switchToTab) {
+            this.configurationTabSelected(switchToTab, null);
+        }
+        return (isWidgetTabValid && isQueryTabValid && isExpressionTabValid);
     }
 
     configurationTabSelected = (eventKey, event) => {
+        let cardBody = null;
+        let textArea = null;
+        switch(eventKey) {
+            case 'widget':
+                cardBody = document.querySelector('div#propertyBox div.card-body');
+                textArea = document.querySelector('textarea#configuration');
+                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+            break;
+            case 'expression':
+                cardBody = document.querySelector('div#propertyBox div.card-body');
+                textArea = document.querySelector('textarea#expression');
+                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+            break;
+        }
+
         let thiz = this;
         this.clearAllErrors().then(function() {
             thiz.setState((state) => {
@@ -250,7 +194,7 @@ class AggregateValueEditor extends React.Component {
                     break;
                     case 'expression':
                         thiz.isExpressionTabValid(state);
-                    beak;
+                    break;
                 }
                 return state;
             },
@@ -260,221 +204,19 @@ class AggregateValueEditor extends React.Component {
                         thiz.refreshWidgetPreview();
                     break;
                     case 'query':
-                        thiz.refreshQueryPreview();
-                    break;
                     case 'expression':
                         thiz.refreshQueryPreview();
-                    beak;
+                    break;
                 }
             });
         });
-    }
-
-    applyFilterToQuery = (index) => {
-        let thiz = this;
-        Swal.fire({
-            title: 'Query filter',
-            input: 'textarea',
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-            onOpen:function(element) {
-                let query = thiz.state.queries[index];
-                if (query) {
-                    let value = query.configuration.filter;
-                    let inputbox = element.querySelector('textarea');
-                    inputbox.value = value ? value : '';
-                    inputbox.disabled = thiz.state.readOnly;
-                }
-            },
-            inputValidator: (value) => {
-                return new Promise((resolve) => {
-                    if (value === '') {
-                        resolve();
-                    }
-                    else {
-                        try {
-                            //Parse to ensure JSON is valid.
-                            JSON.parse(value);
-                            resolve();
-                        }
-                        catch(error) {
-                            resolve('Invalid JSON');
-                        }
-                    }
-                });
-            }
-        }).then((result) => {
-            if (!result.dismiss) {
-                thiz.setState((state) => {
-                    state.queries[index].configuration.filter = (result.value === '') ? null : result.value;
-                    return state;
-                },
-                () => {
-                    thiz.refreshQueryPreview();
-                });
-            }
-        });
-    }
-
-    applyGroupingToQuery = (index) => {
-        let thiz = this;
-        Swal.fire({
-            title: 'Query column grouping',
-            input: 'text',
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-            onOpen:function(element) {
-                let query = thiz.state.queries[index];
-                if (query) {
-                    let value = query.configuration.grouping;
-                    let inputbox = element.querySelector('input[type="text"]');
-                    inputbox.value = value ? value : '';
-                    inputbox.disabled = thiz.state.readOnly;
-                }
-            },
-            inputValidator: (value) => {
-                return new Promise((resolve) => {
-                    if (value === '') {
-                        resolve();
-                    }
-                    else {
-                        try {
-                            //Parse to ensure JSON is valid.
-                            JSON.parse(value);
-                            resolve();
-                        }
-                        catch(error) {
-                            resolve('Invalid JSON');
-                        }
-                    }
-                });
-            }
-        }).then((result) => {
-            if (!result.dismiss) {
-                thiz.setState((state) => {
-                    state.queries[index].configuration.grouping = (result.value === '') ? null : result.value;
-                    return state;
-                },
-                () => {
-                    thiz.refreshQueryPreview();
-                });
-            }
-        });
-    }
-
-    applySortingToQuery = (index) => {
-        let thiz = this;
-        Swal.fire({
-            title: 'Query sorting',
-            input: 'text',
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-            onOpen:function(element) {
-                let query = thiz.state.queries[index];
-                if (query) {
-                    let value = query.configuration.sort;
-                    let inputbox = element.querySelector('input[type="text"]');
-                    inputbox.value = value ? value : '';
-                    inputbox.disabled = thiz.state.readOnly;
-                }
-            },
-            inputValidator: (value) => {
-                return new Promise((resolve) => {
-                    if (value === '') {
-                        resolve();
-                    }
-                    else {
-                        try {
-                            //Parse to ensure JSON is valid.
-                            JSON.parse(value);
-                            resolve();
-                        }
-                        catch(error) {
-                            resolve('Invalid JSON');
-                        }
-                    }
-                });
-            }
-        }).then((result) => {
-            if (!result.dismiss) {
-                thiz.setState((state) => {
-                    state.queries[index].configuration.sort = (result.value === '') ? null : result.value;
-                    return state;
-                },
-                () => {
-                    thiz.refreshQueryPreview();
-                });
-            }
-        });
-    }
-
-    addQueryToGivenState = (state, value) => {
-        state.queries.push({
-            uuid: value ? value : '', 
-            configuration: {
-                filter:'', 
-                grouping:'',
-                sort:''
-            }
-        });
-        state.errors.queries.push(null);
-    }
-
-    addQuery = (value) => {
-        let thiz = this;
-        this.setState((state) => {
-            thiz.addQueryToGivenState(state, value);
-            return state;
-        });
-    }
-
-    deleteQuery = (index) => {
-        let thiz = this;
-        this.setState((state) => {
-            state.queries.splice(index, 1);
-            state.errors.queries.splice(index, 1);
-            return state;
-        });
-    }
-
-    loadData = () => {
-        let thiz = this;
-        let params = {
-            'queries':this.queries
-        };
-        window.postDataRequest('analytics/query/data', params).
-            then(function(responseData) {
-                thiz.data = responseData.data;
-            }).
-            catch(function(responseData) {
-                console.error('Could not load data.');
-                console.error(responseData);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Could not load data. Please try after some time.'
-                });
-            });
     }
 
     componentDidMount() {
         let thiz = this;
-        window.postDataRequest('analytics/query').
-            then(function(response) {
-                thiz.queryList = response.data;
-                thiz.forceUpdate();
-                thiz.configurationTabSelected('widget');
-            }).
-            catch(function(response) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Failed to load queries. Please try after some time.'
-                });
-            });
+        this.loadQueries(function() {
+            thiz.configurationTabSelected('widget');
+        });
     }
 
     render() {
@@ -562,7 +304,7 @@ class AggregateValueEditor extends React.Component {
                                         <div className="form-group row" style={{marginLeft:'0px', marginRight:'0px'}}>
                                             <div className="col-12 no-left-padding no-right-padding">
                                                 <br/>
-                                                <input id="configuration" name="configuration"  ref="configuration" 
+                                                <textarea id="configuration" name="configuration"  ref="configuration" 
                                                     className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
                                                     onChange={this.configurationChanged} value={this.state.configuration} 
                                                     onBlur={this.refreshWidgetPreview} disabled={this.state.readOnly} type="text"/>
@@ -621,7 +363,7 @@ class AggregateValueEditor extends React.Component {
                                     <b>Widget preview</b>
                                 </div>
                             }
-                            {(this.state.selectedTab === 'query') && 
+                            {((this.state.selectedTab === 'query') || (this.state.selectedTab === 'expression')) && 
                                 <div id="queryPreview">
                                     <textarea id="queryPreviewText" name="queryPreviewText" 
                                         className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
