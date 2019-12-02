@@ -12,8 +12,10 @@ class AmChartEditor extends React.Component {
             readOnly: true,
             queries: [],
             configuration: '',
+            expression: '',
             errors:{
                 configuration:null,
+                expression: null,
                 queries: []
             }
         };
@@ -23,7 +25,8 @@ class AmChartEditor extends React.Component {
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED : 'Chart configuration is needed',
             CHART_CONFIGURATION_INVALID_JSON : 'Chart configuration JSON is invalid',
-            QUERY_NEEDED : 'Query should be selected'
+            QUERY_NEEDED : 'Query should be selected',
+            EXPRESSION_INVALID_JSON : 'Expression JSON is invalid',
         };
     }
 
@@ -49,6 +52,7 @@ class AmChartEditor extends React.Component {
         
         return {
             configuration:JSON.parse(this.state.configuration),
+            expression:JSON.parse(this.state.expression),
             queries:queries
         }
     }
@@ -64,6 +68,35 @@ class AmChartEditor extends React.Component {
         //IMPORTANT: Don't refresh chart preview when configurationChanged method is called. 
         //           It is too much to update preview for every key stroke when the user is typing the configuration.
         //           Therefore chart preview is updated when the configuration field loses focus OR when the "chart" tab comes back to focus.
+    }
+
+    expressionChanged = (evt) => {
+        let value = evt.target.value;
+        this.setState({
+            expression : value
+        });
+    }
+
+    expressionBlurred = (evt) => {
+        let expression = this.state.expression;
+        if (expression && (expression != '')) {
+            let errorMessage = null;
+            try {
+                JSON.parse(expression);
+            }
+            catch(jsonParseError) {
+                errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
+            }
+
+            if (errorMessage) {
+                this.setState((state) => {
+                    state.errors.expression = errorMessage;
+                    return state;
+                });
+            }
+        }
+
+        this.refreshQueryPreview();
     }
 
     querySelectionChanged = (evt, index) => {
@@ -139,6 +172,7 @@ class AmChartEditor extends React.Component {
         }
         this.setState((state) => {
             state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
+            state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
             return state;
         });
@@ -151,38 +185,64 @@ class AmChartEditor extends React.Component {
     }
 
     areAllFieldsValid = () => {
+        function findInvalidTab(tabs) {
+            let foundTab = null;
+            tabs.forEach(function(tab) {
+                let tabName = Object.keys(tab)[0];
+                if (!tab[tabName]) {
+                    foundTab = tabName;
+                }
+            });
+            return foundTab;
+        }
+
         let isChartTabValid = this.isChartTabValid(this.state, false);
         let isQueryTabValid = this.isQueryTabValid(this.state, false);
+        let isExpressionTabValid = this.isExpressionTabValid(this.state, false);
         let thiz = this;
+        let switchToTab = null;
         switch(this.state.selectedTab) {
             case 'chart':
-                if (isChartTabValid && !isQueryTabValid) {
-                    this.configurationTabSelected('query', null);
-                }
-                else {
+                if (!isChartTabValid) {
                     this.setState((state) => {
                         thiz.isChartTabValid(state);
                     });
                 }
+                else {
+                    switchToTab = findInvalidTab([{'query':isQueryTabValid}, {'expression':isExpressionTabValid}]);
+                }
             break;
             case 'query':
-                if (isQueryTabValid && !isChartTabValid) {
-                    this.configurationTabSelected('chart', null);
-                }
-                else {
+                if (!isQueryTabValid) {
                     this.setState((state) => {
                         thiz.isQueryTabValid(state);
                     });
                 }
+                else {
+                    switchToTab = findInvalidTab([{'expression':isExpressionTabValid}, {'chart':isChartTabValid}]);
+                }
+            break;
+            case 'expression':
+                if (!isExpressionTabValid) {
+                    this.setState((state) => {
+                        thiz.isExpressionTabValid(state);
+                    });
+                }
+                else {
+                    switchToTab = findInvalidTab([{'chart':isChartTabValid}, {'query':isQueryTabValid}]);
+                }
             break;
         }
-        return (isChartTabValid && isQueryTabValid);
+        if (switchToTab) {
+            this.configurationTabSelected(switchToTab, null);
+        }
+        return (isChartTabValid && isQueryTabValid && isExpressionTabValid);
     }
 
     isChartTabValid = (state, setErrorState = true) => {
         let isValid = true;
 
-        let configuration = this.state.configuration;
+        let configuration = state.configuration;
         let errorMessage = null;
         if ('' === configuration) {
             isValid = false;
@@ -221,11 +281,35 @@ class AmChartEditor extends React.Component {
         return isValid;
     }
 
+    isExpressionTabValid = (state, setErrorState = true) => {
+        let isValid = true;
+        let errorMessage = null;
+        let expression = state.expression;
+        if (expression) {
+            try {
+                //Make sure expression is valid JSON
+                JSON.parse(expression);
+            }
+            catch(jsonParseError) {
+                isValid = false;
+                console.error(jsonParseError);
+                errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
+            }
+        }
+
+        if (setErrorState) {
+            state.errors.expression = errorMessage;
+        }
+
+        return isValid;
+    }
+
     clearAllErrors = () => {
         var thiz = this;
         return new Promise((resolve) => {
             thiz.setState((state) => {
                 state.errors.configuration = null;
+                state.errors.expression = null;
                 let queryErrors = state.errors.queries;
                 for (let i=0; i < queryErrors.length; i++) {
                     queryErrors[i] = null;
@@ -245,10 +329,19 @@ class AmChartEditor extends React.Component {
                 this.amChart = null;
             }
         }
-        if (eventKey === 'chart') {
-            let cardBody = document.querySelector('div#propertyBox div.card-body');
-            let textArea = document.querySelector('textarea#configuration');
-            textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+        let cardBody = null;
+        let textArea = null;
+        switch(eventKey) {
+            case 'chart':
+                cardBody = document.querySelector('div#propertyBox div.card-body');
+                textArea = document.querySelector('textarea#configuration');
+                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+            break;
+            case 'expression':
+                cardBody = document.querySelector('div#propertyBox div.card-body');
+                textArea = document.querySelector('textarea#expression');
+                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+            break;
         }
 
         let thiz = this;
@@ -262,6 +355,9 @@ class AmChartEditor extends React.Component {
                     case 'query':
                         thiz.isQueryTabValid(state);
                     break;
+                    case 'expression':
+                        thiz.isExpressionTabValid(state);
+                    break;
                 }
                 return state;
             },
@@ -271,6 +367,7 @@ class AmChartEditor extends React.Component {
                         thiz.refreshChartPreview();
                     break;
                     case 'query':
+                    case 'expression':
                         thiz.refreshQueryPreview();
                     break;
                 }
@@ -601,6 +698,24 @@ class AmChartEditor extends React.Component {
                                             </button>
                                         </div>
                                     </Tab>
+                                    <Tab eventKey="expression" title="Expression">
+                                        <div className="form-group row" style={{marginLeft:'0px', marginRight:'0px'}}>
+                                            <div className="col-12 no-left-padding no-right-padding">
+                                                <textarea id="expression" name="expression"  ref="expression" 
+                                                    className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
+                                                    onChange={this.expressionChanged} value={this.state.expression} 
+                                                    onBlur={this.expressionBlurred} disabled={this.state.readOnly}/>
+                                                <Overlay id="expression-overlay" target={this.refs.expression} 
+                                                    show={this.state.errors.expression != null} placement="top">
+                                                    {props => (
+                                                    <Tooltip id="expression-tooltip" {...props} className="error-tooltip">
+                                                        {this.state.errors.expression}
+                                                    </Tooltip>
+                                                    )}
+                                                </Overlay>
+                                            </div>
+                                        </div>
+                                    </Tab>
                                 </Tabs>
                             </div>
                         </div>
@@ -617,7 +732,7 @@ class AmChartEditor extends React.Component {
                                     <b>Chart preview</b>
                                 </div>
                             }
-                            {(this.state.selectedTab === 'query') && 
+                            {((this.state.selectedTab === 'query') || (this.state.selectedTab === 'expression')) && 
                                 <div id="queryPreview">
                                     <textarea id="queryPreviewText" name="queryPreviewText" 
                                         className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 

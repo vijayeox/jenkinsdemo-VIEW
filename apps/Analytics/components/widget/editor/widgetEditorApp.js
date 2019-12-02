@@ -60,7 +60,8 @@ class WidgetEditorApp extends React.Component {
                         thiz.refs.editor.setWidgetData({
                             data: widget.data,
                             configuration: widget.configuration,
-                            queries: widget.queries
+                            queries: widget.queries,
+                            expression: widget.expression
                         });
                     }
                 });
@@ -239,6 +240,7 @@ class WidgetEditorApp extends React.Component {
         let params = {
             'uuid' : state.widget.uuid,
             'configuration' : editorState.configuration,
+            'expression' : editorState.expression,
             'queries' : editorState.queries,
             'name' : state.widgetName
         };

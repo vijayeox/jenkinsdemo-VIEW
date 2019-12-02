@@ -1,3 +1,4 @@
+var numeral = require('numeral');
 
 class WidgetRenderer {
     static render(element, widget) {
@@ -7,8 +8,7 @@ class WidgetRenderer {
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     console.error(`Unexpected inline widget tag "${widgetTagName}"`);
                 }
-                element.innerHTML = widget.data;
-                return null;
+                return WidgetRenderer.renderAggregateValue(element, widget.configuration, widget.data);
             break;
 
             case 'amCharts':
@@ -29,6 +29,23 @@ class WidgetRenderer {
                 console.error(`Unexpected widget renderer "${widget.renderer}"`);
                 return null;
         }
+    }
+
+    static renderAggregateValue(element, configuration, data) {
+        let displayValue = null;
+        if (configuration) {
+            if (configuration.numberFormat) {
+                let format = configuration.numberFormat;
+                let num = numeral(data);
+                displayValue = num.format(format);
+            }
+            else if (configuration.dateFormat) {
+                let format = configuration.dateFormat;
+                displayValue = dayjs(data).format(format);
+            }
+        }
+        element.innerHTML = displayValue ? displayValue : ('' + data);
+        return null;
     }
 
     static renderAmCharts(element, configuration, data) {
