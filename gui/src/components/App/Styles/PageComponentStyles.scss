@@ -14,19 +14,31 @@
     flex-direction: row;
     align-items: center;
     margin-right: 5px;
-    margin-left: 5px;
-    padding-left: 5px;
     color: #275362;
     a {
       color: #275362;
       padding-left: 5px;
       font-size: 24px;
     }
+    a:focus, a:hover{
+      text-decoration: none;
+    }
     .seperator {
       margin-right: 0.5rem;
       color: #bababb;
       font-size: 24px;
     }
+  }
+  .searchInput {
+    border: 0;
+    background: #eee;
+    font-size: 20px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    padding: 5px;
+    width: 100%;
   }
 }
 .breadcrumbParent{
