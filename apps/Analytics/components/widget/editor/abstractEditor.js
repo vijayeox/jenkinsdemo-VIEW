@@ -111,7 +111,7 @@ class AbstractEditor extends React.Component {
             state.errors.expression = errorMessage;
             return state;
         });
-        this.refreshQueryPreview();
+        return errorMessage ? false : true;
     }
 
     querySelectionChanged = (evt, index) => {
@@ -127,7 +127,7 @@ class AbstractEditor extends React.Component {
             return state;
         },
         () => {
-            thiz.refreshQueryPreview();
+            thiz.loadData(thiz.refreshQueryPreview());
         });
     }
 
@@ -190,7 +190,7 @@ class AbstractEditor extends React.Component {
                     return state;
                 },
                 () => {
-                    thiz.refreshQueryPreview();
+                    thiz.loadData(thiz.refreshQueryPreview());
                 });
             }
         });
@@ -237,7 +237,7 @@ class AbstractEditor extends React.Component {
                     return state;
                 },
                 () => {
-                    thiz.refreshQueryPreview();
+                    thiz.loadData(thiz.refreshQueryPreview());
                 });
             }
         });
@@ -284,7 +284,7 @@ class AbstractEditor extends React.Component {
                     return state;
                 },
                 () => {
-                    thiz.refreshQueryPreview();
+                    thiz.loadData(thiz.refreshQueryPreview());
                 });
             }
         });
@@ -316,10 +316,13 @@ class AbstractEditor extends React.Component {
             state.queries.splice(index, 1);
             state.errors.queries.splice(index, 1);
             return state;
+        },
+        () => {
+            thiz.loadData(thiz.refreshQueryPreview());
         });
     }
 
-    loadData = () => {
+    loadData = (postLoadCallback) => {
         let thiz = this;
         let params = {
             'queries':this.queries
@@ -327,6 +330,9 @@ class AbstractEditor extends React.Component {
         window.postDataRequest('analytics/query/data', params).
             then(function(responseData) {
                 thiz.data = responseData.data;
+                if (postLoadCallback) {
+                    postLoadCallback();
+                }
             }).
             catch(function(responseData) {
                 console.error('Could not load data.');
@@ -345,7 +351,9 @@ class AbstractEditor extends React.Component {
             then(function(response) {
                 thiz.queryList = response.data;
                 thiz.forceUpdate();
-                postLoadCallback();
+                if (postLoadCallback) {
+                    postLoadCallback();
+                }
             }).
             catch(function(response) {
                 Swal.fire({

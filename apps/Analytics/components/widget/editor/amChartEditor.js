@@ -33,8 +33,9 @@ class AmChartEditor extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
-        this.validateExpression();
-        this.refreshQueryPreview();
+        if (this.validateExpression()) {
+            this.loadData(this.refreshQueryPreview());
+        }
     }
 
     refreshChartPreview = () => {

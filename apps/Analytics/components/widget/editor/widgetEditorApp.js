@@ -12,7 +12,6 @@ class WidgetEditorApp extends React.Component {
     constructor(props) {
         super(props);
         this.widgetList = [];
-        this.queryList = [];
         let editor = props.editor;
         let widgetConfiguration = editor.plugins.oxzion.getWidgetConfiguration(editor);
         this.state = {
@@ -112,19 +111,6 @@ class WidgetEditorApp extends React.Component {
                 });
             });
 
-        window.postDataRequest('analytics/query').
-            then(function(response) {
-                thiz.queryList = response.data;
-                thiz.forceUpdate();
-            }).
-            catch(function(response) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Failed to load queries. Please try after some time.'
-                });
-            });
-
         if (thiz.state.widget.uuid) {
             thiz.loadWidget(thiz.state.widget.uuid);
         }
@@ -154,14 +140,6 @@ class WidgetEditorApp extends React.Component {
         let promise = new Promise((resolve, reject)=> {
             resolvePromise = resolve;
         });
-
-        //Don't validate widget name field if the widget editor is in readOnly state.
-        if (this.state.readOnly) {
-            this.setErrorMessage('widgetName', null);
-            console.debug('Chart editor is readOnly. Widget name is valid.');
-            resolvePromise(true); //No validation errors.
-            return promise;
-        }
 
         let widgetName = this.state.widgetName;
         if (widgetName) {
@@ -218,6 +196,10 @@ class WidgetEditorApp extends React.Component {
                 thiz.refs.editor.areAllFieldsValid();
             console.debug(`Overall validation result:${result}`);
             resolvePromise(result);
+        }).
+        catch(function() {
+            console.debug('widgetEditorApp.isWidgetNameValid call failed.');
+            resolvePromise(false);
         });
 
         return promise;
@@ -256,6 +238,7 @@ class WidgetEditorApp extends React.Component {
 
         let thiz = this;
         this.areAllFieldsValid().then(function(areFieldsValid) {
+            console.debug(`widgetEditorApp.areAllFieldsValid resolved with ${areFieldsValid}`);
             var errors = thiz.state.errors;
             var errorsFound = !areFieldsValid;
             for (let [key, value] of Object.entries(errors)) {

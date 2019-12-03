@@ -18,8 +18,9 @@ class AggregateValueEditor extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
-        this.validateExpression();
-        this.refreshQueryPreview();
+        if (this.validateExpression()) {
+            this.loadData(this.refreshQueryPreview());
+        }
     }
 
     refreshWidgetPreview = () => {
