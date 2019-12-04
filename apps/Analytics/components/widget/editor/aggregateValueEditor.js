@@ -34,7 +34,7 @@ class AggregateValueEditor extends AbstractEditor {
             jsonWidgetConfiguration = JSON.parse(configuration);
         }
         catch(jsonParseError) {
-            console.error(renderError);
+            console.error(jsonParseError);
             errorMessage = this.ERRORS.WIDGET_CONFIGURATION_INVALID_JSON;
         }
         if (jsonWidgetConfiguration) {
@@ -129,7 +129,7 @@ class AggregateValueEditor extends AbstractEditor {
         let thiz = this;
         let switchToTab = null;
         switch(this.state.selectedTab) {
-            case 'chart':
+            case 'widget':
                 if (!isWidgetTabValid) {
                     this.setState((state) => {
                         thiz.isWidgetTabValid(state);
