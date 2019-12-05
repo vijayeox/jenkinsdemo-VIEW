@@ -43,6 +43,9 @@ module.exports = {
   wrapper: {
     url: "http://localhost:8080/",
   },
+  api:{
+    url: "http://localhost:8080/"
+  },
   vfs: {
     watch: false,
     root: path.join(process.cwd(), '../vfs'),
