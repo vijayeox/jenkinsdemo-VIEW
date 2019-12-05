@@ -667,13 +667,27 @@ class FormRender extends React.Component {
       });
     }
   }
+
+  parseResponseData = data => {
+    var parsedData = {};
+    Object.keys(data).forEach(key => {
+      try {
+        parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
+      } catch (error) {
+        parsedData[key] = data[key];
+      }
+    });
+    return parsedData;
+  };
+
   componentDidMount() {
     this.props.url
       ? this.getFormContents(this.props.url).then(response => {
+          var parsedData = this.parseResponseData(JSON.parse(response.data));
           console.log(response);
           this.setState({
             content: JSON.parse(response.template),
-            data: JSON.parse(response.data),
+            data: parsedData,
             workflowInstanceId: response.workflow_instance_id,
             activityInstanceId: response.activity_instance_id,
             formId: response.form_id
