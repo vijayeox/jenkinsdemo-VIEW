@@ -9,6 +9,11 @@ $ npm run clean
 To start the node server
 $ npm run serve
 
+Incase of client's application development, you will have to serve the view from withing the API docker. 
+$ docker exec -it <containerId> bash
+$ cd ../../view/
+$ npm run serve
+
 ------------------------------------------------------
 Note on Windows use git bash to run the above commands
 ------------------------------------------------------
