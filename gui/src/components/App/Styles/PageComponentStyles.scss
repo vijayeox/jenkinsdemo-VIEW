@@ -13,14 +13,15 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-right: 5px;
+    margin-right: 10px;
     color: #275362;
     a {
       color: #275362;
       padding-left: 5px;
       font-size: 24px;
     }
-    a:focus, a:hover{
+    a:focus,
+    a:hover {
       text-decoration: none;
     }
     .seperator {
@@ -41,7 +42,24 @@
     width: 100%;
   }
 }
-.breadcrumbParent{
+
+.k-popup {
+  font-size: small;
+  margin: unset;
+  padding: unset;
+}
+
+.k-item:focus,
+.k-list .k-item.k-state-focused {
+  box-shadow: unset !important;
+}
+
+.k-list .k-item {
+  background-color: #2a4f5d;
+  color: white;
+}
+
+.breadcrumbParent {
   border-bottom: 1px solid #275362;
   margin-bottom: 0.8rem;
 }

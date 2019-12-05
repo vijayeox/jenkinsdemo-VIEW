@@ -1,6 +1,5 @@
 .GridCustomStyle {
-
-  .k-grid{
+  .k-grid {
     height: inherit;
   }
 
@@ -13,19 +12,7 @@
   input {
     border: 2px solid #dadada;
     border-radius: 7px;
-    padding: 2px;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #9ecaed;
-    box-shadow: 0 0 10px #9ecaed;
-  }
-
-  input {
-    border: 2px solid #dadada;
-    border-radius: 7px;
-    padding: 2px;
+    padding: 8px;
   }
 
   input:focus {
@@ -74,24 +61,48 @@
   }
 
   .k-filtercell > .k-filtercell-wrapper > input::placeholder {
-    font-size: 1em;
+    font-size: small;
   }
 
   .k-filtercell > .k-filtercell-wrapper > input {
-    font-size: 1em;
+    font-size: small;
     margin-bottom: 0px;
     height: 25px;
   }
 
+  .k-grid-toolbar {
+    .k-dropdown-button {
+      float: right;
+      margin-right: 5px;
+    }
+  }
+
+  .k-button {
+    font-size: small;
+  }
+
+  .k-header {
+    font-size: small;
+  }
+
+  .k-grid-table {
+    td {
+      font-size: small;
+    }
+  }
+
+  abbr {
+    text-decoration: none;
+    border-bottom: unset;
+  }
+
   .manage-btn {
     //manage icons style and style
-    background-color: #ff6358;
     border-radius: 10px;
     font-family: Roboto;
-    font-size: 1rem;
-    width: 2.2rem;
-    height: 2.2rem;
     cursor: pointer;
+    width: auto;
+    height: 30px;
   }
 
   .manageIcons {
