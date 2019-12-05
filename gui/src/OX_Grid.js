@@ -5,8 +5,10 @@ import {
   GridCell,
   GridColumn,
   GridDetailRow,
-  GridNoRecords
+  GridNoRecords,
+  GridToolbar
 } from "@progress/kendo-react-grid";
+import { Button } from "@progress/kendo-react-buttons";
 import { process } from "@progress/kendo-data-query";
 import $ from "jquery";
 
@@ -14,7 +16,7 @@ import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
 
 import "./components/Grid/customStyles.scss";
-import "@progress/kendo-theme-default/dist/all.css";
+import "@progress/kendo-theme-bootstrap/dist/all.css";
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
@@ -29,7 +31,9 @@ export default class OX_Grid extends React.Component {
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
-      gridDefaultFilters: this.props.gridDefaultFilters?this.props.gridDefaultFilters : {}
+      gridDefaultFilters: this.props.gridDefaultFilters
+        ? this.props.gridDefaultFilters
+        : {}
     };
   }
 
@@ -40,8 +44,7 @@ export default class OX_Grid extends React.Component {
   }
 
   dataStateChange = e => {
-    if(this.state.gridDefaultFilters){
-
+    if (this.state.gridDefaultFilters) {
     }
     this.setState({
       ...this.state,
@@ -54,9 +57,9 @@ export default class OX_Grid extends React.Component {
       gridData: data
     });
   };
-  componentWillReceiveProps(props){
-    if(props.gridDefaultFilters){
-      this.setState({dataState:props.gridDefaultFilters});
+  componentWillReceiveProps(props) {
+    if (props.gridDefaultFilters) {
+      this.setState({ dataState: props.gridDefaultFilters });
     }
   }
 
@@ -236,6 +239,9 @@ export default class OX_Grid extends React.Component {
           expandField="expanded"
           {...this.state.dataState}
         >
+          {this.props.gridToolbar ? (
+            <GridToolbar>{this.props.gridToolbar}</GridToolbar>
+          ) : null}
           {this.createColumns()}
           {/* {this.noRecordsJSX()} */}
         </Grid>
@@ -260,8 +266,7 @@ class CustomCell extends GridCell {
             ? {
                 display: "flex",
                 justifyContent: "space-evenly",
-                cursor:"default"
-                
+                cursor: "default"
               }
             : null
         }
