@@ -3,6 +3,7 @@ import FormRender from "./FormRender";
 import Document from "./Document";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
+import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import DocumentViewer from "../../DocumentViewer";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
@@ -74,7 +75,7 @@ class Page extends React.Component {
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
-            width: "2.2rem"
+            width: "auto"
           }
         : {
             width: "auto",
@@ -85,8 +86,8 @@ class Page extends React.Component {
       showButton
         ? actionButtons.push(
             <abbr title={action[key].name} key={index}>
-              <button
-                type="button"
+              <Button
+                primary={true}
                 className=" btn manage-btn k-grid-edit-command"
                 onClick={() => this.buttonAction(action[key], e)}
                 style={buttonStyles}
@@ -96,13 +97,43 @@ class Page extends React.Component {
                 ) : (
                   action[key].name
                 )}
-              </button>
+              </Button>
             </abbr>
           )
         : null;
     }, this);
     return actionButtons;
   }
+
+  renderListOperations = config => {
+    if (config.actions.length > 1) {
+      var showDropdown = true;
+    }
+    if (showDropdown) {
+      return (
+        <DropDownButton
+          text={config.title}
+          textField="name"
+          className="gridOperationDropdown"
+          iconClass={config.icon}
+          onItemClick={e => this.buttonAction(e.item)}
+          popupSettings={{ popupClass: "dropDownButton" }}
+          items={config.actions}
+          primary={true}
+        />
+      );
+    } else {
+      return (
+        <Button
+          style={{ right: "10px", float: "right" }}
+          primary={true}
+          onClick={() => this.buttonAction(config.actions[0])}
+        >
+          {config.actions[0].name}
+        </Button>
+      );
+    }
+  };
 
   async buttonAction(action, rowData) {
     if (action.page_id) {
@@ -271,7 +302,16 @@ class Page extends React.Component {
               key={i}
               osjsCore={this.core}
               data={dataString}
-              gridDefaultFilters={this.replaceParams(itemContent.defaultFilter)}
+              gridDefaultFilters={
+                itemContent.defaultFilter
+                  ? this.replaceParams(itemContent.defaultFilter)
+                  : null
+              }
+              gridToolbar={
+                itemContent.operations
+                  ? this.renderListOperations(itemContent.operations)
+                  : null
+              }
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}
