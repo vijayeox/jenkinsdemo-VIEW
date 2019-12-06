@@ -55,13 +55,13 @@
     const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
     const user = core.make('osjs/auth').user();
     console.log(user);
-  
+
     // Create an iframe
     const iframe = document.createElement('iframe');
     iframe.style.width = '100%';
     iframe.style.height = '100%';
     iframe.src = proc.resource(baseUrl+ "/oxindex" + suffix + '&oxauth=' + user.jwt);
-  
+
     iframe.setAttribute('border', '0');
 
     // Bind window events to iframe
@@ -72,11 +72,15 @@
     // Listen for messages from iframe
     win.on('iframe:get', msg => {
       console.warn('Message from Iframe', msg);
+      if (msg=== 'Ping') {
       win.emit('iframe:post', 'Pong');
+    } else if(msg.message == 'help'){
+      core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'task'}});
+    }
     });
 
     $content.appendChild(iframe);
-    
+
   });
 }
 );

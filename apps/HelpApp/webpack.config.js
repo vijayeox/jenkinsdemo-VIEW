@@ -1,12 +1,14 @@
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 const mode = process.env.NODE_ENV || 'development';
 const minimize = mode === 'production';
 const plugins = [];
+
+
 
 if (mode === 'production') {
   plugins.push(new OptimizeCSSAssetsPlugin({
@@ -27,9 +29,7 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin([
-      'icon.png','icon_white.png'
-    ]),
+    new CopyWebpackPlugin(["icon.png", "icon_white.png","crm.svg","task.png","chat.svg"]),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -37,7 +37,7 @@ module.exports = {
     new Dotenv({
       path: './.env',
       safe: true
-    }),
+    }),   
     ...plugins
   ],
   module: {
@@ -61,19 +61,13 @@ module.exports = {
             }
           }
         ]
-      },
+      },      
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',        
-          options: {
-            presets: [
-              require.resolve("@babel/preset-react"),
-              require.resolve("@babel/preset-env")
-            ]
-	  }
-      	}
+          loader: 'babel-loader'
+        }
       }
     ]
   }

@@ -50,7 +50,7 @@ export default class Login extends defaultLogin {
           }, h('span', {}, "The username and/or password is incorrect! Please try again.")),
           h('div',{className: 'form-signin__footer'},[
           h("button",{type:"submit",value:"login",className: 'btn waves-effect waves-light'},'Login'),
-          //h('a',{href: '#'},'Forgot your password?'),
+          h('a',{href: '#'},'Forgot your password?'),
         ]),
         ]),
       ]),

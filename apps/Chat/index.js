@@ -99,6 +99,9 @@
           case 'Notify':
           handleNotification();  
           break;
+          case 'help':
+          core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'chat'}});
+          break;
         }
         
       });

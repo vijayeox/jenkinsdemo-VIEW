@@ -26,7 +26,7 @@ class ImportExportContactsWidget extends React.Component {
     ExportContacts(this.props.selectedContactsUUID).then(response => {
       if (response.status == "success") {
         this.convertToFile(response.data, "text/csv", "myContacts.csv");
-        this.notif.current.successNotification("Successfully imported");
+        this.notif.current.successNotification("Successfully exported.");
         this.props.getContact;
       } else {
         this.notif.current.failNotification(
@@ -45,7 +45,7 @@ class ImportExportContactsWidget extends React.Component {
           "text/csv",
           "myContactsErrorList.csv"
         );
-        this.notif.current.successNotification("Successfully imported");
+        this.notif.current.successNotification("Successfully imported.");
         this.props.getContact;
       } else {
         this.notif.current.failNotification(

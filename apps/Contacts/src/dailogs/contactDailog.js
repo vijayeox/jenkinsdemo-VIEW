@@ -524,8 +524,8 @@ class ContactDailog extends React.Component {
 
               <div className="col-12">
                 <div className="row">
-                  <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address 1</label>
+                  <div className="col-12 form-group">
+                    <label htmlFor="phone_1">Address</label>
                     <textarea
                       row={4}
                       className="form-control"
@@ -534,22 +534,6 @@ class ContactDailog extends React.Component {
                       value={
                         this.state.contactDetails.address_1
                           ? this.state.contactDetails.address_1
-                          : ""
-                      }
-                      onChange={this.handleUserInput}
-                    />
-                  </div>
-
-                  <div className="col-6 form-group">
-                    <label htmlFor="phone_1">Address 2</label>
-                    <textarea
-                      row={4}
-                      className="form-control"
-                      name="address_2"
-                      placeholder="Enter address."
-                      value={
-                        this.state.contactDetails.address_2
-                          ? this.state.contactDetails.address_2
                           : ""
                       }
                       onChange={this.handleUserInput}
