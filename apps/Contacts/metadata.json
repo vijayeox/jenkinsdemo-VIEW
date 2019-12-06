@@ -4,7 +4,7 @@
   "category": "utilities",
   "server": "server.js",
   "singleton": true,
-  "hidden": false,
+  "hidden": true,
   "defaultAppforOrgs": true,
   "icon": "icon.png",
   "icon_white": "icon_white.png",
