@@ -683,13 +683,19 @@ class FormRender extends React.Component {
   componentDidMount() {
     this.props.url
       ? this.getFormContents(this.props.url).then(response => {
-          var parsedData = this.parseResponseData(JSON.parse(response.data));
-          console.log(response);
+          var parsedData = [];
+          if (response.data) {
+            parsedData = this.parseResponseData(JSON.parse(response.data));
+          }
+          response.workflow_uuid
+            ? (parsedData.workflow_uuid = response.workflow_uuid)
+            : null;
           this.setState({
             content: JSON.parse(response.template),
             data: parsedData,
             workflowInstanceId: response.workflow_instance_id,
             activityInstanceId: response.activity_instance_id,
+            workflowId: response.workflow_uuid,
             formId: response.form_id
           });
           this.createForm();
