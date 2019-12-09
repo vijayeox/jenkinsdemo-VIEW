@@ -8,7 +8,7 @@
   "autostart":false,
   "singleton":true,
   "hidden":true,
-  "defaultAppforOrgs" : true,
+  "defaultAppforOrgs" : false,
   "title": {
     "en_EN": "Calendar"
   },
