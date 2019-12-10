@@ -37,7 +37,17 @@ module.exports = {
     minimize,
   },
   plugins: [
-    new CopyWebpackPlugin(['icon.png','icon_white.png', 'images/', {from:'static'}]),
+    new CopyWebpackPlugin([
+            'icon.png', 
+            'icon_white.png', 
+            'images/', 
+            {from:'static'}, 
+            {
+                from:'node_modules/@progress/kendo-theme-default/dist/all.css', 
+                to:'kendo-theme-default-all.css'
+            }
+        ]
+    ),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
@@ -71,7 +81,6 @@ module.exports = {
       },
       {
         test: /\.(sa|sc|c)ss$/,
-        exclude: /(node_modules|bower_components)/,
         use: [
           MiniCssExtractPlugin.loader,
           {

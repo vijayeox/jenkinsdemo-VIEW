@@ -1,23 +1,41 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 var numeral = require('numeral');
+import WidgetGrid from './widget/editor/widgetGrid'
 
 class WidgetRenderer {
     static render(element, widget) {
         let widgetTagName = element.tagName.toUpperCase();
         switch(widget.renderer) {
             case 'JsAggregate':
+            case 'JsCalculator':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
-                    console.error(`Unexpected inline widget tag "${widgetTagName}"`);
+                    console.error(`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
                 return WidgetRenderer.renderAggregateValue(element, widget.configuration, widget.data);
             break;
 
             case 'amCharts':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
-                    console.error(`Unexpected inline widget tag "${widgetTagName}"`);
+                    console.error(`Unexpected chart widget tag "${widgetTagName}"`);
                     return null;
                 }
                 try {
                     return WidgetRenderer.renderAmCharts(element, widget.configuration, widget.data);
+                }
+                catch(e) {
+                    console.error(e);
+                    return null;
+                }
+            break;
+
+            case 'JsTable':
+                if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
+                    console.error(`Unexpected table widget tag "${widgetTagName}"`);
+                    return null;
+                }
+                try {
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data);
                 }
                 catch(e) {
                     console.error(e);
@@ -92,6 +110,13 @@ class WidgetRenderer {
             chart.data = data;
         }
         return chart;
+    }
+
+    static renderTable(element, configuration, data) {
+        let contentElement = element.querySelector('div.oxzion-widget-content');
+        ReactDOM.render(
+            <WidgetGrid/>, 
+            contentElement);
     }
 }
 

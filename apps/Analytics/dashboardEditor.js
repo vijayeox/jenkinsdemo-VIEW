@@ -104,6 +104,8 @@ class DashboardEditor extends React.Component {
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo( 'ckEditorInstance', config );
+        //Kendo theme CSS is added like this for rendering Kendo grid inside a widget displayed within ckeditor.
+        editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
         this.editor = editor;
         let thisInstance = this;
         editor.on('instanceReady', function(event) {
