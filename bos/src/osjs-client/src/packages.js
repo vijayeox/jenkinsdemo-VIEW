@@ -325,8 +325,11 @@ export default class Packages {
    * Autostarts tagged packages
    */
   _autostart() {
+    var userDetails = this.core.make('oxzion/profile').get();
+    var appList = userDetails.key.blackListedApps;
+            
     this.metadata
-      .filter(pkg => pkg.autostart === true)
+      .filter(pkg => pkg.autostart === true && !(pkg.name in appList))
       .forEach(pkg => this.launch(pkg.name));
   }
 
