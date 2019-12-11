@@ -11,6 +11,7 @@ $ npm run serve
 
 Incase of client's application development, you will have to serve the view from withing the API docker. 
 $ docker exec -it <containerId> bash
+$ ./set-docker-env.sh
 $ cd ../../view/
 $ npm run serve
 
