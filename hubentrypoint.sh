@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "building view"
 cd bos
 npm rebuild node-sass
 cd ..
