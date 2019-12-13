@@ -45,7 +45,7 @@
     "@babel/runtime": "^7.6.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
-    "copy-webpack-plugin": "^5.0.4",
+    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "mini-css-extract-plugin": "^0.6.0",
