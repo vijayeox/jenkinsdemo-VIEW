@@ -2,6 +2,7 @@
 
 APPS="apps"
 BOS="bos"
+GUI="gui"
 ICON_PACKS="iconpacks"
 THEMES="themes"
 BUID_GUI=false
@@ -93,12 +94,7 @@ if [ "$BUILD_APPS" = true ] || [ "$BUILD_ALL" = true ] ; then
     fi
 fi
 if [ "$BUILD_GUI" = true ] || [ "$BUILD_ALL" = true ] ; then
-    cd gui
-    echo "Building GUI ...";
-    if [ "$RUN_INSTALL" = true ] ; then
-        npm install
-        npm audit fix
-    fi    
+    build_project $GUI
 fi
 if [ "$BUILD_ICON_PACKS" = true ] || [ "$BUILD_ALL" = true ] ; then
     build_projects $ICON_PACKS
