@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {Overlay, Tooltip} from 'react-bootstrap';
 import AmChartEditor from './amChartEditor';
 import AggregateValueEditor from './aggregateValueEditor';
+import TableEditor from './tableEditor';
 import './globalFunctions';
 import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';

@@ -115,7 +115,7 @@ class WidgetRenderer {
     static renderTable(element, configuration, data) {
         let contentElement = element.querySelector('div.oxzion-widget-content');
         ReactDOM.render(
-            <WidgetGrid/>, 
+            <WidgetGrid configuration={configuration} data={data}/>, 
             contentElement);
     }
 }
