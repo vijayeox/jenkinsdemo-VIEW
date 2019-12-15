@@ -32,23 +32,23 @@ class App extends Component {
       <Tabs defaultTab="vertical-tab-one">
         <TabList className="tabLayout">
           <Tab tabFor="vertical-tab-one">
-            <i className="fas fa-user-circle" />
+            <i className="fa fa-user-circle" />
             <span>Edit Profile</span>
           </Tab>
           <Tab tabFor="vertical-tab-two">
-            <i className="fas fa-key" />
+            <i className="fa fa-key" />
             <span>Change Password</span>
           </Tab>
           <Tab tabFor="vertical-tab-three">
-            <i className="fas fa-user-cog" />
+            <i className="fa fa-cog" />
             <span>Preferences</span>
           </Tab>
           <Tab tabFor="vertical-tab-four">
-            <i className="fas fa-image" />
+            <i className="fa fa-image" />
             <span>Background</span>
           </Tab>
           <Tab tabFor="vertical-tab-five">
-            <i className="fas fa-desktop" />
+            <i className="fa fa-desktop" />
             <span>Themes</span>
           </Tab>
         </TabList>

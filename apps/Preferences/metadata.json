@@ -3,7 +3,6 @@
   "name": "Preferences",
   "category": null,
   "autostart":false,
-  "server": "server.js",
   "icon": "icon.svg",
   "icon_white": "icon_white.svg",
   "hidden": true,

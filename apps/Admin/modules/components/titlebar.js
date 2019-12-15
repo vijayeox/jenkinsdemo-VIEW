@@ -14,7 +14,7 @@ export class TitleBar extends React.Component {
             primary={true}
             style={{ width: "45px", height: "45px" }}
           >
-            <i className="fas fa-bars"></i>
+            <i className="fa fa-bars"></i>
           </Button>
         </div>
         <div className="col text-center" id="pageTitle">

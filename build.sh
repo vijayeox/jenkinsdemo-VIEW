@@ -2,8 +2,10 @@
 
 APPS="apps"
 BOS="bos"
+GUI="gui"
 ICON_PACKS="iconpacks"
 THEMES="themes"
+BUID_GUI=false
 BUILD_ICON_PACKS=false
 BUILD_THEMES=false
 BUILD_BOS=false
@@ -56,6 +58,9 @@ usage() {
 
 while [ "$1" != "" ]; do
     case $1 in
+        gui )           BUILD_GUI=true
+                        BUILD_ALL=false
+                        ;;
         bos )           BUILD_BOS=true
                         BUILD_ALL=false
                         ;;
@@ -87,6 +92,9 @@ if [ "$BUILD_APPS" = true ] || [ "$BUILD_ALL" = true ] ; then
     else    
         build_projects $APPS "${APPS_TO_BUILD[@]}"
     fi
+fi
+if [ "$BUILD_GUI" = true ] || [ "$BUILD_ALL" = true ] ; then
+    build_project $GUI
 fi
 if [ "$BUILD_ICON_PACKS" = true ] || [ "$BUILD_ALL" = true ] ; then
     build_projects $ICON_PACKS

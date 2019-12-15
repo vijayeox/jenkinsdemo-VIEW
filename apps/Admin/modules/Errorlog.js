@@ -92,7 +92,7 @@ class Errorlog extends React.Component {
                   {
                     name: "Retry",
                     rule: "true",
-                    icon: "fas fa-redo"
+                    icon: "fa fa-redo"
                   }
                 ]),
               filterCell: e => this.renderEmpty()

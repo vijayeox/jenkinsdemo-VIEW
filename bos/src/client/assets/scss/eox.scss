@@ -2,7 +2,10 @@
 @import 'variables';
 @import 'common.css';
 
-* { font-family: $font, sans-serif;}
+* { 
+    box-sizing: border-box; 
+    font-family: $font, sans-serif;
+}
 
 // Osjs Window
     .osjs-window-inner      { background-color: $white; border-radius: $bdr-rad; overflow: hidden; box-shadow: 0 0 10px $shadow;}
