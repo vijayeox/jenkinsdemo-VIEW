@@ -268,9 +268,9 @@ class FormRender extends React.Component {
             console.log(response.data);
             this.setState({ content: JSON.parse(response.data.template) });
           }
-          this.setState({ formDivID: "formio_" + this.state.formId });
-          this.createForm();
         }
+        this.setState({ formDivID: "formio_" + this.state.formId });
+        this.createForm();
       });
     }
     if (this.props.parentWorkflowInstanceId) {
@@ -700,8 +700,7 @@ class FormRender extends React.Component {
           });
           this.createForm();
         })
-      : null;
-    this.loadWorkflow();
+      : this.loadWorkflow();
   }
 
   async PushDataPOST(api, method, item, body) {
