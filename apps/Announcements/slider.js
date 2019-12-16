@@ -1,5 +1,6 @@
 import React from "react";
 import SlidingPanel from "react-sliding-panel";
+import Loader from "./Loader";
 
 class Slider extends React.Component {
   constructor(props) {
@@ -11,9 +12,18 @@ class Slider extends React.Component {
       translateValue: 0,
       indexCount: 0,
       isPaneOpen: false,
+      loading: true,
       focusData: []
     };
+  }
 
+  async getAnnouncements() {
+    let helper = this.core.make("oxzion/restClient");
+    let announ = await helper.request("v1", "/announcement", {}, "get");
+    return announ;
+  }
+  componentDidMount(){
+    this.setState({loading:true});
     this.getAnnouncements().then(response => {
       let data = response.data;
       let baseUrl = this.core.config("wrapper.url");
@@ -27,16 +37,11 @@ class Slider extends React.Component {
         announcements: data,
         indexCount: data.length - 1
       });
+    this.setState({loading:false});
     });
 
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
     this.goToNextSlide = this.goToNextSlide.bind(this);
-  }
-
-  async getAnnouncements() {
-    let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement", {}, "get");
-    return announ;
   }
 
   goToPrevSlide() {
@@ -105,6 +110,7 @@ class Slider extends React.Component {
   }
 
   render() {
+    if(this.state.loading == false){
     return (
       <div className="announcement-slider" ref={ref => (this.el = ref)}>
         <div
@@ -169,6 +175,8 @@ class Slider extends React.Component {
         </SlidingPanel>
       </div>
     );
+    }
+    return (<Loader />);
   }
 }
 
