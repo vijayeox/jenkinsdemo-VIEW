@@ -239,7 +239,7 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
-                <i class="fa fa-user-lock"></i>
+                <i class="fa fa-lock"></i>
               </div>
             ) : null}
 
