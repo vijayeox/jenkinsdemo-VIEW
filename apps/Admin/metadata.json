@@ -3,7 +3,6 @@
   "name": "Admin",
   "category": "utilities",
   "autostart": false,
-  "server": "server.js",
   "icon": "icon.svg",
   "icon_white": "icon_white.svg",
   "defaultAppforOrgs" : true,
