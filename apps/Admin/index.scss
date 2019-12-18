@@ -10,6 +10,8 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 // ---SweetAlert2 Fixes (End)---
 
 .Window_Admin {
+  $primary-color: #275362;
+
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/react-phone-number-input/style.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
@@ -109,9 +111,10 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   // ---FileUploader Styles (End)---
 
   .manage-btn {
-    background-color: #ff6358;
+    background-color: $primary-color;
     border-radius: 10px;
-    padding: 0.5rem;
+    padding: 7px;
+    font-size: 15px;
   }
 
   tr {
