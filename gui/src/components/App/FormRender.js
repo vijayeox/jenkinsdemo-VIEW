@@ -577,7 +577,6 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function(changed) {
-          console.log("Form was changed", changed);
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
@@ -663,6 +662,9 @@ class FormRender extends React.Component {
               }
             }
           }
+        });
+        form.on("callDelegate", changed => {
+          
         });
       });
     }
