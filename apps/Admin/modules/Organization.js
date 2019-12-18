@@ -153,8 +153,7 @@ class Organization extends React.Component {
           manageGrid={{
             add: this.insert,
             edit: this.edit,
-            remove: this.remove,
-            addUsers: this.addOrgUsers
+            remove: this.remove
           }}
           permission={this.state.permission}
         />
