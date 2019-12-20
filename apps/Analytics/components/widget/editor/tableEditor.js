@@ -40,22 +40,42 @@ class TableEditor extends AbstractEditor {
     refreshTablePreview = () => {
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
-        try {
-            //Make sure table configuratio is valid JSON
-            let jsonTableConfiguration = JSON.parse(this.state.configuration);
-            let previewElement = document.querySelector('div#tablePreview');
-            previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
-//            try {
-//                this.table = WidgetRenderer.renderTable(previewElement, jsonTableConfiguration, this.data);
-//            }
-//            catch(renderError) {
-//                console.error(renderError);
-//                errorMessage = '' + renderError;
-//            }
+        let jsonTableConfiguration = null;
+        let config = this.state.configuration;
+        if (!config || (0 === config.length)) {
+            errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
         }
-        catch(jsonParseError) {
-            console.error(jsonParseError);
-            errorMessage = this.ERRORS.TABLE_CONFIGURATION_INVALID_JSON;
+        else {
+            try {
+                //Make sure table configuratio is valid JSON
+                jsonTableConfiguration = JSON.parse(config);
+            }
+            catch(jsonParseError) {
+                console.error(jsonParseError);
+                errorMessage = this.ERRORS.TABLE_CONFIGURATION_INVALID_JSON;
+            }
+        }
+
+        if (!errorMessage) {
+            let previewElement = document.querySelector('div#tablePreview');
+            if (previewElement) {
+                //Remove and cleanup ReactJS rendered DOM nodes.
+                ReactDOM.unmountComponentAtNode(previewElement);
+                //Remove child nodes under previewElement.
+                let children = previewElement.children;
+                for (let i=0; i < children.length; i++) {
+                    children[i].remove();
+                }
+            }
+            previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
+            previewElement.style.width = (cardBody.offsetWidth- 40) + 'px'; //-40px for border and margin around preview area.
+            try {
+                WidgetRenderer.renderTable(previewElement, jsonTableConfiguration, this.data);
+            }
+            catch(renderError) {
+                console.error(renderError);
+                errorMessage = '' + renderError;
+            }
         }
 
         this.setState((state) => {
@@ -392,7 +412,7 @@ class TableEditor extends AbstractEditor {
                                     <b>Table preview</b>
                                 </div>
                             }
-                            {((this.state.selectedTab === 'query') || (this.state.selectedTab === 'expression')) && 
+                            {((this.state.selectedTab === 'query')|| (this.state.selectedTab === 'expression')) && 
                                 <div id="queryPreview">
                                     <textarea id="queryPreviewText" name="queryPreviewText" 
                                         className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 

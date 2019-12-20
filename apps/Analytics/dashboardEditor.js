@@ -8,6 +8,7 @@ import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
+import '@progress/kendo-theme-default/dist/all.css';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
@@ -390,6 +391,10 @@ class DashboardEditor extends React.Component {
                     <div id="ckEditorInstance" style={{height:'calc(100%)'}}>
                     </div>
                 </div>
+
+<div id="gridArea" style={{height:'200px', width:'800px'}}>
+    <div className="oxzion-widget-content"></div>
+</div>
             </form>
         );
     }

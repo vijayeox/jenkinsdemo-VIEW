@@ -113,10 +113,25 @@ class WidgetRenderer {
     }
 
     static renderTable(element, configuration, data) {
-        let contentElement = element.querySelector('div.oxzion-widget-content');
+        let elementTagName = element.tagName.toUpperCase();
+        let canvasElement = null;
+        switch(elementTagName) {
+            case 'DIV':
+                canvasElement = element;
+            break;
+            case 'FIGURE':
+                canvasElement = element.querySelector('div.oxzion-widget-content');
+            break;
+            default:
+                throw `Unexpected table element "${elementTagName}"`;
+        }
+        if (!canvasElement) {
+            throw 'Canvas element not found for drawing the table/grid.';
+        }
+
         ReactDOM.render(
             <WidgetGrid configuration={configuration} data={data}/>, 
-            contentElement);
+            canvasElement);
     }
 }
 
