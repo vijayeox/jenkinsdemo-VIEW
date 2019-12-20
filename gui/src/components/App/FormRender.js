@@ -107,7 +107,7 @@ class FormRender extends React.Component {
       workflowId: this.state.workflowId,
       route: route
     });
-    let response = await helper.request("v1", "/error", params, "post");
+    let response = await helper.request("v1", "/errorlog", params, "post");
     return;
   }
   async deleteCacheData() {
@@ -403,8 +403,6 @@ class FormRender extends React.Component {
         form.on("render", () => {
           var elm = document.getElementsByClassName("breadcrumbParent");
           if (elm.length > 0) {
-            console.log(elm[0]);
-
             scrollIntoView(elm[0], {
               scrollMode: "if-needed",
               block: "center",
@@ -572,6 +570,33 @@ class FormRender extends React.Component {
                 },
                 true
               );
+            }
+          }
+          var componentList = flattenComponents(form.components);
+          for (var componentKey in componentList) {
+            if (componentList.hasOwnProperty(componentKey)) {
+              var componentItem = componentList[componentKey];
+              if (
+                componentItem.component.properties &&
+                componentItem.component.properties["target"]
+              ) {
+                var targetComponent = form.getComponent(
+                  componentItem.component.properties["target"]
+                );
+                if (targetComponent && componentItem.value) {
+                  if (formdataArray[componentItem.value]) {
+                    targetComponent.setValue(
+                      formdataArray[componentItem.value]
+                    );
+                    targetComponent.refresh();
+                  }
+                }
+              }
+              if(componentItem.component.data && componentItem.component.data.url){
+                var profile = that.core.make('oxzion/profile').get();
+                var url = componentItem.component.data.url = that.core.config('wrapper.url')+'app/'+that.state.appId+'/org/'+profile.key.orgid+componentItem.component.data.url;
+                console.log(url);
+              }
             }
           }
         });
