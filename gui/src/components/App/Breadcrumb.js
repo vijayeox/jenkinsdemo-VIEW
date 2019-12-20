@@ -77,7 +77,7 @@ class Breadcrumb extends React.Component {
               {index == "0" ? null : (
                 // "/"
                 <i
-                  class="fa fa-chevron-right"
+                  className="fa fa-chevron-right"
                   style={{
                     fontSize: "17px",
                     marginRight: "5px"

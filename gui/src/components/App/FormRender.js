@@ -268,9 +268,9 @@ class FormRender extends React.Component {
             console.log(response.data);
             this.setState({ content: JSON.parse(response.data.template) });
           }
-          this.setState({ formDivID: "formio_" + this.state.formId });
-          this.createForm();
         }
+        this.setState({ formDivID: "formio_" + this.state.formId });
+        this.createForm();
       });
     }
     if (this.props.parentWorkflowInstanceId) {
@@ -577,7 +577,6 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function(changed) {
-          console.log("Form was changed", changed);
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
@@ -664,6 +663,9 @@ class FormRender extends React.Component {
             }
           }
         });
+        form.on("callDelegate", changed => {
+          
+        });
       });
     }
   }
@@ -700,8 +702,7 @@ class FormRender extends React.Component {
           });
           this.createForm();
         })
-      : null;
-    this.loadWorkflow();
+      : this.loadWorkflow();
   }
 
   async PushDataPOST(api, method, item, body) {

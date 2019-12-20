@@ -29,7 +29,6 @@ class LeftMenuTemplate extends React.Component {
     this.onToggle = this.onToggle.bind(this);
   }
 
-
   onToggle(expanded) {
     this.setState({ expanded: expanded });
   }
@@ -37,12 +36,12 @@ class LeftMenuTemplate extends React.Component {
   onSelect(selected) {
     this.setState({ selected: selected, expanded: false });
   }
-  menuLoad(menus){
+  menuLoad(menus) {
     this.setState({
       menus: menus
     });
   }
-  selectLoad(selected){
+  selectLoad(selected) {
     this.setState({
       selected: selected
     });
@@ -51,9 +50,7 @@ class LeftMenuTemplate extends React.Component {
   render() {
     const { expanded, selected } = this.state;
     return (
-      <div
-      className='LeftMenuTemplate'
-      >
+      <div className="LeftMenuTemplate">
         <SideNav
           onSelect={this.onSelect}
           onToggle={this.onToggle}
@@ -65,11 +62,13 @@ class LeftMenuTemplate extends React.Component {
               return (
                 <NavItem eventKey={menuitem} key={index}>
                   <NavIcon>
-                    <i
-                      className={menuitem.icon}
-                      name={menuitem.name}
-                      style={{ fontSize: "1.5em", verticalAlign: "middle" }}
-                    />
+                    <abbr title={menuitem.name} style={{ cursor: "pointer" }}>
+                      <i
+                        className={menuitem.icon}
+                        name={menuitem.name}
+                        style={{ fontSize: "1.5em", verticalAlign: "middle" }}
+                      />
+                    </abbr>
                   </NavIcon>
                   <NavText style={{ paddingRight: 32 }} name={menuitem.name}>
                     {menuitem.name}
@@ -79,7 +78,16 @@ class LeftMenuTemplate extends React.Component {
             })}
           </SideNav.Nav>
         </SideNav>
-        <Navigation core={this.core} params={this.params} config={this.config} menuLoad={this.menuLoad.bind(this)} selectLoad={this.selectLoad.bind(this)} onSelect={this.onSelect} appId={this.appId} selected={this.state.selected} />
+        <Navigation
+          core={this.core}
+          params={this.params}
+          config={this.config}
+          menuLoad={this.menuLoad.bind(this)}
+          selectLoad={this.selectLoad.bind(this)}
+          onSelect={this.onSelect}
+          appId={this.appId}
+          selected={this.state.selected}
+        />
       </div>
     );
   }
