@@ -33,7 +33,6 @@ class SearchPage extends React.Component {
                 }
             }
         }
-        console.log(columnConfig);
         if (itemContent.actions) {
             if (columnConfig[columnConfig.length - 1].title == "Actions") {
               null;
