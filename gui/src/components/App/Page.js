@@ -19,6 +19,7 @@ class Page extends React.Component {
       pageId: this.props.pageId,
       submission: this.props.submission,
       showLoader: false,
+      fileId: null,
       currentRow: []
     };
     this.contentDivID = "root_" + this.appId + "_" + this.state.pageId;
@@ -157,6 +158,14 @@ class Page extends React.Component {
                 pageContent: action.details.slice(0, index)
               });
               return false;
+            }
+          } else if(item.type == 'View'){
+            if(item.params.uuid){
+              var fileId = that.replaceParams(item.params.uuid, rowData);
+              that.setState({
+                fileId: fileId
+              });
+              that.loadPage(item.params.page_id);
             }
           } else {
             let pageContent = that.state.pageContent;
@@ -347,11 +356,17 @@ class Page extends React.Component {
             />
           );
           break;
-        case "DocumentViewer":
+         case "DocumentViewer":
           var itemContent = data[i].content;
-          var url =
-            "app/" + this.appId + "/file/" + itemContent.fileId + "/document";
-          content.push(<DocumentViewer key={i} core={this.core} url={url} />);
+          var url = '';
+          let fileId = '';
+          if(this.state.fileId){
+            fileId = this.state.fileId;
+            url = "app/" + this.appId + "/file/" + fileId + "/document";
+          } else {
+            break;
+          }
+          content.push(<DocumentViewer appId={this.appId} key={i} core={this.core} url={url} />);
           break;
         default:
           content.push(
@@ -362,6 +377,7 @@ class Page extends React.Component {
               appId={this.appId}
               content={data[i].content}
               config={this.menu}
+              fileId={this.state.fileId}
             />
           );
           break;

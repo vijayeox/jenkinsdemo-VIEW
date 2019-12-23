@@ -6,6 +6,8 @@ import "./public/css/documentViewer.scss";
 export default class DocumentViewer extends Component {
   constructor(props) {
     super(props);
+    this.core = this.props.core;
+    this.appId = this.props.appId;
     this.state = {
       numPages: null,
       pageNumber: 1,
@@ -14,7 +16,8 @@ export default class DocumentViewer extends Component {
       documentsList: []
     };
     this.getDocumentsList = this.getDocumentsList.bind(this);
-    this.loader = this.props.core.make("oxzion/splash");
+    this.loader = this.core.make("oxzion/splash");
+    this.baseUrl = this.core.config('wrapper.url');
   }
 
   async getDocumentsListService(url) {
@@ -27,10 +30,15 @@ export default class DocumentViewer extends Component {
       this.loader.show();
       this.getDocumentsListService(this.props.url).then(response => {
         this.loader.destroy();
+        var documentsList = [];
+        if(response.data.field_value){
+          Object.keys(response.data.field_value).forEach(function(key,index) {
+            documentsList.push(response.data.field_value[key]);
+          });
         this.setState(
           {
             documentsList:
-              response.data && response.data.length > 0 ? response.data : []
+              documentsList && documentsList.length > 0 ? documentsList : []
           },
           () => {
             if (this.state.documentsList.length > 0) {
@@ -40,6 +48,7 @@ export default class DocumentViewer extends Component {
             }
           }
         );
+        }
       });
     }
   };
@@ -61,14 +70,13 @@ export default class DocumentViewer extends Component {
   };
 
   displayDocumentData = documentData => {
-    console.log(documentData);
     var url;
     if (documentData.type == "pdf") {
-      url = "http://localhost:8081/ViewerJS/#" + documentData.fieldvalue;
+      url = this.core.config('ui.url')+"/ViewerJS/#" + this.baseUrl+this.appId+'/'+documentData;
     } else if (documentData.type == "image") {
-      url = documentData.fieldvalue;
+      url = documentData;
     } else {
-      url = "http://localhost:8081/ViewerJS/#" + documentData.fieldvalue;
+      url = this.core.config('ui.url')+"/ViewerJS/#" + this.baseUrl+this.appId+'/'+documentData;
     }
     return <iframe src={url} className="iframeDoc" key={url}></iframe>;
   };
@@ -97,14 +105,14 @@ export default class DocumentViewer extends Component {
                         className={
                           "docIcon " +
                           (doc.type == "pdf"
-                            ? "fas fa-file-pdf"
+                            ? "fa fa-file-pdf-o"
                             : doc.type == "image"
-                            ? "far fa-file-image"
-                            : "far fa-file-pdf")
+                            ? "fa fa-picture-o"
+                            : "fa fa-file-pdf-o")
                         }
                       ></i>
                       <br></br>
-                      {doc.name}
+                      {doc.substring(doc.lastIndexOf('/')+1)}
                     </div>
                   </div>
                 );
