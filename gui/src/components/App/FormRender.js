@@ -152,9 +152,9 @@ class FormRender extends React.Component {
     let fileData = await helper.request(
       "v1",
       "/app/" +
-        this.state.appId +
-        "/workflowInstance/" +
-        this.props.parentWorkflowInstanceId,
+      this.state.appId +
+      "/workflowInstance/" +
+      this.props.parentWorkflowInstanceId,
       {},
       "get"
     );
@@ -572,36 +572,9 @@ class FormRender extends React.Component {
               );
             }
           }
-          var componentList = flattenComponents(form.components);
-          for (var componentKey in componentList) {
-            if (componentList.hasOwnProperty(componentKey)) {
-              var componentItem = componentList[componentKey];
-              if (
-                componentItem.component.properties &&
-                componentItem.component.properties["target"]
-              ) {
-                var targetComponent = form.getComponent(
-                  componentItem.component.properties["target"]
-                );
-                if (targetComponent && componentItem.value) {
-                  if (formdataArray[componentItem.value]) {
-                    targetComponent.setValue(
-                      formdataArray[componentItem.value]
-                    );
-                    targetComponent.refresh();
-                  }
-                }
-              }
-              if(componentItem.component.data && componentItem.component.data.url){
-                var profile = that.core.make('oxzion/profile').get();
-                var url = componentItem.component.data.url = that.core.config('wrapper.url')+'app/'+that.state.appId+'/org/'+profile.key.orgid+componentItem.component.data.url;
-                console.log(url);
-              }
-            }
-          }
         });
 
-        form.on("change", function(changed) {
+        form.on("change", function (changed) {
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
@@ -675,21 +648,65 @@ class FormRender extends React.Component {
             var properties = component.component.properties;
             if (properties) {
               if (properties["delegate"]) {
-                that
-                  .callDelegate(properties["delegate"], changed)
-                  .then(response => {
-                    that.core.make("oxzion/splash").destroy();
-                    if (response.data) {
-                      form.submission = { data: response.data };
-                      form.triggerChange();
-                    }
-                  });
+                if (properties["sourceDataKey"] && properties["destinationDataKey"]) {
+                  var padiData = { 'padi': changed[properties["sourceDataKey"]] }
+                  that.core.make("oxzion/splash").show();
+                  that
+                    .callDelegate(properties["delegate"], padiData)
+                    .then(response => {
+                      var responseArray = [];
+                      for (var responseDataItem in response.data) {
+                        if (response.data.hasOwnProperty(responseDataItem)) {
+                          responseArray[responseDataItem] =
+                            response.data[responseDataItem];
+                        }
+                      }
+                      if (response.data) {
+                        if (response.data.padiVerified) {
+                          if (changed[properties["destinationDataKey"]].length > 1) {
+                            var flag = false;
+                            for (var i = 0; i < changed[properties["destinationDataKey"]].length; i++) {
+                              if (changed[properties["destinationDataKey"]][i].padi == response.data.padi) {
+                                flag = true;
+                                break;
+                              }
+                            }
+                            if (!flag) {
+                              changed[properties["destinationDataKey"]].push(response.data);
+                            }
+                          }
+                          else if (changed[properties["destinationDataKey"]][0]['padiVerified'] == "false") {
+                            changed[properties["destinationDataKey"]][0] = response.data;
+                          }
+                          else {
+                            if (changed[properties["destinationDataKey"]][0].padi != response.data.padi) {
+                              changed[properties["destinationDataKey"]].push(response.data);
+                            }
+                          }
+                          form.submission = { data: changed };
+                          form.triggerChange();
+                        }
+                      }
+                      that.core.make("oxzion/splash").destroy();
+                    });
+                }
+                else {
+                  that
+                    .callDelegate(properties["delegate"], changed)
+                    .then(response => {
+                      that.core.make("oxzion/splash").destroy();
+                      if (response.data) {
+                        form.submission = { data: response.data };
+                        form.triggerChange();
+                      }
+                    });
+                }
               }
             }
           }
         });
         form.on("callDelegate", changed => {
-          
+
         });
       });
     }
@@ -710,23 +727,23 @@ class FormRender extends React.Component {
   componentDidMount() {
     this.props.url
       ? this.getFormContents(this.props.url).then(response => {
-          var parsedData = [];
-          if (response.data) {
-            parsedData = this.parseResponseData(JSON.parse(response.data));
-          }
-          response.workflow_uuid
-            ? (parsedData.workflow_uuid = response.workflow_uuid)
-            : null;
-          this.setState({
-            content: JSON.parse(response.template),
-            data: parsedData,
-            workflowInstanceId: response.workflow_instance_id,
-            activityInstanceId: response.activity_instance_id,
-            workflowId: response.workflow_uuid,
-            formId: response.form_id
-          });
-          this.createForm();
-        })
+        var parsedData = [];
+        if (response.data) {
+          parsedData = this.parseResponseData(JSON.parse(response.data));
+        }
+        response.workflow_uuid
+          ? (parsedData.workflow_uuid = response.workflow_uuid)
+          : null;
+        this.setState({
+          content: JSON.parse(response.template),
+          data: parsedData,
+          workflowInstanceId: response.workflow_instance_id,
+          activityInstanceId: response.activity_instance_id,
+          workflowId: response.workflow_uuid,
+          formId: response.form_id
+        });
+        this.createForm();
+      })
       : this.loadWorkflow();
   }
 
