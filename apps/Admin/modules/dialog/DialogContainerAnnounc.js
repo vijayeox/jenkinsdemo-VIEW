@@ -15,6 +15,7 @@ export default class DialogContainer extends React.Component {
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
+    this.loader = this.core.make("oxzion/splash");
   }
 
   valueChange = (field, event) => {
@@ -106,6 +107,7 @@ export default class DialogContainer extends React.Component {
 
   editTriggerFunction(file) {
     this.editAnnouncements(file).then(response => {
+       this.loader.destroy();
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
@@ -132,6 +134,7 @@ export default class DialogContainer extends React.Component {
   };
 
   handleSubmit = event => {
+    this.loader.show();
     event.preventDefault();
     if (this.props.formAction == "put") {
       if (this.fUpload.current.state.selectedFile.length == 0) {
@@ -159,6 +162,7 @@ export default class DialogContainer extends React.Component {
         this.pushFile().then(response => {
           var addResponse = response.data.filename[0];
           this.pushData(addResponse).then(response => {
+             this.loader.destroy();
             if (response.status == "success") {
               this.props.action(response);
               this.props.cancel();
