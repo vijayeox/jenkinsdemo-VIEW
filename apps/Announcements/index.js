@@ -13,12 +13,7 @@ const trayOptions = {};
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make('osjs/application', { args, options, metadata });
-  const HeaderIcon = () => {
-  let parent = document.querySelectorAll(".osjs-window[data-id=annoucementsWindow] div.osjs-window-header")[0];
-  if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
-    let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
-    }
-  }
+
    let trayInitialized = false;
   // Create  a new Window instance
   const createProcWindow = () => {
@@ -61,7 +56,6 @@ const register = (core, args, options, metadata) => {
                       console.log(proc);
                       win.raise();
                       win.focus(); 
-                      HeaderIcon();
             }
             tray = core.make('osjs/tray').create(trayOptions, (ev) => {
               core.make('osjs/contextmenu').show({
@@ -70,20 +64,6 @@ const register = (core, args, options, metadata) => {
             });
           }
 
-      // if (core.has('osjs/tray')) {
-      //   const tray = core.make('osjs/tray').create({
-      //     icon: proc.resource(metadata.icon_white),
-      //     title: applicationName,
-      //     badge: 'badgeCheck',
-      //     count: announcementsCount,
-      //     onclick: () => {
-              
-      //                 win.raise();
-      //                 win.focus();
-      //                 win.on('focus', (...args) => console.log(focus));
-      //       },
-      //   });
-      // }
     
     })
   // Creates a new WebSocket connection (see server.js)
