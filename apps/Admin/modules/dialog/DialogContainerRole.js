@@ -144,16 +144,21 @@ export default class DialogContainer extends React.Component {
 
   submitData = event => {
     event.preventDefault();
-    this.notif.current.uploadingData();
+    this.notif.current.notify(
+      "Uploading Data",
+      "Please wait for a few seconds.",
+      "default"
+    )
     this.pushData().then(response => {
       if (response.status == "success") {
         this.props.cancel();
         this.props.action(response);
       } else {
-        this.notif.current.failNotification(
+        this.notif.current.notify(
           "Error",
-          response.message ? response.message : null
-        );
+          response.message ? response.message : null,
+          "danger"
+        )
       }
     });
   };

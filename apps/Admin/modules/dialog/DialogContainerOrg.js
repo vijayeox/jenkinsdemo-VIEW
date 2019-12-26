@@ -47,10 +47,10 @@ export default class DialogContainer extends React.Component {
 
       GetSingleEntityData(
         "organization/" +
-          this.props.dataItem.uuid +
-          "/user/" +
-          this.props.dataItem.contactid +
-          "/profile"
+        this.props.dataItem.uuid +
+        "/user/" +
+        this.props.dataItem.contactid +
+        "/profile"
       ).then(response => {
         this.setState({
           contactName: {
@@ -131,10 +131,12 @@ export default class DialogContainer extends React.Component {
   validateEmail(emailText) {
     var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
     if (!pattern.test(emailText)) {
-      this.notif.current.customWarningNotification(
+
+      this.notif.current.notify(
         "Invalid Email ID",
-        "Please enter a valid email address."
-      );
+        "Please enter a valid email address.",
+        "warning"
+      )
       return true;
     }
   }
@@ -164,10 +166,11 @@ export default class DialogContainer extends React.Component {
             this.props.action(response);
             this.props.cancel();
           } else {
-            this.notif.current.failNotification(
+            this.notif.current.notify(
               "Error",
-              response.message ? response.message : null
-            );
+              response.message ? response.message : null,
+              "danger"
+            )
           }
         });
       }
@@ -179,10 +182,11 @@ export default class DialogContainer extends React.Component {
       document.getElementById("select-currency").value !==
       this.state.orgInEdit.preferences.currency
     ) {
-      this.notif.current.customWarningNotification(
+      this.notif.current.notify(
         "Invalid Currency",
-        "Please choose a valid currency from the list."
-      );
+        "Please choose a valid currency from the list.",
+        "warning"
+      )
       return;
     }
     if (this.props.formAction == "post") {
@@ -197,7 +201,11 @@ export default class DialogContainer extends React.Component {
       }
     }
 
-    this.notif.current.uploadingData();
+    this.notif.current.notify(
+      "Uploading Data",
+      "Please wait for a few seconds.",
+      "default"
+    )
     if (this.props.formAction == "post") {
       var contactData = JSON.stringify({
         firstname: this.state.orgInEdit.contact.firstname,
@@ -255,10 +263,11 @@ export default class DialogContainer extends React.Component {
       ) {
         this.activateOrganization(tempData);
       } else {
-        this.notif.current.failNotification(
+        this.notif.current.notify(
           "Error",
-          response.message ? response.message : null
-        );
+          response.message ? response.message : null,
+          "danger"
+        )
       }
     });
   };
@@ -276,10 +285,12 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-        this.notif.current.customWarningNotification(
+        this.notif.current.notify(
           "No image selected",
-          "Please choose a logo for the Organization."
-        );
+          "Please choose a logo for the Organization.",
+          "warning"
+        )
+
       } else {
         this.pushData();
       }
@@ -610,18 +621,18 @@ export default class DialogContainer extends React.Component {
             {this.props.diableField ? (
               <div style={{ margin: "50px" }} />
             ) : (
-              <div className="orgFileUploader">
-                <FileUploader
-                  ref={this.fUpload}
-                  required={true}
-                  media_type={"image"}
-                  acceptFileTypes={"image/*"}
-                  media_URL={this.props.dataItem.logo}
-                  title={"Upload Organization Logo"}
-                  uploadID={"organizationLogo"}
-                />
-              </div>
-            )}
+                <div className="orgFileUploader">
+                  <FileUploader
+                    ref={this.fUpload}
+                    required={true}
+                    media_type={"image"}
+                    acceptFileTypes={"image/*"}
+                    media_URL={this.props.dataItem.logo}
+                    title={"Upload Organization Logo"}
+                    uploadID={"organizationLogo"}
+                  />
+                </div>
+              )}
           </form>
         </div>
         <SaveCancel

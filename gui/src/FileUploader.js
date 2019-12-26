@@ -30,10 +30,11 @@ class FileUploader extends React.Component {
 
   fileSelectedEvent = e => {
     if (e.affectedFiles[0].validationErrors) {
-      this.notif.current.customWarningNotification(
+      this.notif.current.notify(
         "Invalid File",
-        "Please check the selected file"
-      );
+        "Please check the selected file",
+        "warning"
+      )
     } else {
       e.affectedFiles
         .filter(file => !file.validationErrors)

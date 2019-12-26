@@ -135,10 +135,11 @@ async ExistingUsers(api, selectedEntity) {
 
   handleChange(e) {
     if (this.state.filterValue) {
-      this.notif.current.customSuccessNotification(
+      this.notif.current.notify(
         "Success",
-        e.target.value[e.target.value.length - 1].name + " Added"
-      );
+        e.target.value[e.target.value.length - 1].name + " Added",
+        "success"
+      )
       this.setState({
         selectedUsers: e.target.value
       });

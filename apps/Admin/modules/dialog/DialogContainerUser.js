@@ -135,10 +135,11 @@ export default class DialogContainer extends React.Component {
   validateEmail(emailText) {
     var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
     if (!pattern.test(emailText)) {
-      this.notif.current.customWarningNotification(
+      this.notif.current.notify(
         "Invalid Email ID",
-        "Please enter a valid email address."
-      );
+        "Please enter a valid email address.",
+        "warning"
+      )
       return true;
     }
   }
@@ -146,10 +147,11 @@ export default class DialogContainer extends React.Component {
   validateUserName(username) {
     var pattern = /^[a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)*@[a-z0-9]+(\-[a-z0-9]+)*(\.[a-z0-9]+(\-[a-z0-9]+)*)*\.[a-z]{2,4}$/;
     if (!pattern.test(username)) {
-      this.notif.current.customWarningNotification(
+      this.notif.current.notify(
         "Invalid Email ID",
-        "Please enter a valid email address."
-      );
+        "Please enter a valid email address.",
+        "warning"
+      )
       return true;
     }
   }
@@ -192,10 +194,11 @@ export default class DialogContainer extends React.Component {
           this.props.action(response);
           this.props.cancel();
         } else {
-          this.notif.current.failNotification(
+          this.notif.current.notify(
             "Error",
-            response.message ? response.message : "Operation failed."
-          );
+            response.message ? response.message : null,
+            "danger"
+          )
         }
       });
     } else if (this.props.formAction == "put") {
@@ -220,10 +223,11 @@ export default class DialogContainer extends React.Component {
           this.props.action(response);
           this.props.cancel();
         } else {
-          this.notif.current.failNotification(
+          this.notif.current.notify(
             "Error",
-            response.message ? response.message : null
-          );
+            response.message ? response.message : null,
+            "danger"
+          )
         }
       });
     }

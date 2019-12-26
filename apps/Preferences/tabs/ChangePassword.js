@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import Notification from "../components/Notification";
+import Notification  from "OxzionGUI/Notification"
+
+
 
 class ChangePassword extends Component {
   constructor(props) {
@@ -50,11 +52,17 @@ class ChangePassword extends Component {
 
       this.changePassword(formData).then(response => {
         if (response.status == "error") {
-          this.notif.current.failNotification(response.message);
+          this.notif.current.notify(
+            "Error",
+            response.message,
+            "danger"
+          )
         } else {
-          this.notif.current.successNotification(
-            "Password updated successfully."
-          );
+          this.notif.current.notify(
+            "Success",
+             "Password updated successfully.",
+            "success"
+          )
         }
       });
     }
@@ -90,7 +98,7 @@ class ChangePassword extends Component {
       formIsValid = false;
       errors["old_password"] = "*Please enter your Old Password.";
     }
-
+    
     if (!fields["new_password"]) {
       formIsValid = false;
       errors["new_password"] = "*Please enter your New Password.";

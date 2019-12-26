@@ -38,6 +38,7 @@ export default class GridTemplate extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
+  
   }
 
   componentDidUpdate(prevProps) {
@@ -118,13 +119,23 @@ export default class GridTemplate extends React.Component {
   }
 
   refreshHandler = serverResponse => {
+  
+
+ 
     if (serverResponse.status == "success") {
-      this.notif.current.successNotification();
+
+      this.notif.current.notify(
+        "Success",
+        "Operation succesfully completed",
+        "success"
+      )
     } else {
-      this.notif.current.failNotification(
+
+      this.notif.current.notify(
         "Error",
-        serverResponse.message ? serverResponse.message : null
-      );
+        serverResponse.message ? serverResponse.message : null,
+        "danger"
+      )
     }
     this.child.current.refresh();
   };

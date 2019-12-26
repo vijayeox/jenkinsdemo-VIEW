@@ -1,31 +1,32 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
-const mode = process.env.NODE_ENV || 'development';
-const minimize = mode === 'production';
-const plugins = [];
+const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
-if (mode === 'production') {
-  plugins.push(new OptimizeCSSAssetsPlugin({
-    cssProcessorOptions: {
-      discardComments: true
-    },
-  }));
+const mode = process.env.NODE_ENV || "development";
+const minimize = mode === "production";
+const plugins = [];
+
+if (mode === "production") {
+  plugins.push(
+    new OptimizeCSSAssetsPlugin({
+      cssProcessorOptions: {
+        discardComments: true
+      }
+    })
+  );
 }
 
 module.exports = {
-  mode: (mode !== 'development' ? 'production' : mode),
-  devtool: 'source-map',
+  mode: mode !== "development" ? "production" : mode,
+  devtool: "source-map",
   entry: [
-    path.resolve(__dirname, 'index.js'),
-    path.resolve(__dirname, 'index.scss')
+    path.resolve(__dirname, "index.js"),
+    path.resolve(__dirname, "index.scss")
   ],
   externals: {
-    osjs: 'OSjs',
-    jqyery : 'jQuery'
+    osjs: "OSjs"
   },
   resolve: {
     alias: {
@@ -33,40 +34,53 @@ module.exports = {
     }
   },
   optimization: {
-    minimize,
+    minimize
   },
   plugins: [
     // new BundleAnalyzerPlugin(),
-    new CopyWebpackPlugin([
-      'icon.svg','icon_white.svg'
-    ]),
+    new CopyWebpackPlugin(['icon.svg','icon_white.svg']),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     }),
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery'
-    }),
-new webpack.NormalModuleReplacementPlugin(
-    /\/iconv-loader$/, 'node-noop',
-  ),
     ...plugins
   ],
   module: {
-    rules: [{
+    rules: [
+      {
+        test: /\.(svg|png|jpe?g|gif|webp)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              publicPath: "/apps/Admin"
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(eot|ttf|woff|woff2)$/,
+        include: /typeface/,
+        use: {
+          loader: "file-loader",
+          options: {
+            name: "fonts/[name].[ext]",
+            publicPath: "apps/Admin"
+          }
+        }
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
-        exclude: /(node_modules|bower_components)/,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               minimize,
               sourceMap: true
@@ -78,13 +92,26 @@ new webpack.NormalModuleReplacementPlugin(
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader",
+          options: {
+            presets: [
+              require.resolve("@babel/preset-react"),
+              require.resolve("@babel/preset-env")
+            ],
+            plugins: [
+              require.resolve("@babel/plugin-transform-runtime"),
+              [
+                require.resolve("@babel/plugin-proposal-class-properties"),
+                { loose: false }
+              ]
+            ]
+          }
         }
       },
       {
-        test: /\.mjs$/,
-        type: 'javascript/auto',
-      },
+        test: /\.html$/,
+        loader: "html-loader"
+      }
     ]
   },
   node: {

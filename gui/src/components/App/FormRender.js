@@ -237,10 +237,11 @@ class FormRender extends React.Component {
           if (response.data.errors) {
             this.storeError(data, response.data.errors, route).then(
               storeErrorResponse => {
-                this.notif.current.customFailNotification(
+                this.notif.current.notify(
                   "Error",
-                  "Form Submission Failed"
-                );
+                  "Form Submission Failed",
+                  "danger"
+                )
               }
             );
           }
@@ -461,10 +462,11 @@ class FormRender extends React.Component {
                         });
                         window.dispatchEvent(evt);
                       } else {
-                        that.notif.current.customFailNotification(
+                        that.notif.current.notify(
                           "Error",
-                          "Transaction Token Failed!"
-                        );
+                          "Transaction Token Failed!",
+                          "danger"
+                        )
                       }
                       that.core.make("oxzion/splash").destroy();
                     });
@@ -486,26 +488,30 @@ class FormRender extends React.Component {
                       status: e.detail.status
                     })
                     .then(response => {
-                      that.notif.current.customSuccessNotification(
+                      that.notif.current.notify(
                         "Payment has been Successfully completed!",
-                        "Please wait while we get things ready!"
-                      );
+                        "Please wait while we get things ready!",
+                        "success"
+                      )
+                      
                       var formsave = that.saveForm(form.submission.data);
                       var transactionStatusComponent = form.getComponent(
                         "transaction_status"
                       );
                       transactionStatusComponent.setValue(e.detail.status);
                       if (formsave) {
-                        that.notif.current.customSuccessNotification(
-                          "Success!",
-                          "Application Has been Successfully Submitted!"
-                        );
+                        that.notif.current.notify(
+                          "Success",
+                          "Application Has been Successfully Submitted",
+                          "success"
+                        )
                         that.core.make("oxzion/splash").destroy();
                       } else {
-                        that.notif.current.customFailNotification(
+                        that.notif.current.notify(
                           "Error",
-                          e.detail.message
-                        );
+                          e.detail.message,
+                          "danger"
+                        )
                       }
                     });
                 },
@@ -526,10 +532,11 @@ class FormRender extends React.Component {
                       data: e.detail.data
                     })
                     .then(response => {
-                      that.notif.current.customFailNotification(
+                      that.notif.current.notify(
                         "Error",
-                        e.detail.message
-                      );
+                        e.detail.message,
+                        "danger"
+                      )
                       that.core.make("oxzion/splash").destroy();
                     });
                 },
@@ -549,10 +556,11 @@ class FormRender extends React.Component {
                       data: e.detail.data
                     })
                     .then(response => {
-                      that.notif.current.customFailNotification(
+                      that.notif.current.notify(
                         "Error",
-                        e.detail.message
-                      );
+                        e.detail.message,
+                        "danger"
+                      )
                       that.core.make("oxzion/splash").destroy();
                     });
                 },
@@ -563,10 +571,11 @@ class FormRender extends React.Component {
                 function(e) {
                   that.core.make("oxzion/splash").show();
                   e.stopPropagation();
-                  that.notif.current.stockNotification(
+                  that.notif.current.notify(
                     "Information",
-                    e.detail.message
-                  );
+                    e.detail.message,
+                    "default"
+                  )
                 },
                 true
               );

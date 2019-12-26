@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../components/Notification";
+import Notification  from "OxzionGUI/Notification"
+
 import DateFormats from "OxzionGUI/public/js/DateFormats";
 import Timezones from "OxzionGUI/public/js/Timezones";
 
@@ -188,9 +189,17 @@ class Preferences extends Component {
     );
 
     if (pref.status == "error") {
-      this.notif.current.failNotification("Failed to update.");
+      this.notif.current.notify(
+        "Error",
+        "Failed to update.",
+        "danger"
+      )
     } else {
-      this.notif.current.successNotification("Updated successfully.");
+      this.notif.current.notify(
+        "Success",
+        "Updated successfully.",
+        "success"
+      )
       this.core.make("oxzion/profile").update();
       this.actions.save();
       this.actions.refresh();

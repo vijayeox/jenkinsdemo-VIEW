@@ -12,8 +12,10 @@ import {
   DeleteContact,
   DeleteSelectedContacts
 } from "./src/services/services";
-import { Notification } from "./src/components";
+
+import Notification from "OxzionGUI/Notification"
 import Swal from "sweetalert2";
+
 
 class App extends React.Component {
   constructor(props) {
@@ -53,12 +55,19 @@ class App extends React.Component {
         DeleteContact(uuid).then(response => {
           this.loader.destroy();
           if (response.status == "success") {
-            this.notif.current.successNotification("Contact deleted.");
+            this.notif.current.notify(
+              "Contact deleted.",
+              "Operation succesfully completed",
+              "success"
+            )
             this.getContact();
           } else {
-            this.notif.current.failNotification(
-              "Operation failed" + response.message
-            );
+
+            this.notif.current.notify(
+              "Error",
+              "Operation failed" + response.message,
+              "danger"
+            )
           }
         });
       }
@@ -144,7 +153,11 @@ class App extends React.Component {
   };
 
   success = () => {
-    this.notif.current.successNotification("Operation Success.");
+    this.notif.current.notify(
+      "Operation Success.",
+      "Operation succesfully completed",
+      "success"
+    )
     this.toggleDialog();
     this.getContact();
   };
@@ -183,19 +196,29 @@ class App extends React.Component {
     if (this.state.selectedContactsUUID.length > 0) {
       DeleteSelectedContacts(this.state.selectedContactsUUID).then(response => {
         if (response.status == "success") {
-          this.notif.current.successNotification("Contacts deleted.");
+          this.notif.current.notify(
+            "Contacts deleted.",
+            "Operation succesfully completed",
+            "success"
+          )
           this.setState({
             selectedContactsUUID: []
           });
           this.getContact();
         } else {
-          this.notif.current.failNotification(
-            "Operation failed" + response.message
-          );
+          this.notif.current.notify(
+            "Error",
+            "Operation failed" + response.message,
+            "danger"
+          )
         }
       });
     } else {
-      this.notif.current.failNotification("No contacts selected to delete.");
+      this.notif.current.notify(
+        "Error",
+        "No contacts selected to delete." ,
+        "danger"
+      )
     }
   };
 

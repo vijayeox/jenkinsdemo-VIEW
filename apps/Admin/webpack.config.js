@@ -113,5 +113,8 @@ module.exports = {
         loader: "html-loader"
       }
     ]
+  },
+  node: {
+    fs: "empty"
   }
 };

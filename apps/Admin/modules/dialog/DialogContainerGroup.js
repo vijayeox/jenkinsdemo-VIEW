@@ -84,7 +84,11 @@ export default class DialogContainer extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.notif.current.uploadingData();
+    this.notif.current.notify(
+      "Uploading Data",
+      "Please wait for a few seconds.",
+      "default"
+    )
     let tempData = {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
@@ -108,10 +112,11 @@ export default class DialogContainer extends React.Component {
         this.props.action(response);
         this.props.cancel();
       } else {
-        this.notif.current.failNotification(
+        this.notif.current.notify(
           "Error",
-          response.message ? response.message : null
-        );
+          response.message ? response.message : null,
+          "danger"
+        )
       }
     });
   };

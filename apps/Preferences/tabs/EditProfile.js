@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import CountryCodes from "OxzionGUI/public/js/CountryCodes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Notification from "../components/Notification";
+import Notification  from "OxzionGUI/Notification"
+
 import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
@@ -153,19 +154,25 @@ class EditProfile extends Component {
         "post"
       );
       if (editresponse.status == "error") {
-        this.notif.current.failNotification(
-          "Update failed: " + editresponse.message
-        );
+        this.notif.current.notify(
+          "Error",
+         "Update failed: " + editresponse.message,
+          "danger"
+        )
       } else {
-        this.notif.current.successNotification(
-          "Profile has been successfully updated."
-        );
+        this.notif.current.notify(
+          "Success",
+         "Profile has been successfully updated.",
+          "success"
+        )
         this.core.make("oxzion/profile").update();
       }
     } else {
-      this.notif.current.failNotification(
-        "Please fill all the mandatory fields."
-      );
+      this.notif.current.notify(
+        "Error",
+       "Please fill all the mandatory fields. ",
+        "danger"
+      )
     }
   }
 
@@ -225,17 +232,21 @@ class EditProfile extends Component {
       "post"
     );
     if (uploadresponse.status == "error") {
-      this.notif.current.failNotification(
-        "Update failed: " + uploadresponse.message
-      );
+      this.notif.current.notify(
+        "Error",
+        "Update failed: " + uploadresponse.message,
+        "danger"
+      )
     } else {
       this.setState({
         icon: imageData
       });
       this.core.make("oxzion/profile").update();
-      this.notif.current.successNotification(
-        "Profile picture updated successfully."
-      );
+      this.notif.current.notify(
+        "Success",
+        "Profile picture updated successfully.",
+        "success"
+      )
     }
   }
 

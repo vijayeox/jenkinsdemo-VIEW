@@ -1,7 +1,9 @@
 import React from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import { ImportContacts, ExportContacts } from "../services/services";
-import { Notification } from "../components";
+import Notification from "OxzionGUI/Notification";
+
+
 
 class ImportExportContactsWidget extends React.Component {
   constructor(props) {
@@ -26,12 +28,18 @@ class ImportExportContactsWidget extends React.Component {
     ExportContacts(this.props.selectedContactsUUID).then(response => {
       if (response.status == "success") {
         this.convertToFile(response.data, "text/csv", "myContacts.csv");
-        this.notif.current.successNotification("Successfully exported.");
+        this.notif.current.notify(
+          "Successfully exported.",
+          "Operation succesfully completed",
+          "success"
+        )
         this.props.getContact;
       } else {
-        this.notif.current.failNotification(
-          "Failed to import:" + response.message
-        );
+        this.notif.current.notify(
+          "Error",
+          "Failed to import:" + response.message,
+          "danger"
+        )
       }
     });
   };
@@ -45,12 +53,18 @@ class ImportExportContactsWidget extends React.Component {
           "text/csv",
           "myContactsErrorList.csv"
         );
-        this.notif.current.successNotification("Successfully imported.");
+        this.notif.current.notify(
+          "Successfully imported.",
+          "Operation succesfully completed",
+          "success"
+        )
         this.props.getContact;
       } else {
-        this.notif.current.failNotification(
-          "Failed to import:" + response.message
-        );
+        this.notif.current.notify(
+          "Error",
+          "Failed to import:" + response.message,
+          "danger"
+        )
       }
     });
   };

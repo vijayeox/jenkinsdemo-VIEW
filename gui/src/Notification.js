@@ -6,121 +6,22 @@ class Notification extends React.Component {
   constructor(props) {
     super(props);
     this.notificationDOMRef = React.createRef();
-    this.successNotification = this.successNotification.bind(this);
-    this.failNotification = this.failNotification.bind(this);
+    // this.successNotification = this.successNotification.bind(this);
+    // this.failNotification = this.failNotification.bind(this);
   }
-
-  uploadingData() {
+  notify(title, message, type) {
     this.notificationDOMRef.current.addNotification({
-      title: "Uploading Data",
-      message: "Please wait for a few seconds.",
-      type: "default",
+      title: title || "",
+      message: message || "",
+      type: type || "",
       insert: "top",
       container: "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
+      dismiss: { duration: 3000 },
       dismissable: { click: true }
-    });
+    })
   }
-
-  successNotification() {
-    this.notificationDOMRef.current.addNotification({
-      message: "Operation succesfully completed.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  failNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Error",
-      message: message ? message : "Operation failed.",
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  customSuccessNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Success",
-      message: message ? message : "Operation successful.",
-      type: "success",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  customWarningNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Warning",
-      message: message ? message : "Operation failed.",
-      type: "warning",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-  stockNotification(title,message){
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : null,
-      message: message ? message : "Operation failed.",
-      type: "default",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 1000 },
-      dismissable: { click: true }
-    });
-  }
-
-
-  customFailNotification(title, message) {
-    this.notificationDOMRef.current.addNotification({
-      title: title ? title : "Error",
-      message: message ? message : "Operation failed.",
-      type: "danger",
-      insert: "top",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
-  duplicateEntry() {
-    this.notificationDOMRef.current.addNotification({
-      title: "Operation failed",
-      message: "Name already exists. Please try again.",
-      type: "danger",
-      insert: "bottom",
-      container: "bottom-right",
-      animationIn: ["animated", "bounceIn"],
-      animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 5000 },
-      dismissable: { click: true }
-    });
-  }
-
   render() {
     return (
       <div>
@@ -129,5 +30,4 @@ class Notification extends React.Component {
     );
   }
 }
-
 export default Notification;

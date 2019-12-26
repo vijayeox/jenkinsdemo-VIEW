@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "../components/Notification"
+import Notification  from "OxzionGUI/Notification"
 
 class Themes extends Component {
   constructor(props) {
@@ -47,12 +47,20 @@ class Themes extends Component {
           .then(() => {
             this.actions.setLoading(false);
             this.desktopService.applySettings();
-            this.notif.current.successNotification("Updated successfully.");
+            this.notif.current.notify(
+              "Success",
+              "Updated successfully.",
+              "success"
+            )
           })
           .catch(error => {
             this.actions.setLoading(false);
             console.error(error); // FIXME
-            this.notif.current.failNotification("Update failed.");
+            this.notif.current.notify(
+              "Error",
+              "Update failed.",
+              "danger"
+            )
           });
       },
 

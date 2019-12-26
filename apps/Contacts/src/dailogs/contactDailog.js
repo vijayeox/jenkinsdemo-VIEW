@@ -1,15 +1,18 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
-import { ContactTypes, CountryList } from "../data";
+import { ContactTypes } from "../data";
+import Countries from "../data/Countries";
 import { ProfilePictureWidget } from "../widgets";
 import { SaveContact } from "../services/services";
-import { Notification } from "../components";
+import Notification from "OxzionGUI/Notification";
+
 import { ContactTypeEnum, IconTypeEnum } from "../enums";
 import PhoneInput from "react-phone-number-input";
 
 class ContactDailog extends React.Component {
   constructor(props) {
     super(props);
+    
     this.core = this.props.args;
     this.state = {
       contactDetails: {},
@@ -18,7 +21,8 @@ class ContactDailog extends React.Component {
       icon: null,
       errors: {
         first_name: true
-      }
+      },
+      countryWiseStates:Countries
     };
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
@@ -174,9 +178,12 @@ class ContactDailog extends React.Component {
         this.setState({ contactDetails: {} }, () => this.props.success());
         //close on success
       } else {
-        this.notif.current.failNotification(
-          "Operation failed." + response.message
-        );
+        this.notif.current.notify(
+          "Error",
+          "Operation failed" + response.message,
+          "danger"
+        )
+        
       }
       this.loader.destroy();
     });
@@ -185,20 +192,30 @@ class ContactDailog extends React.Component {
   saveContact = () => {
     const { contactDetails, errors } = this.state;
     if (errors.first_name) {
-      this.notif.current.failNotification("Please fill required fields.");
+      this.notif.current.notify(
+        "Error",
+        "Please fill required fields.",
+        "danger"
+      )
       return;
     }
     let data = {};
     if (contactDetails.phone_1 || contactDetails.email) {
       var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (contactDetails.email && !re.test(contactDetails.email)) {
-        this.notif.current.failNotification("Primary email is not valid.");
+        this.notif.current.notify(
+          "Error",
+          "Primary email is not valid.",
+          "danger"
+        )
         return;
       }
     } else {
-      this.notif.current.failNotification(
-        "Either primary phone or email is mandatory."
-      );
+      this.notif.current.notify(
+        "Error",
+        "Either primary phone or email is mandatory.",
+        "danger"
+      )
       return;
     }
     if (Object.keys(contactDetails).length != 0) {
@@ -365,6 +382,7 @@ class ContactDailog extends React.Component {
   render() {
     return (
       <Window onClose={this.props.cancel}>
+        
         <Notification ref={this.notif} />
         <div className="contactPanel addEditPanel">
           <div className="contactForm">
