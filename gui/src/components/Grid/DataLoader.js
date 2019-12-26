@@ -1,4 +1,6 @@
 import React from "react";
+import { Notification } from '../../../../apps/Admin/GUIComponents'
+
 import { toODataString } from "@progress/kendo-data-query";
 import LoadingPanel from "./LoadingPanel";
 
@@ -8,13 +10,17 @@ export class DataLoader extends React.Component {
     this.core = this.props.args;
     this.refresh = this.refresh.bind(this);
     this.state = {
-      url: this.props.url
+      url: this.props.url,
+      pending:undefined
     };
+    this.notif = React.createRef();
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
+    this.loader = null;
   }
 
   async getData(url) {
+
     if (typeof this.core == "undefined") {
       let response = await fetch(url, this.init);
       let json = await response.json();
@@ -25,11 +31,11 @@ export class DataLoader extends React.Component {
       let data = await helper.request(
         "v1",
         "/" +
-          url +
-          "?" +
-          "filter=[" +
-          JSON.stringify(this.props.dataState) +
-          "]",
+        url +
+        "?" +
+        "filter=[" +
+        JSON.stringify(this.props.dataState) +
+        "]",
         {},
         "get"
       );
@@ -37,16 +43,30 @@ export class DataLoader extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (!this.loader) {
+      this.loader = this.core.make('oxzion/splash');
+    }
+
+  }
   componentDidUpdate(prevProps) {
+
     if (this.props.url !== prevProps.url) {
       this.setState({
         url: this.props.url
       });
       this.getData(this.props.url).then(response => {
-        this.props.onDataRecieved({
-          data: response.data,
-          total: response.total
-        });
+        if (typeof response == "object" && response.status == "success") {
+          this.props.onDataRecieved({
+            data: response.data,
+            total: response.total
+          });
+        } else {
+          //put notification
+        
+          this.state.pending = undefined;
+
+        }
       });
     }
   }
@@ -62,22 +82,37 @@ export class DataLoader extends React.Component {
 
   requestDataIfNeeded = () => {
     if (
-      this.pending ||
+      this.state.pending ||
       toODataString(this.props.dataState) === this.lastSuccess
     ) {
       return;
     }
-    this.pending = toODataString(this.props.dataState, this.props.dataState);
+    this.setState({pending:toODataString(this.props.dataState, this.props.dataState)})
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.getData(this.state.url).then(response => {
-        this.lastSuccess = this.pending;
-        this.pending = "";
+        this.lastSuccess = this.state.pending;
+        this.setState({pending : ""});
         if (toODataString(this.props.dataState) === this.lastSuccess) {
-          this.props.onDataRecieved.call(undefined, {
-            data: response.data,
-            total: response.total ? response.total : null
-          });
+
+          if (response.status !== "success") {
+            //status code 500
+            this.loader.destroy()
+            this.notif.current.notify(
+              "Error",
+              "No response",
+              "danger");
+              
+            this.setState({
+              pending:false
+            })
+          }
+          else {
+            this.props.onDataRecieved.call(undefined, {
+              data: response.data,
+              total: response.total ? response.total : null
+            });
+          }
         } else {
           this.requestDataIfNeeded();
         }
@@ -87,7 +122,12 @@ export class DataLoader extends React.Component {
 
   render() {
     this.requestDataIfNeeded();
-    return this.pending && <LoadingPanel />;
+    return (
+      <>
+        <Notification ref={this.notif} />
+        {this.state.pending && <LoadingPanel />}
+      </>
+    );
   }
 }
 export default DataLoader;
