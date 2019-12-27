@@ -1,5 +1,5 @@
 import React from "react";
-import { Notification } from '../../../../apps/Admin/GUIComponents'
+import Notification from './../../Notification';
 
 import { toODataString } from "@progress/kendo-data-query";
 import LoadingPanel from "./LoadingPanel";
