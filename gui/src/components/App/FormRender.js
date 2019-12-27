@@ -3,6 +3,7 @@ import { Formio } from "formiojs";
 import Notification from "../../Notification";
 import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
 import React from "react";
+import merge from 'deepmerge';
 import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 
@@ -10,6 +11,8 @@ class FormRender extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.core;
+    var userprofile = this.core.make("oxzion/profile").get();
+    this.privileges = userprofile.key.privileges;
     this.state = {
       form: null,
       appId: this.props.appId,
@@ -251,6 +254,16 @@ class FormRender extends React.Component {
     });
   }
 
+  cleanData(formData){
+      formData.privileges = undefined;
+      return formData;
+  }
+
+  addAddlData(data){
+    data = data ? data : {};
+    return merge(data, {privileges:this.privileges});
+  }
+
   async getFormContents(url) {
     let helper = this.core.make("oxzion/restClient");
     let formData = await helper.request("v1", url, {}, "get");
@@ -366,22 +379,24 @@ class FormRender extends React.Component {
             form.setPage(that.state.page);
           }
         }
-        form.submission = { data: that.state.data };
+        console.log(that.addAddlData(that.state.data));
+        form.submission = {data : that.addAddlData(that.state.data)};
         form.on("prevPage", changed => that.setState({ page: changed.page }));
         form.on("nextPage", changed => {
           that.setState({ page: changed.page });
           console.log(form.pages[changed.page]);
           if (form.pages[changed.page]["properties"]["delegate"]) {
             if (form.pages[changed.page]["properties"]["delegate"]) {
+              var form_data = that.cleanData(form.data);
               that
                 .callDelegate(
                   form.pages[changed.page]["properties"]["delegate"],
-                  form.data
+                  form_data
                 )
                 .then(response => {
                   that.core.make("oxzion/splash").destroy();
                   if (response.data) {
-                    form.submission = { data: response.data };
+                    form.submission = { data: that.addAddlData(response.data) };
                     form.triggerChange();
                   }
                 });
@@ -415,11 +430,11 @@ class FormRender extends React.Component {
             if (form._form["properties"]["delegate"]) {
               if (form._form["properties"]["delegate"]) {
                 that
-                  .callDelegate(form._form["properties"]["delegate"], form.data)
+                  .callDelegate(form._form["properties"]["delegate"], that.cleanData(form.data))
                   .then(response => {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.submission = { data: response.data };
+                      form.submission = { data: that.addAddlData(response.data) };
                       form.triggerChange();
                     }
                   });
@@ -429,7 +444,7 @@ class FormRender extends React.Component {
               var elements = document.getElementsByClassName(
                 "btn-wizard-nav-submit"
               );
-              that.getPayment(form.submission.data).then(response => {
+              that.getPayment(that.cleanData(form.submission.data)).then(response => {
                 var responseArray = [];
                 if (response.data) {
                   var evt = new CustomEvent("paymentDetails", {
@@ -490,11 +505,9 @@ class FormRender extends React.Component {
                     .then(response => {
                       that.notif.current.notify(
                         "Payment has been Successfully completed!",
-                        "Please wait while we get things ready!",
-                        "success"
-                      )
-                      
-                      var formsave = that.saveForm(form.submission.data);
+                        "Please wait while we get things ready!", "success"
+                      );
+                      var formsave = that.saveForm(that.cleanData(form.submission.data));
                       var transactionStatusComponent = form.getComponent(
                         "transaction_status"
                       );
@@ -504,14 +517,14 @@ class FormRender extends React.Component {
                           "Success",
                           "Application Has been Successfully Submitted",
                           "success"
-                        )
+                        );
                         that.core.make("oxzion/splash").destroy();
                       } else {
                         that.notif.current.notify(
                           "Error",
                           e.detail.message,
                           "danger"
-                        )
+                        );
                       }
                     });
                 },
@@ -536,7 +549,7 @@ class FormRender extends React.Component {
                         "Error",
                         e.detail.message,
                         "danger"
-                      )
+                      );
                       that.core.make("oxzion/splash").destroy();
                     });
                 },
@@ -560,7 +573,7 @@ class FormRender extends React.Component {
                         "Error",
                         e.detail.message,
                         "danger"
-                      )
+                      );
                       that.core.make("oxzion/splash").destroy();
                     });
                 },
@@ -575,7 +588,7 @@ class FormRender extends React.Component {
                     "Information",
                     e.detail.message,
                     "default"
-                  )
+                  );
                 },
                 true
               );
@@ -598,7 +611,7 @@ class FormRender extends React.Component {
               if (properties["delegate"]) {
                 that.core.make("oxzion/splash").show();
                 that
-                  .callDelegate(properties["delegate"], formdata.data)
+                  .callDelegate(properties["delegate"], that.cleanData(formdata.data))
                   .then(response => {
                     var responseArray = [];
                     for (var responseDataItem in response.data) {
@@ -608,7 +621,7 @@ class FormRender extends React.Component {
                       }
                     }
                     if (response.data) {
-                      form.submission = { data: response.data };
+                      form.submission = { data: that.addAddlData(response.data) };
                       form.triggerChange();
                     }
                     that.core.make("oxzion/splash").destroy();
@@ -705,7 +718,7 @@ class FormRender extends React.Component {
                     .then(response => {
                       that.core.make("oxzion/splash").destroy();
                       if (response.data) {
-                        form.submission = { data: response.data };
+                        form.submission = { data: that.addAddlData(response.data) };
                         form.triggerChange();
                       }
                     });
@@ -736,23 +749,23 @@ class FormRender extends React.Component {
   componentDidMount() {
     this.props.url
       ? this.getFormContents(this.props.url).then(response => {
-        var parsedData = [];
-        if (response.data) {
-          parsedData = this.parseResponseData(JSON.parse(response.data));
-        }
-        response.workflow_uuid
-          ? (parsedData.workflow_uuid = response.workflow_uuid)
-          : null;
-        this.setState({
-          content: JSON.parse(response.template),
-          data: parsedData,
-          workflowInstanceId: response.workflow_instance_id,
-          activityInstanceId: response.activity_instance_id,
-          workflowId: response.workflow_uuid,
-          formId: response.form_id
-        });
-        this.createForm();
-      })
+          var parsedData = [];
+          if (response.data) {
+            parsedData = this.parseResponseData(JSON.parse(response.data));
+          }
+          response.workflow_uuid
+            ? (parsedData.workflow_uuid = response.workflow_uuid)
+            : null;
+          this.setState({
+            content: JSON.parse(response.template),
+            data: this.addAddlData(parsedData),
+            workflowInstanceId: response.workflow_instance_id,
+            activityInstanceId: response.activity_instance_id,
+            workflowId: response.workflow_uuid,
+            formId: response.form_id
+          });
+          this.createForm();
+        })
       : this.loadWorkflow();
   }
 
