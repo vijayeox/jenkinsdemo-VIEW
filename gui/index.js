@@ -8,7 +8,8 @@ import Document from "./src/components/App/Document";
 import OX_Grid from "./src/OX_Grid";
 import DocumentViewer from "./src/DocumentViewer";
 import Dashboard from "./src/Dashboard";
-import Dashboard1 from "./src/Dashboard1";
+import WidgetGrid from "./src/WidgetGrid";
+import WidgetRenderer from "./src/WidgetRenderer";
 
 export {
   LeftMenuTemplate,
@@ -21,5 +22,6 @@ export {
   OX_Grid,
   DocumentViewer,
   Dashboard,
-  Dashboard1
+  WidgetGrid,
+  WidgetRenderer
 };

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Overlay, Tooltip} from 'react-bootstrap';
 import {dashboardEditor as section} from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
-import WidgetRenderer from './components/widgetRenderer';
+import {WidgetRenderer} from './GUIComponents';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';

@@ -1,7 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 var numeral = require('numeral');
-import WidgetGrid from './widget/editor/widgetGrid'
+import WidgetGrid from './WidgetGrid';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import am4themes_kelly from "@amcharts/amcharts4/themes/animated";
+am4core.useTheme(am4themes_animated);
 
 class WidgetRenderer {
     static render(element, widget) {

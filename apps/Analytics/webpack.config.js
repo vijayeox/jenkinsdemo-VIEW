@@ -33,6 +33,12 @@ module.exports = {
   externals: {
     osjs: 'OSjs'
   },
+  resolve: {
+    modules: ['node_modules'],
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
+    }
+  },
   optimization: {
     minimize,
   },
@@ -84,13 +90,13 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true
             }
           },
           {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               minimize,
               sourceMap: true
@@ -102,7 +108,20 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader",
+          options: {
+            presets: [
+              require.resolve("@babel/preset-react"),
+              require.resolve("@babel/preset-env")
+            ],
+            plugins: [
+              require.resolve("@babel/plugin-transform-runtime"),
+              [
+                require.resolve("@babel/plugin-proposal-class-properties"),
+                { loose: false }
+              ]
+            ]
+          }
         }
       },
       {
@@ -112,8 +131,5 @@ module.exports = {
         }]
       }
     ]
-  },
-  resolve: {
-    modules: ['node_modules']
   }
 };

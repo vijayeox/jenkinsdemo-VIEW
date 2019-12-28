@@ -1,5 +1,4 @@
-
-import WidgetRenderer from '../../widgetRenderer';
+import {WidgetRenderer} from '../../../GUIComponents';
 import AbstractEditor from './abstractEditor';
 import React from 'react';
 import ReactDOM from 'react-dom';

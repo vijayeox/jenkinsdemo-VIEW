@@ -87,7 +87,7 @@ class Breadcrumb extends React.Component {
                 {currentValue.icon ? (
                   <i
                     className={currentValue.icon}
-                    style={{ fontSize: "1rem" }}
+                    style={{ fontSize: "17px" }}
                   ></i>
                 ) : null}
                 <a

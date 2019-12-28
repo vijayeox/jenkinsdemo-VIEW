@@ -5,6 +5,7 @@ import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import DocumentViewer from "../../DocumentViewer";
+import Dashboard from "../../Dashboard";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./Styles/PageComponentStyles.scss";
@@ -14,6 +15,7 @@ class Page extends React.Component {
     super(props);
     this.core = this.props.core;
     this.appId = this.props.app;
+    this.proc = this.props.proc;
     this.state = {
       pageContent: [],
       pageId: this.props.pageId,
@@ -367,6 +369,9 @@ class Page extends React.Component {
             break;
           }
           content.push(<DocumentViewer appId={this.appId} key={i} core={this.core} url={url} />);
+          break;
+         case "Dashboard":
+          content.push(<Dashboard appId={this.appId} key={i} core={this.core} content={data[i].content} proc={this.proc} />);
           break;
         default:
           content.push(

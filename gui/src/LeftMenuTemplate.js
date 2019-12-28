@@ -19,6 +19,7 @@ class LeftMenuTemplate extends React.Component {
     this.core = this.props.core;
     this.appId = this.props.appId;
     this.params = this.props.params;
+    this.proc = this.props.proc;
     this.config = this.props.config;
     this.state = {
       menus: [],
@@ -86,6 +87,7 @@ class LeftMenuTemplate extends React.Component {
           selectLoad={this.selectLoad.bind(this)}
           onSelect={this.onSelect}
           appId={this.appId}
+          proc={this.proc}
           selected={this.state.selected}
         />
       </div>

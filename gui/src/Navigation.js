@@ -9,6 +9,7 @@ class Navigation extends React.Component {
     super(props);
     this.core = this.props.core;
     this.appId = this.props.appId;
+    this.proc = this.props.proc;
     this.params = this.props.params;
     this.state = {
       selected: this.props.selected
@@ -64,6 +65,7 @@ class Navigation extends React.Component {
             <Page
               pageId={this.state.selected.page_id}
               config={this.props.config}
+              proc={this.props.proc}
               app={this.props.appId}
               core={this.core}
             />
