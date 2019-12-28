@@ -6,17 +6,20 @@ class Breadcrumb extends React.Component {
     this.state = {
       breadcrumbConfig: []
     };
+    this.appId = this.props.appId;
     this.updateBreadCrumb = this.updateBreadCrumb.bind(this);
     this.stepDownPage = this.stepDownPage.bind(this);
   }
 
   componentDidMount() {
+    if(document.getElementsByClassName(this.appId+"_breadcrumbParent")[0]){
     document
-      .getElementsByClassName("breadcrumbParent")[0]
+      .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
       .addEventListener("updateBreadcrumb", this.updateBreadCrumb, false);
     document
-      .getElementsByClassName("breadcrumbParent")[0]
+      .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
       .addEventListener("stepDownPage", this.stepDownPage, false);
+    }
   }
 
   clearBreadcrumb() {
@@ -35,7 +38,7 @@ class Breadcrumb extends React.Component {
       detail: data[0].content,
       bubbles: true
     });
-    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+    document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
   };
 
   breadcrumbClick = (currentValue, index) => {
@@ -44,7 +47,7 @@ class Breadcrumb extends React.Component {
         detail: currentValue.content,
         bubbles: true
       });
-      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+      document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
     }
     let data = this.state.breadcrumbConfig.slice();
     data.splice(index + 1, data.length);

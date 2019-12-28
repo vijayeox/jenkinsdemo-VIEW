@@ -31,7 +31,7 @@ class Page extends React.Component {
 
   componentDidMount() {
     document
-      .getElementsByClassName("breadcrumbParent")[0]
+      .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
   }
 
@@ -59,7 +59,7 @@ class Page extends React.Component {
           bubbles: true
         });
         document
-          .getElementsByClassName("breadcrumbParent")[0]
+          .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
           .dispatchEvent(ev);
       } else {
         this.setState({ pageContent: [] });
@@ -183,7 +183,7 @@ class Page extends React.Component {
         detail: action,
         bubbles: true
       });
-      document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+      document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
     }
     this.setState({
       showLoader: false
@@ -262,7 +262,7 @@ class Page extends React.Component {
       detail: {},
       bubbles: true
     });
-    document.getElementsByClassName("breadcrumbParent")[0].dispatchEvent(ev);
+    document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
   };
 
   renderContent(data) {

@@ -15,6 +15,7 @@ class Navigation extends React.Component {
       selected: this.props.selected
     };
     this.child = React.createRef();
+    this.breadcrumbDiv = this.appId+'_breadcrumbParent';
     this.homepage = null;
     this.getMenulist().then(response => {
       this.props.menuLoad(response['data']);
@@ -58,8 +59,8 @@ class Navigation extends React.Component {
       <div
           className="PageRender"
         >
-          <div className="breadcrumbParent">
-          <Breadcrumb ref={this.child} />
+          <div className={this.breadcrumbDiv}>
+          <Breadcrumb ref={this.child} appId={this.appId} />
           </div>
           {this.state.selected.page_id ? (
             <Page
