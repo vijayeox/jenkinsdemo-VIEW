@@ -10,8 +10,7 @@ export class DataLoader extends React.Component {
     this.core = this.props.args;
     this.refresh = this.refresh.bind(this);
     this.state = {
-      url: this.props.url,
-      pending:undefined
+      url: this.props.url
     };
     this.notif = React.createRef();
     this.init = { method: "GET", accept: "application/json", headers: {} };
@@ -64,7 +63,7 @@ export class DataLoader extends React.Component {
         } else {
           //put notification
         
-          this.state.pending = undefined;
+          this.pending = undefined;
 
         }
       });
@@ -82,17 +81,17 @@ export class DataLoader extends React.Component {
 
   requestDataIfNeeded = () => {
     if (
-      this.state.pending ||
+      this.pending ||
       toODataString(this.props.dataState) === this.lastSuccess
     ) {
       return;
     }
-    this.setState({pending:toODataString(this.props.dataState, this.props.dataState)})
+    this.pending = toODataString(this.props.dataState, this.props.dataState);
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.getData(this.state.url).then(response => {
-        this.lastSuccess = this.state.pending;
-        this.setState({pending : ""});
+        this.lastSuccess = this.pending;
+        this.pending = "";
         if (toODataString(this.props.dataState) === this.lastSuccess) {
 
           if (response.status !== "success") {
@@ -125,7 +124,7 @@ export class DataLoader extends React.Component {
     return (
       <>
         <Notification ref={this.notif} />
-        {this.state.pending && <LoadingPanel />}
+        {this.pending && <LoadingPanel />}
       </>
     );
   }
