@@ -100,4 +100,20 @@ const init = () => {
   osjs.boot();
 };
 
+function myFunction() {
+  var AuthToken = localStorage.getItem("AUTH_token");
+  if(!AuthToken)
+  {
+    alert("Your session has expired!.");
+    location.reload();
+  }
+}
+
+var AuthToken = localStorage.getItem("AUTH_token");
+if(AuthToken)
+{
+  var temp = AuthToken;
+  setInterval(myFunction, 10000);
+}
+
 window.addEventListener('DOMContentLoaded', () => init());
