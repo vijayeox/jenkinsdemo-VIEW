@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification  from "OxzionGUI/Notification"
+import Notification from "OxzionGUI/Notification"
 
 import DateFormats from "OxzionGUI/public/js/DateFormats";
 import Timezones from "OxzionGUI/public/js/Timezones";
-
+import { Form, Button } from 'react-bootstrap'
 class Preferences extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +17,7 @@ class Preferences extends Component {
     ) {
       this.userprofile.key.preferences["dateformat"] =
         this.userprofile.key.preferences["dateformat"] &&
-        this.userprofile.key.preferences["dateformat"] != ""
+          this.userprofile.key.preferences["dateformat"] != ""
           ? this.userprofile.key.preferences["dateformat"]
           : "dd-MM-yyyy";
     } else {
@@ -94,7 +94,7 @@ class Preferences extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
-    
+
     Timezones.sort((a, b) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
   }
 
@@ -206,15 +206,51 @@ class Preferences extends Component {
     }
   }
 
-  init() {}
+  init() { }
   render() {
     return (
+      //  <>
+      //  <Notification ref={this.notif} />
+      //   <Form onSubmit={this.handleSubmit} className="preferenceForm"> 
+      //       <Form.Group>
+      //         <Form.Label>Sound Notification</Form.Label>
+      //         <Form.Check
+      //           type="radio"
+      //           name="soundnotification"
+      //           value="true"
+      //           label="On"
+      //           onChange={this.handleChange}
+      //           checked={this.state.fields["soundnotification"] == "true"}
+      //         />
+      //          <Form.Check
+      //           type="radio"
+      //           name="soundnotification"
+      //           value="false"
+      //           label="Off"
+      //           onChange={this.handleChange}
+      //           checked={this.state.fields["soundnotification"] == "false"}
+      //         />
+      //       </Form.Group>
+      //       <Form.Group>
+      //         <Form.Label></Form.Label>
+      //         <Form.Control/>
+      //       </Form.Group>
+      //       <Form.Group>
+      //         <Form.Label></Form.Label>
+      //         <Form.Control/>
+      //       </Form.Group>
+      //       <Form.Group>
+      //         <Form.Label></Form.Label>
+      //         <Form.Control/>
+      //       </Form.Group>
+      //   </Form>
+      //  </>
       <div className="componentDiv">
         <Notification ref={this.notif} />
-        <form className="formmargin" onSubmit={this.handleSubmit}>
+        <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
             <div className="col-4" id="sound">
-              <label id="labelname">Sound Notification:</label>
+              <Form.Label>Sound Notification:</Form.Label>
             </div>
             <div className="col-8">
               <label id="name">
@@ -241,7 +277,7 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-4" id="emailalert">
-              <label id="labelname">Email Alerts:</label>
+              <Form.Label>Email Alerts:</Form.Label>
             </div>
             <div className="col-8">
               <label id="name">
@@ -268,9 +304,9 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-4" id="localtimezone">
-              <label id="labelname">Local Time Zone:</label>
+              <Form.Label>Local Time Zone:</Form.Label>
             </div>
-            <div className="col-4 timezonediv">
+            <div className="col-8 timezonediv">
               <select
                 value={this.state.fields["timezone"]}
                 onChange={this.handleChange}
@@ -288,9 +324,9 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="input-field col-4" id="datef">
-              <label id="labelname">Date Format:</label>
+              <Form.Label>Date Format:</Form.Label>
             </div>
-            <div className="input-field col-4">
+            <div className="input-field col-8">
               <select
                 value={this.state.fields["dateformat"]}
                 onChange={this.handleChange}
@@ -308,9 +344,9 @@ class Preferences extends Component {
 
           <div className="row marginsize" style={{ paddingTop: "5px" }}>
             <div className="col-4" id="locallanguage">
-              <label id="labelname">Language:</label>
+              <Form.Label>Language:</Form.Label>
             </div>
-            <div className="col-4 languagediv">
+            <div className="col-8 languagediv">
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
@@ -328,12 +364,10 @@ class Preferences extends Component {
 
           <div className="row marginsize">
             <div className="col-12 input-field">
-              <button className="k-button k-primary" type="submit">
-                Submit
-              </button>
+              <Button className="pull-right preferenceForm-btn" type="submit">Submit</Button>
             </div>
           </div>
-        </form>
+        </Form>
       </div>
     );
   }

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification  from "OxzionGUI/Notification"
-
+import Notification from "OxzionGUI/Notification"
+import { Form, Button } from 'react-bootstrap'
 class Themes extends Component {
   constructor(props) {
     super(props);
@@ -79,22 +79,22 @@ class Themes extends Component {
   }
 
   componentDidMount() {
-    if(this.newSettings.settings.desktop){
+    if (this.newSettings.settings.desktop) {
       this.newSettings.settings.desktop.theme = this.newSettings.settings.desktop.theme ? this.newSettings.settings.desktop.theme : this.newSettings.defaults.desktop.theme;
       this.newSettings.settings.desktop.icons = this.newSettings.settings.desktop.icons ? this.newSettings.settings.desktop.icons : this.newSettings.defaults.desktop.icons;
       this.newSettings.settings.desktop.sounds = this.newSettings.settings.desktop.sounds ? this.newSettings.settings.desktop.sounds : this.newSettings.defaults.desktop.sounds;
-        this.setState({
+      this.setState({
         themeName: this.newSettings.settings.desktop.theme,
         iconName: this.newSettings.settings.desktop.icons,
         soundName: this.newSettings.settings.desktop.sounds
-        });
+      });
     }
-    else{
-        this.setState({
-            themeName: (this.newSettings.defaults.desktop.theme ? this.newSettings.defaults.desktop.theme : ''),
-            iconName: (this.newSettings.defaults.desktop.icons ? this.newSettings.defaults.desktop.icons : ''),
-            soundName: (this.newSettings.defaults.desktop.sounds ? this.newSettings.defaults.desktop.sounds : '')
-        });
+    else {
+      this.setState({
+        themeName: (this.newSettings.defaults.desktop.theme ? this.newSettings.defaults.desktop.theme : ''),
+        iconName: (this.newSettings.defaults.desktop.icons ? this.newSettings.defaults.desktop.icons : ''),
+        soundName: (this.newSettings.defaults.desktop.sounds ? this.newSettings.defaults.desktop.sounds : '')
+      });
     }
   }
 
@@ -145,25 +145,25 @@ class Themes extends Component {
   handleSubmit = event => {
     event.preventDefault();
     this.actions.save();
-    this.actions.refresh(); 
+    this.actions.refresh();
   };
 
   handleChange = event => {
     this.actions.update(event.target.name, event.target.value);
-    if(event.target.name === "desktop.theme"){
-        this.setState({
-            themeName: this.newSettings.settings.desktop.theme
-          });
+    if (event.target.name === "desktop.theme") {
+      this.setState({
+        themeName: this.newSettings.settings.desktop.theme
+      });
     }
-    else if(event.target.name === "desktop.icons"){
-        this.setState({
-            iconName: this.newSettings.settings.desktop.icons
-        });
+    else if (event.target.name === "desktop.icons") {
+      this.setState({
+        iconName: this.newSettings.settings.desktop.icons
+      });
     }
-    else if(event.target.name === "desktop.sounds"){
-        this.setState({
-            soundName: this.newSettings.settings.desktop.soundName
-        })
+    else if (event.target.name === "desktop.sounds") {
+      this.setState({
+        soundName: this.newSettings.settings.desktop.soundName
+      })
     }
   };
 
@@ -171,14 +171,15 @@ class Themes extends Component {
     return (
       <div className="componentDiv">
         <Notification ref={this.notif} />
-        <form className="formmargin" onSubmit={this.handleSubmit}>
+        <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize" >
             <div
               className="col-4"
-              >
-              <label id="styleLabel">Style:</label>
+            >
+              <Form.Label>Style:</Form.Label>
+              {/* <label id="styleLabel">Style:</label> */}
             </div>
-            <div className="col-4 themeStylediv">
+            <div className="col-8 themeStylediv">
               <select
                 value={this.state.themeName}
                 onChange={this.handleChange}
@@ -197,10 +198,12 @@ class Themes extends Component {
           <div className="row marginsize" >
             <div
               className="col-4"
-              >
-              <label id="iconsLabel">Icons:</label>
+            >
+              <Form.Label>Icons:</Form.Label>
+
+              {/* <label id="iconsLabel">Icons:</label> */}
             </div>
-            <div className="col-4 iconsdiv">
+            <div className="col-8 iconsdiv">
               <select
                 value={this.state.iconName}
                 onChange={this.handleChange}
@@ -220,9 +223,11 @@ class Themes extends Component {
             <div
               className="col-4"
             >
-              <label id="soundsLabel">Sounds:</label>
+              <Form.Label>Icons:</Form.Label>
+
+              {/* <label id="soundsLabel">Sounds:</label> */}
             </div>
-            <div className="col-4 soundsdiv">
+            <div className="col-8 soundsdiv">
               <select
                 value={this.state.soundName}
                 onChange={this.handleChange}
@@ -240,12 +245,13 @@ class Themes extends Component {
 
           <div className="row">
             <div className="col-12 input-field" >
-              <button className="k-button k-primary" type="submit">
+              <Button type="submit" className="pull-right preferenceForm-btn">Submit</Button>
+              {/* <button className="k-button k-primary" type="submit">
                 Save
-              </button>
+              </button> */}
             </div>
           </div>
-        </form>
+        </Form>
       </div>
     );
   }

@@ -6,12 +6,12 @@
   @import "./node_modules/react-phone-number-input/style.css";
   font-family: "Roboto";
 
-  .input-field > label {
-    font-size: 16px;
-    color: #333 !important;
-    margin-top: 3px !important;
-    margin-bottom: 3px !important;
-  }
+  // .input-field > label {
+  //   font-size: 16px;
+  //   color: #333 !important;
+  //   margin-top: 3px !important;
+  //   margin-bottom: 3px !important;
+  // }
 
   .row .col.s12.s6 {
     margin-bottom: 10px !important;
@@ -27,25 +27,25 @@
     width: 100%;
     // border-bottom: solid 10px #333333;
     // border-top: solid 10px #333333;
-    background-color: #333333;
+    background-color: #648894;
     display: flex;
     flex-direction: row;
     margin: auto;
     button:hover {
-      color: #f3b340;
+      color: #012733;
     }
     button {
       flex-grow: 1;
       color: white;
       font-size: 1.5rem;
       display: flex;
-      border: solid 3px #333333;
-      border-bottom: solid 10px #333333;
-      border-top: solid 10px #333333;
+      // border: solid 3px #333333;
+      border-bottom: solid 10px #648894;
+      border-top: solid 10px #648894;
       flex-direction: row;
       align-items: center;
       span {
-        font-size: 1rem;
+        font-size: 0.8rem;
         padding-left: 0.5rem;
         font-family: "Raleway", Arial, sans-serif;
       }
@@ -83,8 +83,8 @@
   .rwt__tab[aria-selected="false"]:hover,
   .rwt__tab:focus {
     outline: 0;
-    background-color: #f4f4f4;
-    background-color: rgba(0, 0, 0, 0.05);
+    // background-color: #f4f4f4;
+    // background-color: rgba(0, 0, 0, 0.05);
   }
 
   .rwt__tab[aria-selected="true"] {
@@ -102,7 +102,7 @@
     // border-radius: 55px;
     left: 0;
     width: 100%;
-    border-bottom: 2.5px solid #ecececfc;
+    border-bottom: 2.5px solid #ffffff;
     transform: scaleY(1.5);
   }
 
@@ -147,6 +147,7 @@
   $scoreRed: #f44336;
   $scoreYellow: #ffeb3b;
   $scoreGreen: #4caf50;
+  $tabColor: #648894;
 
   .password {
     display: block;
@@ -176,7 +177,7 @@
     &__show {
       cursor: pointer;
       position: absolute;
-      bottom: 23px;input:not([type]), input[type=date]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=email]:not(.browser-default), input[type=number]:not(.browser-default), input[type=password]:not(.browser-default), input[type=search]:not(.browser-default), input[type=tel]:not(.browser-default), input[type=text]:not(.browser-default), input[type=time]:not(.browser-default), input[type=url]:not(.browser-default), textarea.materialize-textarea {
+      bottom: 23px;input:not([type]), input[type=date]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=number]:not(.browser-default), input[type=search]:not(.browser-default),  input[type=time]:not(.browser-default), input[type=url]:not(.browser-default), textarea.materialize-textarea {
     background-color: transparent;
     border: none;
     border-bottom: 1px solid #9e9e9e;
@@ -432,7 +433,7 @@
   select {
     height: 35px;
     background: ghostwhite;
-    border: cornsilk;
+    border: 0.5px solid #d5e4e8;
     width: 100%;
   }
 
@@ -461,8 +462,10 @@
 
   .imageBtn {
     color: white;
-    background: #000;
+    background: #4c636b;
     margin: 10px;
+    margin-top: 0px;
+    margin-left: 0px;
     padding: 4px;
     border-radius: 5px;
     cursor: pointer;
@@ -616,7 +619,7 @@
   .k-content {
     height: 15vh;
   }
-  input:not([type]), input[type=date]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=email]:not(.browser-default), input[type=number]:not(.browser-default), input[type=password]:not(.browser-default), input[type=search]:not(.browser-default), input[type=tel]:not(.browser-default), input[type=text]:not(.browser-default), input[type=time]:not(.browser-default), input[type=url]:not(.browser-default), textarea.materialize-textarea {
+  input:not([type]), input[type=date]:not(.browser-default), input[type=datetime-local]:not(.browser-default), input[type=datetime]:not(.browser-default), input[type=number]:not(.browser-default), input[type=search]:not(.browser-default),  input[type=time]:not(.browser-default), input[type=url]:not(.browser-default), textarea.materialize-textarea {
     background-color: transparent;
     border: none;
     border-bottom: 1px solid #9e9e9e;
@@ -635,5 +638,53 @@
     transition: border .3s,-webkit-box-shadow .3s;
     transition: box-shadow .3s,border .3s;
     transition: box-shadow .3s,border .3s,-webkit-box-shadow .3s;
+}
+
+// React Bootsrap Form
+
+.text-muted {
+  color: #f31700!important;
+}
+
+.edit-profile-form{
+  margin-top:12px;
+  
+}
+.edit-profile-form label{
+  color:#314e58;
+}
+.confirm-password-form{
+  padding-top:10px;
+  padding-left: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.form-control:focus{
+  border-color: #2f6d82e6;
+}
+.preferenceForm-btn{
+  color: #fff;
+  background-color: #506d77;
+  border-color: #506d77;
+}
+.preferenceForm-showbtn{
+  
+  color: #fff;
+  background-color: #82979e;
+  border-color: #82979e;
+
+}
+.tooltip{
+  font-size: .375rem !important;
+}
+#password-tooltip .tooltip-inner{
+  background: "rgb(231, 222, 234)" !important;
+  color: "black";
+  font-size: ".675rem";
+  width: "200px";
+}
+.preferenceForm label{
+  color:#314e58;
+
 }
 }

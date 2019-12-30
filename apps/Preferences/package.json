@@ -33,6 +33,7 @@
     "react-phone-number-input": "^2.3.22",
     "react-web-tabs": "^1.0.1",
     "react-webcam": "^1.1.1",
+    "reactstrap": "^8.2.0",
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "devDependencies": {
