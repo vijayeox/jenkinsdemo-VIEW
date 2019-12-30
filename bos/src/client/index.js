@@ -70,7 +70,6 @@ import { BosAdapter } from './adapters/BosAdapter.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
 
-
 const init = () => {
   let mergedConfig = merge(config, localConfig);
   const osjs = new Core(mergedConfig, {});
