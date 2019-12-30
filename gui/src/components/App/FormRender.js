@@ -287,12 +287,12 @@ class FormRender extends React.Component {
         this.createForm();
       });
     }
-    if (this.props.parentWorkflowInstanceId) {
+    if (this.state.parentWorkflowInstanceId) {
       this.getFileData().then(response => {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
           console.log(fileData.workflowInstanceId);
-          fileData.parentWorkflowInstanceId = this.props.parentWorkflowInstanceId;
+          fileData.parentWorkflowInstanceId = this.state.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
           this.setState({ data: fileData });
@@ -765,6 +765,7 @@ class FormRender extends React.Component {
             formId: response.form_id
           });
           this.createForm();
+          this.loadWorkflow();
         })
       : this.loadWorkflow();
   }
