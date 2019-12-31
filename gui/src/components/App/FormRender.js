@@ -6,6 +6,7 @@ import React from "react";
 import merge from 'deepmerge';
 import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
+import DocumentComponent from "./Form/DocumentComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -334,6 +335,7 @@ class FormRender extends React.Component {
     let that = this;
     if (this.state.content && !this.state.form) {
       Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
+      Formio.registerComponent("document", DocumentComponent);
       var options = {};
       if (this.state.content["properties"]) {
         if (this.state.content["properties"]["clickable"]) {
