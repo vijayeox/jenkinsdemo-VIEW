@@ -1,6 +1,5 @@
 .Window_Preferences {
   // @import "./public/scss/notifTheme.css";
-  @import "./node_modules/bootstrap/dist/css/bootstrap.min.css";
   @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
   @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
   @import "./node_modules/react-phone-number-input/style.css";
@@ -45,9 +44,7 @@
       flex-direction: row;
       align-items: center;
       span {
-        font-size: 0.8rem;
         padding-left: 0.5rem;
-        font-family: "Raleway", Arial, sans-serif;
       }
     }
   }

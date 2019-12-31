@@ -18,7 +18,7 @@
     "@progress/kendo-react-intl": "^3.2.2",
     "@progress/kendo-react-popup": "^3.7.0",
     "@progress/kendo-theme-default": "^3.7.0",
-    "bootstrap": "^4.3.1",
+    "bootstrap": "^3.3.7",
     "copy-webpack-plugin": "^4.6.0",
     "deepmerge": "^3.2.1",
     "image-to-base64": "^2.0.1",
@@ -34,6 +34,7 @@
     "react-web-tabs": "^1.0.1",
     "react-webcam": "^1.1.1",
     "reactstrap": "^8.2.0",
+    "resolve-mjs": "^2.2.2",
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "devDependencies": {

@@ -194,6 +194,8 @@ class ChangePassword extends Component {
     return (
       <Form onSubmit={this.handleSubmit} className="confirm-password-form preferenceForm">
         <Notification ref={this.notif} />
+          <div className="row">
+          <div className="col-md-12">
         <Form.Group>
           <Form.Label>Old Password</Form.Label>
           <InputGroup>
@@ -210,7 +212,11 @@ class ChangePassword extends Component {
             {this.state.errors.old_password}
           </Form.Text>
         </Form.Group>
+      </div>
+      </div>
 
+          <div className="row">
+          <div className="col-md-12">
         <Form.Group>
           <Form.Label>New Password</Form.Label>
           <InputGroup>
@@ -238,7 +244,11 @@ class ChangePassword extends Component {
             {this.state.errors.new_password}
           </Form.Text>
         </Form.Group>
+        </div>
+        </div>
 
+          <div className="row">
+          <div className="col-md-12">
         <Form.Group>
           <Form.Label>Confirm Password</Form.Label>
           <InputGroup>
@@ -254,8 +264,9 @@ class ChangePassword extends Component {
           <Form.Text className="text-muted errorMsg">
             {this.state.errors.confirm_password}
           </Form.Text>
-        </Form.Group>
-
+            </Form.Group>
+      </div>
+      </div>
         <Button type="submit" className="pull-right preferenceForm-btn">Save</Button>
       </Form>
     );

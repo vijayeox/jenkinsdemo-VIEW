@@ -3,7 +3,7 @@ import CountryCodes from "OxzionGUI/public/js/CountryCodes";
 import Moment from "moment";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import Notification from "OxzionGUI/Notification"
-import { Form, Row, Col, Button } from 'react-bootstrap'
+import { Form, Row, Button } from 'react-bootstrap'
 import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
@@ -409,12 +409,12 @@ class EditProfile extends Component {
           <Notification ref={this.notif} />
           <div className="formmargin">
             <Row>
-              <Col>
+              <div className='col-md-6'>
                 {this.profileImageData()}
                 {this.chooseImageData()}
                 {this.chooseWebCamData()}
-              </Col>
-              <Col>
+              </div>
+              <div className='col-md-6'>
                 <Form.Group>
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
@@ -441,7 +441,7 @@ class EditProfile extends Component {
                     {this.state.errors["lastname"]}
                   </Form.Text>
                 </Form.Group>
-              </Col>
+              </div>
 
             </Row>
             <Form.Group>
@@ -456,12 +456,12 @@ class EditProfile extends Component {
               />
             </Form.Group>
             <Row>
-              <Col>
+              <div className='col-md-6'>
                 <Form.Group>
                   <Form.Label>Gender</Form.Label>
                   <Row><br /></Row>
                   <Row>
-                    <Col>
+                    <div className='col-md-6'>
                       <Form.Check
                         type="radio"
                         name="gender"
@@ -471,8 +471,8 @@ class EditProfile extends Component {
                         checked={this.state.fields.gender == "Male"}
                         className="validate"
                       />
-                    </Col>
-                    <Col>
+                    </div>
+                    <div className='col-md-6'>
                       <Form.Check
                         type="radio"
                         name="gender"
@@ -482,15 +482,15 @@ class EditProfile extends Component {
                         checked={this.state.fields.gender == "Female"}
                         className="validate"
                       />
-                    </Col>
+                    </div>
 
                   </Row>
                   <Form.Text className="text-muted errorMsg">
                     {this.state.errors["gender"]}
                   </Form.Text>
                 </Form.Group>
-              </Col>
-              <Col>
+              </div>
+              <div className='col-md-6'>
                 <Form.Group>
                   <Form.Label id="rowdob">Date of Birth</Form.Label>
                   <DatePicker
@@ -508,7 +508,7 @@ class EditProfile extends Component {
                     {this.state.errors["date_of_birth"]}
                   </Form.Text>
                 </Form.Group>
-              </Col>
+              </div>
             </Row>
 
 
@@ -527,7 +527,7 @@ class EditProfile extends Component {
               </Form.Text>
             </Form.Group>
             <Row>
-              <Col>
+              <div className='col-md-6'>
                 <Form.Group>
                   <Form.Label>Contact Number</Form.Label>
                   <PhoneInput
@@ -544,8 +544,8 @@ class EditProfile extends Component {
                     {this.state.errors["phone"]}
                   </Form.Text>
                 </Form.Group>
-              </Col>
-              <Col>
+              </div>
+              <div className='col-md-6'>
                 <Form.Group>
                   <Form.Label>
                     Country
@@ -565,11 +565,11 @@ class EditProfile extends Component {
                   </select>
 
                 </Form.Group>
-              </Col>
+              </div>
             </Row>
 
             <Row>
-              <Col>
+              <div className='col-md-12'>
                 <Form.Group>
                   <Form.Label>Website</Form.Label>
                   <Form.Control
@@ -579,8 +579,8 @@ class EditProfile extends Component {
                     onChange={this.handleChange}
                   />
                 </Form.Group>
-              </Col>
-              <Col>
+              </div>
+              <div className='col-md-12'>
                 <Form.Group>
                   <Form.Label>Interest</Form.Label>
                   <Form.Control
@@ -593,7 +593,7 @@ class EditProfile extends Component {
                     {this.state.errors["interest"]}
                   </Form.Text>
                 </Form.Group>
-              </Col>
+              </div>
             </Row>
             <Form.Group>
               <Form.Label>About Me</Form.Label>

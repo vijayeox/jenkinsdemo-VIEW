@@ -193,11 +193,11 @@ class Background extends Component {
         <Notification ref={this.notif} />
         <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <Form.Label>Image:</Form.Label>
               {/* <label id="imageLabel">Image:</label> */}
             </div>
-            <div className="col-4 imagediv">
+            <div className="col-md-4 imagediv">
               <div className="image" id="image">
                 {this.state.imageSrc}{" "}
                 <button
@@ -211,10 +211,10 @@ class Background extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <Form.Label>Color:</Form.Label>
             </div>
-            <div className="col-4 colordiv">
+            <div className="col-md-4 colordiv">
               <input
                 type="color"
                 value={this.state.colorCode}
@@ -225,10 +225,10 @@ class Background extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-4">
+            <div className="col-md-4">
               <Form.Label>Style:</Form.Label>
             </div>
-            <div className="col-8 backgroundStylediv">
+            <div className="col-md-8 backgroundStylediv">
               <select
                 value={this.state.styleName}
                 onChange={this.handleChange}

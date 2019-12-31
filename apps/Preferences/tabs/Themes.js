@@ -174,12 +174,12 @@ class Themes extends Component {
         <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize" >
             <div
-              className="col-4"
+              className="col-md-4"
             >
               <Form.Label>Style:</Form.Label>
               {/* <label id="styleLabel">Style:</label> */}
             </div>
-            <div className="col-8 themeStylediv">
+            <div className="col-md-8 themeStylediv">
               <select
                 value={this.state.themeName}
                 onChange={this.handleChange}
@@ -197,13 +197,13 @@ class Themes extends Component {
 
           <div className="row marginsize" >
             <div
-              className="col-4"
+              className="col-md-4"
             >
               <Form.Label>Icons:</Form.Label>
 
               {/* <label id="iconsLabel">Icons:</label> */}
             </div>
-            <div className="col-8 iconsdiv">
+            <div className="col-md-8 iconsdiv">
               <select
                 value={this.state.iconName}
                 onChange={this.handleChange}
@@ -221,13 +221,13 @@ class Themes extends Component {
 
           <div className="row marginsize">
             <div
-              className="col-4"
+              className="col-md-4"
             >
               <Form.Label>Icons:</Form.Label>
 
               {/* <label id="soundsLabel">Sounds:</label> */}
             </div>
-            <div className="col-8 soundsdiv">
+            <div className="col-md-8 soundsdiv">
               <select
                 value={this.state.soundName}
                 onChange={this.handleChange}
@@ -244,7 +244,7 @@ class Themes extends Component {
           </div>
 
           <div className="row">
-            <div className="col-12 input-field" >
+            <div className="col-md-12 input-field" >
               <Button type="submit" className="pull-right preferenceForm-btn">Submit</Button>
               {/* <button className="k-button k-primary" type="submit">
                 Save

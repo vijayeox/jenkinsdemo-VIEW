@@ -249,10 +249,10 @@ class Preferences extends Component {
         <Notification ref={this.notif} />
         <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
-            <div className="col-4" id="sound">
+            <div className="col-md-4" id="sound">
               <Form.Label>Sound Notification:</Form.Label>
             </div>
-            <div className="col-8">
+            <div className="col-md-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -276,10 +276,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-4" id="emailalert">
+            <div className="col-md-4" id="emailalert">
               <Form.Label>Email Alerts:</Form.Label>
             </div>
-            <div className="col-8">
+            <div className="col-md-8">
               <label id="name">
                 <input
                   className="preferencesRadio"
@@ -303,10 +303,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="col-4" id="localtimezone">
+            <div className="col-md-4" id="localtimezone">
               <Form.Label>Local Time Zone:</Form.Label>
             </div>
-            <div className="col-8 timezonediv">
+            <div className="col-md-8 timezonediv">
               <select
                 value={this.state.fields["timezone"]}
                 onChange={this.handleChange}
@@ -323,10 +323,10 @@ class Preferences extends Component {
             </div>
           </div>
           <div className="row marginsize">
-            <div className="input-field col-4" id="datef">
+            <div className="input-field col-md-4" id="datef">
               <Form.Label>Date Format:</Form.Label>
             </div>
-            <div className="input-field col-8">
+            <div className="input-field col-md-8">
               <select
                 value={this.state.fields["dateformat"]}
                 onChange={this.handleChange}
@@ -343,10 +343,10 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize" style={{ paddingTop: "5px" }}>
-            <div className="col-4" id="locallanguage">
+            <div className="col-md-4" id="locallanguage">
               <Form.Label>Language:</Form.Label>
             </div>
-            <div className="col-8 languagediv">
+            <div className="col-md-8 languagediv">
               <select
                 value={this.state.languageName}
                 onChange={this.handleChange}
@@ -363,7 +363,7 @@ class Preferences extends Component {
           </div>
 
           <div className="row marginsize">
-            <div className="col-12 input-field">
+            <div className="col-md-12 input-field">
               <Button className="pull-right preferenceForm-btn" type="submit">Submit</Button>
             </div>
           </div>

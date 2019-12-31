@@ -70,6 +70,10 @@ module.exports = {
         }
       },
       {
+        test: /\.mjs$/,
+        type: 'javascript/auto',
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
