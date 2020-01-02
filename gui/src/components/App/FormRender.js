@@ -599,6 +599,7 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function (changed) {
+          console.log(changed);
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
