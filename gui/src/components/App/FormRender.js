@@ -40,7 +40,10 @@ class FormRender extends React.Component {
     this.formDivID = "formio_" + formID;
   }
 
-  async callDelegate(delegate, params) {
+  async callDelegate(delegate, params, padiType=null) {
+    if(padiType!=null){
+      params['padiType'] = padiType;
+    }
     let helper = this.core.make("oxzion/restClient");
     let delegateData = await helper.request(
       "v1",
@@ -673,11 +676,12 @@ class FormRender extends React.Component {
             var properties = component.component.properties;
             if (properties) {
               if (properties["delegate"]) {
+                var padiType = properties["padiType"]?properties["padiType"]:null;
                 if (properties["sourceDataKey"] && properties["destinationDataKey"]) {
                   var padiData = { 'padi': changed[properties["sourceDataKey"]] }
                   that.core.make("oxzion/splash").show();
                   that
-                    .callDelegate(properties["delegate"], padiData)
+                    .callDelegate(properties["delegate"], padiData, padiType)
                     .then(response => {
                       var responseArray = [];
                       for (var responseDataItem in response.data) {
@@ -717,7 +721,7 @@ class FormRender extends React.Component {
                 }
                 else {
                   that
-                    .callDelegate(properties["delegate"], changed)
+                    .callDelegate(properties["delegate"], changed, padiType)
                     .then(response => {
                       that.core.make("oxzion/splash").destroy();
                       if (response.data) {
