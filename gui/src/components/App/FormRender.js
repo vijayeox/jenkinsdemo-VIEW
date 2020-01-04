@@ -53,6 +53,19 @@ class FormRender extends React.Component {
     );
     return delegateData;
   }
+  async callPipeline(commands, submission) {
+    let helper = this.core.make("oxzion/restClient");
+    var params = [];
+    params['commands'] = commands;
+    params['data'] = submission;
+    let delegateData = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/pipeline",
+      params,
+      "post"
+    );
+    return delegateData;
+  }
   async callPayment(params) {
     let helper = this.core.make("oxzion/restClient");
     let delegateData = await helper.request(
@@ -179,83 +192,96 @@ class FormRender extends React.Component {
     );
     return formContent;
   }
-  async saveForm(data) {
+  async saveForm(form,data) {
     // this.core.make('oxzion/splash').show();
-    let helper = this.core.make("oxzion/restClient");
-    let route = "";
-    let method = "post";
-    if (this.state.workflowId) {
-      route = "/workflow/" + this.state.workflowId;
-      if (this.state.activityInstanceId) {
-        route =
+    if (form._form["properties"]) {
+      if (form._form["properties"]["submission_commands"]) {
+        that.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
+        .then(response => {
+          that.core.make("oxzion/splash").destroy();
+          if (response.data) {
+            form.submission = { data: that.addAddlData(response.data) };
+            form.triggerChange();
+          }
+        });
+      }
+    } else {
+      let helper = this.core.make("oxzion/restClient");
+      let route = "";
+      let method = "post";
+      if (this.state.workflowId) {
+        route = "/workflow/" + this.state.workflowId;
+        if (this.state.activityInstanceId) {
+          route =
           "/workflow/" +
           this.state.workflowId +
           "/activity/" +
           this.state.activityInstanceId;
-        method = "post";
-        if (this.state.instanceId) {
-          route =
+          method = "post";
+          if (this.state.instanceId) {
+            route =
             "/workflow/" +
             this.state.workflowId +
             "/activity/" +
             this.state.activityId +
             "/instance/" +
             this.state.instanceId;
-          method = "put";
+            method = "put";
+          }
         }
-      }
-    } else if (this.state.workflowInstanceId) {
-      route = "/workflowinstance/" + this.state.workflowInstanceId;
-      if (this.state.activityInstanceId) {
-        route =
+      } else if (this.state.workflowInstanceId) {
+        route = "/workflowinstance/" + this.state.workflowInstanceId;
+        if (this.state.activityInstanceId) {
+          route =
           "/workflowinstance/" +
           this.state.workflowInstanceId +
           "/activity/" +
           this.state.activityInstanceId;
-        method = "post";
-      }
-      route = route + "/submit";
-    } else {
-      route =
-        "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
-      method = "post";
-      if (this.state.instanceId) {
+          method = "post";
+        }
+        route = route + "/submit";
+      } else {
         route =
+        "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
+        method = "post";
+        if (this.state.instanceId) {
+          route =
           "/app/" +
           this.state.appId +
           "/form/" +
           this.state.formId +
           "/file/" +
           this.state.instanceId;
-        method = "put";
+          method = "put";
+        }
       }
+      await helper.request("v1", route, data, method).then(response => {
+        this.core.make("oxzion/splash").destroy();
+        if (response.status == "success") {
+          this.deleteCacheData().then(response2 => {
+            if (response2.status == "success") {
+              this.props.postSubmitCallback();
+            }
+            return response;
+          });
+        } else {
+          this.storeCache(data).then(cacheResponse => {
+            if (response.data.errors) {
+              this.storeError(data, response.data.errors, route).then(
+                storeErrorResponse => {
+                  this.notif.current.notify(
+                    "Error",
+                    "Form Submission Failed",
+                    "danger"
+                    )
+                }
+                );
+            }
+          });
+          return;
+        }
+      });
     }
-    await helper.request("v1", route, data, method).then(response => {
-      this.core.make("oxzion/splash").destroy();
-      if (response.status == "success") {
-        this.deleteCacheData().then(response2 => {
-          if (response2.status == "success") {
-            this.props.postSubmitCallback();
-          }
-          return response;
-        });
-      } else {
-        this.storeCache(data).then(cacheResponse => {
-          if (response.data.errors) {
-            this.storeError(data, response.data.errors, route).then(
-              storeErrorResponse => {
-                this.notif.current.notify(
-                  "Error",
-                  "Form Submission Failed",
-                  "danger"
-                )
-              }
-            );
-          }
-        });
-        return;
-      }
-    });
   }
 
   cleanData(formData){
@@ -364,13 +390,8 @@ class FormRender extends React.Component {
       }
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
-          console.log(submission.data);
           that.storeCache(submission.data);
           next(null);
-        },
-        beforeSubmit: (submission, next) => {
-          console.log(next);
-          next();
         }
       };
       options.hooks = hooks;
@@ -384,12 +405,11 @@ class FormRender extends React.Component {
             form.setPage(that.state.page);
           }
         }
-        console.log(that.addAddlData(that.state.data));
+        form.nosubmit = true;
         form.submission = {data : that.addAddlData(that.state.data)};
         form.on("prevPage", changed => that.setState({ page: changed.page }));
         form.on("nextPage", changed => {
           that.setState({ page: changed.page });
-          console.log(form.pages[changed.page]);
           if (form.pages[changed.page]["properties"]["delegate"]) {
             if (form.pages[changed.page]["properties"]["delegate"]) {
               var form_data = that.cleanData(form.data);
@@ -409,10 +429,11 @@ class FormRender extends React.Component {
           }
         });
         form.on("submit", submission => {
-          that.saveForm(submission.data);
+          return that.saveForm(form,submission.data).then(response => {
+            form.emit('submitDone', response);
+          });
         });
         form.on("error", errors => {
-          console.log(errors);
           var elm = document.getElementsByClassName("alert-danger")[0];
           scrollIntoView(elm, {
             scrollMode: "if-needed",
@@ -512,7 +533,7 @@ class FormRender extends React.Component {
                         "Payment has been Successfully completed!",
                         "Please wait while we get things ready!", "success"
                       );
-                      var formsave = that.saveForm(that.cleanData(form.submission.data));
+                      var formsave = that.saveForm(form,that.cleanData(form.submission.data));
                       var transactionStatusComponent = form.getComponent(
                         "transaction_status"
                       );
