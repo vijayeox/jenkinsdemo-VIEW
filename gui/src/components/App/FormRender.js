@@ -40,10 +40,7 @@ class FormRender extends React.Component {
     this.formDivID = "formio_" + formID;
   }
 
-  async callDelegate(delegate, params, padiType=null) {
-    if(padiType!=null){
-      params['padiType'] = padiType;
-    }
+  async callDelegate(delegate, params) {
     let helper = this.core.make("oxzion/restClient");
     let delegateData = await helper.request(
       "v1",
@@ -56,8 +53,8 @@ class FormRender extends React.Component {
   async callPipeline(commands, submission) {
     let helper = this.core.make("oxzion/restClient");
     var params = [];
-    params['commands'] = commands;
-    params['data'] = submission;
+    params = submission;
+    params['commands'] = JSON.parse(commands);
     let delegateData = await helper.request(
       "v1",
       "/app/" + this.state.appId + "/pipeline",
@@ -196,11 +193,11 @@ class FormRender extends React.Component {
     // this.core.make('oxzion/splash').show();
     if (form._form["properties"]) {
       if (form._form["properties"]["submission_commands"]) {
-        that.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
+        this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
         .then(response => {
-          that.core.make("oxzion/splash").destroy();
+          this.core.make("oxzion/splash").destroy();
           if (response.data) {
-            form.submission = { data: that.addAddlData(response.data) };
+            form.submission = { data: this.addAddlData(response.data) };
             form.triggerChange();
           }
         });
@@ -623,7 +620,6 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function (changed) {
-          console.log(changed);
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
@@ -697,12 +693,12 @@ class FormRender extends React.Component {
             var properties = component.component.properties;
             if (properties) {
               if (properties["delegate"]) {
-                var padiType = properties["padiType"]?properties["padiType"]:null;
                 if (properties["sourceDataKey"] && properties["destinationDataKey"]) {
-                  var padiData = { 'padi': changed[properties["sourceDataKey"]] }
+                  var paramData = {};
+                  paramData[properties["valueKey"]] = changed[properties["sourceDataKey"]];
                   that.core.make("oxzion/splash").show();
                   that
-                    .callDelegate(properties["delegate"], padiData, padiType)
+                    .callDelegate(properties["delegate"], paramData)
                     .then(response => {
                       var responseArray = [];
                       for (var responseDataItem in response.data) {
@@ -712,11 +708,12 @@ class FormRender extends React.Component {
                         }
                       }
                       if (response.data) {
-                        if (response.data.padiVerified) {
+                        if (response.data.Verified) {
                           if (changed[properties["destinationDataKey"]].length > 1) {
                             var flag = false;
                             for (var i = 0; i < changed[properties["destinationDataKey"]].length; i++) {
-                              if (changed[properties["destinationDataKey"]][i].padi == response.data.padi) {
+                             
+                              if (changed[properties["destinationDataKey"]][i][properties["valueKey"]] == response.data[properties["valueKey"]]) {
                                 flag = true;
                                 break;
                               }
@@ -725,11 +722,11 @@ class FormRender extends React.Component {
                               changed[properties["destinationDataKey"]].push(response.data);
                             }
                           }
-                          else if (changed[properties["destinationDataKey"]][0]['padiVerified'] == "false") {
+                          else if (changed[properties["destinationDataKey"]][0]['Verified'] == "false") {
                             changed[properties["destinationDataKey"]][0] = response.data;
                           }
                           else {
-                            if (changed[properties["destinationDataKey"]][0].padi != response.data.padi) {
+                            if (changed[properties["destinationDataKey"]][0][properties['valueKey']] != response.data[properties['valueKey']]) {
                               changed[properties["destinationDataKey"]].push(response.data);
                             }
                           }
@@ -742,7 +739,7 @@ class FormRender extends React.Component {
                 }
                 else {
                   that
-                    .callDelegate(properties["delegate"], changed, padiType)
+                    .callDelegate(properties["delegate"], changed)
                     .then(response => {
                       that.core.make("oxzion/splash").destroy();
                       if (response.data) {
