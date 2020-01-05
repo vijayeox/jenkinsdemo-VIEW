@@ -191,8 +191,7 @@ class FormRender extends React.Component {
   }
   async saveForm(form,data) {
     // this.core.make('oxzion/splash').show();
-    if (form._form["properties"]) {
-      if (form._form["properties"]["submission_commands"]) {
+      if (form._form["properties"] && form._form["properties"]["submission_commands"]) {
         this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
         .then(response => {
           this.core.make("oxzion/splash").destroy();
@@ -201,7 +200,6 @@ class FormRender extends React.Component {
             form.triggerChange();
           }
         });
-      }
     } else {
       let helper = this.core.make("oxzion/restClient");
       let route = "";
