@@ -3,6 +3,10 @@
 FROM node:8-slim
 
 RUN apt-get update
+RUN apt-get install python \
+					gcc \
+					g++ \
+					make
 RUN npm install gulp-cli -g
 RUN npx -p touch nodetouch gulpfile.js
 RUN mkdir -p /app/view
