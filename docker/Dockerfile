@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install python \
 					gcc \
 					g++ \
-					make
+					make -y
 RUN npm install gulp-cli -g
 RUN npx -p touch nodetouch gulpfile.js
 RUN mkdir -p /app/view
