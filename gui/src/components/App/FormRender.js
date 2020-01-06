@@ -195,10 +195,33 @@ class FormRender extends React.Component {
         this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
         .then(response => {
           this.core.make("oxzion/splash").destroy();
-          if (response.data) {
+          if (response.status == "success") {
+            if (response.data) {
             form.submission = { data: this.addAddlData(response.data) };
             form.triggerChange();
           }
+          this.deleteCacheData().then(response2 => {
+            if (response2.status == "success") {
+              this.props.postSubmitCallback();
+            }
+            return response;
+          });
+        } else {
+          this.storeCache(data).then(cacheResponse => {
+            if (response.data.errors) {
+              this.storeError(data, response.data.errors, route).then(
+                storeErrorResponse => {
+                  this.notif.current.notify(
+                    "Error",
+                    "Form Submission Failed",
+                    "danger"
+                    )
+                }
+                );
+            }
+          });
+          return;
+        }
         });
     } else {
       let helper = this.core.make("oxzion/restClient");
