@@ -296,20 +296,21 @@ class FormRender extends React.Component {
   }
 
   loadWorkflow() {
+    let that = this;
     if (this.state.formId) {
       this.getWorkflow().then(response => {
         if (response.status == "success" && response.data.workflow_id) {
-          this.setState({ workflowId: response.data.workflow_id });
+          that.setState({ workflowId: response.data.workflow_id });
           if (response.data.activity_id) {
-            this.setState({ activityId: response.data.activity_id });
+            that.setState({ activityId: response.data.activity_id });
           }
-          if (!this.state.content) {
+          if (!that.state.content) {
             console.log(response.data);
-            this.setState({ content: JSON.parse(response.data.template) });
+            that.setState({ content: JSON.parse(response.data.template) });
           }
         }
-        this.setState({ formDivID: "formio_" + this.state.formId });
-        this.createForm();
+        that.setState({ formDivID: "formio_" + that.state.formId });
+        that.createForm();
       });
     }
     if (this.state.parentWorkflowInstanceId) {
@@ -317,40 +318,40 @@ class FormRender extends React.Component {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
           console.log(fileData.workflowInstanceId);
-          fileData.parentWorkflowInstanceId = this.state.parentWorkflowInstanceId;
+          fileData.parentWorkflowInstanceId = that.props.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
-          this.setState({ data: fileData });
-          this.setState({ formDivID: "formio_" + this.state.formId });
-          this.createForm();
+          that.setState({ data: fileData });
+          that.setState({ formDivID: "formio_" + that.state.formId });
+          that.createForm();
         }
       });
     }
     if (this.state.activityInstanceId) {
       this.getActivity().then(response => {
         if (response.status == "success") {
-          this.setState({
+          that.setState({
             workflowInstanceId: response.data.workflow_instance_id
           });
-          this.setState({ workflowId: response.data.workflow_id });
-          this.setState({ activityId: response.data.activity_id });
-          this.setState({ data: JSON.parse(response.data.data) });
-          this.setState({ content: response.data.template });
-          this.createForm();
+          that.setState({ workflowId: response.data.workflow_id });
+          that.setState({ activityId: response.data.activity_id });
+          that.setState({ data: JSON.parse(response.data.data) });
+          that.setState({ content: response.data.template });
+          that.createForm();
         }
       });
     }
     if (this.state.instanceId) {
       this.getInstanceData().then(response => {
         if (response.status == "success" && response.data.workflow_id) {
-          this.setState({
+          that.setState({
             workflowInstanceId: response.data.workflow_instance_id
           });
-          this.setState({ workflowId: response.data.workflow_id });
-          this.setState({ activityId: response.data.activity_id });
-          this.setState({ data: JSON.parse(response.data.data) });
-          this.setState({ content: response.data.template });
-          this.createForm();
+          that.setState({ workflowId: response.data.workflow_id });
+          that.setState({ activityId: response.data.activity_id });
+          that.setState({ data: JSON.parse(response.data.data) });
+          that.setState({ content: response.data.template });
+          that.createForm();
         }
       });
     }
@@ -401,6 +402,7 @@ class FormRender extends React.Component {
           }
         }
         form.nosubmit = true;
+        console.log(that.addAddlData(that.state.data));
         form.submission = {data : that.addAddlData(that.state.data)};
         form.on("prevPage", changed => that.setState({ page: changed.page }));
         form.on("nextPage", changed => {
@@ -424,9 +426,9 @@ class FormRender extends React.Component {
           }
         });
         form.on("submit", submission => {
-          return that.saveForm(form,submission.data).then(response => {
+          var form_data = that.cleanData(submission.data);
+          return that.saveForm(form,form_data).then(response => {
             form.emit('submitDone', response);
-          });
         });
         form.on("error", errors => {
           var elm = document.getElementsByClassName("alert-danger")[0];
@@ -618,6 +620,7 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function (changed) {
+          console.log(changed.changed);
           var formdata = changed;
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
@@ -775,6 +778,8 @@ class FormRender extends React.Component {
           var parsedData = [];
           if (response.data) {
             parsedData = this.parseResponseData(JSON.parse(response.data));
+          }else if(this.state.data){
+            parsedData = this.state.data;
           }
           response.workflow_uuid
             ? (parsedData.workflow_uuid = response.workflow_uuid)
@@ -788,9 +793,9 @@ class FormRender extends React.Component {
             formId: response.form_id
           });
           this.createForm();
-          this.loadWorkflow();
         })
-      : this.loadWorkflow();
+    } 
+    this.loadWorkflow();
   }
 
   async PushDataPOST(api, method, item, body) {
