@@ -429,6 +429,7 @@ class FormRender extends React.Component {
           var form_data = that.cleanData(submission.data);
           return that.saveForm(form,form_data).then(response => {
             form.emit('submitDone', response);
+          });
         });
         form.on("error", errors => {
           var elm = document.getElementsByClassName("alert-danger")[0];
@@ -773,8 +774,8 @@ class FormRender extends React.Component {
   };
 
   componentDidMount() {
-    this.props.url
-      ? this.getFormContents(this.props.url).then(response => {
+    if(this.props.url)
+      {this.getFormContents(this.props.url).then(response => {
           var parsedData = [];
           if (response.data) {
             parsedData = this.parseResponseData(JSON.parse(response.data));
@@ -793,8 +794,7 @@ class FormRender extends React.Component {
             formId: response.form_id
           });
           this.createForm();
-        })
-    } 
+        })};
     this.loadWorkflow();
   }
 
