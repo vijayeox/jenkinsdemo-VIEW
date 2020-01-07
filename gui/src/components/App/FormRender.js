@@ -191,7 +191,17 @@ class FormRender extends React.Component {
   }
   async saveForm(form,data) {
     // this.core.make('oxzion/splash').show();
+    console.log(form);
       if (form._form["properties"] && form._form["properties"]["submission_commands"]) {
+        if (this.state.workflowInstanceId) {
+          form.data['workflowInstanceId'] = this.state.workflowInstanceId;
+          if (this.state.activityInstanceId) {
+             form.data['activityInstanceId'] = this.state.activityInstanceId;
+             if (this.state.instanceId) {
+                form.data['instanceId'] = $this.state.instanceId;
+             }
+          }
+        }
         this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.data))
         .then(response => {
           this.core.make("oxzion/splash").destroy();
@@ -486,6 +496,19 @@ class FormRender extends React.Component {
                     }
                   });
               }
+            }
+            if(form._form["properties"]["commands"]){
+              that
+               .callPipeline(form._form["properties"]["commands"], that.cleanData(form.data))
+               .then(response => {
+                    that.core.make("oxzion/splash").destroy();
+                    if (response.status == "success") {
+                        if (response.data) {
+                            form.submission = { data: that.addAddlData(response.data) };
+                            form.triggerChange();
+                        }
+                    }
+                });
             }
             if (form._form["properties"]["payment_confirmation_page"]) {
               var elements = document.getElementsByClassName(
