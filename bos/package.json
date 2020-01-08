@@ -92,7 +92,7 @@
     "react-notifications-component": "^1.1.1",
     "sanitize-filename": "^1.6.3",
     "signale": "^1.4.0",
-    "simplejsonconf": "^2.0.5",
+    "simplejsonconf": "2.0.5",
     "sweetalert2": "^8.16.3",
     "sweetalert2-react-content": "^1.1.0",
     "url-loader": "^1.1.2",
