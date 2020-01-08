@@ -14,6 +14,7 @@ class FormRender extends React.Component {
     this.core = this.props.core;
     var userprofile = this.core.make("oxzion/profile").get();
     this.privileges = userprofile.key.privileges;
+    this.userprofile = userprofile.key;
     this.state = {
       form: null,
       appId: this.props.appId,
@@ -314,12 +315,13 @@ class FormRender extends React.Component {
 
   cleanData(formData){
       formData.privileges = undefined;
+      formData.userprofile = undefined;
       return formData;
   }
 
   addAddlData(data){
     data = data ? data : {};
-    return merge(data, {privileges:this.privileges});
+    return merge(data, {privileges:this.privileges,userprofile: this.userprofile});
   }
 
   async getFormContents(url) {
