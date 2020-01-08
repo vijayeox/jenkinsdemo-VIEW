@@ -100,7 +100,7 @@ const init = () => {
   osjs.boot();
 };
 
-function myFunction() {
+function CheckAuthToken() {
   var AuthToken = localStorage.getItem("AUTH_token");
   if(!AuthToken)
   {
@@ -113,7 +113,7 @@ var AuthToken = localStorage.getItem("AUTH_token");
 if(AuthToken)
 {
   var temp = AuthToken;
-  setInterval(myFunction, 10000);
+  setInterval(CheckAuthToken, 10000);
 }
 
 window.addEventListener('DOMContentLoaded', () => init());
