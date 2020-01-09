@@ -492,9 +492,6 @@ export default class Login extends defaultLogin {
     this.on("login:start", () => a.setLoading(true));
     this.on("login:stop", () => {
       a.setLoading(false);
-      if(window.localStorage.getItem("AUTH_token")){
-        document.getElementById("ox-login-form").style.display = "none";
-      }
     });
     this.on("login:error", err => a.setError(err));
     window.onload = () => {
