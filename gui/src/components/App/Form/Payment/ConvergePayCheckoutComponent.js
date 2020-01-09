@@ -284,11 +284,11 @@ render(children) {
       }
     });
     var paymentPanel = `<div class="mb-2 card border panel panel-primary" style="display:none;" id="cardPayment">
-        <div class="card-header bg-primary panel-heading"><div ref="header" class="card-header bg-primary">
+        <div ref="header" class="card-header bg-primary">
     <span class="mb-0 card-title">
       Card Details
     </span>
-  </div></div>
+  </div>
         <div id="paymentPanel" class="card-body">
     <div class="row">
     <div class="col-md-12">
@@ -308,17 +308,13 @@ render(children) {
     ${expiryMonth}
     </div>
     </div>
-    </div></div><div class="row">
-    <div class="col-md-12">
-    <div class="form-group">
+    </div></div>
     ${convergepayToken}
-    </div>
-    </div>
-    </div>
     ${merchanttxnid}
-    <div class="convergepay-success" style="display:none;">Payment successful!</div>
+    <div class="row"><div class="col-md-12" style="text-align:center;">
     <button style="display:block;" action="submit" id="makePayment" class="btn btn-success" label="Pay">Complete Application</button>
-    </div></div>`;
+    </div>
+    <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>`;
     var component = super.render(row+paymentPanel);
     return component;
   }

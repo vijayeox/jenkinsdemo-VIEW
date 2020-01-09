@@ -445,10 +445,13 @@ class FormRender extends React.Component {
         this.state.content,
         options
       ).then(function(form) {
-        console.log(form)
         if (that.state.page && form.wizard) {
           if (form.wizard.display == "wizard") {
-            form.setPage(that.state.page);
+            form.setPage(parseInt(that.state.page));
+            var breadcrumbs = document.getElementById(form.wizardKey+'-header');
+            if(breadcrumbs){
+              breadcrumbs.style.display = 'none';
+            }
           }
         }
         form.submission = {data : that.addAddlData(that.state.data)};
@@ -561,15 +564,21 @@ class FormRender extends React.Component {
           }
         });
         form.on("render", function () {
-          var elm = document.getElementsByClassName("breadcrumbParent");
-          if (elm.length > 0) {
-            scrollIntoView(elm[0], {
-              scrollMode: "if-needed",
-              block: "center",
-              behavior: "smooth",
-              inline: "nearest"
-            });
+          if (form.wizard.display == "wizard") {
+            var breadcrumbs = document.getElementById(form.wizardKey+'-header');
+            if(breadcrumbs){
+              breadcrumbs.style.display = 'none';
+            }
           }
+          // var elm = document.getElementsByClassName(this.state.appId+"_breadcrumbParent");
+          // if (elm.length > 0) {
+          //   scrollIntoView(elm[0], {
+          //     scrollMode: "if-needed",
+          //     block: "center",
+          //     behavior: "smooth",
+          //     inline: "nearest"
+          //   });
+          // }
           if (form.originalComponent["properties"]) {
             if (form.originalComponent["properties"]["delegate"]) {
               if (form.originalComponent["properties"]["delegate"]) {

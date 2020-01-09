@@ -22,18 +22,18 @@ export default class DocumentComponent extends Base {
     schema: DocumentComponent.schema()
   }
 
-render(children) {
-  let input = this.renderTemplate('input', {
-          input: {
-            type: 'input',
-            ref: `${this.component.key}`,
-            attr: {
-              id: `${this.component.key}`,
-              class: 'form-control',
-              type: 'hidden',
-            }
-          }
-        });
+  render(children) {
+    let input = this.renderTemplate('input', {
+      input: {
+        type: 'input',
+        ref: `${this.component.key}`,
+        attr: {
+          id: `${this.component.key}`,
+          class: 'form-control',
+          type: 'hidden',
+        }
+      }
+    });
     return super.render(`${input}`);
   }
   attach(element) {
@@ -46,11 +46,9 @@ render(children) {
     info.type = 'input';
     info.attr.type = 'hidden';
     info.changeEvent = 'change';
-    console.log(info)
     return info;
   }
-build(element) {
-    console.log(element);
+  build(element) {
     super.build(element);
   }
 }
