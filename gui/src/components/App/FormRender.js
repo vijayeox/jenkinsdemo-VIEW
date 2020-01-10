@@ -457,7 +457,7 @@ class FormRender extends React.Component {
             }
           }
         }
-        form.submission = {data : that.addAddlData(that.state.data)};
+        form.submission = {data : that.parseResponseData(that.addAddlData(that.state.data))};
               console.log(form.submission);
         form.on("prevPage", changed => {
           form.emit("render");
