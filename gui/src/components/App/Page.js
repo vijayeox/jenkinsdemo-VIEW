@@ -19,10 +19,15 @@ class Page extends React.Component {
     
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
     let pageContent = [];
-    if(this.proc.args){
-      pageContent.push(JSON.parse(this.proc.args));
-      this.proc.args = undefined;
-    }else{
+    if(typeof this.proc.args === 'string'){
+      try {
+        pageContent.push(JSON.parse(this.proc.args));
+        this.proc.args = undefined;
+      } catch(e){
+        this.loadPage(this.props.pageId);
+        console.log("No params!");
+      }
+    } else {
       this.loadPage(this.props.pageId);
     }
     this.state = {
