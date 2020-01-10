@@ -16,16 +16,23 @@ class Page extends React.Component {
     this.core = this.props.core;
     this.appId = this.props.app;
     this.proc = this.props.proc;
+    
+    this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
+    let pageContent = [];
+    if(this.proc.args){
+      pageContent.push(JSON.parse(this.proc.args));
+      this.proc.args = undefined;
+    }else{
+      this.loadPage(this.props.pageId);
+    }
     this.state = {
-      pageContent: [],
+      pageContent: pageContent,
       pageId: this.props.pageId,
       submission: this.props.submission,
       showLoader: false,
       fileId: null,
       currentRow: []
     };
-    this.contentDivID = "root_" + this.appId + "_" + this.state.pageId;
-    this.loadPage(this.props.pageId);
     this.updatePageView = this.updatePageView.bind(this);
   }
 
@@ -33,6 +40,7 @@ class Page extends React.Component {
     document
       .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
+    
   }
 
   componentDidUpdate(prevProps) {
@@ -397,24 +405,27 @@ class Page extends React.Component {
   }
 
   render() {
-    if (
-      this.state.pageContent &&
-      this.state.pageContent.length > 0 &&
-      !this.state.showLoader
-    ) {
-      var pageRender = this.renderContent(this.state.pageContent);
+    
+      if (
+        this.state.pageContent &&
+        this.state.pageContent.length > 0 &&
+        !this.state.showLoader
+      ) {
+        var pageRender = this.renderContent(this.state.pageContent);
+        return (
+          <div id={this.contentDivID} className="AppBuilderPage">
+            {pageRender}
+          </div>
+        );
+      }
       return (
-        <div id={this.contentDivID} className="AppBuilderPage">
-          {pageRender}
+        <div className="loaderAnimation">
+          <Loader type="Circles" color="#275362" height={100} width={100} />
         </div>
       );
     }
-    return (
-      <div className="loaderAnimation">
-        <Loader type="Circles" color="#275362" height={100} width={100} />
-      </div>
-    );
-  }
+    
+  
 }
 
 export default Page;

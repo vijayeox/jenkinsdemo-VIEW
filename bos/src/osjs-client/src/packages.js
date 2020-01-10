@@ -325,12 +325,30 @@ export default class Packages {
    * Autostarts tagged packages
    */
   _autostart() {
-    var userDetails = this.core.make('oxzion/profile').get();
-    var appList = userDetails.key.blackListedApps;
-            
+    let userDetails = this.core.make('oxzion/profile').get();
+    let appList = userDetails.key.blackListedApps;
     this.metadata
       .filter(pkg => pkg.autostart === true && !(pkg.name in appList))
-      .forEach(pkg => this.launch(pkg.name));
+      .forEach((pkg) => {
+        // OXZION START CHANGE
+        let params = {};
+        let queryString = window.location.search.substr(1);
+        if (queryString) {
+          let queryObj = queryString.split('&').reduce((prev, curr, i, arr) => {
+            let p = curr.split('=');
+            prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+            return prev;
+          }, {});
+          const appName = queryObj.app;
+          if(appName === pkg.name) {
+            if(queryObj.params) {
+              params = queryObj.params;
+            }
+          }
+        }
+        // OXZION END CHANGE
+        this.launch(pkg.name, params);
+      });
   }
 
   /**
