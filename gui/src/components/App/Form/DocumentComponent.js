@@ -1,12 +1,45 @@
-import _ from 'lodash';
-import Validator from 'formiojs/components/Validator';
-import BaseComponent from 'formiojs/components/base/Base';
-import Formio from 'formiojs/Formio';
+import Base from 'formiojs/components/_classes/component/Component';
+import editForm from 'formiojs/components/table/Table.form';
 
-export default class DocumentComponent extends BaseComponent {
+export default class DocumentComponent extends Base {
   constructor(component, options, data) {
     super(component, options, data);
   }
+  static schema(...extend) {
+    return Base.schema({
+      label: 'document',
+      type: 'document'
+    }, ...extend);
+  }
+  get defaultSchema() {
+    return DocumentComponent.schema();
+  }
+  static builderInfo = {
+    title: 'Document',
+    group: 'basic',
+    icon: 'fa fa-file',
+    weight: 70,
+    schema: DocumentComponent.schema()
+  }
+
+  render(children) {
+    let input = this.renderTemplate('input', {
+      input: {
+        type: 'input',
+        ref: `${this.component.key}`,
+        attr: {
+          id: `${this.component.key}`,
+          class: 'form-control',
+          type: 'hidden',
+        }
+      }
+    });
+    return super.render(`${input}`);
+  }
+  attach(element) {
+    return super.attach(element);
+  }
+  static editForm = editForm
 
   elementInfo() {
     const info = super.elementInfo();
@@ -15,12 +48,7 @@ export default class DocumentComponent extends BaseComponent {
     info.changeEvent = 'change';
     return info;
   }
-
-  build() {
-    super.build();
+  build(element) {
+    super.build(element);
   }
-}
-
-if (typeof global === 'object' && global.Formio && global.Formio.registerComponent) {
-  global.Formio.registerComponent('document', DocumentComponent);
 }

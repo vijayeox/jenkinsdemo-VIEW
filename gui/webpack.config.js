@@ -34,7 +34,10 @@ module.exports = {
     osjs: "OSjs"
   },
   optimization: {
-    minimize
+    minimize,
+    minimizer: [
+    new OptimizeCSSAssetsPlugin({})
+    ]
   },
   plugins: [
     new MiniCssExtractPlugin({
