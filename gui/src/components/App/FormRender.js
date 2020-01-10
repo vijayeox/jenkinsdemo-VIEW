@@ -208,6 +208,9 @@ class FormRender extends React.Component {
         }
     }
       if (form._form["properties"] && form._form["properties"]["submission_commands"]) {
+        if(this.state.workflowId){
+          form.data['workflowId'] = this.state.workflowId;
+        }
         if (this.state.workflowInstanceId) {
           form.data['workflowInstanceId'] = this.state.workflowInstanceId;
           if (this.state.activityInstanceId) {
