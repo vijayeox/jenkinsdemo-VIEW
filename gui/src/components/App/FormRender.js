@@ -781,8 +781,8 @@ class FormRender extends React.Component {
   };
 
   componentDidMount() {
-    if(this.props.url) {
-      this.getFormContents(this.props.url).then(response => {
+    if(this.props.url)
+      {this.getFormContents(this.props.url).then(response => {
         var parsedData = [];
         if (response.data) {
           parsedData = this.parseResponseData(JSON.parse(response.data));
@@ -800,25 +800,11 @@ class FormRender extends React.Component {
           workflowId: response.workflow_uuid,
           formId: response.form_id
         });
-        if (this.state.parentWorkflowInstanceId) {
-          this.getFileData().then(response => {
-            if (response.status == "success") {
-              let fileData = JSON.parse(response.data.data);
-              fileData.parentWorkflowInstanceId = this.props.parentWorkflowInstanceId;
-              fileData.workflowInstanceId = undefined;
-              fileData.activityId = undefined;
-              this.setState({ data: this.parseResponseData(fileData) });
-              this.setState({ formDivID: "formio_" + this.state.formId });
-              this.createForm();
-            }
-          });
-        } else {
-          this.createForm();
-          this.loadWorkflow();
-        }
-      })
-    };
+        this.createForm();
+      })};
+    this.loadWorkflow();
   }
+
 
   async PushDataPOST(api, method, item, body) {
     if (method == "put") {
