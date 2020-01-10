@@ -125,7 +125,7 @@ class FormRender extends React.Component {
       workflowId: this.state.workflowId,
       route: route
     });
-    let response = await helper.request("v1", "/errorlog", params, "post");
+    let response = await helper.request("v1", "/app/"+this.state.appId+"/errorlog", params, "post");
     return;
   }
   async deleteCacheData() {
@@ -366,11 +366,11 @@ class FormRender extends React.Component {
       this.getFileData().then(response => {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
-          console.log(fileData.workflowInstanceId);
+          console.log(fileData);
           fileData.parentWorkflowInstanceId = that.props.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
-          that.setState({ data: fileData });
+          that.setState({ data: that.parseResponseData(fileData) });
           that.setState({ formDivID: "formio_" + that.state.formId });
           that.createForm();
         }
@@ -446,7 +446,7 @@ class FormRender extends React.Component {
         options
       ).then(function(form) {
         if (that.state.page && form.wizard) {
-          if (form.wizard.display == "wizard") {
+          if (form.wizard && form.wizard.display == "wizard") {
             form.setPage(parseInt(that.state.page));
             var breadcrumbs = document.getElementById(form.wizardKey+'-header');
             if(breadcrumbs){
@@ -564,7 +564,7 @@ class FormRender extends React.Component {
           }
         });
         form.on("render", function () {
-          if (form.wizard.display == "wizard") {
+          if (form.wizard && form.wizard.display == "wizard") {
             var breadcrumbs = document.getElementById(form.wizardKey+'-header');
             if(breadcrumbs){
               breadcrumbs.style.display = 'none';
@@ -579,186 +579,14 @@ class FormRender extends React.Component {
           //     inline: "nearest"
           //   });
           // }
-          if (form.originalComponent["properties"]) {
-            if (form.originalComponent["properties"]["delegate"]) {
-              if (form.originalComponent["properties"]["delegate"]) {
-                that
-                  .callDelegate(form.originalComponent["properties"]["delegate"], that.cleanData(form.data))
-                  .then(response => {
-                    that.core.make("oxzion/splash").destroy();
-                    if (response.data) {
-                      form.submission = { data: that.addAddlData(response.data) };
-                      form.triggerChange();
-                    }
-                  });
-              }
-            }
-            if(form.originalComponent["properties"]["commands"]){
-              that
-               .callPipeline(form.originalComponent["properties"]["commands"], that.cleanData(form.data))
-               .then(response => {
-                    that.core.make("oxzion/splash").destroy();
-                    if (response.status == "success") {
-                        if (response.data) {
-                            form.submission = { data: that.addAddlData(response.data) };
-                            form.triggerChange();
-                        }
-                    }
-                });
-            }
-            if (form.originalComponent["properties"]["payment_confirmation_page"]) {
-              var elements = document.getElementsByClassName(
-                "btn-wizard-nav-submit"
-              );
-              that.getPayment(that.cleanData(form.submission.data)).then(response => {
-                var responseArray = [];
-                if (response.data) {
-                  var evt = new CustomEvent("paymentDetails", {
-                    detail: response.data[0]
-                  });
-                  window.dispatchEvent(evt);
-                }
-              });
-              window.addEventListener(
-                "requestPaymentToken",
-                function(e) {
-                  e.stopPropagation();
-                  that.core.make("oxzion/splash").show();
-                  that
-                    .callPayment({
-                      firstname: e.detail.firstname,
-                      lastname: e.detail.lastname,
-                      amount: e.detail.amount
-                    })
-                    .then(response => {
-                      var transactionIdComponent = form.getComponent(
-                        "transaction_id"
-                      );
-                      if (response.data.transaction.id && response.data.token) {
-                        transactionIdComponent.setValue(
-                          response.data.transaction.id
-                        );
-                        var evt = new CustomEvent("getPaymentToken", {
-                          detail: response.data
-                        });
-                        window.dispatchEvent(evt);
-                      } else {
-                        that.notif.current.notify(
-                          "Error",
-                          "Transaction Token Failed!",
-                          "danger"
-                        )
-                      }
-                      that.core.make("oxzion/splash").destroy();
-                    });
-                },
-                true
-              );
-              window.addEventListener(
-                "paymentSuccess",
-                function(e) {
-                  e.stopPropagation();
-                  that.core.make("oxzion/splash").show();
-                  var transactionIdComponent = form.getComponent(
-                    "transaction_id"
-                  );
-                  that
-                    .storePayment({
-                      transaction_id: transactionIdComponent.getValue(),
-                      data: e.detail.data,
-                      status: e.detail.status
-                    })
-                    .then(response => {
-                      that.notif.current.notify(
-                        "Payment has been Successfully completed!",
-                        "Please wait while we get things ready!", "success"
-                      );
-                      var formsave = that.saveForm(form,that.cleanData(form.submission.data));
-                      var transactionStatusComponent = form.getComponent(
-                        "transaction_status"
-                      );
-                      transactionStatusComponent.setValue(e.detail.status);
-                      if (formsave) {
-                        that.notif.current.notify(
-                          "Success",
-                          "Application Has been Successfully Submitted",
-                          "success"
-                        );
-                        that.core.make("oxzion/splash").destroy();
-                      } else {
-                        that.notif.current.notify(
-                          "Error",
-                          e.detail.message,
-                          "danger"
-                        );
-                      }
-                    });
-                },
-                true
-              );
-              window.addEventListener(
-                "paymentDeclined",
-                function(e) {
-                  e.stopPropagation();
-                  console.log(e.detail);
-                  var transactionIdComponent = form.getComponent(
-                    "transaction_id"
-                  );
-                  console.log;
-                  that
-                    .storePayment({
-                      transaction_id: transactionIdComponent.getValue(),
-                      data: e.detail.data
-                    })
-                    .then(response => {
-                      that.notif.current.notify(
-                        "Error",
-                        e.detail.message,
-                        "danger"
-                      );
-                      that.core.make("oxzion/splash").destroy();
-                    });
-                },
-                true
-              );
-              window.addEventListener(
-                "paymentError",
-                function(e) {
-                  e.stopPropagation();
-                  console.log(e.detail);
-                  var transactionIdComponent = form.getComponent(
-                    "transaction_id"
-                  );
-                  that
-                    .storePayment({
-                      transaction_id: transactionIdComponent.getValue(),
-                      data: e.detail.data
-                    })
-                    .then(response => {
-                      that.notif.current.notify(
-                        "Error",
-                        e.detail.message,
-                        "danger"
-                      );
-                      that.core.make("oxzion/splash").destroy();
-                    });
-                },
-                true
-              );
-              window.addEventListener(
-                "paymentPending",
-                function(e) {
-                  that.core.make("oxzion/splash").show();
-                  e.stopPropagation();
-                  that.notif.current.notify(
-                    "Information",
-                    e.detail.message,
-                    "default"
-                  );
-                },
-                true
-              );
-            }
+          if(that.state.data){
+            form.submission.data = that.parseResponseData(that.state.data);
+          }
+          if(form._form['properties']){
+            that.runDelegates(form,form._form['properties']);
+          }
+          if(form.originalComponent['properties']){
+            that.runDelegates(form,form.originalComponent['properties']);
           }
         });
         form.on("customEvent",function(event){
@@ -831,8 +659,190 @@ class FormRender extends React.Component {
           }
           }
         });
+        form.emit('render');
       });
     }
+  }
+  runDelegates(form,properties){
+          if (properties) {
+            if (properties["delegate"]) {
+                this
+                  .callDelegate(properties["delegate"], this.cleanData(form.data))
+                  .then(response => {
+                    this.core.make("oxzion/splash").destroy();
+                    if (response.data) {
+                      form.submission = { data: this.addAddlData(response.data) };
+                      form.triggerChange();
+                    }
+                  });
+            }
+            if(properties["commands"]){
+              this
+               .callPipeline(properties["commands"], this.cleanData(form.data))
+               .then(response => {
+                    this.core.make("oxzion/splash").destroy();
+                    if (response.status == "success") {
+                        if (response.data) {
+                            form.submission = { data: this.addAddlData(response.data) };
+                            form.triggerChange();
+                        }
+                    }
+                });
+            }
+            if (properties["payment_confirmation_page"]) {
+              var elements = document.getElementsByClassName(
+                "btn-wizard-nav-submit"
+              );
+              this.getPayment(this.cleanData(form.submission.data)).then(response => {
+                var responseArray = [];
+                if (response.data) {
+                  var evt = new CustomEvent("paymentDetails", {
+                    detail: response.data[0]
+                  });
+                  window.dispatchEvent(evt);
+                }
+              });
+              window.addEventListener(
+                "requestPaymentToken",
+                function(e) {
+                  e.stopPropagation();
+                  this.core.make("oxzion/splash").show();
+                  this
+                    .callPayment({
+                      firstname: e.detail.firstname,
+                      lastname: e.detail.lastname,
+                      amount: e.detail.amount
+                    })
+                    .then(response => {
+                      var transactionIdComponent = form.getComponent(
+                        "transaction_id"
+                      );
+                      if (response.data.transaction.id && response.data.token) {
+                        transactionIdComponent.setValue(
+                          response.data.transaction.id
+                        );
+                        var evt = new CustomEvent("getPaymentToken", {
+                          detail: response.data
+                        });
+                        window.dispatchEvent(evt);
+                      } else {
+                        this.notif.current.notify(
+                          "Error",
+                          "Transaction Token Failed!",
+                          "danger"
+                        )
+                      }
+                      this.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentSuccess",
+                function(e) {
+                  e.stopPropagation();
+                  this.core.make("oxzion/splash").show();
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  this
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data,
+                      status: e.detail.status
+                    })
+                    .then(response => {
+                      this.notif.current.notify(
+                        "Payment has been Successfully completed!",
+                        "Please wait while we get things ready!", "success"
+                      );
+                      var formsave = this.saveForm(form,this.cleanData(form.submission.data));
+                      var transactionStatusComponent = form.getComponent(
+                        "transaction_status"
+                      );
+                      transactionStatusComponent.setValue(e.detail.status);
+                      if (formsave) {
+                        this.notif.current.notify(
+                          "Success",
+                          "Application Has been Successfully Submitted",
+                          "success"
+                        );
+                        this.core.make("oxzion/splash").destroy();
+                      } else {
+                        this.notif.current.notify(
+                          "Error",
+                          e.detail.message,
+                          "danger"
+                        );
+                      }
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentDeclined",
+                function(e) {
+                  e.stopPropagation();
+                  console.log(e.detail);
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  console.log;
+                  this
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data
+                    })
+                    .then(response => {
+                      this.notif.current.notify(
+                        "Error",
+                        e.detail.message,
+                        "danger"
+                      );
+                      this.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentError",
+                function(e) {
+                  e.stopPropagation();
+                  console.log(e.detail);
+                  var transactionIdComponent = form.getComponent(
+                    "transaction_id"
+                  );
+                  this
+                    .storePayment({
+                      transaction_id: transactionIdComponent.getValue(),
+                      data: e.detail.data
+                    })
+                    .then(response => {
+                      this.notif.current.notify(
+                        "Error",
+                        e.detail.message,
+                        "danger"
+                      );
+                      this.core.make("oxzion/splash").destroy();
+                    });
+                },
+                true
+              );
+              window.addEventListener(
+                "paymentPending",
+                function(e) {
+                  this.core.make("oxzion/splash").show();
+                  e.stopPropagation();
+                  this.notif.current.notify(
+                    "Information",
+                    e.detail.message,
+                    "default"
+                  );
+                },
+                true
+              );
+            }
+          }
   }
 
   parseResponseData = data => {
