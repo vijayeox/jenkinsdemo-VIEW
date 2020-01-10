@@ -307,14 +307,14 @@ render(children) {
     <div class="form-group">
     ${expiryMonth}
     </div>
-    </div>
     </div></div>
     ${convergepayToken}
     ${merchanttxnid}
     <div class="row"><div class="col-md-12" style="text-align:center;">
-    <button style="display:block;" action="submit" id="makePayment" class="btn btn-success" label="Pay">Complete Application</button>
+    <button style="display:inline-block;" action="submit" id="makePayment" class="btn btn-success" label="Pay">Complete Application</button>
     </div>
-    <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>`;
+    <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>
+    </div>`;
     var component = super.render(row+paymentPanel);
     return component;
   }
