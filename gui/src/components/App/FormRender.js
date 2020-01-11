@@ -220,12 +220,11 @@ class FormRender extends React.Component {
              }
           }
         }
-        this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data))
-        .then(response => {
+        this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(response => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
-            form.submission = { data: this.addAddlData(response.data) };
+            form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
             form.triggerChange();
           }
           this.deleteCacheData().then(response2 => {
@@ -469,18 +468,15 @@ class FormRender extends React.Component {
           if (form.pages[changed.page]["properties"]["delegate"]) {
             if (form.pages[changed.page]["properties"]["delegate"]) {
               var form_data = that.cleanData(form.submission.data);
-              that
-                .callDelegate(
-                  form.pages[changed.page]["properties"]["delegate"],
-                  form_data
-                )
-                .then(response => {
+              that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data).then(response => {
+                if(response){
                   that.core.make("oxzion/splash").destroy();
                   if (response.data) {
-                    form.submission = { data: that.addAddlData(response.data) };
+                    form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
                     form.triggerChange();
                   }
-                });
+                }
+              });
             }
           }
         });
@@ -514,22 +510,22 @@ class FormRender extends React.Component {
             if (properties) {
               if (properties["delegate"]) {
                 that.core.make("oxzion/splash").show();
-                that
-                  .callDelegate(properties["delegate"], that.cleanData(formdata.data))
-                  .then(response => {
-                    var responseArray = [];
-                    for (var responseDataItem in response.data) {
-                      if (response.data.hasOwnProperty(responseDataItem)) {
-                        responseArray[responseDataItem] =
+                that.callDelegate(properties["delegate"], that.cleanData(formdata.data)).then(response => {
+                    if(response){
+                      var responseArray = [];
+                      for (var responseDataItem in response.data) {
+                        if (response.data.hasOwnProperty(responseDataItem)) {
+                          responseArray[responseDataItem] =
                           response.data[responseDataItem];
+                        }
                       }
+                      if (response.data) {
+                        console.log(response.data);
+                        form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
+                        form.triggerChange();
+                      }
+                      that.core.make("oxzion/splash").destroy();
                     }
-                    if (response.data) {
-                      console.log(response.data);
-                      form.submission = { data: that.addAddlData(response.data) };
-                      form.triggerChange();
-                    }
-                    that.core.make("oxzion/splash").destroy();
                   });
               }
               if (properties["target"]) {
@@ -638,7 +634,7 @@ class FormRender extends React.Component {
                               changed[properties["destinationDataKey"]].push(response.data);
                             }
                           }
-                          form.submission = { data: changed };
+                          form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
                           form.triggerChange();
                         }
                       }
@@ -651,7 +647,7 @@ class FormRender extends React.Component {
                     .then(response => {
                       that.core.make("oxzion/splash").destroy();
                       if (response.data) {
-                        form.submission = { data: that.addAddlData(response.data) };
+                        form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
                         form.triggerChange();
                       }
                     });
@@ -661,16 +657,20 @@ class FormRender extends React.Component {
           }
           }
         });
-        // form.on('ready',function(){
-        //   console.log('test');
-        //   if(form._form['properties']){
-        //     that.runDelegates(form,form._form['properties']);
-        //   }
-        //   if(form.originalComponent['properties']){
-        //     that.runDelegates(form,form.originalComponent['properties']);
-        //   }
+        form.formReady.then( () => {
+          console.log('formReady');
+          // form.emit('render');
+        });
+        form.submissionReady.then( () => {
+          console.log('submissionReady');
+          form.emit('render');
+        });
+        // form.formReady.then( () => {
+        //   console.log('formReady');
+        //   form.emit('render');
         // });
-        form.emit('render');
+        console.log(form);
+        // form.emit('render');
       });
     }
   }
@@ -680,7 +680,7 @@ class FormRender extends React.Component {
                 this.callDelegate(properties["delegate"], form.submission.data).then(response => {
                     this.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.submission = { data: this.addAddlData(response.data) };
+                      form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
                       form.triggerChange();
                     }
                   });
@@ -690,7 +690,7 @@ class FormRender extends React.Component {
                     this.core.make("oxzion/splash").destroy();
                     if (response.status == "success") {
                         if (response.data) {
-                            form.submission = { data: this.addAddlData(response.data) };
+                            form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
                             form.triggerChange();
                         }
                     }
