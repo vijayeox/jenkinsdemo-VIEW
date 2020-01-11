@@ -29,24 +29,30 @@ class AggregateValueEditor extends AbstractEditor {
         //Make sure widget configuratio is valid JSON
         let configuration = this.state.configuration;
         let jsonWidgetConfiguration = null;
-        try {
-            jsonWidgetConfiguration = JSON.parse(configuration);
+        if (!configuration || ('' === configuration)) {
+            jsonWidgetConfiguration = {}; //Empty configuration.
         }
-        catch(jsonParseError) {
-            console.error(jsonParseError);
-            errorMessage = this.ERRORS.WIDGET_CONFIGURATION_INVALID_JSON;
-        }
-        if (jsonWidgetConfiguration) {
-            let previewElement = document.querySelector('div#widgetPreview');
-            previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
+        else {
             try {
-                WidgetRenderer.renderAggregateValue(previewElement, jsonWidgetConfiguration, this.data);
+                jsonWidgetConfiguration = JSON.parse(configuration);
             }
-            catch(renderError) {
-                console.error(renderError);
-                errorMessage = '' + renderError;
+            catch(jsonParseError) {
+                console.error(jsonParseError);
+                errorMessage = this.ERRORS.WIDGET_CONFIGURATION_INVALID_JSON;
             }
         }
+
+        //Render the preview.
+        let previewElement = document.querySelector('div#widgetPreview');
+        previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
+        try {
+            WidgetRenderer.renderAggregateValue(previewElement, jsonWidgetConfiguration, this.data);
+        }
+        catch(renderError) {
+            console.error(renderError);
+            errorMessage = '' + renderError;
+        }
+
         this.setState((state) => {
             state.errors.configuration = state.readOnly ? null : errorMessage;
             return state;
@@ -91,7 +97,7 @@ class AggregateValueEditor extends AbstractEditor {
         let isValid = true;
         let errorMessage = null;
         let expression = state.expression;
-        if (expression) {
+        if (expression && (expression !== '')) {
             try {
                 //Make sure expression is valid JSON
                 JSON.parse(expression);

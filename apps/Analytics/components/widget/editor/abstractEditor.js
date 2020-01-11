@@ -34,17 +34,17 @@ class AbstractEditor extends React.Component {
                 queries.push({
                     'uuid':query['uuid'],
                     'configuration':{
-                        'filter': configuration.filter ? JSON.parse(configuration.filter) : null,
-                        'grouping': configuration.grouping ? JSON.parse(configuration.grouping) : null,
-                        'sort': configuration.sort ? JSON.parse(configuration.sort) : null
+                        'filter': configuration ? (configuration.filter ? JSON.parse(configuration.filter) : null) : null,
+                        'grouping': configuration ? (configuration.grouping ? JSON.parse(configuration.grouping) : null) : null,
+                        'sort': configuration ? (configuration.sort ? JSON.parse(configuration.sort) : null) : null
                     }
                 });
             });
         }
         
         return {
-            configuration:JSON.parse(this.state.configuration),
-            expression:JSON.parse(this.state.expression),
+            configuration:this.state.configuration ? JSON.parse(this.state.configuration) : null,
+            expression:this.state.expression ? JSON.parse(this.state.expression) : null,
             queries:queries
         }
     }

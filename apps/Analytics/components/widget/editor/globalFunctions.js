@@ -55,16 +55,6 @@ window.onDialogEvent = function(dialogEvent) {
             window.skipUserInputValidation = false;
         break;
         case 'ok':
-            let widgetEditorApp = window.widgetEditorApp;
-            if (!widgetEditorApp.isEdited()) {
-                console.debug('Widget has not been edited. Close dialog.');
-                return;
-            }
-            if (window.skipUserInputValidation) {
-                console.debug('skipUserInputValidation is true. Close dialog.');
-                return;
-            }
-
             function closeDialogWindow(data) {
                 window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
                 window.skipUserInputValidation = true;
@@ -74,6 +64,24 @@ window.onDialogEvent = function(dialogEvent) {
                 }
                 let button = buttons[0];
                 button.click();
+            }
+
+            let widgetEditorApp = window.widgetEditorApp;
+            if (!widgetEditorApp.isEdited()) {
+                console.debug('Widget has not been edited. Check for widget selection.');
+                let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
+                if (data.id) {
+                    console.debug('Existing widget has been selected. Embedding it in dashboard.');
+                    closeDialogWindow(data);
+                }
+                else {
+                    console.debug('No widget has been selected. Just close dialog.');
+                }
+                return;
+            }
+            if (window.skipUserInputValidation) {
+                console.debug('skipUserInputValidation is true. Close dialog.');
+                return;
             }
 
             widgetEditorApp.hasUserInputErrors(true).then(function(hasErrors) {
