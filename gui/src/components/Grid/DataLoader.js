@@ -12,14 +12,11 @@ export class DataLoader extends React.Component {
     this.state = {
       url: this.props.url
     };
-    this.notif = React.createRef();
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
-    this.loader = null;
   }
 
   async getData(url) {
-
     if (typeof this.core == "undefined") {
       let response = await fetch(url, this.init);
       let json = await response.json();
@@ -30,11 +27,11 @@ export class DataLoader extends React.Component {
       let data = await helper.request(
         "v1",
         "/" +
-        url +
-        "?" +
-        "filter=[" +
-        JSON.stringify(this.props.dataState) +
-        "]",
+          url +
+          "?" +
+          "filter=[" +
+          JSON.stringify(this.props.dataState) +
+          "]",
         {},
         "get"
       );
@@ -42,14 +39,7 @@ export class DataLoader extends React.Component {
     }
   }
 
-  componentDidMount() {
-    if (!this.loader) {
-      this.loader = this.core.make('oxzion/splash');
-    }
-
-  }
   componentDidUpdate(prevProps) {
-
     if (this.props.url !== prevProps.url) {
       this.setState({
         url: this.props.url
@@ -93,25 +83,10 @@ export class DataLoader extends React.Component {
         this.lastSuccess = this.pending;
         this.pending = "";
         if (toODataString(this.props.dataState) === this.lastSuccess) {
-
-          if (response.status !== "success") {
-            //status code 500
-            this.loader.destroy()
-            this.notif.current.notify(
-              "Error",
-              "No response",
-              "danger");
-              
-            this.setState({
-              pending:false
-            })
-          }
-          else {
-            this.props.onDataRecieved.call(undefined, {
-              data: response.data,
-              total: response.total ? response.total : null
-            });
-          }
+          this.props.onDataRecieved.call(undefined, {
+            data: response.data,
+            total: response.total ? response.total : null
+          });
         } else {
           this.requestDataIfNeeded();
         }
