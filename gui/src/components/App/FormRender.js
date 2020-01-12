@@ -30,7 +30,8 @@ class FormRender extends React.Component {
       hasPayment: false,
       content: this.props.content,
       data: this.props.data,
-      page: this.props.page
+      page: this.props.page,
+      currentForm: null
     };
     this.helper = this.core.make("oxzion/restClient");
     this.notif = React.createRef();
@@ -192,6 +193,9 @@ class FormRender extends React.Component {
   }
   async saveForm(form,data) {
     // this.core.make('oxzion/splash').show();
+    if(!form){
+      form = this.state.currentForm;
+    }
     var componentList = flattenComponents(form._form.components,true);
     for (var componentKey in componentList) {
         var componentItem = componentList[componentKey];
@@ -220,34 +224,30 @@ class FormRender extends React.Component {
              }
           }
         }
-        this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(response => {
+        await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async(response) => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
             form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
             form.triggerChange();
           }
-          this.deleteCacheData().then(response2 => {
+          await this.deleteCacheData().then(response2 => {
             if (response2.status == "success") {
               this.props.postSubmitCallback();
             }
             return response;
           });
         } else {
-          this.storeCache(data).then(cacheResponse => {
+          await this.storeCache(data).then(async(cacheResponse) => {
             if (response.data.errors) {
-              this.storeError(data, response.data.errors, route).then(
+              await this.storeError(data, response.data.errors, route).then(
                 storeErrorResponse => {
-                  this.notif.current.notify(
-                    "Error",
-                    "Form Submission Failed",
-                    "danger"
-                    )
-                }
-                );
+                  this.notif.current.notify("Error","Form Submission Failed","danger")
+                });
+            } else {
+              return response;
             }
           });
-          return;
         }
         });
     } else {
@@ -300,32 +300,30 @@ class FormRender extends React.Component {
           method = "put";
         }
       }
-      await helper.request("v1", route, data, method).then(response => {
+      var response = await helper.request("v1", route, data, method).then(async(response) => {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
-          this.deleteCacheData().then(response2 => {
+          var cache = await this.deleteCacheData().then(response2 => {
             if (response2.status == "success") {
               this.props.postSubmitCallback();
             }
-            return response;
           });
+          return response;
         } else {
-          this.storeCache(data).then(cacheResponse => {
+          var storeCache = await this.storeCache(data).then(async(cacheResponse) => {
             if (response.data.errors) {
-              this.storeError(data, response.data.errors, route).then(
-                storeErrorResponse => {
-                  this.notif.current.notify(
-                    "Error",
-                    "Form Submission Failed",
-                    "danger"
-                    )
-                }
-                );
+              var storeError = await this.storeError(data, response.data.errors, route).then((storeErrorResponse) => {
+                  this.notif.current.notify("Error","Form Submission Failed","danger");
+                  return storeErrorResponse;
+                });
+            } else {
+              return storeErrorResponse;
             }
           });
-          return;
         }
+        return response;
       });
+      return response;
     }
   }
 
@@ -439,6 +437,23 @@ class FormRender extends React.Component {
         beforeNext: (currentPage, submission, next) => {
           that.storeCache(submission.data);
           next(null);
+        },
+        beforeSubmit: async(submission,next) =>{
+          var form_data = that.cleanData(submission.data);
+          var formSave =  await that.saveForm(null,form_data).then(function(response){
+            console.log(response);
+            if(response.status=='success'){
+              next(null);
+            } else {
+              var submitErrors = [];
+              if(response.data.errors){
+                submitErrors.push(response.data.errors);
+              } else {
+                submitErrors.push(response.message);
+              }
+              next(submitErrors);
+            }
+          });
         }
       };
       options.hooks = hooks;
@@ -481,10 +496,11 @@ class FormRender extends React.Component {
           }
         });
         form.on("submit", submission => {
-          var form_data = that.cleanData(submission.data);
-          return that.saveForm(form,form_data).then(response => {
-            form.emit('submitDone', response);
-          });
+          // var form_data = that.cleanData(submission.data);
+          // return that.saveForm(form,form_data).then(response => {
+          //   form.emit('submitDone', response);
+          // });
+          console.log('test');
         });
         form.on("error", errors => {
           var elm = document.getElementsByClassName("alert-danger")[0];
@@ -532,10 +548,17 @@ class FormRender extends React.Component {
                 var targetComponent = form.getComponent(properties["target"]);
                 if (changed.changed.value) {
                   var value = formdata.data[changed.changed.value];
+                  if(changed.changed.value.value){
+                    value = formdata.data[changed.changed.value.value];
+                  }
                   if (value) {
                     targetComponent.setValue(value);
                   } else {
-                    targetComponent.setValue(changed.changed.value);
+                    if(changed.changed.value.value){
+                      targetComponent.setValue(changed.changed.value.value);
+                    } else {
+                      targetComponent.setValue(changed.changed.value);
+                    }
                   }
                 }
               }
@@ -659,17 +682,17 @@ class FormRender extends React.Component {
         });
         form.formReady.then( () => {
           console.log('formReady');
-          // form.emit('render');
+          form.emit('render');
         });
         form.submissionReady.then( () => {
           console.log('submissionReady');
-          form.emit('render');
+          // form.emit('render');
         });
+        that.setState({currentForm:form});
         // form.formReady.then( () => {
         //   console.log('formReady');
         //   form.emit('render');
         // });
-        console.log(form);
         // form.emit('render');
       });
     }
@@ -680,7 +703,7 @@ class FormRender extends React.Component {
                 this.callDelegate(properties["delegate"], form.submission.data).then(response => {
                     this.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
+                      form.submission = { data: this.parseResponseData(this.addAddlData(response.data)) };
                       form.triggerChange();
                     }
                   });
@@ -690,7 +713,7 @@ class FormRender extends React.Component {
                     this.core.make("oxzion/splash").destroy();
                     if (response.status == "success") {
                         if (response.data) {
-                            form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
+                            form.submission = { data: this.parseResponseData(this.addAddlData(response.data)) };
                             form.triggerChange();
                         }
                     }
