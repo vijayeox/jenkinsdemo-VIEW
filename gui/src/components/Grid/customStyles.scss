@@ -61,6 +61,10 @@
 
     div.jsx-parser {
       display: contents;
+      td {
+        border-width: 0 0 0 1px;
+        border-color: rgba(33, 37, 41, 0.125);
+      }
     }
   }
 
@@ -99,8 +103,6 @@
     text-decoration: none;
     border-bottom: unset;
   }
-
- 
 
   .manage-btn {
     //manage icons style and style
