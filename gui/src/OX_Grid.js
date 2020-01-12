@@ -213,10 +213,7 @@ export default class OX_Grid extends React.Component {
     var operationsList = [];
     var listData = this.state.gridData.data;
     config.actions.map(i => {
-      // let showAction = false;
       let result = eval(i.rule);
-      console.log(result);
-
       result ? operationsList.push(i) : null;
     });
     if (operationsList.length > 1) {
@@ -335,28 +332,28 @@ export default class OX_Grid extends React.Component {
 
 class CustomCell extends GridCell {
   render() {
-    var cellTemplate = this.props.cellTemplate(this.props.dataItem);
-    var useEvenSpace = true;
-    //   cellTemplate[0].type == "button" || cellTemplate[0].props.children
-    //     ? cellTemplate[0].props.children.type == "button"
-    //     : false
-    //     ? true
-    //     : false;
-    return (
-      <td
-        style={
-          useEvenSpace
-            ? {
-                display: "flex",
-                justifyContent: "space-evenly",
-                cursor: "default"
-              }
-            : null
-        }
-      >
-        {cellTemplate}
-      </td>
-    );
+    let checkType = typeof this.props.cellTemplate;
+    if (checkType == "function") {
+      var cellTemplate = this.props.cellTemplate(this.props.dataItem);
+      return (
+        <td
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            cursor: "default"
+          }}
+        >
+          {cellTemplate}
+        </td>
+      );
+    } else if (checkType == "string") {
+      return (
+        <JsxParser
+          bindings={{ item: this.props.dataItem }}
+          jsx={this.props.cellTemplate}
+        />
+      );
+    }
   }
 }
 

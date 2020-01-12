@@ -58,6 +58,10 @@
     .k-state-selected {
       background-color: #275362 !important;
     }
+
+    div.jsx-parser {
+      display: contents;
+    }
   }
 
   .k-filtercell > .k-filtercell-wrapper > input::placeholder {
@@ -95,6 +99,8 @@
     text-decoration: none;
     border-bottom: unset;
   }
+
+ 
 
   .manage-btn {
     //manage icons style and style
