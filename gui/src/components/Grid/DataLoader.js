@@ -1,5 +1,5 @@
 import React from "react";
-import Notification from './../../Notification';
+import Notification from "./../../Notification";
 
 import { toODataString } from "@progress/kendo-data-query";
 import LoadingPanel from "./LoadingPanel";
@@ -24,17 +24,10 @@ export class DataLoader extends React.Component {
       return data;
     } else {
       let helper = this.core.make("oxzion/restClient");
-      let data = await helper.request(
-        "v1",
-        "/" +
-          url +
-          "?" +
-          "filter=[" +
-          JSON.stringify(this.props.dataState) +
-          "]",
-        {},
-        "get"
-      );
+      let route = this.props.dataState
+        ? url + "?" + "filter=[" + JSON.stringify(this.props.dataState) + "]"
+        : url;
+      let data = await helper.request("v1", "/" + route, {}, "get");
       return data;
     }
   }
@@ -52,9 +45,8 @@ export class DataLoader extends React.Component {
           });
         } else {
           //put notification
-        
-          this.pending = undefined;
 
+          this.pending = undefined;
         }
       });
     }
