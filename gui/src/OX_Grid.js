@@ -8,9 +8,9 @@ import {
   GridNoRecords,
   GridToolbar
 } from "@progress/kendo-react-grid";
-import { Button } from "@progress/kendo-react-buttons";
-import { process } from "@progress/kendo-data-query";
+import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import $ from "jquery";
+import JsxParser from "react-jsx-parser";
 
 import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
@@ -31,6 +31,7 @@ export default class OX_Grid extends React.Component {
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
+      apiActivityCompleted: this.rawDataPresent ? true : false,
       gridDefaultFilters: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {}
@@ -41,6 +42,8 @@ export default class OX_Grid extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
+    this.gridHeight =
+      document.getElementsByClassName("PageRender")[0].clientHeight - 50;
   }
 
   dataStateChange = e => {
@@ -54,7 +57,8 @@ export default class OX_Grid extends React.Component {
 
   dataRecieved = data => {
     this.setState({
-      gridData: data
+      gridData: data,
+      apiActivityCompleted: true
     });
   };
   componentWillReceiveProps(props) {
@@ -187,9 +191,70 @@ export default class OX_Grid extends React.Component {
     this.props.checkBoxSelection(selectedItems);
   };
 
+  updatePageContent = config => {
+    let eventDiv = document.getElementsByClassName(
+      this.props.appId + "_breadcrumbParent"
+    )[0];
+
+    let ev = new CustomEvent("updateBreadcrumb", {
+      detail: config,
+      bubbles: true
+    });
+    eventDiv.dispatchEvent(ev);
+
+    let ev2 = new CustomEvent("updatePageView", {
+      detail: config.details,
+      bubbles: true
+    });
+    eventDiv.dispatchEvent(ev2);
+  };
+
+  renderListOperations = config => {
+    var operationsList = [];
+    var listData = this.state.gridData.data;
+    config.actions.map(i => {
+      // let showAction = false;
+      let result = eval(i.rule);
+      console.log(result);
+
+      result ? operationsList.push(i) : null;
+    });
+    if (operationsList.length > 1) {
+      return (
+        <DropDownButton
+          text={config.title ? config.title : "Options"}
+          textField="name"
+          className="gridOperationDropdown"
+          iconClass={config.icon ? config.icon : null}
+          onItemClick={e => {
+            this.updatePageContent(e.item);
+          }}
+          popupSettings={{ popupClass: "dropDownButton" }}
+          items={operationsList}
+          primary={true}
+          style={{ right: "10px", float: "right" }}
+        />
+      );
+    } else if (operationsList.length == 1) {
+      return (
+        <Button
+          style={{ right: "10px", float: "right" }}
+          primary={true}
+          onClick={e => this.updatePageContent(e.item)}
+        >
+          {operationsList[0].name}
+        </Button>
+      );
+    }
+    return null;
+  };
+
   render() {
     return (
-      <div style={{ height: "inherit" }} className="GridCustomStyle">
+      <div
+        style={{ height: this.gridHeight ? this.gridHeight + "px" : "inherit" }}
+        className="GridCustomStyle"
+      >
         {this.rawDataPresent ? (
           <DataOperation
             gridData={this.props.data}
@@ -240,7 +305,25 @@ export default class OX_Grid extends React.Component {
           {...this.state.dataState}
         >
           {this.props.gridToolbar ? (
-            <GridToolbar>{this.props.gridToolbar}</GridToolbar>
+            <GridToolbar>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+                <JsxParser
+                  bindings={{ gridData: this.state.gridData.data }}
+                  jsx={this.props.gridToolbar}
+                />
+                <div>
+                  {this.props.gridOperations && this.state.apiActivityCompleted
+                    ? this.renderListOperations(this.props.gridOperations)
+                    : null}
+                </div>
+              </div>
+            </GridToolbar>
           ) : null}
           {this.createColumns()}
           {/* {this.noRecordsJSX()} */}

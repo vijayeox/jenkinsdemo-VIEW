@@ -43,7 +43,7 @@ class Page extends React.Component {
 
   componentDidMount() {
     document
-      .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
+      .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
     
   }
@@ -72,7 +72,7 @@ class Page extends React.Component {
           bubbles: true
         });
         document
-          .getElementsByClassName(this.appId+"_breadcrumbParent")[0]
+          .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
           .dispatchEvent(ev);
       } else {
         this.setState({ pageContent: [] });
@@ -121,36 +121,6 @@ class Page extends React.Component {
     return actionButtons;
   }
 
-  renderListOperations = config => {
-    if (config.actions.length > 1) {
-      var showDropdown = true;
-    }
-    if (showDropdown) {
-      return (
-        <DropDownButton
-          text={config.title}
-          textField="name"
-          className="gridOperationDropdown"
-          iconClass={config.icon}
-          onItemClick={e => this.buttonAction(e.item)}
-          popupSettings={{ popupClass: "dropDownButton" }}
-          items={config.actions}
-          primary={true}
-        />
-      );
-    } else {
-      return (
-        <Button
-          style={{ right: "10px", float: "right" }}
-          primary={true}
-          onClick={() => this.buttonAction(config.actions[0])}
-        >
-          {config.actions[0].name}
-        </Button>
-      );
-    }
-  };
-
   async buttonAction(action, rowData) {
     if (action.page_id) {
       this.loadPage(action.page_id);
@@ -174,8 +144,8 @@ class Page extends React.Component {
               });
               return false;
             }
-          } else if(item.type == 'View'){
-            if(item.params.uuid){
+          } else if (item.type == "View") {
+            if (item.params.uuid) {
               var fileId = that.replaceParams(item.params.uuid, rowData);
               that.setState({
                 fileId: fileId
@@ -196,7 +166,9 @@ class Page extends React.Component {
         detail: action,
         bubbles: true
       });
-      document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
+      document
+        .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
+        .dispatchEvent(ev);
     }
     this.setState({
       showLoader: false
@@ -275,7 +247,9 @@ class Page extends React.Component {
       detail: {},
       bubbles: true
     });
-    document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
+    document
+      .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
+      .dispatchEvent(ev);
   };
 
   renderContent(data) {
@@ -323,6 +297,7 @@ class Page extends React.Component {
           var dataString = this.prepareDataRoute(itemContent.route);
           content.push(
             <OX_Grid
+              appId={this.appId}
               key={i}
               osjsCore={this.core}
               data={dataString}
@@ -331,11 +306,8 @@ class Page extends React.Component {
                   ? this.replaceParams(itemContent.defaultFilter)
                   : null
               }
-              gridToolbar={
-                itemContent.operations
-                  ? this.renderListOperations(itemContent.operations)
-                  : null
-              }
+              gridOperations={itemContent.operations}
+              gridToolbar={itemContent.toolbarTemplate}
               filterable={itemContent.filterable}
               reorderable={itemContent.reorderable}
               resizable={itemContent.resizable}
@@ -371,20 +343,35 @@ class Page extends React.Component {
             />
           );
           break;
-         case "DocumentViewer":
+        case "DocumentViewer":
           var itemContent = data[i].content;
-          var url = '';
-          let fileId = '';
-          if(this.state.fileId){
+          var url = "";
+          let fileId = "";
+          if (this.state.fileId) {
             fileId = this.state.fileId;
             url = "app/" + this.appId + "/file/" + fileId + "/document";
           } else {
             break;
           }
-          content.push(<DocumentViewer appId={this.appId} key={i} core={this.core} url={url} />);
+          content.push(
+            <DocumentViewer
+              appId={this.appId}
+              key={i}
+              core={this.core}
+              url={url}
+            />
+          );
           break;
-         case "Dashboard":
-          content.push(<Dashboard appId={this.appId} key={i} core={this.core} content={data[i].content} proc={this.proc} />);
+        case "Dashboard":
+          content.push(
+            <Dashboard
+              appId={this.appId}
+              key={i}
+              core={this.core}
+              content={data[i].content}
+              proc={this.proc}
+            />
+          );
           break;
         default:
           content.push(
