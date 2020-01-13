@@ -522,6 +522,7 @@ class FormRender extends React.Component {
           }
           if (changed && changed.changed) {
             var component = changed.changed.component;
+              console.log(changed);
             var properties = component.properties;
             if (properties) {
               if (properties["delegate"]) {
@@ -620,7 +621,6 @@ class FormRender extends React.Component {
         });
         form.on("customEvent",function(event){
           var changed = event.data;
-          console.log(event);
           if(event.type == 'callDelegate'){
           var component = event.component;
           if (component) {
@@ -686,6 +686,23 @@ class FormRender extends React.Component {
               }
             }
           }
+          }
+          if(event.type == 'callPipeline'){
+            var component = event.component;
+            if (component) {
+              that.core.make("oxzion/splash").show();
+              var properties = component.properties;
+              console.log(properties);
+              if(properties['commands']){
+                that.callPipeline(properties["commands"], changed).then(response => {
+                  that.core.make("oxzion/splash").destroy();
+                  if (response.data) {
+                    form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
+                    form.triggerChange();
+                  }
+                });
+              }
+            }
           }
         });
         form.formReady.then( () => {
