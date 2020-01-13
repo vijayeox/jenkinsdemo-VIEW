@@ -547,7 +547,7 @@ class FormRender extends React.Component {
               }
               if (properties["target"]) {
                 var targetComponent = form.getComponent(properties["target"]);
-                if (changed.changed.value) {
+                if (changed.changed.value && targetComponent) {
                   var value = formdata.data[changed.changed.value];
                   if(changed.changed.value.value){
                     value = formdata.data[changed.changed.value.value];
@@ -559,6 +559,22 @@ class FormRender extends React.Component {
                       targetComponent.setValue(changed.changed.value.value);
                     } else {
                       targetComponent.setValue(changed.changed.value);
+                    }
+                  }
+                } else {
+                  if(document.getElementById(properties['target'])){
+                    var value = formdata.data[changed.changed.value];
+                    if(changed.changed.value.value){
+                      value = formdata.data[changed.changed.value.value];
+                    }
+                    if(value && value != undefined){
+                      document.getElementById(properties['target']).value = value;
+                    } else {
+                      if(changed.changed.value.value){
+                        document.getElementById(properties['target']).value = changed.changed.value.value;
+                      } else {
+                        document.getElementById(properties['target']).value = changed.changed.value;
+                      }
                     }
                   }
                 }
@@ -782,10 +798,10 @@ class FormRender extends React.Component {
                       transactionStatusComponent.setValue(e.detail.status);
                       if (formsave) {
                         that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
-                        that.core.make("oxzion/splash").destroy();
                       } else {
                         that.notif.current.notify("Error",e.detail.message,"danger");
                       }
+                      that.core.make("oxzion/splash").destroy();
                     });
                 },true);
               window.addEventListener("paymentDeclined",function(e) {
