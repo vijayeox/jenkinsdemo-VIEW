@@ -86,7 +86,7 @@ export default class DocumentViewer extends Component {
     if (documentsList && documentsList.length > 0) {
       if (documentsList.length > 1) {
         return (
-          <div className="row">
+          <div className="row" style={{height: "-webkit-fill-available"}} >
             <div className="col-md-2 docListDiv">
               {documentsList.map((doc, index) => {
                 return (
