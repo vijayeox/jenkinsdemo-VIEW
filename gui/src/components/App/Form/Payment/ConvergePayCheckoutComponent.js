@@ -12,65 +12,70 @@ export default class ConvergePayCheckoutComponent extends Base {
     window.addEventListener('paymentDetails', function (e) {
       Formio.requireLibrary('paywithconverge', 'PayWithConverge', e.detail.js_url, true);
       e.stopPropagation();
-     document.getElementById('confirmOrder').addEventListener("click",function(event){
-      var evt = new CustomEvent('requestPaymentToken', {detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
-      window.dispatchEvent(evt);
-      event.stopPropagation();
-    },true);
-    document.getElementById('makePayment').addEventListener("click",function(event){
-      event.stopPropagation();
-      var token = document.getElementById('convergepay-token').value;
-      var card = document.getElementById('convergepay-card').value;
-      var exp = document.getElementById('convergepay-exp').value;
-      var expiryDate = new Date(exp);
-      var cvv = document.getElementById('convergepay-cvv').value;
-      var gettoken = "Y";
-      var addtoken = "Y";
-      var firstname = document.getElementById('convergepay-firstname').value;
-      var lastname = document.getElementById('convergepay-lastname').value;
-      var merchanttxnid = document.getElementById('convergepay-merchanttxnid').value;
-      var paymentData = {
-        ssl_txn_auth_token: token,
-        ssl_card_number: card,
-        ssl_exp_date: ('0'+(expiryDate.getMonth()+1)).slice(-2)+expiryDate.getFullYear().toString().substr(-2),
-        ssl_get_token: gettoken,
-        ssl_add_token: addtoken,
-        ssl_first_name: firstname,
-        ssl_last_name: lastname,
-        ssl_cvv2cvc2: cvv,
-        ssl_merchant_txn_id: merchanttxnid
-      };
-      var callback = {
-        onError: function (error) {
-          document.getElementById('cardPayment').style.display = 'none';
-          document.getElementById('confirmOrder').style.display = 'block';
-          document.getElementById('convergepay-firstname').disabled = false;
-          document.getElementById('convergepay-lastname').disabled = false;
-          document.getElementById('convergepay-token').value = "";
-          var evt = new CustomEvent('paymentError', {detail:{message: error.errorMessage,data:error}});
-          window.dispatchEvent(evt);
-        },
-        onDeclined: function (response) {
-          document.getElementById('cardPayment').style.display = 'none';
-          document.getElementById('confirmOrder').style.display = 'block';
-          document.getElementById('convergepay-firstname').disabled = false;
-          document.getElementById('convergepay-lastname').disabled = false;
-          document.getElementById('convergepay-token').value = "";
-          var evt = new CustomEvent('paymentDeclined', {detail:{message: response.errorMessage,data:response}});
-          window.dispatchEvent(evt);
-        },
-        onApproval: function (response) {
-          console.log("Approval Code=" + response['ssl_approval_code']);
-          console.log("approval:"+JSON.stringify(response, null, '\t'));
-          var evt = new CustomEvent('paymentSuccess', {detail:{data: response,status: response.ssl_token_response}});
-          window.dispatchEvent(evt);
-        }
-      };
-      var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
-      window.dispatchEvent(evt);
-      ConvergeEmbeddedPayment.pay(paymentData, callback);
-    },true);
-    },true);
+      if(document.getElementById('confirmOrder')){
+       document.getElementById('confirmOrder').addEventListener("click",function(event){
+        event.stopPropagation();
+        var evt = new CustomEvent('requestPaymentToken', {detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
+        window.dispatchEvent(evt);
+        event.stopPropagation();
+      },true);
+     }
+     if(document.getElementById('makePayment')){
+      document.getElementById('makePayment').addEventListener("click",function(event){
+        event.stopPropagation();
+        var token = document.getElementById('convergepay-token').value;
+        var card = document.getElementById('convergepay-card').value;
+        var exp = document.getElementById('convergepay-exp').value;
+        var expiryDate = new Date(exp);
+        var cvv = document.getElementById('convergepay-cvv').value;
+        var gettoken = "Y";
+        var addtoken = "Y";
+        var firstname = document.getElementById('convergepay-firstname').value;
+        var lastname = document.getElementById('convergepay-lastname').value;
+        var merchanttxnid = document.getElementById('convergepay-merchanttxnid').value;
+        var paymentData = {
+          ssl_txn_auth_token: token,
+          ssl_card_number: card,
+          ssl_exp_date: ('0'+(expiryDate.getMonth()+1)).slice(-2)+expiryDate.getFullYear().toString().substr(-2),
+          ssl_get_token: gettoken,
+          ssl_add_token: addtoken,
+          ssl_first_name: firstname,
+          ssl_last_name: lastname,
+          ssl_cvv2cvc2: cvv,
+          ssl_merchant_txn_id: merchanttxnid
+        };
+        var callback = {
+          onError: function (error) {
+            document.getElementById('cardPayment').style.display = 'none';
+            document.getElementById('confirmOrder').style.display = 'block';
+            document.getElementById('convergepay-firstname').disabled = false;
+            document.getElementById('convergepay-lastname').disabled = false;
+            document.getElementById('convergepay-token').value = "";
+            var evt = new CustomEvent('paymentError', {detail:{message: error.errorMessage,data:error}});
+            window.dispatchEvent(evt);
+          },
+          onDeclined: function (response) {
+            document.getElementById('cardPayment').style.display = 'none';
+            document.getElementById('confirmOrder').style.display = 'block';
+            document.getElementById('convergepay-firstname').disabled = false;
+            document.getElementById('convergepay-lastname').disabled = false;
+            document.getElementById('convergepay-token').value = "";
+            var evt = new CustomEvent('paymentDeclined', {detail:{message: response.errorMessage,data:response}});
+            window.dispatchEvent(evt);
+          },
+          onApproval: function (response) {
+            console.log("Approval Code=" + response['ssl_approval_code']);
+            console.log("approval:"+JSON.stringify(response, null, '\t'));
+            var evt = new CustomEvent('paymentSuccess', {detail:{data: response,status: response.ssl_token_response}});
+            window.dispatchEvent(evt);
+          }
+        };
+        var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
+        window.dispatchEvent(evt);
+        ConvergeEmbeddedPayment.pay(paymentData, callback);
+      },true);
+    }
+  },true);
     window.addEventListener('getPaymentToken', function (e) {
       document.getElementById('cardPayment').style.display = 'block';
       document.getElementById('confirmOrder').style.display = 'none';
@@ -85,7 +90,7 @@ export default class ConvergePayCheckoutComponent extends Base {
       type: 'convergepay'
     }, ...extend);
   }
-    static builderInfo = {
+  static builderInfo = {
     title: 'Payment',
     group: 'basic',
     icon: 'fa fa-dollar',
@@ -141,34 +146,34 @@ export default class ConvergePayCheckoutComponent extends Base {
     this.setValue(result.token);
     this.paymentDone = true;
   }
-render(children) {
-  var merchanttxnid = this.renderTemplate('input', { 
-    input: {
-      type: 'input',
-      ref: `convergepay-merchanttxnid`,
-      attr: {
-        type: 'hidden',
-        key:'convergepay-merchanttxnid',
-        id:'convergepay-merchanttxnid',
-        hideLabel: 'true',
-        value: 'EOXVantage',
-        class:"form-control"
+  render(children) {
+    var merchanttxnid = this.renderTemplate('input', { 
+      input: {
+        type: 'input',
+        ref: `convergepay-merchanttxnid`,
+        attr: {
+          type: 'hidden',
+          key:'convergepay-merchanttxnid',
+          id:'convergepay-merchanttxnid',
+          hideLabel: 'true',
+          value: 'EOXVantage',
+          class:"form-control"
+        }
       }
-    }
-  });
-  var convergepayToken = this.renderTemplate('input', { 
-    input: {
-      type: 'input',
-      ref: `convergepay-token`,
-      attr: {
-        type: 'hidden',
-        key:'convergepay-token',
-        id:'convergepay-token',
-        hideLabel: 'true',
-        class:"form-control"
+    });
+    var convergepayToken = this.renderTemplate('input', { 
+      input: {
+        type: 'input',
+        ref: `convergepay-token`,
+        attr: {
+          type: 'hidden',
+          key:'convergepay-token',
+          id:'convergepay-token',
+          hideLabel: 'true',
+          class:"form-control"
+        }
       }
-    }
-  });
+    });
     var firstname = this.renderTemplate('input', { 
       input: {
         type: 'input',
@@ -284,12 +289,12 @@ render(children) {
       }
     });
     var paymentPanel = `<div class="mb-2 card border panel panel-primary" style="display:none;" id="cardPayment">
-        <div ref="header" class="card-header bg-primary">
+    <div ref="header" class="card-header bg-primary">
     <span class="mb-0 card-title">
-      Card Details
+    Card Details
     </span>
-  </div>
-        <div id="paymentPanel" class="card-body">
+    </div>
+    <div id="paymentPanel" class="card-body">
     <div class="row">
     <div class="col-md-12">
     <div class="form-group">

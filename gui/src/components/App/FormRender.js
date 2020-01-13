@@ -562,6 +562,14 @@ class FormRender extends React.Component {
                   }
                 }
               }
+              if(properties['render']){
+                var renderComponent = form.getComponent(properties["render"]);
+                if(renderComponent.originalComponent){
+                  if(renderComponent.originalComponent['properties']){
+                    that.runDelegates(form,renderComponent.originalComponent['properties']);
+                  }
+                }
+              }
             }
           }
           var componentList = flattenComponents(form.components);
@@ -682,11 +690,11 @@ class FormRender extends React.Component {
         });
         form.formReady.then( () => {
           console.log('formReady');
-          form.emit('render');
+          // form.emit('render');
         });
         form.submissionReady.then( () => {
           console.log('submissionReady');
-          // form.emit('render');
+          form.emit('render');
         });
         that.setState({currentForm:form});
         // form.formReady.then( () => {
@@ -730,62 +738,61 @@ class FormRender extends React.Component {
                   window.dispatchEvent(evt);
                 }
               });
+              var that=this;
               window.addEventListener("requestPaymentToken",function(e) {
                 e.stopPropagation();
-                this.core.make("oxzion/splash").show();
-                this.callPayment({firstname: e.detail.firstname,lastname: e.detail.lastname,amount: e.detail.amount}).then(response => {
+                that.core.make("oxzion/splash").show();
+                that.callPayment({firstname: e.detail.firstname,lastname: e.detail.lastname,amount: e.detail.amount}).then(response => {
                   var transactionIdComponent = form.getComponent("transaction_id");
                   if (response.data.transaction.id && response.data.token) {
                     transactionIdComponent.setValue(response.data.transaction.id);
                     var evt = new CustomEvent("getPaymentToken", {detail: response.data});
                     window.dispatchEvent(evt);
                   } else {
-                    this.notif.current.notify("Error","Transaction Token Failed!","danger")
+                    that.notif.current.notify("Error","Transaction Token Failed!","danger")
                   }
-                  this.core.make("oxzion/splash").destroy();
+                  that.core.make("oxzion/splash").destroy();
                 });
               },true);
               window.addEventListener("paymentSuccess",function(e) {
                   e.stopPropagation();
-                  this.core.make("oxzion/splash").show();
+                  that.core.make("oxzion/splash").show();
                   var transactionIdComponent = form.getComponent("transaction_id");
-                  this.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
-                      this.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!", "success");
-                      var formsave = this.saveForm(form,this.form.submission.data);
+                  that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
+                      that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!", "success");
+                      var formsave = that.saveForm(form,that.form.submission.data);
                       var transactionStatusComponent = form.getComponent("transaction_status");
                       transactionStatusComponent.setValue(e.detail.status);
                       if (formsave) {
-                        this.notif.current.notify("Success","Application Has been Successfully Submitted","success");
-                        this.core.make("oxzion/splash").destroy();
+                        that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
+                        that.core.make("oxzion/splash").destroy();
                       } else {
-                        this.notif.current.notify("Error",e.detail.message,"danger");
+                        that.notif.current.notify("Error",e.detail.message,"danger");
                       }
                     });
                 },true);
-              window.addEventListener(
-                "paymentDeclined",
-                function(e) {
+              window.addEventListener("paymentDeclined",function(e) {
                   e.stopPropagation();
                   console.log(e.detail);
                   var transactionIdComponent = form.getComponent("transaction_id");
-                  this.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
-                      this.notif.current.notify("Error",e.detail.message,"danger");
-                      this.core.make("oxzion/splash").destroy();
+                  that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
+                      that.notif.current.notify("Error",e.detail.message,"danger");
+                      that.core.make("oxzion/splash").destroy();
                     });
                 },true);
               window.addEventListener("paymentError",function(e) {
                   e.stopPropagation();
                   console.log(e.detail);
                   var transactionIdComponent = form.getComponent("transaction_id");
-                  this.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
-                      this.notif.current.notify("Error",e.detail.message,"danger");
-                      this.core.make("oxzion/splash").destroy();
+                  that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
+                      that.notif.current.notify("Error",e.detail.message,"danger");
+                      that.core.make("oxzion/splash").destroy();
                     });
                 },true);
               window.addEventListener("paymentPending",function(e) {
-                  this.core.make("oxzion/splash").show();
+                  that.core.make("oxzion/splash").show();
                   e.stopPropagation();
-                  this.notif.current.notify("Information",e.detail.message,"default");
+                  that.notif.current.notify("Information",e.detail.message,"default");
                 },true);
             }
           }
