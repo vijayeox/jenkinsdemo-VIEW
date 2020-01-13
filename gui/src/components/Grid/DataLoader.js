@@ -24,9 +24,10 @@ export class DataLoader extends React.Component {
       return data;
     } else {
       let helper = this.core.make("oxzion/restClient");
-      let route = this.props.dataState
-        ? url + "?" + "filter=[" + JSON.stringify(this.props.dataState) + "]"
-        : url;
+      let route =
+        Object.keys(this.props.dataState).length === 0
+          ? url
+          : url + "?" + "filter=[" + JSON.stringify(this.props.dataState) + "]";
       let data = await helper.request("v1", "/" + route, {}, "get");
       return data;
     }
