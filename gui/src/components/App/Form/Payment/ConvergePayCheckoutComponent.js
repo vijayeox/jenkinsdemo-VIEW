@@ -9,19 +9,22 @@ export default class ConvergePayCheckoutComponent extends Base {
     super(component, options, data);
     this.data = data;
     this.form = this.getRoot();
+    var that = this;
     window.addEventListener('paymentDetails', function (e) {
       Formio.requireLibrary('paywithconverge', 'PayWithConverge', e.detail.js_url, true);
       e.stopPropagation();
       if(document.getElementById('confirmOrder')){
-       document.getElementById('confirmOrder').addEventListener("click",function(event){
-        event.stopPropagation();
-        var evt = new CustomEvent('requestPaymentToken', {detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
-        window.dispatchEvent(evt);
-        event.stopPropagation();
-      },true);
+        var confirmOrder = function(event){
+          event.stopPropagation();
+          var evt = new CustomEvent('requestPaymentToken', {detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
+          window.dispatchEvent(evt);
+          event.stopPropagation();
+        }
+        document.getElementById('confirmOrder').removeEventListener('click',confirmOrder);
+        document.getElementById('confirmOrder').addEventListener("click",confirmOrder,true);
      }
      if(document.getElementById('makePayment')){
-      document.getElementById('makePayment').addEventListener("click",function(event){
+      var makePayment = function(event){
         event.stopPropagation();
         var token = document.getElementById('convergepay-token').value;
         var card = document.getElementById('convergepay-card').value;
@@ -73,7 +76,9 @@ export default class ConvergePayCheckoutComponent extends Base {
         var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
         window.dispatchEvent(evt);
         ConvergeEmbeddedPayment.pay(paymentData, callback);
-      },true);
+      };
+        document.getElementById('makePayment').removeEventListener('click',makePayment,false);
+        document.getElementById('makePayment').addEventListener("click",makePayment,true);
     }
   },true);
     window.addEventListener('getPaymentToken', function (e) {
