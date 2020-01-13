@@ -40,8 +40,7 @@ export default class OX_Grid extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
-    this.gridHeight =
-      document.getElementsByClassName("PageRender")[0].clientHeight - 50;
+    this.gridHeight = document.getElementsByClassName("PageRender")[0].clientHeight - 50;
   }
 
   dataStateChange = e => {
@@ -247,7 +246,7 @@ export default class OX_Grid extends React.Component {
   render() {
     return (
       <div
-        style={{ height: this.gridHeight ? this.gridHeight + "px" : "inherit" }}
+        style={{ height: "94%" }}
         className="GridCustomStyle"
       >
         {this.rawDataPresent ? (
