@@ -24,9 +24,7 @@ export default class OX_Grid extends React.Component {
     this.child = React.createRef();
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
-      gridData: this.rawDataPresent
-        ? this.props.data
-        : { data: [], total: "0" },
+      gridData: this.rawDataPresent ? this.props.data : [],
       api: this.rawDataPresent ? undefined : this.props.data,
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
@@ -269,10 +267,11 @@ export default class OX_Grid extends React.Component {
           />
         )}
         <Grid
-          data={
-            this.state.gridData.data
-              ? this.state.gridData
-              : { data: [], total: "0" }
+          data={this.state.gridData.data}
+          total={
+            this.state.gridData.total
+              ? parseInt(this.state.gridData.total)
+              : null
           }
           detail={
             this.props.rowTemplate
@@ -373,7 +372,7 @@ OX_Grid.propTypes = {
   checkBoxSelection: PropTypes.func,
   columnConfig: PropTypes.array.isRequired,
   gridDefaultFilters: PropTypes.object,
-  gridToolbar: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  gridToolbar: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   gridNoRecords: PropTypes.element,
   gridStyles: PropTypes.object,
   groupable: PropTypes.bool,
