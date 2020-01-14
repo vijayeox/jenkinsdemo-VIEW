@@ -1,5 +1,6 @@
 import React from "react";
 import Page from "./components/App/Page";
+import FormRender from "./components/App/FormRender";
 import Breadcrumb from "./components/App/Breadcrumb";
 import { createBrowserHistory } from 'history';
 
@@ -14,9 +15,10 @@ class Navigation extends React.Component {
     this.state = {
       selected: this.props.selected
     };
+    this.homepage = null;
     this.child = React.createRef();
     this.breadcrumbDiv = this.appId+'_breadcrumbParent';
-    this.homepage = null;
+    this.contentDivID = this.appId+'_Content';
     this.getMenulist().then(response => {
       this.props.menuLoad(response['data']);
       this.homepage = response['data'][0];
@@ -26,7 +28,26 @@ class Navigation extends React.Component {
         history.push("/");
       } else if(this.params.activityId){
         this.setState({selected:{activity_id:this.params.activityId}});
+      } else if(this.proc.args){
+        if(typeof this.proc.args === 'string'){
+          try {
+            var appParams = JSON.parse(this.proc.args);
+            if(appParams.type){
+              this.postSubmitCallback = this.postSubmitCallback.bind(this);
+              this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
+            }
+          } catch(e){
+            console.log("No params!");
+            console.log(e);
+            this.child.current.clearBreadcrumb();
+            this.props.selectLoad(this.homepage);
+          }
+        } else {
+          this.child.current.clearBreadcrumb();
+          this.props.selectLoad(this.homepage);
+        }
       } else {
+        this.child.current.clearBreadcrumb();
         this.props.selectLoad(this.homepage);
       }
     });
@@ -38,7 +59,7 @@ class Navigation extends React.Component {
       "/app/" + this.appId + "/menu",
       {},
       "get"
-    );
+      );
     return menulist;
   }
 
@@ -47,42 +68,43 @@ class Navigation extends React.Component {
       this.setState({selected:props.selected});
       if(props.selected !== this.state.selected)
         this.child.current.clearBreadcrumb();
-      }
+    }
   }
-  postSubmitCallback(){
+  postSubmitCallback = () => {
     this.props.selectLoad(this.homepage);
+    this.child.current.clearBreadcrumb();
+    history.push("/");
   }
 
   render() {
     const { expanded, selected } = this.state;
     return (
-      <div
-          className="PageRender"
-        >
-          <div className={this.breadcrumbDiv}>
-          <Breadcrumb ref={this.child} appId={this.appId} />
+      <div className="PageRender">
+      <div className={this.breadcrumbDiv}>
+      <Breadcrumb ref={this.child} appId={this.appId} />
+      </div>
+      {this.state.selected.page_id ? (
+        <Page
+        pageId={this.state.selected.page_id}
+        config={this.props.config}
+        proc={this.props.proc}
+        app={this.props.appId}
+        core={this.core}
+        />
+        ) : null}
+        {((this.state.selected.activityInstanceId && this.state.selected.activityInstanceId)||(this.state.selected.pipeline))? (
+          <div id={this.contentDivID} className="AppBuilderPage">
+          <FormRender
+          postSubmitCallback={this.postSubmitCallback}
+          core={this.core}
+          appId={this.props.appId}
+          activityInstanceId={this.state.selected.activityInstanceId}
+          pipeline={this.state.selected.pipeline}
+          />
           </div>
-          {this.state.selected.page_id ? (
-            <Page
-              pageId={this.state.selected.page_id}
-              config={this.props.config}
-              proc={this.props.proc}
-              app={this.props.appId}
-              core={this.core}
-            />
-          ) : null}
-          {(this.state.selected.workflow_id && this.state.selected.activity_id)? (
-           <div className="formContent">
-            <FormRender
-              postSubmitCallback={this.postSubmitCallback}
-              core={this.core}
-              appId={this.props.appId}
-              activityInstanceId={this.state.selected.activity_id}
-            />
+          ) : null }
           </div>
-        ) : null }
-        </div>
-    );
+          );
   }
 }
 export default Navigation;

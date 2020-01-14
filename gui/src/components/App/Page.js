@@ -19,18 +19,6 @@ class Page extends React.Component {
     
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
     let pageContent = [];
-    if(typeof this.proc.args === 'string'){
-      try {
-        console.log(this.proc.args);
-        pageContent.push(JSON.parse(this.proc.args));
-        this.proc.args = undefined;
-      } catch(e){
-        this.loadPage(this.props.pageId);
-        console.log("No params!");
-      }
-    } else {
-      this.loadPage(this.props.pageId);
-    }
     this.state = {
       pageContent: pageContent,
       pageId: this.props.pageId,
@@ -39,6 +27,7 @@ class Page extends React.Component {
       fileId: null,
       currentRow: []
     };
+    this.loadPage(this.props.pageId);
     this.updatePageView = this.updatePageView.bind(this);
   }
 
