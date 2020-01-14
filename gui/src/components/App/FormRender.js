@@ -880,7 +880,8 @@ class FormRender extends React.Component {
           this.setState({
             content: JSON.parse(data.template),
             data: this.addAddlData(response.data.form_data),
-            workflowId: response.workflow_id
+            formId: data.id,
+            workflowId: response.data.workflow_id
           });
           this.createForm();
         }
