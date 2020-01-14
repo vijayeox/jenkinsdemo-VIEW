@@ -93,6 +93,7 @@ export default class OX_Grid extends React.Component {
                   <CustomCell
                     cellTemplate={dataItem.cell}
                     dataItem={item.dataItem}
+                    type={"cellTemplate"}
                   />
                 )
               : undefined
@@ -108,6 +109,7 @@ export default class OX_Grid extends React.Component {
                   <CustomCell
                     cellTemplate={dataItem.filterCell}
                     dataItem={item.dataItem}
+                    type={"filterTemplate"}
                   />
                 )
               : undefined
@@ -333,17 +335,31 @@ class CustomCell extends GridCell {
     let checkType = typeof this.props.cellTemplate;
     if (checkType == "function") {
       var cellTemplate = this.props.cellTemplate(this.props.dataItem);
-      return (
-        <td
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            cursor: "default"
-          }}
-        >
-          {cellTemplate}
-        </td>
-      );
+      if (this.props.type == "filterTemplate") {
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              cursor: "default"
+            }}
+          >
+            {cellTemplate}
+          </div>
+        );
+      } else {
+        return (
+          <td
+            style={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              cursor: "default"
+            }}
+          >
+            {cellTemplate}
+          </td>
+        );
+      }
     } else if (checkType == "string") {
       return (
         <JsxParser
