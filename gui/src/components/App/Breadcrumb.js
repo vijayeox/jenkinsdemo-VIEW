@@ -34,11 +34,13 @@ class Breadcrumb extends React.Component {
     this.setState({
       breadcrumbConfig: data
     });
-    let ev = new CustomEvent("updatePageView", {
-      detail: data[0].content,
-      bubbles: true
-    });
-    document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
+    if(data[0]){
+      let ev = new CustomEvent("updatePageView", {
+        detail: data[0].content,
+        bubbles: true
+      });
+      document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].dispatchEvent(ev);
+    }
   };
 
   breadcrumbClick = (currentValue, index) => {
