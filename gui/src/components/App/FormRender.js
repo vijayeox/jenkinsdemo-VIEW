@@ -56,13 +56,16 @@ class FormRender extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     var params = [];
     params = submission;
-    params['commands'] = JSON.parse(commands);
-    let delegateData = await helper.request(
-      "v1",
-      "/app/" + this.state.appId + "/pipeline",
-      params,
-      "post"
-    );
+    try{
+      params['commands'] = JSON.parse(commands);
+    } catch(e){
+      if(commands['commands']){
+        params['commands'] = commands['commands'];
+      } else {
+        params['commands'] = commands;
+      }
+    }
+    let delegateData = await helper.request("v1","/app/" + this.state.appId + "/pipeline",params,"post");
     return delegateData;
   }
   async callPayment(params) {
@@ -844,17 +847,15 @@ class FormRender extends React.Component {
   };
 
   componentDidMount() {
-    if(this.props.url)
-      {this.getFormContents(this.props.url).then(response => {
+    if(this.props.url) {
+      this.getFormContents(this.props.url).then(response => {
         var parsedData = [];
         if (response.data) {
           parsedData = this.parseResponseData(JSON.parse(response.data));
         }else if(this.state.data){
           parsedData = this.state.data;
         }
-        response.workflow_uuid
-        ? (parsedData.workflow_uuid = response.workflow_uuid)
-        : null;
+        response.workflow_uuid ? (parsedData.workflow_uuid = response.workflow_uuid) : null;
         this.setState({
           content: JSON.parse(response.template),
           data: this.addAddlData(parsedData),
@@ -864,8 +865,28 @@ class FormRender extends React.Component {
           formId: response.form_id
         });
         this.createForm();
-      })};
+      });
+    }
+    if(this.props.pipeline){
+      this.loadFormWithCommands(this.props.pipeline);
+    }
     this.loadWorkflow();
+  }
+  async loadFormWithCommands(commands){
+    await this.callPipeline(commands,commands).then(response => {
+      if (response.status == "success") {
+        if(response.data.data && response.data.form_data){
+          var data = response.data.data;
+          this.setState({
+            content: JSON.parse(data.template),
+            data: this.addAddlData(response.data.form_data),
+            workflowId: response.workflow_id
+          });
+          this.createForm();
+        }
+      }
+      return response;
+    });
   }
 
 

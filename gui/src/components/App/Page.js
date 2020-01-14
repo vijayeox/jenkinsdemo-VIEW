@@ -21,6 +21,7 @@ class Page extends React.Component {
     let pageContent = [];
     if(typeof this.proc.args === 'string'){
       try {
+        console.log(this.proc.args);
         pageContent.push(JSON.parse(this.proc.args));
         this.proc.args = undefined;
       } catch(e){
@@ -275,6 +276,7 @@ class Page extends React.Component {
               content={data[i].content}
               formId={data[i].form_id}
               config={this.menu}
+              pipeline={data[i].pipeline}
               parentWorkflowInstanceId={workflowInstanceId}
               postSubmitCallback={this.stepBackBreadcrumb}
             />
