@@ -582,6 +582,16 @@ class FormRender extends React.Component {
                   }
                 }
               }
+              if(properties['negate']){
+                var targetComponent = form.getComponent(properties["negate"]);
+                if (changed.changed.value && targetComponent) {
+                    if(changed.changed.value.value){
+                      targetComponent.setValue(!changed.changed.value.value);
+                    } else {
+                      targetComponent.setValue(!changed.changed.value);
+                    }
+                }
+              }
               if(properties['render']){
                 var renderComponent = form.getComponent(properties["render"]);
                 if(renderComponent.originalComponent){
