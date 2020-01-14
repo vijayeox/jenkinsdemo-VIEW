@@ -9,6 +9,8 @@ import image2base64 from "image-to-base64";
 import Webcam from "react-webcam";
 import PhoneInput from "react-phone-number-input";
 import { Editor, EditorTools } from "@progress/kendo-react-editor";
+import Countries from '../public/js/countries'
+import states from '../public/js/states'
 const {
   Bold,
   Italic,
@@ -32,6 +34,7 @@ class EditProfile extends Component {
 
     this.core = this.props.args;
     this.userprofile = this.core.make("oxzion/profile").get();
+    console.log(this.userprofile)
     if (
       this.userprofile.key.preferences != undefined ||
       this.userprofile.key.preferences != null
@@ -51,7 +54,8 @@ class EditProfile extends Component {
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
-      icon: this.userprofile.key.icon + "?" + new Date()
+      icon: this.userprofile.key.icon + "?" + new Date(),
+      selectedCountryID: ""
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -72,8 +76,8 @@ class EditProfile extends Component {
       ).format();
       const Datekendo = new Date(Dateiso);
       let fields = this.state.fields;
-      console.log(fields)
       fields["date_of_birth"] = Datekendo;
+
       this.setState({
         fields
       });
@@ -84,12 +88,25 @@ class EditProfile extends Component {
       this.state.fields.country == null
     ) {
       let fields = this.state.fields;
-      fields["country"] = "United States of America";
+      // fields["country"] = "United States of America";
       this.setState({
         fields
       });
     }
+    else {
+      //setting state dropdown
+      Countries.map((country, key) => {
+        let countryname = country.name
+        let countryid = ""
+        if (this.state.fields.country === countryname) {
+          countryid = "" + country.id
+          this.setState({ selectedCountryID: countryid })
+        }
+      })
+    }
+
   }
+
 
   handleDOBChange = event => {
     let fields = this.state.fields;
@@ -103,6 +120,11 @@ class EditProfile extends Component {
     this.setState({
       fields
     });
+    if (e.target.name === "country") {
+      const selectedIndex = e.target.options.selectedIndex;
+      const countryid = e.target.options[selectedIndex].getAttribute('data-countryid')
+      this.setState({ selectedCountryID: countryid })
+    }
   };
 
   handlePhoneChange = phone => {
@@ -123,7 +145,6 @@ class EditProfile extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-
     if (this.validateForm()) {
       const formData = {};
 
@@ -145,7 +166,6 @@ class EditProfile extends Component {
         }
       });
 
-      console.log(formData);
       let helper = this.core.make("oxzion/restClient");
 
       let editresponse = await helper.request(
@@ -206,14 +226,39 @@ class EditProfile extends Component {
       errors["phone"] = "*Please enter Phone Number";
     }
 
-    if (!fields["address"]) {
+    if (!fields["address1"]) {
       formIsValid = false;
-      errors["address"] = "*Please enter your address";
+      errors["address1"] = "*Please enter your address";
+    }
+    if (!fields["address2"]) {
+      formIsValid = false;
+      errors["address2"] = "*Please enter your address";
+    }
+    if (!fields["state"]) {
+      formIsValid = false;
+      errors["state"] = "*Please select your state";
     }
 
     if (!fields["interest"]) {
       formIsValid = false;
       errors["interest"] = "*Please enter your interest";
+    }
+    if (!fields["country"]) {
+      formIsValid = false;
+      errors["country"] = "*Please select your country";
+    }
+    if (!fields["state"]) {
+      formIsValid = false;
+      errors["state"] = "*Please select your state";
+    }
+    if (!fields["city"]) {
+      formIsValid = false;
+      errors["city"] = "*Please enter your city";
+    }
+    if (!fields["zip"]) {
+      formIsValid = false;
+      
+      errors["zip"] = "*Please enter your zip";
     }
 
     this.setState({
@@ -510,22 +555,40 @@ class EditProfile extends Component {
                 </Form.Group>
               </div>
             </Row>
-
-
-            <Form.Group>
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows="3"
-                name="address"
-                value={this.state.fields.address ? this.state.fields.address : ""}
-                onChange={this.handleChange}
-                required
-              />
-              <Form.Text className="text-muted errorMsg">
-                {this.state.errors["address"]}
-              </Form.Text>
-            </Form.Group>
+            <Row>
+              <div className='col-md-6'>
+                <Form.Group>
+                  <Form.Label>Address 1</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows="3"
+                    name="address1"
+                    value={this.state.fields.address1 ? this.state.fields.address1 : ""}
+                    onChange={this.handleChange}
+                    required
+                  />
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["address1"]}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+              <div className='col-md-6'>
+                <Form.Group>
+                  <Form.Label>Address 2</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows="3"
+                    name="address2"
+                    value={this.state.fields.address2 ? this.state.fields.address2 : ""}
+                    onChange={this.handleChange}
+                    required
+                  />
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["address2"]}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+            </Row>
             <Row>
               <div className='col-md-6'>
                 <Form.Group>
@@ -547,6 +610,24 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
                 <Form.Group>
+                  <Form.Label>Website</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="website"
+                    value={this.state.fields.website ? this.state.fields.website : ""}
+                    onChange={this.handleChange}
+                  />
+                </Form.Group>
+
+
+
+
+              </div>
+            </Row>
+
+            <Row>
+              <div className='col-md-6'>
+                <Form.Group>
                   <Form.Label>
                     Country
               </Form.Label>
@@ -557,29 +638,74 @@ class EditProfile extends Component {
                     onChange={this.handleChange}
                     name="country"
                   >
-                    {CountryCodes.map((country, key) => (
-                      <option key={key} value={country.name}>
+                    {Countries.map((country, key) => (
+                      <option key={key} data-countryid={country.id} value={country.name}>
                         {country.name}
                       </option>
                     ))}
                   </select>
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["country"]}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+              <div className='col-md-6'>
+                <Form.Group>
+                  <Form.Label>
+                    State
+              </Form.Label>
 
+                  <select
+                    value={
+                      this.state.fields.state ? this.state.fields.state : ""
+                    }
+                    onChange={this.handleChange}
+                    name="state"
+                  >
+                    {states.map((state, key) => {
+                      if (state.country_id === this.state.selectedCountryID)
+                        return <option key={key} data-stateid={state.id} value={state.name}>
+                          {state.name}
+                        </option>
+                    })}
+                  </select>
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["state"]}
+                  </Form.Text>
                 </Form.Group>
               </div>
             </Row>
-
             <Row>
-              <div className='col-md-12'>
-                <Form.Group>
-                  <Form.Label>Website</Form.Label>
+            <div className='col-md-6'>
+            <Form.Group>
+                  <Form.Label>City</Form.Label>
                   <Form.Control
                     type="text"
-                    name="website"
-                    value={this.state.fields.website ? this.state.fields.website : ""}
+                    name="city"
+                    value={this.state.fields.city ? this.state.fields.city : ""}
                     onChange={this.handleChange}
                   />
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["city"]}
+                  </Form.Text>
                 </Form.Group>
               </div>
+              <div className='col-md-6'>
+            <Form.Group>
+                  <Form.Label>Postal Code</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="zip"
+                    value={this.state.fields.zip ? this.state.fields.zip : ""}
+                    onChange={this.handleChange}
+                  />
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["zip"]}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+            </Row>
+            <Row>
               <div className='col-md-12'>
                 <Form.Group>
                   <Form.Label>Interest</Form.Label>
