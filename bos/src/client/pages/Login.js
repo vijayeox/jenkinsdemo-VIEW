@@ -515,4 +515,11 @@ export default class Login extends defaultLogin {
       }
     };
   }
+
+    destroy() {
+      this.core.$root.classList.remove('login');
+      if (this.$container) {
+        this.$container.remove();
+      }
+    }
 }
