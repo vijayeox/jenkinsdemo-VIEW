@@ -230,10 +230,7 @@ class EditProfile extends Component {
       formIsValid = false;
       errors["address1"] = "*Please enter your address";
     }
-    if (!fields["address2"]) {
-      formIsValid = false;
-      errors["address2"] = "*Please enter your address";
-    }
+  
     if (!fields["state"]) {
       formIsValid = false;
       errors["state"] = "*Please select your state";
@@ -247,17 +244,13 @@ class EditProfile extends Component {
       formIsValid = false;
       errors["country"] = "*Please select your country";
     }
-    if (!fields["state"]) {
-      formIsValid = false;
-      errors["state"] = "*Please select your state";
-    }
+  
     if (!fields["city"]) {
       formIsValid = false;
       errors["city"] = "*Please enter your city";
     }
     if (!fields["zip"]) {
       formIsValid = false;
-      
       errors["zip"] = "*Please enter your zip";
     }
 
@@ -461,7 +454,7 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label>First Name</Form.Label>
+                  <Form.Label className="mandatory">First Name</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="First Name"
@@ -474,7 +467,7 @@ class EditProfile extends Component {
                   </Form.Text>
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label>Last Name</Form.Label>
+                  <Form.Label className="mandatory">Last Name</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Last Name"
@@ -490,7 +483,7 @@ class EditProfile extends Component {
 
             </Row>
             <Form.Group>
-              <Form.Label>Email</Form.Label>
+              <Form.Label className="mandatory">Email</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Last Name"
@@ -503,7 +496,7 @@ class EditProfile extends Component {
             <Row>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label>Gender</Form.Label>
+                  <Form.Label className="mandatory">Gender</Form.Label>
                   <Row><br /></Row>
                   <Row>
                     <div className='col-md-6'>
@@ -537,7 +530,7 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label id="rowdob">Date of Birth</Form.Label>
+                  <Form.Label className="mandatory" id="rowdob">Date of Birth</Form.Label>
                   <DatePicker
                     format={this.state.dateformat}
                     name="date_of_birth"
@@ -558,10 +551,9 @@ class EditProfile extends Component {
             <Row>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label>Address 1</Form.Label>
+                  <Form.Label className="mandatory">Address 1</Form.Label>
                   <Form.Control
-                    as="textarea"
-                    rows="3"
+                    type="text"
                     name="address1"
                     value={this.state.fields.address1 ? this.state.fields.address1 : ""}
                     onChange={this.handleChange}
@@ -576,59 +568,20 @@ class EditProfile extends Component {
                 <Form.Group>
                   <Form.Label>Address 2</Form.Label>
                   <Form.Control
-                    as="textarea"
-                    rows="3"
+                    type="text"
                     name="address2"
                     value={this.state.fields.address2 ? this.state.fields.address2 : ""}
                     onChange={this.handleChange}
                     required
                   />
-                  <Form.Text className="text-muted errorMsg">
-                    {this.state.errors["address2"]}
-                  </Form.Text>
+                
                 </Form.Group>
               </div>
             </Row>
             <Row>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label>Contact Number</Form.Label>
-                  <PhoneInput
-                    international={false}
-                    country="US"
-                    name="phone"
-                    placeholder="Enter phone number"
-                    maxLength="15"
-                    countryOptions={["US", "IN", "CA", "|", "..."]}
-                    value={this.state.fields.phone ? this.state.fields.phone : ""}
-                    onChange={phone => this.handlePhoneChange(phone)}
-                  />
-                  <Form.Text className="text-muted errorMsg">
-                    {this.state.errors["phone"]}
-                  </Form.Text>
-                </Form.Group>
-              </div>
-              <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label>Website</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="website"
-                    value={this.state.fields.website ? this.state.fields.website : ""}
-                    onChange={this.handleChange}
-                  />
-                </Form.Group>
-
-
-
-
-              </div>
-            </Row>
-
-            <Row>
-              <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label>
+                  <Form.Label className="mandatory">
                     Country
               </Form.Label>
                   <select
@@ -651,7 +604,7 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label>
+                  <Form.Label className="mandatory">
                     State
               </Form.Label>
 
@@ -678,7 +631,7 @@ class EditProfile extends Component {
             <Row>
             <div className='col-md-6'>
             <Form.Group>
-                  <Form.Label>City</Form.Label>
+                  <Form.Label className="mandatory">City</Form.Label>
                   <Form.Control
                     type="text"
                     name="city"
@@ -692,11 +645,11 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
             <Form.Group>
-                  <Form.Label>Postal Code</Form.Label>
+                  <Form.Label className="mandatory">Postal Code</Form.Label>
                   <Form.Control
                     type="number"
                     name="zip"
-                    value={this.state.fields.zip ? this.state.fields.zip : ""}
+                    value={this.state.fields.zip ? this.state.fields.zip : null}
                     onChange={this.handleChange}
                   />
                   <Form.Text className="text-muted errorMsg">
@@ -705,10 +658,48 @@ class EditProfile extends Component {
                 </Form.Group>
               </div>
             </Row>
+           
+            <Row>
+              <div className='col-md-6'>
+                <Form.Group>
+                  <Form.Label className="mandatory">Contact Number</Form.Label>
+                  <PhoneInput
+                    international={false}
+                    country="US"
+                    name="phone"
+                    placeholder="Enter phone number"
+                    maxLength="15"
+                    countryOptions={["US", "IN", "CA", "|", "..."]}
+                    value={this.state.fields.phone ? this.state.fields.phone : ""}
+                    onChange={phone => this.handlePhoneChange(phone)}
+                  />
+                  <Form.Text className="text-muted errorMsg">
+                    {this.state.errors["phone"]}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+              <div className='col-md-6'>
+                <Form.Group>
+                  <Form.Label className="mandatory">Website</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="website"
+                    value={this.state.fields.website ? this.state.fields.website : ""}
+                    onChange={this.handleChange}
+                  />
+                </Form.Group>
+
+
+
+
+              </div>
+            </Row>
+
+          
             <Row>
               <div className='col-md-12'>
                 <Form.Group>
-                  <Form.Label>Interest</Form.Label>
+                  <Form.Label className="mandatory">Interest</Form.Label>
                   <Form.Control
                     type="text"
                     name="interest"
@@ -722,7 +713,7 @@ class EditProfile extends Component {
               </div>
             </Row>
             <Form.Group>
-              <Form.Label>About Me</Form.Label>
+              <Form.Label className="mandatory">About Me</Form.Label>
               <Editor
                 style={{ height: "20vh", overflow: "auto" }}
                 name="about"
