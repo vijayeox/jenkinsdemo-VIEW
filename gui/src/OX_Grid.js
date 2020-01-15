@@ -40,7 +40,8 @@ export default class OX_Grid extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
-    this.gridHeight = document.getElementsByClassName("PageRender")[0].clientHeight - 50;
+    this.gridHeight =
+      document.getElementsByClassName("PageRender")[0].clientHeight - 50;
   }
 
   dataStateChange = e => {
@@ -247,10 +248,7 @@ export default class OX_Grid extends React.Component {
 
   render() {
     return (
-      <div
-        style={{ height: "94%" }}
-        className="GridCustomStyle"
-      >
+      <div style={{ height: "94%" }} className="GridCustomStyle">
         {this.rawDataPresent ? (
           <DataOperation
             gridData={this.props.data}
@@ -301,7 +299,8 @@ export default class OX_Grid extends React.Component {
           expandField="expanded"
           {...this.state.dataState}
         >
-          {this.props.gridToolbar ? (
+          {(this.props.gridToolbar || this.props.gridOperations) &&
+          this.state.apiActivityCompleted ? (
             <GridToolbar>
               <div
                 style={{
@@ -310,12 +309,16 @@ export default class OX_Grid extends React.Component {
                   alignItems: "center"
                 }}
               >
-                <JsxParser
-                  bindings={{ gridData: this.state.gridData.data }}
-                  jsx={this.props.gridToolbar}
-                />
+                {this.props.gridToolbar ? (
+                  <JsxParser
+                    bindings={{ gridData: this.state.gridData.data }}
+                    jsx={this.props.gridToolbar}
+                  />
+                ) : (
+                  <div />
+                )}
                 <div>
-                  {this.props.gridOperations && this.state.apiActivityCompleted
+                  {this.props.gridOperations
                     ? this.renderListOperations(this.props.gridOperations)
                     : null}
                 </div>
