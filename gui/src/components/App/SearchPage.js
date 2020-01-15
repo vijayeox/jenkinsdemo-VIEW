@@ -99,6 +99,7 @@ class SearchPage extends React.Component {
                 </div>
                 </div> : null
             }
+            {this.search.value != ''?
             <div className="row">
             <div className="col-md-12">
             <OX_Grid
@@ -114,6 +115,7 @@ class SearchPage extends React.Component {
             />
             </div>
             </div>
+        :null}
             </div>
             );
     }
