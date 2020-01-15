@@ -23,16 +23,39 @@ export default class OX_Grid extends React.Component {
     super(props);
     this.child = React.createRef();
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
+    var apiUrl = this.props.data;
+    var defaultFilters = {}
+    if(this.props.gridDefaultFilters){
+      defaultFilters = this.props.gridDefaultFilters;
+    }
+    if (typeof this.props.data == 'string') {
+      var splitUrl = this.props.data.split('?');
+      if(splitUrl[1]){
+        apiUrl = splitUrl[0];
+        var getUrlParams = decodeURI(splitUrl[1]).replace('?', '').split('&').map(param => param.split('=')).reduce((values, [ key, value ]) => {
+          values[ key ] = value
+          return values
+        }, {})
+        if(getUrlParams.filter){
+          try{
+            defaultFilters = JSON.parse(getUrlParams.filter);
+          } catch(e){
+            console.log(getUrlParams.filter)
+            console.log(e)
+            defaultFilters = getUrlParams.filter;
+          }
+        }
+      }
+    }
+    if(this.rawDataPresent){
+      apiUrl = undefined;
+    }
     this.state = {
       gridData: this.rawDataPresent ? this.props.data : [],
-      api: this.rawDataPresent ? undefined : this.props.data,
-      dataState: this.props.gridDefaultFilters
-        ? this.props.gridDefaultFilters
-        : {},
+      api: apiUrl,
+      dataState: defaultFilters,
       apiActivityCompleted: this.rawDataPresent ? true : false,
-      gridDefaultFilters: this.props.gridDefaultFilters
-        ? this.props.gridDefaultFilters
-        : {}
+      gridDefaultFilters: defaultFilters
     };
   }
 
