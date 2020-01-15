@@ -517,6 +517,20 @@ class FormRender extends React.Component {
 
         form.on("change", function (changed) {
           var formdata = changed;
+          for (var dataItem in form.submission.data) {
+            if(typeof form.submission.data[dataItem] == 'object'){
+              if(form.submission.data[dataItem]){
+                var checkComponent = form.getComponent(dataItem);
+                if(checkComponent && checkComponent.type == 'datagrid'){
+                  for(var rowItem in Object.keys(form.submission.data[dataItem])){
+                    if(Array.isArray(form.submission.data[dataItem][rowItem])){
+                      form.submission.data[dataItem][rowItem] = Object.assign({},form.submission.data[dataItem][rowItem]);
+                    }
+                  }
+                }
+              }
+            }
+          }
           var formdataArray = [];
           for (var formDataItem in formdata.data) {
             if (formdata.data.hasOwnProperty(formDataItem)) {
@@ -525,7 +539,6 @@ class FormRender extends React.Component {
           }
           if (changed && changed.changed) {
             var component = changed.changed.component;
-              console.log(changed);
             var properties = component.properties;
             if (properties) {
               if (properties["delegate"]) {
