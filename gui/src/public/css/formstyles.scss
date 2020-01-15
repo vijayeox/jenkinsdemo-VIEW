@@ -24,4 +24,7 @@
   .text-muted{
   color:#ddd;
   }
+  .form-control[disabled=disabled] {
+  background-color: #e9ecef;
+  }
 }
