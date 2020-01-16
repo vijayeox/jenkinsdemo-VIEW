@@ -32,13 +32,14 @@
   }
   .searchInput {
     border: 0;
-    background: #eee;
-    font-size: 20px;
+    background: transparent;
     letter-spacing: 1px;
     font-weight: 600;
     color: #1a1a1a;
-    margin-bottom: 20px;
-    padding: 5px;
+    height: 60px;
+    padding: 0 1rem 0 2.5rem;
+    font-size: 1.75rem;
+    font-weight: 300;
     width: 100%;
   }
 }
@@ -72,3 +73,29 @@
 .loaderAnimation > div {
   margin: auto;
 }
+.searchPageDiv {
+  width: 100%;
+    position: absolute;
+}
+.searchPageDiv .seperator{
+  border-bottom: 1px solid #275362;
+  width: 80%;
+}
+.searchPageDiv .icon{
+    box-sizing: border-box;
+    color: rgb(165, 180, 196);
+    display: block;
+    fill: rgb(165, 180, 196);
+    font-family: MaisonNeue, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
+    font-size: 24px;
+    height: 24px;
+    left: 1rem;
+    position: absolute;
+    text-size-adjust: 100%;
+    top: 30%;
+}
+.searchInput {
+  outline-color: transparent;
+  border-bottom: 1px solid #275362;
+}
+
