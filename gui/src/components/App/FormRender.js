@@ -362,10 +362,8 @@ class FormRender extends React.Component {
     let that = this;
     if (this.state.formId) {
       this.getWorkflow().then(response => {
-        if (response.status == "success" ) {
-          if(response.data.workflow_id){
-            that.setState({ workflowId: response.data.workflow_id });
-          }
+        if (response.status == "success" && response.data.workflow_id) {
+          that.setState({ workflowId: response.data.workflow_id });
           if (response.data.activity_id) {
             that.setState({ activityId: response.data.activity_id });
           }
@@ -897,7 +895,6 @@ class FormRender extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.props.url);
     if(this.props.url) {
       this.getFormContents(this.props.url).then(response => {
         var parsedData = [];
@@ -957,8 +954,6 @@ class FormRender extends React.Component {
     }
   }
   render() {
-    console.log(this.state);
-    
     return (
       <div>
         <Notification ref={this.notif} />
