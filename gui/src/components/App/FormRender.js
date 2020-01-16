@@ -161,11 +161,22 @@ class FormRender extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let pageContent = await helper.request(
       "v1",
-      "/app/" + this.state.appId + "/form/" + this.state.formId,
+      "/app/" + this.state.appId + "/form/" + this.state.formId + "/workflow",
       {},
       "get"
     );
     return pageContent;
+  }
+  async getForm() {
+    // call to api using wrapper
+    let helper = this.core.make("oxzion/restClient");
+    let form = await helper.request(
+      "v1",
+      "/app/" + this.state.appId + "/form/" + this.state.formId,
+      {},
+      "get"
+    );
+    return form;
   }
 
   async getFileData() {
@@ -362,6 +373,20 @@ class FormRender extends React.Component {
             console.log(response.data);
             that.setState({ content: JSON.parse(response.data.template) });
           }
+        } else {
+          this.getForm().then(response => {
+            if (response.status == "success" ) {
+             if(response.data.workflow_id){
+              that.setState({ workflowId: response.data.workflow_id });
+            }
+            if (response.data.activity_id) {
+              that.setState({ activityId: response.data.activity_id });
+            }
+            if (!that.state.content) {
+              that.setState({ content: JSON.parse(response.data.template) });
+            }
+          }
+        });
         }
         that.setState({ formDivID: "formio_" + that.state.formId });
         that.createForm();
@@ -872,6 +897,7 @@ class FormRender extends React.Component {
   };
 
   componentDidMount() {
+    console.log(this.props.url);
     if(this.props.url) {
       this.getFormContents(this.props.url).then(response => {
         var parsedData = [];
