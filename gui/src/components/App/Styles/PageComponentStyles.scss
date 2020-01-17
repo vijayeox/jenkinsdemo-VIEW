@@ -109,4 +109,7 @@ border: 0;
     top: 5%;
     position: absolute;
 }
+.searchInput:focus {
+  outline-color:transparent;
+}
 
