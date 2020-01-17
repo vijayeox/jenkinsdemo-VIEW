@@ -18,9 +18,9 @@ function DataSourceModal(props) {
     }
   }, [props.content])
 
-  
+
   function notify(response, operation) {
-    
+
     if (response.status == "success")
       props.notification.current.notify(
         "Data Source " + operation,
@@ -38,7 +38,7 @@ function DataSourceModal(props) {
 
 
   function dataSourceOperation(operation) {
-    
+
     let helper = props.osjsCore.make("oxzion/restClient");
     let requestUrl = ""
     let method = ""

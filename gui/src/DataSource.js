@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import { dataSource as section } from './metadata.json';
-import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
-import { OX_Grid, Notification } from "./GUIComponents"
-import Pagination from './pagination'
+import React from 'react';
+import { dataSource as section } from '../metadata.json';
+import { Button } from 'react-bootstrap'
+import OX_Grid from "./OX_Grid"
+import Notification from "./Notification"
 import DataSourceModal from './components/Modals/DataSourceModal'
-
-
 
 class DataSource extends React.Component {
   constructor(props) {
     super(props);
-
     this.core = this.props.args;
     this.state = {
       showModal: false,
@@ -31,8 +27,8 @@ class DataSource extends React.Component {
     return [<React.Fragment key={1} />];
   }
 
-  renderButtons(e, action) {
-
+   renderButtons(e, action) {
+     
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
@@ -137,12 +133,12 @@ class DataSource extends React.Component {
               filterCell: e => this.renderEmpty()
             }
           ]}
-          gridToolbar={
-            this.renderListOperations({
-              name: "Create",
-              rule: "true"
-            })
-          }
+          // gridToolbar={
+          //   this.renderListOperations({
+          //     name: "Create",
+          //     rule: "true"
+          //   })
+          // }
         />
         <DataSourceModal
           osjsCore={this.core}
@@ -156,6 +152,7 @@ class DataSource extends React.Component {
       </div>
     );
   }
+
 }
 
 export default DataSource;

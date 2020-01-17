@@ -1,9 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import {name as applicationName} from './metadata.json';
-import DataSource from './dataSource';
-import Query from './query';
+// import DataSource from './dataSource';
+import {Query,DataSource} from './GUIComponents'
+// import Query from './query';
 import Visualization from './visualization';
 import Dashboard from './dashboard';
 import DashboardEditor from './dashboardEditor';

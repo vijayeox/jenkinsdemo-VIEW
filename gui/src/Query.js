@@ -1,8 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { query as section } from './metadata.json';
+import { query as section } from '../metadata.json';
 import { Form, Row, Col, Button, Tabs, Tab } from 'react-bootstrap'
-import { OX_Grid, Notification } from "./GUIComponents"
+import OX_Grid from "./OX_Grid"
+import  Notification from "./Notification"
+
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
 class Query extends React.Component {
@@ -93,7 +94,6 @@ class Query extends React.Component {
   async buttonAction(action, item) {
     if (action.name !== undefined) {
       let helper = this.core.make('oxzion/restClient');
-      console.log(item)
       let requestUrl = "analytics/query/" + item.uuid + "?version=0" //fetch version from api
       helper.request('v1', requestUrl, {}, 'delete')
         .then(response => {
@@ -249,6 +249,7 @@ class Query extends React.Component {
           datasourcename={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][0] : ""}
           datasourceuuid={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][1] : ""}
           notification={this.notif}
+          resetInput={()=>this.setState({inputs:{}})}
         />
 
       </div>

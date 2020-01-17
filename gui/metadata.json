@@ -1,0 +1,12 @@
+{
+    "dataSource": {
+        "title": {
+          "en_EN":"Data Source"
+        }
+      },
+      "query": {
+        "title": {
+          "en_EN":"Query"
+        }
+      }
+}

@@ -10,7 +10,8 @@ import DocumentViewer from "./src/DocumentViewer";
 import Dashboard from "./src/Dashboard";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
-
+import DataSource from './src/DataSource'
+import Query from './src/Query'
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -23,5 +24,7 @@ export {
   DocumentViewer,
   Dashboard,
   WidgetGrid,
-  WidgetRenderer
+  WidgetRenderer,
+  DataSource,
+  Query
 };
