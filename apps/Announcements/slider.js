@@ -85,7 +85,7 @@ class Slider extends React.Component {
     return (
       <div className="App row slide" style={{ margin: 0 }} key={Math.random()}>
         <div className="Announcement-visuals col s12">
-          {isImage ? <Img data={data} /> : <Video data={data} />}
+          {isImage ? <Img data={data} /> : <Video autoplay muted data={data} />}
         </div>
         <div className="Announcement-content col">
           <h5 style={{ paddingTop: "10px" }}> {data.name} </h5>
