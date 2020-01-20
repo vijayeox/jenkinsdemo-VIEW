@@ -528,16 +528,6 @@ class FormRender extends React.Component {
           // return that.saveForm(form,form_data).then(response => {
           //   form.emit('submitDone', response);
           // });
-          console.log('test');
-        });
-        form.on("error", errors => {
-          var elm = document.getElementsByClassName("alert-danger")[0];
-          scrollIntoView(elm, {
-            scrollMode: "if-needed",
-            block: "center",
-            behavior: "smooth",
-            inline: "nearest"
-          });
         });
 
         form.on("change", function (changed) {
