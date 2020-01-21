@@ -5,7 +5,12 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 function DataSourceModal(props) {
 
   const [input, setInput] = useState({})
-
+  const allowedOperation = {
+    ACTIVATE: "Activated",
+    CREATE: "Created",
+    EDIT: "Edited",
+    DELETE: "Deleted"
+  }
   useEffect(() => {
     if (props.content !== undefined) {
       var { name, type } = props.content;
@@ -44,16 +49,17 @@ function DataSourceModal(props) {
     let method = ""
     let formData = {}
 
-    if (operation === "Edited" || operation === "Created") {
+    if (operation !== undefined && operation !== allowedOperation.DELETE) {
       formData["name"] = input["name"];
       formData["type"] = input["type"];
       formData["configuration"] = input["configuration"];
 
-      if (operation === "Edited") {
+      if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
         //pass additional form inputs required for edit operation
         formData["uuid"] = props.content.uuid
         formData["version"] = props.content.version;
         requestUrl = "analytics/datasource/" + props.content.uuid;
+        operation === "Activated" ? formData["isdeleted"] = "0" : null
         method = "put"
       }
       else {
@@ -61,8 +67,7 @@ function DataSourceModal(props) {
         method = "filepost"
       }
     }
-
-    else if (operation === "Deleted") {
+    else if (operation === allowedOperation.DELETE) {
       requestUrl = "analytics/datasource/" + props.content.uuid + "?version=" + props.content.version
       method = "delete"
     }
@@ -74,6 +79,7 @@ function DataSourceModal(props) {
       method
     )
       .then(response => {
+        props.refreshGrid.current.child.current.refresh()
         notify(response, operation)
         props.onHide()
       })
@@ -102,6 +108,10 @@ function DataSourceModal(props) {
   else if (props.modalType === "Create") {
     Footer = (<Button variant="primary" onClick={() => dataSourceOperation("Created")}>Create</Button>)
     DisabledFields = false
+  }
+  else if (props.modalType === "Activate") {
+    Footer = (<Button variant="success" onClick={() => dataSourceOperation("Activated")}>Activate</Button>)
+    DisabledFields = true
   }
 
   return (
@@ -140,7 +150,7 @@ function DataSourceModal(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => { props.onHide() }}>Close</Button>
+        <Button variant="secondary" onClick={() => { props.onHide() }}>Cancel</Button>
         {Footer}
       </Modal.Footer>
     </Modal>
