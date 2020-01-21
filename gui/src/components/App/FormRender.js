@@ -463,7 +463,7 @@ class FormRender extends React.Component {
       }
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
-          that.storeCache(submission.data);
+          that.storeCache(that.cleanData(submission.data));
           next(null);
         },
         beforeSubmit: async(submission,next) =>{
