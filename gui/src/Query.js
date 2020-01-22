@@ -43,7 +43,7 @@ class Query extends React.Component {
   }
   async fetchDataSource() {
     let helper = this.core.make('oxzion/restClient');
-    let response = await helper.request('v1', 'analytics/datasource?show_deleted=true', {}, 'get');//stat from here
+    let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
     
     this.setState({ dataSourceOptions: response.data })
   }
