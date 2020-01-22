@@ -195,12 +195,12 @@ class DataSource extends React.Component {
               filterCell: e => this.renderEmpty()
             }
           ]}
-        // gridToolbar={
-        //   this.renderListOperations({
-        //     name: "Create",
-        //     rule: "true"
-        //   })
-        // }
+        gridToolbar={
+          this.renderListOperations({
+            name: "Create",
+            rule: "true"
+          })
+        }
         />
         <DataSourceModal
           osjsCore={this.core}

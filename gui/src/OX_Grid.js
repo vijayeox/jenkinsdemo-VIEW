@@ -45,6 +45,9 @@ export default class OX_Grid extends React.Component {
             defaultFilters = getUrlParams.filter;
           }
         }
+        else {
+          apiUrl = this.props.data;
+        }
       }
     }
     if(this.rawDataPresent){
@@ -63,8 +66,10 @@ export default class OX_Grid extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
-    this.gridHeight =
-      document.getElementsByClassName("PageRender")[0].clientHeight - 50;
+    if (!document.getElementsByClassName("PageRender")) {
+      this.gridHeight =
+        document.getElementsByClassName("PageRender")[0].clientHeight - 50;
+    }
   }
 
   dataStateChange = e => {
@@ -92,21 +97,21 @@ export default class OX_Grid extends React.Component {
     let table = [];
     this.props.checkBoxSelection
       ? table.push(
-          <GridColumn
-            field="selected"
-            filterable={false}
-            // headerSelectionValue={
-            //   this.state.gridData.findIndex(
-            //     dataItem => dataItem.selected === false
-            //   ) === -1
-            // }
-            key={Math.random() * 20}
-            locked={true}
-            reorderable={false}
-            orderIndex={0}
-            width="50px"
-          />
-        )
+        <GridColumn
+          field="selected"
+          filterable={false}
+          // headerSelectionValue={
+          //   this.state.gridData.findIndex(
+          //     dataItem => dataItem.selected === false
+          //   ) === -1
+          // }
+          key={Math.random() * 20}
+          locked={true}
+          reorderable={false}
+          orderIndex={0}
+          width="50px"
+        />
+      )
       : null;
     this.props.columnConfig.map((dataItem, i) => {
       table.push(
@@ -114,12 +119,12 @@ export default class OX_Grid extends React.Component {
           cell={
             dataItem.cell
               ? item => (
-                  <CustomCell
-                    cellTemplate={dataItem.cell}
-                    dataItem={item.dataItem}
-                    type={"cellTemplate"}
-                  />
-                )
+                <CustomCell
+                  cellTemplate={dataItem.cell}
+                  dataItem={item.dataItem}
+                  type={"cellTemplate"}
+                />
+              )
               : undefined
           }
           children={dataItem.children ? dataItem.children : undefined}
@@ -130,12 +135,12 @@ export default class OX_Grid extends React.Component {
           filterCell={
             dataItem.filterCell
               ? item => (
-                  <CustomCell
-                    cellTemplate={dataItem.filterCell}
-                    dataItem={item.dataItem}
-                    type={"filterTemplate"}
-                  />
-                )
+                <CustomCell
+                  cellTemplate={dataItem.filterCell}
+                  dataItem={item.dataItem}
+                  type={"filterTemplate"}
+                />
+              )
               : undefined
           }
           groupable={dataItem.groupable ? dataItem.groupable : undefined}
@@ -176,30 +181,30 @@ export default class OX_Grid extends React.Component {
         {this.props.gridNoRecords ? (
           this.props.gridNoRecords
         ) : (
-          <div className="grid-no-records">
-            <ul className="list-group" style={{ listStyle: "disc" }}>
-              <div
-                href="#"
-                className="list-group-item list-group-item-action bg-warning"
-                style={{
-                  display: "flex",
-                  width: "110%",
-                  alignItems: "center"
-                }}
-              >
-                <div style={{ marginLeft: "10px" }}>
-                  <i className="fas fa-info-circle"></i>
-                </div>
+            <div className="grid-no-records">
+              <ul className="list-group" style={{ listStyle: "disc" }}>
                 <div
-                  style={{ fontSize: "medium", paddingLeft: "30px" }}
-                  className="noRecords"
+                  href="#"
+                  className="list-group-item list-group-item-action bg-warning"
+                  style={{
+                    display: "flex",
+                    width: "110%",
+                    alignItems: "center"
+                  }}
                 >
-                  No Records Available
+                  <div style={{ marginLeft: "10px" }}>
+                    <i className="fas fa-info-circle"></i>
+                  </div>
+                  <div
+                    style={{ fontSize: "medium", paddingLeft: "30px" }}
+                    className="noRecords"
+                  >
+                    No Records Available
                 </div>
-              </div>
-            </ul>
-          </div>
-        )}
+                </div>
+              </ul>
+            </div>
+          )}
       </GridNoRecords>
     );
   }
@@ -280,14 +285,14 @@ export default class OX_Grid extends React.Component {
             onDataRecieved={this.dataRecieved}
           />
         ) : (
-          <DataLoader
-            ref={this.child}
-            args={this.props.osjsCore}
-            url={this.state.api}
-            dataState={this.state.dataState}
-            onDataRecieved={this.dataRecieved}
-          />
-        )}
+            <DataLoader
+              ref={this.child}
+              args={this.props.osjsCore}
+              url={this.state.api}
+              dataState={this.state.dataState}
+              onDataRecieved={this.dataRecieved}
+            />
+          )}
         <Grid
           data={this.state.gridData.data}
           total={
@@ -298,11 +303,11 @@ export default class OX_Grid extends React.Component {
           detail={
             this.props.rowTemplate
               ? dataItem => (
-                  <DetailComponent
-                    rowTemplate={this.props.rowTemplate}
-                    dataItem={dataItem.dataItem}
-                  />
-                )
+                <DetailComponent
+                  rowTemplate={this.props.rowTemplate}
+                  dataItem={dataItem.dataItem}
+                />
+              )
               : undefined
           }
           filterable={this.props.filterable}
@@ -323,31 +328,30 @@ export default class OX_Grid extends React.Component {
           {...this.state.dataState}
         >
           {(this.props.gridToolbar || this.props.gridOperations) &&
-          this.state.apiActivityCompleted ? (
-            <GridToolbar>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                {this.props.gridToolbar ? (
-                  <JsxParser
-                    bindings={{ gridData: this.state.gridData.data }}
-                    jsx={this.props.gridToolbar}
-                  />
-                ) : (
-                  <div />
-                )}
-                <div>
-                  {this.props.gridOperations
-                    ? this.renderListOperations(this.props.gridOperations)
-                    : null}
+            this.state.apiActivityCompleted ? (
+              <GridToolbar>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}
+                >
+                  {typeof this.props.gridToolbar == "string" ? (
+                    <JsxParser
+                      bindings={{ gridData: this.state.gridData.data }}
+                      jsx={this.props.gridToolbar}
+                    />
+
+                  ) : <GridToolbar>{this.props.gridToolbar}</GridToolbar>}
+                  <div>
+                    {this.props.gridOperations
+                      ? this.renderListOperations(this.props.gridOperations)
+                      : null}
+                  </div>
                 </div>
-              </div>
-            </GridToolbar>
-          ) : null}
+              </GridToolbar>
+            ) : null}
           {this.createColumns()}
           {/* {this.noRecordsJSX()} */}
         </Grid>
