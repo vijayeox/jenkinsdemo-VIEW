@@ -5,6 +5,7 @@ import OX_Grid from "./OX_Grid"
 import Notification from "./Notification"
 import Switch from "react-switch"
 import DataSourceModal from './components/Modals/DataSourceModal'
+import "./public/css/dataSource.scss";
 
 class DataSource extends React.Component {
   constructor(props) {

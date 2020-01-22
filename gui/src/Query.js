@@ -6,6 +6,8 @@ import  Notification from "./Notification"
 import Switch from 'react-switch'
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
+import "./public/css/query.scss";
+
 class Query extends React.Component {
   constructor(props) {
     super(props);
@@ -19,10 +21,12 @@ class Query extends React.Component {
       showQueryModal: false,
       modalType: "",
       modalContent: {},
-      checked: {}
+      checked: {},
+      activeTab:"querylist"
     }
     this.refresh = React.createRef();
     this.handleSwitch = this.handleSwitch.bind(this);
+    this.renderButtons = this.renderButtons.bind(this);
     this.checkedList = {}
 
   }
@@ -82,6 +86,7 @@ class Query extends React.Component {
     return validForm
   }
   onsaveQuery() {
+    
     this.validateform() ? this.setState({ showQueryModal: true ,modalContent:"",modalType:"Save"}) : null
   }
 
@@ -111,7 +116,7 @@ class Query extends React.Component {
   queryOperation = (e, operation) => {
     this.setState({ showQueryModal: true, modalContent: e, modalType: operation })
   }
-  async buttonAction(action, item) {
+  buttonAction(action, item) {
     if (action.name !== undefined) {
       if (action.name === "toggleActivate" && item.isdeleted == "0")
       this.queryOperation(item, "Delete")
@@ -120,13 +125,13 @@ class Query extends React.Component {
     }
   }
   renderButtons(e, action) {
-
     var actionButtons = [];
-    Object.keys(action).map(function (key, index) {
-      var string = this.replaceParams(action[key].rule, e);
+    let that = this
+    Object.keys(action).map(function (key, index) { 
+      var string = that.replaceParams(action[key].rule, e);
       var showButton = eval(string);
       if (action[key].name === "toggleActivate") {
-        this.checkedList[e.name] = showButton //check if the datasource is deleted or not
+        that.checkedList[e.name] = showButton //check if the datasource is deleted or not
         showButton = true   //always show the button
       }
       var buttonStyles = action[key].icon
@@ -141,13 +146,14 @@ class Query extends React.Component {
         };
       showButton
         ? action[key].name === "toggleActivate" ?
+        
         actionButtons.push(
-          <abbr title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+          <abbr title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
             <Switch
               id={e.name}
-              onChange={() => this.buttonAction(action[key], e)}
-              checked={this.state.checked[e.name]}
-              onClick={() => this.buttonAction(action[key], e)}
+              onChange={() =>that.buttonAction(action[key], e)}
+              checked={that.state.checked[e.name]}
+              onClick={() => that.buttonAction(action[key], e)}
               onColor="#86d3ff"
               onHandleColor="#2693e6"
               handleDiameter={10}
@@ -163,7 +169,7 @@ class Query extends React.Component {
         )
       :null
         : null;
-    }, this);
+    });
     return actionButtons;
   }
 
@@ -208,17 +214,15 @@ class Query extends React.Component {
                 </Form.Text>
               </Col>
             </Form.Group>
-            <Button className="" onClick={() => this.validateform()} ><i class="fa fa-gear"></i> Run Query</Button>
+            <Button className="" onClick={() => this.validateform()?this.setState({activeTab:"results"}):null} ><i class="fa fa-gear"></i> Run Query</Button>
             <Button onClick={() => this.onsaveQuery()}>Save Query</Button>
           </Form>
         </div>
         <div className="query-result-div">
 
-          <Tabs defaultActiveKey="results" id="uncontrolled-tab-example">
-            <Tab eventKey="results" title="Result">
-              <QueryResult />
-            </Tab>
-            <Tab eventKey="allqueries" title="All Queries">
+          <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({activeTab:k})}>
+            
+            <Tab eventKey="querylist" title="All Queries">
               <div className="col=md-12 querylist-div">
 
                 <OX_Grid
@@ -246,7 +250,9 @@ class Query extends React.Component {
                   ]}
                 />
               </div>
-
+            </Tab>
+            <Tab eventKey="results" title="Result">
+              <QueryResult />
             </Tab>
           </Tabs>
         </div>
