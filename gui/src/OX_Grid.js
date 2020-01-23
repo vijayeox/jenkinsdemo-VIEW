@@ -265,7 +265,7 @@ export default class OX_Grid extends React.Component {
         <Button
           style={{ right: "10px", float: "right" }}
           primary={true}
-          onClick={e => this.updatePageContent(e.item)}
+          onClick={e => this.updatePageContent(operationsList[0])}
         >
           {operationsList[0].name}
         </Button>
