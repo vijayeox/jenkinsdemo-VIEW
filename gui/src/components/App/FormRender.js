@@ -242,7 +242,7 @@ class FormRender extends React.Component {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
-            form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
+            form.submission = { data: this.parseResponseData(this.addAddlData(response.data)) };
             form.triggerChange();
           }
           await this.deleteCacheData().then(response2 => {
@@ -524,6 +524,7 @@ class FormRender extends React.Component {
           }
         });
         form.on("submit", submission => {
+          console.log("Submission Call");
           // var form_data = that.cleanData(submission.data);
           // return that.saveForm(form,form_data).then(response => {
           //   form.emit('submitDone', response);
@@ -580,13 +581,13 @@ class FormRender extends React.Component {
                 var targetComponent = form.getComponent(properties["target"]);
                 if (changed.changed.value && targetComponent) {
                   var value = formdata.data[changed.changed.value];
-                  if(changed.changed.value.value){
+                  if(changed.changed.value.value != undefined && formdata.data[changed.changed.value.value] != undefined){
                     value = formdata.data[changed.changed.value.value];
                   }
-                  if (value) {
+                  if (value != undefined) {
                     targetComponent.setValue(value);
                   } else {
-                    if(changed.changed.value.value){
+                    if(changed.changed.value.value != undefined){
                       targetComponent.setValue(changed.changed.value.value);
                     } else {
                       targetComponent.setValue(changed.changed.value);
