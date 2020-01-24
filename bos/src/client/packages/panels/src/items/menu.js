@@ -178,6 +178,10 @@ export default class MenuPanelItem extends PanelItem {
     const onclick = (ev) => {
       const packages = this.core.make('osjs/packages').getPackages(m => (!m.type || m.type === 'application'));
       let appArray = makeTree(this.core, __, [].concat(packages));
+      if(appArray.length == 0){
+        ev.preventDefault();
+        return;
+      }
       let appmenuElement = document.getElementById('appmenu');
       appmenuElement.innerHTML = '';
       let appBarDiv = document.createElement('div');
