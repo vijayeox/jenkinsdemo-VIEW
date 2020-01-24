@@ -37,7 +37,7 @@
     font-weight: 600;
     color: #1a1a1a;
     height: 60px;
-    padding: 0 1rem 0 2.5rem;
+    padding: 20px 1rem 0 2.5rem;
     font-size: 1.75rem;
     font-weight: 300;
     width: 100%;
@@ -75,28 +75,45 @@
 }
 .searchPageDiv {
   width: 100%;
-    position: absolute;
 }
 .searchPageDiv .seperator{
   border-bottom: 1px solid #275362;
-  width: 80%;
+    width: 80%;
+    margin-top: 20px;
+}
+.searchText{
+  padding: 1.5em;
 }
 .searchPageDiv .icon{
-    box-sizing: border-box;
-    color: rgb(165, 180, 196);
+        box-sizing: border-box;
+    color: #a5b4c4;
     display: block;
-    fill: rgb(165, 180, 196);
+    fill: #a5b4c4;
     font-family: MaisonNeue, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
     font-size: 24px;
     height: 24px;
-    left: 1rem;
-    position: absolute;
+    position: relative;
     text-size-adjust: 100%;
-    top: 30%;
 }
 .searchInput {
-  outline-color: transparent;
-  border-bottom: 1px solid #275362;
+border: 0;
+    background: transparent;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+    height: 60px;
+    padding: 0px 1rem 0 2.5rem;
+    font-size: 1.75rem;
+    font-weight: 300;
+    display: inline-block;
+    width: 100%;
+    top: 5%;
+    position: absolute;
+}
+.searchInput:focus {
+  outline-color:transparent;
+}
+.searchInput:focus {
+  outline-color:transparent;
 }
 .searchInput:focus {
   outline-color:transparent;
