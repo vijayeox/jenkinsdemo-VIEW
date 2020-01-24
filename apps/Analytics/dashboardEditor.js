@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Overlay, Tooltip} from 'react-bootstrap';
-import {dashboardEditor as section} from './metadata.json';
+import { Overlay, Tooltip, Button } from 'react-bootstrap';
+import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
-import {WidgetRenderer} from './GUIComponents';
+import { WidgetRenderer } from './GUIComponents';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
+import '../../gui/src/public/css/dashboardEditor.scss'
 import '@progress/kendo-theme-default/dist/all.css';
 
 class DashboardEditor extends React.Component {
@@ -15,34 +16,35 @@ class DashboardEditor extends React.Component {
         super(props);
         this.core = this.props.args;
         this.state = {
-            dashboardId : (props.dashboardId ? props.dashboardId : null),
+            dashboardId: (props.dashboardId ? props.dashboardId : null),
             dashboardName: '',
-            dashboardDescription:'',
-            version: -1,
-            contentChanged : false,
-            editorMode : 'initial',
+            dashboardDescription: '',
+            version: 1,
+            contentChanged: false,
+            editorMode: 'initial',
             errors: {}
         };
-        this.renderedCharts = {};        
+        this.initialState = { ...this.state }
+        this.renderedCharts = {};
         this.props.setTitle(section.title.en_EN);
         this.restClient = osjs.make('oxzion/restClient');
         this.editor = null;
 
         let thisInstance = this;
-        this.editorDialogMessageHandler = function(event) {
+        this.editorDialogMessageHandler = function (event) {
             let editorDialog = event.source;
             let eventData = event.data;
-            switch(eventData.action) {
+            switch (eventData.action) {
                 case 'data':
-                    thisInstance.doRestRequest(eventData.url, eventData.params, eventData.method ? eventData.method : 'get', 
-                        function(response) { //Successful response
+                    thisInstance.doRestRequest(eventData.url, eventData.params, eventData.method ? eventData.method : 'get',
+                        function (response) { //Successful response
                             editorDialog.postMessage(response, '*');
                         },
-                        function(response) { //Failure response
+                        function (response) { //Failure response
                             editorDialog.postMessage(response, '*');
                         }
                     );
-                break;
+                    break;
                 default:
                     console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
@@ -54,8 +56,8 @@ class DashboardEditor extends React.Component {
         let name = e.target.name;
         let value = e.target.value;
         this.setState({
-            [name]:value,
-            contentChanged:true
+            [name]: value,
+            contentChanged: true
         });
     }
 
@@ -65,11 +67,11 @@ class DashboardEditor extends React.Component {
     getJsLibraryList = () => {
         let self = this;
         return [
-            {'name':'amChartsCoreJs','url':'https://www.amcharts.com/lib/4/core.js','onload':function() {},'onerror':function(){}},
-            {'name':'amChartsChartsJs','url':'https://www.amcharts.com/lib/4/charts.js','onload':function() {},'onerror':function(){}},
-            {'name':'amChartsAnimatedJs','url':'https://www.amcharts.com/lib/4/themes/animated.js','onload':function() {},'onerror':function(){}},
-            {'name':'amChartsKellyJs','url':'https://www.amcharts.com/lib/4/themes/kelly.js','onload':function() {},'onerror':function(){}},
-            {'name':'ckEditorJs','url':'/apps/Analytics/ckeditor/ckeditor.js','onload':function() {self.setupCkEditor();},'onerror':function(){}}
+            { 'name': 'amChartsCoreJs', 'url': 'https://www.amcharts.com/lib/4/core.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsChartsJs', 'url': 'https://www.amcharts.com/lib/4/charts.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsAnimatedJs', 'url': 'https://www.amcharts.com/lib/4/themes/animated.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsKellyJs', 'url': 'https://www.amcharts.com/lib/4/themes/kelly.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'ckEditorJs', 'url': '/apps/Analytics/ckeditor/ckeditor.js', 'onload': function () { self.setupCkEditor(); }, 'onerror': function () { } }
         ];
     }
 
@@ -78,25 +80,25 @@ class DashboardEditor extends React.Component {
             extraPlugins: 'oxzion,autogrow',
             autoGrow_minHeight: 250,
             autoGrow_maxHeight: 400,
-            height:400,
-            width:'100%',
+            height: 400,
+            width: '100%',
             //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
             //CKEDITOR removes tags like span and flattens HTML structure.
-            allowedContent:true,
+            allowedContent: true,
             //extraAllowedContent:'span(*)',
             oxzion: {
                 dimensions: {
                     begin: {
-                        width:300,
-                        height:200
+                        width: 300,
+                        height: 200
                     },
                     min: {
-                        width:50,
-                        height:50
+                        width: 50,
+                        height: 50
                     },
                     max: {
-                        width:800,
-                        height:600,
+                        width: 800,
+                        height: 600,
                     }
                 },
                 dialogUrl: '/apps/Analytics/widgetEditorDialog.html'
@@ -104,35 +106,35 @@ class DashboardEditor extends React.Component {
         };
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
-        let editor = CKEDITOR.appendTo( 'ckEditorInstance', config );
+        let editor = CKEDITOR.appendTo('ckEditorInstance', config);
         //Kendo theme CSS is added like this for rendering Kendo grid inside a widget displayed within ckeditor.
         editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
         this.editor = editor;
         let thisInstance = this;
-        editor.on('instanceReady', function(event) {
+        editor.on('instanceReady', function (event) {
             thisInstance.getDashboard(editor);
         });
-        editor.on('oxzionWidgetInitialization', function(event) {
+        editor.on('oxzionWidgetInitialization', function (event) {
             try {
                 let elementId = event.data.elementId;
                 let widgetId = event.data.widgetId;
                 thisInstance.updateWidget(elementId, widgetId);
             }
-            catch(error) {
+            catch (error) {
                 console.error(error);
             }
         });
-        editor.on('oxzionWidgetPrepareToDowncast', function(event) {
+        editor.on('oxzionWidgetPrepareToDowncast', function (event) {
             try {
                 let elementId = event.data.elementId;
                 let chart = thisInstance.renderedCharts[elementId];
                 if (chart) {
                     chart.dispose();
                     thisInstance.renderedCharts[elementId] = null;
-                    console.info(`Disposed the chart of element id ${elementId} for downcasting it.`); 
+                    console.info(`Disposed the chart of element id ${elementId} for downcasting it.`);
                 }
             }
-            catch(error) {
+            catch (error) {
                 console.error(error);
             }
         });
@@ -143,29 +145,31 @@ class DashboardEditor extends React.Component {
         //        });
         //    }
         //});
-        editor.on('oxzionWidgetChanged', function(event) {
+        editor.on('oxzionWidgetChanged', function (event) {
             thisInstance.setState({
-                contentChanged:true
+                contentChanged: true
             });
         });
-        editor.on('change', function(event) {
+        editor.on('change', function (event) {
             thisInstance.setState({
-                contentChanged : true
+                contentChanged: true
             });
         });
-        editor.on('mode', function(event) {
+        editor.on('mode', function (event) {
             thisInstance.setState({
-                editorMode : this.mode
+                editorMode: this.mode
             });
         });
     }
 
     saveDashboard = () => {
+
         let params = {
-            'content':this.editor.getData(),
-            'version':this.state.version,
-            'name':this.state.dashboardName,
-            'description':this.state.dashboardDescription
+            'content': this.editor.getData(),
+            'version': this.state.version,
+            'name': this.state.dashboardName,
+            'description': this.state.dashboardDescription,
+            'dashboard_type': "html"
         };
         let url = 'analytics/dashboard';
         let method = '';
@@ -177,10 +181,12 @@ class DashboardEditor extends React.Component {
             method = 'post';
         }
         let thisInstance = this;
-        this.doRestRequest(url, params, method, 
-            function(response) {
+        this.doRestRequest(url, params, method,
+            function (response) {
+                thisInstance.props.flipCard("Saved")
+
                 let updateState = {
-                    contentChanged : false
+                    contentChanged: false
                 };
                 if (thisInstance.state.dashboardId) { //Case of updating existing dashboard.
                     updateState.version = response.dashboard.version;
@@ -190,19 +196,21 @@ class DashboardEditor extends React.Component {
                     updateState.dashboardId = response.dashboard.uuid;
                 }
                 thisInstance.setState(updateState);
-            }, 
-            function(response) {
+
+            },
+            function (response) {
                 let versionChanged = false;
                 if (response.data && response.data.reasonCode) {
                     if (response.data.reasonCode === 'VERSION_CHANGED') {
                         versionChanged = true;
+
                     }
                 }
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
-                    text: versionChanged ? 
-                        'Dashboard has been modified by another user. Please reload the data and try again.' : 
+                    text: versionChanged ?
+                        'Dashboard has been modified by another user. Please reload the data and try again.' :
                         'Could not save dashboard. Please try after some time.'
                 });
             }
@@ -212,17 +220,18 @@ class DashboardEditor extends React.Component {
     getDashboard = (editor) => {
         var thisInstance = this;
         if (this.state.dashboardId) {
-            this.doRestRequest('analytics/dashboard/' + this.state.dashboardId, {}, 'get', 
-                function(response) {
+
+            this.doRestRequest('analytics/dashboard/' + this.state.dashboardId, {}, 'get',
+                function (response) {
                     let dashboard = response.dashboard;
                     thisInstance.setState({
-                        version:dashboard.version,
-                        dashboardName:dashboard.name ? dashboard.name : '',
-                        dashboardDescription:dashboard.description ? dashboard.description : ''
+                        version: dashboard.version,
+                        dashboardName: dashboard.name ? dashboard.name : '',
+                        dashboardDescription: dashboard.description ? dashboard.description : ''
                     });
                     editor.setData(response.dashboard.content);
-                }, 
-                function(response) {
+                },
+                function (response) {
                     Swal.fire({
                         type: 'error',
                         title: 'Oops...',
@@ -251,7 +260,7 @@ class DashboardEditor extends React.Component {
                 try {
                     failureHandler(response);
                 }
-                catch(e) {
+                catch (e) {
                     console.error(response);
                 }
             }
@@ -264,16 +273,17 @@ class DashboardEditor extends React.Component {
             }
         }
         restResponse.
-            then(function(response) {
+            then(function (response) {
                 if (response.status !== 'success') {
                     handleNonSuccessResponse(response);
                 }
                 else {
                     if (successHandler) {
+
                         let responseObject = {
-                            'url':url,
-                            'params':params,
-                            'status':'success'
+                            'url': url,
+                            'params': params,
+                            'status': 'success'
                         };
                         let dataContent = response.data;
                         for (let property in dataContent) {
@@ -285,16 +295,16 @@ class DashboardEditor extends React.Component {
                         try {
                             successHandler(responseObject);
                         }
-                        catch(e) {
+                        catch (e) {
                             console.error(e);
                         }
                     }
                 }
             }).
-            catch(function(response){
+            catch(function (response) {
                 handleNonSuccessResponse(response);
             }).
-            finally(function(response){
+            finally(function (response) {
                 if (thisInstance.loader) {
                     thisInstance.loader.destroy();
                 }
@@ -313,11 +323,11 @@ class DashboardEditor extends React.Component {
             }
         }
 
-        this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get', 
-            function(response) {
+        this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get',
+            function (response) {
                 WidgetRenderer.render(widgetElement, response.widget);
             },
-            function(response) {
+            function (response) {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
@@ -325,6 +335,21 @@ class DashboardEditor extends React.Component {
                 });
             }
         );
+    }
+    componentDidUpdate(prevProps) {
+
+        if (this.props.dashboardId !== prevProps.dashboardId) {
+            if (this.props.dashboardId === "") {
+                this.editor.setData("");
+                this.setState({ ...this.initialState })
+            }
+            else {
+                this.setState({ dashboardId: this.props.dashboardId }, () => this.getDashboard(this.editor))
+
+            }
+            //call the update funciton here
+
+        }
     }
 
     componentDidMount() {
@@ -348,53 +373,57 @@ class DashboardEditor extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <form className="dashboard-editor-form">
+                <div className="row col-12" style={{ marginBottom: "3em" }}>
+                    <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i class="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
+                </div>
                 <div className="form-group row">
+
                     <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
                     <div className="col-2">
                         <>
-                        <input type="text" id="dashboardName" name="dashboardName"  ref="dashboardName" className="form-control form-control-sm" 
-                            onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
-                            disabled={false}/>
-                        <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
-                            {props => (
-                            <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
-                                {this.state.errors.dashboardName}
-                            </Tooltip>
-                            )}
-                        </Overlay>
+                            <input type="text" id="dashboardName" name="dashboardName" ref="dashboardName" className="form-control form-control-sm"
+                                onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
+                                disabled={false} />
+                            <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
+                                {props => (
+                                    <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
+                                        {this.state.errors.dashboardName}
+                                    </Tooltip>
+                                )}
+                            </Overlay>
                         </>
                     </div>
                     <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
                     <div className="col-4">
                         <>
-                        <input type="text" id="dashboardDescription" name="dashboardDescription"  ref="dashboardDescription" className="form-control form-control-sm" 
-                            onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
-                            disabled={false}/>
-                        <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
-                            {props => (
-                            <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
-                                {this.state.errors.dashboardDescription}
-                            </Tooltip>
-                            )}
-                        </Overlay>
+                            <input type="text" id="dashboardDescription" name="dashboardDescription" ref="dashboardDescription" className="form-control form-control-sm"
+                                onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
+                                disabled={false} />
+                            <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
+                                {props => (
+                                    <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
+                                        {this.state.errors.dashboardDescription}
+                                    </Tooltip>
+                                )}
+                            </Overlay>
                         </>
                     </div>
                     <div className="col-1">
-                        <button type="button" className="btn btn-primary" style={{float:'right'}} onClick={this.saveDashboard} disabled={!this.state.contentChanged}>
+                        <button type="button" className="btn btn-primary" style={{ float: 'right' }} onClick={this.saveDashboard} disabled={!this.state.contentChanged}>
                             Save
                         </button>
                     </div>
                 </div>
                 <div className="dashboard">
-                    <div id="ckEditorInstance" style={{height:'calc(100%)'}}>
+                    <div id="ckEditorInstance" style={{ height: 'calc(100%)' }}>
                     </div>
                 </div>
 
-<div id="gridArea" style={{height:'200px', width:'800px'}}>
-    <div className="oxzion-widget-content"></div>
-</div>
+                <div id="gridArea" style={{ height: '200px', width: '800px' }}>
+                    <div className="oxzion-widget-content"></div>
+                </div>
             </form>
         );
     }
