@@ -15,7 +15,7 @@ class SearchPage extends React.Component {
         this.search = {
             value:''
         };
-        this.api = "app/" + this.appId + "/file/search";
+        this.api = "app/" + this.appId + "/file/search/status/Completed";
         this.pageable = {buttonCount: 3,pageSizes: [10,20,50]};
         this.state = {
             content: this.props.content,
