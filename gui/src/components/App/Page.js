@@ -201,6 +201,10 @@ class Page extends React.Component {
 
   prepareDataRoute(route, params) {
     if (typeof route == "string") {
+      if(!params){
+        params = {};
+      }
+      params['current_date'] = (new Date()).toISOString().slice(0,10);
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
       return result;
