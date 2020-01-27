@@ -1,12 +1,13 @@
 import "../../public/css/formstyles.scss";
 import { Formio } from "formiojs";
 import Notification from "../../Notification";
-import { getComponent, flattenComponents } from "formiojs/utils/formUtils";
+import { getComponent, flattenComponents,eachComponent } from "formiojs/utils/formUtils";
 import React from "react";
 import merge from 'deepmerge';
 import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
+import {countryList} from "./Form/Country.js";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -242,7 +243,7 @@ class FormRender extends React.Component {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
-            form.submission = { data: that.parseResponseData(this.addAddlData(response.data)) };
+            form.submission = { data: this.parseResponseData(this.addAddlData(response.data)) };
             form.triggerChange();
           }
           await this.deleteCacheData().then(response2 => {
@@ -524,6 +525,7 @@ class FormRender extends React.Component {
           }
         });
         form.on("submit", submission => {
+          console.log("Submission Call");
           // var form_data = that.cleanData(submission.data);
           // return that.saveForm(form,form_data).then(response => {
           //   form.emit('submitDone', response);
@@ -590,13 +592,13 @@ class FormRender extends React.Component {
                 var targetComponent = form.getComponent(properties["target"]);
                 if (changed.changed.value && targetComponent) {
                   var value = formdata.data[changed.changed.value];
-                  if(changed.changed.value.value){
+                  if(changed.changed.value.value != undefined && formdata.data[changed.changed.value.value] != undefined){
                     value = formdata.data[changed.changed.value.value];
                   }
-                  if (value) {
+                  if (value != undefined) {
                     targetComponent.setValue(value);
                   } else {
-                    if(changed.changed.value.value){
+                    if(changed.changed.value.value != undefined){
                       targetComponent.setValue(changed.changed.value.value);
                     } else {
                       targetComponent.setValue(changed.changed.value);
@@ -670,15 +672,41 @@ class FormRender extends React.Component {
               breadcrumbs.style.display = 'none';
             }
           }
-          // var elm = document.getElementsByClassName(this.state.appId+"_breadcrumbParent");
-          // if (elm.length > 0) {
-          //   scrollIntoView(elm[0], {
-          //     scrollMode: "if-needed",
-          //     block: "center",
-          //     behavior: "smooth",
-          //     inline: "nearest"
-          //   });
-          // }
+          eachComponent(form.root.components, function (component) {
+            if (component) {
+              if (component.component.properties && component.component.properties.custom_list) {
+                var targetComponent = form.getComponent(component.component.key);
+                if (targetComponent) {
+                  switch(component.component.properties.custom_list) {
+                    case 'user_list':
+                    var commands = {"commands":[{"command":"getuserlist"}]};
+                    that.callPipeline(commands, form.submission).then(response => {
+                      that.core.make("oxzion/splash").destroy();
+                      if (response.data) {
+                        component.setValue(response.data.userlist);
+                      }
+                    });
+                    break;
+                    case 'country_list':
+                    component.setValue(countryList);
+                    break;
+                    default:
+                    break;
+                    component.refresh();
+                  }
+                }
+              }
+            } 
+          }, true);
+          var elm = document.getElementsByClassName(that.state.appId+"_breadcrumbParent");
+          if (elm.length > 0) {
+            scrollIntoView(elm[0], {
+              scrollMode: "if-needed",
+              block: "center",
+              behavior: "smooth",
+              inline: "nearest"
+            });
+          }
           if(form._form['properties']){
             that.runDelegates(form,form._form['properties']);
           }
@@ -699,50 +727,40 @@ class FormRender extends React.Component {
                   var paramData = {};
                   paramData[properties["valueKey"]] = changed[properties["sourceDataKey"]];
                   that.core.make("oxzion/splash").show();
-                  that
-                    .callDelegate(properties["delegate"], paramData)
-                    .then(response => {
+                  that.callDelegate(properties["delegate"], paramData).then(response => {
                       var responseArray = [];
                       for (var responseDataItem in response.data) {
                         if (response.data.hasOwnProperty(responseDataItem)) {
-                          responseArray[responseDataItem] =
-                            response.data[responseDataItem];
+                          responseArray[responseDataItem] = response.data[responseDataItem];
                         }
                       }
                       if (response.data) {
-                        if (response.data.Verified) {
-                          if (changed[properties["destinationDataKey"]].length > 1) {
-                            var flag = false;
-                            for (var i = 0; i < changed[properties["destinationDataKey"]].length; i++) {
-                             
-                              if (changed[properties["destinationDataKey"]][i][properties["valueKey"]] == response.data[properties["valueKey"]]) {
-                                flag = true;
-                                break;
+                        var destinationComponent = form.getComponent(properties["destinationDataKey"]);
+                        if (response.data) {
+                          if(properties["validationKey"]){
+                            if(properties["validationKey"] && response.data[properties["validationKey"]]){
+                              var componentList = flattenComponents(destinationComponent.componentComponents,false);
+                              var valueArray = [];
+                              for (var componentKey in componentList) {
+                                valueArray[componentKey] = response.data[componentKey];
                               }
+                              valueArray = Object.assign({},valueArray);
+                              changed[properties["destinationDataKey"]].push(valueArray);
                             }
-                            if (!flag) {
-                              changed[properties["destinationDataKey"]].push(response.data);
-                            }
-                          }
-                          else if (changed[properties["destinationDataKey"]][0]['Verified'] == "false") {
-                            changed[properties["destinationDataKey"]][0] = response.data;
-                          }
-                          else {
-                            if (changed[properties["destinationDataKey"]][0][properties['valueKey']] != response.data[properties['valueKey']]) {
-                              changed[properties["destinationDataKey"]].push(response.data);
+                            if(properties['clearSource']){
+                              changed[properties["sourceDataKey"]] = '';
                             }
                           }
                           form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
                           form.triggerChange();
+                          destinationComponent.triggerRedraw();
                         }
                       }
                       that.core.make("oxzion/splash").destroy();
                     });
                 }
                 else {
-                  that
-                    .callDelegate(properties["delegate"], changed)
-                    .then(response => {
+                  that.callDelegate(properties["delegate"], changed).then(response => {
                       that.core.make("oxzion/splash").destroy();
                       if (response.data) {
                         form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
