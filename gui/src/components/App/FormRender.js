@@ -392,6 +392,7 @@ class FormRender extends React.Component {
   cleanData(formData) {
     formData.privileges = undefined;
     formData.userprofile = undefined;
+    formData.countryList = undefined;
     return formData;
   }
 
