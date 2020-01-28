@@ -1016,9 +1016,7 @@ class FormRender extends React.Component {
           },
           true
         );
-        window.addEventListener(
-          "paymentSuccess",
-          function(e) {
+        window.addEventListener("paymentSuccess",function(e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1027,88 +1025,56 @@ class FormRender extends React.Component {
                 data: e.detail.data,
                 status: e.detail.status
               }).then(response => {
-                that.notif.current.notify(
-                  "Payment has been Successfully completed!",
-                  "Please wait while we get things ready!",
-                  "success"
-                );
+                that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
                 var formsave = that.saveForm(form, that.state.currentForm.submission.data);
                 var transactionStatusComponent = form.getComponent(
                   "transaction_status"
                 );
                 transactionStatusComponent.setValue(e.detail.status);
                 if (formsave) {
-                  that.notif.current.notify(
-                    "Success",
-                    "Application Has been Successfully Submitted",
-                    "success"
-                  );
+                  that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
                 } else {
-                  that.notif.current.notify(
-                    "Error",
-                    e.detail.message,
-                    "danger"
-                  );
+                  that.notif.current.notify("Error",e.detail.message,"danger");
                 }
                 that.core.make("oxzion/splash").destroy();
               });
           },
           true
         );
-        window.addEventListener(
-          "paymentDeclined",
-          function(e) {
+        window.addEventListener("paymentDeclined",function(e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
-            that
-              .storePayment({
+            that.storePayment({
                 transaction_id: transactionIdComponent.getValue(),
                 data: e.detail.data
-              })
-              .then(response => {
+              }).then(response => {
                 that.notif.current.notify("Error", e.detail.message, "danger");
                 that.core.make("oxzion/splash").destroy();
               });
-          },
-          true
-        );
+          },true);
         window.addEventListener("paymentCancelled",function(e) {
             e.stopPropagation();
             that.notif.current.notify("Warning", e.detail.message, "danger");
             that.core.make("oxzion/splash").destroy();
           },true);
-        window.addEventListener(
-          "paymentError",
-          function(e) {
+        window.addEventListener("paymentError",function(e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
-            that
-              .storePayment({
+            that.storePayment({
                 transaction_id: transactionIdComponent.getValue(),
                 data: e.detail.data
-              })
-              .then(response => {
+              }).then(response => {
                 that.notif.current.notify("Error", e.detail.message, "danger");
                 that.core.make("oxzion/splash").destroy();
               });
-          },
-          true
-        );
-        window.addEventListener(
-          "paymentPending",
-          function(e) {
+          },true);
+        window.addEventListener("paymentPending",function(e) {
             that.core.make("oxzion/splash").show();
             e.stopPropagation();
-            that.notif.current.notify(
-              "Information",
-              e.detail.message,
-              "default"
-            );
-          },
-          true
-        );
+            that.notif.current.notify("Information",e.detail.message,"default");
+          },true);
       }
     }
   }
