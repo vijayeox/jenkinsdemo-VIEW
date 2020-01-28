@@ -20,32 +20,15 @@ export default class ConvergePayCheckoutComponent extends Base {
           window.dispatchEvent(evt);
           event.stopPropagation();
         }
-        document.getElementById('confirmOrder').removeEventListener('click',confirmOrder);
+        document.getElementById('confirmOrder').removeEventListener('click',confirmOrder,false);
         document.getElementById('confirmOrder').addEventListener("click",confirmOrder,true);
      }
      if(document.getElementById('makePayment')){
       var makePayment = function(event){
         event.stopPropagation();
         var token = document.getElementById('convergepay-token').value;
-        var card = document.getElementById('convergepay-card').value;
-        var exp = document.getElementById('convergepay-exp').value;
-        var expiryDate = new Date(exp);
-        var cvv = document.getElementById('convergepay-cvv').value;
-        var gettoken = "Y";
-        var addtoken = "Y";
-        var firstname = document.getElementById('convergepay-firstname').value;
-        var lastname = document.getElementById('convergepay-lastname').value;
-        var merchanttxnid = document.getElementById('convergepay-merchanttxnid').value;
         var paymentData = {
-          ssl_txn_auth_token: token,
-          ssl_card_number: card,
-          ssl_exp_date: ('0'+(expiryDate.getMonth()+1)).slice(-2)+expiryDate.getFullYear().toString().substr(-2),
-          ssl_get_token: gettoken,
-          ssl_add_token: addtoken,
-          ssl_first_name: firstname,
-          ssl_last_name: lastname,
-          ssl_cvv2cvc2: cvv,
-          ssl_merchant_txn_id: merchanttxnid
+          ssl_txn_auth_token: token
         };
         var callback = {
           onError: function (error) {
@@ -75,7 +58,7 @@ export default class ConvergePayCheckoutComponent extends Base {
         };
         var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
         window.dispatchEvent(evt);
-        ConvergeEmbeddedPayment.pay(paymentData, callback);
+        PayWithConverge.open(paymentData, callback);
       };
         document.getElementById('makePayment').removeEventListener('click',makePayment,false);
         document.getElementById('makePayment').addEventListener("click",makePayment,true);
@@ -247,52 +230,6 @@ export default class ConvergePayCheckoutComponent extends Base {
     </div>
     <button style="display:block;" action="button" id="confirmOrder" onClick="buttonClicked();" class="btn btn-success" label="Confirm Order">Confirm Order</button>
     </div>`;
-
-    var convergePaycard = this.renderTemplate('input', { 
-      input: {
-        type: 'input',
-        ref: `convergepay-card`,
-        attr: {
-          type: 'textfield',
-          key:'convergepay-card',
-          class:'form-control',
-          lang:'en',
-          id:'convergepay-card',
-          placeholder:'Please enter your card Number',
-          hideLabel: 'true'
-        }
-      }
-    });
-    var cvv2 = this.renderTemplate('input', { 
-      input: {
-        type: 'input',
-        ref: `convergepay-cvv`,
-        attr: {
-          type: 'textfield',
-          key:'convergepay-cvv',
-          class:'form-control',
-          lang:'en',
-          id:'convergepay-cvv',
-          placeholder:'Please Enter CVV',
-          hideLabel: 'true'
-        }
-      }
-    });
-
-    var expiryMonth = this.renderTemplate('input', { 
-      input: {
-        type: 'input',
-        ref: `convergepay-exp`,
-        attr: {
-          type: 'month',
-          key:'convergepay-exp',
-          id:'convergepay-exp',
-          hideLabel: 'true',
-          class:"form-control",
-          format: 'yymm'
-        }
-      }
-    });
     var paymentPanel = `<div class="mb-2 card border panel panel-primary" style="display:none;" id="cardPayment">
     <div ref="header" class="card-header bg-primary">
     <span class="mb-0 card-title">
@@ -300,24 +237,6 @@ export default class ConvergePayCheckoutComponent extends Base {
     </span>
     </div>
     <div id="paymentPanel" class="card-body">
-    <div class="row">
-    <div class="col-md-12">
-    <div class="form-group">
-    ${convergePaycard}
-    </div>
-    </div>
-    </div>
-    <div class="row">
-    <div class="col-md-6"> 
-    <div class="form-group">
-    ${cvv2}
-    </div>
-    </div>
-    <div class="col-md-6"> 
-    <div class="form-group">
-    ${expiryMonth}
-    </div>
-    </div></div>
     ${convergepayToken}
     ${merchanttxnid}
     <div class="row"><div class="col-md-12" style="text-align:center;">
