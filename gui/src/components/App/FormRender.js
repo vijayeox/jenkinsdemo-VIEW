@@ -1075,6 +1075,11 @@ class FormRender extends React.Component {
           },
           true
         );
+        window.addEventListener("paymentCancelled",function(e) {
+            e.stopPropagation();
+            that.notif.current.notify("Warning", e.detail.message, "danger");
+            that.core.make("oxzion/splash").destroy();
+          },true);
         window.addEventListener(
           "paymentError",
           function(e) {
