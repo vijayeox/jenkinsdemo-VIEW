@@ -601,6 +601,7 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function(changed) {
+          console.log(changed.data);
           var formdata = changed;
           for (var dataItem in form.submission.data) {
             if (typeof form.submission.data[dataItem] == "object") {
@@ -883,7 +884,7 @@ class FormRender extends React.Component {
                       });
                   } else {
                     that
-                      .callDelegate(properties["delegate"], changed)
+                      .callDelegate(properties["delegate"], that.cleanData(changed))
                       .then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
@@ -908,7 +909,7 @@ class FormRender extends React.Component {
               console.log(properties);
               if (properties["commands"]) {
                 that
-                  .callPipeline(properties["commands"], changed)
+                  .callPipeline(properties["commands"], that.cleanData(changed))
                   .then(response => {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
