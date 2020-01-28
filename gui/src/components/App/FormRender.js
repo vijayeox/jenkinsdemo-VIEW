@@ -1022,19 +1022,17 @@ class FormRender extends React.Component {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             var transactionIdComponent = form.getComponent("transaction_id");
-            that
-              .storePayment({
+            that.storePayment({
                 transaction_id: transactionIdComponent.getValue(),
                 data: e.detail.data,
                 status: e.detail.status
-              })
-              .then(response => {
+              }).then(response => {
                 that.notif.current.notify(
                   "Payment has been Successfully completed!",
                   "Please wait while we get things ready!",
                   "success"
                 );
-                var formsave = that.saveForm(form, that.form.submission.data);
+                var formsave = that.saveForm(form, that.state.currentForm.submission.data);
                 var transactionStatusComponent = form.getComponent(
                   "transaction_status"
                 );
