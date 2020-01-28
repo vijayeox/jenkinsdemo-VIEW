@@ -20,8 +20,8 @@ export default class ConvergePayCheckoutComponent extends Base {
           window.dispatchEvent(evt);
           event.stopPropagation();
         }
-        document.getElementById('confirmOrder').removeEventListener('click',confirmOrder,false);
-        document.getElementById('confirmOrder').addEventListener("click",confirmOrder,true);
+        document.getElementById('confirmOrder').onclick = null;
+        document.getElementById('confirmOrder').onclick = confirmOrder;
      }
      if(document.getElementById('makePayment')){
       var makePayment = function(event){
@@ -38,6 +38,15 @@ export default class ConvergePayCheckoutComponent extends Base {
             document.getElementById('convergepay-lastname').disabled = false;
             document.getElementById('convergepay-token').value = "";
             var evt = new CustomEvent('paymentError', {detail:{message: error.errorMessage,data:error}});
+            window.dispatchEvent(evt);
+          },
+          onCancelled: function () {
+            document.getElementById('cardPayment').style.display = 'none';
+            document.getElementById('confirmOrder').style.display = 'block';
+            document.getElementById('convergepay-firstname').disabled = false;
+            document.getElementById('convergepay-lastname').disabled = false;
+            document.getElementById('convergepay-token').value = "";
+            var evt = new CustomEvent('paymentCancelled', {detail:{message: "Payment Cancelled By User",data:{}}});
             window.dispatchEvent(evt);
           },
           onDeclined: function (response) {
@@ -59,8 +68,9 @@ export default class ConvergePayCheckoutComponent extends Base {
         var evt = new CustomEvent('paymentPending', {detail:{message:"Payment is Processing Please wait" }});
         window.dispatchEvent(evt);
         PayWithConverge.open(paymentData, callback);
+        return false;
       };
-        document.getElementById('makePayment').removeEventListener('click',makePayment,false);
+        document.getElementById('makePayment').removeEventListener('click',makePayment,true);
         document.getElementById('makePayment').addEventListener("click",makePayment,true);
     }
   },true);
@@ -233,14 +243,14 @@ export default class ConvergePayCheckoutComponent extends Base {
     var paymentPanel = `<div class="mb-2 card border panel panel-primary" style="display:none;" id="cardPayment">
     <div ref="header" class="card-header bg-primary">
     <span class="mb-0 card-title">
-    Card Details
+    Complete Application
     </span>
     </div>
     <div id="paymentPanel" class="card-body">
     ${convergepayToken}
     ${merchanttxnid}
     <div class="row"><div class="col-md-12" style="text-align:center;">
-    <button style="display:inline-block;" action="submit" id="makePayment" class="btn btn-success" label="Pay">Complete Application</button>
+    <button style="display:inline-block;" action="submit" id="makePayment" class="btn btn-success" label="Pay">Make Payment</button>
     </div>
     <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>
     </div>`;
