@@ -352,7 +352,7 @@ class FormRender extends React.Component {
         }
       }
       var response = await helper
-        .request("v1", route, data, method)
+        .request("v1", route, this.cleanData(data), method)
         .then(async response => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
