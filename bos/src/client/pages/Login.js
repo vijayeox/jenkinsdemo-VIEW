@@ -242,11 +242,6 @@ export default class Login extends defaultLogin {
                           className: "btn waves-effect waves-light"
                         },
                         "Login"
-                      ),
-                      h(
-                        "a",
-                        { href: "#", onclick: () => showForgotPassScreen() },
-                        "Forgot your password?"
                       )
                     ])
                   ]
