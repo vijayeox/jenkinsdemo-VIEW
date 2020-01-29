@@ -80,14 +80,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 					refreshflag = true;
 				} else {
 					alert('Session Expired. Redirecting to Login');
-					this.core.make('osjs/auth').logout();
+					location.reload();
 				}
 			}
 			xhr.send(formData);
 
 		} else {
 			alert('Session Expired. Redirecting to Login');
-			this.core.make('osjs/auth').logout();
+			location.reload();
 		}
 		return refreshflag;
 	}
@@ -219,7 +219,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 							} else {
 								console.log("refresh failed..");
 								alert('Session Expired. Redirecting to Login');
-								this.core.make('osjs/auth').logout();
+								location.reload();
 							}
 						} else {
 							// error not expired token
