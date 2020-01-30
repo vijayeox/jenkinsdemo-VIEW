@@ -84,7 +84,7 @@ export default class DocumentViewer extends Component {
   render() {
     const { documentsList } = this.state;
     if (documentsList && documentsList.length > 0) {
-      if (documentsList.length > 1) {
+      if (documentsList.length > 0) {
         return (
           <div className="row" style={{height: "-webkit-fill-available"}} >
             <div className="col-md-2 docListDiv">
@@ -119,14 +119,6 @@ export default class DocumentViewer extends Component {
               })}
             </div>
             <div className="col-md-10 border">
-              {this.displayDocumentData(this.state.selectedDocument)}
-            </div>
-          </div>
-        );
-      } else if (documentsList.length == 1) {
-        return (
-          <div className="row">
-            <div className="col-md-12 border">
               {this.displayDocumentData(this.state.selectedDocument)}
             </div>
           </div>

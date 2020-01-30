@@ -462,25 +462,32 @@ export default class WindowBehavior {
    * @param {Window} win Window reference
    */
   iconClick(ev, win) {
-    const {minimized, maximized} = win.state;
-    const {minimizable, maximizable, closeable} = win.attributes;
-    const _ = this.core.make('osjs/locale').translate;
+    if (win.attributes.controls) {
+      const { minimized, maximized } = win.state;
+      const { minimizable, maximizable, closeable } = win.attributes;
+      const _ = this.core.make("osjs/locale").translate;
 
-    this.core.make('osjs/contextmenu', {
-      position: ev,
-      menu: [{
-        label: minimized ? _('LBL_RAISE') : _('LBL_MINIMIZE'),
-        disabled: !minimizable,
-        onclick: () => minimized ? win.raise() : win.minimize()
-      }, {
-        label: maximized ? _('LBL_RESTORE') : _('LBL_MAXIMIZE'),
-        disabled: !maximizable,
-        onclick: () => maximized ? win.restore() : win.maximize()
-      }, {
-        label: _('LBL_CLOSE'),
-        disabled: !closeable,
-        onclick: () => !closeable ? win.minimize() : win.close()
-      }]
-    });
+      this.core.make("osjs/contextmenu", {
+        position: ev,
+        menu: [
+          {
+            label: minimized ? _("LBL_RAISE") : _("LBL_MINIMIZE"),
+            disabled: !minimizable,
+            onclick: () => (minimized ? win.raise() : win.minimize())
+          },
+          {
+            label: maximized ? _("LBL_RESTORE") : _("LBL_MAXIMIZE"),
+            disabled: !maximizable,
+            onclick: () => (maximized ? win.restore() : win.maximize())
+          },
+          {
+            label: _("LBL_CLOSE"),
+            disabled: !closeable,
+            onclick: () => (!closeable ? win.minimize() : win.close())
+          }
+        ]
+      });
+    }
+
   }
 }

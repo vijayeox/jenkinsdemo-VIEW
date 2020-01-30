@@ -180,15 +180,17 @@ export default class Panel extends EventEmitter {
     });
 
     document.onclick = (ev) => {
-      if (ev.target.closest('.appmenu') || ev.target.closest('.osjs-panel-item[data-name="menu"]') || ev.target.closest('.profile') || ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
-        if (ev.target.closest('.osjs-panel-item[data-name="menu"]')) {
-          document.getElementById('appmenu').classList.toggle('appmenu-visible');
+      if(!ev.defaultPrevented){
+        if (ev.target.closest('.appmenu') || ev.target.closest('.osjs-panel-item[data-name="menu"]') || ev.target.closest('.profile') || ev.target.closest('.osjs-panel-item[data-name="profile"]')) {
+          if (ev.target.closest('.osjs-panel-item[data-name="menu"]')) {
+            document.getElementById('appmenu').classList.toggle('appmenu-visible');
+          } else {
+            return;
+          }
         } else {
-          return;
+          document.getElementById('appmenu').classList.remove('appmenu-visible');
+          //document.getElementById('profileMenu').classList.remove('profile-visible');
         }
-      } else {
-        document.getElementById('appmenu').classList.remove('appmenu-visible');
-        //document.getElementById('profileMenu').classList.remove('profile-visible');
       }
     };
 

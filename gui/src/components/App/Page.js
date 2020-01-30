@@ -7,6 +7,7 @@ import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
 import Loader from "react-loader-spinner";
+import moment from "moment";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./Styles/PageComponentStyles.scss";
 
@@ -201,6 +202,10 @@ class Page extends React.Component {
 
   prepareDataRoute(route, params) {
     if (typeof route == "string") {
+      if(!params){
+        params = {};
+      }
+      params['current_date'] = moment().format("YYYY-MM-DD");
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
       return result;
