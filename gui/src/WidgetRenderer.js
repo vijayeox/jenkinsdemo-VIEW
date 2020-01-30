@@ -79,7 +79,7 @@ class WidgetRenderer {
                 if (dataItem[prop]) {
                     obj[prop] = dataItem[prop];
                 }
-            }
+            });
             return obj;
         }
 
