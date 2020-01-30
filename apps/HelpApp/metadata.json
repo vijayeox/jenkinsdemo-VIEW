@@ -3,7 +3,7 @@
   "name": "HelpApp",
   "category": null,
   "singleton":true,
-  "hidden": false,
+  "hidden": true,
   "icon": "icon.png",
   "icon_white": "icon_white.png",
   "defaultAppforOrgs" : true,
