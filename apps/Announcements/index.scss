@@ -1,8 +1,11 @@
-.Window_Announcements {
-  @import "~bootstrap/scss/bootstrap.scss";
+.osjs-window[data-id=annoucementsWindow]  {
+  .osjs-window-button[data-action=minimize] > div {
+    background-position: 50% 50%;
+    background-image: url('./close.svg');
+  }
+  @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
   $primary: rgb(182, 157, 230);
-
   height: 100%;
   margin: 0;
   padding: 0;
@@ -12,19 +15,6 @@
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  html,
-  body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-      "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
 
   #root {
     height: 100%;
@@ -225,5 +215,5 @@
         transform: scale(0.99);
       }
     }
-  }
+  } 
 }

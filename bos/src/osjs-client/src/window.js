@@ -522,13 +522,15 @@ export default class Window extends EventEmitter {
       behavior.init(this);
     }
 
+    //Disabled to fix Drag AND Drop in Admin app announcement crud
+
     // DnD functionality
-    const d = droppable(this.$element, {
-      ondragenter: (...args) => this.emit('dragenter', ...args, this),
-      ondragover: (...args) => this.emit('dragover', ...args, this),
-      ondragleave: (...args) => this.emit('dragleave', ...args, this),
-      ondrop: (...args) => this.emit('drop', ...args, this)
-    });
+    // const d = droppable(this.$element, {
+    //   ondragenter: (...args) => this.emit('dragenter', ...args, this),
+    //   ondragover: (...args) => this.emit('dragover', ...args, this),
+    //   ondragleave: (...args) => this.emit('dragleave', ...args, this),
+    //   ondrop: (...args) => this.emit('drop', ...args, this)
+    // });
 
     this.on('destroy', () => d.destroy());
 

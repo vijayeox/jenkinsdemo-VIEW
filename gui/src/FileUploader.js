@@ -157,7 +157,7 @@ class FileUploader extends React.Component {
                  {this.props.media_type !== "image" ? (
                 <li className="pt-3 pr-4">Video Format supported: MP4</li>
               ) : null}
-                <li className="pt-3 pr-4">Max file size allowed: 20 MB</li>
+                <li className="pt-3 pr-4">Max file size allowed less than: 20 MB</li>
               </ul>
             </div>
           </div>

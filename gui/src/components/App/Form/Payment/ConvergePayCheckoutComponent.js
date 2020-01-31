@@ -202,23 +202,30 @@ export default class ConvergePayCheckoutComponent extends Base {
         }
       }
     });
-    var amount = this.renderTemplate('input', { 
-      input: {
-        type: 'input',
-        ref: `convergepay-amount`,
-        attr: {
-          type: 'textfield',
-          key:'convergepay-amount',
-          class:'form-control',
-          disabled:true,
-          lang:'en',
-          id:'convergepay-amount',
-          placeholder:'Amount to be payed',
-          hideLabel: 'true',
-          value: this.data['amount']
+    var that = this;
+    function renderWithPrefix(prefix){
+      that.component.prefix="$";
+      var ret = that.renderTemplate('input', { 
+        input: {
+          type: 'input',
+          ref: `convergepay-amount`,
+          attr: {
+            type: 'textfield',
+            key:'convergepay-amount',
+            class:'form-control',
+            disabled:true,
+            lang:'en',
+            id:'convergepay-amount',
+            placeholder:'Amount to be payed',
+            hideLabel: 'true',
+            value: that.data['amount']
+          }
         }
-      }
-    });
+      });
+      that.component.prefix="";
+      return ret;
+    }
+    var amount = renderWithPrefix("$");
     var row = `<div class="convergepay"><div class="row">
     <div class="col-md-6"> 
     <div class="form-group">
