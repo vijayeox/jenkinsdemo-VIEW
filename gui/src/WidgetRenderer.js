@@ -73,13 +73,13 @@ class WidgetRenderer {
     }
 
     static renderAmCharts(element, configuration, data) {
-        function getAvailablePropertiesAsObject(dataItem, propertyList) {
+        function getDataContext(dataItem, propertyList) {
             let obj = {};
             propertyList.forEach(function(prop, index, array) {
                 if (dataItem[prop]) {
                     obj[prop] = dataItem[prop];
                 }
-            }
+            });
             return obj;
         }
 
@@ -118,7 +118,7 @@ class WidgetRenderer {
                     }
                     let  seriesEvts = columns['events'];
                      seriesEvts['hit'] = function(evt) {
-                        let dataObj = getAvailablePropertiesAsObject(evt.target.dataItem, [
+                        let dataContext = getDataContext(evt.target.dataItem, [
                             'valueX',
                             'valueY',
                             'dateX',
@@ -132,12 +132,24 @@ class WidgetRenderer {
                             'openCategoryX',
                             'openCategoryY'
                         ]);
-                        //console.log("Clicked => category:" + evt.target.dataItem.categoryX + ", value:" + evt.target.dataItem.valueY);
-                        //console.log("Clicked => ", evt.target.dataItem);
-                        console.log("Clicked => ", dataObj);
-                    }
+                        console.log("Clicked column => ", dataContext);
+                    };
                 break;
                 case 'LineSeries':
+                    if (!ser['segments']) {
+                        ser['segments'] = {};
+                    }
+                    let segments = ser['segments'];
+                    segments['interactionsEnabled'] = true;
+                    if (!segments['events']) {
+                        segments['events'] = {};
+                    }
+                    let segmentEvts = segments['events'];
+                    segmentEvts['hit'] = function(evt) {
+                        let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
+                        console.log('Clicked line segment => ', dataContext);
+                    };
+
                     if (!ser['bullets']) {
                         ser['bullets'] = {};
                     }
@@ -147,9 +159,9 @@ class WidgetRenderer {
                     }
                     let bulletEvts = bullets['events'];
                     bulletEvts['hit'] = function(evt) {
-                        console.log("Clicked => ", evt.target.dataItem);
-                        dumpProperties(evt.target.dataItem);
-                    }
+                        let dataContext = evt.target.dataItem.dataContext.value;
+                        console.log('Clicked bullet => ', dataContext);
+                    };
                 break;
             }
         });

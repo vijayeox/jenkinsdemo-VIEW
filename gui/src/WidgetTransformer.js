@@ -8,8 +8,10 @@ class WidgetTransformer {
                 type = '';
             }
             type = type.toUpperCase();
-            if (type === 'STACKED-BAR') {
-                return WidgetTransformer._transformStackedGraph(configuration, data);
+            switch(type) {
+                case 'STACKED-BAR':
+                    return WidgetTransformer._transformStackedGraph(configuration, data);
+                break;
             }
         }
 
