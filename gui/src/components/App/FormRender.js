@@ -13,6 +13,7 @@ import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComp
 import DocumentComponent from "./Form/DocumentComponent";
 import { countryList } from "./Form/Country.js";
 import SliderComponent from "./Form/SliderComponent";
+import FortePayCheckoutComponent from "./Form/Payment/FortePayCheckoutComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -493,6 +494,8 @@ class FormRender extends React.Component {
     Formio.registerComponent("slider", SliderComponent);
     Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
     Formio.registerComponent("document", DocumentComponent);
+    Formio.registerComponent("fortepay" , FortePayCheckoutComponent)
+    
     if (this.state.content && !this.state.form) {
       var options = {};
       if (this.state.content["properties"]) {
