@@ -223,7 +223,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col-4 ">
-                  <label className="required-label">Start Data</label>
+                  <label className="required-label">Start Date</label>
                   <div>
                     <DateComponent
                       format={this.props.userPreferences.dateformat}
