@@ -7,12 +7,12 @@ import Select from 'react-select/creatable'
 const FilterFields = function (props) {
     const { rows, index, fieldName, dataType, onUpdate, removeField } = props;
     const filtersOptions = {
-        "dateoptions": ["Between", "<", ">","="],
-        "textoptions": ["contains", "as"],
-        "numericoptions" : ["<",">","=","range"]
+        "dateoptions": [{ "Between": "gte&&lte" }, { "<": "lt" }, { ">": "gt" }, { "=": "eq" }],
+        "textoptions": [{ "Starts With": "startswith" }, { "contains": "contains" }],
+        "numericoptions": [{ "<": "lt" }, { ">": "gt" }, { "=": "eq" }]
     };
     const dataTypeOptions = [
-     "numeric"
+        "numeric"
     ]
     return (
         <Form.Row>
@@ -26,12 +26,12 @@ const FilterFields = function (props) {
                 dataType !== "date" && dataType !== "text"
                     ?
                     <Col sm="2">
-                        <Form.Group controlId="formGridData"> 
-                            <Form.Label>Data Type</Form.Label> 
+                        <Form.Group controlId="formGridData">
+                            <Form.Label>Data Type</Form.Label>
                             <Form.Control name="dataType" as="select" onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["dataType"] : ""} >
 
-                                 <option disabled key="-1" value=""></option>
-                                 {dataTypeOptions.map(item => {
+                                <option disabled key="-1" value=""></option>
+                                {dataTypeOptions.map(item => {
                                     return (<option>{item}</option>)
                                 })}
                             </Form.Control>
@@ -43,12 +43,12 @@ const FilterFields = function (props) {
                 <Form.Group >
                     <Form.Label>Options</Form.Label>
                     {
-                        dataType === "date" || dataType === "text" ||dataType === "numeric"
+                        dataType === "date" || dataType === "text" || dataType === "numeric"
                             ?
                             <Form.Control as="select" name={"options"} onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["options"] : ""}>
                                 <option disabled key="-1" value=""></option>
                                 {filtersOptions[dataType + 'options'].map(item => {
-                                    return (<option>{item}</option>)
+                                    return (<option value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
                                 })}
                             </Form.Control>
                             :
@@ -64,7 +64,7 @@ const FilterFields = function (props) {
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
                         ?
-                        rows[index]["options"] !== "Between" ?
+                        rows[index]["options"] !== "gte&&lte" ?
                             <DatePicker
                                 key={index}
                                 dateFormat="dd/MM/yyyy"
@@ -72,6 +72,18 @@ const FilterFields = function (props) {
                                 showMonthDropdown
                                 showYearDropdown
                                 dropdownMode="select"
+                                popperPlacement="bottom"
+                                popperModifiers={{
+                                    flip: {
+                                        behavior: ["bottom"] // don't allow it to flip to be above
+                                    },
+                                    preventOverflow: {
+                                        enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
+                                    },
+                                    hide: {
+                                        enabled: false // turn off since needs preventOverflow to be enabled
+                                    }
+                                }}
                                 onChange={date => onUpdate(date, index, "startDate")}
                                 name="startDate" />
                             :
@@ -85,6 +97,18 @@ const FilterFields = function (props) {
                                     endDate={rows[index]["endDate"]}
                                     showMonthDropdown
                                     showYearDropdown
+                                    popperPlacement="bottom"
+                                    popperModifiers={{
+                                        flip: {
+                                            behavior: ["bottom"] // don't allow it to flip to be above
+                                        },
+                                        preventOverflow: {
+                                            enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
+                                        },
+                                        hide: {
+                                            enabled: false // turn off since needs preventOverflow to be enabled
+                                        }
+                                    }}
                                     dropdownMode="select"
                                 />
                                 <DatePicker
@@ -97,6 +121,18 @@ const FilterFields = function (props) {
                                     minDate={rows[index]["startDate"]}
                                     showMonthDropdown
                                     showYearDropdown
+                                    popperPlacement="bottom"
+                                    popperModifiers={{
+                                        flip: {
+                                            behavior: ["bottom"] // don't allow it to flip to be above
+                                        },
+                                        preventOverflow: {
+                                            enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
+                                        },
+                                        hide: {
+                                            enabled: false // turn off since needs preventOverflow to be enabled
+                                        }
+                                    }}
                                     dropdownMode="select"
                                 />
                             </div>
@@ -215,16 +251,16 @@ class DashboardEditorFilter extends React.Component {
 
         let restClient = this.props.core.make('oxzion/restClient');
         let filters
-        if(this.state.rows!==undefined){
-            filters=this.state.rows.filter(function (obj) {
-                return obj!==undefined && obj.value !== undefined;
+        if (this.state.rows !== undefined) {
+            filters = this.state.rows.filter(function (obj) {
+                return obj !== undefined && obj.value !== undefined;
             });
         }
 
         let formData = {}
-        formData["dashboard_type"]="html";
-        formData["version"]=this.props.dashboardVersion;
-        formData["filters"]=filters
+        formData["dashboard_type"] = "html";
+        formData["version"] = this.props.dashboardVersion;
+        formData["filters"] = filters
 
         console.log(formData)
         //uncomment once api is implemented
