@@ -148,7 +148,7 @@ class Query extends React.Component {
         ? action[key].name === "toggleActivate" ?
         
         actionButtons.push(
-          <abbr title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+          <abbr className={that.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
             <Switch
               id={e.name}
               onChange={() =>that.buttonAction(action[key], e)}

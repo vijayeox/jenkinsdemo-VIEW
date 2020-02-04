@@ -57,3 +57,21 @@ color:#275362;
     background: #8cb5b536;
     
 }
+.query .btn-primary{
+    color: #fff;
+    background-color: #265160;
+    border-color: #265160;
+  }
+  
+.query .btn-primary:hover{
+    background-image:none !important;
+    background-color:#265160c4 !important;
+  }
+  
+.query .deactivateDash .react-switch-bg{
+    background: rgb(39, 83, 98)  !important;
+  }
+.query .react-switch-handle{
+    background: #fff !important;
+  
+  }
