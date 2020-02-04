@@ -86,9 +86,6 @@ class Body extends React.Component {
       case SECTION_DASHBOARD:
         sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard}/>;
       break;
-      case SECTION_EDIT_DASHBOARD:
-        sectionContent = <DashboardEditor args={this.core} setTitle={this.setTitle} dashboardId={this.state.sectionData}/>;
-      break;
     }
 
     return(
@@ -100,7 +97,6 @@ class Body extends React.Component {
                 <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_QUERY, null)}}>Query</a>
                 <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_VISUALIZATION, null)}}>Visualization</a>
                 <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_DASHBOARD, null)}}>Dashboard</a>
-                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_EDIT_DASHBOARD, null)}}>Dashboard Editor</a>
             </Menu>
             <div className="page-title full-width">{this.state.title}</div>
             <div className="page-content full-width" id="page-content">
