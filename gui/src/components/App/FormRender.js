@@ -95,10 +95,10 @@ class FormRender extends React.Component {
     let delegateData = await helper.request(
       "v1",
       "/app/" +
-        this.state.appId +
-        "/transaction/" +
-        params.transaction_id +
-        "/status",
+      this.state.appId +
+      "/transaction/" +
+      params.transaction_id +
+      "/status",
       params.data,
       "post"
     );
@@ -202,9 +202,9 @@ class FormRender extends React.Component {
     let fileData = await helper.request(
       "v1",
       "/app/" +
-        this.state.appId +
-        "/workflowInstance/" +
-        this.props.parentWorkflowInstanceId,
+      this.state.appId +
+      "/workflowInstance/" +
+      this.props.parentWorkflowInstanceId,
       {},
       "get"
     );
@@ -494,8 +494,8 @@ class FormRender extends React.Component {
     Formio.registerComponent("slider", SliderComponent);
     Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
     Formio.registerComponent("document", DocumentComponent);
-    Formio.registerComponent("fortepay" , FortePayCheckoutComponent)
-    
+    Formio.registerComponent("fortepay", FortePayCheckoutComponent);
+
     if (this.state.content && !this.state.form) {
       var options = {};
       if (this.state.content["properties"]) {
@@ -530,7 +530,7 @@ class FormRender extends React.Component {
           var form_data = that.cleanData(submission.data);
           var formSave = await that
             .saveForm(null, form_data)
-            .then(function(response) {
+            .then(function (response) {
               console.log(response);
               if (response.status == "success") {
                 next(null);
@@ -551,7 +551,7 @@ class FormRender extends React.Component {
         document.getElementById(this.formDivID),
         this.state.content,
         options
-      ).then(function(form) {
+      ).then(function (form) {
         if (that.state.page && form.wizard) {
           if (form.wizard && form.wizard.display == "wizard") {
             form.setPage(parseInt(that.state.page));
@@ -606,7 +606,7 @@ class FormRender extends React.Component {
           // });
         });
 
-        form.on("change", function(changed) {
+        form.on("change", function (changed) {
           console.log(changed.data);
           var formdata = changed;
           for (var dataItem in form.submission.data) {
@@ -756,7 +756,7 @@ class FormRender extends React.Component {
             }
           }
         });
-        form.on("render", function() {
+        form.on("render", function () {
           if (form.wizard && form.wizard.display == "wizard") {
             var breadcrumbs = document.getElementById(
               form.wizardKey + "-header"
@@ -767,7 +767,7 @@ class FormRender extends React.Component {
           }
           eachComponent(
             form.root.components,
-            function(component) {
+            function (component) {
               if (component) {
                 if (
                   component.component.properties &&
@@ -822,7 +822,7 @@ class FormRender extends React.Component {
             that.runDelegates(form, form.originalComponent["properties"]);
           }
         });
-        form.on("customEvent", function(event) {
+        form.on("customEvent", function (event) {
           var changed = event.data;
           if (event.type == "callDelegate") {
             var component = event.component;
@@ -992,6 +992,7 @@ class FormRender extends React.Component {
           var responseArray = [];
           if (response.data) {
             var evt = new CustomEvent("paymentDetails", {
+
               detail: response.data[0]
             });
             window.dispatchEvent(evt);
@@ -1000,15 +1001,20 @@ class FormRender extends React.Component {
         var that = this;
         window.addEventListener(
           "requestPaymentToken",
-          function(e) {
+          function (e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
+            // let requestbody = {
+            //   firstname: e.detail.firstname,
+            //   lastname: e.detail.lastname,
+            //   amount: e.detail.amount
+            // };
+            // if (e.detail.hasOwnProperty('order_number') && e.detail.hasOwnProperty('method')) {
+            //   requestbody['order_number'] = e.detail.order_number;
+            //   requestbody['method'] = e.detail.method;
+            // }
             that
-              .callPayment({
-                firstname: e.detail.firstname,
-                lastname: e.detail.lastname,
-                amount: e.detail.amount
-              })
+              .callPayment(e.detail)
               .then(response => {
                 var transactionIdComponent = form.getComponent(
                   "transaction_id"
@@ -1033,7 +1039,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentSuccess",
-          function(e) {
+          function (e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1077,7 +1083,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentDeclined",
-          function(e) {
+          function (e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1095,7 +1101,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentCancelled",
-          function(e) {
+          function (e) {
             e.stopPropagation();
             that.notif.current.notify("Warning", e.detail.message, "danger");
             that.core.make("oxzion/splash").destroy();
@@ -1104,7 +1110,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentError",
-          function(e) {
+          function (e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1122,7 +1128,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentPending",
-          function(e) {
+          function (e) {
             that.core.make("oxzion/splash").show();
             e.stopPropagation();
             that.notif.current.notify(

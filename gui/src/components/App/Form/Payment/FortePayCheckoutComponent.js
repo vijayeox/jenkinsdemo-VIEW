@@ -8,8 +8,9 @@ export default class FortePayCheckoutComponent extends Base {
 		component.label = 'fortePayment'
         super(component, options, data);
         window.addEventListener("paymentDetails", function (e){
-            console.log(data)
-            Formio.requireLibrary('paywithforte', 'payWithForte',e.detail.url , true);
+            console.log(e.detail)
+            console.log("FortePayment")
+            Formio.requireLibrary('paywithforte', 'payWithForte',e.detail.js_url, true);
             document.getElementById("makePayment").setAttribute('api_access_id',"");
            
             if(document.getElementById('confirmOrder')) {
@@ -19,7 +20,9 @@ export default class FortePayCheckoutComponent extends Base {
                         detail : {
                             firstname : document.getElementById('fortepay-firstname').value,
                             lastname : document.getElementById('fortepay-lastname').value,
-                            amount: document.getElementById('fortepay-amount').value
+                            amount: document.getElementById('fortepay-amount').value,
+                            order_number : "12344",
+                            method: "schedule"
                         }
                     })
                     window.dispatchEvent(evt);
@@ -46,11 +49,12 @@ export default class FortePayCheckoutComponent extends Base {
            switch(response.event) {
                
                 case 'success' : 
-                    var evt = new CustomEvent('paymentSuccess', {detail:{data: response,status: response.request_id}});
+                    var evt = new CustomEvent('paymentSuccess', {detail:{data: response,status: response.event}});
                     window.dispatchEvent(evt);
                     break;
                 case 'failure' :
                     document.getElementById('confirmOrder').style.display = 'block';
+                    document.getElementById('makePayment').style.display = 'none';
                     document.getElementById('fortepay-firstname').disabled = false;
                     document.getElementById('fortepay-lastname').disabled = false;
                     document.getElementById('fortepay-token').value = "";
@@ -78,19 +82,23 @@ export default class FortePayCheckoutComponent extends Base {
 
         }
         window.addEventListener('getPaymentToken', function(e) {
-            let data = e.detail.data.token
+            console.log(e.detail)
+            let data = e.detail.token
             document.getElementById("confirmOrder").style.display ="none";
             document.getElementById("makePayment").style.display ="block";
             document.getElementById("fortepay-token").value = data.api_access_id
             document.getElementById("makePayment").setAttribute('api_access_id',data.api_access_id);
-            document.getElementById("makePayment").setAttribute('total_amount',data.total_amount);
+            document.getElementById("makePayment").setAttribute('total_amount',data.amount);
             document.getElementById("makePayment").setAttribute('method',data.method);
             document.getElementById("makePayment").setAttribute('location_id',data.location_id);
             document.getElementById("makePayment").setAttribute('utc_time',data.utc_time);
             document.getElementById("makePayment").setAttribute('hash_method',data.hash_method);
             document.getElementById("makePayment").setAttribute('signature',data.signature);
             document.getElementById('makePayment').setAttribute("version_number",data.version);
-            document.getElementById('makePayment').setAttribute("order_number",data.order_number);
+            document.getElementById('makePayment').setAttribute("order_number", data.order_number);
+            // document.getElementById('makePayment').setAttribute('schedule_start_date')
+            // document.getElementById('makePayment').setAttribute('schedule_frequency')
+            // document.getElementById('makePayment').setAttribute('schedule_quantity')
             // document.getElementById('makePayment').setAttribute("customer_token",data.customer_token);
             // document.getElementById('makePayment').setAttribute("billing_company_name",data.billing_company_name);
             // document.getElementById('makePayment').setAttribute("consumer_id",data.billing_company_name);
@@ -162,54 +170,46 @@ export default class FortePayCheckoutComponent extends Base {
                 type: 'input',
                 ref: `fortepay-lastname`,
                 attr: {
-                type: 'textfield',
-                key:'fortepay-lastname',
-                class:'form-control',
-                lang:'en',
-                id:'fortepay-lastname',
-                placeholder:'Last Name',
-                hideLabel: 'true'
+                    type: 'textfield',
+                    key:'fortepay-lastname',
+                    class:'form-control',
+                    lang:'en',
+                    id:'fortepay-lastname',
+                    placeholder:'Last Name',
+                    hideLabel: 'true'
                 }
             }
         });
+        var that = this;
+        function renderWithPrefix(prefix){
+            that.component.prefix="$";
+            var ret = that.renderTemplate('input', { 
+                input: {
+                    type: 'input',
+                    ref: `fortepay-amount`,
+                    attr: {
+                        type: 'textfield',
+                        key:'fortepay-amount',
+                        class:'form-control',
+                        disabled:true,
+                        lang:'en',
+                        Prefix: "$",
+                        id:'fortepay-amount',
+                        placeholder:'Amount to be payed',
+                        hideLabel: 'true',
+                        value: 800
+                    }
+                }
+            });
+            that.component.prefix="";
+            return ret;
+          }
+          var amount = renderWithPrefix("$");
 
-        var amount = this.renderTemplate('input', { 
-            input: {
-                type: 'input',
-                ref: `fortepay-amount`,
-                attr: {
-                type: 'textfield',
-                key:'fortepay-amount',
-                class:'form-control',
-                disabled:true,
-                lang:'en',
-                Prefix: "$",
-                id:'fortepay-amount',
-                placeholder:'Amount to be payed',
-                hideLabel: 'true',
-                value: 800
-                }
-            }
-        });
         
-        var paymentPanel = `
-        <div class="mb-2 card border panel panel-primary" style="display:none;" id="cardPayment">
-            <div ref="header" class="card-header bg-primary">
-                <span class="mb-0 card-title">
-        Complete Application
-        </span>
-        </div>
-        <div id="paymentPanel" class="card-body">
-            ${api_access_id}
-        <div class="row">
-        <div class="col-md-12" style="text-align:center;">
-            
-        </div>
-        <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>
-        </div>`;
-
         var row = 
         `<div>
+            ${api_access_id}
             <div class="row">
                 <div class="col-md-6">
                     ${firstname}
@@ -223,7 +223,7 @@ export default class FortePayCheckoutComponent extends Base {
                 ${amount}
             </div> 
             <br/>
-            <button id="confirmOrder">Confirm Order</button>
+            <button id="confirmOrder" class="btn btn-success">Confirm Order</button>
             <button 
                 ref="makePayment"
                 id="makePayment"
@@ -234,7 +234,7 @@ export default class FortePayCheckoutComponent extends Base {
             </button>
     
         </div>`
-        var component = super.render(row + paymentPanel)
+        var component = super.render(row)
         return component;
     }
     static editForm = editForm;
