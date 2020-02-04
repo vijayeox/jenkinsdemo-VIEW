@@ -96,7 +96,7 @@ class Dashboard extends React.Component {
         ?
         action[key].name === "toggleActivate" ?
           actionButtons.push(
-            <abbr title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+            <abbr className={this.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
               <Switch
                 id={e.name}
                 onChange={() => this.buttonAction(action[key], e)}

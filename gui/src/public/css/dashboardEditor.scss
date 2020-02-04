@@ -21,6 +21,24 @@
     right: 5.3em;
 }
 
+.dashboard .btn-primary{
+  color: #fff;
+  background-color: #265160;
+  border-color: #265160;
+}
+
+.dashboard .btn-primary:hover{
+  background-image:none !important;
+  background-color:#265160c4 !important;
+}
+
+.dashboard .deactivateDash .react-switch-bg{
+  background: rgb(39, 83, 98)  !important;
+}
+.dashboard .react-switch-handle{
+  background: #fff !important;
+
+}
 //dashboard editor filter
 .create-filter-form{
     padding: 30px;
