@@ -92,7 +92,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
+      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/detail",
       {},
       "get"
     );
@@ -173,7 +173,6 @@ export default class DialogContainer extends React.Component {
         this.props.dataItem.uuid,
         {
           username: this.state.userInEdit.username,
-          password: this.state.userInEdit.password,
           firstname: this.state.userInEdit.firstname,
           lastname: this.state.userInEdit.lastname,
           email: this.state.userInEdit.email,
@@ -187,6 +186,10 @@ export default class DialogContainer extends React.Component {
           date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
             "YYYY-MM-DD"
           ),
+          address1:" ",
+          city:" ",
+          state:" ",
+          zip:" ",
           country: this.state.userInEdit.country
         }
       ).then(response => {
@@ -203,9 +206,9 @@ export default class DialogContainer extends React.Component {
       });
     } else if (this.props.formAction == "put") {
       PushData("user", this.props.formAction, this.props.dataItem.uuid, {
-        password: this.state.userInEdit.password,
         firstname: this.state.userInEdit.firstname,
         lastname: this.state.userInEdit.lastname,
+        username: this.state.userInEdit.username,
         email: this.state.userInEdit.email,
         date_of_birth: new Moment(this.state.userInEdit.date_of_birth).format(
           "YYYY-MM-DD"
@@ -217,6 +220,10 @@ export default class DialogContainer extends React.Component {
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
           "YYYY-MM-DD"
         ),
+        address1:"",
+        city:"",
+        state:"",
+        zip:"",
         country: this.state.userInEdit.country
       }).then(response => {
         if (response.status == "success") {
