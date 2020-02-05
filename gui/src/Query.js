@@ -2,7 +2,7 @@ import React from 'react';
 import { query as section } from '../metadata.json';
 import { Form, Row, Col, Button, Tabs, Tab } from 'react-bootstrap'
 import OX_Grid from "./OX_Grid"
-import  Notification from "./Notification"
+import Notification from "./Notification"
 import Switch from 'react-switch'
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
@@ -22,7 +22,7 @@ class Query extends React.Component {
       modalType: "",
       modalContent: {},
       checked: {},
-      activeTab:"querylist"
+      activeTab: "querylist"
     }
     this.refresh = React.createRef();
     this.handleSwitch = this.handleSwitch.bind(this);
@@ -44,7 +44,7 @@ class Query extends React.Component {
   async fetchDataSource() {
     let helper = this.core.make('oxzion/restClient');
     let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
-    
+
     this.setState({ dataSourceOptions: response.data })
   }
 
@@ -86,8 +86,8 @@ class Query extends React.Component {
     return validForm
   }
   onsaveQuery() {
-    
-    this.validateform() ? this.setState({ showQueryModal: true ,modalContent:"",modalType:"Save"}) : null
+
+    this.validateform() ? this.setState({ showQueryModal: true, modalContent: "", modalType: "Save" }) : null
   }
 
   renderEmpty() {
@@ -119,15 +119,15 @@ class Query extends React.Component {
   buttonAction(action, item) {
     if (action.name !== undefined) {
       if (action.name === "toggleActivate" && item.isdeleted == "0")
-      this.queryOperation(item, "Delete")
-    else if (action.name === "toggleActivate" && item.isdeleted == "1")
-      this.queryOperation(item, "Activate")
+        this.queryOperation(item, "Delete")
+      else if (action.name === "toggleActivate" && item.isdeleted == "1")
+        this.queryOperation(item, "Activate")
     }
   }
   renderButtons(e, action) {
     var actionButtons = [];
     let that = this
-    Object.keys(action).map(function (key, index) { 
+    Object.keys(action).map(function (key, index) {
       var string = that.replaceParams(action[key].rule, e);
       var showButton = eval(string);
       if (action[key].name === "toggleActivate") {
@@ -146,39 +146,66 @@ class Query extends React.Component {
         };
       showButton
         ? action[key].name === "toggleActivate" ?
-        
-        actionButtons.push(
-          <abbr className={that.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
-            <Switch
-              id={e.name}
-              onChange={() =>that.buttonAction(action[key], e)}
-              checked={that.state.checked[e.name]}
-              onClick={() => that.buttonAction(action[key], e)}
-              onColor="#86d3ff"
-              onHandleColor="#2693e6"
-              handleDiameter={10}
-              uncheckedIcon={false}
-              checkedIcon={false}
-              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              height={20}
-              width={33}
-              className="react-switch"
-            />
-          </abbr>
-        )
-      :null
+
+          actionButtons.push(
+            <abbr className={that.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+              <Switch
+                id={e.name}
+                onChange={() => that.buttonAction(action[key], e)}
+                checked={that.state.checked[e.name]}
+                onClick={() => that.buttonAction(action[key], e)}
+                onColor="#86d3ff"
+                onHandleColor="#2693e6"
+                handleDiameter={10}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={20}
+                width={33}
+                className="react-switch"
+              />
+            </abbr>
+          )
+          : null
         : null;
     });
     return actionButtons;
   }
+  toggleQueryForm(mode) {
+    let element = document.getElementById("query-form");
+    let btn = document.getElementById("add-query-btn");
+    if (element !== undefined) {
+      if (mode === "hide") {
+        element.classList.add("disappear")
+        btn.classList.remove("disappear")
+      }
+      else {
+        element.classList.remove("disappear")
+        btn.classList.add("disappear")
+      }
+    }
 
+  }
   render() {
     return (
       <div className="query full-height">
         <Notification ref={this.notif} />
-        <div className="query-form">
+
+        <Row>
+          <Button id="add-query-btn" onClick={() => this.toggleQueryForm("display")}>
+            <i class="fa fa-plus" aria-hidden="true"></i>
+             Add/Run Query
+          </Button>
+        </Row>
+        <div id="query-form" className="query-form disappear">
+
           <Form>
+            <Form.Group as={Row}>
+              <button type="button" style={{ width: "100%" }} className="close" aria-label="Close" onClick={() => this.toggleQueryForm("hide")}>
+                <span aria-hidden="true" style={{ float: "right" }}>&times;</span>
+              </button>
+            </Form.Group>
             <Form.Group as={Row}>
               <Form.Label column lg="3">Data Source Name</Form.Label>
               <Col lg="9">
@@ -214,14 +241,14 @@ class Query extends React.Component {
                 </Form.Text>
               </Col>
             </Form.Group>
-            <Button className="" onClick={() => this.validateform()?this.setState({activeTab:"results"}):null} ><i class="fa fa-gear"></i> Run Query</Button>
+            <Button className="" onClick={() => this.validateform() ? this.setState({ activeTab: "results" }) : null} ><i class="fa fa-gear"></i> Run Query</Button>
             <Button onClick={() => this.onsaveQuery()}>Save Query</Button>
           </Form>
         </div>
         <div className="query-result-div">
 
-          <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({activeTab:k})}>
-            
+          <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({ activeTab: k })}>
+
             <Tab eventKey="querylist" title="All Queries">
               <div className="col=md-12 querylist-div">
 
@@ -284,7 +311,7 @@ class Query extends React.Component {
           datasourcename={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][0] : ""}
           datasourceuuid={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][1] : ""}
           notification={this.notif}
-          resetInput={()=>this.setState({inputs:{}})}
+          resetInput={() => this.setState({ inputs: {} })}
         />
 
       </div>

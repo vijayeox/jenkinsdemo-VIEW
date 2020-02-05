@@ -13,6 +13,7 @@
     width: 100%;
     float: left;
     padding: 2em;
+    padding-top: 0px;
     background:#a9c4c4;
     border-radius: 19px;
     color:#275362;
@@ -74,4 +75,13 @@ color:#275362;
 .query .react-switch-handle{
     background: #fff !important;
   
+  }
+
+  .disappear{
+      display: none;
+  }
+
+  #add-query-btn{
+    margin-left: 1em;
+    margin-bottom: 10px;
   }
