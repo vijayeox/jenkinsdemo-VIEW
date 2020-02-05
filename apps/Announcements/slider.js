@@ -22,8 +22,8 @@ class Slider extends React.Component {
     let announ = await helper.request("v1", "/announcement", {}, "get");
     return announ;
   }
-  componentDidMount(){
-    this.setState({loading:true});
+  componentDidMount() {
+    this.setState({ loading: true });
     this.getAnnouncements().then(response => {
       let data = response.data;
       let baseUrl = this.core.config("wrapper.url");
@@ -37,7 +37,7 @@ class Slider extends React.Component {
         announcements: data,
         indexCount: data.length - 1
       });
-    this.setState({loading:false});
+      this.setState({ loading: false });
     });
 
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
@@ -81,6 +81,7 @@ class Slider extends React.Component {
   }
 
   renderCard(data) {
+    let lengthyDesc = data.description.length < 150 ? "" : "...";
     const isImage = data.media_type == "image";
     return (
       <div className="App row slide" style={{ margin: 0 }} key={Math.random()}>
@@ -90,14 +91,14 @@ class Slider extends React.Component {
         <div className="Announcement-content col">
           <h5 style={{ paddingTop: "10px" }}> {data.name} </h5>
           {data.description ? (
-            <p> {data.description.slice(0, 150) + "..."} </p>
+            <p> {data.description.slice(0, 150) + lengthyDesc} </p>
           ) : null}
           {data.description ? (
             data.description.length < 150 ? null : (
               <button
                 className="readMore"
                 onClick={() => {
-                 this.setState({ isPaneOpen: true, focusData: data });
+                  this.setState({ isPaneOpen: true, focusData: data });
                 }}
               >
                 READ MORE
@@ -110,73 +111,73 @@ class Slider extends React.Component {
   }
 
   render() {
-    if(this.state.loading == false){
-    return (
-      <div className="announcement-slider" ref={ref => (this.el = ref)}>
-        <div
-          className="slider-wrapper"
-          style={{
-            transform: `translateX(${this.state.translateValue}px)`,
-            transition: "transform ease-out 0.45s"
-          }}
-        >
-          {this.state.announcements.length >= 1
-            ? this.state.announcements.map((announcement, i) =>
-                this.renderCard(announcement)
-              )
-            : null}
-        </div>
-
-        {this.state.announcements.length == 0 ? (
-          this.renderCard({
-            name: "No Announcements have been posted for you right now!",
-            description: "Stay Tuned for updates!",
-            media_type: "image",
-            media: "https://svgshare.com/i/DqC.svg",
-            uuid: "empty"
-          })
-        ) : this.state.announcements.length > 1 ? (
-          <div>
-            <LeftArrow goToPrevSlide={this.goToPrevSlide} />
-
-            <RightArrow goToNextSlide={this.goToNextSlide} />
+    if (this.state.loading == false) {
+      return (
+        <div className="announcement-slider" ref={ref => (this.el = ref)}>
+          <div
+            className="slider-wrapper"
+            style={{
+              transform: `translateX(${this.state.translateValue}px)`,
+              transition: "transform ease-out 0.45s"
+            }}
+          >
+            {this.state.announcements.length >= 1
+              ? this.state.announcements.map((announcement, i) =>
+                  this.renderCard(announcement)
+                )
+              : null}
           </div>
-        ) : null}
 
-        <SlidingPanel
-          type={"bottom"}
-          isOpen={this.state.isPaneOpen}
-          closeFunc={() => this.setState({ isPaneOpen: false })}
-        >
-          <center style={{ margin: "2%", colour: "white" }}>
-            <h6
-              style={{
-                fontSize: "1.5rem",
-                padding: "20px",
-                maxWidth: "70%"
-              }}
-            >
-              {this.state.focusData.name}
-            </h6>
-            <p className="mainText">{this.state.focusData.description}</p>
-            <button
-              onClick={() => {
-                this.setState({
-                  isPaneOpen: false
-                });
-              }}
-              className="readMore"
-              style={{ margin: "3%" }}
-              src="https://img.icons8.com/flat_round/344/circled-left-2.png"
-            >
-              BACK
-            </button>
-          </center>
-        </SlidingPanel>
-      </div>
-    );
+          {this.state.announcements.length == 0 ? (
+            this.renderCard({
+              name: "No Announcements have been posted for you right now.",
+              description: "Stay Tuned for updates!",
+              media_type: "image",
+              media: "https://svgshare.com/i/DqC.svg",
+              uuid: "empty"
+            })
+          ) : this.state.announcements.length > 1 ? (
+            <div>
+              <LeftArrow goToPrevSlide={this.goToPrevSlide} />
+
+              <RightArrow goToNextSlide={this.goToNextSlide} />
+            </div>
+          ) : null}
+
+          <SlidingPanel
+            type={"bottom"}
+            isOpen={this.state.isPaneOpen}
+            closeFunc={() => this.setState({ isPaneOpen: false })}
+          >
+            <center style={{ margin: "2%", colour: "white" }}>
+              <h6
+                style={{
+                  fontSize: "1.5rem",
+                  padding: "20px",
+                  maxWidth: "70%"
+                }}
+              >
+                {this.state.focusData.name}
+              </h6>
+              <p className="mainText">{this.state.focusData.description}</p>
+              <button
+                onClick={() => {
+                  this.setState({
+                    isPaneOpen: false
+                  });
+                }}
+                className="readMore"
+                style={{ margin: "3%" }}
+                src="https://img.icons8.com/flat_round/344/circled-left-2.png"
+              >
+                BACK
+              </button>
+            </center>
+          </SlidingPanel>
+        </div>
+      );
     }
-    return (<Loader />);
+    return <Loader />;
   }
 }
 
