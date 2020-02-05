@@ -80,7 +80,7 @@ export default class SliderComponent extends Base {
 
 			<div class="range">
 				<span class="inputRange">
-					<input type="range" min=${this.component.min} max=${max} step=${this.component.step} value=${this.component.min} }>
+					<input type="range" min=${this.component.min} max=${max} step=${this.component.step} value=${this.dataValue} }>
 				</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
 			
