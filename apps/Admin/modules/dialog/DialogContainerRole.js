@@ -148,7 +148,7 @@ export default class DialogContainer extends React.Component {
       "Uploading Data",
       "Please wait for a few seconds.",
       "default"
-    )
+    );
     this.pushData().then(response => {
       if (response.status == "success") {
         this.props.cancel();
@@ -158,7 +158,7 @@ export default class DialogContainer extends React.Component {
           "Error",
           response.message ? response.message : null,
           "danger"
-        )
+        );
       }
     });
   };
@@ -180,7 +180,7 @@ export default class DialogContainer extends React.Component {
               <input
                 id="Name"
                 type="text"
-                className="validate"
+                className="form-control validate"
                 name="name"
                 value={this.state.roleInEdit.name || ""}
                 maxLength="25"
