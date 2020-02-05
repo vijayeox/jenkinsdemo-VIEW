@@ -46,3 +46,20 @@
     height:calc(100%);
 }
 
+
+  //menu css
+  .Window_Analytics .bm-item-list .bm-item{
+    line-height: 2em !important;
+    padding-left: 1em;
+}
+.Window_Analytics .bm-item-list .bm-item i{
+    padding-right: 0.5em;
+}
+
+.Window_Analytics .bm-item:hover{
+    color: #ffffff !important;
+}
+
+.Window_Analytics .bm-menu{
+    padding: 2.5em 0 0 0 !important;
+}

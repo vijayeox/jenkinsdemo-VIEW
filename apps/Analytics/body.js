@@ -1,8 +1,8 @@
 import React from 'react';
 import $ from 'jquery';
-import {name as applicationName} from './metadata.json';
+import { name as applicationName } from './metadata.json';
 // import DataSource from './dataSource';
-import {Query,DataSource} from './GUIComponents'
+import { Query, DataSource } from './GUIComponents'
 // import Query from './query';
 import Visualization from './visualization';
 import Dashboard from './dashboard';
@@ -23,15 +23,15 @@ class Body extends React.Component {
       isMenuOpen: false,
       displaySection: SECTION_DASHBOARD,
       sectionData: null,
-      title:''
+      title: ''
     };
   }
 
   switchSection = (section, data) => {
     this.hideMenu();
     this.setState({
-        displaySection: section,
-        sectionData: data
+      displaySection: section,
+      sectionData: data
     });
   }
 
@@ -40,15 +40,15 @@ class Body extends React.Component {
   }
 
   hideMenu = () => {
-    this.setState({isMenuOpen: false});
+    this.setState({ isMenuOpen: false });
   };
 
   showMenu = () => {
-    this.setState({isMenuOpen: true});
+    this.setState({ isMenuOpen: true });
   };
 
   handleMenuStateChange = (state) => {
-    this.setState({isMenuOpen: state.isOpen});
+    this.setState({ isMenuOpen: state.isOpen });
     this.showHideMenuElement(state.isOpen);
   }
 
@@ -56,15 +56,15 @@ class Body extends React.Component {
   showHideMenuElement = (isOpen) => {
     var menuElement = $('.page-body .bm-menu-wrap');
     if (isOpen) {
-        menuElement.show();
+      menuElement.show();
     }
     else {
-        menuElement.hide();
+      menuElement.hide();
     }
   }
 
   setTitle = (title) => {
-    this.setState({title:title});
+    this.setState({ title: title });
   }
 
   componentDidMount() {
@@ -73,36 +73,45 @@ class Body extends React.Component {
 
   render() {
     let sectionContent;
-    switch(this.state.displaySection) {
+    switch (this.state.displaySection) {
       case SECTION_DATA_SOURCE:
-        sectionContent = <DataSource args={this.core} setTitle={this.setTitle}/>;
-      break;
+        sectionContent = <DataSource args={this.core} setTitle={this.setTitle} />;
+        break;
       case SECTION_QUERY:
-        sectionContent = <Query args={this.core} setTitle={this.setTitle}/>;
-      break;
+        sectionContent = <Query args={this.core} setTitle={this.setTitle} />;
+        break;
       case SECTION_VISUALIZATION:
-        sectionContent = <Visualization args={this.core} setTitle={this.setTitle}/>;
-      break;
+        sectionContent = <Visualization args={this.core} setTitle={this.setTitle} />;
+        break;
       case SECTION_DASHBOARD:
-        sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard}/>;
-      break;
+        sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+        break;
     }
 
-    return(
-        <div id="page-body" className="page-body full-width">
-            <Menu isOpen={this.state.isMenuOpen} onStateChange={this.handleMenuStateChange} 
-                disableAutoFocus width="20%" 
-                outerContainerId="page-body" pageWrapId="page-content">
-                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_DATA_SOURCE, null)}}>Data Source</a>
-                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_QUERY, null)}}>Query</a>
-                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_VISUALIZATION, null)}}>Visualization</a>
-                <a className="menu-item" onClick={(e) => {this.switchSection(SECTION_DASHBOARD, null)}}>Dashboard</a>
-            </Menu>
-            <div className="page-title full-width">{this.state.title}</div>
-            <div className="page-content full-width" id="page-content">
-                { sectionContent }
-            </div>
+    return (
+      
+      <div id="page-body" className="page-body full-width">
+        <Menu isOpen={this.state.isMenuOpen} onStateChange={this.handleMenuStateChange}
+          disableAutoFocus width="20%"
+          outerContainerId="page-body" pageWrapId="page-content">
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DATA_SOURCE, null) }}>
+            <i class="fa fa-database" aria-hidden="true"></i> Data Source
+                </a>
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_QUERY, null) }}>
+            <i class="fa fa-search" aria-hidden="true"></i> Query
+                </a>
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_VISUALIZATION, null) }}>
+            <i class="fa fa-eye" aria-hidden="true"></i> Visualization
+                </a>
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
+            <i class="fa fa-tasks" aria-hidden="true"></i> Dashboard
+                  </a>
+        </Menu>
+        <div className="page-title full-width">{this.state.title}</div>
+        <div className="page-content full-width" id="page-content">
+          {sectionContent}
         </div>
+      </div>
     );
   }
 }

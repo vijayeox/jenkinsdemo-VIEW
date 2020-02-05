@@ -56,7 +56,12 @@ color:#275362;
 .querylist-div{
     padding:2em;
     background: #8cb5b536;
-    
+    padding-bottom: 0;
+    padding-top: 2px;
+    height: 62vh;
+}
+.querylist-div .GridCustomStyle{
+    height: 58vh !important;
 }
 .query .btn-primary{
     color: #fff;
@@ -84,4 +89,9 @@ color:#275362;
   #add-query-btn{
     margin-left: 1em;
     margin-bottom: 10px;
+  }
+  .query .modal-content .btn-primary{
+    color: #fff !important;
+    background-color: #275362 !important;
+    border-color: #275362 !important;
   }
