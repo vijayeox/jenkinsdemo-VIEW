@@ -38,7 +38,6 @@ export default class GridTemplate extends React.Component {
     $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
-  
   }
 
   componentDidUpdate(prevProps) {
@@ -82,7 +81,7 @@ export default class GridTemplate extends React.Component {
         table.push(
           <GridColumn
             key={i}
-            width="150px"
+            width="90px"
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
@@ -119,23 +118,18 @@ export default class GridTemplate extends React.Component {
   }
 
   refreshHandler = serverResponse => {
-  
-
- 
     if (serverResponse.status == "success") {
-
       this.notif.current.notify(
         "Success",
         "Operation succesfully completed",
         "success"
-      )
+      );
     } else {
-
       this.notif.current.notify(
         "Error",
         serverResponse.message ? serverResponse.message : null,
         "danger"
-      )
+      );
     }
     this.child.current.refresh();
   };
@@ -236,7 +230,7 @@ class AddButton extends React.Component {
       <button
         onClick={this.props.args}
         className="k-button"
-        style={{ position: "absolute", top: "-1px", right: "3px" }}
+        style={{ position: "absolute", top: "7px", right: "10px" }}
       >
         <i className="fa fa-plus-circle" style={{ fontSize: "20px" }}></i>
 

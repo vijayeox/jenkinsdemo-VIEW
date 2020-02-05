@@ -135,11 +135,11 @@ async ExistingUsers(api, selectedEntity) {
 
   handleChange(e) {
     if (this.state.filterValue) {
-      this.notif.current.notify(
-        "Success",
-        e.target.value[e.target.value.length - 1].name + " Added",
-        "success"
-      )
+      // this.notif.current.notify(
+      //   "Success",
+      //   e.target.value[e.target.value.length - 1].name + " Added",
+      //   "success"
+      // )
       this.setState({
         selectedUsers: e.target.value
       });
@@ -150,7 +150,7 @@ async ExistingUsers(api, selectedEntity) {
     const noData = (
       <h4 style={{ fontSize: "1em" }}>
         <span style={{ fontSize: "2.5em" }}>
-          <i className="fas fa-search"></i>
+          <i className="fa fa-search"></i>
         </span>
         <br />
         <br />
@@ -192,7 +192,7 @@ async ExistingUsers(api, selectedEntity) {
             <h6 style={{ color: "white", paddingTop: "3px" }}>
               {this.props.config.title} &nbsp; -&nbsp;&nbsp;
               {this.props.config.dataItem.name}
-              &nbsp;&nbsp; <i className="fas fa-arrow-right"></i> &nbsp; Manage
+              &nbsp;&nbsp; <i className="fa fa-arrow-right"></i> &nbsp; Manage
               {" " + this.props.config.members}
             </h6>
           </nav>
@@ -209,7 +209,7 @@ async ExistingUsers(api, selectedEntity) {
                 onFilterChange={this.filterChange}
                 onOpen={this.tagRender}
                 onClose={this.tagRender}
-                autoClose={false}
+                autoClose={true}
                 clearButton={false}
                 textField="name"
                 dataItemKey="uuid"
