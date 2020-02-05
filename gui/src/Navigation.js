@@ -34,7 +34,8 @@ class Navigation extends React.Component {
             var appParams = JSON.parse(this.proc.args);
             if(appParams.type){
               this.postSubmitCallback = this.postSubmitCallback.bind(this);
-              this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
+              this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,workflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
+              console.log(this.state.selected);
             }
           } catch(e){
             console.log("No params!");
@@ -99,6 +100,7 @@ class Navigation extends React.Component {
           core={this.core}
           appId={this.props.appId}
           activityInstanceId={this.state.selected.activityInstanceId}
+          workflowInstanceId={this.state.selected.workflowInstanceId}
           pipeline={this.state.selected.pipeline}
           />
           </div>
