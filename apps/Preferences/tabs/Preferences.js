@@ -136,6 +136,12 @@ class Preferences extends Component {
       /m/g,
       "M"
     );
+    var fields = this.state.fields;
+    this.state.fields["soundnotification"]?"":fields["soundnotification"]="true";
+    this.state.fields["emailalerts"]?"":fields["emailalerts"]="true";
+    this.setState({
+      fields
+    })
   }
 
   componentDidMount() {
