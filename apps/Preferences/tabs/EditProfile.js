@@ -617,9 +617,24 @@ class EditProfile extends Component {
                   >
                     {states.map((state, key) => {
                       if (state.country_id === this.state.selectedCountryID)
-                        return <option key={key} data-stateid={state.id} value={state.name}>
+                        {
+                          if(key == 0){
+                             return (
+                             <React.Fragment>
+                             <option key={123456} value={"please"}>
+                          {"please select"}
+                          </option>
+                             <option key={key} data-stateid={state.id} value={state.name}>
                           {state.name}
-                        </option>
+                          </option>
+                          </React.Fragment>)
+                          } else {
+                             return <option key={key} data-stateid={state.id} value={state.name}>
+                          {state.name}
+                          </option>
+                          }
+                         
+                        }
                     })}
                   </select>
                   <Form.Text className="text-muted errorMsg">

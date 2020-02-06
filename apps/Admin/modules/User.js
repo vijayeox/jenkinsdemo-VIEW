@@ -94,7 +94,7 @@ class User extends React.Component {
             api: "organization/" + this.state.selectedOrg + "/users",
             column: [
               {
-                title: "Profile Image",
+                title: "Image",
                 field: "logo"
               },
               {
