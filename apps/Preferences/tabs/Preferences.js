@@ -348,26 +348,6 @@ class Preferences extends Component {
             </div>
           </div>
 
-          <div className="row marginsize" style={{ paddingTop: "5px" }}>
-            <div className="col-md-4" id="locallanguage">
-              <Form.Label>Language:</Form.Label>
-            </div>
-            <div className="col-md-8 languagediv">
-              <select
-                value={this.state.languageName}
-                onChange={this.handleChange}
-                name="locale.language"
-              >
-                {" "}
-                {this.languagesList.map((language, key) => (
-                  <option key={key} value={language.value}>
-                    {language.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           <div className="row marginsize">
             <div className="col-md-12 input-field">
               <Button className="pull-right preferenceForm-btn" type="submit">Submit</Button>

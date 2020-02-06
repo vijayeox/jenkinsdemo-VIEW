@@ -224,7 +224,7 @@ export default class DialogContainer extends React.Component {
 
     let tempData = {
       name: this.state.orgInEdit.name,
-      address: this.state.orgInEdit.address,
+      address1: this.state.orgInEdit.address1,
       city: this.state.orgInEdit.city,
       state: this.state.orgInEdit.state,
       country: this.state.orgInEdit.country,
@@ -334,8 +334,8 @@ export default class DialogContainer extends React.Component {
               <TextareaAutosize
                 type="text"
                 className="form-control"
-                value={this.state.orgInEdit.address || ""}
-                name="address"
+                value={this.state.orgInEdit.address1 || ""}
+                name="address1"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
                 maxLength="250"
