@@ -51,7 +51,7 @@ class Project extends React.Component {
         dataItem: dataItem,
         title: "Project",
         mainList: "organization/" + this.state.selectedOrg + "/users/list",
-        subList: "project",
+        subList: "organization/" + this.state.selectedOrg + "/project",
         members: "Users"
       },
       manage: {

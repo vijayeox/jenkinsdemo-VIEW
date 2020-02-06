@@ -335,7 +335,7 @@ export default class DialogContainer extends React.Component {
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.address1 || ""}
-                name="address"
+                name="address1"
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Organization Address"
                 maxLength="250"
