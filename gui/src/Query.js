@@ -22,7 +22,8 @@ class Query extends React.Component {
       modalType: "",
       modalContent: {},
       checked: {},
-      activeTab: "querylist"
+      activeTab: "querylist",
+      queryResult: null
     }
     this.refresh = React.createRef();
     this.handleSwitch = this.handleSwitch.bind(this);
@@ -46,6 +47,7 @@ class Query extends React.Component {
     let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
 
     this.setState({ dataSourceOptions: response.data })
+
   }
 
   handleChange(e, instance) {
@@ -185,17 +187,41 @@ class Query extends React.Component {
         btn.classList.add("disappear")
       }
     }
+  }
 
+  async runQuery() {
+    this.setState({ activeTab: "results" })
+    let helper = this.core.make('oxzion/restClient');
+    let formData = {}
+    formData["configuration"] = this.state.inputs["configuration"]
+    formData["datasource_id"] = this.state.inputs["datasourcename"][1]
+    console.log(formData)
+    let response = await helper.request('v1', 'analytics/query/preview', formData, 'filepost');
+    if (response.status === "success") {
+      this.setState({ queryResult: response.data.result })
+      this.notif.current.notify(
+        "Query Executed ",
+        "Operation succesfully completed",
+        "success"
+      )
+    }
+    else {
+      this.notif.current.notify(
+        "Error",
+        "Operation failed " + response.message,
+        "danger"
+      )
+    }
+    // console.log(response)
   }
   render() {
     return (
       <div className="query full-height">
         <Notification ref={this.notif} />
-
         <Row>
           <Button id="add-query-btn" onClick={() => this.toggleQueryForm("display")}>
             <i class="fa fa-plus" aria-hidden="true"></i>
-             Add/Run Query
+            Add/Run Query
           </Button>
         </Row>
         <div id="query-form" className="query-form disappear">
@@ -203,7 +229,7 @@ class Query extends React.Component {
           <Form>
             <Form.Group as={Row}>
               <button type="button" style={{ width: "100%" }} className="close" aria-label="Close" onClick={() => this.toggleQueryForm("hide")}>
-                <span aria-hidden="true" style={{ float: "right" }}>&times;</span>
+                <span aria-hidden="true" className="query-form-close-btn">&times;</span>
               </button>
             </Form.Group>
             <Form.Group as={Row}>
@@ -241,7 +267,7 @@ class Query extends React.Component {
                 </Form.Text>
               </Col>
             </Form.Group>
-            <Button className="" onClick={() => this.validateform() ? this.setState({ activeTab: "results" }) : null} ><i class="fa fa-gear"></i> Run Query</Button>
+            <Button className="" onClick={() => this.validateform() ? this.runQuery() : null} ><i class="fa fa-gear"></i> Run Query</Button>
             <Button onClick={() => this.onsaveQuery()}>Save Query</Button>
           </Form>
         </div>
@@ -279,27 +305,28 @@ class Query extends React.Component {
               </div>
             </Tab>
             <Tab eventKey="results" title="Result">
-              <QueryResult />
+              {/* <QueryResult queryResult={this.state.queryResult!==null?this.state.queryResult:""}/> */}
+              {this.state.queryResult !== null ?
+                <OX_Grid
+                  osjsCore={this.core}
+                  data={this.state.queryResult}
+                  filterable={true}
+                  reorderable={true}
+                  sortable={true}
+                  pageable={true}
+                  columnConfig={[
+                    {
+                      title: "Store", field: "store"
+                    },
+                    {
+                      title: "Sold Price", field: "sold_price"
+                    }
+                  ]}
+                /> : null
+              }
             </Tab>
           </Tabs>
         </div>
-
-        {/* <div className="query-result-div">
-          <OX_Grid
-            osjsCore={this.core}
-            data={"analytics/datasource"}
-            filterable={true}
-            reorderable={true}
-            sortable={true}
-            pageable={true}
-            columnConfig={[
-              {
-                title: "Name", field: "name"
-              }
-
-            ]}
-          />
-        </div> */}
         <QueryModal
           osjsCore={this.core}
           modalType={this.state.modalType}
