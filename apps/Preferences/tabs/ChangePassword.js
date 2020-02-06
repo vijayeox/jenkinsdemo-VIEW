@@ -95,6 +95,16 @@ class ChangePassword extends Component {
             "Password updated successfully.",
             "success"
           )
+          let fields = this.state.fields;
+          fields['old_password'] = '';
+          fields['new_password'] = '';
+          fields['confirm_password'] = '';
+          this.setState({
+            fields
+          });
+          for(var i=0; i<document.getElementsByClassName("passwordField").length; i++){
+            document.getElementsByClassName("passwordField")[i].value = '';
+          }
         }
       });
     }
@@ -203,6 +213,7 @@ class ChangePassword extends Component {
               type={this.state.type}
               name="old_password"
               onChange={this.handleChange}
+              className="passwordField"
             />
             <InputGroup.Append>
               <Button className="preferenceForm-showbtn" onClick={this.showHide}>{this.state.type === "text" ? "Hide" : "Show"}</Button>
@@ -226,6 +237,7 @@ class ChangePassword extends Component {
               onClick={() => this.toggleToolTip(this.state.tooltipOpen)}
               onChange={this.handleChange}
               id="newPassword"
+              className="passwordField"
               onBlur={() => this.toggleToolTip(false)}
             />
             <InputGroup.Append>
@@ -256,6 +268,7 @@ class ChangePassword extends Component {
               type={this.state.type2}
               name="confirm_password"
               onChange={this.handleChange}
+              className="passwordField"
             />
             <InputGroup.Append>
               <Button className="preferenceForm-showbtn" onClick={this.showHide2}>{this.state.type2 === "text" ? "Hide" : "Show"}</Button>

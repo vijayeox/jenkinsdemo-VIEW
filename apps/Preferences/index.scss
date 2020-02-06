@@ -670,8 +670,13 @@
   color: #fff;
   background-color: #82979e;
   border-color: #82979e;
-
+  height: 36px;
+  width: 60px;
+  border-radius: 10px;
+  border-top-left-radius: 10px !important;
+  border-bottom-left-radius: 10px !important; 
 }
+
 .tooltip{
   font-size: .375rem !important;
 }
