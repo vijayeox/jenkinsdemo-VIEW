@@ -92,7 +92,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let rolesList = await helper2.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/detail",
+      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
       "get"
     );
