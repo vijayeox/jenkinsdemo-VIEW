@@ -226,7 +226,7 @@ class WidgetEditorApp extends React.Component {
             'queries' : editorState.queries,
             'name' : state.widgetName
         };
-        return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/create', params, 'post');
+        return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
     }
 
     //Called in globalFunctions.js to ensure data is clean when the user clicks "Ok" button of dialog.
