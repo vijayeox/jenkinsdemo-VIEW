@@ -459,7 +459,7 @@ class FormRender extends React.Component {
           });
         }
         that.setState({ formDivID: "formio_" + that.state.formId });
-        that.createForm();
+        setTimeout(function(){ that.createForm() }, 2000);
       });
     }
     if (this.state.parentWorkflowInstanceId) {
