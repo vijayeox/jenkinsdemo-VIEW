@@ -464,7 +464,7 @@ export default class Login extends defaultLogin {
                           }
                         },
 
-                        "Cancel"errorDivforUpdatingPassword
+                        "Cancel"
                       )
                     ])
                   ]
