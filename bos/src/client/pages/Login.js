@@ -427,7 +427,7 @@ export default class Login extends defaultLogin {
                         name: "password",
                         className: "validate",
                         id: "reEnterPassword",
-                        placeholder: " Re-enter Password"
+                        placeholder: "Re-enter Password"
                       }),
                       h("label", { for: "password" }, "Re-Enter Password")
                     ]),
@@ -473,7 +473,7 @@ export default class Login extends defaultLogin {
             ),
 
             h("div", { className: "footer-links" }, [
-              h("a", { href: "https://www.vantageagora.com" }, "About Us")
+              h("a", { href: "https://www.eoxvantage.com" }, "About Us")
             ]),
       h('div',{className:'login-copyright'},'Copyright © 2020 EOX Vantage. All rights reserved.'),
       ])
