@@ -3,7 +3,6 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 
 
 function QueryModal(props) {
-
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
 
@@ -87,10 +86,10 @@ function QueryModal(props) {
 
       formData["name"] = input["queryname"]
       formData["datasource_id"] = input["datasourceuuid"]
-      formData["configuration"] = input["configuration"]
+      formData["configuration"] = props.configuration
       formData["ispublic"] = input["visibility"]
       if (operation === "Activated") {
-        formData["configuration"] = JSON.stringify(input["configuration"])
+        formData["configuration"] = props.configuration
         formData["version"] = input["version"]
         formData["isdeleted"] = "0"
         requestUrl = "analytics/query/" + input["uuid"]
