@@ -669,11 +669,17 @@ class FormRender extends React.Component {
                       if (response.data) {
                         console.log(response.data);
                         form.submission = {
-                          data: that.parseResponseData(
-                            that.addAddlData(response.data)
-                          )
+                                  data: that.parseResponseData(
+                                          that.addAddlData(response.data)
+                            )
                         };
                         form.triggerChange();
+                        if (properties["target"]) {
+                          var targetComponent = form.getComponent(properties["target"]);
+                          setTimeout(function(){
+                            targetComponent.triggerChange();  
+                          },3000);      
+                        }
                       }
                       that.core.make("oxzion/splash").destroy();
                     }
@@ -720,6 +726,7 @@ class FormRender extends React.Component {
                   }
                 }
               }
+
               if (properties["negate"]) {
                 var targetComponent = form.getComponent(properties["negate"]);
                 if (changed.changed.value && targetComponent) {
@@ -1011,6 +1018,12 @@ class FormRender extends React.Component {
                 data: this.parseResponseData(this.addAddlData(response.data))
               };
               form.triggerChange();
+              if (properties["target"]) {
+                var targetComponent = form.getComponent(properties["target"]);
+                  setTimeout(function(){
+                  targetComponent.triggerChange();  
+                  },3000);      
+              }
             }
           }
         });
