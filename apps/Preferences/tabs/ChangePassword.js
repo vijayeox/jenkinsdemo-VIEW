@@ -212,6 +212,7 @@ class ChangePassword extends Component {
             <Form.Control
               type={this.state.type}
               name="old_password"
+              className="passwordField"
               onChange={this.handleChange}
             />
             <InputGroup.Append>
@@ -236,6 +237,7 @@ class ChangePassword extends Component {
               onClick={() => this.toggleToolTip(this.state.tooltipOpen)}
               onChange={this.handleChange}
               id="newPassword"
+              className="passwordField"
               onBlur={() => this.toggleToolTip(false)}
             />
             <InputGroup.Append>
@@ -265,6 +267,7 @@ class ChangePassword extends Component {
             <Form.Control
               type={this.state.type2}
               name="confirm_password"
+              className="passwordField"
               onChange={this.handleChange}
             />
             <InputGroup.Append>
