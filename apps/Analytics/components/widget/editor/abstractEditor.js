@@ -330,7 +330,7 @@ class AbstractEditor extends React.Component {
             };
         window.postDataRequest('analytics/query/'+queryUuid+'?data=true', params).
             then(function(responseData) {
-                thiz.data = responseData.data;
+                thiz.data = responseData.query.data;
                 if (postLoadCallback) {
                     postLoadCallback();
                 }

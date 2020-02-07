@@ -65,7 +65,7 @@ class AggregateValueEditor extends AbstractEditor {
         textArea.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around textarea.
         let value = '';
         if (this.data) {
-            value = '' + this.data; //Append to string to convert the value to string if at all it is a number.
+            value = '' + JSON.stringify(this.data); //Append to string to convert the value to string if at all it is a number.
         }
         textArea.value = value;
     }
