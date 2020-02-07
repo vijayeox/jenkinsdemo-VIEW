@@ -79,14 +79,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 					// console.log('true return now');
 					refreshflag = true;
 				} else {
-					alert('Session Expired. Redirecting to Login');
+					alert('Session has Expired. Please wait while we redict to login page');
 					location.reload();
 				}
 			}
 			xhr.send(formData);
 
 		} else {
-			alert('Session Expired. Redirecting to Login');
+			alert('Session has Expired. Please wait while we redict to login page');
 			location.reload();
 		}
 		return refreshflag;
@@ -218,7 +218,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 								});
 							} else {
 								console.log("refresh failed..");
-								alert('Session Expired. Redirecting to Login');
+								alert('Session has Expired. Please wait while we redict to login page');
 								location.reload();
 							}
 						} else {
