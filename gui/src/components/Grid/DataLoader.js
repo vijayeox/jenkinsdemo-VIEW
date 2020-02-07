@@ -17,6 +17,7 @@ export class DataLoader extends React.Component {
   }
 
   async getData(url) {
+    let paramSeperator = url!==undefined?url.includes("?") ? "&" : "?":"&";
     if (typeof this.core == "undefined") {
       let response = await fetch(url, this.init);
       let json = await response.json();
@@ -27,7 +28,7 @@ export class DataLoader extends React.Component {
       let route =
         Object.keys(this.props.dataState).length === 0
           ? url
-          : url + "?" + "filter=[" + JSON.stringify(this.props.dataState) + "]";
+          : url + paramSeperator + "filter=[" + JSON.stringify(this.props.dataState) + "]";
       let data = await helper.request("v1", "/" + route, {}, "get");
       return data;
     }

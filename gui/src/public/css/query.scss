@@ -13,6 +13,7 @@
     width: 100%;
     float: left;
     padding: 2em;
+    padding-top: 0px;
     background:#a9c4c4;
     border-radius: 19px;
     color:#275362;
@@ -55,5 +56,48 @@ color:#275362;
 .querylist-div{
     padding:2em;
     background: #8cb5b536;
-    
+    padding-bottom: 0;
+    padding-top: 2px;
+    height: 62vh;
 }
+.querylist-div .GridCustomStyle{
+    height: 58vh !important;
+}
+.query .btn-primary{
+    color: #fff;
+    background-color: #265160;
+    border-color: #265160;
+  }
+  
+.query .btn-primary:hover{
+    background-image:none !important;
+    background-color:#265160c4 !important;
+  }
+  
+.query .deactivateDash .react-switch-bg{
+    background: rgb(39, 83, 98)  !important;
+  }
+.query .react-switch-handle{
+    background: #fff !important;
+  
+  }
+
+  .disappear{
+      display: none;
+  }
+
+  #add-query-btn{
+    margin-left: 1em;
+    margin-bottom: 10px;
+  }
+  .query .modal-content .btn-primary{
+    color: #fff !important;
+    background-color: #275362 !important;
+    border-color: #275362 !important;
+  }
+
+  .query-form-close-btn{
+    float: right;
+    position: relative;
+    top: 5px;
+  }

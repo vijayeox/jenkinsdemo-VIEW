@@ -8,3 +8,25 @@
     padding-right: 4.5em;
     height: auto;
 }
+
+.data-source .btn-primary{
+    color: #fff;
+    background-color: #265160;
+    border-color: #265160;
+  }
+  
+.datasdata-sourceource .btn-primary:hover{
+    background-image:none !important;
+    background-color:#265160c4 !important;
+  }
+  
+.data-source .deactivateDash .react-switch-bg{
+    background: rgb(39, 83, 98)  !important;
+  }
+.data-source .react-switch-handle{
+    background: #fff !important;
+  }
+
+  .data-source .GridCustomStyle{
+    height: 70vh !important;
+  }

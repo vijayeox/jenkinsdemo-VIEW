@@ -43,14 +43,6 @@ class App extends Component {
             <i className="fa fa-cog" />
             <span>Preferences</span>
           </Tab>
-          <Tab tabFor="vertical-tab-four">
-            <i className="fa fa-image" />
-            <span>Background</span>
-          </Tab>
-          <Tab tabFor="vertical-tab-five">
-            <i className="fa fa-desktop" />
-            <span>Themes</span>
-          </Tab>
         </TabList>
         <TabPanel
           tabId="vertical-tab-one"

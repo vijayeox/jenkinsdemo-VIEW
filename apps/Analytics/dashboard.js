@@ -43,7 +43,7 @@ class Dashboard extends React.Component {
       this.setState({ showModal: true, modalContent: e, modalType: operation, uuid: e.uuid })
     }
   }
-  
+
   buttonAction(action, item) {
     if (action.name !== undefined) {
       if (action.name === "toggleActivate" && item.isdeleted == "0")
@@ -96,7 +96,7 @@ class Dashboard extends React.Component {
         ?
         action[key].name === "toggleActivate" ?
           actionButtons.push(
-            <abbr title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+            <abbr className={this.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
               <Switch
                 id={e.name}
                 onChange={() => this.buttonAction(action[key], e)}
@@ -228,17 +228,14 @@ class Dashboard extends React.Component {
               dashboardId={this.state.uuid}
               flipCard={(status) => {
                 if (status === "Saved") {
-                  this.setState({ flipped: false })
+                  //refreshing the ox_grid when saved
                   this.refresh.current.child.current.refresh()
                 }
-                else {
-                  this.setState({ flipped: false })
-                }
+                this.setState({ flipped: false })
               }}
             />
           </BackSide>
         </Flippy>
-
         <DashboardEditorModal
           osjsCore={this.core}
           modalType={this.state.modalType}

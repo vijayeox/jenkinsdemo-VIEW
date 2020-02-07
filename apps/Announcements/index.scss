@@ -1,7 +1,7 @@
-.osjs-window[data-id=annoucementsWindow]  {
-  .osjs-window-button[data-action=minimize] > div {
+.osjs-window[data-id="annoucementsWindow"] {
+  .osjs-window-button[data-action="minimize"] > div {
     background-position: 50% 50%;
-    background-image: url('./close.svg');
+    background-image: url("./close.svg");
   }
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
@@ -35,9 +35,9 @@
   }
 
   .Announcement-visuals > img {
-    width: auto;
-    height: 100%;
-    max-width: 100%;
+    width: 250px;
+    height: 250px;
+    margin-top: 3rem;
   }
 
   .Announcement-content {
@@ -215,5 +215,5 @@
         transform: scale(0.99);
       }
     }
-  } 
+  }
 }

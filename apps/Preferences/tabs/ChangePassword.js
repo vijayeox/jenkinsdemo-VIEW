@@ -94,7 +94,17 @@ class ChangePassword extends Component {
             "Success",
             "Password updated successfully.",
             "success"
-          )
+            )
+          let fields = this.state.fields;
+          fields['old_password'] = '';
+          fields['new_password'] = '';
+          fields['confirm_password'] = '';
+          this.setState({
+            fields
+          });
+          for(var i=0; i<document.getElementsByClassName("passwordField").length; i++){
+            document.getElementsByClassName("passwordField")[i].value = '';
+          }
         }
       });
     }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Overlay, Tooltip, Button } from 'react-bootstrap';
 import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
-import { WidgetRenderer } from './GUIComponents';
+import { WidgetRenderer, DashboardEditorFilter } from './GUIComponents';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
@@ -371,58 +371,69 @@ class DashboardEditor extends React.Component {
         }
         JavascriptLoader.unloadScript(this.getJsLibraryList());
     }
-
+    displayFilterDiv() {
+        var element = document.getElementById("filter-form-container");
+        element.classList.remove("disappear");
+        document.getElementById("dashboard-container").classList.add("disappear")
+        document.getElementById("dashboard-filter-btn").disabled = true
+    }
     render() {
         return (
             <form className="dashboard-editor-form">
                 <div className="row col-12" style={{ marginBottom: "3em" }}>
                     <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i class="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
+                    <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
+                    <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i class="fa fa-filter" aria-hidden="true"></i>Filter</Button>
                 </div>
-                <div className="form-group row">
+                <div>
+                    <DashboardEditorFilter 
+                      dashboardId={this.props.dashboardId} 
+                      dashboardVersion={this.state.version} 
+                      core={this.core}
+                      />
+                </div>
+                <div id="dashboard-container">
+                    <div className="form-group row">
+                        <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
+                        <div className="col-2">
+                            <>
+                                <input type="text" id="dashboardName" name="dashboardName" ref="dashboardName" className="form-control form-control-sm"
+                                    onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
+                                    disabled={false} />
+                                <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
+                                    {props => (
+                                        <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
+                                            {this.state.errors.dashboardName}
+                                        </Tooltip>
+                                    )}
+                                </Overlay>
+                            </>
+                        </div>
+                        <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
+                        <div className="col-4">
+                            <>
+                                <input type="text" id="dashboardDescription" name="dashboardDescription" ref="dashboardDescription" className="form-control form-control-sm"
+                                    onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
+                                    disabled={false} />
+                                <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
+                                    {props => (
+                                        <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
+                                            {this.state.errors.dashboardDescription}
+                                        </Tooltip>
+                                    )}
+                                </Overlay>
+                            </>
+                        </div>
 
-                    <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
-                    <div className="col-2">
-                        <>
-                            <input type="text" id="dashboardName" name="dashboardName" ref="dashboardName" className="form-control form-control-sm"
-                                onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
-                                disabled={false} />
-                            <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
-                                {props => (
-                                    <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
-                                        {this.state.errors.dashboardName}
-                                    </Tooltip>
-                                )}
-                            </Overlay>
-                        </>
                     </div>
-                    <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
-                    <div className="col-4">
-                        <>
-                            <input type="text" id="dashboardDescription" name="dashboardDescription" ref="dashboardDescription" className="form-control form-control-sm"
-                                onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
-                                disabled={false} />
-                            <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
-                                {props => (
-                                    <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
-                                        {this.state.errors.dashboardDescription}
-                                    </Tooltip>
-                                )}
-                            </Overlay>
-                        </>
+                    <div className="dashboard">
+                        <div id="ckEditorInstance" style={{ height: 'calc(100%)' }}>
+                        </div>
                     </div>
-                    <div className="col-1">
-                        <button type="button" className="btn btn-primary" style={{ float: 'right' }} onClick={this.saveDashboard} disabled={!this.state.contentChanged}>
-                            Save
-                        </button>
-                    </div>
-                </div>
-                <div className="dashboard">
-                    <div id="ckEditorInstance" style={{ height: 'calc(100%)' }}>
-                    </div>
-                </div>
 
-                <div id="gridArea" style={{ height: '200px', width: '800px' }}>
-                    <div className="oxzion-widget-content"></div>
+                    <div id="gridArea" style={{ height: '200px', width: '800px' }}>
+                        <div className="oxzion-widget-content"></div>
+                    </div>
                 </div>
             </form>
         );

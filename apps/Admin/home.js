@@ -145,7 +145,7 @@ class Home extends React.Component {
           </div>
           <div className="titles">Errorlog</div>
         </div>
-        {this.userProfile.privileges.MANAGE_EMAIL_READ ? (
+        {this.userProfile.privileges.MANAGE_ERROR_WRITE ? (
           <div key={10} onClick={this.mailAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/091-email-1.svg" />
@@ -154,7 +154,7 @@ class Home extends React.Component {
           </div>
         ) : null}
 
-        {this.userProfile.privileges.MANAGE_CRM_WRITE ? (
+        {this.userProfile.privileges.MANAGE_CRMADMIN_WRITE ? (
           <div onClick={this.crmAdminClick}>
             <div className="block d1">
               <img src="apps/Admin/crm-icon.svg" />

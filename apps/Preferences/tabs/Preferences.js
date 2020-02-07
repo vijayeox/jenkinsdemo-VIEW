@@ -136,6 +136,12 @@ class Preferences extends Component {
       /m/g,
       "M"
     );
+    var fields = this.state.fields;
+    this.state.fields["soundnotification"]?"":fields["soundnotification"]="true";
+    this.state.fields["emailalerts"]?"":fields["emailalerts"]="true";
+    this.setState({
+      fields
+    })
   }
 
   componentDidMount() {
@@ -336,26 +342,6 @@ class Preferences extends Component {
                 {DateFormats.map((dateFormat, key) => (
                   <option key={key} value={dateFormat.value}>
                     {dateFormat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="row marginsize" style={{ paddingTop: "5px" }}>
-            <div className="col-md-4" id="locallanguage">
-              <Form.Label>Language:</Form.Label>
-            </div>
-            <div className="col-md-8 languagediv">
-              <select
-                value={this.state.languageName}
-                onChange={this.handleChange}
-                name="locale.language"
-              >
-                {" "}
-                {this.languagesList.map((language, key) => (
-                  <option key={key} value={language.value}>
-                    {language.label}
                   </option>
                 ))}
               </select>
