@@ -406,7 +406,13 @@ class FormRender extends React.Component {
     formData.privileges = undefined;
     formData.userprofile = undefined;
     formData.countryList = undefined;
-    return formData;
+    var ordered_data = {};
+    Object.keys(formData)
+      .sort()
+      .forEach(function(key) {
+        ordered_data[key] = formData[key];
+      });
+    return ordered_data;
   }
 
   addAddlData(data) {
