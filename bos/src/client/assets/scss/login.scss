@@ -133,7 +133,7 @@ button {
     font-weight: 400;
     -webkit-appearance: none;
     &:focus {
-      border-bottom: solid 1px $primary;
+      border-bottom: solid 1px #275362;
       outline: 0;
       box-shadow: 0 2px 6px -8px rgba($primary, 0.45);
     }
@@ -144,7 +144,6 @@ button {
     margin-bottom: 10px;
     width: 100%;
     label {
-      position: absolute;
       top: calc(50% - 7px);
       left: 0;
       opacity: 0;
@@ -333,16 +332,16 @@ $displacement: 3px;
   color: white;
   font-size: 1.5em;
   border-radius: 10px;
-  background-color: #b08bf8;
+  background-color: #275362;
 }
 a.footer-link{
-  color: #275262;
+  color: #275362;
     text-decoration: dashed;
 }
 a.forgotpasswordLink{
 margin:15px;
-  color: #275262;
-  border-bottom: 1px dotted #275262;
+  color: #275362;
+  border-bottom: 1px dotted #275362;
     text-decoration: none;
 }
 .footer{
