@@ -35,9 +35,9 @@
   }
 
   .Announcement-visuals > img {
-    width: 250px;
-    height: 250px;
-    margin-top: 3rem;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
   }
 
   .Announcement-content {
@@ -114,7 +114,7 @@
 
   .nextArrow {
     position: absolute;
-    bottom: 40%;
+    bottom: 30px;
     right: 0;
     z-index: 999;
     color: gray;
@@ -126,7 +126,7 @@
 
   .backArrow {
     position: absolute;
-    bottom: 40%;
+    bottom: 30px;
     left: 0;
     z-index: 999;
     color: gray;
