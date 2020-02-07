@@ -12,7 +12,8 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && NODE_ENV=production npm run build && npm run build:esm"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.8.4",
+    "@amcharts/amcharts4": "^4.8.8",
+    "@amcharts/amcharts4-geodata": "^4.1.11",
     "@progress/kendo-data-query": "^1.5.1",
     "@progress/kendo-react-animation": "^3.10.1",
     "@progress/kendo-react-buttons": "^3.10.1",
