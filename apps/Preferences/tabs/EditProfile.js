@@ -662,7 +662,7 @@ class EditProfile extends Component {
             <Form.Group>
                   <Form.Label className="mandatory">Postal Code</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="phone"
                     name="zip"
                     value={this.state.fields.zip ? this.state.fields.zip : null}
                     onChange={this.handleChange}
