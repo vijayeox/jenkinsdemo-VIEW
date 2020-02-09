@@ -75,6 +75,12 @@ class AmChartEditor extends AbstractEditor {
         textArea.value = value;
     }
 
+    refreshViews = () => {
+        if (this.state.selectedTab === 'chart') {
+            this.refreshChartPreview();
+        }
+    }
+
     isChartTabValid = (state, setErrorState = true) => {
         let isValid = true;
 
