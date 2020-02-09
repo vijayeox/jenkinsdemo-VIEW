@@ -45,6 +45,11 @@ class AmChartEditor extends AbstractEditor {
             let jsonChartConfiguration = JSON.parse(this.state.configuration);
             let previewElement = document.querySelector('div#chartPreview');
             previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
+            //Chart must be disposed (if exists) before repainting it.
+            if (this.amChart) {
+                this.amChart.dispose();
+                this.amChart = null;
+            }
             try {
                 this.amChart = WidgetRenderer.renderAmCharts(previewElement, jsonChartConfiguration, this.data);
             }
