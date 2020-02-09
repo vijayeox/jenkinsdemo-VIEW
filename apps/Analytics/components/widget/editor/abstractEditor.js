@@ -328,11 +328,10 @@ class AbstractEditor extends React.Component {
 
     loadData = (postLoadCallback) => {
         let thiz = this;
-        let queryUuid=this.state.queries!==undefined?this.state.queries[0].uuid:""
-            let params = {
-                'queries':this.queries
-            };
-        window.postDataRequest('analytics/query/'+queryUuid+'?data=true', params).
+        let params = {
+            'queries':this.state.queries
+        };
+        window.postDataRequest('analytics/query/data', params).
             then(function(responseData) {
                 thiz.data = responseData.query.data;
                 if (postLoadCallback) {
