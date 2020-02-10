@@ -21,11 +21,15 @@ function QueryModal(props) {
 
   function notify(response, operation) {
     if (response.status == "success")
-      props.notification.current.notify(
+      {
+        props.notification.current.notify(
         "Data Source " + operation,
         "Operation succesfully completed",
         "success"
       )
+      setInput({})
+      props.resetInput()
+        }
     else {
       props.notification.current.notify(
         "Error",
@@ -170,18 +174,22 @@ function QueryModal(props) {
               </Form.Text>
             </Col>
           </Form.Group>
+          <>
+          {props.modalType==="Save"?
           <Form.Group as={Row}>
             <Form.Label column lg="3">Data Source Name</Form.Label>
             <Col lg="9">
               <Form.Control type="text" name="datasourcename" value={props.datasourcename} disabled />
             </Col>
           </Form.Group>
+          :null}
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">
               <Form.Control as="textarea" name="configuration" value={input["configuration"] !== undefined ? JSON.stringify(input["configuration"]) : props.configuration} disabled />
             </Col>
           </Form.Group>
+          </>
         </Form>
       </Modal.Body>
       <Modal.Footer>
