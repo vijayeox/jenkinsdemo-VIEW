@@ -96,10 +96,10 @@ class FormRender extends React.Component {
     let delegateData = await helper.request(
       "v1",
       "/app/" +
-      this.state.appId +
-      "/transaction/" +
-      params.transaction_id +
-      "/status",
+        this.state.appId +
+        "/transaction/" +
+        params.transaction_id +
+        "/status",
       params.data,
       "post"
     );
@@ -203,9 +203,9 @@ class FormRender extends React.Component {
     let fileData = await helper.request(
       "v1",
       "/app/" +
-      this.state.appId +
-      "/workflowInstance/" +
-      this.props.parentWorkflowInstanceId,
+        this.state.appId +
+        "/workflowInstance/" +
+        this.props.parentWorkflowInstanceId,
       {},
       "get"
     );
@@ -227,7 +227,14 @@ class FormRender extends React.Component {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
     let formContent = await helper.request(
-      "v1","/app/"+this.state.appId+'/workflowinstance/'+this.state.workflowInstanceId+'/activityinstance/'+this.state.activityInstanceId + "/form",
+      "v1",
+      "/app/" +
+        this.state.appId +
+        "/workflowinstance/" +
+        this.state.workflowInstanceId +
+        "/activityinstance/" +
+        this.state.activityInstanceId +
+        "/form",
       {},
       "get"
     );
@@ -296,21 +303,22 @@ class FormRender extends React.Component {
             return response;
           });
         } else {
-          await this.storeCache(data).then(async cacheResponse => {
-            if (response.data.errors) {
-              await this.storeError(data, response.data.errors, route).then(
-                storeErrorResponse => {
-                  this.notif.current.notify(
-                    "Error",
-                    "Form Submission Failed",
-                    "danger"
-                  );
-                }
-              );
-            } else {
-              return response;
-            }
-          });
+          if (response.errors) {
+            await this.storeError(data, response.errors, "pipeline");
+            this.notif.current.notify(
+              "Error",
+              response.errors[0].message,
+              "danger"
+            );
+            return response;
+          } else {
+            await this.storeCache(data);
+            this.notif.current.notify(
+              "Error",
+              "Form Submission Failed",
+              "danger"
+            );
+          }
         }
       });
     } else {
@@ -460,7 +468,9 @@ class FormRender extends React.Component {
           });
         }
         that.setState({ formDivID: "formio_" + that.state.formId });
-        that.createForm();
+        setTimeout(function() {
+          that.createForm();
+        }, 2000);
       });
     }
     if (this.state.parentWorkflowInstanceId) {
@@ -495,7 +505,9 @@ class FormRender extends React.Component {
     if (this.state.instanceId) {
       this.getInstanceData().then(response => {
         if (response.status == "success" && response.data.workflow_id) {
-          that.setState({ workflowInstanceId: response.data.workflow_instance_id});
+          that.setState({
+            workflowInstanceId: response.data.workflow_instance_id
+          });
           that.setState({ workflowId: response.data.workflow_id });
           that.setState({ activityId: response.data.activity_id });
           that.setState({ data: JSON.parse(response.data.data) });
@@ -542,25 +554,6 @@ class FormRender extends React.Component {
           var form_data = JSON.parse(JSON.stringify(submission.data));
           that.storeCache(that.cleanData(form_data));
           next(null);
-        },
-        beforeSubmit: async (submission, next) => {
-          var form_data = that.cleanData(submission.data);
-          var formSave = await that
-            .saveForm(null, form_data)
-            .then(function (response) {
-              console.log(response);
-              if (response.status == "success") {
-                next(null);
-              } else {
-                var submitErrors = [];
-                if (response.data.errors) {
-                  submitErrors.push(response.data.errors);
-                } else {
-                  submitErrors.push(response.message);
-                }
-                next(submitErrors);
-              }
-            });
         }
       };
       options.hooks = hooks;
@@ -568,7 +561,7 @@ class FormRender extends React.Component {
         document.getElementById(this.formDivID),
         this.state.content,
         options
-      ).then(function (form) {
+      ).then(function(form) {
         if (that.state.page && form.wizard) {
           if (form.wizard && form.wizard.display == "wizard") {
             form.setPage(parseInt(that.state.page));
@@ -583,7 +576,17 @@ class FormRender extends React.Component {
         form.submission = {
           data: that.parseResponseData(that.addAddlData(that.state.data))
         };
-        console.log(form.submission);
+        form.on("submit", async function(submission) {
+          var form_data = that.cleanData(submission.data);
+          var response_data = await that.saveForm(null, form_data);
+          console.log(response_data);
+          // Not able to get the returned response here from saveForm (Bharat)
+          // if (response_data.status == "success") {
+          //   form.emit("submitDone", response_data);
+          // } else {
+          //   form.emit("error", response_data);
+          // }
+        });
         form.on("prevPage", changed => {
           form.emit("render");
           that.setState({ page: changed.page });
@@ -608,22 +611,15 @@ class FormRender extends React.Component {
                           that.addAddlData(response.data)
                         )
                       };
-                      form.triggerChange();
+                      // form.triggerChange();
                     }
                   }
                 });
             }
           }
         });
-        form.on("submit", submission => {
-          console.log("Submission Call");
-          // var form_data = that.cleanData(submission.data);
-          // return that.saveForm(form,form_data).then(response => {
-          //   form.emit('submitDone', response);
-          // });
-        });
 
-        form.on("change", function (changed) {
+        form.on("change", function(changed) {
           console.log(changed.data);
           var formdata = changed;
           for (var dataItem in form.submission.data) {
@@ -773,7 +769,7 @@ class FormRender extends React.Component {
             }
           }
         });
-        form.on("render", function () {
+        form.on("render", function() {
           if (form.wizard && form.wizard.display == "wizard") {
             var breadcrumbs = document.getElementById(
               form.wizardKey + "-header"
@@ -784,7 +780,7 @@ class FormRender extends React.Component {
           }
           eachComponent(
             form.root.components,
-            function (component) {
+            function(component) {
               if (component) {
                 if (
                   component.component.properties &&
@@ -839,7 +835,7 @@ class FormRender extends React.Component {
             that.runDelegates(form, form.originalComponent["properties"]);
           }
         });
-        form.on("customEvent", function (event) {
+        form.on("customEvent", function(event) {
           var changed = event.data;
           if (event.type == "callDelegate") {
             var component = event.component;
@@ -848,29 +844,47 @@ class FormRender extends React.Component {
               var properties = component.properties;
               if (properties) {
                 if (properties["delegate"]) {
-                  if (properties["sourceDataKey"] && properties["destinationDataKey"]) {
+                  if (
+                    properties["sourceDataKey"] &&
+                    properties["destinationDataKey"]
+                  ) {
                     var paramData = {};
-                    paramData[properties["valueKey"]] = changed[properties["sourceDataKey"]];
+                    paramData[properties["valueKey"]] =
+                      changed[properties["sourceDataKey"]];
                     that.core.make("oxzion/splash").show();
-                    that.callDelegate(properties["delegate"], paramData).then(response => {
+                    that
+                      .callDelegate(properties["delegate"], paramData)
+                      .then(response => {
                         var responseArray = [];
                         for (var responseDataItem in response.data) {
                           if (response.data.hasOwnProperty(responseDataItem)) {
-                            responseArray[responseDataItem] = response.data[responseDataItem];
+                            responseArray[responseDataItem] =
+                              response.data[responseDataItem];
                           }
                         }
                         if (response.data) {
                           if (response.data) {
-                            var destinationComponent = form.getComponent(properties["destinationDataKey"]);
+                            var destinationComponent = form.getComponent(
+                              properties["destinationDataKey"]
+                            );
                             if (properties["validationKey"]) {
-                              if (properties["validationKey"] && response.data[properties["validationKey"]]) {
-                                var componentList = flattenComponents(destinationComponent.componentComponents,false);
+                              if (
+                                properties["validationKey"] &&
+                                response.data[properties["validationKey"]]
+                              ) {
+                                var componentList = flattenComponents(
+                                  destinationComponent.componentComponents,
+                                  false
+                                );
                                 var valueArray = [];
                                 for (var componentKey in componentList) {
-                                  valueArray[componentKey] = response.data[componentKey];
+                                  valueArray[componentKey] =
+                                    response.data[componentKey];
                                 }
                                 valueArray = Object.assign({}, valueArray);
-                                changed[properties["destinationDataKey"]].push(valueArray);
+                                changed[properties["destinationDataKey"]].push(
+                                  valueArray
+                                );
                               }
                               if (properties["clearSource"]) {
                                 changed[properties["sourceDataKey"]] = "";
@@ -887,32 +901,43 @@ class FormRender extends React.Component {
                         }
                         that.core.make("oxzion/splash").destroy();
                       });
-                  } else if(properties['sourceDataKey']){
+                  } else if (properties["sourceDataKey"]) {
                     var paramData = {};
-                    paramData[properties["valueKey"]] = changed[properties["sourceDataKey"]];
+                    paramData[properties["valueKey"]] =
+                      changed[properties["sourceDataKey"]];
                     that.core.make("oxzion/splash").show();
-                    that.callDelegate(properties["delegate"], paramData).then(response => {
+                    that
+                      .callDelegate(properties["delegate"], paramData)
+                      .then(response => {
                         var responseArray = [];
                         for (var responseDataItem in response.data) {
                           if (response.data.hasOwnProperty(responseDataItem)) {
-                            responseArray[responseDataItem] = response.data[responseDataItem];
+                            responseArray[responseDataItem] =
+                              response.data[responseDataItem];
                           }
                         }
                         if (response.data) {
-                            if (properties["validationKey"]) {
-                              if (properties["validationKey"] && response.data[properties["validationKey"]]) {
-                                var valueArray = [];
-                                for (var item in response.data) {
-                                  changed[item] = response.data[item];
-                                }
-                              }
-                              if (properties["clearSource"]) {
-                                changed[properties["sourceDataKey"]] = "";
+                          if (properties["validationKey"]) {
+                            if (
+                              properties["validationKey"] &&
+                              response.data[properties["validationKey"]]
+                            ) {
+                              var valueArray = [];
+                              for (var item in response.data) {
+                                changed[item] = response.data[item];
                               }
                             }
-                            form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
-                            form.triggerChange();
-                            destinationComponent.triggerRedraw();
+                            if (properties["clearSource"]) {
+                              changed[properties["sourceDataKey"]] = "";
+                            }
+                          }
+                          form.submission = {
+                            data: that.parseResponseData(
+                              that.addAddlData(changed)
+                            )
+                          };
+                          form.triggerChange();
+                          destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
                       });
@@ -925,7 +950,11 @@ class FormRender extends React.Component {
                       .then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.submission = { data: that.parseResponseData( that.addAddlData(response.data))};
+                          form.submission = {
+                            data: that.parseResponseData(
+                              that.addAddlData(response.data)
+                            )
+                          };
                           form.triggerChange();
                         }
                       });
@@ -964,18 +993,22 @@ class FormRender extends React.Component {
         });
         form.submissionReady.then(() => {
           console.log("submissionReady");
-          window.addEventListener("getAppDetails",
-            function (e) {
+          window.addEventListener(
+            "getAppDetails",
+            function(e) {
               e.stopPropagation();
-              var evt = new CustomEvent("appDetails", { detail: {
-                core: that.core,
-                appId: that.state.appId,
-                uiUrl: that.core.config('ui.url'),
-                wrapperUrl: that.core.config('wrapper.url')
-              }
+              var evt = new CustomEvent("appDetails", {
+                detail: {
+                  core: that.core,
+                  appId: that.state.appId,
+                  uiUrl: that.core.config("ui.url"),
+                  wrapperUrl: that.core.config("wrapper.url")
+                }
               });
               window.dispatchEvent(evt);
-            },true);
+            },
+            true
+          );
           form.emit("render");
         });
         that.setState({ currentForm: form });
@@ -1028,7 +1061,6 @@ class FormRender extends React.Component {
           var responseArray = [];
           if (response.data) {
             var evt = new CustomEvent("paymentDetails", {
-
               detail: response.data[0]
             });
             window.dispatchEvent(evt);
@@ -1037,7 +1069,7 @@ class FormRender extends React.Component {
         var that = this;
         window.addEventListener(
           "requestPaymentToken",
-          function (e) {
+          function(e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             // let requestbody = {
@@ -1049,33 +1081,29 @@ class FormRender extends React.Component {
             //   requestbody['order_number'] = e.detail.order_number;
             //   requestbody['method'] = e.detail.method;
             // }
-            that
-              .callPayment(e.detail)
-              .then(response => {
-                var transactionIdComponent = form.getComponent(
-                  "transaction_id"
+            that.callPayment(e.detail).then(response => {
+              var transactionIdComponent = form.getComponent("transaction_id");
+              if (response.data.transaction.id && response.data.token) {
+                transactionIdComponent.setValue(response.data.transaction.id);
+                var evt = new CustomEvent("getPaymentToken", {
+                  detail: response.data
+                });
+                window.dispatchEvent(evt);
+              } else {
+                that.notif.current.notify(
+                  "Error",
+                  "Transaction Token Failed!",
+                  "danger"
                 );
-                if (response.data.transaction.id && response.data.token) {
-                  transactionIdComponent.setValue(response.data.transaction.id);
-                  var evt = new CustomEvent("getPaymentToken", {
-                    detail: response.data
-                  });
-                  window.dispatchEvent(evt);
-                } else {
-                  that.notif.current.notify(
-                    "Error",
-                    "Transaction Token Failed!",
-                    "danger"
-                  );
-                }
-                that.core.make("oxzion/splash").destroy();
-              });
+              }
+              that.core.make("oxzion/splash").destroy();
+            });
           },
           true
         );
         window.addEventListener(
           "paymentSuccess",
-          function (e) {
+          function(e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1119,7 +1147,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentDeclined",
-          function (e) {
+          function(e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1137,7 +1165,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentCancelled",
-          function (e) {
+          function(e) {
             e.stopPropagation();
             that.notif.current.notify("Warning", e.detail.message, "danger");
             that.core.make("oxzion/splash").destroy();
@@ -1146,7 +1174,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentError",
-          function (e) {
+          function(e) {
             e.stopPropagation();
             console.log(e.detail);
             var transactionIdComponent = form.getComponent("transaction_id");
@@ -1164,7 +1192,7 @@ class FormRender extends React.Component {
         );
         window.addEventListener(
           "paymentPending",
-          function (e) {
+          function(e) {
             that.core.make("oxzion/splash").show();
             e.stopPropagation();
             that.notif.current.notify(
