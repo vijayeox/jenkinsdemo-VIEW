@@ -6,6 +6,7 @@ import Notification from "./Notification"
 import Switch from 'react-switch'
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
+import ReactDOM from 'react-dom'
 import "./public/css/query.scss";
 
 class Query extends React.Component {
@@ -37,6 +38,7 @@ class Query extends React.Component {
     //set switch respect to activated and deactivated datasource
     this.setState({ checked: this.checkedList })
   }
+
 
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
@@ -71,6 +73,7 @@ class Query extends React.Component {
   componentDidMount() {
     this.fetchDataSource()
   }
+
 
   validateform() {
     let validForm = true;
@@ -191,7 +194,7 @@ class Query extends React.Component {
   queryOperation = (e, operation) => {
     this.setState({ showQueryModal: true, modalContent: e, modalType: operation })
   }
- 
+
   toggleQueryForm(mode) {
     let element = document.getElementById("query-form");
     let btn = document.getElementById("add-query-btn");
@@ -208,16 +211,15 @@ class Query extends React.Component {
   }
 
   async runQuery(e) {
+    console.log(e)
     let that = this
     this.setState({ activeTab: "results" })
     let helper = this.core.make('oxzion/restClient');
     let formData = {}
     if (e !== undefined) {
+      console.log(e)
       formData["configuration"] = JSON.stringify(e.configuration);
-      let ds = this.state.dataSourceOptions.filter(function (ds) {
-        return ds.name === e.name
-      });
-      formData["datasource_id"] = e.datasource_id;
+      formData["datasource_id"] = e.datasource_uuid;
     }
     else {
       formData["configuration"] = this.state.inputs["configuration"]
@@ -235,6 +237,13 @@ class Query extends React.Component {
             columnNameObj.push({ 'title': name, 'field': name })
           }) : null
         this.setState({ queryResult: response.data.result, queryColumns: columnNameObj })
+        document.getElementById("result-tab-div") !== null
+          ?
+          (this.destroyResult(),
+            this.setState({ queryResult: response.data.result, queryColumns: columnNameObj }),
+            this.renderResult())
+          :
+          (this.setState({ queryResult: response.data.result, queryColumns: columnNameObj }), this.renderResult())
       }
       else {
         this.setState({ queryResult: response.data.result })
@@ -252,6 +261,18 @@ class Query extends React.Component {
         "danger"
       )
     }
+  }
+
+  destroyResult() {
+    this.setState({ queryResult: null, queryColumns: null })
+    ReactDOM.unmountComponentAtNode(document.getElementById("result-tab-div"))
+  }
+  renderResult() {
+    ReactDOM.render(<QueryResult
+      queryResult={this.state.queryResult}
+      core={this.core}
+      columns={this.state.queryColumns}
+    />, document.getElementById("result-tab-div"))
   }
 
   render() {
@@ -311,7 +332,7 @@ class Query extends React.Component {
             <Button onClick={() => this.onsaveQuery()}>Save Query</Button>
           </Form>
         </div>
-        <div className="query-result-div">
+        <div className="query-result-div" >
 
           <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({ activeTab: k })}>
 
@@ -334,9 +355,9 @@ class Query extends React.Component {
                       title: "Actions",
                       cell: e =>
                         this.renderButtons(e, [
-                          // {
-                          //   name: "execute", rule: "{{isdeleted}}==0", icon: "fa fa-gear"
-                          // },
+                          {
+                            name: "execute", rule: "{{isdeleted}}==0", icon: "fa fa-gear"
+                          },
                           {
                             name: "toggleActivate", rule: "{{isdeleted}}==0", icon: "fa fa-trash"
                           }
@@ -348,19 +369,10 @@ class Query extends React.Component {
                 />
               </div>
             </Tab>
-            <Tab eventKey="results" title="Result">
-              {/* <QueryResult queryResult={this.state.queryResult!==null?this.state.queryResult:""}/> */}
-              {this.state.queryResult !== null ?
-                <OX_Grid
-                  osjsCore={this.core}
-                  data={this.state.queryResult}
-                  filterable={true}
-                  reorderable={true}
-                  sortable={true}
-                  pageable={true}
-                  columnConfig={this.state.queryColumns}
-                /> : null
-              }
+            <Tab eventKey="results" title="Result" id="result-tab">
+              <div id="result-tab-div">
+              </div>
+
             </Tab>
           </Tabs>
         </div>
