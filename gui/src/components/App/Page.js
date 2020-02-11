@@ -290,7 +290,7 @@ class Page extends React.Component {
               });
             }
           }
-          var dataString = this.prepareDataRoute(itemContent.route);
+          var dataString = this.prepareDataRoute(itemContent.route, {'fileId': this.state.fileId});
           content.push(
             <OX_Grid
               appId={this.appId}
