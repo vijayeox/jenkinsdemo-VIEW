@@ -39,7 +39,8 @@ class FormRender extends React.Component {
       content: this.props.content,
       data: this.props.data,
       page: this.props.page,
-      currentForm: null
+      currentForm: null,
+      formLevelDelegateCalled: false
     };
     this.helper = this.core.make("oxzion/restClient");
     this.notif = React.createRef();
@@ -552,6 +553,7 @@ class FormRender extends React.Component {
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
           var form_data = JSON.parse(JSON.stringify(submission.data));
+          // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
           that.storeCache(that.cleanData(form_data));
           next(null);
         }
@@ -834,11 +836,16 @@ class FormRender extends React.Component {
               inline: "nearest"
             });
           }
-          if (form._form["properties"]) {
-            that.runDelegates(form, form._form["properties"]);
-          }
-          if (form.originalComponent["properties"]) {
-            that.runDelegates(form, form.originalComponent["properties"]);
+          if(that.state.formLevelDelegateCalled != true){
+            that.setState({
+              formLevelDelegateCalled: true
+            });
+            if (form._form["properties"]) {
+              that.runDelegates(form, form._form["properties"]);
+            }
+            if (form.originalComponent["properties"]) {
+              that.runDelegates(form, form.originalComponent["properties"]);
+            }
           }
         });
         form.on("customEvent", function(event) {
