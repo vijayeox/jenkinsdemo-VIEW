@@ -39,6 +39,16 @@
   }
 }
 
+.osjs-panel-item[data-name=menu_hidden] {
+  display: flex;
+  align-items: center;
+  padding: 0;
+
+  & > div {
+    padding: $base-margin / 1.5;
+  }
+}
+
 .appcaption{
 	cursor:pointer;
 }
