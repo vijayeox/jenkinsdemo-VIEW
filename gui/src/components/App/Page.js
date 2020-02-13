@@ -112,6 +112,20 @@ class Page extends React.Component {
     return actionButtons;
   }
 
+  renderRow(e,config){
+    var url = config[0].content.route
+    var dataString = this.prepareDataRoute(url,e);
+    
+    return <OX_Grid
+        appId={this.appId}
+        osjsCore={this.core}
+        data={dataString}
+        gridToolbar={config[0].content.toolbarTemplate}
+        columnConfig={config[0].content.columnConfig}
+      />
+  }
+
+
   async buttonAction(action, rowData) {
     if (action.page_id) {
       this.loadPage(action.page_id);
@@ -294,8 +308,10 @@ class Page extends React.Component {
             }
           }
           var dataString = this.prepareDataRoute(itemContent.route, this.state.currentRow);
+          console.log(this.state.currentRow)
           content.push(
             <OX_Grid
+              rowTemplate={itemContent.expandable ? e => this.renderRow(e, itemContent.rowConfig) : null}
               appId={this.appId}
               key={i}
               osjsCore={this.core}
@@ -313,6 +329,7 @@ class Page extends React.Component {
               pageable={itemContent.pageable}
               sortable={itemContent.sortable}
               columnConfig={columnConfig}
+              expandable={itemContent.expandable}
             />
           );
           break;

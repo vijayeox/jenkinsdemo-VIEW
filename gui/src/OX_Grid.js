@@ -318,14 +318,14 @@ export default class OX_Grid extends React.Component {
           reorderable={this.props.reorderable}
           sortable={this.props.sortable}
           onDataStateChange={this.dataStateChange}
-          onExpandChange={this.expandChange}
+          onExpandChange={this.props.expandable ? this.expandChange : null}
           onHeaderSelectionChange={this.headerSelectionChange}
           onSelectionChange={this.selectionChange}
           onRowClick={e => {
             this.props.onRowClick ? this.props.onRowClick(e) : null;
           }}
           selectedField="selected"
-          expandField="expanded"
+          expandField={this.props.expandable ? "expanded" : null}
           {...this.state.dataState}
         >
           {(this.props.gridToolbar || this.props.gridOperations) &&
@@ -428,7 +428,8 @@ OX_Grid.propTypes = {
   resizable: PropTypes.bool,
   reorderable: PropTypes.bool,
   rowTemplate: PropTypes.func,
-  sortable: PropTypes.bool
+  sortable: PropTypes.bool,
+  expandable : PropTypes.bool
 };
 
 // Send selected value as true in data array to enable selected field css background
