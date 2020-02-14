@@ -617,9 +617,24 @@ class EditProfile extends Component {
                   >
                     {states.map((state, key) => {
                       if (state.country_id === this.state.selectedCountryID)
-                        return <option key={key} data-stateid={state.id} value={state.name}>
+                        {
+                          if(key == 0){
+                             return (
+                             <React.Fragment>
+                             <option key={123456} value={"please select"}>
+                          {"please select"}
+                          </option>
+                             <option key={key} data-stateid={state.id} value={state.name}>
                           {state.name}
-                        </option>
+                          </option>
+                          </React.Fragment>)
+                          } else {
+                             return <option key={key} data-stateid={state.id} value={state.name}>
+                          {state.name}
+                          </option>
+                          }
+                         
+                        }
                     })}
                   </select>
                   <Form.Text className="text-muted errorMsg">
@@ -647,7 +662,7 @@ class EditProfile extends Component {
             <Form.Group>
                   <Form.Label className="mandatory">Postal Code</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     name="zip"
                     value={this.state.fields.zip ? this.state.fields.zip : null}
                     onChange={this.handleChange}
@@ -680,7 +695,7 @@ class EditProfile extends Component {
               </div>
               <div className='col-md-6'>
                 <Form.Group>
-                  <Form.Label className="mandatory">Website</Form.Label>
+                  <Form.Label>Website</Form.Label>
                   <Form.Control
                     type="text"
                     name="website"
@@ -713,7 +728,7 @@ class EditProfile extends Component {
               </div>
             </Row>
             <Form.Group>
-              <Form.Label className="mandatory">About Me</Form.Label>
+              <Form.Label>About Me</Form.Label>
               <Editor
                 style={{ height: "20vh", overflow: "auto" }}
                 name="about"

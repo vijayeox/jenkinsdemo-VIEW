@@ -38,7 +38,7 @@ export default class Login extends defaultLogin {
       request.open("POST", baseUrl + "user/me/forgotpassword", false);
       request.send(reqData);
       if (request.status === 200) {
-        console.log(request.responseText);
+        console.log(request .responseText);
         const resp = JSON.parse(request.responseText);
         console.log(resp["status"]);
         if (resp["status"] == "success") {
@@ -427,7 +427,7 @@ export default class Login extends defaultLogin {
                         name: "password",
                         className: "validate",
                         id: "reEnterPassword",
-                        placeholder: " Re-enter Password"
+                        placeholder: "Re-enter Password"
                       }),
                       h("label", { for: "password" }, "Re-Enter Password")
                     ]),
@@ -473,26 +473,19 @@ export default class Login extends defaultLogin {
             ),
 
             h("div", { className: "footer-links" }, [
-              h("a", { href: "https://www.vantageagora.com" }, "About Us")
+              h("a", { href: "https://www.eoxvantage.com" }, "About Us")
             ]),
-            h(
-              "div",
-              { className: "login-copyright" },
-              "Copyright © 2019 Vantage Agora. All rights reserved."
-            )
-          ])
-        ]
-      );
-    const a = app(
-      Object.assign({ hidden: startHidden }, login),
-      actions,
-      view,
-      document.body
-    );
-    this.on("login:start", () => a.setLoading(true));
-    this.on("login:stop", () => {
+      h('div',{className:'login-copyright'},'Copyright © 2020 EOX Vantage. All rights reserved.'),
+      ])
+    ])
+    const a = app(Object.assign({hidden: startHidden},login),actions,view,document.body);
+    this.on('login:start', () => {
+      a.setLoading(true)
+    });
+    this.on('login:stop', () => {
       a.setLoading(false);
       if(window.localStorage.getItem("AUTH_token")){
+      	//location.reload();
         document.getElementById("ox-login-form").style.display = "none";
       }
     });

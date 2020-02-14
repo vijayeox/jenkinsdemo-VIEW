@@ -3,22 +3,33 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 
 
 function QueryModal(props) {
-
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    setInput({ ["datasourcename"]: props.datasourcename, ["configuration"]: props.configuration, ["datasourceuuid"]: props.datasourceuuid })
-  }, [props.configuration])
+    if (props.content !== undefined) {
+      if (props.content.length !== 0) {
+        var { name, ispublic, configuration, uuid, version } = props.content;
+        setInput({ ...input, ["queryname"]: name, ["visibility"]: ispublic, configuration, uuid, version })
+      }
+      else {
+        setInput({ ["queryname"]: "", ["datasourcename"]: props.datasourcename, ["datasourceuuid"]: props.datasourceuuid })
+      }
+    }
+  }, [props.content])
 
 
   function notify(response, operation) {
     if (response.status == "success")
-      props.notification.current.notify(
+      {
+        props.notification.current.notify(
         "Data Source " + operation,
         "Operation succesfully completed",
         "success"
       )
+      setInput({})
+      props.resetInput()
+        }
     else {
       props.notification.current.notify(
         "Error",
@@ -38,6 +49,22 @@ function QueryModal(props) {
     setInput({ ...input, [name]: value });
   }
 
+  var Footer = null
+  var DisabledFields = true
+
+
+  if (props.modalType === "Delete") {
+    Footer = (<Button variant="danger" onClick={() => queryOperation("Deleted")}>Delete</Button>)
+    DisabledFields = true
+  }
+  else if (props.modalType === "Save") {
+    Footer = (<Button variant="primary" onClick={() => queryOperation("Created")}>Create</Button>)
+    DisabledFields = false
+  }
+  else if (props.modalType === "Activate") {
+    Footer = (<Button variant="success" onClick={() => queryOperation("Activated")}>Activate</Button>)
+    DisabledFields = true
+  }
   function validateForm() {
     let formValid = true
     var error = errors
@@ -50,7 +77,6 @@ function QueryModal(props) {
       error["visibility"] = "* Please enter the configuration"
     }
     setErrors({ ...error })
-    console.log(errors)
     return formValid
   }
 
@@ -60,14 +86,29 @@ function QueryModal(props) {
     let method = ""
     let formData = {}
 
-    if (operation === "Saved") {
-      requestUrl = "analytics/query"
-      method = "filepost"
+    if (operation === "Created" || operation === "Activated") {
+
       formData["name"] = input["queryname"]
       formData["datasource_id"] = input["datasourceuuid"]
-      formData["configuration"] = input["configuration"]
+      formData["configuration"] = props.configuration
       formData["ispublic"] = input["visibility"]
+      if (operation === "Activated") {
+        formData["configuration"] = props.configuration
+        formData["version"] = input["version"]
+        formData["isdeleted"] = "0"
+        requestUrl = "analytics/query/" + input["uuid"]
+        method = "put"
+      }
+      else {
+        requestUrl = "analytics/query"
+        method = "filepost"
+      }
     }
+    else if (operation === "Deleted") {
+      requestUrl = "analytics/query/" + input["uuid"] + "?version=" + input["version"]
+      method = "delete"
+    }
+
 
     let formValid = validateForm()
     if (formValid === true) {
@@ -78,7 +119,8 @@ function QueryModal(props) {
         method
       )
         .then(response => {
-          notify(response, "Saved")
+          props.refreshGrid.current.child.current.refresh()
+          notify(response, operation)
           props.resetInput()
           props.onHide()
         })
@@ -98,7 +140,7 @@ function QueryModal(props) {
     >
       <Modal.Header >
         <Modal.Title id="contained-modal-title-vcenter">
-          Save Query
+          {props.modalType} Query
          </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modal-body">
@@ -106,7 +148,7 @@ function QueryModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Query Name</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="queryname" onChange={handleChange} />
+              <Form.Control type="text" name="queryname" onChange={handleChange} disabled={DisabledFields} value={input["queryname"] !== undefined ? input["queryname"] : null} />
               <Form.Text className="text-muted errorMsg">
                 {errors["queryname"]}
               </Form.Text>
@@ -121,7 +163,7 @@ function QueryModal(props) {
                 name="visibility"
                 onChange={handleChange}
                 value={input["visibility"] !== undefined ? input["visibility"] : -1}
-
+                disabled={DisabledFields}
               >
                 <option disabled value={-1} key={-1}></option>
                 <option value="0">Private</option>
@@ -132,23 +174,26 @@ function QueryModal(props) {
               </Form.Text>
             </Col>
           </Form.Group>
+          <>
+          {props.modalType==="Save"?
           <Form.Group as={Row}>
             <Form.Label column lg="3">Data Source Name</Form.Label>
             <Col lg="9">
               <Form.Control type="text" name="datasourcename" value={props.datasourcename} disabled />
             </Col>
           </Form.Group>
+          :null}
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">
-              <Form.Control as="textarea" name="configuration" value={props.configuration || ""} disabled />
+              <Form.Control as="textarea" name="configuration" value={input["configuration"] !== undefined ? JSON.stringify(input["configuration"]) : props.configuration} disabled />
             </Col>
           </Form.Group>
+          </>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => props.onHide()}>Close</Button>
-        <Button onClick={() => queryOperation("Saved")}>Save</Button>
+        {Footer}
       </Modal.Footer>
     </Modal>
   );

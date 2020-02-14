@@ -65,11 +65,15 @@ class AbstractEditor extends React.Component {
                 });
             });
         }
+        var thiz = this;
         this.setState((state) => {
             state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
             return state;
+        }, 
+        () => {
+            thiz.refreshViews();
         });
     }
 
@@ -325,11 +329,11 @@ class AbstractEditor extends React.Component {
     loadData = (postLoadCallback) => {
         let thiz = this;
         let params = {
-            'queries':this.queries
+            'queries':this.state.queries
         };
         window.postDataRequest('analytics/query/data', params).
             then(function(responseData) {
-                thiz.data = responseData.data;
+                thiz.data = responseData.query.data;
                 if (postLoadCallback) {
                     postLoadCallback();
                 }

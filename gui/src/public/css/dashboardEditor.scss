@@ -1,0 +1,110 @@
+.dashboard-editor-form .form-group{
+    margin-left: 1em;
+}
+
+.dashboard-back-btn{
+    border-radius:100px;
+    width: 4em;
+}
+
+
+.dashboard .flippy-back{
+    height: 120vh !important;
+} 
+.dashboard-filter-btn{
+    position: absolute;
+    right: 2px;
+}
+
+.dashboard-save-btn{
+    position: absolute;
+    right: 5.3em;
+}
+
+.dashboard .btn-primary{
+  color: #fff;
+  background-color: #265160;
+  border-color: #265160;
+}
+
+.dashboard .btn-primary:hover{
+  background-image:none !important;
+  background-color:#265160c4 !important;
+}
+
+.dashboard .deactivateDash .react-switch-bg{
+  background: rgb(39, 83, 98)  !important;
+}
+.dashboard .react-switch-handle{
+  background: #fff !important;
+
+}
+//dashboard editor filter
+.create-filter-form{
+    padding: 30px;
+  }
+  
+  .create-filter-form .btn{
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+  }
+  
+  .dates-container{
+    display: flex;
+  }
+  .react-datepicker-wrapper{
+  padding-right: 10px !important;
+  }
+  
+  .dates-container input,.create-filter-form input{
+    display: block;
+      height: calc(1.5em + .75rem + 2px);
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #495057;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      width: 12vw;
+  }
+  
+  .create-filter-form input{
+    // width: 20vw;
+  }
+  .dates-container input{
+    width: 14vw;
+  
+  }
+  #filtertype{
+    max-width: 23vw;
+  }
+
+  .disappear{
+      display: none;
+  }
+  #filter-form-container{
+      background:#a9c4c4;
+      border-radius: 10px;
+  }
+  #filter-form-container button.close{
+padding-right: 1em;
+  }
+
+  #filter-form-container label{
+      color:#275362;
+  }
+
+  .apply-filter-btn{
+    position: initial !important;
+    border-radius: 12px;
+    margin-left: 2em;
+  }
+
+  .Window_Analytics .dashboard .GridCustomStyle{
+    height: calc(100% - 91px) !important
+  }

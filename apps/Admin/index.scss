@@ -21,7 +21,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     width: inherit !important;
   }
   .k-checkbox-label:empty {
-  display: block;
+    display: block;
   }
 
   .grid-no-records {
@@ -67,6 +67,41 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .react-phone-number-input__icon {
     width: 29px;
     height: 22px;
+  }
+
+  .react-phone-number-input__row {
+    ::-webkit-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::-moz-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    :-ms-input-placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+
+    ::placeholder {
+      color: #9e9e9e;
+      font-size: 16px;
+    }
+  }
+
+  .react-phone-number-input__input {
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    font: inherit;
+    box-sizing: border-box;
+    outline: 0;
+    background: #fff;
+    color: #474747;
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    padding: 0.5rem 0.75rem;
   }
 
   // ---FileUploader Styles (Start)---
@@ -145,7 +180,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   .k-checkbox-label::before {
     border-color: #275362;
-    background-color: #275362
   }
 
   .gridBanner {
@@ -212,15 +246,17 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   // ---Currency Picker (Start)---
   .select-currency {
     input {
+      margin-top: 5px;
       width: 100%;
-      padding: 9px 12px;
+      height: calc(2.25rem + 2px);
       font: inherit;
       box-sizing: border-box;
       outline: 0;
       background: #fff;
-      border: 1px solid #e6ebec;
-      border-radius: 2px;
       color: #474747;
+      border: 2px solid #dadada;
+      border-radius: 7px;
+      padding: 0.5rem 0.75rem;
     }
 
     ::-webkit-input-placeholder {
@@ -595,9 +631,17 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   }
 
   .k-filtercell > .k-filtercell-wrapper > input {
-    font-size: 1em;
+    font-size: 1rem;
     margin-bottom: 0px;
-    height: 25px;
+    height: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: 0;
+    background: #fff;
+    color: #474747;
+    border: 2px solid #dadada;
+    border-radius: 7px;
+    padding: 0.3rem 0.5rem;
   }
 
   .privilegeGrid {
@@ -720,9 +764,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .k-grid {
     margin: 15px;
     width: 100%;
-    
+
     .k-pager-wrap .k-pager-sizes > select {
-    width: 5rem;
+      width: 5rem;
     }
   }
 
@@ -747,14 +791,38 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     text-align: center;
   }
 
+  .k-widget.k-state-invalid > .k-dropdown-wrap {
+    border-color: #919191;
+  }
+
+  .k-widget.k-state-invalid > .k-dropdown-wrap {
+    color: #919191;
+  }
+
+  .k-textbox.k-state-invalid {
+    border-color: rgb(218, 218, 218);
+  }
+
+  .k-widget.k-state-invalid > .k-dateinput-wrap {
+    color: #696969;
+  }
+
+  .k-filtercell .k-filtercell-wrapper {
+    align-items: center;
+  }
+
   .select-wrapper {
     width: 80px;
   }
 
   .manageIcons {
-    font-size: 1.1em;
+    font-size: 20px;
     color: #ffffff;
     display: block;
+  }
+
+  .k-pager-numbers .k-state-selected {
+    background-color: #275362;
   }
 
   .mainHead {

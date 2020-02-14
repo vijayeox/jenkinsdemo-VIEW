@@ -94,6 +94,11 @@ class TableEditor extends AbstractEditor {
         textArea.value = value;
     }
 
+    refreshViews = () => {
+        //Nothing to do for now. Implement this method to refresh the table if there is
+        //table update problem when the widget selection is changed.
+    }
+
     isTableTabValid = (state, setErrorState = true) => {
         let isValid = true;
 

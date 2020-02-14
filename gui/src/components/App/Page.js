@@ -7,6 +7,7 @@ import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
 import Loader from "react-loader-spinner";
+import moment from "moment";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./Styles/PageComponentStyles.scss";
 
@@ -135,6 +136,9 @@ class Page extends React.Component {
               return false;
             }
           } else if (item.type == "View") {
+            that.setState({
+              currentRow: rowData
+            });
             if (item.params.uuid) {
               var fileId = that.replaceParams(item.params.uuid, rowData);
               that.setState({
@@ -204,7 +208,7 @@ class Page extends React.Component {
       if(!params){
         params = {};
       }
-      params['current_date'] = (new Date()).toISOString().slice(0,10);
+      params['current_date'] = moment().format("YYYY-MM-DD");
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
       return result;
@@ -289,7 +293,7 @@ class Page extends React.Component {
               });
             }
           }
-          var dataString = this.prepareDataRoute(itemContent.route);
+          var dataString = this.prepareDataRoute(itemContent.route, this.state.currentRow);
           content.push(
             <OX_Grid
               appId={this.appId}

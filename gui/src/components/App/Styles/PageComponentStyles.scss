@@ -36,12 +36,32 @@
     letter-spacing: 1px;
     font-weight: 600;
     color: #1a1a1a;
-    height: 60px;
-    padding: 20px 1rem 0 2.5rem;
+    height: 30px;
+    padding: 0px 0px 5px 10px;
     font-size: 1.75rem;
     font-weight: 300;
     width: 100%;
   }
+
+  .searchBar {
+    display: flex;
+  }
+}
+
+.searchInput {
+  border: 0;
+  background: transparent;
+  letter-spacing: 1px;
+  color: #1a1a1a;
+  height: 30px;
+  // padding: 0px 1rem 0 2.5rem;
+  font-size: 1.75rem;
+  font-weight: 300;
+  display: inline-block;
+  width: 100%;
+}
+.searchInput:focus {
+  outline-color: transparent;
 }
 
 .k-popup {
@@ -76,46 +96,23 @@
 .searchPageDiv {
   width: 100%;
 }
-.searchPageDiv .seperator{
+.searchPageDiv .seperator {
   border-bottom: 1px solid #275362;
-    width: 80%;
-    margin-top: 20px;
+  width: 80%;
+  margin-top: 10px;
 }
-.searchText{
+.searchText {
   padding: 1.5em;
 }
-.searchPageDiv .icon{
-        box-sizing: border-box;
-    color: #a5b4c4;
-    display: block;
-    fill: #a5b4c4;
-    font-family: MaisonNeue, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
-    font-size: 24px;
-    height: 24px;
-    position: relative;
-    text-size-adjust: 100%;
+.searchPageDiv .icon {
+  box-sizing: border-box;
+  color: #a5b4c4;
+  display: block;
+  fill: #a5b4c4;
+  font-family: MaisonNeue, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+    "Lucida Grande", sans-serif;
+  font-size: 24px;
+  height: 26px;
+  position: relative;
+  text-size-adjust: 100%;
 }
-.searchInput {
-border: 0;
-    background: transparent;
-    letter-spacing: 1px;
-    color: #1a1a1a;
-    height: 60px;
-    padding: 0px 1rem 0 2.5rem;
-    font-size: 1.75rem;
-    font-weight: 300;
-    display: inline-block;
-    width: 100%;
-    top: 5%;
-    position: absolute;
-}
-.searchInput:focus {
-  outline-color:transparent;
-}
-.searchInput:focus {
-  outline-color:transparent;
-}
-.searchInput:focus {
-  outline-color:transparent;
-}
-

@@ -28,33 +28,33 @@
  * @licence Simplified BSD License
  */
 
-import {h} from 'hyperapp';
-import PanelItem from '../panel-item';
-import * as languages from '../locales';
+import { h } from "hyperapp";
+import PanelItem from "../panel-item";
+import * as languages from "../locales";
 
 // const menuIcon = require('../logo-white-32x32.png');
-const menuIcon = require('../../../../assets/images/logo.png');
-const defaultIcon = require('../../../../assets/images/oxfav.png');
+const menuIcon = require("../../../../assets/images/logo.png");
+const defaultIcon = require("../../../../assets/images/oxfav.png");
 const sortBy = fn => (a, b) => -(fn(a) < fn(b)) || +(fn(a) > fn(b));
 const sortByLabel = iter => String(iter.label).toLowerCase();
 
-const getIcon = (core, m) => m.icon
-  ? (m.icon.match(/^(https?:)\//)
-    ? m.icon
-    : core.url(m.icon, {}, m))
-  : defaultIcon;
+const getIcon = (core, m) =>
+  m.icon
+    ? m.icon.match(/^(https?:)\//)
+      ? m.icon
+      : core.url(m.icon, {}, m)
+    : defaultIcon;
 
-const getTitle = (locale, item) => locale
-  .translatableFlat(item.title, item.name);
+const getTitle = (locale, item) =>
+  locale.translatableFlat(item.title, item.name);
 
-const getCategory = (locale, cat) => locale
-  .translate(cat);
+const getCategory = (locale, cat) => locale.translate(cat);
 
 const makeCategory = (category, core) => {
-  let categoryDiv = document.createElement('div');
-  categoryDiv.classList.add('category');
-  let captionDiv = document.createElement('div');
-  captionDiv.classList.add('caption');
+  let categoryDiv = document.createElement("div");
+  categoryDiv.classList.add("category");
+  let captionDiv = document.createElement("div");
+  captionDiv.classList.add("caption");
   let categoryLabel = document.createTextNode(category.label);
   captionDiv.append(categoryLabel);
   categoryDiv.appendChild(captionDiv);
@@ -64,23 +64,26 @@ const makeCategory = (category, core) => {
 
 const makeAppList = (category, categoryDiv, core) => {
   if (category.items) {
-    let appListDiv = document.createElement('div');
-    appListDiv.classList.add('applist');
+    let appListDiv = document.createElement("div");
+    appListDiv.classList.add("applist");
     for (let i = 0; i < category.items.length; i++) {
       const appItem = category.items[i];
-      let appDiv = document.createElement('div');
-      appDiv.classList.add('app');
-      let captionDiv = document.createElement('div');
-      let icon = document.createElement('i');
-      icon.classList.add('osjs-icon');
-      icon.setAttribute('data-icon', appItem.icon);
-      icon.style['background-image'] = 'url(' + appItem.icon + ')';
-      captionDiv.classList.add('appcaption');
+      let appDiv = document.createElement("div");
+      appDiv.classList.add("app");
+      let captionDiv = document.createElement("div");
+      let icon = document.createElement("i");
+      icon.classList.add("osjs-icon");
+      icon.setAttribute("data-icon", appItem.icon);
+      icon.style["background-image"] = "url(" + appItem.icon + ")";
+      captionDiv.classList.add("appcaption");
       let appLabel = document.createTextNode(appItem.label);
       captionDiv.append(appLabel);
       appDiv.appendChild(icon);
       appDiv.appendChild(captionDiv);
-      appDiv.onclick = function() { core.run(appItem.data.name);document.getElementById('appmenu').classList.remove('appmenu-visible'); };
+      appDiv.onclick = function() {
+        core.run(appItem.data.name);
+        document.getElementById("appmenu").classList.remove("appmenu-visible");
+      };
       appListDiv.appendChild(appDiv);
     }
     categoryDiv.appendChild(appListDiv);
@@ -88,30 +91,34 @@ const makeAppList = (category, categoryDiv, core) => {
   return categoryDiv;
 };
 const makeTree = (core, __, metadata) => {
-  const configuredCategories = core.config('application.categories');
+  const configuredCategories = core.config("application.categories");
   const categories = {};
-  const locale = core.make('osjs/locale');
+  const locale = core.make("osjs/locale");
 
-  metadata.filter(m => m.hidden !== true).forEach((m) => {
-    const cat = Object.keys(configuredCategories).find(c => c === m.category) || 'other';
-    const found = configuredCategories[cat];
+  metadata
+    .filter(m => m.hidden !== true)
+    .forEach(m => {
+      const cat =
+        Object.keys(configuredCategories).find(c => c === m.category) ||
+        "other";
+      const found = configuredCategories[cat];
 
-    if (!categories[cat]) {
-      categories[cat] = {
-        icon: found.icon ? {name: found.icon} : defaultIcon,
-        label: getCategory(locale, found.label),
-        items: []
-      };
-    }
-
-    categories[cat].items.push({
-      icon: getIcon(core, m),
-      label: getTitle(locale, m),
-      data: {
-        name: m.name
+      if (!categories[cat]) {
+        categories[cat] = {
+          icon: found.icon ? { name: found.icon } : defaultIcon,
+          label: getCategory(locale, found.label),
+          items: []
+        };
       }
+
+      categories[cat].items.push({
+        icon: getIcon(core, m),
+        label: getTitle(locale, m),
+        data: {
+          name: m.name
+        }
+      });
     });
-  });
 
   Object.keys(categories).forEach(k => {
     categories[k].items.sort(sortBy(sortByLabel));
@@ -129,15 +136,16 @@ const makeTree = (core, __, metadata) => {
  * @desc Menu Panel Item
  */
 export default class MenuPanelItem extends PanelItem {
-
   attachKeybindings(el) {
     const onkeydown = ev => {
-      const checkKeys = (this.options.boundKey || 'Alt+a').toLowerCase().split('+');
-      const modifierNames = ['ctrl', 'shift', 'alt', 'meta'];
+      const checkKeys = (this.options.boundKey || "Alt+a")
+        .toLowerCase()
+        .split("+");
+      const modifierNames = ["ctrl", "shift", "alt", "meta"];
       const keyName = String(ev.key).toLowerCase();
-      const validKeypress = checkKeys.every(k => modifierNames.indexOf(k) !== -1
-        ? ev[k + 'Key']
-        : keyName === k);
+      const validKeypress = checkKeys.every(k =>
+        modifierNames.indexOf(k) !== -1 ? ev[k + "Key"] : keyName === k
+      );
 
       if (!validKeypress) {
         return;
@@ -146,46 +154,62 @@ export default class MenuPanelItem extends PanelItem {
       el.click();
     };
 
-    window.addEventListener('keydown', onkeydown);
-    this.on('destroy', () => window.removeEventListener('keydown', onkeydown));
+    window.addEventListener("keydown", onkeydown);
+    this.on("destroy", () => window.removeEventListener("keydown", onkeydown));
+  }
+
+  hideMenu() {
+    const _ = this.core.make("osjs/locale").translate;
+    const __ = this.core.make("osjs/locale").translatable(languages);
+    const packages = this.core
+      .make("osjs/packages")
+      .getPackages(m => !m.type || m.type === "application");
+    let appArray = makeTree(this.core, __, [].concat(packages));
+    return appArray.length == 0;
   }
 
   render(state, actions) {
-    const _ = this.core.make('osjs/locale').translate;
-    const __ = this.core.make('osjs/locale').translatable(languages);
+    const _ = this.core.make("osjs/locale").translate;
+    const __ = this.core.make("osjs/locale").translatable(languages);
 
-    const addSearch = (searchDiv, input) => {
-      let  filter, items, i;
-      filter = input.value.toUpperCase();
-      items = document.getElementsByClassName('appcaption');
-      for (i = 0; i < items.length; i++) {
-        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-          items[i].parentElement.parentElement.parentElement.style.display = 'block';
-          items[i].parentElement.style.display = 'flex';
-        } else {
-          items[i].parentElement.style.display = 'none';
-          items[i].parentElement.parentElement.parentElement.style.display = 'none';
-        }
-      }
-      for (i = 0; i < items.length; i++) {
-        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-          items[i].parentElement.parentElement.parentElement.style.display = 'block';
-          items[i].parentElement.style.display = 'flex';
-        }
-      }
-    };
+    // const addSearch = (searchDiv, input) => {
+    //   let filter, items, i;
+    //   filter = input.value.toUpperCase();
+    //   items = document.getElementsByClassName("appcaption");
+    //   for (i = 0; i < items.length; i++) {
+    //     if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+    //       items[i].parentElement.parentElement.parentElement.style.display =
+    //         "block";
+    //       items[i].parentElement.style.display = "flex";
+    //     } else {
+    //       items[i].parentElement.style.display = "none";
+    //       items[i].parentElement.parentElement.parentElement.style.display =
+    //         "none";
+    //     }
+    //   }
+    //   for (i = 0; i < items.length; i++) {
+    //     if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+    //       items[i].parentElement.parentElement.parentElement.style.display =
+    //         "block";
+    //       items[i].parentElement.style.display = "flex";
+    //     }
+    //   }
+    // };
 
-    const onclick = (ev) => {
-      const packages = this.core.make('osjs/packages').getPackages(m => (!m.type || m.type === 'application'));
+    const onclick = ev => {
+      const packages = this.core
+        .make("osjs/packages")
+        .getPackages(m => !m.type || m.type === "application");
       let appArray = makeTree(this.core, __, [].concat(packages));
-      if(appArray.length == 0){
+
+      if (this.hideMenu()) {
         ev.preventDefault();
         return;
       }
-      let appmenuElement = document.getElementById('appmenu');
-      appmenuElement.innerHTML = '';
-      let appBarDiv = document.createElement('div');
-      appBarDiv.classList.add('app-bar');
+      let appmenuElement = document.getElementById("appmenu");
+      appmenuElement.innerHTML = "";
+      let appBarDiv = document.createElement("div");
+      appBarDiv.classList.add("app-bar");
 
       // let searchDiv = document.createElement('div');
       // searchDiv.classList.add('app-search-div');
@@ -224,18 +248,24 @@ export default class MenuPanelItem extends PanelItem {
       //   }
       // });
     };
-    return super.render('menu', [
-      h('div', {
-        onclick,
-        oncreate: el => this.attachKeybindings(el),
-        className: 'logo-here'
-      }, [
-        h('img', {
-          src: menuIcon,
-          alt: _('LBL_MENU'),
-          title:'Applications'
-        })])
+
+    var menu_name = this.hideMenu() ? "menu_hidden" : "menu";
+    return super.render(menu_name, [
+      h(
+        "div",
+        {
+          onclick,
+          oncreate: el => this.attachKeybindings(el),
+          className: "logo-here"
+        },
+        [
+          h("img", {
+            src: menuIcon,
+            alt: _("LBL_MENU"),
+            title: menu_name == "menu" ? "Applications" : null
+          })
+        ]
+      )
     ]);
   }
-
 }

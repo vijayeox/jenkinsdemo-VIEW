@@ -22,19 +22,20 @@ class Navigation extends React.Component {
     this.getMenulist().then(response => {
       this.props.menuLoad(response['data']);
       this.homepage = response['data'][0];
-      if(this.params.page){
+      if(this.params && this.params.page){
         this.child.current.clearBreadcrumb();
         this.setState({selected:{page_id:this.params.page}});
         history.push("/");
-      } else if(this.params.activityId){
+      } else if(this.params && this.params.activityId){
         this.setState({selected:{activity_id:this.params.activityId}});
-      } else if(this.proc.args){
+      } else if(this.proc && this.proc.args){
         if(typeof this.proc.args === 'string'){
           try {
             var appParams = JSON.parse(this.proc.args);
             if(appParams.type){
               this.postSubmitCallback = this.postSubmitCallback.bind(this);
-              this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
+              this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,workflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
+              console.log(this.state.selected);
             }
           } catch(e){
             console.log("No params!");
@@ -99,6 +100,7 @@ class Navigation extends React.Component {
           core={this.core}
           appId={this.props.appId}
           activityInstanceId={this.state.selected.activityInstanceId}
+          workflowInstanceId={this.state.selected.workflowInstanceId}
           pipeline={this.state.selected.pipeline}
           />
           </div>
