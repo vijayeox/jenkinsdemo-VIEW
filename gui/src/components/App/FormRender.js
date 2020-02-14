@@ -1085,6 +1085,7 @@ class FormRender extends React.Component {
               detail: response.data[0]
             });
             window.dispatchEvent(evt);
+          return true;
           }
         });
         var that = this;
@@ -1112,7 +1113,7 @@ class FormRender extends React.Component {
                 that.notif.current.notify("Error","Transaction Token Failed!","danger");
               }
               that.core.make("oxzion/splash").destroy();
-            return true;
+              return true;
             });
             return true;
           },true);
@@ -1206,8 +1207,8 @@ class FormRender extends React.Component {
                 that.notif.current.notify("Error", e.detail.message, "danger");
                 that.core.make("oxzion/splash").destroy();
                 return true;
-              })
-              return false;
+              });
+              return true;
           },
           true
         );
