@@ -680,10 +680,17 @@ class FormRender extends React.Component {
                         };
                         form.triggerChange();
                         if(properties['target']){
-                          var targetComponent = form.getComponent(properties["target"]);
-                          setTimeout(function(){
-                            targetComponent.triggerChange();
-                          },3000);
+                          var targetProperty = properties['target'];
+                          var targetList = targetProperty.split(',');
+                           targetList.map(item => 
+                              {
+                                 var targetComponent = form.getComponent(item);
+                                 setTimeout(function(){
+                                    targetComponent.triggerRedraw();
+                                    targetComponent.triggerChange();
+                                 },3000);
+                              }
+                          )
                         }
                       }
                       that.core.make("oxzion/splash").destroy();
@@ -1064,11 +1071,20 @@ class FormRender extends React.Component {
                 data: this.parseResponseData(this.addAddlData(response.data))
               };
               form.triggerChange();
+
               if(properties['target']){
-                  var targetComponent = form.getComponent(properties["target"]);
-                  setTimeout(function(){
-                      targetComponent.triggerChange();},3000);
-               }
+                var targetProperty = properties['target'];
+                var targetList = targetProperty.split(',');
+                 targetList.map(item => 
+                    {
+                       var targetComponent = form.getComponent(item);
+                       setTimeout(function(){
+                          targetComponent.triggerRedraw();
+                          targetComponent.triggerChange();
+                       },3000);
+                    }
+                )
+              }
             }
           }
         });
