@@ -595,15 +595,12 @@ class FormRender extends React.Component {
         });
         form.on("nextPage", changed => {
           form.emit("render");
+          that.runDelegates(form,form.pages[changed.page].originalComponent['properties']);
           that.setState({ page: changed.page });
           if (form.pages[changed.page]["properties"]["delegate"]) {
             if (form.pages[changed.page]["properties"]["delegate"]) {
               var form_data = that.cleanData(form.submission.data);
-              that
-                .callDelegate(
-                  form.pages[changed.page]["properties"]["delegate"],
-                  form_data
-                )
+              that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data)
                 .then(response => {
                   if (response) {
                     that.core.make("oxzion/splash").destroy();
@@ -843,17 +840,6 @@ class FormRender extends React.Component {
               inline: "nearest"
             });
           }
-          if(that.state.formLevelDelegateCalled != true){
-            that.setState({
-              formLevelDelegateCalled: true
-            });
-            if (form._form["properties"]) {
-              that.runDelegates(form, form._form["properties"]);
-            }
-            if (form.originalComponent["properties"]) {
-              that.runDelegates(form, form.originalComponent["properties"]);
-            }
-          }
         });
         form.on("customEvent", function(event) {
           var changed = event.data;
@@ -1089,6 +1075,7 @@ class FormRender extends React.Component {
           }
         });
       }
+      console.log(properties)
       if (properties["payment_confirmation_page"]) {
         var elements = document.getElementsByClassName("btn-wizard-nav-submit");
         this.getPayment(form.submission.data).then(response => {
@@ -1101,16 +1088,14 @@ class FormRender extends React.Component {
           }
         });
         var that = this;
-        window.addEventListener(
-          "requestPaymentToken",
-          function(e) {
+        window.addEventListener("requestPaymentToken",function(e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
-            // let requestbody = {
-            //   firstname: e.detail.firstname,
-            //   lastname: e.detail.lastname,
-            //   amount: e.detail.amount
-            // };
+            let requestbody = {
+              firstname: e.detail.firstname,
+              lastname: e.detail.lastname,
+              amount: e.detail.amount
+            };
             // if (e.detail.hasOwnProperty('order_number') && e.detail.hasOwnProperty('method')) {
             //   requestbody['order_number'] = e.detail.order_number;
             //   requestbody['method'] = e.detail.method;
@@ -1124,25 +1109,20 @@ class FormRender extends React.Component {
                 });
                 window.dispatchEvent(evt);
               } else {
-                that.notif.current.notify(
-                  "Error",
-                  "Transaction Token Failed!",
-                  "danger"
-                );
+                that.notif.current.notify("Error","Transaction Token Failed!","danger");
               }
               that.core.make("oxzion/splash").destroy();
+            return true;
             });
-          },
-          true
-        );
+            return true;
+          },true);
         window.addEventListener(
           "paymentSuccess",
           function(e) {
             e.stopPropagation();
             that.core.make("oxzion/splash").show();
             var transactionIdComponent = form.getComponent("transaction_id");
-            that
-              .storePayment({
+            that.storePayment({
                 transaction_id: transactionIdComponent.getValue(),
                 data: e.detail.data,
                 status: e.detail.status
@@ -1175,7 +1155,9 @@ class FormRender extends React.Component {
                   );
                 }
                 that.core.make("oxzion/splash").destroy();
+            return true;
               });
+            return true;
           },
           true
         );
@@ -1193,7 +1175,9 @@ class FormRender extends React.Component {
               .then(response => {
                 that.notif.current.notify("Error", e.detail.message, "danger");
                 that.core.make("oxzion/splash").destroy();
+                return true;
               });
+            return true;
           },
           true
         );
@@ -1203,6 +1187,7 @@ class FormRender extends React.Component {
             e.stopPropagation();
             that.notif.current.notify("Warning", e.detail.message, "danger");
             that.core.make("oxzion/splash").destroy();
+            return true;
           },
           true
         );
@@ -1220,7 +1205,9 @@ class FormRender extends React.Component {
               .then(response => {
                 that.notif.current.notify("Error", e.detail.message, "danger");
                 that.core.make("oxzion/splash").destroy();
-              });
+                return true;
+              })
+              return false;
           },
           true
         );
@@ -1234,6 +1221,7 @@ class FormRender extends React.Component {
               e.detail.message,
               "default"
             );
+            return true;
           },
           true
         );
