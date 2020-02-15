@@ -187,6 +187,11 @@ class WidgetRenderer {
                 case 'PieSeries':
                     am4ChartType = am4charts.PieChart;
                 break;
+
+                case 'FunnelSeries':
+                case 'PyramidSeries':
+                    am4ChartType = am4charts.SlicedChart;
+                break;
             }
         }
 
