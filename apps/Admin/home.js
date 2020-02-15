@@ -113,7 +113,7 @@ class Home extends React.Component {
 
     appsList.map((currentValue, index) => {
       table.push(
-        this.userProfile.privileges["MANAGE_" + currentValue.api + "_READ"] ? (
+        this.userProfile.privileges["MANAGE_" + currentValue.api + "_WRITE"] ? (
           <div
             key={index}
             className="moduleBtn"

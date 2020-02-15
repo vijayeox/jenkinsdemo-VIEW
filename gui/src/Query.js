@@ -6,6 +6,7 @@ import Notification from "./Notification"
 import Switch from 'react-switch'
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
+import ReactDOM from 'react-dom'
 import "./public/css/query.scss";
 
 class Query extends React.Component {
@@ -23,7 +24,8 @@ class Query extends React.Component {
       modalContent: {},
       checked: {},
       activeTab: "querylist",
-      queryResult: null
+      queryResult: null,
+      queryColumns: null
     }
     this.refresh = React.createRef();
     this.handleSwitch = this.handleSwitch.bind(this);
@@ -37,6 +39,7 @@ class Query extends React.Component {
     this.setState({ checked: this.checkedList })
   }
 
+
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
     toggleList[id] = checked
@@ -45,9 +48,7 @@ class Query extends React.Component {
   async fetchDataSource() {
     let helper = this.core.make('oxzion/restClient');
     let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
-
     this.setState({ dataSourceOptions: response.data })
-
   }
 
   handleChange(e, instance) {
@@ -65,13 +66,14 @@ class Query extends React.Component {
     else {
       name = e.target.name
       value = e.target.value;
-      errors["query"] = ""
+      errors["configuration"] = ""
     }
     instance.setState({ inputs: { ...instance.state.inputs, [name]: value, errors: errors } })
   }
   componentDidMount() {
     this.fetchDataSource()
   }
+
 
   validateform() {
     let validForm = true;
@@ -81,20 +83,20 @@ class Query extends React.Component {
       errors["datasourcename"] = "*Please select the datasource";
     }
     if (!this.state.inputs["configuration"]) {
-      errors["query"] = "*Please enter the query";
+      errors["configuration"] = "*Please enter the query";
       validForm = false
     }
     this.setState({ errors: errors })
     return validForm
   }
   onsaveQuery() {
-
     this.validateform() ? this.setState({ showQueryModal: true, modalContent: "", modalType: "Save" }) : null
   }
 
   renderEmpty() {
     return [<React.Fragment key={1} />];
   }
+
   replaceParams(route, params) {
     if (!params) {
       return route;
@@ -106,7 +108,6 @@ class Query extends React.Component {
       if (m.index === regex.lastIndex) {
         regex.lastIndex++;
       }
-
       // The result can be accessed through the `m`-variable.
       m.forEach((match, groupIndex) => {
         route = route.replace(match, params[match.replace(/\{\{|\}\}/g, "")]);
@@ -115,17 +116,6 @@ class Query extends React.Component {
     return route;
   }
 
-  queryOperation = (e, operation) => {
-    this.setState({ showQueryModal: true, modalContent: e, modalType: operation })
-  }
-  buttonAction(action, item) {
-    if (action.name !== undefined) {
-      if (action.name === "toggleActivate" && item.isdeleted == "0")
-        this.queryOperation(item, "Delete")
-      else if (action.name === "toggleActivate" && item.isdeleted == "1")
-        this.queryOperation(item, "Activate")
-    }
-  }
   renderButtons(e, action) {
     var actionButtons = [];
     let that = this
@@ -169,11 +159,42 @@ class Query extends React.Component {
               />
             </abbr>
           )
-          : null
-        : null;
+          :
+          actionButtons.push(
+            <abbr title={action[key].name} key={index}>
+              <Button
+                primary={true}
+                className=" btn manage-btn k-grid-edit-command"
+                variant="primary"
+                onClick={() => that.runQuery(e)}
+                style={buttonStyles}
+              >
+                {action[key].icon ? (
+                  <i className={action[key].icon + " manageIcons"}></i>
+                ) : (
+                    action[key].name
+                  )}
+              </Button>
+            </abbr>
+          )
+        : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>);
     });
     return actionButtons;
   }
+
+  buttonAction(action, item) {
+    if (action.name !== undefined) {
+      if (action.name === "toggleActivate" && item.isdeleted == "0")
+        this.queryOperation(item, "Delete")
+      else if (action.name === "toggleActivate" && item.isdeleted == "1")
+        this.queryOperation(item, "Activate")
+    }
+  }
+
+  queryOperation = (e, operation) => {
+    this.setState({ showQueryModal: true, modalContent: e, modalType: operation })
+  }
+
   toggleQueryForm(mode) {
     let element = document.getElementById("query-form");
     let btn = document.getElementById("add-query-btn");
@@ -189,16 +210,44 @@ class Query extends React.Component {
     }
   }
 
-  async runQuery() {
+  async runQuery(e) {
+    console.log(e)
+    let that = this
     this.setState({ activeTab: "results" })
     let helper = this.core.make('oxzion/restClient');
     let formData = {}
-    formData["configuration"] = this.state.inputs["configuration"]
-    formData["datasource_id"] = this.state.inputs["datasourcename"][1]
-    console.log(formData)
+    if (e !== undefined) {
+      console.log(e)
+      formData["configuration"] = JSON.stringify(e.configuration);
+      formData["datasource_id"] = e.datasource_uuid;
+    }
+    else {
+      formData["configuration"] = this.state.inputs["configuration"]
+      formData["datasource_id"] = this.state.inputs["datasourcename"][1]
+    }
     let response = await helper.request('v1', 'analytics/query/preview', formData, 'filepost');
     if (response.status === "success") {
-      this.setState({ queryResult: response.data.result })
+      let columnNames
+      let columnNameObj = []
+      if (response.data !== undefined) {
+        columnNames = Object.keys(response.data.result[0])
+        // prepare column names for OX_Grid
+        columnNames != undefined ?
+          columnNames.map(name => {
+            columnNameObj.push({ 'title': name, 'field': name })
+          }) : null
+        this.setState({ queryResult: response.data.result, queryColumns: columnNameObj })
+        document.getElementById("result-tab-div") !== null
+          ?
+          (this.destroyResult(),
+            this.setState({ queryResult: response.data.result, queryColumns: columnNameObj }),
+            this.renderResult())
+          :
+          (this.setState({ queryResult: response.data.result, queryColumns: columnNameObj }), this.renderResult())
+      }
+      else {
+        this.setState({ queryResult: response.data.result })
+      }
       this.notif.current.notify(
         "Query Executed ",
         "Operation succesfully completed",
@@ -212,8 +261,20 @@ class Query extends React.Component {
         "danger"
       )
     }
-    // console.log(response)
   }
+
+  destroyResult() {
+    this.setState({ queryResult: null, queryColumns: null })
+    ReactDOM.unmountComponentAtNode(document.getElementById("result-tab-div"))
+  }
+  renderResult() {
+    ReactDOM.render(<QueryResult
+      queryResult={this.state.queryResult}
+      core={this.core}
+      columns={this.state.queryColumns}
+    />, document.getElementById("result-tab-div"))
+  }
+
   render() {
     return (
       <div className="query full-height">
@@ -259,11 +320,11 @@ class Query extends React.Component {
                   as="textarea"
                   row="2"
                   name="configuration"
-                  value={this.state.inputs["query"]}
+                  value={this.state.inputs["configuration"] || ''}
                   onChange={(e) => this.handleChange(e, this)}
                 />
                 <Form.Text className="text-muted errorMsg">
-                  {this.state.errors["query"]}
+                  {this.state.errors["configuration"]}
                 </Form.Text>
               </Col>
             </Form.Group>
@@ -271,7 +332,7 @@ class Query extends React.Component {
             <Button onClick={() => this.onsaveQuery()}>Save Query</Button>
           </Form>
         </div>
-        <div className="query-result-div">
+        <div className="query-result-div" >
 
           <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({ activeTab: k })}>
 
@@ -295,8 +356,12 @@ class Query extends React.Component {
                       cell: e =>
                         this.renderButtons(e, [
                           {
+                            name: "execute", rule: "{{isdeleted}}==0", icon: "fa fa-gear"
+                          },
+                          {
                             name: "toggleActivate", rule: "{{isdeleted}}==0", icon: "fa fa-trash"
                           }
+
                         ]),
                       filterCell: e => this.renderEmpty()
                     }
@@ -304,26 +369,10 @@ class Query extends React.Component {
                 />
               </div>
             </Tab>
-            <Tab eventKey="results" title="Result">
-              {/* <QueryResult queryResult={this.state.queryResult!==null?this.state.queryResult:""}/> */}
-              {this.state.queryResult !== null ?
-                <OX_Grid
-                  osjsCore={this.core}
-                  data={this.state.queryResult}
-                  filterable={true}
-                  reorderable={true}
-                  sortable={true}
-                  pageable={true}
-                  columnConfig={[
-                    {
-                      title: "Store", field: "store"
-                    },
-                    {
-                      title: "Sold Price", field: "sold_price"
-                    }
-                  ]}
-                /> : null
-              }
+            <Tab eventKey="results" title="Result" id="result-tab">
+              <div id="result-tab-div">
+              </div>
+
             </Tab>
           </Tabs>
         </div>

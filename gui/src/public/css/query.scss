@@ -41,11 +41,12 @@ color:#275362;
 }
 
 .query-result-tab{
-    height: 30vh;
+    height: 60vh;
     display: table-cell;
     text-align: center;
-    vertical-align: middle;
     width: 100vw;
+    padding-left: 2em;
+    padding-right: 2em;
     background: #8cb5b536;
 }
 
@@ -100,4 +101,14 @@ color:#275362;
     float: right;
     position: relative;
     top: 5px;
+  }
+
+  
+  .query-result-div .nav-tabs .nav-link.active{
+    background: #265160 !important;
+    color:white !important;
+  }
+
+  .query-result-div .nav-tabs{
+      border-bottom: 1px solid #275362 !important;
   }

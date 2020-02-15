@@ -4,14 +4,11 @@ import { name as applicationName } from './metadata.json';
 // import DataSource from './dataSource';
 import { Query, DataSource } from './GUIComponents'
 // import Query from './query';
-import Visualization from './visualization';
 import Dashboard from './dashboard';
-import DashboardEditor from './dashboardEditor';
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
 const SECTION_QUERY = 'QR'; //QueRy
-const SECTION_VISUALIZATION = 'VZ'; //VisualiZation
 const SECTION_DASHBOARD = 'DB'; //DashBoard
 const SECTION_EDIT_DASHBOARD = 'EDB'; //Edit DashBoard
 
@@ -80,16 +77,12 @@ class Body extends React.Component {
       case SECTION_QUERY:
         sectionContent = <Query args={this.core} setTitle={this.setTitle} />;
         break;
-      case SECTION_VISUALIZATION:
-        sectionContent = <Visualization args={this.core} setTitle={this.setTitle} />;
-        break;
       case SECTION_DASHBOARD:
         sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
         break;
     }
 
     return (
-      
       <div id="page-body" className="page-body full-width">
         <Menu isOpen={this.state.isMenuOpen} onStateChange={this.handleMenuStateChange}
           disableAutoFocus width="20%"
@@ -99,9 +92,6 @@ class Body extends React.Component {
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_QUERY, null) }}>
             <i class="fa fa-search" aria-hidden="true"></i> Query
-                </a>
-          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_VISUALIZATION, null) }}>
-            <i class="fa fa-eye" aria-hidden="true"></i> Visualization
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
             <i class="fa fa-tasks" aria-hidden="true"></i> Dashboard

@@ -136,6 +136,9 @@ class Page extends React.Component {
               return false;
             }
           } else if (item.type == "View") {
+            that.setState({
+              currentRow: rowData
+            });
             if (item.params.uuid) {
               var fileId = that.replaceParams(item.params.uuid, rowData);
               that.setState({
@@ -290,7 +293,7 @@ class Page extends React.Component {
               });
             }
           }
-          var dataString = this.prepareDataRoute(itemContent.route);
+          var dataString = this.prepareDataRoute(itemContent.route, this.state.currentRow);
           content.push(
             <OX_Grid
               appId={this.appId}
