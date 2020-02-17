@@ -37,7 +37,8 @@ export default class SliderComponent extends Base {
 
 	render(children) {
 
-		// To make this dynamic, we could call this.renderTemplate('templatename', {}).
+
+		
 		let content = '';
 		let list = "<ul class='ticks'>"
 		let range = (this.component.max - this.component.min)/this.component.step
@@ -45,29 +46,23 @@ export default class SliderComponent extends Base {
 		console.log(range)
 		
 		for(let i = this.component.min; i<= max ;i += this.component.step) {
-		
-				let cell = `<li id="${this.component.key}-${i}" >`;
-				cell += `${i}`
-				cell += '</li>';
-				list += cell
-			
-	
+			let cell = `<li id="${this.component.key}-${i}" >`;
+			cell += `${i}`
+			cell += '</li>';
+			list += cell
 		}
 		list += "</ul>"
 		content += list;
 		
 		// Calling super.render will wrap it html as a component.
 		return super.render(`
-
 			<div class="range">
-				<div class="inputRange">
+				<span class="inputRange">
 					<input type="range" min=${this.component.min} max=${max} step=${this.component.step} value=${this.dataValue} }>
-				</div>
+				</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
-			
 				${content}
-			</div>
-			
+			</div><br/>
 		`);
 		
 	}
@@ -90,7 +85,7 @@ export default class SliderComponent extends Base {
    */
 	
 	setValue(value) {
-		console.log(value)
+		window.addEventListener("input", (e) => this.updateValue(e.target.value))
 	}
 	static editForm = editForm;
 

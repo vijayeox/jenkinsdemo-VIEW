@@ -78,7 +78,7 @@ class Body extends React.Component {
         sectionContent = <Query args={this.core} setTitle={this.setTitle} />;
         break;
       case SECTION_DASHBOARD:
-        sectionContent = <Dashboard args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+        sectionContent = <Dashboard args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
         break;
     }
 

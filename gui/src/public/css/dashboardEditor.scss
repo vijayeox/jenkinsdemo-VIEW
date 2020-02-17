@@ -11,6 +11,9 @@
 .dashboard .flippy-back{
     height: 120vh !important;
 } 
+.dashboard .flippy-front{
+  height: auto;
+}
 .dashboard-filter-btn{
     position: absolute;
     right: 2px;
@@ -49,7 +52,9 @@
     right: 0px;
     position: absolute;
   }
-  
+  .hide-dash-editor{
+    display: none;
+  }
   .dates-container{
     display: flex;
   }
@@ -104,7 +109,53 @@ padding-right: 1em;
     border-radius: 12px;
     margin-left: 2em;
   }
-
+  .dash-manager-bar{
+    border: 0.5px solid#3d6776;
+    padding: 1em;
+    padding-top: 12px;
+    padding-bottom: 0px;
+    border-radius: 10px;
+    position: absolute;
+    width: 98%;
+    background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
+  }
+  .dashboard-viewer-div{
+    margin-top: 5em;
+  }
+  .dash-manager-buttons{
+    position: absolute;
+    right: 1em;
+  }
+  .dash-manager-buttons .btn{
+  margin-right: 7px;
+  border-color: #eaeaea;
+ }
+.dasboard-viewer-content{
+  border: 1px solid#1d6165;
+  min-height: 48vh;
+  border-radius: 4px;
+  box-shadow: 2px 5px#c6b5b5;
+  padding:1em;
+}
+.dashboard-preview-tab{
+  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65,#1d6365);
+  height: 1.3em;
+  color:#f2f2f2;
+  top: 50%;
+  width: 15em;
+  text-align: center;
+}
+.dashboard-preview-tab span{
+  position: relative;
+  top: 0.1em;
+}
+ .create-dash-btn{
+   margin-bottom: 5px;
+ }
   .Window_Analytics .dashboard .GridCustomStyle{
     height: calc(100% - 91px) !important
+  }
+
+  .Window_Analytics .dashboard label{
+    color: #265160 !important;
   }
