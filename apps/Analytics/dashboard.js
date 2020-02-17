@@ -35,7 +35,6 @@ class Dashboard extends React.Component {
     this.loader = null;
   }
   componentWillMount() {
-    //set switch respect to activated and deactivated dashboard
     this.fetchDashboards()
   }
   async getUserDetails(uuid) {
@@ -49,7 +48,6 @@ class Dashboard extends React.Component {
     return rolesList;
   }
   dashboardOperation = (e, operation) => {
-
     if (operation === "Delete" || operation === "Activate") {
       this.setState({ showModal: true, modalContent: e, modalType: operation })
     }
@@ -84,6 +82,8 @@ class Dashboard extends React.Component {
     if (event.target.name === "dashname") {
       name = event.target.name
       value = JSON.parse(event.target.value)
+      var element = document.getElementById("dashboard-editor-div");
+      element.classList.add("hide-dash-editor");
     }
     else {
       name = event.target.name
@@ -99,13 +99,13 @@ class Dashboard extends React.Component {
     this.setState({ inputs })
   }
   editDashboard() {
-    var element = document.getElementById("dashboard-container");
+    var element = document.getElementById("dashboard-editor-div");
     element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
     this.setState({ flipped: true, uuid: this.state.uuid })
   }
 
   createDashboard() {
-    var element = document.getElementById("dashboard-container");
+    var element = document.getElementById("dashboard-editor-div");
     element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
     let inputs = { ...this.state.inputs }
     inputs["dashname"] !== undefined ? delete inputs.dashname : null
@@ -174,6 +174,10 @@ class Dashboard extends React.Component {
             </div>
             
             <div className="dashboard-viewer-div">
+              <div className="dashboard-preview-tab">
+                 <span>Dashboard Previewer</span>
+              </div>
+              <div className="dasboard-viewer-content">
               <DashboardViewer
                 key={this.state.uuid}
                 uuid={this.state.uuid}
@@ -181,6 +185,8 @@ class Dashboard extends React.Component {
                 setTitle={this.props.setTitle}
                 proc={this.props.proc}
               />
+              </div>
+             
             </div>
             </>
             :
@@ -190,6 +196,7 @@ class Dashboard extends React.Component {
             :null}
           </FrontSide>
           <BackSide>
+            <div id="dashboard-editor-div">
             <DashboardEditor
               args={this.core}
               setTitle={this.setTitle}
@@ -201,12 +208,13 @@ class Dashboard extends React.Component {
                   this.fetchDashboards()
                 }
                 else if (status === "") {
-                  var element = document.getElementById("dashboard-container");
+                  var element = document.getElementById("dashboard-editor-div");
                   element.classList.add("hide-dash-editor");
                 }
                 this.setState({ flipped: false })
               }}
             />
+            </div>
           </BackSide>
         </Flippy>
         <DashboardEditorModal
