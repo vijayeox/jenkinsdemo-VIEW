@@ -49,7 +49,9 @@
     right: 0px;
     position: absolute;
   }
-  
+  .hide-dash-editor{
+    display: none;
+  }
   .dates-container{
     display: flex;
   }
@@ -104,7 +106,35 @@ padding-right: 1em;
     border-radius: 12px;
     margin-left: 2em;
   }
+  .dash-manager-bar{
+    border: 0.5px solid#3d6776;
+    padding: 1em;
+    padding-top: 12px;
+    padding-bottom: 0px;
+    border-radius: 10px;
+    position: absolute;
+    width: 98%;
+    background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
+  }
+  .dashboard-viewer-div{
+    margin-top: 5em;
+  }
+  .dash-manager-buttons{
+    position: absolute;
+    right: 1em;
+  }
+  .dash-manager-buttons .btn{
+  margin-right: 7px;
+  border-color: #eaeaea;
+ }
 
+ .create-dash-btn{
+   margin-bottom: 5px;
+ }
   .Window_Analytics .dashboard .GridCustomStyle{
     height: calc(100% - 91px) !important
+  }
+
+  .Window_Analytics .dashboard label{
+    color: #265160 !important;
   }

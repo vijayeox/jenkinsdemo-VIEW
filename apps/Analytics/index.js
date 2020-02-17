@@ -20,7 +20,7 @@ const register = (core, args, options, metadata) => {
   })
     .on('destroy', () => proc.destroy())
     .on('render', () => { win.maximize(); })
-    .render($content => ReactDOM.render(<Body args={core}/>, $content));
+    .render($content => ReactDOM.render(<Body args={core} proc={proc}/>, $content));
 
   return proc;
 };

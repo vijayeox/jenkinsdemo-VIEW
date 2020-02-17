@@ -78,9 +78,9 @@ function DashboardEditorModal(props) {
             method
         )
             .then(response => {
-                props.refreshGrid.current.child.current.refresh()
                 notify(response, operation)
                 props.onHide()
+                props.deleteDashboard()
             })
             .catch(err => {
                 console.log(err)

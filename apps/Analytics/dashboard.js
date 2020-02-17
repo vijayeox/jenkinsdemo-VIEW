@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { dashboard as section } from './metadata.json';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
-import { OX_Grid, Notification } from './GUIComponents'
-import { Button } from 'react-bootstrap'
+import { OX_Grid, Notification, DashboardViewer } from './GUIComponents'
+import { Button, Form, Col, Row } from 'react-bootstrap'
 import Switch from 'react-switch'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
@@ -15,27 +15,41 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.userProfile = this.core.make("oxzion/profile").get();
+
     this.props.setTitle(section.title.en_EN);
     this.state = {
       showModal: false,
       modalType: "",
       modalContent: {},
-      checked: {},
       flipped: false,
-      uuid: ""
+      uuid: "",
+      dashList: [],
+      inputs: {}
     };
+    this.appId = this.props.app;
+    this.proc = this.props.proc;
     this.refresh = React.createRef();
     this.notif = React.createRef();
     this.restClient = osjs.make('oxzion/restClient');
     this.loader = null;
-    this.checkedList = {}
   }
   componentWillMount() {
     //set switch respect to activated and deactivated dashboard
-    this.setState({ checked: this.checkedList })
+    this.fetchDashboards()
   }
+  async getUserDetails(uuid) {
+    let helper2 = this.core.make("oxzion/restClient");
+    let rolesList = await helper2.request(
+      "v1",
+      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
+      {},
+      "get"
+    );
+    return rolesList;
+  }
+  dashboardOperation = (e, operation) => {
 
-  dataSourceOperation = (e, operation) => {
     if (operation === "Delete" || operation === "Activate") {
       this.setState({ showModal: true, modalContent: e, modalType: operation })
     }
@@ -44,137 +58,58 @@ class Dashboard extends React.Component {
     }
   }
 
-  buttonAction(action, item) {
-    if (action.name !== undefined) {
-      if (action.name === "toggleActivate" && item.isdeleted == "0")
-        this.dataSourceOperation(item, "Delete")
-      else if (action.name === "toggleActivate" && item.isdeleted == "1")
-        this.dataSourceOperation(item, "Activate")
-      else if (action.name === "Create") {
-        this.setState({ flipped: true, uuid: "" })
-      }
-      else if (action.name === "Edit") {
-        const dashUuid = item.uuid
-        this.setState({ uuid: dashUuid, flipped: true })
-      }
-      else
-        this.dataSourceOperation(item, action.name)
+  async fetchDashboards() {
+    let that = this
+    let helper = this.restClient;
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined
+    let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
+    if (response.data.length >= 0) {
+      that.setState({ dashList: response.data, uuid: '' })
+      inputs["dashname"] !== undefined ?
+        response.data.map(dash => {
+          dash.name === inputs["dashname"]["name"] ?
+            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid }))
+            : that.setState({ inputs: this.state.inputs })
+        })
+        : null
     }
   }
+  setTitle(title) { }
 
-  renderButtons(e, action) {
-    var actionButtons = [];
-    var that = this;
-    Object.keys(action).map(function (key, index) {
-      var string = this.replaceParams(action[key].rule, e);
-      var showButton = eval(string);
-      var variant = "primary"
-      if (action[key].name === "Activate") {
-        variant = "success"
-      }
-      else if (action[key].name === "Delete") {
-        variant = "danger"
-      }
-      else if (action[key].name === "toggleActivate") {
-        this.checkedList[e.name] = showButton //check if the datasource is deleted or not
-        showButton = true   //always show the button
-      }
-      else {
-        variant = "primary"
-      }
-      var buttonStyles = action[key].icon
-        ? {
-          width: "auto"
-        }
-        : {
-          width: "auto",
-          // paddingTop: "5px",
-          color: "white",
-          fontWeight: "600"
-        };
-      showButton
-        ?
-        action[key].name === "toggleActivate" ?
-          actionButtons.push(
-            <abbr className={this.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
-              <Switch
-                id={e.name}
-                onChange={() => this.buttonAction(action[key], e)}
-                checked={this.state.checked[e.name]}
-                onClick={() => this.buttonAction(action[key], e)}
-                onColor="#86d3ff"
-                onHandleColor="#2693e6"
-                handleDiameter={10}
-                uncheckedIcon={false}
-                checkedIcon={false}
-                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                height={20}
-                width={33}
-                className="react-switch"
-              />
-            </abbr>
-          )
-          :
-          actionButtons.push(
-            <abbr title={action[key].name} key={index}>
-              <Button
-                primary={true}
-
-                className=" btn manage-btn k-grid-edit-command"
-                variant={variant}
-                // onClick={() => this.props.editDashboard(e.uuid)}
-                onClick={() => that.buttonAction(action[key], e)}
-                style={buttonStyles}
-              >
-                {action[key].icon ? (
-                  <i className={action[key].icon + " manageIcons"}></i>
-                ) : (
-                    action[key].name
-                  )}
-              </Button>
-            </abbr>
-          )
-        : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>)
-    }, this);
-    return actionButtons;
-  }
-
-  replaceParams(route, params) {
-    if (!params) {
-      return route;
+  handleChange(event) {
+    let inputs = {}
+    inputs = { ...this.state.inputs }
+    let name
+    let value
+    if (event.target.name === "dashname") {
+      name = event.target.name
+      value = JSON.parse(event.target.value)
     }
-    var regex = /\{\{.*?\}\}/g;
-    let m;
-    while ((m = regex.exec(route)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
-      }
-      // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
-        route = route.replace(match, params[match.replace(/\{\{|\}\}/g, "")]);
-      });
+    else {
+      name = event.target.name
+      value = event.target.value
     }
-    return route;
+    inputs[name] = value
+    this.setState({ inputs: inputs, uuid: value["uuid"] })
   }
-  //functions for OX_Grid
-  renderEmpty() {
-    return [<React.Fragment key={1} />];
-  }
-  renderListOperations = config => {
-    return (
-      <Button
-        style={{ right: "10px", float: "right" }}
-        primary={true}
-        onClick={() => this.buttonAction({ name: config.name })}
-      >
-        <i class="fa fa-plus" aria-hidden="true"></i> {config.name}
-      </Button>
-    );
-  };
-  setTitle(title) {
 
+  deleteDashboard() {
+    let inputs = this.state.inputs
+    inputs["dashname"] = undefined
+    this.setState({ inputs })
+  }
+  editDashboard() {
+    var element = document.getElementById("dashboard-container");
+    element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
+    this.setState({ flipped: true, uuid: this.state.uuid })
+  }
+
+  createDashboard() {
+    var element = document.getElementById("dashboard-container");
+    element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
+    let inputs = { ...this.state.inputs }
+    inputs["dashname"] !== undefined ? delete inputs.dashname : null
+    this.setState({ flipped: true, uuid: "", inputs: inputs })
   }
   render() {
     return (
@@ -187,49 +122,87 @@ class Dashboard extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-            <OX_Grid
-              ref={this.refresh}
-              osjsCore={this.core}
-              data={"analytics/dashboard?show_deleted=true"}
-              filterable={true}
-              reorderable={true}
-              sortable={true}
-              pageable={true}
-              columnConfig={[
-                {
-                  title: "Name", field: "name"
-                },
-                {
-                  title: "Actions",
-                  cell: e =>
-                    this.renderButtons(e, [
-                      {
-                        name: "Edit", rule: "{{isdeleted}}==0", icon: "fa fa-edit"
-                      },
-                      {
-                        name: "toggleActivate", rule: "{{isdeleted}}==0", icon: "fa fa-user"
-                      }
-                    ]),
-                  filterCell: e => this.renderEmpty()
-                }
-              ]}
-              gridToolbar={
-                this.renderListOperations({
-                  name: "Create",
-                  rule: "true"
-                })
-              }
-            />
+            {this.userProfile.key.privileges.MANAGE_DASHBOARD_CREATE ?
+              <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i class="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+              : null
+            }
+            {this.state.dashList != undefined ? this.state.dashList.length > 0 ?
+            <>
+            <div className="dash-manager-bar">
+              <Form className="dashboard-manager-items">
+                <Row>
+                  <Col lg="4" md="4" sm="4">
+                    <Form.Group as={Row}>
+                      <Col>
+                          <Form.Control
+                            as="select"
+                            onChange={(e) => this.handleChange(e)}
+                            name="dashname"
+                            value={this.state.inputs["dashname"] !== undefined && this.state.inputs["dashname"] !== {} ? JSON.stringify(this.state.inputs["dashname"])["name"] : -1}
+                          >
+                            <option disabled value={-1} key={-1} style={{ color: "grey" }}>Select Dashboard</option>
+                            {this.state.dashList !== undefined ? this.state.dashList.map((option, index) => (
+                              <option key={option.uuid} value={JSON.stringify(option)}>{option.name}</option>
+                            )) : null}
+                          </Form.Control>
+                      </Col>
+                    </Form.Group>
+                  </Col>
+                  <div className="dash-manager-buttons">
+                    {this.state.uuid !== "" ?
+                      <>
+                        {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE ?
+                          <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
+                            <i class="fa fa-pen" aria-hidden="true"></i>
+                          </Button>
+                          : null
+                        }
+                        {
+                          this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE ?
+                            <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete Dashboard">
+                              <i class="fa fa-trash" aria-hidden="true"></i>
+                            </Button>
+                            : null
+                        }
+                      </>
+                      : null
+                    }
+                  </div>
+
+                </Row>
+              </Form>
+            </div>
+            
+            <div className="dashboard-viewer-div">
+              <DashboardViewer
+                key={this.state.uuid}
+                uuid={this.state.uuid}
+                core={this.core}
+                setTitle={this.props.setTitle}
+                proc={this.props.proc}
+              />
+            </div>
+            </>
+            :
+            <div className="dashboard-viewer-div" style={{textAlign:"center",fontWeight:"bolder",fontSize:"20px"}}>
+                NO DASHBOARDS FOUND
+          </div>
+            :null}
           </FrontSide>
           <BackSide>
             <DashboardEditor
               args={this.core}
               setTitle={this.setTitle}
+              key={this.state.uuid}
               dashboardId={this.state.uuid}
               flipCard={(status) => {
                 if (status === "Saved") {
-                  //refreshing the ox_grid when saved
-                  this.refresh.current.child.current.refresh()
+                  //refreshing the dashboardData
+                  this.fetchDashboards()
+                }
+                else if (status === "") {
+                  var element = document.getElementById("dashboard-container");
+                  element.classList.add("hide-dash-editor");
                 }
                 this.setState({ flipped: false })
               }}
@@ -240,11 +213,11 @@ class Dashboard extends React.Component {
           osjsCore={this.core}
           modalType={this.state.modalType}
           show={this.state.showModal}
-          onHide={() => this.setState({ showModal: false })}
+          onHide={() => { this.fetchDashboards(), this.setState({ showModal: false }) }}
           content={this.state.modalContent}
-          handleChange={(e) => this.handleChange(e)}
           notification={this.notif}
           refreshGrid={this.refresh}
+          deleteDashboard={() => this.deleteDashboard()}
         />
       </div>
     );
