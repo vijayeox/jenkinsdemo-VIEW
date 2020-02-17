@@ -1,15 +1,18 @@
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from 'formiojs/components/table/Table.form'
 import Formio from 'formiojs/Formio';
+import moment from 'moment';
 
 
 export default class FortePayCheckoutComponent extends Base { 
     constructor(component, options, data) {
 		component.label = 'fortePayment'
         super(component, options, data);
+        console.log("data",data)
+        this.data = data;
+        this.form = this.getRoot();
+        var that = this;
         window.addEventListener("paymentDetails", function (e){
-            console.log(e.detail)
-            console.log("FortePayment")
             Formio.requireLibrary('paywithforte', 'payWithForte',e.detail.js_url, true);
             document.getElementById("makePayment").setAttribute('api_access_id',"");
            
@@ -42,6 +45,13 @@ export default class FortePayCheckoutComponent extends Base {
             }
 
         },true)
+
+        //set multiple attributes at once
+        function setAttributes(element, attrs) {
+            for(var key in attrs){
+                element.setAttribute(key,attrs[key])
+            }
+        }
         function oncallback(e) {
             
            var response = JSON.parse(e.data)
@@ -83,26 +93,33 @@ export default class FortePayCheckoutComponent extends Base {
         }
         window.addEventListener('getPaymentToken', function(e) {
             console.log(e.detail)
-            let data = e.detail.token
+            let paymentData = e.detail.token
             document.getElementById("confirmOrder").style.display ="none";
             document.getElementById("makePayment").style.display ="block";
-            document.getElementById("fortepay-token").value = data.api_access_id
-            document.getElementById("makePayment").setAttribute('api_access_id',data.api_access_id);
-            document.getElementById("makePayment").setAttribute('total_amount',data.amount);
-            document.getElementById("makePayment").setAttribute('method',data.method);
-            document.getElementById("makePayment").setAttribute('location_id',data.location_id);
-            document.getElementById("makePayment").setAttribute('utc_time',data.utc_time);
-            document.getElementById("makePayment").setAttribute('hash_method',data.hash_method);
-            document.getElementById("makePayment").setAttribute('signature',data.signature);
-            document.getElementById('makePayment').setAttribute("version_number",data.version);
-            document.getElementById('makePayment').setAttribute("order_number", data.order_number);
-            // document.getElementById('makePayment').setAttribute('schedule_start_date')
-            // document.getElementById('makePayment').setAttribute('schedule_frequency')
-            // document.getElementById('makePayment').setAttribute('schedule_quantity')
-            // document.getElementById('makePayment').setAttribute("customer_token",data.customer_token);
-            // document.getElementById('makePayment').setAttribute("billing_company_name",data.billing_company_name);
-            // document.getElementById('makePayment').setAttribute("consumer_id",data.billing_company_name);
-            document.getElementById('makePayment').setAttribute("callback",oncallback);
+            document.getElementById("fortepay-token").value = paymentData.api_access_id
+            
+            setAttributes(document.getElementById("makePayment"),{
+                'api_access_id' : paymentData.api_access_id ,
+                'total_amount'  : paymentData.amount ,
+                'location_id'   : paymentData.location_id,
+                'utc_time'      : paymentData.utc_time ,
+                'hash_method'   : paymentData.hash_method ,
+                'signature'     : paymentData.signature ,
+                "version_number": paymentData.version,
+                "order_number"  : paymentData.order_number ,
+                'method'        : that.data['payment_method'] ,
+                "billing_name"  : that.data['firstname']+" "+that.data['lastname'] ,
+                "callback"      : oncallback
+            })
+            // if(that.data['payment_method'] === 'schedule'){
+            //     console.log(that.data['planTerm'])
+            //     console.log("setAttrs")
+            //     setAttributes(document.getElementById("makePayment"),{
+            //         'schedule_start_date' :  '02/17/2020', 
+            //         'schedule_frequency'  :  that.data['paymentFrequency'],
+            //         'schedule_quantity'   :  "2"
+            //     })
+            // }
         })
     }
 
@@ -149,6 +166,7 @@ export default class FortePayCheckoutComponent extends Base {
               }
             }
           });
+        var that = this;
         var firstname = this.renderTemplate('input', { 
             input: {
               type: 'input',
@@ -160,11 +178,12 @@ export default class FortePayCheckoutComponent extends Base {
                 lang:'en',
                 id:'fortepay-firstname',
                 placeholder:'First Name',
-                hideLabel: 'true'
+                hideLabel: 'true',
+                value : that.data['firstname']
               }
             }
         });
-
+        
         var lastname = this.renderTemplate('input', { 
             input: {
                 type: 'input',
@@ -176,10 +195,12 @@ export default class FortePayCheckoutComponent extends Base {
                     lang:'en',
                     id:'fortepay-lastname',
                     placeholder:'Last Name',
-                    hideLabel: 'true'
+                    hideLabel: 'true',
+                    value : that.data['lastname']
                 }
             }
         });
+        
         var that = this;
         function renderWithPrefix(prefix){
             that.component.prefix="$";
@@ -197,7 +218,7 @@ export default class FortePayCheckoutComponent extends Base {
                         id:'fortepay-amount',
                         placeholder:'Amount to be payed',
                         hideLabel: 'true',
-                        value: 800
+                        value: that.data['current_payable_amount']
                     }
                 }
             });
