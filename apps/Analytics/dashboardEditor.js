@@ -67,10 +67,10 @@ class DashboardEditor extends React.Component {
     getJsLibraryList = () => {
         let self = this;
         return [
-            { 'name': 'amChartsCoreJs', 'url': 'https://www.amcharts.com/lib/4/core.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsChartsJs', 'url': 'https://www.amcharts.com/lib/4/charts.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsAnimatedJs', 'url': 'https://www.amcharts.com/lib/4/themes/animated.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsKellyJs', 'url': 'https://www.amcharts.com/lib/4/themes/kelly.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsCoreJs', 'url': '/apps/Analytics/script/core.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsChartsJs', 'url': '/apps/Analytics/script/charts.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsAnimatedJs', 'url': '/apps/Analytics/script/themes/animated.js', 'onload': function () { }, 'onerror': function () { } },
+            { 'name': 'amChartsKellyJs', 'url': '/apps/Analytics/script/themes/kelly.js', 'onload': function () { }, 'onerror': function () { } },
             { 'name': 'ckEditorJs', 'url': '/apps/Analytics/ckeditor/ckeditor.js', 'onload': function () { self.setupCkEditor(); }, 'onerror': function () { } }
         ];
     }
