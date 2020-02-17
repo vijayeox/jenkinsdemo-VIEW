@@ -10,26 +10,6 @@ export default class ConvergePayCheckoutComponent extends Base {
     this.data = data;
     this.form = this.getRoot();
     var that = this;
-    var paymentDetails = function(e){
-      Formio.requireLibrary('paywithconverge', 'PayWithConverge', e.detail.js_url, true);
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      if(document.getElementById('confirmOrder')){
-        var confirmOrder = function(event){
-          document.getElementById('confirmOrder').disabled = true;
-          var evt = new CustomEvent('requestPaymentToken', {cancelable: true,detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
-          that.form.element.dispatchEvent(evt);
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-        }
-        document.getElementById('confirmOrder').onclick = null;
-        document.getElementById('confirmOrder').onclick = confirmOrder;
-      }
-    }
-    this.form.element.removeEventListener('paymentDetails', paymentDetails,false);
-    this.form.element.addEventListener('paymentDetails', paymentDetails,false);
     var getPaymentToken = function(e){
       e.preventDefault();
       e.stopPropagation();
@@ -56,6 +36,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           document.getElementById('convergepay-token').value = "";
           var evt = new CustomEvent('paymentError', {cancelable: true,detail:{message: error.errorMessage,data:error}});
           that.form.element.dispatchEvent(evt);
+          that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
         },
         onCancelled: function () {
           document.getElementById('cardPayment').style.display = 'none';
@@ -66,6 +47,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           document.getElementById('convergepay-token').value = "";
           var evt = new CustomEvent('paymentCancelled', {cancelable: true,detail:{message: "Payment Cancelled By User",data:{}}});
           that.form.element.dispatchEvent(evt);
+          that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
         },
         onDeclined: function (response) {
           document.getElementById('cardPayment').style.display = 'none';
@@ -76,6 +58,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           document.getElementById('convergepay-token').value = "";
           var evt = new CustomEvent('paymentDeclined', {cancelable: true,detail:{message: response.errorMessage,data:response}});
           that.form.element.dispatchEvent(evt);
+          that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
         },
         onApproval: function (response) {
           console.log("Approval Code=" + response['ssl_approval_code']);
@@ -87,9 +70,30 @@ export default class ConvergePayCheckoutComponent extends Base {
       var evt = new CustomEvent('paymentPending', {cancelable: true,detail:{message:"Payment is Processing Please wait" }});
       that.form.element.dispatchEvent(evt);
       PayWithConverge.open(paymentData, callback);
+      that.form.element.removeEventListener('getPaymentToken', getPaymentToken,false);
     }
-    that.form.element.removeEventListener('getPaymentToken', getPaymentToken,false);
-    that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
+    
+    var paymentDetails = function(e){
+      Formio.requireLibrary('paywithconverge', 'PayWithConverge', e.detail.js_url, true);
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      if(document.getElementById('confirmOrder')){
+        var confirmOrder = function(event){
+          document.getElementById('confirmOrder').disabled = true;
+          var evt = new CustomEvent('requestPaymentToken', {cancelable: true,detail:{firstname: document.getElementById('convergepay-firstname').value,lastname: document.getElementById('convergepay-lastname').value,amount: document.getElementById('convergepay-amount').value}});
+          that.form.element.dispatchEvent(evt);
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        }
+        document.getElementById('confirmOrder').onclick = null;
+        document.getElementById('confirmOrder').onclick = confirmOrder;
+      }
+    }
+    this.form.element.removeEventListener('paymentDetails', paymentDetails,false);
+    this.form.element.addEventListener('paymentDetails', paymentDetails,false);
+    this.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
   }
   static schema(...extend) {
     return Base.schema({
