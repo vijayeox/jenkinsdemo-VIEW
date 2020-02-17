@@ -593,7 +593,7 @@ class FormRender extends React.Component {
           form.emit("render");
           that.setState({ page: changed.page });
         });
-        form.on("nextPage", changed => {
+        form.on("nextPage", changed => { 
           form.emit("render");
           that.runDelegates(form,form.pages[changed.page].originalComponent['properties']);
           that.setState({ page: changed.page });
@@ -802,6 +802,17 @@ class FormRender extends React.Component {
               behavior: "smooth",
               inline: "nearest"
             });
+          }
+          if(that.state.formLevelDelegateCalled != true){
+            that.setState({
+              formLevelDelegateCalled: true
+            });
+            if (form._form["properties"]) {
+              that.runDelegates(form, form._form["properties"]);
+            }
+            if (form.originalComponent["properties"]) {
+              that.runDelegates(form, form.originalComponent["properties"]);
+            }
           }
         });
         form.on("customEvent", function(event) {
