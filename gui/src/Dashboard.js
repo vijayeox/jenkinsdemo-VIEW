@@ -96,13 +96,14 @@ class Dashboard extends Component {
 
   updateGraph = root => {
     var widgets = root.getElementsByClassName("oxzion-widget");
-    widgets.forEach(widget => {
-      var attributes = widget.attributes;
-      var widgetUUId = attributes['data-oxzion-widget-id'].value;
-      this.GetWidgetByUUID(widgetUUId).then(response => {
-        WidgetRenderer.render(widget, response.data.widget);
-      });
-    });
+    for(let widget of widgets)
+    {
+        var attributes = widget.attributes;
+        var widgetUUId = attributes['data-oxzion-widget-id'].value;
+        this.GetWidgetByUUID(widgetUUId).then(response => {
+          WidgetRenderer.render(widget, response.data.widget);
+        })
+    }
   };
 
   render() {
