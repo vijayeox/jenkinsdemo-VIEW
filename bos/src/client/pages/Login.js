@@ -156,7 +156,7 @@ export default class Login extends defaultLogin {
         return false;
       }
 
-      re = /[$ & + , : ; = ? @ # | ' < > . - ^ * ( ) % /]/;
+      re = /[! $ & + , : ; = ? @ # | ' < > . - ^ * ( ) % /]/;
       if (!re.test(newPassword)) {
         document.getElementById("errorDivforUpdatingPassword").style.display =
           "block";
