@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom';
 import { dashboard as section } from './metadata.json';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
-import { OX_Grid, Notification, DashboardViewer } from './GUIComponents'
+import {Notification ,DashboardViewer} from './GUIComponents'
 import { Button, Form, Col, Row } from 'react-bootstrap'
-import Switch from 'react-switch'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from '../../gui/src/components/Modals/DashboardEditorModal'
@@ -82,6 +81,7 @@ class Dashboard extends React.Component {
     if (event.target.name === "dashname") {
       name = event.target.name
       value = JSON.parse(event.target.value)
+      
       var element = document.getElementById("dashboard-editor-div");
       element.classList.add("hide-dash-editor");
     }
@@ -199,6 +199,7 @@ class Dashboard extends React.Component {
             <div id="dashboard-editor-div">
             <DashboardEditor
               args={this.core}
+              notif={this.notif}
               setTitle={this.setTitle}
               key={this.state.uuid}
               dashboardId={this.state.uuid}

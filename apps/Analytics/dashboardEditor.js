@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Overlay, Tooltip, Button } from 'react-bootstrap';
 import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
+
 import { WidgetRenderer, DashboardEditorFilter } from './GUIComponents';
 import osjs from 'osjs';
 import Swal from "sweetalert2";
@@ -67,10 +68,6 @@ class DashboardEditor extends React.Component {
     getJsLibraryList = () => {
         let self = this;
         return [
-            { 'name': 'amChartsCoreJs', 'url': '/apps/Analytics/script/core.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsChartsJs', 'url': '/apps/Analytics/script/charts.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsAnimatedJs', 'url': '/apps/Analytics/script/themes/animated.js', 'onload': function () { }, 'onerror': function () { } },
-            { 'name': 'amChartsKellyJs', 'url': '/apps/Analytics/script/themes/kelly.js', 'onload': function () { }, 'onerror': function () { } },
             { 'name': 'ckEditorJs', 'url': '/apps/Analytics/ckeditor/ckeditor.js', 'onload': function () { self.setupCkEditor(); }, 'onerror': function () { } }
         ];
     }
@@ -387,6 +384,7 @@ class DashboardEditor extends React.Component {
                 </div>
                 <div>
                     <DashboardEditorFilter 
+                     notif={this.props.notif}
                       dashboardId={this.props.dashboardId} 
                       dashboardVersion={this.state.version} 
                       core={this.core}
