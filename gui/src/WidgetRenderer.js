@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import * as am4maps from "@amcharts/amcharts4/maps";
+import * as am4core from "../amcharts/core";
+import * as am4charts from "../amcharts/charts";
+import * as am4maps from "../amcharts/maps";
 import am4geodata_usaAlbersLow from "@amcharts/amcharts4-geodata/usaAlbersLow";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
-import am4themes_kelly from "@amcharts/amcharts4/themes/animated";
+import am4themes_animated from "../amcharts/themes/animated";
+import am4themes_kelly from "../amcharts/themes/kelly";
 import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
