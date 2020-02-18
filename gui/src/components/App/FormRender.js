@@ -12,6 +12,7 @@ import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
 import { countryList } from "./Form/Country.js";
+import { phoneList } from "./Form/Phonelist.js";
 import SliderComponent from "./Form/SliderComponent";
 import FortePayCheckoutComponent from "./Form/Payment/FortePayCheckoutComponent";
 import DocumentViewerComponent from "./Form/DocumentViewerComponent";
@@ -415,6 +416,7 @@ class FormRender extends React.Component {
     formData.privileges = undefined;
     formData.userprofile = undefined;
     formData.countryList = undefined;
+    formData.phoneList = undefined;
     formData.orgId = this.userprofile.orgid;
     var ordered_data = {};
     Object.keys(formData)
@@ -430,7 +432,8 @@ class FormRender extends React.Component {
     return merge(data, {
       privileges: this.privileges,
       userprofile: this.userprofile,
-      countryList: countryList
+      countryList: countryList,
+      phoneList: phoneList
     });
   }
 
