@@ -425,6 +425,9 @@ var countryList = [{
     "country": "Portugal",
     "states": ["Aveiro", "Acores", "Beja", "Braga", "Braganca", "Castelo Branco", "Coimbra", "Evora", "Faro", "Guarda", "Leiria", "Lisboa", "Madeira", "Portalegre", "Porto", "Santarem", "Setubal", "Viana do Castelo", "Vila Real", "Viseu"]
 }, {
+    "country": "Oceania",
+    "states": ["Palau","Federated States of Micronesia"."Marshall Islands"]
+}, {
     "country": "Qatar",
     "states": ["Ad Dawhah", "Al Ghuwayriyah", "Al Jumayliyah", "Al Khawr", "Al Wakrah", "Ar Rayyan", "Jarayan al Batinah", "Madinat ash Shamal", "Umm Sa'id", "Umm Salal"]
 }, {
