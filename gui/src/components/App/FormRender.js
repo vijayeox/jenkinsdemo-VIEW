@@ -16,6 +16,7 @@ import { phoneList } from "./Form/Phonelist.js";
 import SliderComponent from "./Form/SliderComponent";
 import FortePayCheckoutComponent from "./Form/Payment/FortePayCheckoutComponent";
 import DocumentViewerComponent from "./Form/DocumentViewerComponent";
+import RadioCardComponent from "./Form/RadioCardComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -528,6 +529,7 @@ class FormRender extends React.Component {
     Formio.registerComponent("document", DocumentComponent);
     Formio.registerComponent("fortepay", FortePayCheckoutComponent);
     Formio.registerComponent("documentviewer", DocumentViewerComponent);
+    Formio.registerComponent("radiocard",RadioCardComponent);
 
     if (this.state.content && !this.state.form) {
       var options = {};
@@ -622,7 +624,7 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function(changed) {
-          console.log(changed.data);
+        
           var formdata = changed;
           for (var dataItem in form.submission.data) {
             if (typeof form.submission.data[dataItem] == "object") {
