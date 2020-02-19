@@ -667,16 +667,7 @@ class FormRender extends React.Component {
                         };
                         form.triggerChange();
                         if(properties['target']){
-                          var targetProperty = properties['target'];
-                          var targetList = targetProperty.split(',');
-                           targetList.map(item => {
-                                 var targetComponent = form.getComponent(item);
-                                 setTimeout(function(){
-                                    targetComponent.triggerRedraw();
-                                    targetComponent.triggerChange();
-                                 },3000);
-                              }
-                          )
+                          this.triggerComponent(form,properties['target']);
                         }
                       }
                       that.core.make("oxzion/splash").destroy();
@@ -945,6 +936,20 @@ class FormRender extends React.Component {
       });
     }
   }
+  triggerComponent(form,targetProperties){
+    var targetList = targetProperties.split(',');
+     targetList.map(item => 
+     {
+        var targetComponent = form.getComponent(item);
+        setTimeout(function(){
+            if(targetComponent.type == 'datagrid'){
+                targetComponent.triggerRedraw();
+            }
+            targetComponent.triggerChange();
+        },3000);
+     }
+    )
+  };
   runDelegates(form, properties) {
     if (properties) {
       if (properties["delegate"]) {
@@ -978,17 +983,7 @@ class FormRender extends React.Component {
               form.triggerChange();
 
               if(properties['target']){
-                var targetProperty = properties['target'];
-                var targetList = targetProperty.split(',');
-                 targetList.map(item => 
-                    {
-                       var targetComponent = form.getComponent(item);
-                       setTimeout(function(){
-                          targetComponent.triggerRedraw();
-                          targetComponent.triggerChange();
-                       },3000);
-                    }
-                )
+                this.triggerComponent(form,properties['target']);
               }
             }
           }
