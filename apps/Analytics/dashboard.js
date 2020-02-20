@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { dashboard as section } from './metadata.json';
-import osjs from 'osjs';
 import Swal from "sweetalert2";
 import {Notification ,DashboardViewer} from './GUIComponents'
 import { Button, Form, Col, Row } from 'react-bootstrap'
@@ -30,7 +29,7 @@ class Dashboard extends React.Component {
     this.proc = this.props.proc;
     this.refresh = React.createRef();
     this.notif = React.createRef();
-    this.restClient = osjs.make('oxzion/restClient');
+    this.restClient = this.core.make('oxzion/restClient');
     this.loader = null;
   }
   componentWillMount() {
