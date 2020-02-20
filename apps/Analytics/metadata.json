@@ -3,7 +3,7 @@
   "name": "Analytics",
   "category": "organization",
   "singleton": true,
-  "hidden": true,
+  "hidden": false,
   "defaultAppforOrgs" : true,
   "icon": "icon.png", 
   "icon_white":"icon_white.png",
