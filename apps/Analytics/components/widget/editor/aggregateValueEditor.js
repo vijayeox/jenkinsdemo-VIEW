@@ -70,6 +70,11 @@ class AggregateValueEditor extends AbstractEditor {
         textArea.value = value;
     }
 
+    refreshViews = () => {
+        //Nothing to do for now. Implement this method to refresh the widget display if there is
+        //display/view update problem when the widget selection is changed in editor.
+    }
+
     isWidgetTabValid = (state, setErrorState = true) => {
         let isValid = true;
         return isValid;
