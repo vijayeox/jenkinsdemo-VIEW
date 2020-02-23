@@ -52,8 +52,7 @@ module.exports = {
             {
                 from:'node_modules/@progress/kendo-theme-default/dist/all.css', 
                 to:'kendo-theme-default-all.css'
-            },
-            '../../../Analytics/static/amcharts/dist/'
+            }
         ]
     ),
     new MiniCssExtractPlugin({
