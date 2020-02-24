@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { dashboard as section } from './metadata.json';
+import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
-import {Notification ,DashboardViewer} from './GUIComponents'
+import {Notification ,DashboardViewer} from '../../apps/Analytics/GUIComponents'
 import { Button, Form, Col, Row } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
-import DashboardEditorModal from '../../gui/src/components/Modals/DashboardEditorModal'
-import DashboardEditor from "./dashboardEditor"
+import DashboardEditorModal from './components/Modals/DashboardEditorModal'
+import DashboardEditor from "../../apps/Analytics/dashboardEditor"
 
 class Dashboard extends React.Component {
   constructor(props) {

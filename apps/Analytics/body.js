@@ -1,16 +1,15 @@
 import React from 'react';
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-// import DataSource from './dataSource';
-import { Query, DataSource } from './GUIComponents'
-// import Query from './query';
-import Dashboard from './dashboard';
+import { Query, DataSource,DashboardManager,WidgetManager } from './GUIComponents'
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
 const SECTION_QUERY = 'QR'; //QueRy
 const SECTION_DASHBOARD = 'DB'; //DashBoard
 const SECTION_EDIT_DASHBOARD = 'EDB'; //Edit DashBoard
+const SECTION_WIDGET = 'WD'; //Edit DashBoard
+
 
 class Body extends React.Component {
   constructor(props) {
@@ -18,7 +17,7 @@ class Body extends React.Component {
     this.core = this.props.args;
     this.state = {
       isMenuOpen: false,
-      displaySection: SECTION_DASHBOARD,
+      displaySection: SECTION_DATA_SOURCE,
       sectionData: null,
       title: ''
     };
@@ -78,8 +77,11 @@ class Body extends React.Component {
         sectionContent = <Query args={this.core} setTitle={this.setTitle} />;
         break;
       case SECTION_DASHBOARD:
-        sectionContent = <Dashboard args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+        sectionContent = <DashboardManager args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
         break;
+        case SECTION_WIDGET:
+          sectionContent = <WidgetManager args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+          break;
     }
 
     return (
@@ -95,6 +97,9 @@ class Body extends React.Component {
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
             <i class="fa fa-tasks" aria-hidden="true"></i> Dashboard
+                  </a>
+                  <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
+            <i class="fa fa-cubes" aria-hidden="true"></i> Widget Manager
                   </a>
         </Menu>
         <div className="page-title full-width">{this.state.title}</div>

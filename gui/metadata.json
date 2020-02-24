@@ -8,5 +8,20 @@
         "title": {
           "en_EN":"Query"
         }
+      },
+      "dashboard": {
+        "title": {
+          "en_EN":"Dashboard"
+         }
+      },
+      "dashboardEditor": {
+        "title": {
+          "en_EN":"Edit dashboard"
+        }
+      },
+      "widget": {
+        "title": {
+          "en_EN":"Widget Manager"
+        }
       }
 }

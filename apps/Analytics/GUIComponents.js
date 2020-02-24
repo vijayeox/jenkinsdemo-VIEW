@@ -6,4 +6,6 @@ import DataSource from "OxzionGUI/DataSource";
 import Query from "OxzionGUI/Query";
 import DashboardEditorFilter from "OxzionGUI/DashboardEditorFilter"
 import DashboardViewer from "OxzionGUI/Dashboard"
-export { DashboardViewer,WidgetGrid,WidgetRenderer,OX_Grid,Notification,DataSource,Query,DashboardEditorFilter};
+import DashboardManager from "OxzionGUI/DashboardManager"
+import WidgetManager from "OxzionGUI/WidgetManager"
+export { WidgetManager,DashboardManager,DashboardViewer,WidgetGrid,WidgetRenderer,OX_Grid,Notification,DataSource,Query,DashboardEditorFilter};

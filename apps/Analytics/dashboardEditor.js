@@ -5,7 +5,6 @@ import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 
 import { WidgetRenderer, DashboardEditorFilter } from './GUIComponents';
-import osjs from 'osjs';
 import Swal from "sweetalert2";
 import '../../gui/src/public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
@@ -28,7 +27,7 @@ class DashboardEditor extends React.Component {
         this.initialState = { ...this.state }
         this.renderedCharts = {};
         this.props.setTitle(section.title.en_EN);
-        this.restClient = osjs.make('oxzion/restClient');
+        this.restClient = this.core.make('oxzion/restClient');
         this.editor = null;
 
         let thisInstance = this;
