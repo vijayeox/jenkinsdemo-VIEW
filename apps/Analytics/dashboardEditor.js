@@ -126,7 +126,9 @@ class DashboardEditor extends React.Component {
                 let elementId = event.data.elementId;
                 let chart = thisInstance.renderedCharts[elementId];
                 if (chart) {
-                    chart.dispose();
+                    if (chart.dispose) {
+                        chart.dispose();
+                    }
                     thisInstance.renderedCharts[elementId] = null;
                     console.info(`Disposed the chart of element id ${elementId} for downcasting it.`);
                 }
@@ -142,10 +144,18 @@ class DashboardEditor extends React.Component {
         //        });
         //    }
         //});
-        editor.on('oxzionWidgetChanged', function (event) {
+        editor.on('oxzionWidgetResized', function (event) {
             thisInstance.setState({
                 contentChanged: true
             });
+            try {
+                let elementId = event.data.elementId;
+                let widgetId = event.data.widgetId;
+                thisInstance.updateWidget(elementId, widgetId);
+            }
+            catch (error) {
+                console.error(error);
+            }
         });
         editor.on('change', function (event) {
             thisInstance.setState({
@@ -160,7 +170,6 @@ class DashboardEditor extends React.Component {
     }
 
     saveDashboard = () => {
-
         let params = {
             'content': this.editor.getData(),
             'version': this.state.version,
@@ -309,6 +318,15 @@ class DashboardEditor extends React.Component {
     }
 
     updateWidget = (elementId, widgetId) => {
+        //Dispose and cleanup if this chart had been painted previously.
+        let existingChart = this.renderedCharts[elementId];
+        if (existingChart) {
+            if (existingChart.dispose) {
+                existingChart.dispose();
+                this.renderedCharts[elementId] = null;
+            }
+        }
+
         let iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
         let iframeWindow = iframeElement.contentWindow;
         let iframeDocument = iframeWindow.document;
@@ -320,9 +338,11 @@ class DashboardEditor extends React.Component {
             }
         }
 
+        var thisInstance = this;
         this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get',
             function (response) {
-                WidgetRenderer.render(widgetElement, response.widget);
+                let chart = WidgetRenderer.render(widgetElement, response.widget);
+                thisInstance.renderedCharts[elementId] = chart;
             },
             function (response) {
                 Swal.fire({
@@ -333,8 +353,8 @@ class DashboardEditor extends React.Component {
             }
         );
     }
-    componentDidUpdate(prevProps) {
 
+    componentDidUpdate(prevProps) {
         if (this.props.dashboardId !== prevProps.dashboardId) {
             if (this.props.dashboardId === "") {
                 this.editor.setData("");
@@ -358,7 +378,9 @@ class DashboardEditor extends React.Component {
         for (let elementId in this.renderedCharts) {
             let chart = this.renderedCharts[elementId];
             if (chart) {
-                chart.dispose();
+                if (chart.dispose) {
+                    chart.dispose();
+                }
                 this.renderedCharts[elementId] = null;
             }
         }
@@ -368,12 +390,14 @@ class DashboardEditor extends React.Component {
         }
         JavascriptLoader.unloadScript(this.getJsLibraryList());
     }
+
     displayFilterDiv() {
         var element = document.getElementById("filter-form-container");
         element.classList.remove("disappear");
         document.getElementById("dashboard-container").classList.add("disappear")
         document.getElementById("dashboard-filter-btn").disabled = true
     }
+
     render() {
         return (
             <form className="dashboard-editor-form">
