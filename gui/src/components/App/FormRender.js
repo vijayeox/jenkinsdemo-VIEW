@@ -624,7 +624,6 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function(changed) {
-        
           var formdata = changed;
           for (var dataItem in form.submission.data) {
             if (typeof form.submission.data[dataItem] == "object") {
@@ -661,76 +660,25 @@ class FormRender extends React.Component {
                         }
                       }
                       if (response.data) {
-                        console.log(response.data);
-                        form.submission = {
-                          data: that.parseResponseData(
-                            that.addAddlData(response.data)
-                          )
-                        };
+                        var updatedVariables = that.runProps(changed.changed,form,properties,that.parseResponseData(that.addAddlData(response.data)));
+                        form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
                         form.triggerChange();
-                        if(properties['target']){
-                          this.triggerComponent(form,properties['target']);
-                        }
                       }
                       that.core.make("oxzion/splash").destroy();
                     }
                   });
               }
-              if (properties["target"]) {
-                var targetComponent = form.getComponent(properties["target"]);
-                if (changed.changed.value && targetComponent) {
-                  var value = formdata.data[changed.changed.value];
-                  if (
-                    changed.changed.value.value != undefined &&
-                    formdata.data[changed.changed.value.value] != undefined
-                  ) {
-                    value = formdata.data[changed.changed.value.value];
-                  }
-                  if (value != undefined) {
-                    targetComponent.setValue(value);
-                  } else {
-                    if (changed.changed.value.value != undefined) {
-                      targetComponent.setValue(changed.changed.value.value);
-                    } else {
-                      targetComponent.setValue(changed.changed.value);
-                    }
-                  }
-                } else {
-                  if (document.getElementById(properties["target"])) {
-                    var value = formdata.data[changed.changed.value];
-                    if (changed.changed.value.value) {
-                      value = formdata.data[changed.changed.value.value];
-                    }
-                    if (value && value != undefined) {
-                      document.getElementById(properties["target"]).value = value;
-                    } else {
-                      if (changed.changed.value.value) {
-                        document.getElementById(properties["target"]).value = changed.changed.value.value;
-                      } else {
-                        document.getElementById(properties["target"]).value = changed.changed.value;
-                      }
-                    }
-                  }
-                }
-              }
-              if (properties["negate"]) {
-                var targetComponent = form.getComponent(properties["negate"]);
-                if (changed.changed.value && targetComponent) {
-                  if (changed.changed.value.value) {
-                    targetComponent.setValue(!changed.changed.value.value);
-                  } else {
-                    targetComponent.setValue(!changed.changed.value);
-                  }
-                }
-              }
-              if (properties["render"]) {
-                var renderComponent = form.getComponent(properties["render"]);
-                if (renderComponent.originalComponent) {
-                  if (renderComponent.originalComponent["properties"]) {
-                    that.runDelegates(form,renderComponent.originalComponent["properties"]);
-                  }
-                }
-              }
+            }
+          }
+          if(changed.changed && changed.changed.component){
+            var updatedVariables = that.runProps(changed.changed,form,changed.changed.component.properties,formdata);
+            form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
+            form.triggerChange();
+          } else {
+            if(changed.changed){
+              var updatedVariables = that.runProps(changed.changed,form,changed.changed.properties,formdata);
+              form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
+              form.triggerChange();
             }
           }
           var componentList = flattenComponents(form.components);
@@ -758,9 +706,7 @@ class FormRender extends React.Component {
               breadcrumbs.style.display = "none";
             }
           }
-          eachComponent(
-            form.root.components,
-            function(component) {
+          eachComponent(form.root.components,function(component) {
               if (component) {
                 if (component.component.properties &&component.component.properties.custom_list) {
                   var targetComponent = form.getComponent(component.component.key);
@@ -947,18 +893,103 @@ class FormRender extends React.Component {
             if(targetComponent.type == 'datagrid'){
                 targetComponent.triggerRedraw();
             }
-            targetComponent.triggerChange();
         },3000);
      }
     )
   };
+  runProps(component,form,properties,formdata){
+    if(formdata.data){
+      formdata = formdata.data;
+    }
+    if(properties){
+      if (properties["target"]) {
+        var targetComponent = form.getComponent(properties["target"]);
+        var value;
+        if (component.value && targetComponent) {
+          if (component.value.value != undefined && formdata[component.value.value] != undefined) {
+            value = formdata[component.value.value];
+          } else  if (component.value.value != undefined) {
+            value = component.value.value;
+          } else if(formdata[component.value] != undefined){
+            value = formdata[component.value];
+          } else {
+            value = component.value;
+          }
+          targetComponent.setValue(value);
+          formdata[targetComponent.key] = value;
+        } else if (component.dataValue && targetComponent) {
+          value = formdata[component.dataValue];
+          if (component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
+            formdata[component.key] = formdata[component.dataValue.value];
+          } else if (component.dataValue.value != undefined) {
+            value = component.dataValue.value;
+          } else if(formdata[component.dataValue] != undefined){
+            value = formdata[component.dataValue];
+          } else {
+            value = component.dataValue;
+          }
+          formdata[targetComponent.key] = value;
+          targetComponent.setValue(value);
+          targetComponent.updateValue(value);
+        } else {
+          if (document.getElementById(properties["target"])) {
+            value = formdata[component.value];
+            if (component.value.value) {
+              value = formdata[component.value.value];
+            } else if (value && value != undefined) {
+              value = value;
+            } else {
+              if (component.value.value) {
+                value = component.value.value;
+              } else {
+                value = component.value;
+              }
+            }
+            formdata[targetComponent.key] = value;
+            document.getElementById(properties["target"]).value  = value;
+          }
+        }
+      }
+      if (properties["negate"]) {
+        var targetComponent = form.getComponent(properties["negate"]);
+        if (component.value && targetComponent) {
+          if (component.value.value) {
+            targetComponent.setValue(!component.value.value);
+          } else {
+            targetComponent.setValue(!component.value);
+          }
+        }
+      }
+      if (properties["post_delegate_refresh"]) {
+        var targetList = properties["post_delegate_refresh"].split(',');
+        targetList.map(item => {
+         var targetComponent = form.getComponent(item);
+         if(targetComponent.component && targetComponent.component["properties"]){
+          if(targetComponent.type == 'datagrid'){
+            targetComponent.triggerRedraw();
+          }
+          if(targetComponent.component['properties']){
+            formdata = this.runProps(targetComponent,form,targetComponent.component['properties'],formdata);
+          }
+        }
+      });
+      }
+      if (properties["render"]) {
+        var targetList = properties["render"].split(',');
+        targetList.map(item => {
+         var targetComponent = form.getComponent(item);
+         if(targetComponent.originalComponent && targetComponent.originalComponent["properties"]){
+          this.runDelegates(form,targetComponent.originalComponent["properties"]);
+        }
+      });
+      }
+    }
+    return formdata;
+  }
   runDelegates(form, properties) {
     if (properties) {
       if (properties["delegate"]) {
-        this.callDelegate(
-          properties["delegate"],
-          this.cleanData(form.submission.data)
-        ).then(response => {
+        this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
           this.core.make("oxzion/splash").destroy();
           if (response.data) {
             let form_data = this.parseResponseData(
@@ -972,10 +1003,7 @@ class FormRender extends React.Component {
         });
       }
       if (properties["commands"]) {
-        this.callPipeline(
-          properties["commands"],
-          this.cleanData(form.submission.data)
-        ).then(response => {
+        this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
@@ -983,10 +1011,6 @@ class FormRender extends React.Component {
                 data: this.parseResponseData(this.addAddlData(response.data))
               };
               form.triggerChange();
-
-              if(properties['target']){
-                this.triggerComponent(form,properties['target']);
-              }
             }
           }
         });
