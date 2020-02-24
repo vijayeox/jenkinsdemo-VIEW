@@ -12,11 +12,11 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && NODE_ENV=production npm run build && npm run build:esm"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.8.8",
-    "@amcharts/amcharts4-geodata": "^4.1.11",
+    "@amcharts/amcharts4": "^4.9.1",
+    "@amcharts/amcharts4-geodata": "^4.1.12",
     "@progress/kendo-data-query": "^1.5.1",
-    "@progress/kendo-react-animation": "^3.10.1",
-    "@progress/kendo-react-buttons": "^3.10.1",
+    "@progress/kendo-react-animation": "^3.11.0",
+    "@progress/kendo-react-buttons": "^3.11.0",
     "@progress/kendo-react-dateinputs": "^2.10.0",
     "@progress/kendo-react-dialogs": "^2.10.0",
     "@progress/kendo-react-dropdowns": "^2.10.0",
@@ -24,9 +24,9 @@
     "@progress/kendo-react-grid": "^2.10.0",
     "@progress/kendo-react-inputs": "^2.10.0",
     "@progress/kendo-react-intl": "^2.10.0",
-    "@progress/kendo-react-popup": "^3.10.1",
-    "@progress/kendo-react-upload": "^3.10.1",
-    "@progress/kendo-theme-bootstrap": "^4.10.0",
+    "@progress/kendo-react-popup": "^3.11.0",
+    "@progress/kendo-react-upload": "^3.11.0",
+    "@progress/kendo-theme-bootstrap": "^4.10.2",
     "@progress/kendo-theme-default": "^3.7.0",
     "@trendmicro/react-buttons": "^1.3.1",
     "@trendmicro/react-dropdown": "^1.3.0",
@@ -46,7 +46,7 @@
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react-bootstrap": "^1.0.0-beta.16",
-    "react-datepicker": "^2.11.0",
+    "react-datepicker": "^2.13.0",
     "react-flippy": "^0.1.5",
     "react-formio": "^3.1.12",
     "react-jsx-parser": "^1.21.0",
@@ -64,12 +64,12 @@
     "url-loader": "^2.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.3",
+    "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
-    "@babel/runtime": "^7.8.3",
+    "@babel/runtime": "^7.8.4",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
     "eslint": "^5.12.1",
@@ -79,11 +79,11 @@
     "popper.js": "^1.16.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-icons": "^3.6.1",
+    "react-icons": "^3.9.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^1.1.3",
-    "webpack": "^4.34.0",
-    "webpack-cli": "^3.2.1"
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   },
   "peerDependencies": {
     "react-icons": "^3.6.1"
