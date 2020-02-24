@@ -670,16 +670,14 @@ class FormRender extends React.Component {
               }
             }
           }
-          if(changed.changed && changed.changed.component){
+          if(changed.changed.component){
             var updatedVariables = that.runProps(changed.changed,form,changed.changed.component.properties,formdata);
             form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
             form.triggerChange();
           } else {
-            if(changed.changed){
-              var updatedVariables = that.runProps(changed.changed,form,changed.changed.properties,formdata);
-              form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
-              form.triggerChange();
-            }
+            var updatedVariables = that.runProps(changed.changed,form,changed.changed.properties,formdata);
+            form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
+            form.triggerChange();
           }
           var componentList = flattenComponents(form.components);
           for (var componentKey in componentList) {
@@ -893,6 +891,7 @@ class FormRender extends React.Component {
             if(targetComponent.type == 'datagrid'){
                 targetComponent.triggerRedraw();
             }
+            // targetComponent.triggerChange();
         },3000);
      }
     )
