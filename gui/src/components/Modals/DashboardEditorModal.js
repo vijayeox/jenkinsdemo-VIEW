@@ -10,7 +10,8 @@ function DashboardEditorModal(props) {
         ACTIVATE: "Activated",
         CREATE: "Created",
         EDIT: "Edited",
-        DELETE: "Deleted"
+        DELETE: "Deleted",
+        DEFAULT:"SetDefault"
     }
     useEffect(() => {
         if (props.content !== undefined) {
@@ -61,6 +62,13 @@ function DashboardEditorModal(props) {
                 operation === "Activated" ? formData["isdeleted"] = "0" : null
                 method = "put"
             }
+            else if (operation === allowedOperation.DEFAULT){
+                formData["uuid"] = props.content.uuid
+                formData["version"] = props.content.version;
+                requestUrl = "analytics/dashboard/" + props.content.uuid;
+                formData["isdefault"]="1"
+                method = "put"
+            }
             else {
                 requestUrl = "analytics/dashboard";
                 method = "filepost"
@@ -80,7 +88,8 @@ function DashboardEditorModal(props) {
             .then(response => {
                 notify(response, operation)
                 props.onHide()
-                props.deleteDashboard()
+                props.refreshDashboard()
+                operation === allowedOperation.DELETE?props.deleteDashboard():null
             })
             .catch(err => {
                 console.log(err)
@@ -117,6 +126,10 @@ function DashboardEditorModal(props) {
     else if (props.modalType === "Create") {
         Footer = (<Button variant="primary" onClick={() => dashboardOperation(allowedOperation.CREATE)}>Create</Button>)
         DisabledFields = false
+    }
+    else if (props.modalType === "SetDefault") {
+        Footer = (<Button variant="primary" onClick={() => dashboardOperation(allowedOperation.DEFAULT)}>Set as Default Dashboard</Button>)
+        DisabledFields = true
     }
     else if (props.modalType === "Activate") {
         Footer = (<Button variant="success" onClick={() => dashboardOperation(allowedOperation.ACTIVATE)}>Activate</Button>)

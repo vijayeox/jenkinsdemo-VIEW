@@ -10,9 +10,11 @@
 
 .dashboard .flippy-back{
     height: 120vh !important;
+    min-height: 70vh;
 } 
 .dashboard .flippy-front{
   height: auto;
+  min-height: 70vh;
 }
 .dashboard-filter-btn{
     position: absolute;
