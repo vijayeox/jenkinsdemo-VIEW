@@ -648,21 +648,13 @@ class FormRender extends React.Component {
           if (changed && changed.changed) {
             var component = changed.changed.component;
             var properties = component.properties;
-            if (properties) {
+            if (properties && (Object.keys(properties).length > 0)) {
               if (properties["delegate"]) {
                 that.core.make("oxzion/splash").show();
                 that.callDelegate(properties["delegate"],that.cleanData(formdata.data)).then(response => {
                     if (response) {
-                      var responseArray = [];
-                      for (var responseDataItem in response.data) {
-                        if (response.data.hasOwnProperty(responseDataItem)) {
-                          responseArray[responseDataItem] = response.data[responseDataItem];
-                        }
-                      }
                       if (response.data) {
-                        var updatedVariables = that.runProps(changed.changed,form,properties,that.parseResponseData(that.addAddlData(response.data)));
-                        form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
-                        form.triggerChange();
+                        that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
                       }
                       that.core.make("oxzion/splash").destroy();
                     }
@@ -670,14 +662,10 @@ class FormRender extends React.Component {
               }
             }
           }
-          if(changed.changed.component){
-            var updatedVariables = that.runProps(changed.changed,form,changed.changed.component.properties,formdata);
-            form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
-            form.triggerChange();
+          if(changed.changed && changed.changed.component){
+            that.runProps(changed.changed,form,changed.changed.component.properties,formdata);
           } else {
-            var updatedVariables = that.runProps(changed.changed,form,changed.changed.properties,formdata);
-            form.submission = { data: that.parseResponseData(that.addAddlData(updatedVariables)) };
-            form.triggerChange();
+            that.runProps(changed.changed,form,changed.changed.properties,formdata);
           }
           var componentList = flattenComponents(form.components);
           for (var componentKey in componentList) {
@@ -900,7 +888,7 @@ class FormRender extends React.Component {
     if(formdata.data){
       formdata = formdata.data;
     }
-    if(properties){
+    if(properties && (Object.keys(properties).length > 0)){
       if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
         var value;
@@ -915,7 +903,7 @@ class FormRender extends React.Component {
             value = component.value;
           }
           targetComponent.setValue(value);
-          formdata[targetComponent.key] = value;
+          form.submission.data[targetComponent.key] = value;
         } else if (component.dataValue && targetComponent) {
           value = formdata[component.dataValue];
           if (component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
@@ -927,9 +915,9 @@ class FormRender extends React.Component {
           } else {
             value = component.dataValue;
           }
-          formdata[targetComponent.key] = value;
           targetComponent.setValue(value);
           targetComponent.updateValue(value);
+          form.submission.data[targetComponent.key] = value;
         } else {
           if (document.getElementById(properties["target"])) {
             value = formdata[component.value];
@@ -944,8 +932,8 @@ class FormRender extends React.Component {
                 value = component.value;
               }
             }
-            formdata[targetComponent.key] = value;
             document.getElementById(properties["target"]).value  = value;
+            form.submission.data[targetComponent.key] = value;
           }
         }
       }
@@ -954,8 +942,10 @@ class FormRender extends React.Component {
         if (component.value && targetComponent) {
           if (component.value.value) {
             targetComponent.setValue(!component.value.value);
+            form.submission.data[targetComponent.key] = !component.value.value;
           } else {
             targetComponent.setValue(!component.value);
+            form.submission.data[targetComponent.key] = !component.value;
           }
         }
       }
@@ -968,7 +958,7 @@ class FormRender extends React.Component {
             targetComponent.triggerRedraw();
           }
           if(targetComponent.component['properties']){
-            formdata = this.runProps(targetComponent,form,targetComponent.component['properties'],formdata);
+            this.runProps(targetComponent,form,targetComponent.component['properties'],formdata);
           }
         }
       });
@@ -983,7 +973,6 @@ class FormRender extends React.Component {
       });
       }
     }
-    return formdata;
   }
   runDelegates(form, properties) {
     if (properties) {
