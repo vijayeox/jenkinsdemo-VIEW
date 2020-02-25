@@ -239,7 +239,10 @@ export default class ConvergePayCheckoutComponent extends Base {
       return ret;
     }
     var amount = renderWithPrefix("$");
-    var row = `<div class="convergepay"><div class="row"><div class="col-md-12">Please enter your Name as Per Card Details</div></div<<div class="row">
+    var row = `<div class="convergepay">
+    <p style="padding: 10px; background-color: #cec8c8; color:red; border-radius: 5px;"> Note : &nbsp; We only accept Visa, Mastercard and American Express cards.</p>
+    <div class="row"><div class="col-md-12">Please enter your Name as Per Card Details</div></div><br/>
+    <div class="row">
     <div class="col-md-6"> 
     <div class="form-group">
     ${firstname}
