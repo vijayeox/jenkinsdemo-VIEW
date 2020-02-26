@@ -8,20 +8,30 @@ export default class FortePayCheckoutComponent extends Base {
     constructor(component, options, data) {
 		component.label = 'fortePayment'
         super(component, options, data);
-        console.log("data",data)
         this.data = data;
         this.form = this.getRoot();
         var that = this;
-        console.log(that.form.element)
+        console.log("data",data);
+        var getFormInfo = function(e){
+            var evt = new CustomEvent('formInfo', {cancelable: true,detail:{form:that.form}});
+            window.dispatchEvent(evt);
+        }
+        window.addEventListener('getFormInfo', getFormInfo,false);
         function oncallback(e) {
             console.log(e)
+            var form;
             var response = JSON.parse(e.data)
-            
+            var formInfo = function(e){
+                form = e.detail.form;
+            }
+            window.addEventListener('formInfo', formInfo,false);
+            var evt = new CustomEvent('getFormInfo', {cancelable: true,detail:{}});
+            window.dispatchEvent(evt);
             switch(response.event) {
                 
                  case 'success' : 
                      var evt = new CustomEvent('paymentSuccess', {cancelable: true,detail:{data: response,status: response.event}});
-                     that.form.element.dispatchEvent(evt);
+                     form.element.dispatchEvent(evt);
                      break;
                  case 'failure' :
                      document.getElementById('confirmOrder').style.display = 'block';
@@ -30,8 +40,8 @@ export default class FortePayCheckoutComponent extends Base {
                      document.getElementById('fortepay-lastname').disabled = false;
                      document.getElementById('fortepay-token').value = "";
                      var evt = new CustomEvent('paymentDeclined', {cancelable: true,detail:{message: response.response_description,data:response}});
-                     that.form.element.dispatchEvent(evt);
-                     that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
+                     form.element.dispatchEvent(evt);
+                     form.element.addEventListener('getPaymentToken', getPaymentToken,false);
                      break;
                  case 'error' :
                      document.getElementById('confirmOrder').style.display = 'block';
@@ -39,8 +49,8 @@ export default class FortePayCheckoutComponent extends Base {
                      document.getElementById('fortepay-lastname').disabled = false;
                      document.getElementById('fortepay-token').value = "";
                      var evt = new CustomEvent('paymentError', {cancelable: true,detail:{message: response.msg,data:response}});
-                     that.form.element.dispatchEvent(evt);
-                     that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
+                     form.element.dispatchEvent(evt);
+                     form.element.addEventListener('getPaymentToken', getPaymentToken,false);
                      break;
                  case 'abort' :
                      document.getElementById('confirmOrder').style.display = 'block';
@@ -49,8 +59,8 @@ export default class FortePayCheckoutComponent extends Base {
                      document.getElementById('fortepay-lastname').disabled = false;
                      document.getElementById('fortepay-token').value = "";
                      var evt = new CustomEvent('paymentCancelled', {cancelable: true,detail:{message: "Payment Cancelled By User",data:{}}});
-                     that.form.element.dispatchEvent(evt);
-                     that.form.element.addEventListener('getPaymentToken', getPaymentToken,false);
+                     form.element.dispatchEvent(evt);
+                     form.element.addEventListener('getPaymentToken', getPaymentToken,false);
                      break;
              }
  
@@ -96,11 +106,8 @@ export default class FortePayCheckoutComponent extends Base {
             // }
         }
         var paymentDetails = function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
             Formio.requireLibrary('paywithforte', 'payWithForte',e.detail.js_url, true);
-            document.getElementById("makePayment").setAttribute('api_access_id',"");
+            document.getElementById("makePayment").setAttribute('api_access_id',"")
            
             if(document.getElementById('confirmOrder')) {
                 var confirmOrder = function(event) {
@@ -111,7 +118,7 @@ export default class FortePayCheckoutComponent extends Base {
                             lastname : document.getElementById('fortepay-lastname').value,
                             amount: document.getElementById('fortepay-amount').value,
                             order_number : "12344",
-                            method: "schedule"
+                            method: that.data['paymentMethod']
                         }
                     })
                     that.form.element.dispatchEvent(evt);
@@ -203,7 +210,7 @@ export default class FortePayCheckoutComponent extends Base {
                 id:'fortepay-firstname',
                 placeholder:'First Name',
                 hideLabel: 'true',
-                value : that.data['firstname']
+                
               }
             }
         });
@@ -220,7 +227,7 @@ export default class FortePayCheckoutComponent extends Base {
                     id:'fortepay-lastname',
                     placeholder:'Last Name',
                     hideLabel: 'true',
-                    value : that.data['lastname']
+                    
                 }
             }
         });
