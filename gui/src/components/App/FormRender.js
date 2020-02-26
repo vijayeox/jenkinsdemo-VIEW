@@ -654,7 +654,7 @@ class FormRender extends React.Component {
                 that.callDelegate(properties["delegate"],that.cleanData(formdata.data)).then(response => {
                     if (response) {
                       if (response.data) {
-                        form.submission = {data : response.data};
+                        form.submission = {data: that.parseResponseData(that.addAddlData(response.data))};
                         setTimeout(function(){
                           that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
                         },1000);
@@ -843,7 +843,9 @@ class FormRender extends React.Component {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
                       form.submission = {data: that.parseResponseData(that.addAddlData(response.data))};
-                      form.triggerChange();
+                      setTimeout(function(){
+                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
+                        },1000);
                     }
                   });
               }
@@ -951,7 +953,7 @@ class FormRender extends React.Component {
             form.submission.data[targetComponent.key] = !component.value;
           }
         }
-      }
+      } 
       if (properties["post_delegate_refresh"]) {
         var targetList = properties["post_delegate_refresh"].split(',');
         targetList.map(item => {
@@ -994,14 +996,15 @@ class FormRender extends React.Component {
         });
       }
       if (properties["commands"]) {
+        var that = this;
         this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
-              form.submission = {
-                data: this.parseResponseData(this.addAddlData(response.data))
-              };
-              form.triggerChange();
+              form.submission = {data: that.parseResponseData(that.addAddlData(response.data))};
+              setTimeout(function(){
+                that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(response.data)));
+              },1000);
             }
           }
         });
