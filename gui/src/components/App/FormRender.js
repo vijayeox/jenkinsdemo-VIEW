@@ -908,6 +908,11 @@ runProps(component,form,properties,formdata){
           } else {
             value = component.dataValue;
           }
+            if(value == undefined){
+              if(formdata[formdata[component.key]]){
+                value = formdata[component.key];
+              }
+            }
           targetComponent.setValue(value);
           // targetComponent.updateValue(value);
           form.submission.data[targetComponent.key] = value;
@@ -925,6 +930,8 @@ runProps(component,form,properties,formdata){
               value = formdata[formdata[component.key]];
             } else if(formdata[formdata[component.key].value] != undefined){
               value = formdata[formdata[component.key].value];
+            }else if(formdata[component.key] != undefined){
+              value = formdata[component.key];
             } else {
               value = component.value;
             }
@@ -943,6 +950,10 @@ runProps(component,form,properties,formdata){
                 value = formdata[component.value.value];
               } else if (value && value != undefined) {
                 value = value;
+              } else if(formdata[formdata[component.key]] != undefined){
+                value = formdata[formdata[component.key]];
+              } else if(formdata[component.key] != undefined){
+                value = formdata[component.key];
               } else {
                 if (component.value != undefined && component.value.value != undefined) {
                   value = component.value.value;
@@ -950,7 +961,7 @@ runProps(component,form,properties,formdata){
                   value = component.value;
                 }
               }
-              
+
             if(value == undefined){
               if(formdata[formdata[component.key]]){
                 value = formdata[component.key];
