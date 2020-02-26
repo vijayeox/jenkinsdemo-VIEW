@@ -62,20 +62,23 @@ class Dashboard extends React.Component {
     let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
-      inputs["dashname"] !== undefined ?
+      if(inputs["dashname"] != undefined)
+      {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, that.setState({ dashboardBody:"",inputs, dashList: response.data, uuid: dash.uuid }))
+            (inputs["dashname"] = dash, that.setState({inputs, dashList: response.data, uuid: dash.uuid }))
             : that.setState({ inputs: this.state.inputs })
         })
-        :
+      }
+      else{
         //setting default dashboard on page load
         response.data.map(dash => {
           dash.isdefault === "1" ?
             (inputs["dashname"] = dash, that.setState({ dashboardBody:"",inputs, dashList: response.data, uuid: dash.uuid }))
             : null
         })
+      }
 
     }
     else
@@ -106,9 +109,13 @@ class Dashboard extends React.Component {
   }
 
   deleteDashboard() {
-    let inputs = this.state.inputs
-    inputs["dashname"] = undefined
-    this.setState({ inputs })
+    setTimeout(()=>{
+      let inputs = this.state.inputs
+      inputs["dashname"]!=undefined?inputs["dashname"] = undefined:null
+      
+      this.setState({ inputs })
+
+    },1000)
   }
   editDashboard() {
     var element = document.getElementById("dashboard-editor-div");
@@ -150,9 +157,9 @@ class Dashboard extends React.Component {
                               as="select"
                               onChange={(e) => this.handleChange(e)}
                               name="dashname"
-                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? JSON.stringify(this.state.inputs["dashname"]) : ""}
+                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? JSON.stringify(this.state.inputs["dashname"]) : "-1"}
                             >
-
+                              <option key="-1" value="-1" disabled></option>
                               {this.state.dashList !== undefined ?
                                 this.state.dashList.map((option, index) => (
                                   <option key={option.uuid} value={JSON.stringify(option)}>{option.name}</option>
