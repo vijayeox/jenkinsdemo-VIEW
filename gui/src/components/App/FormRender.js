@@ -654,7 +654,10 @@ class FormRender extends React.Component {
                 that.callDelegate(properties["delegate"],that.cleanData(formdata.data)).then(response => {
                     if (response) {
                       if (response.data) {
-                        that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
+                        form.submission = {data : response.data};
+                        setTimeout(function(){
+                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
+                        },1000);
                       }
                       that.core.make("oxzion/splash").destroy();
                     }
