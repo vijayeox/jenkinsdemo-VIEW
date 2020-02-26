@@ -955,18 +955,20 @@ runProps(component,form,properties,formdata){
           }
         }
       }
-    if (properties["negate"]) {
-      var targetComponent = form.getComponent(properties["negate"]);
-      if (component.value && targetComponent) {
-        if (component.value.value) {
-          targetComponent.setValue(!component.value.value);
-        } else {
-          targetComponent.setValue(!component.value);
-        }
+      if (properties["negate"]) {
+        var targetComponent = form.getComponent(properties["negate"]);
+        if (component.value && targetComponent) {
+          if (component.value.value) {
+            targetComponent.setValue(!component.value.value);
           } else {
             targetComponent.setValue(!component.value);
           }
+        } else {
+          if(formdata[component.key]){
+            targetComponent.setValue(!formdata[component.key]);
+          }
         }
+      }
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
