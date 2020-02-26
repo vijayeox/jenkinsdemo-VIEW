@@ -338,7 +338,7 @@ export default class OX_Grid extends React.Component {
                     alignItems: "center"
                   }}
                 >
-                  {typeof this.props.gridToolbar == "string" ? (
+                  {typeof this.props.gridToolbar == "string" || typeof this.props.gridToolbar == "undefined" ? (
                     <JsxParser
                       bindings={{ gridData: this.state.gridData.data }}
                       jsx={this.props.gridToolbar}
