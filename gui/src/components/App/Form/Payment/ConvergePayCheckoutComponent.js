@@ -301,7 +301,7 @@ export default class ConvergePayCheckoutComponent extends Base {
     var amount = renderWithPrefix("$");
     var row = `<div class="convergepay">
     <div style="display:flex">
-    <div class="col-md-7">
+    <div class="col-md-7" style="padding-left:0px">
     <p style="padding: 10px; background-color: #cec8c8; color:red; border-radius: 5px; margin-top:8px;"> Note : &nbsp; We only accept Visa, Mastercard and American Express cards.</p>
     </div>
     <div class="col-md-5">
