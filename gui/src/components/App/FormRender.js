@@ -947,7 +947,6 @@ runProps(component,form,properties,formdata){
                 }
               }
               document.getElementById(properties["target"]).value  = value;
-              form.submission.data[targetComponent.key] = value;
             }
           }
         }
@@ -957,14 +956,11 @@ runProps(component,form,properties,formdata){
       if (component.value && targetComponent) {
         if (component.value.value) {
           targetComponent.setValue(!component.value.value);
-          form.submission.data[targetComponent.key] = !component.value.value;
         } else {
           targetComponent.setValue(!component.value);
-          form.submission.data[targetComponent.key] = !component.value;
         }
           } else {
             targetComponent.setValue(!component.value);
-            form.submission.data[targetComponent.key] = !component.value;
           }
         }
       if (properties["render"]) {
