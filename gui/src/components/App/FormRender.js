@@ -781,7 +781,7 @@ class FormRender extends React.Component {
                             }
                           }
                           form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
-                          form.triggerChange();
+                          // form.triggerChange();
                           destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -791,7 +791,7 @@ class FormRender extends React.Component {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
                           form.submission = { data: that.parseResponseData(that.addAddlData(response.data))};
-                          form.triggerChange();
+                          // form.triggerChange();
                         }
                       });
                     }
@@ -909,7 +909,7 @@ runProps(component,form,properties,formdata){
             value = component.dataValue;
           }
           targetComponent.setValue(value);
-          targetComponent.updateValue(value);
+          // targetComponent.updateValue(value);
           form.submission.data[targetComponent.key] = value;
         } else {
           if (component != undefined && targetComponent != undefined) {
@@ -921,6 +921,10 @@ runProps(component,form,properties,formdata){
               value = formdata[component.value];
             } else if(formdata[formdata[component.key]]){
               value = formdata[formdata[component.key]];
+            } else if(formdata[formdata[component.key]]){
+              value = formdata[formdata[component.key]];
+            } else if(formdata[formdata[component.key].value]){
+              value = formdata[formdata[component.key].value];
             } else {
               value = component.value;
             }
@@ -930,7 +934,7 @@ runProps(component,form,properties,formdata){
               }
             }
             targetComponent.setValue(value);
-            targetComponent.updateValue(value);
+            // targetComponent.updateValue(value);
             form.submission.data[targetComponent.key] = value;
           } else {
             if (document.getElementById(properties["target"])) {
