@@ -897,9 +897,9 @@ runProps(component,form,properties,formdata){
     if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
         var value;
-        if (component.dataValue && targetComponent) {
+        if (component.dataValue != undefined && targetComponent != undefined) {
           value = formdata[component.dataValue];
-          if (component.dataValue && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
+          if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
             formdata[component.key] = formdata[component.dataValue.value];
           } else if (component.dataValue.value != undefined) {
             value = component.dataValue.value;
@@ -913,17 +913,17 @@ runProps(component,form,properties,formdata){
           form.submission.data[targetComponent.key] = value;
         } else {
           if (component != undefined && targetComponent != undefined) {
-            if (component.value && component.value.value != undefined && formdata[component.value.value] != undefined) {
+            if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
               value = formdata[component.value.value];
-            } else  if (component.value && component.value.value != undefined) {
+            } else  if (component.value != undefined && component.value.value != undefined) {
               value = component.value.value;
             } else if(formdata[component.value] != undefined){
               value = formdata[component.value];
-            } else if(formdata[formdata[component.key]]){
+            } else if(formdata[formdata[component.key]] != undefined){
               value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key]]){
+            } else if(formdata[formdata[component.key]] != undefined){
               value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key].value]){
+            } else if(formdata[formdata[component.key].value] != undefined){
               value = formdata[formdata[component.key].value];
             } else {
               value = component.value;
@@ -939,17 +939,23 @@ runProps(component,form,properties,formdata){
           } else {
             if (document.getElementById(properties["target"])) {
               value = formdata[component.value];
-              if (component.value.value) {
+              if (component.value != undefined && component.value.value != undefined) {
                 value = formdata[component.value.value];
               } else if (value && value != undefined) {
                 value = value;
               } else {
-                if (component.value.value) {
+                if (component.value != undefined && component.value.value != undefined) {
                   value = component.value.value;
                 } else {
                   value = component.value;
                 }
               }
+              
+            if(value == undefined){
+              if(formdata[formdata[component.key]]){
+                value = formdata[component.key];
+              }
+            }
               document.getElementById(properties["target"]).value  = value;
             }
           }
