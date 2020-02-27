@@ -642,7 +642,6 @@ class FormRender extends React.Component {
               if (properties && (Object.keys(properties).length > 0)) {
                 if(component != undefined){
                   that.runProps(component,form,properties,changed.data);
-                  that.setPristine(true);
                 } else {
                   if(changed.changed != undefined){
                     that.runProps(changed.changed,form,changed.changed.properties,changed.data);
