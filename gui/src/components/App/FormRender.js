@@ -697,7 +697,7 @@ class FormRender extends React.Component {
                 inline: "nearest"
               });
             }
-            if(that.state.formLevelDelegateCalled != true){
+            if(that.state.formLevelDelegateCalled == false){
               that.setState({
                 formLevelDelegateCalled: true
               });
@@ -992,9 +992,11 @@ runProps(component,form,properties,formdata){
         var targetList = properties["render"].split(',');
         targetList.map(item => {
          var targetComponent = form.getComponent(item);
-         if(targetComponent.originalComponent && targetComponent.originalComponent["properties"]){
-      }
-    });
+         if(targetComponent.component && targetComponent.component.properties){
+            that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+            that.runDelegates(form, targetComponent.component["properties"]);
+         }
+       });
     }
   }
   form.setPristine(true);
