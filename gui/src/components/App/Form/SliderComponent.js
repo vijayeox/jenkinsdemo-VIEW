@@ -1,10 +1,11 @@
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from 'formiojs/components/table/Table.form'
-
+import $ from 'jquery'
 export default class SliderComponent extends Base {
 	constructor(component, options, data) {
 		component.label = 'Slider'
 		super(component, options, data);
+		
 	}
 	static schema(...extend) {
 		return Base.schema({
@@ -36,18 +37,14 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-
-
-		
 		let content = '';
 		let list = "<ul class='ticks'>"
 		let range = (this.component.max - this.component.min)/this.component.step
 		let max = this.component.max
-		console.log(range)
 		
 		for(let i = this.component.min; i<= max ;i += this.component.step) {
-			let cell = `<li id="${this.component.key}-${i}" >`;
-			cell += `${i}`
+			let cell = `<li id="${this.component.key}-${i}" value="${i}">`;
+			// cell += `${i}`
 			cell += '</li>';
 			list += cell
 		}
@@ -57,9 +54,10 @@ export default class SliderComponent extends Base {
 		// Calling super.render will wrap it html as a component.
 		return super.render(`
 			<div class="range">
-				<span class="inputRange">
+				
 					<input type="range" min=${this.component.min} max=${max} step=${this.component.step} value=${this.dataValue} }>
-				</span>
+					<span class="range-thumb">$</span>
+			
 				<!-- You could generate the ticks based on your min, max & step values. -->
 				${content}
 			</div><br/>
@@ -74,8 +72,50 @@ export default class SliderComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) { 
-		window.addEventListener("input", (e) => this.updateValue(e.target.value))
-		return super.attach(element);
+
+		element.addEventListener("input", (e) => this.updateValue(e.target.value))
+		var sheet = document.createElement('style'),  
+			$rangeInput = $('input[type="range"]'),
+			prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'],
+			min = this.component.min,
+			max = this.component.max;
+	  
+			$rangeInput.each(function() {
+				
+				var $thumb = $(this).next('.range-thumb');
+				var tw = 80; // Thumb width. See CSS
+				$(this).on('input', function(el) {
+					sheet.textContent = getTrackStyle(this);
+					var curVal = el.target.value ;
+					var w = $(this).width();
+					var val = (curVal - min)/(max-min) * (w - tw);
+				  $thumb.css({left: val}).attr("data-val", curVal);
+				});
+				$(document).ready(function() {
+					sheet.textContent = getTrackStyle($rangeInput[0]);
+					var tw = 80; // Thumb width. See CSS
+					var curVal = $rangeInput[0].value ;
+					var w = $rangeInput.width();
+					var val = (curVal - min)/(max-min) * (w - tw);
+					
+					$thumb.css({left: val}).attr("data-val", curVal);
+	
+				})
+			});
+			  
+      	document.body.appendChild(sheet);
+		
+		var getTrackStyle = function (el) {  
+			var curVal = el.value,
+				val = (curVal - min)/(max-min) * 100,
+				style = '';
+			// Change background gradient
+			for (var i = 0; i < prefs.length; i++) {
+				style += 'input[type="range"]::-' + prefs[i] + '{background: linear-gradient(to right, #005eb8 0%, #005eb8 ' + val + '%, #002855 ' + val + '%, #002855 100%)}';
+			}
+			return style;
+		}
+			return super.attach(element);
 	}
 	/**
    * Set the value of the component into the dom elements.
@@ -85,8 +125,12 @@ export default class SliderComponent extends Base {
    */
 	
 	setValue(value) {
-		window.addEventListener("input", (e) => this.updateValue(e.target.value))
+		
 	}
 	static editForm = editForm;
 
 }
+
+
+    
+    
