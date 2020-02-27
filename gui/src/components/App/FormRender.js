@@ -580,9 +580,9 @@ class FormRender extends React.Component {
               }
             }
           }
-          form.submission = {
-            data: that.parseResponseData(that.addAddlData(that.state.data))
-          };
+          form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
+            form.setPristine(true);
+          });
           form.on("submit", async function(submission) {
             var form_data = that.cleanData(submission.data);
             var response_data = await that.saveForm(null, form_data);
@@ -598,24 +598,21 @@ class FormRender extends React.Component {
             form.emit("render");
             that.setState({ page: changed.page });
           });
-          form.on("nextPage", changed => { 
+          form.on("nextPage", changed => {
+            form.setPristine(true);
             form.emit("render");
             that.runDelegates(form,form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
             if (form.pages[changed.page]["properties"]["delegate"]) {
               if (form.pages[changed.page]["properties"]["delegate"]) {
                 var form_data = that.cleanData(form.submission.data);
-                that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data)
-                .then(response => {
+                that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data).then(response => {
                   if (response) {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.submission = {
-                        data: that.parseResponseData(
-                          that.addAddlData(response.data)
-                          )
-                      };
-                      // form.triggerChange();
+                      form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+                        form.setPristine(true);
+                      });
                     }
                   }
                 });
@@ -624,6 +621,7 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function(changed) {
+            form.setPristine(true);
             for (var dataItem in form.submission.data) {
               if (typeof form.submission.data[dataItem] == "object") {
                 if (form.submission.data[dataItem]) {
@@ -644,6 +642,7 @@ class FormRender extends React.Component {
               if (properties && (Object.keys(properties).length > 0)) {
                 if(component != undefined){
                   that.runProps(component,form,properties,changed.data);
+                  that.setPristine(true);
                 } else {
                   if(changed.changed != undefined){
                     that.runProps(changed.changed,form,changed.changed.properties,changed.data);
@@ -661,6 +660,7 @@ class FormRender extends React.Component {
                 breadcrumbs.style.display = "none";
               }
             }
+            form.setPristine(true);
             eachComponent(form.root.components,function(component) {
               if (component) {
                 if (component.component.properties &&component.component.properties.custom_list) {
@@ -673,11 +673,9 @@ class FormRender extends React.Component {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
                           component.setValue(response.data.userlist);
+                          form.setPristine(true);
                         }
                       });
-                      break;
-                      case "country_list":
-                      component.setValue(countryList);
                       break;
                       default:
                       break;
@@ -706,9 +704,10 @@ class FormRender extends React.Component {
               });
               if (form._form["properties"]) {
                 that.runDelegates(form, form._form["properties"]);
-              }
-              if (form.originalComponent["properties"]) {
-                that.runDelegates(form, form.originalComponent["properties"]);
+              } else {
+                if (form.originalComponent["properties"]) {
+                  that.runDelegates(form, form.originalComponent["properties"]);
+                }
               }
             }
           });
@@ -750,7 +749,7 @@ class FormRender extends React.Component {
                               }
                             }
                             form.submission = { data: that.parseResponseData(that.addAddlData(changed))};
-                            form.triggerChange();
+                            // form.triggerChange();
                             destinationComponent.triggerRedraw();
                           }
                         }
@@ -808,10 +807,15 @@ class FormRender extends React.Component {
                   that.callPipeline(properties["commands"], that.cleanData(changed)).then(response => {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.submission = {data: that.parseResponseData(that.addAddlData(response.data))};
-                      setTimeout(function(){
-                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(response.data)));
-                        },1000);
+                      try {
+                        var formData = that.parseResponseData(that.addAddlData(response.data));
+                        form.setSubmission({data:formData},{modified:false}).then(response2 =>{
+                          form.setPristine(true);
+                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+                        });
+                      } catch (e){
+                        console.log(e);
+                      }
                     }
                   });
                 }
@@ -866,7 +870,9 @@ runProps(component,form,properties,formdata){
       this.callDelegate(properties["delegate"],this.cleanData(formdata)).then(response => {
         if (response) {
           if (response.data) {
-            form.submission = { data: this.parseResponseData(this.addAddlData(response.data))};
+            var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
+            form.setSubmission(formData,{modified:false}).then(response2 =>{
+              form.setPristine(true);
             if (properties["post_delegate_refresh"]) {
               var targetList = properties["post_delegate_refresh"].split(',');
               targetList.map(item => {
@@ -876,19 +882,16 @@ runProps(component,form,properties,formdata){
                   targetComponent.triggerRedraw();
                 }
                 if(targetComponent.component['properties']){
-                 setTimeout(function(){
                   that.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-                },1000);
                } else {
                 if(targetComponent.component && targetComponent.component.properties){
-                 setTimeout(function(){
                   that.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-                },1000);
                } 
                 }
               }
             });
             }
+            });
           }
           this.core.make("oxzion/splash").destroy();
         }
@@ -995,6 +998,7 @@ runProps(component,form,properties,formdata){
     });
     }
   }
+  form.setPristine(true);
 }
 runDelegates(form, properties) {
   if (properties) {
@@ -1005,10 +1009,9 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.submission = {
-            data: form_data
-          };
-          form.triggerChange();
+          form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
+            form.setPristine(true);
+          });
         }
       });
     }
@@ -1017,55 +1020,57 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-            form.submission = {
-              data: this.parseResponseData(this.addAddlData(response.data))
-            };
-            form.triggerChange();
+            let form_data = this.parseResponseData(
+              this.addAddlData(response.data)
+              );
+            form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
+              form.setPristine(true);
+            });
           }
-          }
-        });
-      }
-      if (properties["commands"]) {
-        var that = this;
-        this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
-          this.core.make("oxzion/splash").destroy();
-          if (response.status == "success") {
-            if (response.data) {
-              form.submission = {data: that.parseResponseData(that.addAddlData(response.data))};
-              setTimeout(function(){
-                that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(response.data)));
-              },1000);
-            }
-          }
-        });
-      }
-      if (properties["payment_confirmation_page"]) {
-        var elements = document.getElementsByClassName("btn-wizard-nav-submit");
-        this.getPayment(form.submission.data).then(response => {
-          var responseArray = [];
+        }
+      });
+    }
+    if (properties["commands"]) {
+      var that = this;
+      this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
+        this.core.make("oxzion/splash").destroy();
+        if (response.status == "success") {
           if (response.data) {
-            var evt = new CustomEvent("paymentDetails", { cancelable: true,detail: response.data[0] });
-            form.element.dispatchEvent(evt);
+            form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+              form.setPristine(true);
+              that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+            });
           }
-        });
-        var that = this;
-        form.element.removeEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
-        form.element.addEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
-        form.element.addEventListener("paymentSuccess", function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          that.core.make("oxzion/splash").show();
-          var transactionIdComponent = form.getComponent("transaction_id");
-          that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
-            that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
-            var formsave = that.saveForm(form,that.state.currentForm.submission.data);
-            var transactionStatusComponent = form.getComponent("transaction_status");
-            transactionStatusComponent.setValue(e.detail.status);
-            if (formsave) {
-              that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
-            } else {
-              that.notif.current.notify("Error",e.detail.message,"danger");
+        }
+      });
+    }
+    if (properties["payment_confirmation_page"]) {
+      var elements = document.getElementsByClassName("btn-wizard-nav-submit");
+      this.getPayment(form.submission.data).then(response => {
+        var responseArray = [];
+        if (response.data) {
+          var evt = new CustomEvent("paymentDetails", { cancelable: true,detail: response.data[0] });
+          form.element.dispatchEvent(evt);
+        }
+      });
+      var that = this;
+      form.element.removeEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
+      form.element.addEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
+      form.element.addEventListener("paymentSuccess", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        that.core.make("oxzion/splash").show();
+        var transactionIdComponent = form.getComponent("transaction_id");
+        that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
+          that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
+          var formsave = that.saveForm(form,that.state.currentForm.submission.data);
+          var transactionStatusComponent = form.getComponent("transaction_status");
+          transactionStatusComponent.setValue(e.detail.status);
+          if (formsave) {
+            that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
+          } else {
+            that.notif.current.notify("Error",e.detail.message,"danger");
           }
           that.core.make("oxzion/splash").destroy();
         });
@@ -1139,7 +1144,9 @@ parseResponseData = data => {
     try {
       parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
     } catch (error) {
-      parsedData[key] = data[key];
+      if(data[key] != undefined && data[key] != ""){
+        parsedData[key] = data[key];
+      }
     }
   });
   return parsedData;
