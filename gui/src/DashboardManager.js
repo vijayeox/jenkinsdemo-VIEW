@@ -24,7 +24,8 @@ class Dashboard extends React.Component {
       uuid: "",
       dashList: [],
       inputs: {},
-      dashboardBody:""
+      dashboardBody: "",
+      loadEditor:false
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -62,28 +63,26 @@ class Dashboard extends React.Component {
     let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
-      if(inputs["dashname"] != undefined)
-      {
+      if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, that.setState({inputs, dashList: response.data, uuid: dash.uuid }))
+            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid }))
             : that.setState({ inputs: this.state.inputs })
         })
       }
-      else{
+      else {
         //setting default dashboard on page load
         response.data.map(dash => {
           dash.isdefault === "1" ?
-            (inputs["dashname"] = dash, that.setState({ dashboardBody:"",inputs, dashList: response.data, uuid: dash.uuid }))
+            (inputs["dashname"] = dash, that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid }))
             : null
         })
       }
 
     }
-    else
-    {
-      this.setState({dashboardBody:"NO DASHBOARD FOUND"})
+    else {
+      this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
   setTitle(title) { }
@@ -98,7 +97,9 @@ class Dashboard extends React.Component {
       value = JSON.parse(event.target.value)
 
       var element = document.getElementById("dashboard-editor-div");
-      element.classList.add("hide-dash-editor");
+      element != undefined ?
+        element.classList.add("hide-dash-editor")
+        : null
     }
     else {
       name = event.target.name
@@ -109,26 +110,30 @@ class Dashboard extends React.Component {
   }
 
   deleteDashboard() {
-    setTimeout(()=>{
+    setTimeout(() => {
       let inputs = this.state.inputs
-      inputs["dashname"]!=undefined?inputs["dashname"] = undefined:null
-      
+      inputs["dashname"] != undefined ? inputs["dashname"] = undefined : null
+
       this.setState({ inputs })
 
-    },1000)
+    }, 500)
   }
   editDashboard() {
     var element = document.getElementById("dashboard-editor-div");
-    element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
-    this.setState({ flipped: true, uuid: this.state.uuid })
+    element != undefined ?
+      element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
+      : null
+    this.setState({ flipped: true, uuid: this.state.uuid,loadEditor:true })
   }
 
   createDashboard() {
     var element = document.getElementById("dashboard-editor-div");
-    element.classList.remove("hide-dash-editor"); //fixes dropdown bug in mozilla firefox cused due to charts
+     element != undefined ?
+      element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
+      : null
     let inputs = { ...this.state.inputs }
     inputs["dashname"] !== undefined ? delete inputs.dashname : null
-    this.setState({ flipped: true, uuid: "", inputs: inputs })
+    this.setState({ flipped: true, uuid: "", inputs: inputs ,loadEditor:true})
   }
   render() {
     return (
@@ -225,12 +230,14 @@ class Dashboard extends React.Component {
               </>
               :
               <div className="dashboard-viewer-div" style={{ textAlign: "center", fontWeight: "bolder", fontSize: "20px" }}>
-               {this.state.dashboardBody}
-          </div>
+                {this.state.dashboardBody}
+              </div>
               : null}
           </FrontSide>
           <BackSide>
-            <div id="dashboard-editor-div">
+             <div id="dashboard-editor-div">
+               {
+                 this.state.loadEditor?
               <DashboardEditor
                 args={this.core}
                 notif={this.notif}
@@ -241,15 +248,19 @@ class Dashboard extends React.Component {
                   if (status === "Saved") {
                     //refreshing the dashboardData
                     this.fetchDashboards()
+                    
                   }
                   else if (status === "") {
                     var element = document.getElementById("dashboard-editor-div");
                     element.classList.add("hide-dash-editor");
                   }
-                  this.setState({ flipped: false })
+                  this.setState({ flipped: false ,loadEditor:false})
                 }}
-              />
+              /> 
+              :null
+  }
             </div>
+           
           </BackSide>
         </Flippy>
         <DashboardEditorModal
