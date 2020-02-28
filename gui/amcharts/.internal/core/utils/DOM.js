@@ -79,7 +79,6 @@ function isProtoElement(el) {
     }
 }
 export function getElement(el) {
-    console.log(el)
     if ($type.isString(el)) {
         var e = document.getElementById(el);
         if (e == null) {
