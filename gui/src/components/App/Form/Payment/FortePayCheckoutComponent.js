@@ -92,7 +92,6 @@ export default class FortePayCheckoutComponent extends Base {
                 "order_number"  : paymentData.order_number ,
                 "xdata_1"       : "that.form.element",
                 'method'        : that.data['paymentMethod'] ,
-                "billing_name"  : that.data['firstname']+" "+that.data['lastname'] ,
                 "callback"      : oncallback
             })
             // if(that.data['payment_method'] === 'schedule'){
@@ -248,8 +247,7 @@ export default class FortePayCheckoutComponent extends Base {
                         Prefix: "$",
                         id:'fortepay-amount',
                         placeholder:'Amount to be paid',
-                        hideLabel: 'true',
-                        value: that.data['current_payable_amount']
+                        hideLabel: 'true'
                     }
                 }
             });
