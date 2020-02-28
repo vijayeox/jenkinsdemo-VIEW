@@ -78,26 +78,39 @@
     height: 25px;
   }
 
+  .k-filtercell {
+    .k-datepicker {
+      height: 35px;
+      .k-dateinput-wrap {
+        input {
+          font-size: small !important;
+          height: 34px;
+        }
+      }
+    }
+  }
+
   .k-grid-toolbar {
     .k-dropdown-button {
       float: right;
       margin-right: 5px;
     }
   }
-  .k-pager-numbers li a.k-state-selected{
-  color: #fff;
-  background-color: #275362;
-  border-color: #275362;
+  .k-pager-numbers li a.k-state-selected {
+    color: #fff;
+    background-color: #275362;
+    border-color: #275362;
   }
-  .k-pager-numbers li a{
-  color: #275362;
+  .k-pager-numbers li a {
+    color: #275362;
   }
-   .page-item.active .page-link{
+  .page-item.active .page-link {
     background-color: #275362;
     color: #fff;
     border-color: #275362;
   }
-  .k-pager-wrap .k-link, .k-pager-wrap .k-pager-nav{
+  .k-pager-wrap .k-link,
+  .k-pager-wrap .k-pager-nav {
     color: #275362;
   }
 
