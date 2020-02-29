@@ -37,7 +37,7 @@
     "deepmerge": "^4.2.2",
     "file-loader": "^4.3.0",
     "file-upload-with-preview": "^4.0.2",
-    "formiojs": "4.8.0",
+    "formiojs": "4.9.0-rc.2",
     "history": "^4.10.1",
     "jquery": "^3.4.0",
     "lodash": "^4.17.15",

@@ -1,7 +1,7 @@
 import React from "react";
-import Notification from "./../../Notification";
-
 import { toODataString } from "@progress/kendo-data-query";
+import moment from "moment";
+import Notification from "./../../Notification";
 import LoadingPanel from "./LoadingPanel";
 
 export class DataLoader extends React.Component {
@@ -14,24 +14,6 @@ export class DataLoader extends React.Component {
     };
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
-  }
-
-  async getData(url) {
-    let paramSeperator = url!==undefined?url.includes("?") ? "&" : "?":"&";
-    if (typeof this.core == "undefined") {
-      let response = await fetch(url, this.init);
-      let json = await response.json();
-      let data = { data: json.value, total: json["@odata.count"] };
-      return data;
-    } else {
-      let helper = this.core.make("oxzion/restClient");
-      let route =
-        Object.keys(this.props.dataState).length === 0
-          ? url
-          : url + paramSeperator + "filter=[" + JSON.stringify(this.props.dataState) + "]";
-      let data = await helper.request("v1", "/" + route, {}, "get");
-      return data;
-    }
   }
 
   componentDidUpdate(prevProps) {
@@ -53,6 +35,54 @@ export class DataLoader extends React.Component {
       });
     }
   }
+
+  async getData(url) {
+    if (typeof this.core == "undefined") {
+      let response = await fetch(url, this.init);
+      let json = await response.json();
+      let data = { data: json.value, total: json["@odata.count"] };
+      return data;
+    } else {
+      let helper = this.core.make("oxzion/restClient");
+      let paramSeperator =
+        url !== undefined ? (url.includes("?") ? "&" : "?") : "&";
+      if (Object.keys(this.props.dataState).length === 0) {
+        var route = url;
+      } else {
+        var filterConfig = this.prepareQueryFilters(this.props.dataState);
+        var route =
+          url +
+          paramSeperator +
+          "filter=[" +
+          JSON.stringify(filterConfig) +
+          "]";
+      }
+      let data = await helper.request("v1", "/" + route, {}, "get");
+      return data;
+    }
+  }
+
+  prepareQueryFilters = filterConfig => {
+    var gridConfig = JSON.parse(JSON.stringify(filterConfig));
+    this.props.columnConfig.map(ColumnItem => {
+      if (ColumnItem.filterFormat && gridConfig.filter) {
+        gridConfig.filter.filters.map((filterItem, i) => {
+          if (filterItem.field == ColumnItem.field) {
+            var result = moment(gridConfig.filter.filters[i].value).format(
+              ColumnItem.filterFormat
+            );
+            if (
+              gridConfig.filter.filters[i].value &&
+              result != "Invalid date"
+            ) {
+              gridConfig.filter.filters[i].value = result;
+            }
+          }
+        });
+      }
+    });
+    return gridConfig;
+  };
 
   refresh = temp => {
     this.getData(this.state.url).then(response => {

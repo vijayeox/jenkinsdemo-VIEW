@@ -53,7 +53,7 @@ export class BosAdapter extends ServiceProvider {
             greet = 'Good Evening';
             //console.log(this.core.make('oxzion/profile').get().UserInfo();
             var userDetails = this.core.make('oxzion/profile').get();
-            this.core.make('osjs/notification', {  timeout:10000,icon:userDetails['key']['icon'],title:"Welcome to 3.0!",message: 'Hello and '+greet+" "+userDetails['key']['firstname']+'!'})
+            this.core.make('osjs/notification', {  timeout:10000,icon:userDetails['key']['icon'],title:"Welcome to EOS!",message: 'Hello and '+greet+" "+userDetails['key']['firstname']+'!'})
         });
 
         this.core.on('oxzion/application:launch', (params) =>{

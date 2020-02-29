@@ -40,6 +40,7 @@ export default class RadioCardComponent extends Base {
                         <div class="card card-input">
                             <div class="card-body" style="text-align: center">
                                 ${this.component.paymentTerm[i]}
+                                Months
                             </div>
                         </div>
                     </label>`

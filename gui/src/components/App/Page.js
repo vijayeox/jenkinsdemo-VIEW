@@ -71,10 +71,6 @@ class Page extends React.Component {
     });
   }
 
-  renderEmpty() {
-    return [<React.Fragment key={1} />];
-  }
-
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function(key, index) {
@@ -303,7 +299,9 @@ class Page extends React.Component {
               columnConfig.push({
                 title: "Actions",
                 cell: e => this.renderButtons(e, itemContent.actions),
-                filterCell: e => this.renderEmpty()
+                filterCell: {
+                  type:"empty"
+                }
               });
             }
           }
@@ -343,7 +341,9 @@ class Page extends React.Component {
               columnConfig.push({
                 title: "Actions",
                 cell: e => this.renderButtons(e, itemContent.actions),
-                filterCell: e => this.renderEmpty()
+                filterCell: {
+                  type:"empty"
+                }
               });
             }
           }

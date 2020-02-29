@@ -14,6 +14,11 @@
       color: darkslategray;
     }
   }
+  .formio-error-wrapper{
+  background-color: transparent;
+  border-color: transparent;
+    padding: 0;
+  }
   .page-link {
     color: #275362;
   }
@@ -71,21 +76,21 @@
   
   .inputRange input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
-    height: 2px;
+    height: 3px;
     cursor: pointer;
     background: #b2b2b2;
   }
   
   .inputRange input[type=range]::-moz-range-track {
     width: 100%;
-    height: 2px;
+    height: 3px;
     cursor: pointer;
     background: #b2b2b2;
   }
   
   .inputRange input[type=range]::-ms-track {
     width: 100%;
-    height: 2px;
+    height: 3px;
     cursor: pointer;
     background: #b2b2b2;
   }
@@ -157,6 +162,7 @@
     line-height: 50px;
     border-radius: 50%;
     margin-bottom: 20px;
+    cursor: pointer;
   }
   
   .ticks .active {
@@ -169,5 +175,30 @@
   .ticks .active.selected::before {
     display: none;
   }
+  .labels {
+    width: 100%;
+  }
+
+  .card-input-element {
+      display: none;
+  }
+
+  .card-input {
+      margin: 10px;
+      padding: 00px;
+      box-shadow: 0 0 1px 1px #37adbf;
+      color: #37adbf;
+  }
+
+  .card-input:hover {
+      cursor: pointer;
+  }
+
+  .card-input-element:checked + .card-input {
+      box-shadow: 0 0 1px 1px #37adbf;
+      color : #fff;
+      background-color: #37adbf;
+  }
+
 
 }
