@@ -45,10 +45,44 @@ class DashboardEditor extends React.Component {
                         }
                     );
                     break;
-                default:
-                    console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
         };
+    }
+
+    widgetDrillDownMessageHandler = (event) => {
+        if (event['action'] !== 'oxzion-widget-drillDown') {
+            return;
+        }
+
+        //let messageContent = {
+        //    'action':'oxzion-widget-drillDown',
+        //    'widgetId':widgetElement.getAttribute('data-oxzion-widget-id'),
+        //    'elementId':widgetElement.getAttribute('id'),
+        //    'filter':filterString
+        //};
+        //if (drillDownConfig['replaceWith']) {
+        //    messageContent['replaceWith'] = drillDownConfig['replaceWith'];
+        //}
+
+        let elementId = event['elementId'];
+        let widgetId = event['widgetId'];
+        let chart = this.renderedCharts[elementId];
+        if (chart) {
+            if (chart.dispose) {
+                chart.dispose();
+            }
+            this.renderedCharts[elementId] = null;
+        }
+        let replaceWidgetId = event['replaceWith'];
+        if (replaceWidgetId) {
+            widgetId = replaceWidgetId;
+            let iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
+            let iframeWindow = iframeElement.contentWindow;
+            let iframeDocument = iframeWindow.document;
+            let widgetElement = iframeDocument.querySelector('#' + elementId);
+            widgetElement.setAttribute('data-oxzion-wiget-id', replaceWidgetId);
+        }
+        this.updateWidget(elementId, widgetId);
     }
 
     inputChanged = (e) => {
@@ -370,6 +404,7 @@ class DashboardEditor extends React.Component {
 
     componentDidMount() {
         window.addEventListener('message', this.editorDialogMessageHandler, false);
+        window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
         JavascriptLoader.loadScript(this.getJsLibraryList());
     }
 
@@ -384,6 +419,7 @@ class DashboardEditor extends React.Component {
             }
         }
         window.removeEventListener('message', this.editorDialogMessageHandler, false);
+        window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
         if (this.editor) {
             this.editor.destroy();
         }
