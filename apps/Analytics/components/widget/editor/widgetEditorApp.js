@@ -427,7 +427,7 @@ class WidgetEditorApp extends React.Component {
                                     </button>
                                 </div>
                             } */}
-                            {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&this.state.widgetOwner) &&
+                            {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&this.state.widgetOwner==1) &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
                                         onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
