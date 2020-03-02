@@ -66,21 +66,31 @@ export class DataLoader extends React.Component {
     var gridConfig = JSON.parse(JSON.stringify(filterConfig));
     this.props.columnConfig.map(ColumnItem => {
       if (ColumnItem.filterFormat && gridConfig.filter) {
-        gridConfig.filter.filters.map((filterItem, i) => {
-          if (filterItem.field == ColumnItem.field) {
-            var result = moment(gridConfig.filter.filters[i].value).format(
+        gridConfig.filter.filters.map((filterItem1, i) => {
+          if (filterItem1.field == ColumnItem.field) {
+            var result = moment(filterItem1.value).format(
               ColumnItem.filterFormat
             );
-            if (
-              gridConfig.filter.filters[i].value &&
-              result != "Invalid date"
-            ) {
+            if (filterItem1.value && result != "Invalid date") {
               gridConfig.filter.filters[i].value = result;
             }
           }
         });
       }
+      if (ColumnItem.multiFieldFilter && gridConfig.filter) {
+        gridConfig.filter.filters.map((filterItem2, i) => {
+          if (filterItem2.field == ColumnItem.field) {
+            ColumnItem.multiFieldFilter.map(multiFieldItem => {
+              let newFilter = JSON.parse(JSON.stringify(filterItem2));
+              newFilter.field = multiFieldItem;
+              gridConfig.filter.filters.push(newFilter);
+            });
+            gridConfig.filter.logic = "or";
+          }
+        });
+      }
     });
+    console.log(gridConfig);
     return gridConfig;
   };
 

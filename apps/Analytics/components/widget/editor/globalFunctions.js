@@ -47,7 +47,11 @@ window.onDialogEvent = function(dialogEvent) {
     switch(dialogEvent.name) {
         case 'load':
             window.addEventListener('message', function(event) {
-                window.handleDataResponse(event.data);
+                if (event.data.data!=undefined && 'permissions' in event.data.data){
+                    window.sendAllPermissions(event.data.data)
+                }
+                else
+                    window.handleDataResponse(event.data);
             }, false);
             //Dialog 'load' event contains reference to the editor opening this dialog.
             window.oxzionEditor = dialogEvent.editor;
@@ -132,6 +136,7 @@ window.postDataRequest = function(url, params, method) {
     return deferred.promise;
 }
 
+
 window.handleDataResponse = function(response) {
     let corrId = response.params[OXZION_CORRELATION_ID];
     if (!corrId) {
@@ -154,4 +159,34 @@ window.handleDataResponse = function(response) {
         break;
     }
 }
+
+// sends message to dashboardEditor
+window.getAllPermission = function(){
+    let deferred = new Deferred();
+    let params={}
+    params[OXZION_CORRELATION_ID] = deferred.corrId;
+    var message = {
+        'action':'permissions',
+        'params':params 
+    };
+    window.top.postMessage(message);
+    return deferred.promise
+}
+
+window.sendAllPermissions = function(response){
+    let corrId = response.corrid;
+    if (!corrId) {
+        throw `Response object does not contain ${OXZION_CORRELATION_ID} parameter.`;
+    }
+    delete response.corrid;
+    let deferred = Deferred.getFromRegistry(corrId);
+    if (!deferred) {
+        console.warn('No deferred instance found. Unexpected REST response found:');
+        console.warn(response);
+        return;
+    }
+     deferred.resolve(response);
+}
+
+
 
