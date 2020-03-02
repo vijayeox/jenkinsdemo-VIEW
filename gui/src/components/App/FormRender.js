@@ -794,6 +794,9 @@ class FormRender extends React.Component {
                 }
               }
             }
+            if (event.type == "triggerFormChange") {
+              form.triggerChange();
+            }
             if (event.type == "callPipeline") {
               var component = event.component;
               if (component) {
