@@ -28,7 +28,7 @@ class WidgetEditorApp extends React.Component {
             showModal: false,
             widgetName: '',
             widgetPermissions: {},
-            widgetOwner:0,
+            widgetOwner: 0,
             visualizationID: '',
             errors: {
             },
@@ -58,14 +58,13 @@ class WidgetEditorApp extends React.Component {
         let thiz = this;
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
             then(function (responseData) {
-                console.log(responseData)
                 let widget = responseData.widget;
                 thiz.setState((state) => {
                     widget.align = state.widget.align; //Retain align in widget object.
                     state.widget = widget;
                     state.widgetName = widget.name;
                     state.version = widget.version;
-                    state.widgetOwner=widget.is_owner
+                    state.widgetOwner = widget.is_owner
                     return state;
                 },
                     () => {
@@ -204,7 +203,6 @@ class WidgetEditorApp extends React.Component {
                 //permissions are sent from dashboardEditor
                 const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response.permissions
                 thiz.setState({ widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
-                console.log(thiz.state.widgetPermissions)
             })
             .catch(err => {
                 console.log(err)
@@ -427,7 +425,7 @@ class WidgetEditorApp extends React.Component {
                                     </button>
                                 </div>
                             } */}
-                            {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&this.state.widgetOwner) &&
+                            {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && this.state.widgetOwner == 1) &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
                                         onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
@@ -437,7 +435,7 @@ class WidgetEditorApp extends React.Component {
                             }
 
                             <div className="col-1">
-                                {this.state.widget.uuid &&
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
                                         <button type="button" className="btn btn-primary add-series-button" title="Copy widget"
                                             onClick={this.copyWidget} disabled={!this.state.readOnly}>
