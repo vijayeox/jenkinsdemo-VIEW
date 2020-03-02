@@ -50,22 +50,13 @@ class DashboardEditor extends React.Component {
     }
 
     widgetDrillDownMessageHandler = (event) => {
-        if (event['action'] !== 'oxzion-widget-drillDown') {
+        let data = event['data'];
+        if (data['action'] !== 'oxzion-widget-drillDown') {
             return;
         }
 
-        //let messageContent = {
-        //    'action':'oxzion-widget-drillDown',
-        //    'widgetId':widgetElement.getAttribute('data-oxzion-widget-id'),
-        //    'elementId':widgetElement.getAttribute('id'),
-        //    'filter':filterString
-        //};
-        //if (drillDownConfig['replaceWith']) {
-        //    messageContent['replaceWith'] = drillDownConfig['replaceWith'];
-        //}
-
-        let elementId = event['elementId'];
-        let widgetId = event['widgetId'];
+        let elementId = data['elementId'];
+        let widgetId = data['widgetId'];
         let chart = this.renderedCharts[elementId];
         if (chart) {
             if (chart.dispose) {
@@ -73,14 +64,14 @@ class DashboardEditor extends React.Component {
             }
             this.renderedCharts[elementId] = null;
         }
-        let replaceWidgetId = event['replaceWith'];
+        let replaceWidgetId = data['replaceWith'];
         if (replaceWidgetId) {
             widgetId = replaceWidgetId;
             let iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
             let iframeWindow = iframeElement.contentWindow;
             let iframeDocument = iframeWindow.document;
             let widgetElement = iframeDocument.querySelector('#' + elementId);
-            widgetElement.setAttribute('data-oxzion-wiget-id', replaceWidgetId);
+            widgetElement.setAttribute('data-oxzion-widget-id', replaceWidgetId);
         }
         this.updateWidget(elementId, widgetId);
     }

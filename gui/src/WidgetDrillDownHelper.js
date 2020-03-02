@@ -1,10 +1,12 @@
 
 class WidgetDrillDownHelper {
+    static OXZION_DRILL_DOWN_ATTRIBUTE = 'data-oxzion-drillDown';
+
     static broadcastDrillDown(widgetElement, dataContext) {
-        let drillDownConfig = widgetElement.getAttribute('data-oxzion-drillDown');
+        let drillDownConfig = widgetElement.getAttribute(OXZION_DRILL_DOWN_ATTRIBUTE);
         if (!drillDownConfig) {
             let widgetId = widgetElement.getAttribute('oxzion-widget-id');
-            console.warn(`"data-oxzion-drillDown" is not configured for widget id ${widgetId}.`);
+            console.warn(`"${WidgetDrillDownHelper.OXZION_DRILL_DOWN_ATTRIBUTE}" is not configured for widget id ${widgetId}.`);
             return;
         }
         drillDownConfig = JSON.parse(drillDownConfig);
@@ -146,7 +148,7 @@ console.log('Hit function', evt);
     }
 
     static retrieveDrillDownConfiguration(element) {
-        let jsonString = element.getAttribute('data-oxzion-drillDown');
+        let jsonString = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_ATTRIBUTE);
         if (!jsonString) {
             return null;
         }
@@ -163,7 +165,7 @@ console.log('Hit function', evt);
             return false;
         }
         let jsonString = JSON.stringify(drillDown);
-        element.setAttribute('data-oxzion-drillDown', jsonString);
+        element.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_ATTRIBUTE, jsonString);
         return true;
     }
 }

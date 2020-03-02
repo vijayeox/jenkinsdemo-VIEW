@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import WidgetRenderer from "./WidgetRenderer";
 
-
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -67,12 +66,14 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       this.callUpdateGraph();
     }
+    window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentWillUnmount() {
     if (this.chart) {
       this.chart.dispose();
     }
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentDidUpdate(prevProps) {
@@ -104,6 +105,30 @@ class Dashboard extends Component {
         })
     }
   };
+
+    widgetDrillDownMessageHandler = (event) => {
+        let data = event.data;
+        if (data['action'] !== 'oxzion-widget-drillDown') {
+            return;
+        }
+
+        let elementId = data['elementId'];
+        let widgetId = data['widgetId'];
+//        let chart = this.renderedCharts[elementId];
+//        if (chart) {
+//            if (chart.dispose) {
+//                chart.dispose();
+//            }
+//            this.renderedCharts[elementId] = null;
+//        }
+        let replaceWidgetId = data['replaceWith'];
+        if (replaceWidgetId) {
+            let widgetElement = document.querySelector('#' + elementId);
+            widgetId = replaceWidgetId;
+            widgetElement.setAttribute('data-oxzion-widget-id', replaceWidgetId);
+        }
+        thiz.callUpdateGraph();
+    }
 
   render() {
     return <div dangerouslySetInnerHTML={{ __html: this.state.htmlData }} />;
