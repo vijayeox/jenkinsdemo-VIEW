@@ -45,6 +45,14 @@ class DashboardEditor extends React.Component {
                         }
                     );
                     break;
+                case 'permissions':
+                    thisInstance.userProfile = thisInstance.core.make("oxzion/profile").get();
+                   let permissions=thisInstance.userProfile.key.privileges;
+                    let preparedData={
+                        "permissions":permissions,
+                        "corrid":eventData.params["OX_CORR_ID"]
+                    }
+                    editorDialog.postMessage({"data":preparedData},'*')
                 default:
                     console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
