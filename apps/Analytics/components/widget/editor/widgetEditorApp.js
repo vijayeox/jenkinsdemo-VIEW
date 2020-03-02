@@ -58,7 +58,6 @@ class WidgetEditorApp extends React.Component {
         let thiz = this;
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
             then(function (responseData) {
-                console.log(responseData)
                 let widget = responseData.widget;
                 thiz.setState((state) => {
                     widget.align = state.widget.align; //Retain align in widget object.
@@ -204,7 +203,6 @@ class WidgetEditorApp extends React.Component {
                 //permissions are sent from dashboardEditor
                 const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response.permissions
                 thiz.setState({ widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
-                console.log(thiz.state.widgetPermissions)
             })
             .catch(err => {
                 console.log(err)
