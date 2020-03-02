@@ -39,7 +39,7 @@ class FormRender extends React.Component {
       paymentDetails: null,
       hasPayment: false,
       content: this.props.content,
-      data: this.props.data,
+      data: this.addAddlData(this.props.data),
       page: this.props.page,
       currentForm: null,
       formLevelDelegateCalled: false
@@ -494,6 +494,7 @@ class FormRender extends React.Component {
         });
       }
       if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+        console.log(that.state);
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({
@@ -1017,21 +1018,6 @@ runDelegates(form, properties) {
       });
     }
     if (properties["commands"]) {
-      this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
-        this.core.make("oxzion/splash").destroy();
-        if (response.status == "success") {
-          if (response.data) {
-            let form_data = this.parseResponseData(
-              this.addAddlData(response.data)
-              );
-            form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
-              form.setPristine(true);
-            });
-          }
-        }
-      });
-    }
-    if (properties["commands"]) {
       var that = this;
       this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
         this.core.make("oxzion/splash").destroy();
@@ -1179,6 +1165,7 @@ componentDidMount() {
   if (this.props.pipeline) {
     this.loadFormWithCommands(this.props.pipeline);
   }
+
   this.loadWorkflow();
 }
 async loadFormWithCommands(commands) {
