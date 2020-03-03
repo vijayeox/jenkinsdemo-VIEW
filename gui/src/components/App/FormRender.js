@@ -883,7 +883,7 @@ postDelegateRefresh(form,properties){
     targetList.map(item => {
      var targetComponent = form.getComponent(item);
      if(targetComponent.component && targetComponent.component["properties"]){
-      if(targetComponent.type == 'datagrid'){
+      if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
         targetComponent.triggerRedraw();
       }
       if(targetComponent.component['properties']){
@@ -1188,13 +1188,16 @@ componentDidMount() {
       });
       
     });
-  }
-  if (this.props.pipeline) {
+  }else if (this.props.pipeline) {
     this.loadFormWithCommands(this.props.pipeline).then(response=>{
       this.createForm().then(form => {
         this.loadWorkflow(form);
       });
     });
+  }else{
+      this.createForm().then(form => {
+        this.loadWorkflow(form);
+      });
   }
 }
 async loadFormWithCommands(commands) {
