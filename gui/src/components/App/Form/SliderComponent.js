@@ -5,7 +5,7 @@ export default class SliderComponent extends Base {
 	constructor(component, options, data) {
 		component.label = 'Slider'
 		super(component, options, data);
-		
+	
 	}
 	static schema(...extend) {
 		return Base.schema({
@@ -37,13 +37,14 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-		let content = '';
-		let list = "<ul class='ticks'>"
-		let range = (this.component.max - this.component.min)/this.component.step
-		let max = this.component.max
 		
-		for(let i = this.component.min; i<= max ;i += this.component.step) {
-			let cell = `<li id="${this.component.key}-${i}" value="${i}">`;
+		let content = '';
+		let list = "<ul class='ticks' id='tickmarks'>";
+		var max = this.component.sliderRange.length-1,
+			min = 0;
+			console.log(max)
+		for(let i = min; i<= max ;i++) {
+			let cell = `<li id="${this.component.key}-${i}" value="${this.component.sliderRange[i]}">`;
 			// cell += `${i}`
 			cell += '</li>';
 			list += cell
@@ -54,12 +55,10 @@ export default class SliderComponent extends Base {
 		// Calling super.render will wrap it html as a component.
 		return super.render(`
 			<div class="range">
-				
-					<input type="range" min=${this.component.min} max=${max} step=${this.component.step} value=${this.dataValue} }>
-					<span class="range-thumb">$</span>
-			
+				<input type="range" min="${min}" max="${max}" list="tickmarks">
+				<span class="range-thumb">$</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
-				${content}
+				
 			</div><br/>
 		`);
 		
@@ -73,13 +72,14 @@ export default class SliderComponent extends Base {
    */
 	attach(element) { 
 
-		element.addEventListener("input", (e) => this.updateValue(e.target.value))
 		var sheet = document.createElement('style'),  
 			$rangeInput = $('input[type="range"]'),
 			prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'],
-			min = this.component.min,
-			max = this.component.max;
-	  
+			min = 0,
+			max = this.component.sliderRange.length-1,
+			sliderRange = this.component.sliderRange;
+		element.addEventListener("input", (e) => this.updateValue(sliderRange[e.target.value]))
+		
 			$rangeInput.each(function() {
 				
 				var $thumb = $(this).next('.range-thumb');
@@ -89,7 +89,7 @@ export default class SliderComponent extends Base {
 					var curVal = el.target.value ;
 					var w = $(this).width();
 					var val = (curVal - min)/(max-min) * (w - tw);
-				  $thumb.css({left: val}).attr("data-val", curVal);
+				  $thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
 				});
 				$(document).ready(function() {
 					sheet.textContent = getTrackStyle($rangeInput[0]);
@@ -98,7 +98,7 @@ export default class SliderComponent extends Base {
 					var w = $rangeInput.width();
 					var val = (curVal - min)/(max-min) * (w - tw);
 					
-					$thumb.css({left: val}).attr("data-val", curVal);
+					$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
 	
 				})
 			});

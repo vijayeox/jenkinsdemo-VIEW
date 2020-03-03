@@ -39,7 +39,7 @@ class FormRender extends React.Component {
       paymentDetails: null,
       hasPayment: false,
       content: this.props.content,
-      data: this.props.data,
+      data: this.addAddlData(this.props.data),
       page: this.props.page,
       currentForm: null,
       formLevelDelegateCalled: false
@@ -496,6 +496,7 @@ class FormRender extends React.Component {
         });
       }
       if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+        console.log(that.state);
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({
@@ -609,7 +610,6 @@ class FormRender extends React.Component {
             that.setState({ page: changed.page });
           });
           form.on("nextPage", changed => {
-            form.setPristine(true);
             form.emit("render");
             that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
@@ -711,13 +711,17 @@ class FormRender extends React.Component {
               that.setState({
                 formLevelDelegateCalled: true
               });
+              setTimeout(function (){
               if (form._form["properties"]) {
                 that.runDelegates(form, form._form["properties"]);
+                that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
               } else {
                 if (form.originalComponent["properties"]) {
                   that.runDelegates(form, form.originalComponent["properties"]);
+                  that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
                 }
               }
+              },1000)
             }
           });
           form.on("customEvent", function (event) {
@@ -807,6 +811,9 @@ class FormRender extends React.Component {
                 }
               }
             }
+            if (event.type == "triggerFormChange") {
+              form.triggerChange();
+            }
             if (event.type == "callPipeline") {
               var component = event.component;
               if (component) {
@@ -870,6 +877,25 @@ triggerComponent(form,targetProperties){
   }
   )
 };
+
+postDelegateRefresh(form,properties){
+  var targetList = properties["post_delegate_refresh"].split(',');
+    targetList.map(item => {
+     var targetComponent = form.getComponent(item);
+     if(targetComponent.component && targetComponent.component["properties"]){
+      if(targetComponent.type == 'datagrid'){
+        targetComponent.triggerRedraw();
+      }
+      if(targetComponent.component['properties']){
+        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
+     } else {
+      if(targetComponent.component && targetComponent.component.properties){
+        this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
+     } 
+      }
+    }
+  });
+}
 runProps(component,form,properties,formdata){
   if(formdata.data){
     formdata = formdata.data;
@@ -883,24 +909,8 @@ runProps(component,form,properties,formdata){
           if (response.data) {
             var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
             form.setSubmission(formData,{modified:false}).then(response2 =>{
-              form.setPristine(true);
             if (properties["post_delegate_refresh"]) {
-              var targetList = properties["post_delegate_refresh"].split(',');
-              targetList.map(item => {
-               var targetComponent = form.getComponent(item);
-               if(targetComponent.component && targetComponent.component["properties"]){
-                if(targetComponent.type == 'datagrid'){
-                  targetComponent.triggerRedraw();
-                }
-                if(targetComponent.component['properties']){
-                  that.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-               } else {
-                if(targetComponent.component && targetComponent.component.properties){
-                  that.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-               } 
-                }
-              }
-            });
+              this.postDelegateRefresh(form,properties);
             }
             });
           }
@@ -910,6 +920,7 @@ runProps(component,form,properties,formdata){
     }
     if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
+        console.log(targetComponent);
         var value;
         if (component.dataValue != undefined && targetComponent != undefined) {
           value = formdata[component.dataValue];
@@ -985,6 +996,9 @@ runProps(component,form,properties,formdata){
             }
           }
         }
+          if(targetComponent && targetComponent.component && targetComponent.component.properties){
+            that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+          }
       }
       if (properties["negate"]) {
         var targetComponent = form.getComponent(properties["negate"]);
@@ -1011,7 +1025,6 @@ runProps(component,form,properties,formdata){
        });
     }
   }
-  form.setPristine(true);
 }
 runDelegates(form, properties) {
   if (properties) {
@@ -1022,24 +1035,7 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
-            form.setPristine(true);
-          });
-        }
-      });
-    }
-    if (properties["commands"]) {
-      this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
-        this.core.make("oxzion/splash").destroy();
-        if (response.status == "success") {
-          if (response.data) {
-            let form_data = this.parseResponseData(
-              this.addAddlData(response.data)
-              );
-            form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
-              form.setPristine(true);
-            });
-          }
+          form.setSubmission({data:form_data},{modified:false});
         }
       });
     }
@@ -1049,9 +1045,12 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-            form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
-              form.setPristine(true);
-              that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+              if (properties["post_delegate_refresh"]) {
+                this.postDelegateRefresh(form,properties);
+              }else{
+                that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data))); 
+              }  
             });
           }
         }
@@ -1157,7 +1156,7 @@ parseResponseData = data => {
     try {
       parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
     } catch (error) {
-      if(data[key] != undefined && data[key] != ""){
+      if(data[key] != undefined){
         parsedData[key] = data[key];
       }
     }

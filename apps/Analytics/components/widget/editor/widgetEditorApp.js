@@ -25,8 +25,11 @@ class WidgetEditorApp extends React.Component {
                 uuid: widgetConfiguration ? widgetConfiguration.id : null,
                 type: null
             },
-            showModal:false,
+            showModal: false,
             widgetName: '',
+            widgetPermissions: {},
+            widgetOwner: 0,
+            visualizationID: '',
             errors: {
             },
             visualizationOptions: [],
@@ -61,6 +64,7 @@ class WidgetEditorApp extends React.Component {
                     state.widget = widget;
                     state.widgetName = widget.name;
                     state.version = widget.version;
+                    state.widgetOwner = widget.is_owner
                     return state;
                 },
                     () => {
@@ -107,7 +111,7 @@ class WidgetEditorApp extends React.Component {
 
         window.postDataRequest('analytics/widget/' + this.state.widget.uuid + "?version=" + this.state.widget.version, {}, "delete")
             .then(function (response) {
-                
+
                 //fetch the updated widget list after delete
                 window.postDataRequest('analytics/widget')
                     .then(function (response) {
@@ -124,26 +128,26 @@ class WidgetEditorApp extends React.Component {
                                 uuid: null,
                                 type: null
                             },
-                            showModal:false
+                            showModal: false
                         })
 
                     })
                     .catch(function (response) {
-                        thiz.setState({showModal:false})
+                        thiz.setState({ showModal: false })
                         Swal.fire({
                             type: 'error',
                             title: 'Oops ...',
                             text: 'Failed to load widgets. Please try after some time.'
                         });
                     });
-                    Swal.fire({
-                        type: 'success',
-                        title: 'Operation Successfull',
-                        text: 'Widget Deleted Successfully'
-                    });
+                Swal.fire({
+                    type: 'success',
+                    title: 'Operation Successfull',
+                    text: 'Widget Deleted Successfully'
+                });
             })
             .catch(function (response) {
-                thiz.setState({showModal:false})
+                thiz.setState({ showModal: false })
                 Swal.fire({
                     type: 'error',
                     title: 'Operation Failed',
@@ -181,16 +185,24 @@ class WidgetEditorApp extends React.Component {
 
         window.postDataRequest('analytics/visualization')
             .then(function (response) {
-                console.log(response)
                 let visualizationData = response.data;
                 let visualList = []
                 visualList = visualizationData.map(visualization => {
                     return (
-                        <option key={visualization.uuid} value={visualization.type}>{visualization.name}</option>
+                        <option key={visualization.uuid} data-key={visualization.uuid} value={visualization.type}>{visualization.name}</option>
                     )
                 });
-                console.log(visualList)
                 thiz.setState({ visualizationOptions: visualList })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+        window.getAllPermission()
+            .then(function (response) {
+                //permissions are sent from dashboardEditor
+                const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response.permissions
+                thiz.setState({ widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
             })
             .catch(err => {
                 console.log(err)
@@ -199,6 +211,7 @@ class WidgetEditorApp extends React.Component {
         if (thiz.state.widget.uuid) {
             thiz.loadWidget(thiz.state.widget.uuid);
         }
+
     }
 
     updateWidgetState = (value) => {
@@ -304,13 +317,20 @@ class WidgetEditorApp extends React.Component {
     saveWidget = () => {
         let state = this.state;
         let editorState = this.refs.editor.getState();
+
         let params = {
             'configuration': editorState.configuration,
             'expression': editorState.expression,
             'queries': editorState.queries,
             'name': state.widgetName
         };
-        return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
+        if (this.state.flipped) {
+            params["visualization"] = this.state.visualizationID
+            return window.postDataRequest('analytics/widget', params, 'post');
+        }
+        else {
+            return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
+        }
     }
 
     //Called in globalFunctions.js to ensure data is clean when the user clicks "Ok" button of dialog.
@@ -352,14 +372,19 @@ class WidgetEditorApp extends React.Component {
         return !this.state.readOnly;
     }
     selectVisualization(e) {
+        const selectedIndex = event.target.options.selectedIndex;
+        let visualizationid = event.target.options[selectedIndex].getAttribute('data-key')
         let newWidget = { type: "" }
         if (e.target.value !== undefined) {
             newWidget.type = e.target.value
-            this.setState({ widget: newWidget }, () => {
+            this.setState({ widget: newWidget, visualizationID: visualizationid }, () => {
                 this.copyWidget()
             })
         }
-
+    }
+    toggleWidgetDiv() {
+        this.setState({ flipped: true })
+        console.log(document.getElementById("cke_139_uiElement"))
     }
 
     render() {
@@ -379,7 +404,6 @@ class WidgetEditorApp extends React.Component {
                     style={{ width: '100%', height: '100vh' }}
                 >
                     <FrontSide>
-
                         <div className="form-group row no-left-margin no-right-margin">
                             <div className="col-1 right-align">
                                 <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
@@ -392,21 +416,26 @@ class WidgetEditorApp extends React.Component {
                                     {this.state.htmlWidgetOptions}
                                 </select>
                             </div>
-                            <div className="col-1" style={{maxWidth:"3em"}}>
-                                {this.state.widget.uuid &&
+                            {/* {
+                                this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+                                <div className="col-1" style={{ maxWidth: "3em" }}>
+                                    <button type="button" className="btn btn-primary add-series-button" title="Create widget"
+                                        onClick={() => this.toggleWidgetDiv()}>
+                                        <span className="fa fa-plus" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            } */}
+                            {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && this.state.widgetOwner == 1) &&
+                                <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
-                                        onClick={()=>{this.setState({showModal:true})}} disabled={!this.state.readOnly}>
+                                        onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
                                         <span className="fa fa-trash" aria-hidden="true"></span>
                                     </button>
-                                }
-                                {/* <button type="button" className="btn btn-primary add-series-button" title="Create widget"
-                                    onClick={() => this.setState({ flipped: true })}>
-                                    <span className="fa fa-plus" aria-hidden="true"></span>
-                                </button> */}
+                                </div>
+                            }
 
-                            </div>
                             <div className="col-1">
-                                {this.state.widget.uuid &&
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
                                         <button type="button" className="btn btn-primary add-series-button" title="Copy widget"
                                             onClick={this.copyWidget} disabled={!this.state.readOnly}>
@@ -436,7 +465,7 @@ class WidgetEditorApp extends React.Component {
                                 </>
                             }
                         </div>
-                        {!this.state.flipped ?
+                        {!this.state.flipped &&
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
                                     <AmChartEditor ref="editor" widget={this.state.widget} />
@@ -447,7 +476,8 @@ class WidgetEditorApp extends React.Component {
                                 {(this.state.widget.type === 'inline') &&
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                 }
-                            </div> : null}
+                            </div>
+                        }
                     </FrontSide>
                     <BackSide style={{ padding: "0px" }}>
                         <button type="button" className="btn btn-primary add-series-button" title="Create widget"
@@ -505,13 +535,14 @@ class WidgetEditorApp extends React.Component {
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                 }
                             </div> : null}
+
                     </BackSide>
                 </Flippy>
-                    <WidgetModal
-                        show={this.state.showModal}
-                        onHide={()=>{this.setState({showModal:false})}}
-                        deletewidget={this.deleteWidget}
-                    />
+                <WidgetModal
+                    show={this.state.showModal}
+                    onHide={() => { this.setState({ showModal: false }) }}
+                    deletewidget={this.deleteWidget}
+                />
             </form>
         );
     }

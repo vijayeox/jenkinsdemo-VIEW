@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
+import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import * as am4core from "../amcharts/core";
 import * as am4charts from "../amcharts/charts";
 import * as am4maps from "../amcharts/maps";
@@ -74,32 +75,12 @@ class WidgetRenderer {
     }
 
     static renderAmCharts(element, configuration, data) {
-        function getDataContext(dataItem, propertyList) {
-            let obj = {};
-            propertyList.forEach(function(prop, index, array) {
-                if (dataItem[prop]) {
-                    obj[prop] = dataItem[prop];
-                }
-            });
-            return obj;
-        }
-
-        //function dumpProperties(obj) {
-        //    for (var prop in obj) {
-        //        console.log(prop + ' => ' + obj[prop]);
-        //    }
-        //    //Object.keys(obj).forEach(function(key,index) {
-        //    //    // key: the name of the object key
-        //    //    // index: the ordinal position of the key within the object 
-        //    //    console.log(key + ' => ' + obj[key]);
-        //    //});
-        //}
-
-        var transformedConfig = WidgetTransformer.transform(configuration, data);
+        let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
         data = transformedConfig.chartData;
 
         let series = configuration.series;
+
         //if (!Array.isArray(series)) {
         //    throw 'Chart series should be array.';
         //}
@@ -107,6 +88,7 @@ class WidgetRenderer {
         //    throw 'Chart series is empty.';
         //}
 
+/*
         if (series) {
             series.forEach(function(ser) {
                 switch(ser.type) {
@@ -119,8 +101,8 @@ class WidgetRenderer {
                             columns['events'] = {};
                         }
                         let  seriesEvts = columns['events'];
-                         seriesEvts['hit'] = function(evt) {
-                            let dataContext = getDataContext(evt.target.dataItem, [
+                        seriesEvts['hit'] = function(evt) {
+                            let dataContext = WidgetDrillDownHelper.getDataContext(evt.target.dataItem, [
                                 'valueX',
                                 'valueY',
                                 'dateX',
@@ -134,7 +116,8 @@ class WidgetRenderer {
                                 'openCategoryX',
                                 'openCategoryY'
                             ]);
-                            console.log("Clicked column => ", dataContext);
+                            WidgetDrillDownHelper.broadcastDrillDown(
+                                WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
                         };
                     break;
                     case 'LineSeries':
@@ -149,25 +132,32 @@ class WidgetRenderer {
                         let segmentEvts = segments['events'];
                         segmentEvts['hit'] = function(evt) {
                             let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
-                            console.log('Clicked line segment => ', dataContext);
+                            WidgetDrillDownHelper.broadcastDrillDown(
+                                WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
+//console.log('Clicked line segment => ', dataContext);
                         };
     
                         if (!ser['bullets']) {
-                            ser['bullets'] = {};
+                            ser['bullets'] = [];
                         }
                         let bullets = ser['bullets'];
-                        if (!bullets['events']) {
-                            bullets['events'] = {};
-                        }
-                        let bulletEvts = bullets['events'];
-                        bulletEvts['hit'] = function(evt) {
-                            let dataContext = evt.target.dataItem.dataContext.value;
-                            console.log('Clicked bullet => ', dataContext);
-                        };
+                        bullets.forEach(function(bul) {
+                            if (!bul['events']) {
+                                bul['events'] = {};
+                            }
+                            let bulletEvts = bul['events'];
+                            bulletEvts['hit'] = function(evt) {
+                                let dataContext = evt.target.dataItem.dataContext;
+                                WidgetDrillDownHelper.broadcastDrillDown(
+                                    WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
+                            };
+                        });
+
                     break;
                 }
             });
         }
+*/
 
         let type = null;
         if (Array.isArray(series) && (series.length > 0)) {
@@ -192,7 +182,31 @@ class WidgetRenderer {
                 case 'PyramidSeries':
                     am4ChartType = am4charts.SlicedChart;
                 break;
+
+                default:
+                    throw(`Unhandled am4charts type: ${type}`);
             }
+        }
+        else {
+            let meta = configuration['oxzion-meta'];
+            let chartType = meta ? meta['type'] : null;
+            if (chartType) {
+                switch(chartType) {
+                    case 'map':
+                        am4ChartType = 'amCharts-map';
+                    break;
+
+                    default:
+                        throw(`Unhandled oxzion-meta chart type : ${chartType}`);
+                }
+            }
+            else {
+                throw('Specify chart type in oxzion-meta object.');
+            }
+        }
+
+        if (WidgetDrillDownHelper.persistDrillDownConfiguration(element, configuration)) {
+            WidgetDrillDownHelper.setupEventHandlers(series);
         }
 
         let elementTagName = element.tagName.toUpperCase();
@@ -212,23 +226,13 @@ class WidgetRenderer {
         }
 
         let chart = null;
-        if (am4ChartType) {
+        if ('amCharts-map' === am4ChartType) {
+            chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
+        }
+        else {
             chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
             if (chart && data) {
                 chart.data = data;
-            }
-        }
-        else {
-            let meta = configuration['oxzion-meta'];
-            let chartType = meta ? meta['type'] : null;
-            if (chartType) {
-                switch(chartType) {
-                    case 'map':
-                        chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
-                    break;
-                    default:
-                        throw `Chart type "${chartType}" is not supported.`;
-                }
             }
         }
 
@@ -424,7 +428,7 @@ class WidgetRenderer {
                 "US-TX": -99,
                 "US-FL": -81.65
             };
-            var latitude = {
+            let latitude = {
                 // polygonSeries.getPolygonById('US-ID').latitude
                 // 45.496849999999995
                 "US-ID": 43.6

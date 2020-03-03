@@ -6,7 +6,9 @@
     overflow-x:hidden;
     overflow-y:auto;
 }
-
+#widgetEditorDialog .flippy-front,#widgetEditorDialog .flippy-front{
+    height: auto;
+}
 .no-left-margin {
     margin-left:0px;
 }
@@ -80,5 +82,10 @@
     border-bottom: 1px solid #dee2e6;
 }
 /* End - styling react-bootstrap tabs. */
-
+.create-widget-div{
+    height: 9vh;
+}
+.disappear{
+    display:none;
+}
 

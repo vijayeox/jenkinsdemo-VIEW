@@ -31,13 +31,13 @@ class Query extends React.Component {
     this.handleSwitch = this.handleSwitch.bind(this);
     this.renderButtons = this.renderButtons.bind(this);
     this.checkedList = {}
-
   }
 
-  componentWillMount() {
-    //set switch respect to activated and deactivated datasource
-    this.setState({ checked: this.checkedList })
-  }
+  // componentWillMount() {
+  //   //set switch respect to activated and deactivated datasource
+  //   console.log(this.checkedList)
+  //   this.setState({ checked: this.checkedList })
+  // }
 
 
   handleSwitch(checked, event, id) {
@@ -45,6 +45,7 @@ class Query extends React.Component {
     toggleList[id] = checked
     this.setState({ checked: toggleList });
   }
+
   async fetchDataSource() {
     let helper = this.core.make('oxzion/restClient');
     let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
@@ -70,10 +71,10 @@ class Query extends React.Component {
     }
     instance.setState({ inputs: { ...instance.state.inputs, [name]: value, errors: errors } })
   }
+
   componentDidMount() {
     this.fetchDataSource()
   }
-
 
   validateform() {
     let validForm = true;
@@ -89,6 +90,7 @@ class Query extends React.Component {
     this.setState({ errors: errors })
     return validForm
   }
+
   onsaveQuery() {
     this.validateform() ? this.setState({ showQueryModal: true, modalContent: "", modalType: "Save" }) : null
   }
@@ -138,7 +140,6 @@ class Query extends React.Component {
         };
       showButton
         ? action[key].name === "toggleActivate" ?
-
           actionButtons.push(
             <abbr className={that.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={that.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
               <Switch
@@ -185,14 +186,10 @@ class Query extends React.Component {
   buttonAction(action, item) {
     if (action.name !== undefined) {
       if (action.name === "toggleActivate" && item.isdeleted == "0")
-        this.queryOperation(item, "Delete")
+        this.setState({ showQueryModal: true, modalContent: item, modalType: "Delete" })
       else if (action.name === "toggleActivate" && item.isdeleted == "1")
-        this.queryOperation(item, "Activate")
+        this.setState({ showQueryModal: true, modalContent: item, modalType: "Activate" })
     }
-  }
-
-  queryOperation = (e, operation) => {
-    this.setState({ showQueryModal: true, modalContent: e, modalType: operation })
   }
 
   toggleQueryForm(mode) {
@@ -211,13 +208,11 @@ class Query extends React.Component {
   }
 
   async runQuery(e) {
-    console.log(e)
     let that = this
     this.setState({ activeTab: "results" })
     let helper = this.core.make('oxzion/restClient');
     let formData = {}
     if (e !== undefined) {
-      console.log(e)
       formData["configuration"] = JSON.stringify(e.configuration);
       formData["datasource_id"] = e.datasource_uuid;
     }
@@ -267,12 +262,14 @@ class Query extends React.Component {
     this.setState({ queryResult: null, queryColumns: null })
     ReactDOM.unmountComponentAtNode(document.getElementById("result-tab-div"))
   }
+
   renderResult() {
-    ReactDOM.render(<QueryResult
-      queryResult={this.state.queryResult}
-      core={this.core}
-      columns={this.state.queryColumns}
-    />, document.getElementById("result-tab-div"))
+    ReactDOM.render(
+      <QueryResult
+        queryResult={this.state.queryResult}
+        core={this.core}
+        columns={this.state.queryColumns}
+      />, document.getElementById("result-tab-div"))
   }
 
   render() {
@@ -286,7 +283,6 @@ class Query extends React.Component {
           </Button>
         </Row>
         <div id="query-form" className="query-form disappear">
-
           <Form>
             <Form.Group as={Row}>
               <button type="button" style={{ width: "100%" }} className="close" aria-label="Close" onClick={() => this.toggleQueryForm("hide")}>
@@ -305,7 +301,6 @@ class Query extends React.Component {
                   {this.state.dataSourceOptions.map((option, index) => (
                     <option key={option.uuid} data-key={option.uuid} value={option.name}>{option.name}</option>
                   ))}
-
                 </Form.Control>
                 <Form.Text className="text-muted errorMsg">
                   {this.state.errors["datasourcename"]}
@@ -333,12 +328,9 @@ class Query extends React.Component {
           </Form>
         </div>
         <div className="query-result-div" >
-
           <Tabs defaultActiveKey="querylist" id="controlled-tab" activeKey={this.state.activeTab} onSelect={k => this.setState({ activeTab: k })}>
-
             <Tab eventKey="querylist" title="All Queries">
               <div className="col=md-12 querylist-div">
-
                 <OX_Grid
                   ref={this.refresh}
                   osjsCore={this.core}
@@ -372,7 +364,6 @@ class Query extends React.Component {
             <Tab eventKey="results" title="Result" id="result-tab">
               <div id="result-tab-div">
               </div>
-
             </Tab>
           </Tabs>
         </div>
@@ -389,7 +380,6 @@ class Query extends React.Component {
           notification={this.notif}
           resetInput={() => this.setState({ inputs: {} })}
         />
-
       </div>
     );
   }
