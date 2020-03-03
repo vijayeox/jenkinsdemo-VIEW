@@ -857,6 +857,25 @@ triggerComponent(form,targetProperties){
   }
   )
 };
+
+postDelegateRefresh(form,properties){
+  var targetList = properties["post_delegate_refresh"].split(',');
+    targetList.map(item => {
+     var targetComponent = form.getComponent(item);
+     if(targetComponent.component && targetComponent.component["properties"]){
+      if(targetComponent.type == 'datagrid'){
+        targetComponent.triggerRedraw();
+      }
+      if(targetComponent.component['properties']){
+        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
+     } else {
+      if(targetComponent.component && targetComponent.component.properties){
+        this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
+     } 
+      }
+    }
+  });
+}
 runProps(component,form,properties,formdata){
   if(formdata.data){
     formdata = formdata.data;
@@ -871,22 +890,7 @@ runProps(component,form,properties,formdata){
             var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
             form.setSubmission(formData,{modified:false}).then(response2 =>{
             if (properties["post_delegate_refresh"]) {
-              var targetList = properties["post_delegate_refresh"].split(',');
-              targetList.map(item => {
-               var targetComponent = form.getComponent(item);
-               if(targetComponent.component && targetComponent.component["properties"]){
-                if(targetComponent.type == 'datagrid'){
-                  targetComponent.triggerRedraw();
-                }
-                if(targetComponent.component['properties']){
-                  that.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-               } else {
-                if(targetComponent.component && targetComponent.component.properties){
-                  that.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-               } 
-                }
-              }
-            });
+              this.postDelegateRefresh(form,properties);
             }
             });
           }
@@ -1021,8 +1025,12 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-            form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
-              that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+              if (properties["post_delegate_refresh"]) {
+                this.postDelegateRefresh(form,properties);
+              }else{
+                that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data))); 
+              }  
             });
           }
         }
@@ -1128,7 +1136,7 @@ parseResponseData = data => {
     try {
       parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
     } catch (error) {
-      if(data[key] != undefined && data[key] != ""){
+      if(data[key] != undefined){
         parsedData[key] = data[key];
       }
     }
