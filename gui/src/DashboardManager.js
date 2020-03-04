@@ -31,6 +31,7 @@ class Dashboard extends React.Component {
     this.refresh = React.createRef();
     this.notif = React.createRef();
     this.restClient = this.core.make('oxzion/restClient');
+    this.deleteDashboard = this.deleteDashboard.bind(this)
     this.loader = null;
   }
 
@@ -260,7 +261,7 @@ class Dashboard extends React.Component {
           content={this.state.modalContent}
           notification={this.notif}
           refreshDashboard={() => this.fetchDashboards()}
-          deleteDashboard={() => this.deleteDashboard()}
+          deleteDashboard={this.deleteDashboard}
         />
       </div>
     );

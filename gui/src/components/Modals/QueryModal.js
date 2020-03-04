@@ -132,7 +132,8 @@ function QueryModal(props) {
 
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={()=>props.onHide()}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -148,7 +149,7 @@ function QueryModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Query Name</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="queryname" onChange={handleChange} disabled={DisabledFields} value={input["queryname"] !== undefined ? input["queryname"] : null} />
+              <Form.Control type="text" name="queryname" onChange={handleChange} disabled={DisabledFields} value={input["queryname"] !== undefined ? input["queryname"] : ""} />
               <Form.Text className="text-muted errorMsg">
                 {errors["queryname"]}
               </Form.Text>
@@ -175,14 +176,14 @@ function QueryModal(props) {
             </Col>
           </Form.Group>
           <>
-          {props.modalType==="Save"?
+          {props.modalType==="Save" &&
           <Form.Group as={Row}>
             <Form.Label column lg="3">Data Source Name</Form.Label>
             <Col lg="9">
               <Form.Control type="text" name="datasourcename" value={props.datasourcename} disabled />
             </Col>
           </Form.Group>
-          :null}
+          }
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">

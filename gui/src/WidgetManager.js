@@ -6,7 +6,9 @@ import Notification from "./Notification"
 import Switch from "react-switch"
 import WidgetEditorApp from '../../apps/Analytics/components/widget/editor/widgetEditorApp'
 import WidgetModal from './components/Modals/WidgetModal'
+import WidgetCreate from './components/Modals/WidgetCreate'
 import "./public/css/widgetmanager.scss";
+
 
 class WidgetManager extends React.Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class WidgetManager extends React.Component {
     this.checkedList = {}
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({ checked: this.checkedList })
   }
 
@@ -101,8 +103,6 @@ class WidgetManager extends React.Component {
             actionButtons.push(
               <abbr title={action[key].name} key={index}>
                 <Button
-                  primary={true}
-
                   className=" btn manage-btn k-grid-edit-command"
                   variant={variant}
                   onClick={() => this.buttonAction(action[key], e)}
@@ -120,19 +120,6 @@ class WidgetManager extends React.Component {
     }, this);
     return actionButtons;
   }
-
-  renderListOperations = config => {
-    return (
-      <Button
-        style={{ right: "10px", float: "right" }}
-        primary={true}
-        onClick={() => this.buttonAction({ name: config.name })}
-      >
-        <i class="fa fa-plus" aria-hidden="true"></i> {config.name}
-      </Button>
-    );
-  };
-
 
   replaceParams(route, params) {
     if (!params) {
@@ -196,12 +183,6 @@ class WidgetManager extends React.Component {
               filterCell: e => this.renderEmpty()
             }
           ]}
-        // gridToolbar={
-        //   this.renderListOperations({
-        //     name: "Create",
-        //     rule: "true"
-        //   })
-        // }
         />
         
         <WidgetModal
@@ -214,6 +195,16 @@ class WidgetManager extends React.Component {
           notification={this.notif}
           refreshGrid={this.refresh}
         />
+         {/* <WidgetCreate
+          osjsCore={this.core}
+          modalType={this.state.modalType}
+          show={this.state.showModal}
+          onHide={() => this.setState({ showModal: false })}
+          content={this.state.modalContent}
+          handleChange={(e) => this.handleChange(e)}
+          notification={this.notif}
+          refreshGrid={this.refresh}
+        /> */}
       </div>
     );
   }

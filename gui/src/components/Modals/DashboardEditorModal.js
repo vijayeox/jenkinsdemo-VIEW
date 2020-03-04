@@ -4,7 +4,6 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 import DashboardEditor from "../../../../apps/Analytics/dashboardEditor"
 import '../../public/css/dashboardEditor.scss'
 function DashboardEditorModal(props) {
-
     const [input, setInput] = useState({})
     const allowedOperation = {
         ACTIVATE: "Activated",
@@ -138,7 +137,8 @@ function DashboardEditorModal(props) {
 
     return (
         <Modal
-            {...props}
+            onHide={()=>props.onHide()}
+            show={props.show}
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
             centered
@@ -155,13 +155,13 @@ function DashboardEditorModal(props) {
                     <Form.Group as={Row}>
                         <Form.Label column lg="3">Name</Form.Label>
                         <Col lg="9">
-                            <Form.Control type="text" name="name" value={input["name"]} onChange={handleChange} disabled={DisabledFields} />
+                            <Form.Control type="text" name="name" value={input["name"]?input["name"]:""} onChange={handleChange} disabled={DisabledFields} />
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row}>
                         <Form.Label column lg="3">Description</Form.Label>
                         <Col lg="9">
-                            <Form.Control type="text" name="description" value={input["description"]} onChange={handleChange} disabled={DisabledFields} />
+                            <Form.Control type="text" name="description" value={input["description"]?input["description"]:""} onChange={handleChange} disabled={DisabledFields} />
                         </Col>
                     </Form.Group>
                     

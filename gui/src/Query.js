@@ -67,6 +67,7 @@ class Query extends React.Component {
 
   componentDidMount() {
     this.fetchDataSource()
+    this.setState({ checked: this.checkedList })
   }
 
   validateform() {
@@ -138,7 +139,7 @@ class Query extends React.Component {
               <Switch
                 id={e.name}
                 onChange={() => that.buttonAction(action[key], e)}
-                checked={that.state.checked[e.name]}
+                checked={that.state.checked[e.name]?that.state.checked[e.name]:false}
                 onClick={() => that.buttonAction(action[key], e)}
                 onColor="#86d3ff"
                 onHandleColor="#2693e6"
@@ -157,7 +158,6 @@ class Query extends React.Component {
           actionButtons.push(
             <abbr title={action[key].name} key={index}>
               <Button
-                primary={true}
                 className=" btn manage-btn k-grid-edit-command"
                 variant="primary"
                 onClick={() => that.runQuery(e)}
