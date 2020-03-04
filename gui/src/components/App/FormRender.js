@@ -473,7 +473,6 @@ class FormRender extends React.Component {
             });
           }
           that.setState({ formDivID: "formio_" + that.state.formId });
-          
         });
       }
       if (this.state.parentWorkflowInstanceId) {
@@ -488,15 +487,14 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(that.parseResponseData(fileData)) });
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
+              form.setSubmission({data:that.state.data}).then(response2 => {
+              	form.triggerChange();
               });
             }
           }
         });
       }
       if (this.state.activityInstanceId && this.state.workflowInstanceId) {
-        console.log(that.state);
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({
@@ -504,11 +502,11 @@ class FormRender extends React.Component {
             });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
-            that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
+            that.setState({ data: this.parseResponseData(this.addAddlData(JSON.parse(response.data.data))) });
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
+              form.setSubmission({data:that.state.data}).then(response2 => {
+              	form.triggerChange();
               });
             }
           }
@@ -525,8 +523,8 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
             that.setState({ content: response.data.template });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
+              form.setSubmission({data:that.state.data}).then(response2 => {
+              	form.triggerChange();
               });
             }
           }
@@ -569,58 +567,58 @@ class FormRender extends React.Component {
         var hooks = {
           beforeNext: (currentPage, submission, next) => {
             var form_data = JSON.parse(JSON.stringify(submission.data));
-            // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
-            that.storeCache(that.cleanData(form_data));
-            next(null);
-          }
-        };
-        options.hooks = hooks;
-        var formCreated = Formio.createForm(
-          document.getElementById(this.formDivID),
-          this.state.content,
-          options
-        ).then(function (form) {
+          // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
+          that.storeCache(that.cleanData(form_data));
+          next(null);
+        }
+      };
+      options.hooks = hooks;
+      var formCreated = Formio.createForm(
+        document.getElementById(this.formDivID),
+        this.state.content,
+        options
+        ).then(function(form) {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
               var breadcrumbs = document.getElementById(
                 form.wizardKey + "-header"
-              );
+                );
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
           }
-          form.setSubmission({ data: that.state.data }, { modified: false }).then(response2 => {
+          form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
             form.setPristine(true);
           });
-          form.on("submit", async function (submission) {
+          form.on("submit", async function(submission) {
             var form_data = that.cleanData(submission.data);
             var response_data = await that.saveForm(null, form_data);
             console.log(response_data);
-            // Not able to get the returned response here from saveForm (Bharat)
-            // if (response_data.status == "success") {
-            //   form.emit("submitDone", response_data);
-            // } else {
-            //   form.emit("error", response_data);
-            // }
-          });
+          // Not able to get the returned response here from saveForm (Bharat)
+          // if (response_data.status == "success") {
+          //   form.emit("submitDone", response_data);
+          // } else {
+          //   form.emit("error", response_data);
+          // }
+        });
           form.on("prevPage", changed => {
             form.emit("render");
             that.setState({ page: changed.page });
           });
           form.on("nextPage", changed => {
             form.emit("render");
-            that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
+            that.runDelegates(form,form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
             if (form.pages[changed.page]["properties"]["delegate"]) {
               if (form.pages[changed.page]["properties"]["delegate"]) {
                 var form_data = that.cleanData(form.submission.data);
-                that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
+                that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data).then(response => {
                   if (response) {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) }, { modified: false }).then(response2 => {
+                      form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
                         form.setPristine(true);
                       });
                     }
@@ -630,7 +628,7 @@ class FormRender extends React.Component {
             }
           });
 
-          form.on("change", function (changed) {
+          form.on("change", function(changed) {
             form.setPristine(true);
             for (var dataItem in form.submission.data) {
               if (typeof form.submission.data[dataItem] == "object") {
@@ -639,7 +637,7 @@ class FormRender extends React.Component {
                   if (checkComponent && checkComponent.type == "datagrid") {
                     for (var rowItem in Object.keys(form.submission.data[dataItem])) {
                       if (Array.isArray(form.submission.data[dataItem][rowItem])) {
-                        form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
+                        form.submission.data[dataItem][rowItem] = Object.assign({},form.submission.data[dataItem][rowItem]);
                       }
                     }
                   }
@@ -650,55 +648,55 @@ class FormRender extends React.Component {
               var component = changed.changed.component;
               var properties = component.properties;
               if (properties && (Object.keys(properties).length > 0)) {
-                if (component != undefined) {
-                  that.runProps(component, form, properties, changed.data);
+                if(component != undefined){
+                  that.runProps(component,form,properties,changed.data);
                 } else {
-                  if (changed.changed != undefined) {
-                    that.runProps(changed.changed, form, changed.changed.properties, changed.data);
+                  if(changed.changed != undefined){
+                    that.runProps(changed.changed,form,changed.changed.properties,changed.data);
                   }
                 }
               }
             }
           });
-          form.on("render", function () {
+          form.on("render", function() {
             if (form.wizard && form.wizard.display == "wizard") {
               var breadcrumbs = document.getElementById(
                 form.wizardKey + "-header"
-              );
+                );
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
             form.setPristine(true);
-            eachComponent(form.root.components, function (component) {
+            eachComponent(form.root.components,function(component) {
               if (component) {
-                if (component.component.properties && component.component.properties.custom_list) {
+                if (component.component.properties &&component.component.properties.custom_list) {
                   var targetComponent = form.getComponent(component.component.key);
                   if (targetComponent) {
                     switch (component.component.properties.custom_list) {
                       case "user_list":
-                        var commands = { commands: [{ command: "getuserlist" }] };
-                        that.callPipeline(commands, form.submission).then(response => {
-                          that.core.make("oxzion/splash").destroy();
-                          if (response.data) {
-                            component.setValue(response.data.userlist);
-                            form.setPristine(true);
-                          }
-                        });
-                        break;
+                      var commands = {commands: [{ command: "getuserlist" }]};
+                      that.callPipeline(commands, form.submission).then(response => {
+                        that.core.make("oxzion/splash").destroy();
+                        if (response.data) {
+                          component.setValue(response.data.userlist);
+                          form.setPristine(true);
+                        }
+                      });
+                      break;
                       default:
-                        break;
-                        component.refresh();
+                      break;
+                      component.refresh();
                     }
                   }
                 }
               }
             },
-              true
+            true
             );
             var elm = document.getElementsByClassName(
               that.state.appId + "_breadcrumbParent"
-            );
+              );
             if (elm.length > 0) {
               scrollIntoView(elm[0], {
                 scrollMode: "if-needed",
@@ -707,24 +705,20 @@ class FormRender extends React.Component {
                 inline: "nearest"
               });
             }
-            if (that.state.formLevelDelegateCalled == false) {
+            if(that.state.formLevelDelegateCalled == false){
               that.setState({
                 formLevelDelegateCalled: true
               });
-              setTimeout(function (){
               if (form._form["properties"]) {
                 that.runDelegates(form, form._form["properties"]);
-                that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
               } else {
                 if (form.originalComponent["properties"]) {
                   that.runDelegates(form, form.originalComponent["properties"]);
-                  that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
                 }
               }
-              },1000)
             }
           });
-          form.on("customEvent", function (event) {
+          form.on("customEvent", function(event) {
             var changed = event.data;
             if (event.type == "callDelegate") {
               var component = event.component;
@@ -748,8 +742,8 @@ class FormRender extends React.Component {
                           if (response.data) {
                             var destinationComponent = form.getComponent(properties["destinationDataKey"]);
                             if (properties["validationKey"]) {
-                              if (properties["validationKey"] && response.data[properties["validationKey"]]) {
-                                var componentList = flattenComponents(destinationComponent.componentComponents, false);
+                              if (properties["validationKey"] && response.data[properties["validationKey"]] ) {
+                                var componentList = flattenComponents( destinationComponent.componentComponents, false);
                                 var valueArray = [];
                                 for (var componentKey in componentList) {
                                   valueArray[componentKey] = response.data[componentKey];
@@ -761,7 +755,7 @@ class FormRender extends React.Component {
                                 changed[properties["sourceDataKey"]] = "";
                               }
                             }
-                            form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
+                            form.submission = { data: that.parseResponseData(that.addAddlData(changed))};
                             // form.triggerChange();
                             destinationComponent.triggerRedraw();
                           }
@@ -777,7 +771,7 @@ class FormRender extends React.Component {
                         for (var responseDataItem in response.data) {
                           if (response.data.hasOwnProperty(responseDataItem)) {
                             responseArray[responseDataItem] =
-                              response.data[responseDataItem];
+                            response.data[responseDataItem];
                           }
                         }
                         if (response.data) {
@@ -799,10 +793,10 @@ class FormRender extends React.Component {
                         that.core.make("oxzion/splash").destroy();
                       });
                     } else {
-                      that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
+                      that.callDelegate(properties["delegate"],that.cleanData(changed)).then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
+                          form.submission = { data: that.parseResponseData(that.addAddlData(response.data))};
                           // form.triggerChange();
                         }
                       });
@@ -825,11 +819,11 @@ class FormRender extends React.Component {
                     if (response.data) {
                       try {
                         var formData = that.parseResponseData(that.addAddlData(response.data));
-                        form.setSubmission({ data: formData }, { modified: false }).then(response2 => {
+                        form.setSubmission({data:formData},{modified:false}).then(response2 =>{
                           form.setPristine(true);
-                          that.runProps(component, form, properties, that.parseResponseData(that.addAddlData(form.submission.data)));
+                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
                         });
-                      } catch (e) {
+                      } catch (e){
                         console.log(e);
                       }
                     }
@@ -838,29 +832,24 @@ class FormRender extends React.Component {
               }
             }
           });
-          form.formReady.then(() => {
-            console.log("formReady");
-          });
-          form.submissionReady.then(() => {
-            console.log("submissionReady");
-            form.element.addEventListener("getAppDetails", function (e) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              var evt = new CustomEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
-              form.element.dispatchEvent(evt);
-            }, true);
-            form.emit("render");
-          });
-          that.setState({ currentForm: form });
-          // form.formReady.then( () => {
-          //   console.log('formReady');
-          //   form.emit('render');
-          // });
-          // form.emit('render');
-          return form;
-        });
-      }
+form.formReady.then(() => {
+  console.log("formReady");
+});
+form.submissionReady.then(() => {
+  console.log("submissionReady");
+  form.element.addEventListener("getAppDetails",function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    var evt = new CustomEvent("appDetails", {detail: {core: that.core,appId: that.state.appId,uiUrl: that.core.config("ui.url"),wrapperUrl: that.core.config("wrapper.url")}});
+    form.element.dispatchEvent(evt);
+  },true);
+  form.emit("render");
+});
+that.setState({ currentForm: form });
+return form;
+});
+}
       return formCreated;
 }
 triggerComponent(form,targetProperties){
@@ -920,7 +909,6 @@ runProps(component,form,properties,formdata){
     }
     if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
-        console.log(targetComponent);
         var value;
         if (component.dataValue != undefined && targetComponent != undefined) {
           value = formdata[component.dataValue];
@@ -996,9 +984,6 @@ runProps(component,form,properties,formdata){
             }
           }
         }
-          if(targetComponent && targetComponent.component && targetComponent.component.properties){
-            that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
-          }
       }
       if (properties["negate"]) {
         var targetComponent = form.getComponent(properties["negate"]);
@@ -1035,7 +1020,24 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.setSubmission({data:form_data},{modified:false});
+          form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
+            form.setPristine(true);
+          });
+        }
+      });
+    }
+    if (properties["commands"]) {
+      this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
+        this.core.make("oxzion/splash").destroy();
+        if (response.status == "success") {
+          if (response.data) {
+            let form_data = this.parseResponseData(
+              this.addAddlData(response.data)
+              );
+            form.setSubmission({data:form_data},{modified:false}).then(response2 =>{
+              form.setPristine(true);
+            });
+          }
         }
       });
     }
@@ -1186,18 +1188,19 @@ componentDidMount() {
       this.createForm().then(form => {
         this.loadWorkflow(form);
       });
-      
     });
-  }else if (this.props.pipeline) {
-    this.loadFormWithCommands(this.props.pipeline).then(response=>{
+  } else {
+    if (this.props.pipeline) {
+      this.loadFormWithCommands(this.props.pipeline).then(response=>{
+        this.createForm().then(form => {
+          this.loadWorkflow(form);
+        });
+      });
+    } else {
       this.createForm().then(form => {
         this.loadWorkflow(form);
       });
-    });
-  }else{
-      this.createForm().then(form => {
-        this.loadWorkflow(form);
-      });
+    }
   }
 }
 async loadFormWithCommands(commands) {
@@ -1207,7 +1210,7 @@ async loadFormWithCommands(commands) {
         var data = response.data.data;
         this.setState({
           content: JSON.parse(data.template),
-          data: this.addAddlData(response.data.form_data),
+          data: this.parseResponseData(this.addAddlData(response.data.form_data)),
           formId: data.id,
           workflowId: response.data.workflow_id
         });
