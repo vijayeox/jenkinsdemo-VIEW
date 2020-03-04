@@ -461,6 +461,8 @@ class FormRender extends React.Component {
               form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
                 form.setPristine(true);
               });
+            } else {
+              this.createForm();
             }
           }
         });
@@ -478,6 +480,8 @@ class FormRender extends React.Component {
               form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
                 form.setPristine(true);
               });
+            } else {
+              this.createForm();
             }
           }
         });
@@ -524,6 +528,8 @@ class FormRender extends React.Component {
               form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
                 form.setPristine(true);
               });
+            } else {
+              this.createForm();
             }
           }
         });
@@ -1193,9 +1199,7 @@ componentDidMount() {
       });
     });
   } else {
-      this.createForm().then(form => {
-        this.loadWorkflow(form);
-      });
+    this.loadWorkflow();
   }
 }
 async loadFormWithCommands(commands) {
