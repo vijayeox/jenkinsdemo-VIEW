@@ -34,9 +34,10 @@ class Dashboard extends React.Component {
     this.loader = null;
   }
 
-  componentWillMount() {
+  componentDidMount(){
     this.fetchDashboards()
   }
+  
 
   async getUserDetails(uuid) {
     let helper2 = this.core.make("oxzion/restClient");
@@ -141,7 +142,9 @@ class Dashboard extends React.Component {
         >
           <FrontSide>
             {this.userProfile.key.privileges.MANAGE_DASHBOARD_CREATE &&
-              <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i class="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+             <div class="row">
+               <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i class="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+             </div>
             }
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <>
