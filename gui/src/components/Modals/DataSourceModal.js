@@ -116,7 +116,8 @@ function DataSourceModal(props) {
 
   return (
     <Modal
-      {...props}
+      show={props.show}
+      onHide={()=>props.onHide()}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -132,19 +133,19 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Name</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="name" value={input["name"]} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control type="text" name="name" value={input["name"]?input["name"]:""} onChange={handleChange} disabled={DisabledFields} />
             </Col>
           </Form.Group>
           <Form.Group as={Row}>
             <Form.Label column lg="3">Type</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="type" value={input["type"]} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control type="text" name="type" value={input["type"]?input["type"]:""} onChange={handleChange} disabled={DisabledFields} />
             </Col>
           </Form.Group>
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">
-              <Form.Control as="textarea" rows="4" name="configuration" value={input["configuration"]} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control as="textarea" rows="4" name="configuration" value={input["configuration"]?input["configuration"]:""} onChange={handleChange} disabled={DisabledFields} />
             </Col>
           </Form.Group>
         </Form>
