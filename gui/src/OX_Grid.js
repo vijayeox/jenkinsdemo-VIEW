@@ -24,6 +24,7 @@ export default class OX_Grid extends React.Component {
   constructor(props) {
     super(props);
     this.child = React.createRef();
+    this.userprofile = this.props.osjsCore.make("oxzion/profile").get().key;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     var apiUrl = this.props.data;
     var defaultFilters = {};
@@ -127,6 +128,7 @@ export default class OX_Grid extends React.Component {
                     cellTemplate={dataItem.cell}
                     dataItem={item.dataItem}
                     type={"cellTemplate"}
+                    userProfile={this.userprofile}
                   />
                 )
               : undefined
@@ -392,7 +394,11 @@ class CustomCell extends GridCell {
     } else if (checkType == "string") {
       return (
         <JsxParser
-          bindings={{ item: this.props.dataItem, moment: moment }}
+          bindings={{
+            item: this.props.dataItem,
+            moment: moment,
+            profile: this.props.userProfile
+          }}
           jsx={this.props.cellTemplate}
         />
       );
