@@ -35,7 +35,7 @@ class Navigation extends React.Component {
             if(appParams.type){
               this.postSubmitCallback = this.postSubmitCallback.bind(this);
               this.setState({selected:{type:appParams.type,page_id:appParams.pageId,pipeline:appParams.pipeline,workflow_id:appParams.workflowId,parentWorkflowInstanceId:appParams.workflowInstanceId,workflowInstanceId:appParams.workflowInstanceId,url:appParams.url,activityInstanceId:appParams.activityInstanceId}});
-              console.log(this.state.selected);
+              history.push("/");
             }
           } catch(e){
             console.log("No params!");

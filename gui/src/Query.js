@@ -33,13 +33,6 @@ class Query extends React.Component {
     this.checkedList = {}
   }
 
-  // componentWillMount() {
-  //   //set switch respect to activated and deactivated datasource
-  //   console.log(this.checkedList)
-  //   this.setState({ checked: this.checkedList })
-  // }
-
-
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
     toggleList[id] = checked
