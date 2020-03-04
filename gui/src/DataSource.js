@@ -24,7 +24,10 @@ class DataSource extends React.Component {
     this.checkedList = {}
   }
 
-
+  componentDidMount() {
+    //set switch respect to activated and deactivated datasource
+    this.setState({ checked: this.checkedList })
+  }
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
     toggleList[id] = checked
@@ -97,8 +100,6 @@ class DataSource extends React.Component {
             actionButtons.push(
               <abbr title={action[key].name} key={index}>
                 <Button
-                  primary={true}
-
                   className=" btn manage-btn k-grid-edit-command"
                   variant={variant}
                   onClick={() => this.buttonAction(action[key], e)}
@@ -121,7 +122,6 @@ class DataSource extends React.Component {
     return (
       <Button
         style={{ right: "10px", float: "right" }}
-        primary={true}
         onClick={() => this.buttonAction({ name: config.name })}
       >
         <i class="fa fa-plus" aria-hidden="true"></i> {config.name}
