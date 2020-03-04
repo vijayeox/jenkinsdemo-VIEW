@@ -75,45 +75,45 @@ class DataSource extends React.Component {
         };
       showButton
         ?
-          action[key].name === "toggleActivate" ?
-            actionButtons.push(
-              <abbr className={this.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
-                <Switch
-                  id={e.name}
-                  onChange={() => this.buttonAction(action[key], e)}
-                  checked={this.state.checked[e.name]}
-                  onClick={() => this.buttonAction(action[key], e)}
-                  onColor="#86d3ff"
-                  onHandleColor="#2693e6"
-                  handleDiameter={10}
-                  uncheckedIcon={false}
-                  checkedIcon={false}
-                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                  height={20}
-                  width={33}
-                  className="react-switch"
-                />
-              </abbr>
-            )
+        action[key].name === "toggleActivate" ?
+          actionButtons.push(
+            <abbr className={this.checkedList[e.name] ? "deactivateDash" : "activateDash"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+              <Switch
+                id={e.name}
+                onChange={() => this.buttonAction(action[key], e)}
+                checked={this.state.checked[e.name]}
+                onClick={() => this.buttonAction(action[key], e)}
+                onColor="#86d3ff"
+                onHandleColor="#2693e6"
+                handleDiameter={10}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={20}
+                width={33}
+                className="react-switch"
+              />
+            </abbr>
+          )
           :
-            actionButtons.push(
-              <abbr title={action[key].name} key={index}>
-                <Button
-                  className=" btn manage-btn k-grid-edit-command"
-                  variant={variant}
-                  onClick={() => this.buttonAction(action[key], e)}
-                  style={buttonStyles}
-                >
-                  {action[key].icon ? (
-                    <i className={action[key].icon + " manageIcons"}></i>
-                  ) : (
-                      action[key].name
-                    )}
-                </Button>
-              </abbr>
-            )
-        : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>)
+          actionButtons.push(
+            <abbr title={action[key].name} key={index}>
+              <Button
+                key={"manage"+action[key].name}
+                className=" btn manage-btn k-grid-edit-command"
+                variant={variant}
+                onClick={() => this.buttonAction(action[key], e)}
+                style={buttonStyles}
+              >
+                {
+                 action[key].icon ? 
+                (<i className={action[key].icon + " manageIcons"}></i>) 
+                : (action[key].name)}
+              </Button>
+            </abbr>
+          )
+        : actionButtons.push(<Button key={"space-btn"} style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>)
     }, this);
     return actionButtons;
   }
@@ -192,12 +192,12 @@ class DataSource extends React.Component {
               filterCell: e => this.renderEmpty()
             }
           ]}
-        gridToolbar={
-          this.renderListOperations({
-            name: "Create",
-            rule: "true"
-          })
-        }
+          gridToolbar={
+            this.renderListOperations({
+              name: "Create",
+              rule: "true"
+            })
+          }
         />
         <DataSourceModal
           osjsCore={this.core}

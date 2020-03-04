@@ -158,6 +158,7 @@ class Query extends React.Component {
           actionButtons.push(
             <abbr title={action[key].name} key={index}>
               <Button
+               key={"manage"+action[key].name}
                 className=" btn manage-btn k-grid-edit-command"
                 variant="primary"
                 onClick={() => that.runQuery(e)}
@@ -171,7 +172,7 @@ class Query extends React.Component {
               </Button>
             </abbr>
           )
-        : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>);
+        : actionButtons.push(<Button key={"space-btn"} style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>);
     });
     return actionButtons;
   }
