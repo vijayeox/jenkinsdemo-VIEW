@@ -6,4 +6,12 @@ module.exports = {
   ui: {
       url: "http://localhost:8081/"
   }
+  desktop: {
+	settings: {
+	  font: 'Roboto',
+	  theme: 'BridgeMed'
+	}
+  },
 }
+
+
