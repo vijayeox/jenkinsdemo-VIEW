@@ -458,9 +458,7 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(that.parseResponseData(fileData)) });
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
-              });
+              form.setSubmission({data:that.state.data},{modified:false});
             } else {
               this.createForm();
             }
@@ -477,9 +475,7 @@ class FormRender extends React.Component {
             that.setState({ data: that.parseResponseData(this.addAddlData(JSON.parse(response.data.data))) });
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
-              });
+              form.setSubmission({data:that.state.data});
             } else {
               this.createForm();
             }
@@ -493,7 +489,6 @@ class FormRender extends React.Component {
               that.setState({ activityId: response.data.activity_id });
             }
             if (!that.state.content) {
-              console.log(response.data);
               that.setState({ content: JSON.parse(response.data.template) });
             }
           } else {
@@ -525,9 +520,7 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
             that.setState({ content: response.data.template });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false}).then(response2 =>{
-                form.setPristine(true);
-              });
+              form.setSubmission({data:that.state.data});
             } else {
               this.createForm();
             }
@@ -579,11 +572,7 @@ class FormRender extends React.Component {
           }
         };
         options.hooks = hooks;
-        var formCreated = Formio.createForm(
-          document.getElementById(this.formDivID),
-          this.state.content,
-          options
-        ).then(function (form) {
+        var formCreated = Formio.createForm(document.getElementById(this.formDivID),this.state.content,options).then(function (form) {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
@@ -595,9 +584,11 @@ class FormRender extends React.Component {
               }
             }
           }
-          form.setSubmission({ data: that.state.data }, { modified: false }).then(response2 => {
-            form.setPristine(true);
-          });
+          if(that.state.data !=  undefined){
+            form.setSubmission({ data: that.state.data }).then(response2 => {
+              form.setPristine(true);
+            });
+          }
           form.on("submit", async function (submission) {
             var form_data = that.cleanData(submission.data);
             var response_data = await that.saveForm(null, form_data);
@@ -624,9 +615,7 @@ class FormRender extends React.Component {
                   if (response) {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) }, { modified: false }).then(response2 => {
-                        form.setPristine(true);
-                      });
+                      form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) });
                     }
                   }
                 });
@@ -635,7 +624,6 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            form.setPristine(true);
             for (var dataItem in form.submission.data) {
               if (typeof form.submission.data[dataItem] == "object") {
                 if (form.submission.data[dataItem]) {
@@ -673,7 +661,6 @@ class FormRender extends React.Component {
                 breadcrumbs.style.display = "none";
               }
             }
-            form.setPristine(true);
             eachComponent(form.root.components, function (component) {
               if (component) {
                 if (component.component.properties && component.component.properties.custom_list) {
@@ -686,7 +673,6 @@ class FormRender extends React.Component {
                           that.core.make("oxzion/splash").destroy();
                           if (response.data) {
                             component.setValue(response.data.userlist);
-                            form.setPristine(true);
                           }
                         });
                         break;
@@ -765,8 +751,9 @@ class FormRender extends React.Component {
                                 changed[properties["sourceDataKey"]] = "";
                               }
                             }
-                            form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
-                            // form.triggerChange();
+                            form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
+                              form.setPristine(true);
+                            });
                             destinationComponent.triggerRedraw();
                           }
                         }
@@ -796,8 +783,9 @@ class FormRender extends React.Component {
                               changed[properties["sourceDataKey"]] = "";
                             }
                           }
-                          form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
-                          // form.triggerChange();
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
+                            form.setPristine(true);
+                          });
                           destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -806,8 +794,9 @@ class FormRender extends React.Component {
                       that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.submission = { data: that.parseResponseData(that.addAddlData(response.data)) };
-                          // form.triggerChange();
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) }).then(response2 => {
+                            form.setPristine(true);
+                          });
                         }
                       });
                     }
@@ -830,7 +819,6 @@ class FormRender extends React.Component {
                       try {
                         var formData = that.parseResponseData(that.addAddlData(response.data));
                         form.setSubmission({ data: formData }, { modified: false }).then(response2 => {
-                          form.setPristine(true);
                           that.runProps(component, form, properties, that.parseResponseData(that.addAddlData(form.submission.data)));
                         });
                       } catch (e) {
@@ -1199,7 +1187,13 @@ componentDidMount() {
       });
     });
   } else {
-    this.loadWorkflow();
+    if(this.state.content){
+      this.createForm().then(form => {
+        this.loadWorkflow(form);
+      });
+    } else {
+      this.loadWorkflow();
+    }
   }
 }
 async loadFormWithCommands(commands) {
