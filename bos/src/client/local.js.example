@@ -9,7 +9,7 @@ module.exports = {
   desktop: {
 	settings: {
 	  font: 'Roboto',
-	  theme: 'BridgeMed'
+	  theme: 'Vision'
 	}
   },
 }
