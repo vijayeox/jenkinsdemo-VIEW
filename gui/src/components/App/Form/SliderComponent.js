@@ -5,12 +5,12 @@ export default class SliderComponent extends Base {
 	constructor(component, options, data) {
 		component.label = 'Slider'
 		super(component, options, data);
-	
+
 	}
 	static schema(...extend) {
 		return Base.schema({
 		type: 'slider',
-		label : 'slider'   
+		label : 'slider'
 		}, ...extend );
 	}
 
@@ -37,7 +37,7 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-		
+
 		let content = '';
 		let list = "<ul class='ticks' id='tickmarks'>";
 		var max = this.component.sliderRange.length-1,
@@ -51,17 +51,17 @@ export default class SliderComponent extends Base {
 		}
 		list += "</ul>"
 		content += list;
-		
+
 		// Calling super.render will wrap it html as a component.
 		return super.render(`
 			<div class="range">
 				<input type="range" min="${min}" max="${max}" list="tickmarks">
 				<span class="range-thumb">$</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
-				
+
 			</div><br/>
 		`);
-		
+
 	}
 	 /**
    * After the html string has been mounted into the dom, the dom element is returned here. Use refs to find specific
@@ -70,18 +70,18 @@ export default class SliderComponent extends Base {
    * @param element
    * @returns {Promise}
    */
-	attach(element) { 
+	attach(element) {
 
-		var sheet = document.createElement('style'),  
+		var sheet = document.createElement('style'),
 			$rangeInput = $('input[type="range"]'),
 			prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'],
 			min = 0,
 			max = this.component.sliderRange.length-1,
 			sliderRange = this.component.sliderRange;
 		element.addEventListener("input", (e) => this.updateValue(sliderRange[e.target.value]))
-		
+
 			$rangeInput.each(function() {
-				
+
 				var $thumb = $(this).next('.range-thumb');
 				var tw = 80; // Thumb width. See CSS
 				$(this).on('input', function(el) {
@@ -97,15 +97,15 @@ export default class SliderComponent extends Base {
 					var curVal = $rangeInput[0].value ;
 					var w = $rangeInput.width();
 					var val = (curVal - min)/(max-min) * (w - tw);
-					
+
 					$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
-	
+
 				})
 			});
-			  
+
       	document.body.appendChild(sheet);
-		
-		var getTrackStyle = function (el) {  
+
+		var getTrackStyle = function (el) {
 			var curVal = el.value,
 				val = (curVal - min)/(max-min) * 100,
 				style = '';
@@ -123,14 +123,13 @@ export default class SliderComponent extends Base {
    * @param value
    * @returns {boolean}
    */
-	
+
 	setValue(value) {
-		
+
 	}
 	static editForm = editForm;
 
 }
 
 
-    
-    
+

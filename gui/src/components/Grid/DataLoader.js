@@ -132,7 +132,6 @@ export class DataLoader extends React.Component {
     this.requestDataIfNeeded();
     return (
       <>
-        <Notification ref={this.notif} />
         {this.pending && <LoadingPanel />}
       </>
     );

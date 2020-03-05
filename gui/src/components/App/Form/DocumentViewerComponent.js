@@ -8,6 +8,7 @@ export default class DocumentViewerComponent extends Base {
     component.uiUrl = null;
     component.wrapperUrl = '<p> No Files to Display</p>';
     super(component, options, data);
+    
     window.addEventListener('appDetails', function (e) {
       component.core = e.detail.core;
       component.appId = e.detail.appId;
@@ -32,8 +33,11 @@ export default class DocumentViewerComponent extends Base {
     schema: DocumentViewerComponent.schema()
   }
   onChange(flags, fromRoot){
-    this.fileList = this.getFileList(this.dataValue);
     var dataValue = this.dataValue;
+    if(typeof dataValue == 'string'){
+       dataValue = JSON.parse(dataValue);
+    }
+    this.fileList = this.getFileList(dataValue);
     var component = this.component
     this.redraw();
     if(dataValue && dataValue != undefined){
