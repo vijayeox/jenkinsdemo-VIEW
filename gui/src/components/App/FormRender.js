@@ -450,7 +450,6 @@ class FormRender extends React.Component {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
-            console.log(fileData);
             fileData.parentWorkflowInstanceId =
             that.props.parentWorkflowInstanceId;
             fileData.workflowInstanceId = undefined;
@@ -458,7 +457,17 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(that.parseResponseData(fileData)) });
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false});
+              form.setSubmission({data:that.state.data}).then(function (){
+                if (form._form["properties"]) {
+                  that.runDelegates(form, form._form["properties"]);
+                  that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
+                } else {
+                  if (form.originalComponent["properties"]) {
+                    that.runDelegates(form, form.originalComponent["properties"]);
+                    that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
+                  }
+                }
+              });
             } else {
               this.createForm();
             }
@@ -467,15 +476,23 @@ class FormRender extends React.Component {
       } else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
             that.setState({ data: that.parseResponseData(this.addAddlData(JSON.parse(response.data.data))) });
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
-              form.setSubmission({data:that.state.data});
+              form.setSubmission({data:that.state.data}).then(function (){
+                if (form._form["properties"]) {
+                  that.runDelegates(form, form._form["properties"]);
+                  that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
+                } else {
+                  if (form.originalComponent["properties"]) {
+                    that.runDelegates(form, form.originalComponent["properties"]);
+                    that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
+                  }
+                }
+              });
             } else {
               this.createForm();
             }
@@ -507,14 +524,11 @@ class FormRender extends React.Component {
             });
           }
           that.setState({ formDivID: "formio_" + that.state.formId });
-          
         });
       } else if (this.state.instanceId) {
         this.getInstanceData().then(response => {
           if (response.status == "success" && response.data.workflow_id) {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
             that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
@@ -538,7 +552,6 @@ class FormRender extends React.Component {
       Formio.registerComponent("fortepay", FortePayCheckoutComponent);
       Formio.registerComponent("documentviewer", DocumentViewerComponent);
       Formio.registerComponent("radiocard", RadioCardComponent);
-
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -576,18 +589,14 @@ class FormRender extends React.Component {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-              );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
           }
           if(that.state.data !=  undefined){
-            form.setSubmission({ data: that.state.data }).then(response2 => {
-              form.setPristine(true);
-            });
+            form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
             var form_data = that.cleanData(submission.data);
@@ -654,9 +663,7 @@ class FormRender extends React.Component {
           });
           form.on("render", function () {
             if (form.wizard && form.wizard.display == "wizard") {
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-              );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
@@ -683,35 +690,13 @@ class FormRender extends React.Component {
                   }
                 }
               }
-            },
-              true
-            );
-            var elm = document.getElementsByClassName(
-              that.state.appId + "_breadcrumbParent"
-            );
+            },true);
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
             if (elm.length > 0) {
-              scrollIntoView(elm[0], {
-                scrollMode: "if-needed",
-                block: "center",
-                behavior: "smooth",
-                inline: "nearest"
-              });
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
             }
             if (that.state.formLevelDelegateCalled == false) {
-              that.setState({
-                formLevelDelegateCalled: true
-              });
-              setTimeout(function (){
-              if (form._form["properties"]) {
-                that.runDelegates(form, form._form["properties"]);
-                that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-              } else {
-                if (form.originalComponent["properties"]) {
-                  that.runDelegates(form, form.originalComponent["properties"]);
-                  that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                }
-              }
-              },1000)
+              that.setState({formLevelDelegateCalled: true});
             }
           });
           form.on("customEvent", function (event) {
@@ -752,9 +737,8 @@ class FormRender extends React.Component {
                               }
                             }
                             form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
-                              form.setPristine(true);
+                              destinationComponent.triggerRedraw();
                             });
-                            destinationComponent.triggerRedraw();
                           }
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -783,9 +767,7 @@ class FormRender extends React.Component {
                               changed[properties["sourceDataKey"]] = "";
                             }
                           }
-                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
-                            form.setPristine(true);
-                          });
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) });
                           destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -794,9 +776,7 @@ class FormRender extends React.Component {
                       that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) }).then(response2 => {
-                            form.setPristine(true);
-                          });
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) });
                         }
                       });
                     }
@@ -818,7 +798,7 @@ class FormRender extends React.Component {
                     if (response.data) {
                       try {
                         var formData = that.parseResponseData(that.addAddlData(response.data));
-                        form.setSubmission({ data: formData }, { modified: false }).then(response2 => {
+                        form.setSubmission({ data: formData }).then(response2 => {
                           that.runProps(component, form, properties, that.parseResponseData(that.addAddlData(form.submission.data)));
                         });
                       } catch (e) {
@@ -900,7 +880,7 @@ runProps(component,form,properties,formdata){
         if (response) {
           if (response.data) {
             var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
-            form.setSubmission(formData,{modified:false}).then(response2 =>{
+            form.setSubmission(formData).then(response2 =>{
             if (properties["post_delegate_refresh"]) {
               this.postDelegateRefresh(form,properties);
             }
@@ -912,7 +892,6 @@ runProps(component,form,properties,formdata){
     }
     if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
-        console.log(targetComponent);
         var value;
         if (component.dataValue != undefined && targetComponent != undefined) {
           value = formdata[component.dataValue];
@@ -1027,7 +1006,7 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.setSubmission({data:form_data},{modified:false});
+          form.setSubmission({data:form_data});
         }
       });
     }
@@ -1037,7 +1016,7 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))}).then(response2 =>{
               if (properties["post_delegate_refresh"]) {
                 this.postDelegateRefresh(form,properties);
               }else{
