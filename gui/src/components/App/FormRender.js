@@ -633,14 +633,16 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            for (var dataItem in form.submission.data) {
-              if (typeof form.submission.data[dataItem] == "object") {
-                if (form.submission.data[dataItem]) {
+            for (var dataItem in changed.data) {
+              if (typeof changed.data[dataItem] == "object") {
+                if (changed.data[dataItem]) {
                   var checkComponent = form.getComponent(dataItem);
                   if (checkComponent && checkComponent.type == "datagrid") {
-                    for (var rowItem in Object.keys(form.submission.data[dataItem])) {
-                      if (Array.isArray(form.submission.data[dataItem][rowItem])) {
-                        form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
+                    for (var rowItem in Object.keys(changed.data[dataItem])) {
+                      if (Array.isArray(changed.data[dataItem][rowItem])) {
+                        if(Object.keys(changed.data[dataItem][rowItem]).length > 0){
+                          form.submission.data[dataItem][rowItem] = Object.assign({}, changed.data[dataItem][rowItem]);
+                        }
                       }
                     }
                   }
