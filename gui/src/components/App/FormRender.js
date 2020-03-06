@@ -444,6 +444,18 @@ class FormRender extends React.Component {
       return formData.data;
     }
 
+    processProperties(form){
+      if (form._form["properties"]) {
+        this.runDelegates(form, form._form["properties"]);
+        this.runProps(form._form,form,form._form["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+      } else {
+        if (form.originalComponent["properties"]) {
+          this.runDelegates(form, form.originalComponent["properties"]);
+          this.runProps(form.originalComponent,form,form.originalComponent["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+        }
+      }
+    }
+
     loadWorkflow(form) {
       let that = this;
       if (this.state.parentWorkflowInstanceId) {
@@ -458,15 +470,7 @@ class FormRender extends React.Component {
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
               form.setSubmission({data:that.state.data}).then(function (){
-                if (form._form["properties"]) {
-                  that.runDelegates(form, form._form["properties"]);
-                  that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                } else {
-                  if (form.originalComponent["properties"]) {
-                    that.runDelegates(form, form.originalComponent["properties"]);
-                    that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                  }
-                }
+              that.processProperties(form);
               });
             } else {
               this.createForm();
@@ -483,15 +487,7 @@ class FormRender extends React.Component {
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
               form.setSubmission({data:that.state.data}).then(function (){
-                if (form._form["properties"]) {
-                  that.runDelegates(form, form._form["properties"]);
-                  that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                } else {
-                  if (form.originalComponent["properties"]) {
-                    that.runDelegates(form, form.originalComponent["properties"]);
-                    that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                  }
-                }
+              that.processProperties(form);
               });
             } else {
               this.createForm();
@@ -1140,11 +1136,9 @@ parseResponseData = data => {
 componentDidMount() {
   if (this.props.url) {
     this.getFormContents(this.props.url).then(response => {
-      var parsedData = [];
+      var parsedData = {};
       if (response.data) {
-        parsedData = this.parseResponseData(JSON.parse(response.data));
-      } else if (this.state.data) {
-        parsedData = this.state.data;
+        parsedData = this.parseResponseData(this.addAddlData(JSON.parse(response.data)));
       }
       response.workflow_uuid
       ? (parsedData.workflow_uuid = response.workflow_uuid)
@@ -1157,7 +1151,14 @@ componentDidMount() {
         formId: response.form_id
       });
       this.createForm().then(form => {
-        this.loadWorkflow(form);
+        if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
+          var that = this;
+          form.setSubmission({data: parsedData}).then(respone=> {
+            that.processProperties(form);
+          });
+        }else{
+          this.loadWorkflow(form);
+        }
       });
       
     });
@@ -1173,7 +1174,7 @@ componentDidMount() {
         this.loadWorkflow(form);
       });
     } else {
-      this.loadWorkflow();
+      this.loadWorkflow(form);
     }
   }
 }
