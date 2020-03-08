@@ -8,6 +8,8 @@ import {
 } from "formiojs/utils/formUtils";
 import React from "react";
 import merge from "deepmerge";
+import $ from "jquery";
+import Swal from "sweetalert2";
 import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
@@ -578,6 +580,24 @@ class FormRender extends React.Component {
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(that.cleanData(form_data));
             next(null);
+          },
+          beforeCancel: () => {
+            Swal.fire({
+              title: "Are you sure?",
+              text:
+                "Do you really want to cancel the submission? This action cannot be undone!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              cancelButtonText: "No",
+              confirmButtonText: "Yes",
+              target:".AppBuilderPage"
+            }).then(result => {
+              if (result.value) {
+                that.props.postSubmitCallback();
+              }
+            });
           }
         };
         options.hooks = hooks;
