@@ -152,7 +152,7 @@ class Dashboard extends Component {
         }).
         catch(response => {
             Swal.fire({
-                type: 'error',
+                icon: 'error',
                 title: 'Oops...',
                 text: 'Could not fetch the widget data. Please try after some time.'
             });
