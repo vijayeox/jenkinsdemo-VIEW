@@ -532,7 +532,7 @@ export default class Window extends EventEmitter {
     //   ondrop: (...args) => this.emit('drop', ...args, this)
     // });
 
-    this.on('destroy', () => d.destroy());
+    // this.on('destroy', () => d.destroy());
 
     this.inited = true;
     this.emit('init', this);

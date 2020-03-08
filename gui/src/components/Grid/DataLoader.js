@@ -49,7 +49,9 @@ export class DataLoader extends React.Component {
       if (Object.keys(this.props.dataState).length === 0) {
         var route = url;
       } else {
-        var filterConfig = this.prepareQueryFilters(this.props.dataState);
+        var filterConfig = this.props.columnConfig
+          ? this.prepareQueryFilters(this.props.dataState)
+          : this.props.dataState;
         var route =
           url +
           paramSeperator +
@@ -130,12 +132,7 @@ export class DataLoader extends React.Component {
 
   render() {
     this.requestDataIfNeeded();
-    return (
-      <>
-        <Notification ref={this.notif} />
-        {this.pending && <LoadingPanel />}
-      </>
-    );
+    return <>{this.pending && <LoadingPanel />}</>;
   }
 }
 export default DataLoader;

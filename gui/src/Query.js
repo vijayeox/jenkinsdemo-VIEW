@@ -33,13 +33,6 @@ class Query extends React.Component {
     this.checkedList = {}
   }
 
-  // componentWillMount() {
-  //   //set switch respect to activated and deactivated datasource
-  //   console.log(this.checkedList)
-  //   this.setState({ checked: this.checkedList })
-  // }
-
-
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
     toggleList[id] = checked
@@ -74,6 +67,7 @@ class Query extends React.Component {
 
   componentDidMount() {
     this.fetchDataSource()
+    this.setState({ checked: this.checkedList })
   }
 
   validateform() {
@@ -145,7 +139,7 @@ class Query extends React.Component {
               <Switch
                 id={e.name}
                 onChange={() => that.buttonAction(action[key], e)}
-                checked={that.state.checked[e.name]}
+                checked={that.state.checked[e.name]?that.state.checked[e.name]:false}
                 onClick={() => that.buttonAction(action[key], e)}
                 onColor="#86d3ff"
                 onHandleColor="#2693e6"
@@ -164,7 +158,7 @@ class Query extends React.Component {
           actionButtons.push(
             <abbr title={action[key].name} key={index}>
               <Button
-                primary={true}
+               key={"manage"+action[key].name}
                 className=" btn manage-btn k-grid-edit-command"
                 variant="primary"
                 onClick={() => that.runQuery(e)}
@@ -178,7 +172,7 @@ class Query extends React.Component {
               </Button>
             </abbr>
           )
-        : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>);
+        : actionButtons.push(<Button key={"space-btn"} style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>);
     });
     return actionButtons;
   }

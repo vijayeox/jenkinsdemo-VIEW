@@ -444,9 +444,57 @@ class FormRender extends React.Component {
       return formData.data;
     }
 
-    loadWorkflow() {
+    processProperties(form){
+      if (form._form["properties"]) {
+        this.runDelegates(form, form._form["properties"]);
+        this.runProps(form._form,form,form._form["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+      } else {
+        if (form.originalComponent["properties"]) {
+          this.runDelegates(form, form.originalComponent["properties"]);
+          this.runProps(form.originalComponent,form,form.originalComponent["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+        }
+      }
+    }
+
+    loadWorkflow(form) {
       let that = this;
-      if (this.state.formId) {
+      if (this.state.parentWorkflowInstanceId) {
+        this.getFileData().then(response => {
+          if (response.status == "success") {
+            let fileData = JSON.parse(response.data.data);
+            fileData.parentWorkflowInstanceId =
+            that.props.parentWorkflowInstanceId;
+            fileData.workflowInstanceId = undefined;
+            fileData.activityId = undefined;
+            that.setState({ data: this.addAddlData(that.parseResponseData(fileData)) });
+            that.setState({ formDivID: "formio_" + that.state.formId });
+            if(form){
+              form.setSubmission({data:that.state.data}).then(function (){
+              that.processProperties(form);
+              });
+            } else {
+              this.createForm();
+            }
+          }
+        });
+      } else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+        this.getActivityInstance().then(response => {
+          if (response.status == "success") {
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
+            that.setState({ workflowId: response.data.workflow_id });
+            that.setState({ activityId: response.data.activity_id });
+            that.setState({ data: that.parseResponseData(this.addAddlData(JSON.parse(response.data.data))) });
+            that.setState({ content: JSON.parse(response.data.template) });
+            if(form){
+              form.setSubmission({data:that.state.data}).then(function (){
+              that.processProperties(form);
+              });
+            } else {
+              this.createForm();
+            }
+          }
+        });
+      } else if (this.state.formId) {
         this.getWorkflow().then(response => {
           if (response.status == "success" && response.data.workflow_id) {
             that.setState({ workflowId: response.data.workflow_id });
@@ -454,7 +502,6 @@ class FormRender extends React.Component {
               that.setState({ activityId: response.data.activity_id });
             }
             if (!that.state.content) {
-              console.log(response.data);
               that.setState({ content: JSON.parse(response.data.template) });
             }
           } else {
@@ -473,54 +520,24 @@ class FormRender extends React.Component {
             });
           }
           that.setState({ formDivID: "formio_" + that.state.formId });
-          setTimeout(function() {
-            that.createForm();
-          }, 2000);
         });
-      }
-      if (this.state.parentWorkflowInstanceId) {
-        this.getFileData().then(response => {
-          if (response.status == "success") {
-            let fileData = JSON.parse(response.data.data);
-            console.log(fileData);
-            fileData.parentWorkflowInstanceId =
-            that.props.parentWorkflowInstanceId;
-            fileData.workflowInstanceId = undefined;
-            fileData.activityId = undefined;
-            that.setState({ data: that.parseResponseData(fileData) });
-            that.setState({ formDivID: "formio_" + that.state.formId });
-            that.createForm();
-          }
-        });
-      }
-      if (this.state.activityInstanceId && this.state.workflowInstanceId) {
-        console.log(that.state);
-        this.getActivityInstance().then(response => {
-          if (response.status == "success") {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
-            that.setState({ workflowId: response.data.workflow_id });
-            that.setState({ activityId: response.data.activity_id });
-            that.setState({ data: JSON.parse(response.data.data) });
-            that.setState({ content: JSON.parse(response.data.template) });
-            that.createForm();
-          }
-        });
-      }
-      if (this.state.instanceId) {
+      } else if (this.state.instanceId) {
         this.getInstanceData().then(response => {
           if (response.status == "success" && response.data.workflow_id) {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
-            that.setState({ data: JSON.parse(response.data.data) });
+            that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
             that.setState({ content: response.data.template });
-            that.createForm();
+            if(form){
+              form.setSubmission({data:that.state.data});
+            } else {
+              this.createForm();
+            }
           }
         });
+      } else {
+
       }
     }
     createForm() {
@@ -530,8 +547,7 @@ class FormRender extends React.Component {
       Formio.registerComponent("document", DocumentComponent);
       Formio.registerComponent("fortepay", FortePayCheckoutComponent);
       Formio.registerComponent("documentviewer", DocumentViewerComponent);
-      Formio.registerComponent("radiocard",RadioCardComponent);
-
+      Formio.registerComponent("radiocard", RadioCardComponent);
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -559,56 +575,52 @@ class FormRender extends React.Component {
         var hooks = {
           beforeNext: (currentPage, submission, next) => {
             var form_data = JSON.parse(JSON.stringify(submission.data));
-          // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
-          that.storeCache(that.cleanData(form_data));
-          next(null);
-        }
-      };
-      options.hooks = hooks;
-      var formCreated = Formio.createForm(
-        document.getElementById(this.formDivID),
-        this.state.content,
-        options
-        ).then(function(form) {
+            // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
+            that.storeCache(that.cleanData(form_data));
+            next(null);
+          }
+        };
+        options.hooks = hooks;
+        var formCreated = Formio.createForm(document.getElementById(this.formDivID),this.state.content,options).then(function (form) {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-                );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
           }
-          form.setSubmission({data:that.state.data},{modified:false});
-          form.on("submit", async function(submission) {
+          if(that.state.data !=  undefined){
+            form.setSubmission({ data: that.state.data });
+          }
+          form.on("submit", async function (submission) {
             var form_data = that.cleanData(submission.data);
             var response_data = await that.saveForm(null, form_data);
             console.log(response_data);
-          // Not able to get the returned response here from saveForm (Bharat)
-          // if (response_data.status == "success") {
-          //   form.emit("submitDone", response_data);
-          // } else {
-          //   form.emit("error", response_data);
-          // }
-        });
+            // Not able to get the returned response here from saveForm (Bharat)
+            // if (response_data.status == "success") {
+            //   form.emit("submitDone", response_data);
+            // } else {
+            //   form.emit("error", response_data);
+            // }
+          });
           form.on("prevPage", changed => {
             form.emit("render");
             that.setState({ page: changed.page });
           });
           form.on("nextPage", changed => {
             form.emit("render");
-            that.runDelegates(form,form.pages[changed.page].originalComponent['properties']);
+            that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
             if (form.pages[changed.page]["properties"]["delegate"]) {
               if (form.pages[changed.page]["properties"]["delegate"]) {
                 var form_data = that.cleanData(form.submission.data);
-                that.callDelegate(form.pages[changed.page]["properties"]["delegate"],form_data).then(response => {
+                that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
                   if (response) {
                     that.core.make("oxzion/splash").destroy();
                     if (response.data) {
-                      form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false});
+                      form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) });
                     }
                   }
                 });
@@ -616,15 +628,17 @@ class FormRender extends React.Component {
             }
           });
 
-          form.on("change", function(changed) {
-            for (var dataItem in form.submission.data) {
-              if (typeof form.submission.data[dataItem] == "object") {
-                if (form.submission.data[dataItem]) {
+          form.on("change", function (changed) {
+            for (var dataItem in changed.data) {
+              if (typeof changed.data[dataItem] == "object") {
+                if (changed.data[dataItem]) {
                   var checkComponent = form.getComponent(dataItem);
                   if (checkComponent && checkComponent.type == "datagrid") {
-                    for (var rowItem in Object.keys(form.submission.data[dataItem])) {
-                      if (Array.isArray(form.submission.data[dataItem][rowItem])) {
-                        form.submission.data[dataItem][rowItem] = Object.assign({},form.submission.data[dataItem][rowItem]);
+                    for (var rowItem in Object.keys(changed.data[dataItem])) {
+                      if (Array.isArray(changed.data[dataItem][rowItem])) {
+                        if(Object.keys(changed.data[dataItem][rowItem]).length > 0){
+                          form.submission.data[dataItem][rowItem] = Object.assign({}, changed.data[dataItem][rowItem]);
+                        }
                       }
                     }
                   }
@@ -635,79 +649,55 @@ class FormRender extends React.Component {
               var component = changed.changed.component;
               var properties = component.properties;
               if (properties && (Object.keys(properties).length > 0)) {
-                if(component != undefined){
-                  that.runProps(component,form,properties,changed.data);
+                if (component != undefined) {
+                  that.runProps(component, form, properties, changed.data);
                 } else {
-                  if(changed.changed != undefined){
-                    that.runProps(changed.changed,form,changed.changed.properties,changed.data);
+                  if (changed.changed != undefined) {
+                    that.runProps(changed.changed, form, changed.changed.properties, changed.data);
                   }
                 }
               }
             }
           });
-          form.on("render", function() {
+          form.on("render", function () {
             if (form.wizard && form.wizard.display == "wizard") {
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-                );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
-            eachComponent(form.root.components,function(component) {
+            eachComponent(form.root.components, function (component) {
               if (component) {
-                if (component.component.properties &&component.component.properties.custom_list) {
+                if (component.component.properties && component.component.properties.custom_list) {
                   var targetComponent = form.getComponent(component.component.key);
                   if (targetComponent) {
                     switch (component.component.properties.custom_list) {
                       case "user_list":
-                      var commands = {commands: [{ command: "getuserlist" }]};
-                      that.callPipeline(commands, form.submission).then(response => {
-                        that.core.make("oxzion/splash").destroy();
-                        if (response.data) {
-                          component.setValue(response.data.userlist);
-                        }
-                      });
-                      break;
+                        var commands = { commands: [{ command: "getuserlist" }] };
+                        that.callPipeline(commands, form.submission).then(response => {
+                          that.core.make("oxzion/splash").destroy();
+                          if (response.data) {
+                            component.setValue(response.data.userlist);
+                          }
+                        });
+                        break;
                       default:
-                      break;
-                      component.refresh();
+                        break;
+                        component.refresh();
                     }
                   }
                 }
               }
-            },
-            true
-            );
-            var elm = document.getElementsByClassName(
-              that.state.appId + "_breadcrumbParent"
-              );
+            },true);
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
             if (elm.length > 0) {
-              scrollIntoView(elm[0], {
-                scrollMode: "if-needed",
-                block: "center",
-                behavior: "smooth",
-                inline: "nearest"
-              });
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
             }
-            if(that.state.formLevelDelegateCalled == false){
-              that.setState({
-                formLevelDelegateCalled: true
-              });
-              setTimeout(function (){
-              if (form._form["properties"]) {
-                that.runDelegates(form, form._form["properties"]);
-                that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-              } else {
-                if (form.originalComponent["properties"]) {
-                  that.runDelegates(form, form.originalComponent["properties"]);
-                  that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                }
-              }
-              },1000)
+            if (that.state.formLevelDelegateCalled == false) {
+              that.setState({formLevelDelegateCalled: true});
             }
           });
-          form.on("customEvent", function(event) {
+          form.on("customEvent", function (event) {
             var changed = event.data;
             if (event.type == "callDelegate") {
               var component = event.component;
@@ -731,8 +721,8 @@ class FormRender extends React.Component {
                           if (response.data) {
                             var destinationComponent = form.getComponent(properties["destinationDataKey"]);
                             if (properties["validationKey"]) {
-                              if (properties["validationKey"] && response.data[properties["validationKey"]] ) {
-                                var componentList = flattenComponents( destinationComponent.componentComponents, false);
+                              if (properties["validationKey"] && response.data[properties["validationKey"]]) {
+                                var componentList = flattenComponents(destinationComponent.componentComponents, false);
                                 var valueArray = [];
                                 for (var componentKey in componentList) {
                                   valueArray[componentKey] = response.data[componentKey];
@@ -744,9 +734,9 @@ class FormRender extends React.Component {
                                 changed[properties["sourceDataKey"]] = "";
                               }
                             }
-                            form.submission = { data: that.parseResponseData(that.addAddlData(changed))};
-                            // form.triggerChange();
-                            destinationComponent.triggerRedraw();
+                            form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
+                              destinationComponent.triggerRedraw();
+                            });
                           }
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -760,7 +750,7 @@ class FormRender extends React.Component {
                         for (var responseDataItem in response.data) {
                           if (response.data.hasOwnProperty(responseDataItem)) {
                             responseArray[responseDataItem] =
-                            response.data[responseDataItem];
+                              response.data[responseDataItem];
                           }
                         }
                         if (response.data) {
@@ -775,18 +765,16 @@ class FormRender extends React.Component {
                               changed[properties["sourceDataKey"]] = "";
                             }
                           }
-                          form.submission = { data: that.parseResponseData(that.addAddlData(changed)) };
-                          // form.triggerChange();
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) });
                           destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
                       });
                     } else {
-                      that.callDelegate(properties["delegate"],that.cleanData(changed)).then(response => {
+                      that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.submission = { data: that.parseResponseData(that.addAddlData(response.data))};
-                          // form.triggerChange();
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) });
                         }
                       });
                     }
@@ -808,10 +796,10 @@ class FormRender extends React.Component {
                     if (response.data) {
                       try {
                         var formData = that.parseResponseData(that.addAddlData(response.data));
-                        form.setSubmission({data:formData},{modified:false}).then(response2 =>{
-                          that.runProps(component,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+                        form.setSubmission({ data: formData }).then(response2 => {
+                          that.runProps(component, form, properties, that.parseResponseData(that.addAddlData(form.submission.data)));
                         });
-                      } catch (e){
+                      } catch (e) {
                         console.log(e);
                       }
                     }
@@ -820,28 +808,30 @@ class FormRender extends React.Component {
               }
             }
           });
-form.formReady.then(() => {
-  console.log("formReady");
-});
-form.submissionReady.then(() => {
-  console.log("submissionReady");
-  form.element.addEventListener("getAppDetails",function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    var evt = new CustomEvent("appDetails", {detail: {core: that.core,appId: that.state.appId,uiUrl: that.core.config("ui.url"),wrapperUrl: that.core.config("wrapper.url")}});
-    form.element.dispatchEvent(evt);
-  },true);
-  form.emit("render");
-});
-that.setState({ currentForm: form });
-        // form.formReady.then( () => {
-        //   console.log('formReady');
-        //   form.emit('render');
-        // });
-        // form.emit('render');
-      });
-}
+          form.formReady.then(() => {
+            console.log("formReady");
+          });
+          form.submissionReady.then(() => {
+            console.log("submissionReady");
+            form.element.addEventListener("getAppDetails", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              var evt = new CustomEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
+              form.element.dispatchEvent(evt);
+            }, true);
+            form.emit("render");
+          });
+          that.setState({ currentForm: form });
+          // form.formReady.then( () => {
+          //   console.log('formReady');
+          //   form.emit('render');
+          // });
+          // form.emit('render');
+          return form;
+        });
+      }
+      return formCreated;
 }
 triggerComponent(form,targetProperties){
   var targetList = targetProperties.split(',');
@@ -857,6 +847,25 @@ triggerComponent(form,targetProperties){
   }
   )
 };
+
+postDelegateRefresh(form,properties){
+  var targetList = properties["post_delegate_refresh"].split(',');
+    targetList.map(item => {
+     var targetComponent = form.getComponent(item);
+     if(targetComponent.component && targetComponent.component["properties"]){
+      if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
+        targetComponent.triggerRedraw();
+      }
+      if(targetComponent.component['properties']){
+        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
+     } else {
+      if(targetComponent.component && targetComponent.component.properties){
+        this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
+     } 
+      }
+    }
+  });
+}
 runProps(component,form,properties,formdata){
   if(formdata.data){
     formdata = formdata.data;
@@ -869,24 +878,9 @@ runProps(component,form,properties,formdata){
         if (response) {
           if (response.data) {
             var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
-            form.setSubmission(formData,{modified:false}).then(response2 =>{
+            form.setSubmission(formData).then(response2 =>{
             if (properties["post_delegate_refresh"]) {
-              var targetList = properties["post_delegate_refresh"].split(',');
-              targetList.map(item => {
-               var targetComponent = form.getComponent(item);
-               if(targetComponent.component && targetComponent.component["properties"]){
-                if(targetComponent.type == 'datagrid'){
-                  targetComponent.triggerRedraw();
-                }
-                if(targetComponent.component['properties']){
-                  that.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-               } else {
-                if(targetComponent.component && targetComponent.component.properties){
-                  that.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-               } 
-                }
-              }
-            });
+              this.postDelegateRefresh(form,properties);
             }
             });
           }
@@ -896,7 +890,6 @@ runProps(component,form,properties,formdata){
     }
     if (properties["target"]) {
         var targetComponent = form.getComponent(properties["target"]);
-        console.log(targetComponent);
         var value;
         if (component.dataValue != undefined && targetComponent != undefined) {
           value = formdata[component.dataValue];
@@ -1011,7 +1004,7 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.setSubmission({data:form_data},{modified:false});
+          form.setSubmission({data:form_data});
         }
       });
     }
@@ -1021,8 +1014,12 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-            form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
-              that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data)));
+             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))}).then(response2 =>{
+              if (properties["post_delegate_refresh"]) {
+                this.postDelegateRefresh(form,properties);
+              }else{
+                that.runProps(null,form,properties,that.parseResponseData(that.addAddlData(form.submission.data))); 
+              }  
             });
           }
         }
@@ -1128,7 +1125,7 @@ parseResponseData = data => {
     try {
       parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
     } catch (error) {
-      if(data[key] != undefined && data[key] != ""){
+      if(data[key] != undefined){
         parsedData[key] = data[key];
       }
     }
@@ -1139,31 +1136,47 @@ parseResponseData = data => {
 componentDidMount() {
   if (this.props.url) {
     this.getFormContents(this.props.url).then(response => {
-      var parsedData = [];
+      var parsedData = {};
       if (response.data) {
-        parsedData = this.parseResponseData(JSON.parse(response.data));
-      } else if (this.state.data) {
-        parsedData = this.state.data;
+        parsedData = this.parseResponseData(this.addAddlData(JSON.parse(response.data)));
       }
       response.workflow_uuid
       ? (parsedData.workflow_uuid = response.workflow_uuid)
       : null;
       this.setState({
         content: JSON.parse(response.template),
-        data: this.addAddlData(parsedData),
         workflowInstanceId: response.workflow_instance_id,
         activityInstanceId: response.activity_instance_id,
         workflowId: response.workflow_uuid,
         formId: response.form_id
       });
-      this.createForm();
+      this.createForm().then(form => {
+        if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
+          var that = this;
+          form.setSubmission({data: parsedData}).then(respone=> {
+            that.processProperties(form);
+          });
+        }else{
+          this.loadWorkflow(form);
+        }
+      });
+      
     });
+  } else if (this.props.pipeline) {
+    this.loadFormWithCommands(this.props.pipeline).then(response=>{
+      this.createForm().then(form => {
+        this.loadWorkflow(form);
+      });
+    });
+  } else {
+    if(this.state.content){
+      this.createForm().then(form => {
+        this.loadWorkflow(form);
+      });
+    } else {
+      this.loadWorkflow(form);
+    }
   }
-  if (this.props.pipeline) {
-    this.loadFormWithCommands(this.props.pipeline);
-  }
-
-  this.loadWorkflow();
 }
 async loadFormWithCommands(commands) {
   await this.callPipeline(commands, commands).then(response => {
@@ -1176,10 +1189,8 @@ async loadFormWithCommands(commands) {
           formId: data.id,
           workflowId: response.data.workflow_id
         });
-        this.createForm();
       }
     }
-    return response;
   });
 }
 
