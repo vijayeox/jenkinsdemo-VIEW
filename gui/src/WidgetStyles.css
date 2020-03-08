@@ -1,0 +1,32 @@
+
+/* figure, */
+figure.oxzion-widget,
+div.oxzion-widget
+{
+    text-align:center;
+    outline:solid 1px #ccc;
+    background:rgba(0,0,0,0.05);
+    margin:10px 20px;
+    display:inline-block;
+    position:relative;
+}
+
+/* figure > figcaption, */
+figure.oxzion-widget > figcaption
+{
+    text-align:center;
+    /* display:block; */
+    display:none;
+}
+
+figure.oxzion-widget > div.oxzion-widget-back-button, 
+div.oxzion-widget > div.oxzion-widget-back-button {
+    z-index:2;
+    position:absolute;
+    top:0px;
+    right:0px;
+    font-size:30px;
+    margin:10px;
+    cursor:pointer;
+}
+
