@@ -1,5 +1,8 @@
-import React, { Component } from "react";
-import WidgetRenderer from "./WidgetRenderer";
+import React, { Component } from 'react';
+import WidgetRenderer from './WidgetRenderer';
+import WidgetDrillDownHelper from './WidgetDrillDownHelper';
+import Swal from 'sweetalert2';
+import './WidgetStyles.css'
 
 class Dashboard extends Component {
   constructor(props) {
@@ -66,7 +69,7 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       this.updateGraph();
     }
-    window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
+    window.addEventListener('message', this.widgetDrillDownhMessageHandler, false);
   }
 
   componentWillUnmount() {
@@ -76,10 +79,10 @@ class Dashboard extends Component {
         if (widget.dispose) {
           widget.dispose();
         }
-        this.renderedWidgets[elementId] = null;
+        delete this.renderedWidgets[elementId];
       }
     }
-    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
+    window.removeEventListener('message', this.widgetDrillDownhMessageHandler, false);
   }
 
   componentDidUpdate(prevProps) {
@@ -109,28 +112,51 @@ class Dashboard extends Component {
     }
   };
 
-    widgetDrillDownMessageHandler = (event) => {
+    widgetDrillDownhMessageHandler = (event) => {
         let data = event.data;
         if (data['action'] !== 'oxzion-widget-drillDown') {
             return;
         }
 
+        var thiz = this;
+        function cleanup(elementId) {
+            let widget = thiz.renderedWidgets[elementId];
+            if (widget) {
+                if (widget.dispose) {
+                    widget.dispose();
+                }
+                delete thiz.renderedCharts[elementId];
+            }
+        }
+
         let elementId = data['elementId'];
         let widgetId = data['widgetId'];
-//        let chart = this.renderedCharts[elementId];
-//        if (chart) {
-//            if (chart.dispose) {
-//                chart.dispose();
-//            }
-//            this.renderedCharts[elementId] = null;
-//        }
-        let replaceWidgetId = data['replaceWith'];
-        if (replaceWidgetId) {
-            let widgetElement = document.querySelector('#' + elementId);
-            widgetId = replaceWidgetId;
-            widgetElement.setAttribute('data-oxzion-widget-id', replaceWidgetId);
+        cleanup(elementId);
+
+        let newContext = WidgetDrillDownHelper.prepareWidgetForDrillDown(elementId, widgetId);
+        widgetId = newContext['widgetId'];
+
+        let url = `analytics/widget/${widgetId}?data=true`;
+        let filter = newContext['filter'];
+        if (filter) {
+            url = url + '&filter=' + encodeURIComponent(filter);
         }
-        thiz.callUpdateGraph();
+        var self = this;
+        this.helper.request('v1', url, null, 'get').
+        then(response => {
+            let element = document.getElementById(elementId);
+            let widgetObject = WidgetRenderer.render(element, response.data.widget)
+            if (widgetObject) {
+                self.renderedWidgets[widgetId] = widgetObject;
+            }
+        }).
+        catch(response => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Could not fetch the widget data. Please try after some time.'
+            });
+        });
     }
 
   render() {

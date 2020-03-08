@@ -5,7 +5,7 @@ import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 
 import { WidgetRenderer, DashboardEditorFilter } from './GUIComponents';
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 import '../../gui/src/public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
 import '../../gui/src/public/css/dashboardEditor.scss'
@@ -47,7 +47,7 @@ class DashboardEditor extends React.Component {
                     break;
                 case 'permissions':
                     thisInstance.userProfile = thisInstance.core.make("oxzion/profile").get();
-                   let permissions=thisInstance.userProfile.key.privileges;
+                    let permissions=thisInstance.userProfile.key.privileges;
                     let preparedData={
                         "permissions":permissions,
                         "corrid":eventData.params["OX_CORR_ID"]

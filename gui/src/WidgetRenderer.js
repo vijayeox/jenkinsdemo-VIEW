@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
-import * as am4core from "../amcharts/core";
-import * as am4charts from "../amcharts/charts";
-import * as am4maps from "../amcharts/maps";
-import am4geodata_usaAlbersLow from "@amcharts/amcharts4-geodata/usaAlbersLow";
-import am4themes_animated from "../amcharts/themes/animated";
-import am4themes_kelly from "../amcharts/themes/kelly";
+import * as am4core from '../amcharts/core';
+import * as am4charts from '../amcharts/charts';
+import * as am4maps from '../amcharts/maps';
+import am4geodata_usaAlbersLow from '@amcharts/amcharts4-geodata/usaAlbersLow';
+import am4themes_animated from '../amcharts/themes/animated';
+import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
@@ -18,15 +18,14 @@ class WidgetRenderer {
         switch(widget.renderer) {
             case 'JsAggregate':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
-                    console.error(`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
+                    throw(`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
                 return WidgetRenderer.renderAggregateValue(element, widget.configuration, widget.data);
             break;
 
             case 'amCharts':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
-                    console.error(`Unexpected chart widget tag "${widgetTagName}"`);
-                    return null;
+                    throw(`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
                     return WidgetRenderer.renderAmCharts(element, widget.configuration, widget.data);
@@ -39,8 +38,7 @@ class WidgetRenderer {
 
             case 'JsTable':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
-                    console.error(`Unexpected table widget tag "${widgetTagName}"`);
-                    return null;
+                    throw(`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
                     return WidgetRenderer.renderTable(element, widget.configuration, widget.data);
@@ -52,8 +50,7 @@ class WidgetRenderer {
             break;
 
             default:
-                console.error(`Unexpected widget renderer "${widget.renderer}"`);
-                return null;
+                throw(`Unexpected widget renderer "${widget.renderer}"`);
         }
     }
 
@@ -87,77 +84,6 @@ class WidgetRenderer {
         //if (0 === series.length) {
         //    throw 'Chart series is empty.';
         //}
-
-/*
-        if (series) {
-            series.forEach(function(ser) {
-                switch(ser.type) {
-                    case 'ColumnSeries':
-                        if (!ser['columns']) {
-                            ser['columns'] = {};
-                        }
-                        let columns = ser['columns'];
-                        if (!columns['events']) {
-                            columns['events'] = {};
-                        }
-                        let  seriesEvts = columns['events'];
-                        seriesEvts['hit'] = function(evt) {
-                            let dataContext = WidgetDrillDownHelper.getDataContext(evt.target.dataItem, [
-                                'valueX',
-                                'valueY',
-                                'dateX',
-                                'dateY',
-                                'categoryX',
-                                'categoryY',
-                                'openValueX',
-                                'openValueY',
-                                'openDateX',
-                                'openDateY',
-                                'openCategoryX',
-                                'openCategoryY'
-                            ]);
-                            WidgetDrillDownHelper.broadcastDrillDown(
-                                WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
-                        };
-                    break;
-                    case 'LineSeries':
-                        if (!ser['segments']) {
-                            ser['segments'] = {};
-                        }
-                        let segments = ser['segments'];
-                        segments['interactionsEnabled'] = true;
-                        if (!segments['events']) {
-                            segments['events'] = {};
-                        }
-                        let segmentEvts = segments['events'];
-                        segmentEvts['hit'] = function(evt) {
-                            let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
-                            WidgetDrillDownHelper.broadcastDrillDown(
-                                WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
-//console.log('Clicked line segment => ', dataContext);
-                        };
-    
-                        if (!ser['bullets']) {
-                            ser['bullets'] = [];
-                        }
-                        let bullets = ser['bullets'];
-                        bullets.forEach(function(bul) {
-                            if (!bul['events']) {
-                                bul['events'] = {};
-                            }
-                            let bulletEvts = bul['events'];
-                            bulletEvts['hit'] = function(evt) {
-                                let dataContext = evt.target.dataItem.dataContext;
-                                WidgetDrillDownHelper.broadcastDrillDown(
-                                    WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
-                            };
-                        });
-
-                    break;
-                }
-            });
-        }
-*/
 
         let type = null;
         if (Array.isArray(series) && (series.length > 0)) {
@@ -205,8 +131,8 @@ class WidgetRenderer {
             }
         }
 
-        if (WidgetDrillDownHelper.persistDrillDownConfiguration(element, configuration)) {
-            WidgetDrillDownHelper.setupEventHandlers(series);
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)) {
+            WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
         }
 
         let elementTagName = element.tagName.toUpperCase();
@@ -236,13 +162,32 @@ class WidgetRenderer {
             }
         }
 
+        let isDrilledDown = false;
+        if (isDrilledDown) {
+            element.insertAdjacentHTML('beforeend', 
+                '<div class="oxzion-widget-back-button"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></div>');
+        }
+
         return chart;
     }
 
     static renderAmMap(configuration, canvasElement, data) {
-        //-----------------------------------------------------------------------------------------
-        // Code is based on https://codepen.io/team/amcharts/pen/5ae84826c9e2ab4772c9ef85021835c7
-        //-----------------------------------------------------------------------------------------
+        function findWidgetElement(element) {
+            if ('MapPolygon' !== element.className) {
+                throw 'Unexpected element type.';
+            }
+            element = element.htmlContainer;
+            while(true) {
+                element = element.parentElement;
+                if (!element) {
+                    throw('Did not find widget element when moving up the node hierarchy of map chart click event.');
+                }
+                if (element.hasAttribute('data-oxzion-widget-id')) {
+                    return element;
+                }
+            }
+        }
+
         function processData(data, configuration) {
             let meta = configuration['oxzion-meta'];
             if (!meta) {
@@ -279,6 +224,9 @@ class WidgetRenderer {
             }
         }
 
+        //-----------------------------------------------------------------------------------------
+        // Code is based on https://codepen.io/team/amcharts/pen/5ae84826c9e2ab4772c9ef85021835c7
+        //-----------------------------------------------------------------------------------------
         let chart = am4core.create(canvasElement, am4maps.MapChart);
         chart.geodata = am4geodata_usaAlbersLow;
         chart.projection = new am4maps.projections.Mercator();
@@ -361,6 +309,11 @@ class WidgetRenderer {
         // 1. hide tooltip (use hit event handler)
         // 2. open URL if available (use url property, property binding, and adapter)
         polygonTemplate.events.on("hit", function(event) {
+            let dataContext = {
+                'state':event.target.dataItem.dataContext.name
+            };
+            WidgetDrillDownHelper.drillDownClicked(findWidgetElement(event.target), dataContext);
+
             // The original logic was if this state has a numeric value,
             // but a tooltip will only show if that's the case,
             // so we can just hide it regardless.
