@@ -649,22 +649,24 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            for (var dataItem in changed.data) {
-              if (typeof changed.data[dataItem] == "object") {
-                if (changed.data[dataItem]) {
-                  var checkComponent = form.getComponent(dataItem);
-                  if (checkComponent && checkComponent.type == "datagrid") {
-                    for (var rowItem in Object.keys(changed.data[dataItem])) {
-                      if (Array.isArray(changed.data[dataItem][rowItem])) {
-                        if(Object.keys(changed.data[dataItem][rowItem]).length > 0){
-                          form.submission.data[dataItem][rowItem] = Object.assign({}, changed.data[dataItem][rowItem]);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            // for (var dataItem in form.submission.data) {
+            //   if (typeof form.submission.data[dataItem] == "object") {
+            //     if (form.submission.data[dataItem]) {
+            //       var checkComponent = form.getComponent(dataItem);
+            //       if (checkComponent && checkComponent.type == "datagrid") {
+            //         for (var rowItem in Object.keys(form.submission.data[dataItem])) {
+            //           if (Array.isArray(form.submission.data[dataItem][rowItem])) {
+            //             if(Object.keys(form.submission.data[dataItem][rowItem]).length == 0){
+            //               console.log(form.submission.data[dataItem][rowItem])
+            //               form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
+            //             }
+            //           }
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            console.log(changed);
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var properties = component.properties;
@@ -703,7 +705,6 @@ class FormRender extends React.Component {
                         break;
                       default:
                         break;
-                        component.refresh();
                     }
                   }
                 }
@@ -870,21 +871,22 @@ triggerComponent(form,targetProperties){
 
 postDelegateRefresh(form,properties){
   var targetList = properties["post_delegate_refresh"].split(',');
-    targetList.map(item => {
-     var targetComponent = form.getComponent(item);
-     if(targetComponent.component && targetComponent.component["properties"]){
-      if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
-        targetComponent.triggerRedraw();
-      }
-      if(targetComponent.component['properties']){
-        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-     } else {
+  targetList.map(item => {
+   var targetComponent = form.getComponent(item);
+   console.log(targetComponent);
+   if(targetComponent.component && targetComponent.component["properties"]){
+    if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
+      targetComponent.triggerRedraw();
+    }
+    if(targetComponent.component['properties']){
+      this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
+    } else {
       if(targetComponent.component && targetComponent.component.properties){
         this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-     } 
-      }
+      } 
     }
-  });
+  }
+});
 }
 runProps(component,form,properties,formdata){
   if(formdata.data){
@@ -902,6 +904,7 @@ runProps(component,form,properties,formdata){
             if (properties["post_delegate_refresh"]) {
               this.postDelegateRefresh(form,properties);
             }
+            form.setPristine(true);
             });
           }
           this.core.make("oxzion/splash").destroy();
@@ -909,86 +912,88 @@ runProps(component,form,properties,formdata){
       });
     }
     if (properties["target"]) {
-        var targetComponent = form.getComponent(properties["target"]);
-        var value;
-        if (component.dataValue != undefined && targetComponent != undefined) {
+      var targetComponent = form.getComponent(properties["target"]);
+      var value;
+      if (component.dataValue != undefined && targetComponent != undefined) {
+        value = formdata[component.dataValue];
+        if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
+          formdata[component.key] = formdata[component.dataValue.value];
+        } else if (component.dataValue.value != undefined) {
+          value = component.dataValue.value;
+        } else if(formdata[component.dataValue] != undefined){
           value = formdata[component.dataValue];
-          if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
-            formdata[component.key] = formdata[component.dataValue.value];
-          } else if (component.dataValue.value != undefined) {
-            value = component.dataValue.value;
-          } else if(formdata[component.dataValue] != undefined){
-            value = formdata[component.dataValue];
-          } else {
-            value = component.dataValue;
-          }
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-          targetComponent.setValue(value);
-          // targetComponent.updateValue(value);
-          form.submission.data[targetComponent.key] = value;
         } else {
-          if (component != undefined && targetComponent != undefined) {
-            if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
-              value = formdata[component.value.value];
-            } else  if (component.value != undefined && component.value.value != undefined) {
-              value = component.value.value;
-            } else if(formdata[component.value] != undefined){
-              value = formdata[component.value];
-            } else if(formdata[formdata[component.key]] != undefined){
-              value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key]] != undefined){
-              value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key].value] != undefined){
-              value = formdata[formdata[component.key].value];
-            }else if(formdata[component.key] != undefined){
-              value = formdata[component.key];
-            } else {
-              value = component.value;
-            }
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-            targetComponent.setValue(value);
-            // targetComponent.updateValue(value);
-            form.submission.data[targetComponent.key] = value;
-          } else {
-            if (document.getElementById(properties["target"])) {
-              value = formdata[component.value];
-              if (component.value != undefined && component.value.value != undefined) {
-                value = formdata[component.value.value];
-              } else if (value && value != undefined) {
-                value = value;
-              } else if(formdata[formdata[component.key]] != undefined){
-                value = formdata[formdata[component.key]];
-              } else if(formdata[component.key] != undefined){
-                value = formdata[component.key];
-              } else {
-                if (component.value != undefined && component.value.value != undefined) {
-                  value = component.value.value;
-                } else {
-                  value = component.value;
-                }
-              }
-
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-              document.getElementById(properties["target"]).value  = value;
-            }
+          value = component.dataValue;
+        }
+        if(value == undefined){
+          if(formdata[formdata[component.key]]){
+            value = formdata[component.key];
           }
         }
-          if(targetComponent && targetComponent.component && targetComponent.component.properties){
-            that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+        if(value != undefined){
+          targetComponent.setValue(value);
+          form.submission.data[targetComponent.key] = value; 
+        }
+      } else {
+        if (component != undefined && targetComponent != undefined) {
+          if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
+            value = formdata[component.value.value];
+          } else  if (component.value != undefined && component.value.value != undefined) {
+            value = component.value.value;
+          } else if(formdata[component.value] != undefined){
+            value = formdata[component.value];
+          } else if(formdata[formdata[component.key]] != undefined){
+            value = formdata[formdata[component.key]];
+          } else if(formdata[formdata[component.key]] != undefined){
+            value = formdata[formdata[component.key]];
+          } else if(formdata[formdata[component.key].value] != undefined){
+            value = formdata[formdata[component.key].value];
+          }else if(formdata[component.key] != undefined){
+            value = formdata[component.key];
+          } else {
+            value = component.value;
           }
+          if(value == undefined){
+            if(formdata[formdata[component.key]]){
+              value = formdata[component.key];
+            }
+          }
+          if(value != undefined){
+            targetComponent.setValue(value);
+            form.submission.data[targetComponent.key] = value;
+          }
+        } else {
+          if (document.getElementById(properties["target"])) {
+            value = formdata[component.value];
+            if (component.value != undefined && component.value.value != undefined) {
+              value = formdata[component.value.value];
+            } else if (value && value != undefined) {
+              value = value;
+            } else if(formdata[formdata[component.key]] != undefined){
+              value = formdata[formdata[component.key]];
+            } else if(formdata[component.key] != undefined){
+              value = formdata[component.key];
+            } else {
+              if (component.value != undefined && component.value.value != undefined) {
+                value = component.value.value;
+              } else {
+                value = component.value;
+              }
+            }
+            if(value == undefined){
+              if(formdata[formdata[component.key]]){
+                value = formdata[component.key];
+              }
+            }
+            document.getElementById(properties["target"]).value  = value;
+          }
+        }
       }
+      if(targetComponent && targetComponent.component && targetComponent.component.properties){
+        that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+        form.setPristine(true);
+      }
+    }
       if (properties["negate"]) {
         var targetComponent = form.getComponent(properties["negate"]);
         if (component.value && targetComponent) {
@@ -1002,7 +1007,7 @@ runProps(component,form,properties,formdata){
             targetComponent.setValue(!formdata[component.key]);
           }
         }
-      }
+      } q
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
@@ -1013,6 +1018,7 @@ runProps(component,form,properties,formdata){
          }
        });
     }
+    form.setPristine(true);
   }
 }
 runDelegates(form, properties) {
