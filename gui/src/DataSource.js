@@ -124,7 +124,7 @@ class DataSource extends React.Component {
         style={{ right: "10px", float: "right" }}
         onClick={() => this.buttonAction({ name: config.name })}
       >
-        <i class="fa fa-plus" aria-hidden="true"></i> {config.name}
+        <i className="fa fa-plus" aria-hidden="true"></i> {config.name}
       </Button>
     );
   };
