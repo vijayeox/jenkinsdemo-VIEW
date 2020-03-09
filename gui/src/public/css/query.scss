@@ -44,8 +44,8 @@ color:#275362;
     display: table-cell;
     text-align: center;
     width: 100vw;
-    padding-left: 2em;
-    padding-right: 2em;
+    // padding-left: 2em;
+    padding-right: 0.1em;
     background: #8cb5b536;
 }
 
@@ -112,4 +112,16 @@ color:#275362;
 
   .query-result-div .nav-tabs{
       border-bottom: 1px solid #275362 !important;
+  }
+
+  .query-result-details{
+    padding: 0.5em;
+    background:#a2b7ca;
+    color:black;
+    font-weight: bolder;
+  }
+
+  .query-result-details span
+  {
+    color: #0c3d52;
   }

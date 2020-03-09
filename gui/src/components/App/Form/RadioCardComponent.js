@@ -1,5 +1,7 @@
 import Base from 'formiojs/components/_classes/component/Component'
 import editForm from 'formiojs/components/table/Table.form'
+import $ from 'jquery';
+import { element } from 'prop-types';
 
 export default class RadioCardComponent extends Base {
     constructor(component, options, data) {
@@ -7,7 +9,7 @@ export default class RadioCardComponent extends Base {
         this.data = data;
         this.form = this.getRoot();
         var that = this;
-        console.log(that.form.element)
+   
     }
     static schema() {
         return Base.schema({
@@ -31,15 +33,18 @@ export default class RadioCardComponent extends Base {
    * @returns {string}
    */
     render(children) { 
+        let that = this;
         let content = '';
         let component = '<div class="row">';
-        for(let i = 0 ; i< this.component.paymentTerm.length; i++) {
+        let defaultRange = that.data["defaultRange"].split(",").map(i => +i);
+        for(let i = 0 ; i< defaultRange.length; i++) {
+            // disabled[i] = that.component.range.includes(defaultRange[i])
             let cell = '<div class="col-md-2">'
             cell += `<label class="labels">
-                        <input type="radio" name="product" class="card-input-element" value={${this.component.paymentTerm[i]}} />
+                        <input id="${i}" type="radio" name="product" class="card-input-element" value="${defaultRange[i]}" />
                         <div class="card card-input">
                             <div class="card-body" style="text-align: center">
-                                ${this.component.paymentTerm[i]}
+                                ${defaultRange[i]}
                                 Months
                             </div>
                         </div>
@@ -54,6 +59,46 @@ export default class RadioCardComponent extends Base {
                 ${component}
             </div>
         `);
+    }
+    /**
+   * After the html string has been mounted into the dom, the dom element is returned here. Use refs to find specific
+   * elements to attach functionality to.
+   *
+   * @param element
+   * @returns {Promise}
+   */
+	attach(element) { 
+        element.addEventListener("click", (e) => this.updateValue(e.target.value))
+        if(this.component.range){
+            var defaultRange = this.data["defaultRange"].split(",").map(i => +i);
+            for(let i = 0 ; i< defaultRange.length; i++) { 
+                if(!this.component.range.includes(defaultRange[i])){
+                    $('input[type=radio][value=' + defaultRange[i] + ']').prop("disabled",true);
+                }
+            }
+        }
+        
+        if(this.data['rangeValue']){
+            $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
+            this.updateValue(this.data['rangeValue'])
+        }
+
+       
+        
+        return super.attach(element);
+    }
+    /**
+   * Set the value of the component into the dom elements.
+   *
+   * @param value
+   * @returns {boolean}
+   */
+    setValue(value) {
+        if (!value) {
+            return;
+        }
+     
+        
     }
    
 }

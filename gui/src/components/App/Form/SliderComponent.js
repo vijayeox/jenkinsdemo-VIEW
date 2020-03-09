@@ -5,7 +5,9 @@ export default class SliderComponent extends Base {
 	constructor(component, options, data) {
 		component.label = 'Slider'
 		super(component, options, data);
-
+		this.data = data;
+		this.form = this.getRoot();
+		
 	}
 	static schema(...extend) {
 		return Base.schema({
@@ -22,8 +24,7 @@ export default class SliderComponent extends Base {
 		schema: SliderComponent.schema()
 	}
 	build() {
-		console.log(this);
-		// super.build(element);
+		// console.log(this);
 	}
 	rebuild(){
 		super.rebuild();
@@ -37,12 +38,12 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-
+	
 		let content = '';
 		let list = "<ul class='ticks' id='tickmarks'>";
 		var max = this.component.sliderRange.length-1,
-			min = 0;
-			console.log(max)
+			min = 0,
+			value = this.component.sliderRange.indexOf(this.dataValue);
 		for(let i = min; i<= max ;i++) {
 			let cell = `<li id="${this.component.key}-${i}" value="${this.component.sliderRange[i]}">`;
 			// cell += `${i}`
@@ -53,9 +54,10 @@ export default class SliderComponent extends Base {
 		content += list;
 
 		// Calling super.render will wrap it html as a component.
+
 		return super.render(`
 			<div class="range">
-				<input type="range" min="${min}" max="${max}" list="tickmarks">
+				<input type="range" min="${min}" id="slider" max="${max}" list="tickmarks" value="${value}">
 				<span class="range-thumb">$</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
 
@@ -71,7 +73,6 @@ export default class SliderComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) {
-
 		var sheet = document.createElement('style'),
 			$rangeInput = $('input[type="range"]'),
 			prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'],
@@ -79,33 +80,37 @@ export default class SliderComponent extends Base {
 			max = this.component.sliderRange.length-1,
 			sliderRange = this.component.sliderRange;
 		element.addEventListener("input", (e) => this.updateValue(sliderRange[e.target.value]))
+		if(this.data["sliderValue"]){
+			var value = this.component.sliderRange.indexOf(this.data["sliderValue"]);
+			document.getElementById("slider").value = value;
+			this.updateValue(this.data["sliderValue"]);
+		}
+		$rangeInput.each(function() {
 
-			$rangeInput.each(function() {
-
-				var $thumb = $(this).next('.range-thumb');
-				var tw = 80; // Thumb width. See CSS
-				$(this).on('input', function(el) {
-					sheet.textContent = getTrackStyle(this);
-					var curVal = el.target.value ;
-					var w = $(this).width();
-					var val = (curVal - min)/(max-min) * (w - tw);
-				  $thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
-				});
-				$(document).ready(function() {
-					sheet.textContent = getTrackStyle($rangeInput[0]);
-					var tw = 80; // Thumb width. See CSS
-					var curVal = $rangeInput[0].value ;
-					var w = $rangeInput.width();
-					var val = (curVal - min)/(max-min) * (w - tw);
-
-					$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
-
-				})
+			var $thumb = $(this).next('.range-thumb');
+			var tw = 80; // Thumb width. See CSS
+			$(this).on('input', function(el) {
+				sheet.textContent = getTrackStyle(this);
+				var curVal = el.target.value ;
+				var w = $(this).width();
+				var val = (curVal - min)/(max-min) * (w - tw);
+				$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
 			});
+			$(document).ready(function() {
+				sheet.textContent = getTrackStyle($rangeInput[0]);
+				var tw = 80; // Thumb width. See CSS
+				var curVal = $rangeInput[0].value ;
+				var w = $rangeInput.width();
+				var val = (curVal - min)/(max-min) * (w - tw);
 
-      	document.body.appendChild(sheet);
+				$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
 
-		var getTrackStyle = function (el) {
+			})
+		});
+			  
+  
+		
+		var getTrackStyle = function (el) {  
 			var curVal = el.value,
 				val = (curVal - min)/(max-min) * 100,
 				style = '';
@@ -115,8 +120,20 @@ export default class SliderComponent extends Base {
 			}
 			return style;
 		}
+		
 			return super.attach(element);
 	}
+
+	/**
+   * Get the value of the component from the dom elements.
+   *
+   * @returns {Array}
+   */
+
+   getValue() {
+	   var value= [];
+
+   }
 	/**
    * Set the value of the component into the dom elements.
    *

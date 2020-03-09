@@ -143,8 +143,8 @@ class Dashboard extends React.Component {
         >
           <FrontSide>
             {this.userProfile.key.privileges.MANAGE_DASHBOARD_CREATE &&
-             <div class="row">
-               <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i class="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+             <div className="row">
+               <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
              </div>
             }
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
@@ -175,14 +175,14 @@ class Dashboard extends React.Component {
                           <>
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
-                                <i class="fa fa-pen" aria-hidden="true"></i>
+                                <i className="fa fa-pen" aria-hidden="true"></i>
                               </Button>
                             }
                             {
                               (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
                                 this.state.inputs["dashname"]["isdefault"] == "0") &&
                               <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete Dashboard">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                <i className="fa fa-trash" aria-hidden="true"></i>
                               </Button>
                             }
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&

@@ -8,6 +8,8 @@ import {
 } from "formiojs/utils/formUtils";
 import React from "react";
 import merge from "deepmerge";
+import $ from "jquery";
+import Swal from "sweetalert2";
 import scrollIntoView from "scroll-into-view-if-needed";
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
@@ -444,13 +446,24 @@ class FormRender extends React.Component {
       return formData.data;
     }
 
+    processProperties(form){
+      if (form._form["properties"]) {
+        this.runDelegates(form, form._form["properties"]);
+        this.runProps(form._form,form,form._form["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+      } else {
+        if (form.originalComponent["properties"]) {
+          this.runDelegates(form, form.originalComponent["properties"]);
+          this.runProps(form.originalComponent,form,form.originalComponent["properties"],this.parseResponseData(this.addAddlData(form.submission.data)));
+        }
+      }
+    }
+
     loadWorkflow(form) {
       let that = this;
       if (this.state.parentWorkflowInstanceId) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
-            console.log(fileData);
             fileData.parentWorkflowInstanceId =
             that.props.parentWorkflowInstanceId;
             fileData.workflowInstanceId = undefined;
@@ -458,7 +471,9 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(that.parseResponseData(fileData)) });
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
-              form.setSubmission({data:that.state.data},{modified:false});
+              form.setSubmission({data:that.state.data}).then(function (){
+              that.processProperties(form);
+              });
             } else {
               this.createForm();
             }
@@ -467,15 +482,15 @@ class FormRender extends React.Component {
       } else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
             that.setState({ data: that.parseResponseData(this.addAddlData(JSON.parse(response.data.data))) });
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
-              form.setSubmission({data:that.state.data});
+              form.setSubmission({data:that.state.data}).then(function (){
+              that.processProperties(form);
+              });
             } else {
               this.createForm();
             }
@@ -507,14 +522,11 @@ class FormRender extends React.Component {
             });
           }
           that.setState({ formDivID: "formio_" + that.state.formId });
-          
         });
       } else if (this.state.instanceId) {
         this.getInstanceData().then(response => {
           if (response.status == "success" && response.data.workflow_id) {
-            that.setState({
-              workflowInstanceId: response.data.workflow_instance_id
-            });
+            that.setState({ workflowInstanceId: response.data.workflow_instance_id });
             that.setState({ workflowId: response.data.workflow_id });
             that.setState({ activityId: response.data.activity_id });
             that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
@@ -538,7 +550,6 @@ class FormRender extends React.Component {
       Formio.registerComponent("fortepay", FortePayCheckoutComponent);
       Formio.registerComponent("documentviewer", DocumentViewerComponent);
       Formio.registerComponent("radiocard", RadioCardComponent);
-
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -569,6 +580,24 @@ class FormRender extends React.Component {
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(that.cleanData(form_data));
             next(null);
+          },
+          beforeCancel: () => {
+            Swal.fire({
+              title: "Are you sure?",
+              text:
+                "Do you really want to cancel the submission? This action cannot be undone!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              cancelButtonText: "No",
+              confirmButtonText: "Yes",
+              target:".AppBuilderPage"
+            }).then(result => {
+              if (result.value) {
+                that.props.postSubmitCallback();
+              }
+            });
           }
         };
         options.hooks = hooks;
@@ -576,18 +605,14 @@ class FormRender extends React.Component {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-              );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
             }
           }
           if(that.state.data !=  undefined){
-            form.setSubmission({ data: that.state.data }).then(response2 => {
-              form.setPristine(true);
-            });
+            form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
             var form_data = that.cleanData(submission.data);
@@ -624,20 +649,24 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            for (var dataItem in form.submission.data) {
-              if (typeof form.submission.data[dataItem] == "object") {
-                if (form.submission.data[dataItem]) {
-                  var checkComponent = form.getComponent(dataItem);
-                  if (checkComponent && checkComponent.type == "datagrid") {
-                    for (var rowItem in Object.keys(form.submission.data[dataItem])) {
-                      if (Array.isArray(form.submission.data[dataItem][rowItem])) {
-                        form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            // for (var dataItem in form.submission.data) {
+            //   if (typeof form.submission.data[dataItem] == "object") {
+            //     if (form.submission.data[dataItem]) {
+            //       var checkComponent = form.getComponent(dataItem);
+            //       if (checkComponent && checkComponent.type == "datagrid") {
+            //         for (var rowItem in Object.keys(form.submission.data[dataItem])) {
+            //           if (Array.isArray(form.submission.data[dataItem][rowItem])) {
+            //             if(Object.keys(form.submission.data[dataItem][rowItem]).length == 0){
+            //               console.log(form.submission.data[dataItem][rowItem])
+            //               form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
+            //             }
+            //           }
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            console.log(changed);
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var properties = component.properties;
@@ -654,9 +683,7 @@ class FormRender extends React.Component {
           });
           form.on("render", function () {
             if (form.wizard && form.wizard.display == "wizard") {
-              var breadcrumbs = document.getElementById(
-                form.wizardKey + "-header"
-              );
+              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
                 breadcrumbs.style.display = "none";
               }
@@ -678,40 +705,17 @@ class FormRender extends React.Component {
                         break;
                       default:
                         break;
-                        component.refresh();
                     }
                   }
                 }
               }
-            },
-              true
-            );
-            var elm = document.getElementsByClassName(
-              that.state.appId + "_breadcrumbParent"
-            );
+            },true);
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
             if (elm.length > 0) {
-              scrollIntoView(elm[0], {
-                scrollMode: "if-needed",
-                block: "center",
-                behavior: "smooth",
-                inline: "nearest"
-              });
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
             }
             if (that.state.formLevelDelegateCalled == false) {
-              that.setState({
-                formLevelDelegateCalled: true
-              });
-              setTimeout(function (){
-              if (form._form["properties"]) {
-                that.runDelegates(form, form._form["properties"]);
-                that.runProps(form._form,form,form._form["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-              } else {
-                if (form.originalComponent["properties"]) {
-                  that.runDelegates(form, form.originalComponent["properties"]);
-                  that.runProps(form.originalComponent,form,form.originalComponent["properties"],that.parseResponseData(that.addAddlData(form.submission.data)));
-                }
-              }
-              },1000)
+              that.setState({formLevelDelegateCalled: true});
             }
           });
           form.on("customEvent", function (event) {
@@ -752,9 +756,8 @@ class FormRender extends React.Component {
                               }
                             }
                             form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
-                              form.setPristine(true);
+                              destinationComponent.triggerRedraw();
                             });
-                            destinationComponent.triggerRedraw();
                           }
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -783,9 +786,7 @@ class FormRender extends React.Component {
                               changed[properties["sourceDataKey"]] = "";
                             }
                           }
-                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) }).then(response2 => {
-                            form.setPristine(true);
-                          });
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(changed)) });
                           destinationComponent.triggerRedraw();
                         }
                         that.core.make("oxzion/splash").destroy();
@@ -794,9 +795,7 @@ class FormRender extends React.Component {
                       that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
                         that.core.make("oxzion/splash").destroy();
                         if (response.data) {
-                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) }).then(response2 => {
-                            form.setPristine(true);
-                          });
+                          form.setSubmission({ data: that.parseResponseData(that.addAddlData(response.data)) });
                         }
                       });
                     }
@@ -818,7 +817,7 @@ class FormRender extends React.Component {
                     if (response.data) {
                       try {
                         var formData = that.parseResponseData(that.addAddlData(response.data));
-                        form.setSubmission({ data: formData }, { modified: false }).then(response2 => {
+                        form.setSubmission({ data: formData }).then(response2 => {
                           that.runProps(component, form, properties, that.parseResponseData(that.addAddlData(form.submission.data)));
                         });
                       } catch (e) {
@@ -872,21 +871,22 @@ triggerComponent(form,targetProperties){
 
 postDelegateRefresh(form,properties){
   var targetList = properties["post_delegate_refresh"].split(',');
-    targetList.map(item => {
-     var targetComponent = form.getComponent(item);
-     if(targetComponent.component && targetComponent.component["properties"]){
-      if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
-        targetComponent.triggerRedraw();
-      }
-      if(targetComponent.component['properties']){
-        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-     } else {
+  targetList.map(item => {
+   var targetComponent = form.getComponent(item);
+   console.log(targetComponent);
+   if(targetComponent.component && targetComponent.component["properties"]){
+    if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
+      targetComponent.triggerRedraw();
+    }
+    if(targetComponent.component['properties']){
+      this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
+    } else {
       if(targetComponent.component && targetComponent.component.properties){
         this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-     } 
-      }
+      } 
     }
-  });
+  }
+});
 }
 runProps(component,form,properties,formdata){
   if(formdata.data){
@@ -900,10 +900,11 @@ runProps(component,form,properties,formdata){
         if (response) {
           if (response.data) {
             var formData = { data: this.parseResponseData(this.addAddlData(response.data))};
-            form.setSubmission(formData,{modified:false}).then(response2 =>{
+            form.setSubmission(formData).then(response2 =>{
             if (properties["post_delegate_refresh"]) {
               this.postDelegateRefresh(form,properties);
             }
+            form.setPristine(true);
             });
           }
           this.core.make("oxzion/splash").destroy();
@@ -911,87 +912,88 @@ runProps(component,form,properties,formdata){
       });
     }
     if (properties["target"]) {
-        var targetComponent = form.getComponent(properties["target"]);
-        console.log(targetComponent);
-        var value;
-        if (component.dataValue != undefined && targetComponent != undefined) {
+      var targetComponent = form.getComponent(properties["target"]);
+      var value;
+      if (component.dataValue != undefined && targetComponent != undefined) {
+        value = formdata[component.dataValue];
+        if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
+          formdata[component.key] = formdata[component.dataValue.value];
+        } else if (component.dataValue.value != undefined) {
+          value = component.dataValue.value;
+        } else if(formdata[component.dataValue] != undefined){
           value = formdata[component.dataValue];
-          if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
-            formdata[component.key] = formdata[component.dataValue.value];
-          } else if (component.dataValue.value != undefined) {
-            value = component.dataValue.value;
-          } else if(formdata[component.dataValue] != undefined){
-            value = formdata[component.dataValue];
-          } else {
-            value = component.dataValue;
-          }
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-          targetComponent.setValue(value);
-          // targetComponent.updateValue(value);
-          form.submission.data[targetComponent.key] = value;
         } else {
-          if (component != undefined && targetComponent != undefined) {
-            if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
-              value = formdata[component.value.value];
-            } else  if (component.value != undefined && component.value.value != undefined) {
-              value = component.value.value;
-            } else if(formdata[component.value] != undefined){
-              value = formdata[component.value];
-            } else if(formdata[formdata[component.key]] != undefined){
-              value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key]] != undefined){
-              value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key].value] != undefined){
-              value = formdata[formdata[component.key].value];
-            }else if(formdata[component.key] != undefined){
-              value = formdata[component.key];
-            } else {
-              value = component.value;
-            }
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-            targetComponent.setValue(value);
-            // targetComponent.updateValue(value);
-            form.submission.data[targetComponent.key] = value;
-          } else {
-            if (document.getElementById(properties["target"])) {
-              value = formdata[component.value];
-              if (component.value != undefined && component.value.value != undefined) {
-                value = formdata[component.value.value];
-              } else if (value && value != undefined) {
-                value = value;
-              } else if(formdata[formdata[component.key]] != undefined){
-                value = formdata[formdata[component.key]];
-              } else if(formdata[component.key] != undefined){
-                value = formdata[component.key];
-              } else {
-                if (component.value != undefined && component.value.value != undefined) {
-                  value = component.value.value;
-                } else {
-                  value = component.value;
-                }
-              }
-
-            if(value == undefined){
-              if(formdata[formdata[component.key]]){
-                value = formdata[component.key];
-              }
-            }
-              document.getElementById(properties["target"]).value  = value;
-            }
+          value = component.dataValue;
+        }
+        if(value == undefined){
+          if(formdata[formdata[component.key]]){
+            value = formdata[component.key];
           }
         }
-          if(targetComponent && targetComponent.component && targetComponent.component.properties){
-            that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+        if(value != undefined){
+          targetComponent.setValue(value);
+          form.submission.data[targetComponent.key] = value; 
+        }
+      } else {
+        if (component != undefined && targetComponent != undefined) {
+          if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
+            value = formdata[component.value.value];
+          } else  if (component.value != undefined && component.value.value != undefined) {
+            value = component.value.value;
+          } else if(formdata[component.value] != undefined){
+            value = formdata[component.value];
+          } else if(formdata[formdata[component.key]] != undefined){
+            value = formdata[formdata[component.key]];
+          } else if(formdata[formdata[component.key]] != undefined){
+            value = formdata[formdata[component.key]];
+          } else if(formdata[formdata[component.key].value] != undefined){
+            value = formdata[formdata[component.key].value];
+          }else if(formdata[component.key] != undefined){
+            value = formdata[component.key];
+          } else {
+            value = component.value;
           }
+          if(value == undefined){
+            if(formdata[formdata[component.key]]){
+              value = formdata[component.key];
+            }
+          }
+          if(value != undefined){
+            targetComponent.setValue(value);
+            form.submission.data[targetComponent.key] = value;
+          }
+        } else {
+          if (document.getElementById(properties["target"])) {
+            value = formdata[component.value];
+            if (component.value != undefined && component.value.value != undefined) {
+              value = formdata[component.value.value];
+            } else if (value && value != undefined) {
+              value = value;
+            } else if(formdata[formdata[component.key]] != undefined){
+              value = formdata[formdata[component.key]];
+            } else if(formdata[component.key] != undefined){
+              value = formdata[component.key];
+            } else {
+              if (component.value != undefined && component.value.value != undefined) {
+                value = component.value.value;
+              } else {
+                value = component.value;
+              }
+            }
+            if(value == undefined){
+              if(formdata[formdata[component.key]]){
+                value = formdata[component.key];
+              }
+            }
+            document.getElementById(properties["target"]).value  = value;
+          }
+        }
       }
+      if(targetComponent && targetComponent.component && targetComponent.component.properties){
+        that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+        form.setPristine(true);
+      }
+    }
       if (properties["negate"]) {
         var targetComponent = form.getComponent(properties["negate"]);
         if (component.value && targetComponent) {
@@ -1005,7 +1007,7 @@ runProps(component,form,properties,formdata){
             targetComponent.setValue(!formdata[component.key]);
           }
         }
-      }
+      } q
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
@@ -1016,6 +1018,7 @@ runProps(component,form,properties,formdata){
          }
        });
     }
+    form.setPristine(true);
   }
 }
 runDelegates(form, properties) {
@@ -1027,7 +1030,7 @@ runDelegates(form, properties) {
           let form_data = this.parseResponseData(
             this.addAddlData(response.data)
             );
-          form.setSubmission({data:form_data},{modified:false});
+          form.setSubmission({data:form_data});
         }
       });
     }
@@ -1037,7 +1040,7 @@ runDelegates(form, properties) {
         this.core.make("oxzion/splash").destroy();
         if (response.status == "success") {
           if (response.data) {
-             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))},{modified:false}).then(response2 =>{
+             form.setSubmission({data:that.parseResponseData(that.addAddlData(response.data))}).then(response2 =>{
               if (properties["post_delegate_refresh"]) {
                 this.postDelegateRefresh(form,properties);
               }else{
@@ -1159,11 +1162,9 @@ parseResponseData = data => {
 componentDidMount() {
   if (this.props.url) {
     this.getFormContents(this.props.url).then(response => {
-      var parsedData = [];
+      var parsedData = {};
       if (response.data) {
-        parsedData = this.parseResponseData(JSON.parse(response.data));
-      } else if (this.state.data) {
-        parsedData = this.state.data;
+        parsedData = this.parseResponseData(this.addAddlData(JSON.parse(response.data)));
       }
       response.workflow_uuid
       ? (parsedData.workflow_uuid = response.workflow_uuid)
@@ -1176,7 +1177,14 @@ componentDidMount() {
         formId: response.form_id
       });
       this.createForm().then(form => {
-        this.loadWorkflow(form);
+        if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
+          var that = this;
+          form.setSubmission({data: parsedData}).then(respone=> {
+            that.processProperties(form);
+          });
+        }else{
+          this.loadWorkflow(form);
+        }
       });
       
     });
@@ -1192,7 +1200,7 @@ componentDidMount() {
         this.loadWorkflow(form);
       });
     } else {
-      this.loadWorkflow();
+      this.loadWorkflow(form);
     }
   }
 }
