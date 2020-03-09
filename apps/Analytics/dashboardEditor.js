@@ -438,9 +438,9 @@ class DashboardEditor extends React.Component {
         return (
             <form className="dashboard-editor-form">
                 <div className="row col-12" style={{ marginBottom: "3em" }}>
-                    <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i class="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
+                    <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i className="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
                     <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
-                    <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i class="fa fa-filter" aria-hidden="true"></i>Filter</Button>
+                    <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true"></i>Filter</Button>
                 </div>
                 <div>
                     <DashboardEditorFilter 
