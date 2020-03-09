@@ -1007,7 +1007,7 @@ runProps(component,form,properties,formdata){
             targetComponent.setValue(!formdata[component.key]);
           }
         }
-      } q
+      } 
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
