@@ -2,22 +2,22 @@
 @import "~@osjs/gui/dist/main.css";
 @import "~@osjs/dialogs/dist/main.css";
 @import "~@osjs/panels/dist/main.css";
-@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,900');
+@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700,900");
 
-html{
-    font-family: 'Lato';
+html {
+  font-family: "Lato";
 }
-.osjs-window-header{
-	height:3em;
+.osjs-window-header {
+  height: 3em;
 }
-.osjs-window-icon > div{
-	height:3em;
-	width:3em;
+.osjs-window-icon > div {
+  height: 3em;
+  width: 3em;
 }
-.osjs-notifications{
-	top: 45px;
+.osjs-notifications {
+  top: 45px;
 }
 
 .osjs-panel-item .logo-here img {
-    width : 150px;
+  width: 150px;
 }
