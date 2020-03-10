@@ -220,29 +220,13 @@ class FormRender extends React.Component {
   async getActivity() {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
-    let formContent = await helper.request(
-      "v1",
-      "/activity/" + this.state.activityInstanceId + "/form",
-      {},
-      "get"
-      );
+    let formContent = await helper.request("v1","/activity/" + this.state.activityInstanceId + "/form",{},"get");
     return formContent;
   }
   async getActivityInstance() {
     // call to api using wrapper
     let helper = this.core.make("oxzion/restClient");
-    let formContent = await helper.request(
-      "v1",
-      "/app/" +
-      this.state.appId +
-      "/workflowinstance/" +
-      this.state.workflowInstanceId +
-      "/activityinstance/" +
-      this.state.activityInstanceId +
-      "/form",
-      {},
-      "get"
-      );
+    let formContent = await helper.request("v1","/app/" +this.state.appId + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");
     return formContent;
   }
   async saveForm(form, data) {
@@ -257,11 +241,7 @@ class FormRender extends React.Component {
         if (data[componentKey]) {
           delete data[componentKey];
         }
-      } else if (
-        componentItem &&
-        componentItem &&
-        componentItem.persistent == false
-        ) {
+      } else if (componentItem && componentItem && componentItem.persistent == false) {
         if (data[componentKey]) {
           delete data[componentKey];
         }
@@ -269,26 +249,20 @@ class FormRender extends React.Component {
         // console.log(componentItem);
       }
     }
-    if (
-      form._form["properties"] &&
-      form._form["properties"]["submission_commands"]
-      ) {
+    if (form._form["properties"] && form._form["properties"]["submission_commands"]) {
       if (this.state.workflowId) {
         form.data["workflowId"] = this.state.workflowId;
       }
       if (this.state.workflowInstanceId) {
-        form.submission.data[
-        "workflowInstanceId"
-        ] = this.state.workflowInstanceId;
+        form.submission.data["workflowInstanceId"] = this.state.workflowInstanceId;
         if (this.state.activityInstanceId) {
-          form.submission.data[
-          "activityInstanceId"
-          ] = this.state.activityInstanceId;
+          form.submission.data["activityInstanceId"] = this.state.activityInstanceId;
           if (this.state.instanceId) {
             form.submission.data["instanceId"] = $this.state.instanceId;
           }
         }
       }
+      var that = this;
       await this.callPipeline(
         form._form["properties"]["submission_commands"],
         this.cleanData(form.submission.data)
@@ -296,9 +270,9 @@ class FormRender extends React.Component {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             if (response.data) {
-              form.submission = {
-                data: this.parseResponseData(this.addAddlData(response.data))
-              };
+              form.setSubmission({data:this.parseResponseData(this.addAddlData(response.data))}).then(function (){
+                that.processProperties(form);
+              });
               form.triggerChange();
             }
             await this.deleteCacheData().then(response2 => {
@@ -310,19 +284,11 @@ class FormRender extends React.Component {
           } else {
             if (response.errors) {
               await this.storeError(data, response.errors, "pipeline");
-              this.notif.current.notify(
-                "Error",
-                response.errors[0].message,
-                "danger"
-                );
+              this.notif.current.notify("Error",response.errors[0].message, "danger");
               return response;
             } else {
               await this.storeCache(data);
-              this.notif.current.notify(
-                "Error",
-                "Form Submission Failed",
-                "danger"
-                );
+              this.notif.current.notify("Error", "Form Submission Failed", "danger");
             }
           }
         });
@@ -333,52 +299,29 @@ class FormRender extends React.Component {
         if (this.state.workflowId) {
           route = "/workflow/" + this.state.workflowId;
           if (this.state.activityInstanceId) {
-            route =
-            "/workflow/" +
-            this.state.workflowId +
-            "/activity/" +
-            this.state.activityInstanceId;
+            route = "/workflow/" + this.state.workflowId + "/activity/" + this.state.activityInstanceId;
             method = "post";
             if (this.state.instanceId) {
-              route =
-              "/workflow/" +
-              this.state.workflowId +
-              "/activity/" +
-              this.state.activityId +
-              "/instance/" +
-              this.state.instanceId;
+              route = "/workflow/" + this.state.workflowId + "/activity/" + this.state.activityId + "/instance/" + this.state.instanceId;
               method = "put";
             }
           }
         } else if (this.state.workflowInstanceId) {
           route = "/workflowinstance/" + this.state.workflowInstanceId;
           if (this.state.activityInstanceId) {
-            route =
-            "/workflowinstance/" +
-            this.state.workflowInstanceId +
-            "/activity/" +
-            this.state.activityInstanceId;
+            route = "/workflowinstance/" + this.state.workflowInstanceId + "/activity/" + this.state.activityInstanceId;
             method = "post";
           }
           route = route + "/submit";
         } else {
-          route =
-          "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
+          route = "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
           method = "post";
           if (this.state.instanceId) {
-            route =
-            "/app/" +
-            this.state.appId +
-            "/form/" +
-            this.state.formId +
-            "/file/" +
-            this.state.instanceId;
+            route ="/app/" + this.state.appId + "/form/" +this.state.formId + "/file/" + this.state.instanceId;
             method = "put";
           }
         }
-        var response = await helper
-        .request("v1", route, this.cleanData(data), method)
-        .then(async response => {
+        var response = await helper.request("v1", route, this.cleanData(data), method).then(async response => {
           this.core.make("oxzion/splash").destroy();
           if (response.status == "success") {
             var cache = await this.deleteCacheData().then(response2 => {
@@ -391,16 +334,8 @@ class FormRender extends React.Component {
             var storeCache = await this.storeCache(data).then(
               async cacheResponse => {
                 if (response.data.errors) {
-                  var storeError = await this.storeError(
-                    data,
-                    response.data.errors,
-                    route
-                    ).then(storeErrorResponse => {
-                      this.notif.current.notify(
-                        "Error",
-                        "Form Submission Failed",
-                        "danger"
-                        );
+                  var storeError = await this.storeError(data,response.data.errors,route).then(storeErrorResponse => {
+                      this.notif.current.notify("Error","Form Submission Failed","danger");
                       return storeErrorResponse;
                     });
                   } else {
@@ -422,9 +357,7 @@ class FormRender extends React.Component {
       formData.phoneList = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
-      Object.keys(formData)
-      .sort()
-      .forEach(function(key) {
+      Object.keys(formData).sort().forEach(function(key) {
         ordered_data[key] = formData[key];
       });
       return ordered_data;
@@ -472,7 +405,7 @@ class FormRender extends React.Component {
             that.setState({ formDivID: "formio_" + that.state.formId });
             if(form){
               form.setSubmission({data:that.state.data}).then(function (){
-              that.processProperties(form);
+                that.processProperties(form);
               });
             } else {
               this.createForm();
@@ -489,7 +422,7 @@ class FormRender extends React.Component {
             that.setState({ content: JSON.parse(response.data.template) });
             if(form){
               form.setSubmission({data:that.state.data}).then(function (){
-              that.processProperties(form);
+                that.processProperties(form);
               });
             } else {
               this.createForm();
@@ -532,14 +465,18 @@ class FormRender extends React.Component {
             that.setState({ data: this.addAddlData(JSON.parse(response.data.data)) });
             that.setState({ content: response.data.template });
             if(form){
-              form.setSubmission({data:that.state.data});
+              form.setSubmission({data:that.state.data}).then(function (){
+                that.processProperties(form);
+              });
             } else {
               this.createForm();
             }
           }
         });
       } else {
-
+        if(form){
+          that.processProperties(form);
+        }
       }
     }
     createForm() {
@@ -844,11 +781,6 @@ class FormRender extends React.Component {
             form.emit("render");
           });
           that.setState({ currentForm: form });
-          // form.formReady.then( () => {
-          //   console.log('formReady');
-          //   form.emit('render');
-          // });
-          // form.emit('render');
           return form;
         });
       }
@@ -1014,6 +946,7 @@ runProps(component,form,properties,formdata){
          var targetComponent = form.getComponent(item);
          if(targetComponent.component && targetComponent.component.properties){
             that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+            console.log(targetComponent);
             that.runDelegates(form, targetComponent.component["properties"]);
          }
        });
@@ -1200,7 +1133,7 @@ componentDidMount() {
         this.loadWorkflow(form);
       });
     } else {
-      this.loadWorkflow(form);
+      this.loadWorkflow();
     }
   }
 }
