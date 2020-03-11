@@ -17,7 +17,8 @@ class Page extends React.Component {
     this.core = this.props.core;
     this.appId = this.props.app;
     this.proc = this.props.proc;
-    
+    this.loader = this.core.make("oxzion/splash");
+
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
     let pageContent = [];
     this.state = {
@@ -36,11 +37,13 @@ class Page extends React.Component {
     document
       .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
-    
+
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.pageId !== prevProps.pageId) {
+      var PageRenderDiv = document.querySelector(".PageRender")
+      this.loader.show(PageRenderDiv)
       this.setState({ pageContent: [], pageId: this.props.pageId });
       this.loadPage(this.props.pageId);
     }
@@ -68,57 +71,58 @@ class Page extends React.Component {
       } else {
         this.setState({ pageContent: [] });
       }
+      this.loader.destroy()
     });
   }
 
   renderButtons(e, action) {
     var actionButtons = [];
-    Object.keys(action).map(function(key, index) {
+    Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
-            width: "auto"
-          }
+          width: "auto"
+        }
         : {
-            width: "auto",
-            // paddingTop: "5px",
-            color: "white",
-            fontWeight: "600"
-          };
+          width: "auto",
+          // paddingTop: "5px",
+          color: "white",
+          fontWeight: "600"
+        };
       showButton
         ? actionButtons.push(
-            <abbr title={action[key].name} key={index}>
-              <Button
-                primary={true}
-                className=" btn manage-btn k-grid-edit-command"
-                onClick={() => this.buttonAction(action[key], e)}
-                style={buttonStyles}
-              >
-                {action[key].icon ? (
-                  <i className={action[key].icon + " manageIcons"}></i>
-                ) : (
+          <abbr title={action[key].name} key={index}>
+            <Button
+              primary={true}
+              className=" btn manage-btn k-grid-edit-command"
+              onClick={() => this.buttonAction(action[key], e)}
+              style={buttonStyles}
+            >
+              {action[key].icon ? (
+                <i className={action[key].icon + " manageIcons"}></i>
+              ) : (
                   action[key].name
                 )}
-              </Button>
-            </abbr>
-          )
+            </Button>
+          </abbr>
+        )
         : null;
     }, this);
     return actionButtons;
   }
 
-  renderRow(e,config){
+  renderRow(e, config) {
     var url = config[0].content.route
-    var dataString = this.prepareDataRoute(url,e);
-    
+    var dataString = this.prepareDataRoute(url, e);
+
     return <OX_Grid
-        appId={this.appId}
-        osjsCore={this.core}
-        data={dataString}
-        gridToolbar={config[0].content.toolbarTemplate}
-        columnConfig={config[0].content.columnConfig}
-      />
+      appId={this.appId}
+      osjsCore={this.core}
+      data={dataString}
+      gridToolbar={config[0].content.toolbarTemplate}
+      columnConfig={config[0].content.columnConfig}
+    />
   }
 
 
@@ -130,7 +134,7 @@ class Page extends React.Component {
         pageContent: []
       });
       var that = this;
-      setTimeout(function() {
+      setTimeout(function () {
         action.details.every(async (item, index) => {
           if (item.type == "Update") {
             that.setState({
@@ -215,7 +219,7 @@ class Page extends React.Component {
 
   prepareDataRoute(route, params) {
     if (typeof route == "string") {
-      if(!params){
+      if (!params) {
         params = {};
       }
       params['current_date'] = moment().format("YYYY-MM-DD");
@@ -300,7 +304,7 @@ class Page extends React.Component {
                 title: "Actions",
                 cell: e => this.renderButtons(e, itemContent.actions),
                 filterCell: {
-                  type:"empty"
+                  type: "empty"
                 }
               });
             }
@@ -342,7 +346,7 @@ class Page extends React.Component {
                 title: "Actions",
                 cell: e => this.renderButtons(e, itemContent.actions),
                 filterCell: {
-                  type:"empty"
+                  type: "empty"
                 }
               });
             }
@@ -413,27 +417,23 @@ class Page extends React.Component {
   }
 
   render() {
-    
-      if (
-        this.state.pageContent &&
-        this.state.pageContent.length > 0 &&
-        !this.state.showLoader
-      ) {
-        var pageRender = this.renderContent(this.state.pageContent);
-        return (
-          <div id={this.contentDivID} className="AppBuilderPage">
-            {pageRender}
-          </div>
-        );
-      }
+    if (
+      this.state.pageContent &&
+      this.state.pageContent.length > 0 &&
+      !this.state.showLoader
+    ) {
+      var pageRender = this.renderContent(this.state.pageContent);
       return (
-        <div className="loaderAnimation">
-          <Loader type="Circles" color="#275362" height={100} width={100} />
+        <div id={this.contentDivID} className="AppBuilderPage">
+          {pageRender}
         </div>
       );
     }
-    
-  
+    this.loader.show()
+    return <></>
+  }
+
+
 }
 
 export default Page;
