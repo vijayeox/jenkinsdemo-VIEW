@@ -217,7 +217,8 @@ export default class FortePayCheckoutComponent extends Base {
                         id:'fortepay-amount',
                         hideLabel: 'false',
                         placeholder: that.data["label"],
-                        style: "background:#fff"
+                        style: "background:#fff",
+                        value: that.data["currentDue"]
                         
                       
                     }
