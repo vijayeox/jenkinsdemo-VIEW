@@ -277,6 +277,7 @@ export default class OX_Grid extends React.Component {
       <div style={{ height: "94%" }} className="GridCustomStyle">
         {this.rawDataPresent ? (
           <DataOperation
+            args={this.props.osjsCore}
             gridData={this.props.data}
             total={this.props.data.length}
             dataState={this.state.dataState}

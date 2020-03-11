@@ -6,7 +6,7 @@ import { process } from "@progress/kendo-data-query";
 export class DataOperation extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.core;
+    this.core = this.props.args;
     this.loader = this.core.make("oxzion/splash");
 
     this.timeout = null;
