@@ -38,7 +38,7 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-	
+		
 		let content = '';
 		let list = "<ul class='ticks' id='tickmarks'>";
 		var max = this.component.sliderRange.length-1,
@@ -60,7 +60,6 @@ export default class SliderComponent extends Base {
 				<input type="range" min="${min}" id="slider" max="${max}" list="tickmarks" value="${value}">
 				<span class="range-thumb">$</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
-
 			</div><br/>
 		`);
 
@@ -79,7 +78,7 @@ export default class SliderComponent extends Base {
 			min = 0,
 			max = this.component.sliderRange.length-1,
 			sliderRange = this.component.sliderRange;
-		element.addEventListener("input", (e) => this.updateValue(sliderRange[e.target.value]))
+		element.addEventListener("change", (e) => this.updateValue(sliderRange[e.target.value]))
 		if(this.data["sliderValue"]){
 			var value = this.component.sliderRange.indexOf(this.data["sliderValue"]);
 			document.getElementById("slider").value = value;
@@ -102,13 +101,11 @@ export default class SliderComponent extends Base {
 				var curVal = $rangeInput[0].value ;
 				var w = $rangeInput.width();
 				var val = (curVal - min)/(max-min) * (w - tw);
-
 				$thumb.css({left: val}).attr("data-val", sliderRange[curVal]);
 
 			})
 		});
-			  
-  
+			
 		
 		var getTrackStyle = function (el) {  
 			var curVal = el.value,

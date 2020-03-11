@@ -98,19 +98,17 @@ export default class FortePayCheckoutComponent extends Base {
                 'method'        : that.data['paymentMethod'] ,
                 "callback"      : oncallback
             })
-            // if(that.data['payment_method'] === 'schedule'){
-            //     console.log(that.data['planTerm'])
-            //     console.log("setAttrs")
-            //     setAttributes(document.getElementById("makePayment"),{
-            //         'schedule_start_date' :  '02/17/2020', 
-            //         'schedule_frequency'  :  that.data['paymentFrequency'],
-            //         'schedule_quantity'   :  "2"
-            //     })
-            // }
+            if(that.data['payment_method'] === 'schedule'){
+                setAttributes(document.getElementById("makePayment"),{
+                    'schedule_start_date' :  moment().format('MM/DD/YYYY'), 
+                    'schedule_frequency'  :  that.data['paymentFrequency'],
+                    'schedule_quantity'   :  that.data['planTerm']
+                })
+            }
             if(document.getElementById("makePayment").hasAttribute("signature")){
                 setTimeout(() => {
                     $("#makePayment").click()
-                },50)
+                },90)
                 
             }
             
