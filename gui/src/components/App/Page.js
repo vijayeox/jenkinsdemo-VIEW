@@ -422,6 +422,7 @@ class Page extends React.Component {
       this.state.pageContent.length > 0 &&
       !this.state.showLoader
     ) {
+      this.loader.destroy()
       var pageRender = this.renderContent(this.state.pageContent);
       return (
         <div id={this.contentDivID} className="AppBuilderPage">

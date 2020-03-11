@@ -32,6 +32,7 @@ export class DataOperation extends React.Component {
       } else {
         this.requestDataIfNeeded();
       }
+      this.loader.destroy()
     }, 500);
   };
 
