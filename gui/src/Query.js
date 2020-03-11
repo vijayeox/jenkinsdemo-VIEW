@@ -322,7 +322,7 @@ class Query extends React.Component {
                   value={this.state.inputs["datasourcename"] !== undefined ? this.state.inputs["datasourcename"][0] : -1}
                   name="datasourcename">
                   <option disabled value={-1} key={-1}></option>
-                  {this.state.dataSourceOptions.map((option, index) => (
+                  {this.state.dataSourceOptions && this.state.dataSourceOptions.map((option, index) => (
                     <option key={option.uuid} data-key={option.uuid} value={option.name}>{option.name}</option>
                   ))}
                 </Form.Control>
