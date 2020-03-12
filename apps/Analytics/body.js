@@ -90,16 +90,16 @@ class Body extends React.Component {
           disableAutoFocus width="20%"
           outerContainerId="page-body" pageWrapId="page-content">
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DATA_SOURCE, null) }}>
-            <i class="fa fa-database" aria-hidden="true"></i> Data Source
+            <i className="fa fa-database" aria-hidden="true"></i> Data Source
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_QUERY, null) }}>
-            <i class="fa fa-search" aria-hidden="true"></i> Query
+            <i className="fa fa-search" aria-hidden="true"></i> Query
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
-            <i class="fa fa-tasks" aria-hidden="true"></i> Dashboard
+            <i className="fa fa-tasks" aria-hidden="true"></i> Dashboard
                   </a>
                   <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
-            <i class="fa fa-cubes" aria-hidden="true"></i> Widget Manager
+            <i className="fa fa-cubes" aria-hidden="true"></i> Widget Manager
                   </a>
         </Menu>
         <div className="page-title full-width">{this.state.title}</div>

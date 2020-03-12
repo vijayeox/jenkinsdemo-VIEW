@@ -122,7 +122,9 @@ padding-right: 1em;
     background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
   }
   .dashboard-viewer-div{
+    position: absolute;
     margin-top: 5em;
+    width:100%;
   }
   .dash-manager-buttons{
     position: absolute;

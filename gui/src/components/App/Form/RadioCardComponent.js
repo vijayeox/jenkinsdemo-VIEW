@@ -9,7 +9,8 @@ export default class RadioCardComponent extends Base {
         this.data = data;
         this.form = this.getRoot();
         var that = this;
-   
+        console.log(this.data)
+
     }
     static schema() {
         return Base.schema({
@@ -38,7 +39,6 @@ export default class RadioCardComponent extends Base {
         let component = '<div class="row">';
         let defaultRange = that.data["defaultRange"].split(",").map(i => +i);
         for(let i = 0 ; i< defaultRange.length; i++) {
-            // disabled[i] = that.component.range.includes(defaultRange[i])
             let cell = '<div class="col-md-2">'
             cell += `<label class="labels">
                         <input id="${i}" type="radio" name="product" class="card-input-element" value="${defaultRange[i]}" />
@@ -68,7 +68,13 @@ export default class RadioCardComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) { 
-        element.addEventListener("click", (e) => this.updateValue(e.target.value))
+    //    var value = this.dataValue;
+    if(this.dataValue){
+        $('input[type=radio][value=' + this.dataValue + ']').prop("checked",true);
+        this.updateValue(this.dataValue);
+    }
+      
+        // $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
         if(this.component.range){
             var defaultRange = this.data["defaultRange"].split(",").map(i => +i);
             for(let i = 0 ; i< defaultRange.length; i++) { 
@@ -82,8 +88,8 @@ export default class RadioCardComponent extends Base {
             $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
             this.updateValue(this.data['rangeValue'])
         }
-
-       
+    
+        element.addEventListener("click", (e) => this.updateValue(e.target.value))
         
         return super.attach(element);
     }
@@ -97,8 +103,6 @@ export default class RadioCardComponent extends Base {
         if (!value) {
             return;
         }
-     
-        
     }
    
 }

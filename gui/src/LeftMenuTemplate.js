@@ -21,10 +21,11 @@ class LeftMenuTemplate extends React.Component {
     this.params = this.props.params;
     this.proc = this.props.proc;
     this.config = this.props.config;
+    this.keepExpanded = this.props.keepExpanded;
     this.state = {
       menus: [],
       selected: "",
-      expanded: false
+      expanded: this.keepExpanded ? true : false
     };
     this.onSelect = this.onSelect.bind(this);
     this.onToggle = this.onToggle.bind(this);
@@ -35,7 +36,7 @@ class LeftMenuTemplate extends React.Component {
   }
 
   onSelect(selected) {
-    this.setState({ selected: selected, expanded: false });
+    this.setState({ selected: selected, expanded: this.keepExpanded ? true : false });
   }
   menuLoad(menus) {
     this.setState({
@@ -57,7 +58,7 @@ class LeftMenuTemplate extends React.Component {
           onToggle={this.onToggle}
           expanded={this.state.expanded}
         >
-          <SideNav.Toggle />
+          { this.keepExpanded ? null :<SideNav.Toggle />}
           <SideNav.Nav selected={selected}>
             {this.state.menus.map((menuitem, index) => {
               return (

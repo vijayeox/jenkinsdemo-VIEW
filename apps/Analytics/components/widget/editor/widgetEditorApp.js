@@ -197,7 +197,7 @@ class WidgetEditorApp extends React.Component {
             .catch(err => {
                 console.log(err)
             })
-
+        //called from globalFunctions
         window.getAllPermission()
             .then(function (response) {
                 //permissions are sent from dashboardEditor
@@ -388,13 +388,6 @@ class WidgetEditorApp extends React.Component {
     }
 
     render() {
-        // let htmlWidgetOptions = this.widgetList.map((widget, index) => {
-        //     return (
-        //         <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
-        //     )
-        // });
-
-
         return (
             <form className="widget-editor-form">
                 <Flippy
@@ -416,15 +409,15 @@ class WidgetEditorApp extends React.Component {
                                     {this.state.htmlWidgetOptions}
                                 </select>
                             </div>
-                            {/* {
-                                this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+
+                            {/* { this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Create widget"
                                         onClick={() => this.toggleWidgetDiv()}>
                                         <span className="fa fa-plus" aria-hidden="true"></span>
                                     </button>
                                 </div>
-                            } */}
+                            }       */}
                             {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && this.state.widgetOwner == 1) &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
