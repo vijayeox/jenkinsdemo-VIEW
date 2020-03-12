@@ -261,6 +261,7 @@ class Query extends React.Component {
         )
       }
       else {
+        this.loader.destroy()
         this.notif.current.notify(
           "Error",
           "Operation failed " + response.message,
