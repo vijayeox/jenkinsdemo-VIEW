@@ -455,7 +455,11 @@ class FormRender extends React.Component {
                   that.setState({ content: JSON.parse(response.data.template) });
                 }
                 if(form){
-                  that.processProperties(form);
+                   that.processProperties(form);
+                }else{
+                	setTimeout(function(){ that.createForm().then(form=> {
+						that.processProperties(form);
+                	}) }, 2000);
                 }
               }
             });
