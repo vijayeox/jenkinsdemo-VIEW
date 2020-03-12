@@ -69,7 +69,7 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       this.updateGraph();
     }
-    window.addEventListener('message', this.widgetDrillDownhMessageHandler, false);
+    window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentWillUnmount() {
@@ -82,7 +82,7 @@ class Dashboard extends Component {
         delete this.renderedWidgets[elementId];
       }
     }
-    window.removeEventListener('message', this.widgetDrillDownhMessageHandler, false);
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentDidUpdate(prevProps) {
@@ -112,7 +112,7 @@ class Dashboard extends Component {
     }
   };
 
-    widgetDrillDownhMessageHandler = (event) => {
+    widgetDrillDownMessageHandler = (event) => {
         let data = event.data;
         if (data['action'] !== 'oxzion-widget-drillDown') {
             return;

@@ -1,9 +1,10 @@
 
 class WidgetDrillDownHelper {
-    static OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE = 'data-oxzion-drillDownCtx';
+    static OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE = 'data-oxzion-drilldownctx';
+    static OXZION_WIDGET_ID_ATTRIBUTE = 'data-oxzion-widget-id';
 
     static bindDrillDownDataContext(widgetElement, dataContext) {
-        let widgetId = widgetElement.getAttribute('data-oxzion-widget-id');
+        let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
         let elementId = widgetElement.getAttribute('id');
 
         let strAttribute = null;
@@ -36,6 +37,7 @@ class WidgetDrillDownHelper {
                 });
             }
             context['filter'] = filterString;
+            context['isBound'] = true;
 
             let jsonString = JSON.stringify(drillDownContext);
             widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, jsonString);
@@ -49,7 +51,7 @@ class WidgetDrillDownHelper {
         WidgetDrillDownHelper.bindDrillDownDataContext(widgetElement, dataContext);
         let messageContent = {
             'action':'oxzion-widget-drillDown',
-            'widgetId':widgetElement.getAttribute('data-oxzion-widget-id'),
+            'widgetId':widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE),
             'elementId':widgetElement.getAttribute('id')
         };
         console.log('Posting message to window.', messageContent);
@@ -74,7 +76,7 @@ class WidgetDrillDownHelper {
             context = drillDownContext[drillDownContext.length - 1];
             let replaceWith = context['replaceWith'];
             if (replaceWith) {
-                widgetElement.setAttribute('data-oxzion-widget-id', replaceWith);
+                widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, replaceWith);
                 returnObject['widgetId'] = replaceWith;
             }
             else {
@@ -94,7 +96,7 @@ class WidgetDrillDownHelper {
             if (!element) {
                 throw('Did not find widget element when moving up the node hierarchy of chart click event.');
             }
-            if (element.hasAttribute('data-oxzion-widget-id')) {
+            if (element.hasAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE)) {
                 return element;
             }
         }
@@ -196,27 +198,71 @@ console.log('Hit function', evt);
             return false;
         }
         let drillDown = meta['drillDown'];
-        let context = null;
-        let hasDrillDown = false;
-        if (drillDown) {
-            context = JSON.parse(JSON.stringify(drillDown));
-            context['widgetId'] = element.getAttribute('data-oxzion-widget-id');
-            hasDrillDown = true;
+        if (!drillDown) {
+            return false;
         }
+
+        let maxDepth = drillDown['maxDepth'];
+        let context = JSON.parse(JSON.stringify(drillDown));
+        delete context['maxDepth'];
+        context['widgetId'] = element.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
+        content['isBound'] = false;
 
         let drillDownContext = null;
         if (element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
             let strAttribute = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
             drillDownContext = JSON.parse(strAttribute);
         }
-        else {
+
+        if (!drillDownContext) {
             drillDownContext = [];
         }
-
+        if (maxDepth) {
+            if (drillDownContext.length >= maxDepth) {
+                return false;
+            }
+        }
         drillDownContext.push(context);
         let jsonString = JSON.stringify(drillDownContext);
         element.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, jsonString);
-        return hasDrillDown;
+        return true;
+    }
+
+    static isDrilledDown(element) {
+        if (element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
+            let strAttribute = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
+            let isDrilledDown = false;
+            let drillDownContext = JSON.parse(strAttribute);
+            for (let i=0; i < drillDownContext.length; i++) {
+                let context = drillDownContext[i];
+                if (context['isBound']) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else {
+            return false;
+        }
+    }
+
+    static backButtonClicked(event) {
+        let widgetElement = findWidgetElement(event.target);
+        let messageContent = {
+            'action':'oxzion-widget-rollUp',
+            'widgetId':widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE),
+            'elementId':widgetElement.getAttribute('id')
+        };
+        console.log('Posting message to window.', messageContent);
+        window.postMessage(messageContent);
+    }
+
+    static prepareWidgetForRollUp(elementId, widgetId) {
+        let newContext = WidgetDrillDownHelper.prepareWidgetForDrillDown(elementId, widgetId);
+        widgetId = newContext['widgetId'];
+    }
+
+    static unwindWidgetDrillDownStack() {
     }
 }
 

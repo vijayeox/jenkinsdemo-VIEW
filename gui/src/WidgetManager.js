@@ -6,7 +6,7 @@ import Notification from "./Notification"
 import Switch from "react-switch"
 import WidgetEditorApp from '../../apps/Analytics/components/widget/editor/widgetEditorApp'
 import WidgetModal from './components/Modals/WidgetModal'
-import WidgetCreate from './components/Modals/WidgetCreate'
+//import WidgetCreate from './components/Modals/WidgetCreate'
 import "./public/css/widgetmanager.scss";
 
 

@@ -162,10 +162,20 @@ class WidgetRenderer {
             }
         }
 
-        let isDrilledDown = false;
-        if (isDrilledDown) {
-            element.insertAdjacentHTML('beforeend', 
-                '<div class="oxzion-widget-back-button"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></div>');
+        if (WidgetDrillDownHelper.isDrilledDown(element)) {
+            let bbElements = element.getElementsByClassName('oxzion-widget-back-button');
+            let backButtonElement = (bbElements && (bbElements.length > 0)) ? bbElements[0] : null;
+            if (!backButtonElement) {
+                element.insertAdjacentHTML('beforeend', 
+                    '<div class="oxzion-widget-back-button" title="Back">' + 
+                        '<i class="fa fa-arrow-circle-left" aria-hidden="true"></i>' + 
+                    '</div>');
+                bbElements = element.getElementsByClassName('oxzion-widget-back-button');
+                backButtonElement = (bbElements && (bbElements.length > 0)) ? bbElements[0] : null;
+                backButtonElement.addEventListener('click', event => {
+console.log(event);
+                });
+            }
         }
 
         return chart;
@@ -182,7 +192,7 @@ class WidgetRenderer {
                 if (!element) {
                     throw('Did not find widget element when moving up the node hierarchy of map chart click event.');
                 }
-                if (element.hasAttribute('data-oxzion-widget-id')) {
+                if (element.hasAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE)) {
                     return element;
                 }
             }
