@@ -4,9 +4,7 @@ import { Button } from 'react-bootstrap'
 import OX_Grid from "./OX_Grid"
 import Notification from "./Notification"
 import Switch from "react-switch"
-import WidgetEditorApp from '../../apps/Analytics/components/widget/editor/widgetEditorApp'
 import WidgetModal from './components/Modals/WidgetModal'
-import WidgetCreate from './components/Modals/WidgetCreate'
 import "./public/css/widgetmanager.scss";
 
 
@@ -78,44 +76,43 @@ class WidgetManager extends React.Component {
         };
       showButton
         ?
-          action[key].name === "toggleActivate" ?
-            actionButtons.push(
-              <abbr className={this.checkedList[e.name] ? "deactivateWidget" : "activateWidget"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
-                <Switch
-                  id={e.name}
-                  onChange={() => this.buttonAction(action[key], e)}
-                  checked={this.state.checked[e.name]}
-                  onClick={() => this.buttonAction(action[key], e)}
-                  onColor="#86d3ff"
-                  onHandleColor="#2693e6"
-                  handleDiameter={10}
-                  uncheckedIcon={false}
-                  checkedIcon={false}
-                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                  height={20}
-                  width={33}
-                  className="react-switch"
-                />
-              </abbr>
-            )
+        action[key].name === "toggleActivate" ?
+          actionButtons.push(
+            <abbr className={this.checkedList[e.name] ? "deactivateWidget" : "activateWidget"} title={this.checkedList[e.name] ? "Deactivate" : "Activate"} key={index}>
+              <Switch
+                id={e.name}
+                onChange={() => this.buttonAction(action[key], e)}
+                checked={this.state.checked[e.name]}
+                onColor="#86d3ff"
+                onHandleColor="#2693e6"
+                handleDiameter={10}
+                uncheckedIcon={false}
+                checkedIcon={false}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={20}
+                width={33}
+                className="react-switch"
+              />
+            </abbr>
+          )
           :
-            actionButtons.push(
-              <abbr title={action[key].name} key={index}>
-                <Button
-                  className=" btn manage-btn k-grid-edit-command"
-                  variant={variant}
-                  onClick={() => this.buttonAction(action[key], e)}
-                  style={buttonStyles}
-                >
-                  {action[key].icon ? (
-                    <i className={action[key].icon + " manageIcons"}></i>
-                  ) : (
-                      action[key].name
-                    )}
-                </Button>
-              </abbr>
-            )
+          actionButtons.push(
+            <abbr title={action[key].name} key={index}>
+              <Button
+                className=" btn manage-btn k-grid-edit-command"
+                variant={variant}
+                onClick={() => this.buttonAction(action[key], e)}
+                style={buttonStyles}
+              >
+                {action[key].icon ? (
+                  <i className={action[key].icon + " manageIcons"}></i>
+                ) : (
+                    action[key].name
+                  )}
+              </Button>
+            </abbr>
+          )
         : actionButtons.push(<Button style={{ visibility: "hidden" }}><i className="fa fa-user"></i></Button>)
     }, this);
     return actionButtons;
@@ -184,7 +181,7 @@ class WidgetManager extends React.Component {
             }
           ]}
         />
-        
+
         <WidgetModal
           osjsCore={this.core}
           modalType={this.state.modalType}
@@ -195,16 +192,6 @@ class WidgetManager extends React.Component {
           notification={this.notif}
           refreshGrid={this.refresh}
         />
-         {/* <WidgetCreate
-          osjsCore={this.core}
-          modalType={this.state.modalType}
-          show={this.state.showModal}
-          onHide={() => this.setState({ showModal: false })}
-          content={this.state.modalContent}
-          handleChange={(e) => this.handleChange(e)}
-          notification={this.notif}
-          refreshGrid={this.refresh}
-        /> */}
       </div>
     );
   }
