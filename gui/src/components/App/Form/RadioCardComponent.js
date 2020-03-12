@@ -69,8 +69,12 @@ export default class RadioCardComponent extends Base {
    */
 	attach(element) { 
     //    var value = this.dataValue;
-    //    $('input[type=radio][value=' + this.dataValue + ']').prop("checked",true);
-        $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
+    if(this.dataValue){
+        $('input[type=radio][value=' + this.dataValue + ']').prop("checked",true);
+        this.updateValue(this.dataValue);
+    }
+      
+        // $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
         if(this.component.range){
             var defaultRange = this.data["defaultRange"].split(",").map(i => +i);
             for(let i = 0 ; i< defaultRange.length; i++) { 
@@ -84,7 +88,7 @@ export default class RadioCardComponent extends Base {
             $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
             this.updateValue(this.data['rangeValue'])
         }
-        $('input[type=radio][value=' + this.dataValue + ']').prop("checked",true);
+    
         element.addEventListener("click", (e) => this.updateValue(e.target.value))
         
         return super.attach(element);
