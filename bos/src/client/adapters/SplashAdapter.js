@@ -18,7 +18,8 @@ export class SplashServiceProvider extends ServiceProvider {
 		this.core.instance('oxzion/splash', () => ({
 			show: (ele) => this.show(ele),
 			destroy: () => this.destroy(),
-			showGrid: () => this.showGrid()
+			showGrid: () => this.showGrid(),
+			renderHtml:()=> this.renderHtml()
 		}));
 	}
 	showGrid() {
@@ -36,7 +37,15 @@ export class SplashServiceProvider extends ServiceProvider {
 		gridContent ? this.show(gridContent) : this.show();
 	}
 
+	renderHtml(){
+		this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
+		return '<img src="./load.svg" height="150" width="150" align="center">'
+	}
 	show(ele) {
+		if (ele) {
+			this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
+			ele.appendChild(this.$loading);
+		}
 		if (!this.$loading.parentNode) {
 			if (ele) {
 				this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
