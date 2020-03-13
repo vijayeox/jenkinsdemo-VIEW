@@ -144,6 +144,7 @@ class Dashboard extends Component {
         if (filter && ('' !== filter)) {
             url = url + '&filter=' + encodeURIComponent(filter);
         }
+
         var self = this;
         this.helper.request('v1', url, null, 'get').
         then(response => {

@@ -328,7 +328,8 @@ class WidgetRenderer {
         // 2. open URL if available (use url property, property binding, and adapter)
         polygonTemplate.events.on("hit", function(event) {
             let dataContext = {
-                'state':event.target.dataItem.dataContext.name
+                'code':event.target.dataItem.dataContext.id.substring(3),
+                'name':event.target.dataItem.dataContext.name
             };
             WidgetDrillDownHelper.drillDownClicked(findWidgetElement(event.target), dataContext);
 
