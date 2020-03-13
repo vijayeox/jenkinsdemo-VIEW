@@ -1,11 +1,12 @@
 import React from "react";
 import SlidingPanel from "react-sliding-panel";
-import Loader from "./Loader";
 
 class Slider extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.loader = this.core.make("oxzion/splash");
+    
     this.state = {
       announcements: [],
       currentIndex: 0,
@@ -177,7 +178,7 @@ class Slider extends React.Component {
         </div>
       );
     }
-    return <Loader />;
+    return  <div className="announcement-splash-loader" dangerouslySetInnerHTML={{ __html: this.loader.renderHtml() }} />;
   }
 }
 
