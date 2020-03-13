@@ -2,7 +2,6 @@ import React from "react";
 import { toODataString } from "@progress/kendo-data-query";
 import moment from "moment";
 import Notification from "./../../Notification";
-import LoadingPanel from "./LoadingPanel";
 
 export class DataLoader extends React.Component {
   constructor(props) {
@@ -14,6 +13,8 @@ export class DataLoader extends React.Component {
     };
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
+    this.loader = this.core.make("oxzion/splash");
+
   }
 
   componentDidUpdate(prevProps) {
@@ -29,9 +30,9 @@ export class DataLoader extends React.Component {
           });
         } else {
           //put notification
-
           this.pending = undefined;
         }
+        this.loader.destroy()
       });
     }
   }
@@ -59,6 +60,7 @@ export class DataLoader extends React.Component {
           JSON.stringify(filterConfig) +
           "]";
       }
+
       let data = await helper.request("v1", "/" + route, {}, "get");
       return data;
     }
@@ -102,6 +104,7 @@ export class DataLoader extends React.Component {
         data: response.data,
         total: response.total
       });
+      this.loader.destroy()
     });
   };
 
@@ -127,12 +130,13 @@ export class DataLoader extends React.Component {
           this.requestDataIfNeeded();
         }
       });
+      this.loader.destroy()
     }, 1000);
   };
 
   render() {
     this.requestDataIfNeeded();
-    return <>{this.pending && <LoadingPanel />}</>;
+    return <>{this.pending && this.loader.showGrid()}</>;
   }
 }
 export default DataLoader;

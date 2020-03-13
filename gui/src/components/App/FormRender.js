@@ -439,6 +439,9 @@ class FormRender extends React.Component {
             if (!that.state.content) {
               that.setState({ content: JSON.parse(response.data.template) });
             }
+            if(form){
+              that.processProperties(form);
+            }
           } else {
             this.getForm().then(response => {
               if (response.status == "success") {
@@ -450,6 +453,13 @@ class FormRender extends React.Component {
                 }
                 if (!that.state.content) {
                   that.setState({ content: JSON.parse(response.data.template) });
+                }
+                if(form){
+                   that.processProperties(form);
+                }else{
+                	setTimeout(function(){ that.createForm().then(form=> {
+						that.processProperties(form);
+                	}) }, 2000);
                 }
               }
             });
@@ -544,7 +554,7 @@ class FormRender extends React.Component {
               form.setPage(parseInt(that.state.page));
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                breadcrumbs.style.display = "none";
+                // breadcrumbs.style.display = "none";
               }
             }
           }
@@ -622,7 +632,7 @@ class FormRender extends React.Component {
             if (form.wizard && form.wizard.display == "wizard") {
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                breadcrumbs.style.display = "none";
+                // breadcrumbs.style.display = "none";
               }
             }
             eachComponent(form.root.components, function (component) {
