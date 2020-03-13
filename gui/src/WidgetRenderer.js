@@ -163,18 +163,26 @@ class WidgetRenderer {
         }
 
         if (WidgetDrillDownHelper.isDrilledDown(element)) {
-            let bbElements = element.getElementsByClassName('oxzion-widget-back-button');
-            let backButtonElement = (bbElements && (bbElements.length > 0)) ? bbElements[0] : null;
-            if (!backButtonElement) {
+            let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+            let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+            if (!buttonElement) {
                 element.insertAdjacentHTML('beforeend', 
-                    '<div class="oxzion-widget-back-button" title="Back">' + 
+                    '<div class="oxzion-widget-roll-up-button" title="Back">' + 
                         '<i class="fa fa-arrow-circle-left" aria-hidden="true"></i>' + 
                     '</div>');
-                bbElements = element.getElementsByClassName('oxzion-widget-back-button');
-                backButtonElement = (bbElements && (bbElements.length > 0)) ? bbElements[0] : null;
-                backButtonElement.addEventListener('click', event => {
-console.log(event);
+                rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+                buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+                buttonElement.addEventListener('click', event => {
+                    WidgetDrillDownHelper.rollUpClicked(
+                        WidgetDrillDownHelper.findWidgetElement(event.originalTarget));
                 });
+            }
+        }
+        else {
+            let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+            let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+            if (buttonElement) {
+                buttonElement.remove();
             }
         }
 

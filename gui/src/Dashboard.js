@@ -114,7 +114,8 @@ class Dashboard extends Component {
 
     widgetDrillDownMessageHandler = (event) => {
         let data = event.data;
-        if (data['action'] !== 'oxzion-widget-drillDown') {
+        let action = data['action'];
+        if ((action !== 'oxzion-widget-drillDown') && (action !== 'oxzion-widget-rollUp')) {
             return;
         }
 
@@ -133,12 +134,14 @@ class Dashboard extends Component {
         let widgetId = data['widgetId'];
         cleanup(elementId);
 
-        let newContext = WidgetDrillDownHelper.prepareWidgetForDrillDown(elementId, widgetId);
-        widgetId = newContext['widgetId'];
+        let newWidgetId = data['newWidgetId'];
+        if (newWidgetId) {
+            widgetId = newWidgetId;
+        }
 
         let url = `analytics/widget/${widgetId}?data=true`;
-        let filter = newContext['filter'];
-        if (filter) {
+        let filter = data['filter'];
+        if (filter && ('' !== filter)) {
             url = url + '&filter=' + encodeURIComponent(filter);
         }
         var self = this;

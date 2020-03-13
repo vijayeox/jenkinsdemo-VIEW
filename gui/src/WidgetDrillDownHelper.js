@@ -3,91 +3,66 @@ class WidgetDrillDownHelper {
     static OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE = 'data-oxzion-drilldownctx';
     static OXZION_WIDGET_ID_ATTRIBUTE = 'data-oxzion-widget-id';
 
-    static bindDrillDownDataContext(widgetElement, dataContext) {
-        let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
-        let elementId = widgetElement.getAttribute('id');
-
-        let strAttribute = null;
-        if (widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
+    static bindDrillDownDataContext(filterString, dataContext) {
+        if (!filterString || ('' === filterString)) {
+            return filterString;
         }
-        else {
-            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}, element id ${elementId}.`);
-        }
-
-        let drillDownContext = JSON.parse(strAttribute);
-        let context = null;
-        if (drillDownContext.length > 0) {
-            context = drillDownContext[drillDownContext.length - 1];
-            let regex = /\${.*?}/;
-            let filterString = context['filter'];
-            while(true) {
-                let hits = regex.exec(filterString);
-                if (!hits) {
-                    break;
-                }
-                filterString = filterString.replace(regex, function(matchedSubstring, offset, string) {
-                    let key = matchedSubstring.substring(2, (matchedSubstring.length - 1)); //Extract string between ${ and }
-                    let value = dataContext[key];
-                    if (!value) {
-                        console.error('Event data context:', dataContext);
-                        throw `Value for key "${key}" not found in the event data context (logged above) for widget id ${widgetId}, element id ${elementId}.`;
-                    }
-                    return value;
-                });
+        let regex = /\${.*?}/;
+        while(true) {
+            let hits = regex.exec(filterString);
+            if (!hits) {
+                break;
             }
-            context['filter'] = filterString;
-            context['isBound'] = true;
-
-            let jsonString = JSON.stringify(drillDownContext);
-            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, jsonString);
+            filterString = filterString.replace(regex, function(matchedSubstring, offset, string) {
+                let key = matchedSubstring.substring(2, (matchedSubstring.length - 1)); //Extract string between ${ and }
+                let value = dataContext[key];
+                if (!value) {
+                    console.error('Filter string:', filterString);
+                    console.error('Event data context:', dataContext);
+                    throw `Value for key "${key}" not found in the event data context logged above.`;
+                }
+                return value;
+            });
         }
-        else {
-            throw(`Drill down conetxt value is not found for widget id ${widgetId}, element id ${elementId}.`);
-        }
+        return filterString;
     }
 
     static drillDownClicked(widgetElement, dataContext) {
+        let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
+        if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
+            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+        }
+
         WidgetDrillDownHelper.bindDrillDownDataContext(widgetElement, dataContext);
+        let elementId = widgetElement.getAttribute('id');
         let messageContent = {
             'action':'oxzion-widget-drillDown',
-            'widgetId':widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE),
-            'elementId':widgetElement.getAttribute('id')
+            'widgetId':widgetId,
+            'elementId':elementId
         };
-        console.log('Posting message to window.', messageContent);
-        window.postMessage(messageContent);
-    }
 
-    static prepareWidgetForDrillDown(elementId, widgetId) {
-        let widgetElement = document.getElementById(elementId);
-        let strAttribute = null;
-        if (widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
-        }
-        else {
-            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
-            return;
-        }
-
+        let newWidgetId = widgetId;
+        let filter = null;
+        let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
-        let context = null;
-        if (drillDownContext.length > 0) {
-            let returnObject = {};
-            context = drillDownContext[drillDownContext.length - 1];
-            let replaceWith = context['replaceWith'];
-            if (replaceWith) {
-                widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, replaceWith);
-                returnObject['widgetId'] = replaceWith;
-            }
-            else {
-                returnObject['widgetId'] = widgetId;
-            }
-            returnObject['filter'] = context['filter'];
-            return returnObject;
+        if (!drillDownContext || (0 === drillDownContext.length)) {
+            throw(`Drill down conetxt is not found for widget id ${widgetId}.`);
         }
-        else {
-            throw(`Drill down conetxt value is not found for widget id ${widgetId}.`);
+        let context = drillDownContext[drillDownContext.length - 1];
+        let replaceWith = context['replaceWith'];
+        if (replaceWith) {
+            messageContent['newWidgetId'] = replaceWith;
+            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, replaceWith);
         }
+        let boundFilter = WidgetDrillDownHelper.bindDrillDownDataContext(context['filter'], dataContext);
+        messageContent['filter'] = boundFilter;
+        context['filter'] = boundFilter;
+        context['isBound'] = true;
+        //Update the widget element attribute containing drill down context stack.
+        widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, JSON.stringify(drillDownContext));
+
+        console.log('Posting drillDown message to window.', messageContent);
+        window.postMessage(messageContent);
     }
 
     static findWidgetElement(element) {
@@ -203,10 +178,10 @@ console.log('Hit function', evt);
         }
 
         let maxDepth = drillDown['maxDepth'];
-        let context = JSON.parse(JSON.stringify(drillDown));
+        let context = JSON.parse(JSON.stringify(drillDown)); //Clone drillDown context.
         delete context['maxDepth'];
         context['widgetId'] = element.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
-        content['isBound'] = false;
+        context['isBound'] = false;
 
         let drillDownContext = null;
         if (element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
@@ -229,40 +204,82 @@ console.log('Hit function', evt);
     }
 
     static isDrilledDown(element) {
-        if (element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            let strAttribute = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
-            let isDrilledDown = false;
-            let drillDownContext = JSON.parse(strAttribute);
-            for (let i=0; i < drillDownContext.length; i++) {
-                let context = drillDownContext[i];
-                if (context['isBound']) {
-                    return true;
-                }
+        if (!element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
+            return false;
+        }
+
+        let strAttribute = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
+        let drillDownContext = JSON.parse(strAttribute);
+        for (let i=0; i < drillDownContext.length; i++) {
+            let context = drillDownContext[i];
+            if (context['isBound']) {
+                return true;
             }
-            return false;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
-    static backButtonClicked(event) {
-        let widgetElement = findWidgetElement(event.target);
+    static rollUpClicked(widgetElement) {
+        let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
+        if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
+            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+        }
+
+        let context = WidgetDrillDownHelper.unwindDrillDownContextStack(widgetElement);
+        let elementId = widgetElement.getAttribute('id');
         let messageContent = {
             'action':'oxzion-widget-rollUp',
-            'widgetId':widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE),
-            'elementId':widgetElement.getAttribute('id')
+            'widgetId':widgetId,
+            'elementId':elementId,
+            'filter':context['filter']
         };
-        console.log('Posting message to window.', messageContent);
+        let newWidgetId = context['widgetId'];
+        if (newWidgetId !== widgetId) {
+            messageContent['newWidgetId'] = newWidgetId;
+            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, newWidgetId);  
+        }
+
+        console.log('Posting rollUp message to window.', messageContent);
         window.postMessage(messageContent);
     }
 
-    static prepareWidgetForRollUp(elementId, widgetId) {
-        let newContext = WidgetDrillDownHelper.prepareWidgetForDrillDown(elementId, widgetId);
-        widgetId = newContext['widgetId'];
-    }
+    static unwindDrillDownContextStack(widgetElement) {
+        let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
+        if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
+            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+        }
 
-    static unwindWidgetDrillDownStack() {
+        let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
+        let drillDownContext = JSON.parse(strAttribute);
+        if (!drillDownContext || (0 === drillDownContext.length)) {
+            throw(`Drill down conetxt is not found for widget id ${widgetId}.`);
+        }
+
+        let context = drillDownContext.pop();
+        if (!context['isBound']) {
+            context = drillDownContext.pop();
+        }        
+        if (!context['isBound']) {
+            throw(`Unbound context not found neither at top nor at 2nd position from top of drill down stack for widget id ${widgetId}.`);
+        }
+        //Update the widget element attribute containing drill down context stack.
+        widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, JSON.stringify(drillDownContext));
+
+        //Clone the context.
+        context = JSON.parse(JSON.stringify(context));
+        delete context['filter']; //Filter should be picked up from the context at the top of the drill down stack.
+
+        //Filter should be picked up from the context at the top of the drill down stack.
+        let tempContext = null;
+        if (drillDownContext.length > 0) {
+            tempContext = drillDownContext[drillDownContext.length - 1];
+            let filter = tempContext['filter'];
+            if (filter) {
+                context['filter'] = filter;
+            }
+        }
+
+        return context;
     }
 }
 
