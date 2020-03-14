@@ -147,12 +147,12 @@ class Page extends React.Component {
             return false;
           }
         } else {
-          if (item.type == "View" || item.type == "DocumentViewer") {
+          if (item.params) {
             if (item.params.uuid) {
               fileId = that.replaceParams(item.params.uuid, rowData);
-              if (item.params.page_id) {
-                that.loadPage(item.params.page_id);
-              }
+            }
+            if (item.params.page_id) {
+              that.loadPage(item.params.page_id);
             }
           }
           copyPageContent.push(item);
