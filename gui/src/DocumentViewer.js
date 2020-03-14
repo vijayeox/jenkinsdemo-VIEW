@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import osjs from "osjs";
-let helper = osjs.make("oxzion/restClient");
+import Accordion from "react-bootstrap/Accordion";
+import { Card, Button } from "react-bootstrap";
 import "./public/css/documentViewer.scss";
 
 export default class DocumentViewer extends Component {
@@ -9,19 +9,19 @@ export default class DocumentViewer extends Component {
     this.core = this.props.core;
     this.appId = this.props.appId;
     this.state = {
-      numPages: null,
-      pageNumber: 1,
-      scale: 1.0,
-      selectedDocument: "",
-      documentsList: []
+      selectedDocument: undefined,
+      documentsList: undefined
     };
-    this.getDocumentsList = this.getDocumentsList.bind(this);
     this.loader = this.core.make("oxzion/splash");
-    this.baseUrl = this.core.config('wrapper.url');
+    this.helper = this.core.make("oxzion/restClient");
+    this.baseUrl = this.core.config("wrapper.url");
+    this.documentTypes = this.props.params.documentTypes;
+    this.getDocumentsList = this.getDocumentsList.bind(this);
+    this.getDocumentsList();
   }
 
   async getDocumentsListService(url) {
-    let response = await helper.request("v1", "/" + url, {}, "get");
+    let response = await this.helper.request("v1", "/" + url, {}, "get");
     return response;
   }
 
@@ -29,41 +29,110 @@ export default class DocumentViewer extends Component {
     if (this.props.url) {
       this.loader.show();
       this.getDocumentsListService(this.props.url).then(response => {
-        this.loader.destroy();
-        var documentsList = [];
-        if(response.data.field_value){
-          Object.keys(response.data.field_value).forEach(function(key,index) {
-            documentsList.push(response.data.field_value[key]);
-          });
-        this.setState(
-          {
-            documentsList:
-              documentsList && documentsList.length > 0 ? documentsList : []
-          },
-          () => {
-            if (this.state.documentsList.length > 0) {
-              this.setState({
-                selectedDocument: this.state.documentsList[0]
+        if (response.data) {
+          var documentsList = {};
+          this.documentTypes.map((docType, index) => {
+            var docItem = [];
+            if (response.data[docType.field]) {
+              Object.keys(response.data[docType.field]).forEach(function(key) {
+                docItem.push(response.data[docType.field][key]);
               });
+              documentsList[docType.field] = docItem;
             }
+          });
+          if (Object.keys(documentsList).length > 0) {
+            this.setState({
+              documentsList: documentsList,
+              selectedDocument: documentsList[this.documentTypes[0].field][0]
+            });
           }
-        );
+          this.loader.destroy();
         }
       });
     }
   };
 
-  componentDidUpdate(prevProps) {
-    if (this.props.url !== prevProps.url) {
-      this.getDocumentsList();
+  componentDidMount() {
+    if (this.state.selectedDocument) {
+      var documentViewerDiv = document.querySelector(".docViewerWindow");
+      this.loader.show(documentViewerDiv);
     }
   }
 
-  componentDidMount() {
-    this.getDocumentsList();
+  generateDocumentList() {
+    var accordionHTML = [];
+    if (this.documentTypes) {
+      this.documentTypes.map((docType, index) => {
+        this.state.documentsList[docType.field]
+          ? accordionHTML.push(
+              <Card key={index}>
+                <Card.Header>
+                  <Accordion.Toggle as={Button} eventKey={docType.field}>
+                    {docType.title}
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey={docType.field}>
+                  <Card.Body>
+                    {this.state.documentsList[docType.field].map((doc, i) => {
+                      return (
+                        <Card
+                          className="docItems"
+                          onClick={e => {
+                            doc != this.state.selectedDocument
+                              ? this.handleDocumentClick(doc)
+                              : null;
+                          }}
+                          key={i}
+                        >
+                          <div
+                            className={
+                              doc == this.state.selectedDocument
+                                ? "card-body docListBody borderActive"
+                                : "card-body docListBody border"
+                            }
+                          >
+                            <i
+                              className={"docIcon " + this.getDocIcon(doc)}
+                            ></i>
+                            <p>{doc.substring(doc.lastIndexOf("/") + 1)}</p>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            )
+          : null;
+      });
+    }
+    return accordionHTML;
+  }
+
+  getDocIcon(document) {
+    var type = document.split(".")[1];
+    if (type == "png" || type == "jpg" || type == "jpeg") {
+      return "fa fa-picture-o";
+    } else if (type == "pdf") {
+      return "fa fa-file-pdf-o";
+    } else if (type == "mp4" || type == "avi") {
+      return "fa fa-file-video-o";
+    } else if (
+      type == "odt" ||
+      type == "odp" ||
+      type == "ods" ||
+      type == "doc" ||
+      type == "docx"
+    ) {
+      return "fa fa-file-word-o";
+    } else {
+      return "fa fa-file-o";
+    }
   }
 
   handleDocumentClick = doc => {
+    var documentViewerDiv = document.querySelector(".docViewerWindow");
+    this.loader.show(documentViewerDiv);
     this.setState({
       selectedDocument: doc
     });
@@ -71,61 +140,96 @@ export default class DocumentViewer extends Component {
 
   displayDocumentData = documentData => {
     var url;
-    if (documentData.type == "pdf") {
-      url = this.core.config('ui.url')+"/ViewerJS/#" + this.baseUrl+this.appId+'/'+documentData;
-    } else if (documentData.type == "image") {
-      url = documentData;
+    var type = documentData.split(".")[1];
+    if (type == "png" || type == "jpg" || type == "jpeg") {
+      url = this.baseUrl + this.appId + "/" + documentData;
+      return (
+        <img
+          onLoad={() => this.loader.destroy()}
+          className="img-fluid"
+          style={{ height: "100%" }}
+          src={url}
+        />
+      );
+    } else if (type == "mp4" || type == "avi") {
+      url = this.baseUrl + this.appId + "/" + documentData;
+      return (
+        <video
+          autoplay
+          muted
+          preload
+          controls
+          width="100%"
+          onCanPlay={this.loader.destroy()}
+        >
+          <source src={url} type={"video/" + type} />
+          Sorry, your browser doesn't support embedded videos.
+        </video>
+      );
+    } else if (
+      type == "pdf" ||
+      type == "odt" ||
+      type == "odp" ||
+      type == "ods"
+    ) {
+      url =
+        this.core.config("ui.url") +
+        "/ViewerJS/#" +
+        this.baseUrl +
+        this.appId +
+        "/" +
+        documentData;
+      return (
+        <iframe
+          onLoad={() => {
+            setTimeout(() => {
+              this.loader.destroy();
+            }, 800);
+          }}
+          key={Math.random() * 20}
+          src={url}
+          className="iframeDoc"
+        ></iframe>
+      );
     } else {
-      url = this.core.config('ui.url')+"/ViewerJS/#" + this.baseUrl+this.appId+'/'+documentData;
+      url = this.baseUrl + this.appId + "/" + documentData;
+      window.open(url, "_self");
+      var url2 =
+        this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.png";
+      this.loader.destroy();
+      return (
+        <img className="img-fluid" style={{ height: "100%" }} src={url2} />
+      );
     }
-    return <iframe src={url} className="iframeDoc" key={url}></iframe>;
   };
 
   render() {
     const { documentsList } = this.state;
-    if (documentsList && documentsList.length > 0) {
-      if (documentsList.length > 0) {
-        return (
-          <div className="row" style={{height: "-webkit-fill-available"}} >
-            <div className="col-md-2 docListDiv">
-              {documentsList.map((doc, index) => {
-                return (
-                  <div className="card docList" key={index}>
-                    <div
-                      className={
-                        this.state.selectedDocument == doc
-                          ? "card-body docListBody borderActive"
-                          : "card-body docListBody border"
-                      }
-                      onClick={e => {
-                        this.handleDocumentClick(doc);
-                      }}
-                    >
-                      <i
-                        className={
-                          "docIcon " +
-                          (doc.type == "pdf"
-                            ? "fa fa-file-pdf-o"
-                            : doc.type == "image"
-                            ? "fa fa-picture-o"
-                            : "fa fa-file-pdf-o")
-                        }
-                      ></i>
-                      <br></br>
-                      {doc.substring(doc.lastIndexOf('/')+1)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="col-md-10 border">
-              {this.displayDocumentData(this.state.selectedDocument)}
-            </div>
+    if (documentsList) {
+      return (
+        <div className="docViewerComponent">
+          <div className="col-md-3 docListDiv">
+            <Accordion defaultActiveKey={this.documentTypes[0].field}>
+              {this.generateDocumentList()}
+            </Accordion>
           </div>
-        );
-      } else {
-        return <p>No files to display.</p>;
-      }
-    } else return <p>No files to display.</p>;
+          <div className="col-md-9 border docViewerWindow">
+            {this.state.selectedDocument ? (
+              this.displayDocumentData(this.state.selectedDocument)
+            ) : (
+              <p>No files to display.</p>
+            )}
+          </div>
+        </div>
+      );
+    } else {
+      return <p>No files to display.</p>;
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.url !== prevProps.url) {
+      this.getDocumentsList();
+    }
   }
 }
