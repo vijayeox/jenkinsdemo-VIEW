@@ -10,9 +10,6 @@ import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./components/Grid/DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
-import withReactContent from "sweetalert2-react-content";
-
-const MySwal = withReactContent(Swal);
 
 // import "@progress/kendo-theme-default/dist/all.css";
 
@@ -318,7 +315,7 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
             className="btn manage-btn k-grid-remove-command"
             onClick={e => {
               e.preventDefault();
-              MySwal.fire({
+              Swal.fire({
                 title: "Are you sure?",
                 text:
                   "Do you really want to delete the record? This cannot be undone.",
