@@ -35,7 +35,7 @@
     "react-webcam": "^1.1.1",
     "reactstrap": "^8.4.1",
     "resolve-mjs": "^2.2.2",
-    "webpack-bundle-analyzer": "^3.3.2"
+    "webpack-bundle-analyzer": "^3.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
