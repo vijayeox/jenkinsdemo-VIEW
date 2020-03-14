@@ -3,37 +3,45 @@ class WidgetDrillDownHelper {
     static OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE = 'data-oxzion-drilldownctx';
     static OXZION_WIDGET_ID_ATTRIBUTE = 'data-oxzion-widget-id';
 
-    static bindDrillDownDataContext(filterString, dataContext) {
-        if (!filterString || ('' === filterString)) {
-            return filterString;
+    static bindDrillDownDataContext(templateString, dataContext) {
+        if (!templateString || ('' === templateString) || !dataContext) {
+            return templateString;
         }
         let regex = /\${.*?}/;
         while(true) {
-            let hits = regex.exec(filterString);
+            let hits = regex.exec(templateString);
             if (!hits) {
                 break;
             }
-            filterString = filterString.replace(regex, function(matchedSubstring, offset, string) {
+            templateString = templateString.replace(regex, function(matchedSubstring, offset, string) {
                 let key = matchedSubstring.substring(2, (matchedSubstring.length - 1)); //Extract string between ${ and }
                 let value = dataContext[key];
                 if (!value) {
-                    console.error('Filter string:', filterString);
+                    console.error('Filter string:', templateString);
                     console.error('Event data context:', dataContext);
                     throw `Value for key "${key}" not found in the event data context logged above.`;
                 }
                 return value;
             });
         }
-        return filterString;
+        return templateString;
     }
 
     static drillDownClicked(widgetElement, dataContext) {
+        function bindProperty(context, messageContent, propName) {
+            let property = context ? context[propName] : null;
+            if (property) {
+                let boundProperty = WidgetDrillDownHelper.bindDrillDownDataContext(property, dataContext);
+                messageContent[propName] = boundProperty;
+                context[propName] = boundProperty;
+            }
+        }
+
         let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
         if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
             throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
         }
 
-        WidgetDrillDownHelper.bindDrillDownDataContext(widgetElement, dataContext);
         let elementId = widgetElement.getAttribute('id');
         let messageContent = {
             'action':'oxzion-widget-drillDown',
@@ -42,7 +50,6 @@ class WidgetDrillDownHelper {
         };
 
         let newWidgetId = widgetId;
-        let filter = null;
         let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
         if (!drillDownContext || (0 === drillDownContext.length)) {
@@ -54,9 +61,15 @@ class WidgetDrillDownHelper {
             messageContent['newWidgetId'] = replaceWith;
             widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, replaceWith);
         }
-        let boundFilter = WidgetDrillDownHelper.bindDrillDownDataContext(context['filter'], dataContext);
-        messageContent['filter'] = boundFilter;
-        context['filter'] = boundFilter;
+        let target = context['target'];
+        if (target) {
+            messageContent['target'] = target;
+        }
+
+        bindProperty(context, messageContent, 'filter');
+        bindProperty(context, messageContent, 'widgetTitle');
+        bindProperty(context, messageContent, 'widgetFooter');
+
         context['isBound'] = true;
         //Update the widget element attribute containing drill down context stack.
         widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, JSON.stringify(drillDownContext));
@@ -66,6 +79,9 @@ class WidgetDrillDownHelper {
     }
 
     static findWidgetElement(element) {
+        if (element.topParent) {
+            element = element.topParent.htmlContainer;
+        }
         while(true) {
             element = element.parentElement;
             if (!element) {
@@ -119,7 +135,7 @@ class WidgetDrillDownHelper {
                             'openCategoryY'
                         ]);
                         WidgetDrillDownHelper.drillDownClicked(
-                            WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
+                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
                     };
                 break;
                 case 'LineSeries':
@@ -135,7 +151,7 @@ class WidgetDrillDownHelper {
                     segmentEvts['hit'] = function(evt) {
                         let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
                         WidgetDrillDownHelper.drillDownClicked(
-                            WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
+                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
                     };
     
                     if (!ser['bullets']) {
@@ -150,7 +166,7 @@ class WidgetDrillDownHelper {
                         bulletEvts['hit'] = function(evt) {
                             let dataContext = evt.target.dataItem.dataContext;
                             WidgetDrillDownHelper.drillDownClicked(
-                                WidgetDrillDownHelper.findWidgetElement(evt.event.originalTarget), dataContext);
+                                WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
                         };
                     });
                 break;

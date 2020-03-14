@@ -113,9 +113,13 @@ class Dashboard extends Component {
   };
 
     widgetDrillDownMessageHandler = (event) => {
-        let data = event.data;
-        let action = data['action'];
+        let eventData = event.data;
+        let action = eventData['action'];
         if ((action !== 'oxzion-widget-drillDown') && (action !== 'oxzion-widget-rollUp')) {
+            return;
+        }
+        let target = eventData['target'];
+        if (target && (target !== 'widget')) {
             return;
         }
 
@@ -126,21 +130,21 @@ class Dashboard extends Component {
                 if (widget.dispose) {
                     widget.dispose();
                 }
-                delete thiz.renderedCharts[elementId];
+                delete thiz.renderedWidgets[elementId];
             }
         }
 
-        let elementId = data['elementId'];
-        let widgetId = data['widgetId'];
+        let elementId = eventData['elementId'];
+        let widgetId = eventData['widgetId'];
         cleanup(elementId);
 
-        let newWidgetId = data['newWidgetId'];
+        let newWidgetId = eventData['newWidgetId'];
         if (newWidgetId) {
             widgetId = newWidgetId;
         }
 
         let url = `analytics/widget/${widgetId}?data=true`;
-        let filter = data['filter'];
+        let filter = eventData['filter'];
         if (filter && ('' !== filter)) {
             url = url + '&filter=' + encodeURIComponent(filter);
         }
@@ -149,9 +153,9 @@ class Dashboard extends Component {
         this.helper.request('v1', url, null, 'get').
         then(response => {
             let element = document.getElementById(elementId);
-            let widgetObject = WidgetRenderer.render(element, response.data.widget)
+            let widgetObject = WidgetRenderer.render(element, response.data.widget, eventData);
             if (widgetObject) {
-                self.renderedWidgets[widgetId] = widgetObject;
+                self.renderedWidgets[elementId] = widgetObject;
             }
         }).
         catch(response => {

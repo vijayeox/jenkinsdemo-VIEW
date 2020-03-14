@@ -13,14 +13,14 @@ import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
 class WidgetRenderer {
-    static render(element, widget) {
+    static render(element, widget, props) {
         let widgetTagName = element.tagName.toUpperCase();
         switch(widget.renderer) {
             case 'JsAggregate':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw(`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderAggregateValue(element, widget.configuration, widget.data);
+                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data);
             break;
 
             case 'amCharts':
@@ -28,7 +28,7 @@ class WidgetRenderer {
                     throw(`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderAmCharts(element, widget.configuration, widget.data);
+                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data);
                 }
                 catch(e) {
                     console.error(e);
@@ -54,7 +54,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderAggregateValue(element, configuration, data) {
+    static renderAggregateValue(element, configuration, props, data) {
         let displayValue = null;
         if (configuration) {
             if (configuration.numberFormat) {
@@ -71,10 +71,37 @@ class WidgetRenderer {
         return null;
     }
 
-    static renderAmCharts(element, configuration, data) {
+    static overrideConfigurationProps(configuration, props) {
+        if (!configuration || !props) {
+            return configuration;
+        }
+        let widgetTitle = props['widgetTitle'];
+        if (widgetTitle && ('' !== widgetTitle)) {
+            let configTitles = configuration['titles'];
+            if (configTitles && (configTitles.length > 0)) {
+                let title = configTitles[0];
+                title['text'] = widgetTitle;
+            }
+        }
+        let widgetFooter = props['widgetFooter'];
+        if (widgetFooter && ('' !== widgetFooter)) {
+            let chContainer = configuration['chartContainer'];
+            if (chContainer) {
+                let footers = chContainer['children'];
+                if (footers && (footers.length > 0)) {
+                    let footer = footers[0];
+                    footer['text'] = widgetFooter;
+                }
+            }
+        }
+        return configuration;
+    }
+
+    static renderAmCharts(element, configuration, props, data) {
         let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
         data = transformedConfig.chartData;
+        configuration = WidgetRenderer.overrideConfigurationProps(configuration, props);
 
         let series = configuration.series;
 
