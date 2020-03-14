@@ -17,5 +17,7 @@
     overflow: scroll;
 }
 .AppBuilderPage{
-	height: -webkit-fill-available;
+	height: calc(100% - 60px);
+	display: flex;
+    flex-direction: column;
 }
