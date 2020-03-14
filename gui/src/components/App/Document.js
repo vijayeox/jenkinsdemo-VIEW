@@ -1,5 +1,6 @@
 import React from "react";
 import JsxParser from "react-jsx-parser";
+import moment from "moment";
 
 class Document extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Document extends React.Component {
     this.appId = this.props.appId;
     this.state = {
       content: this.props.content,
+      fileData: [],
       dataReady: false
     };
   }
@@ -21,7 +23,10 @@ class Document extends React.Component {
       this.getFileDetails(this.fileId).then(response => {
         if (response.status == "success") {
           this.setState({
-            content: this.parseFileData(this.state.content, response.data.data),
+            content: this.props.content.includes("{{")
+              ? this.parseFileData(this.state.content, response.data.data)
+              : this.props.content,
+            fileData: response.data.data,
             dataReady: true
           });
         }
@@ -59,7 +64,16 @@ class Document extends React.Component {
 
   render() {
     return this.fileId ? (
-      this.state.dataReady && <JsxParser jsx={this.state.content} />
+      this.state.dataReady && (
+        <JsxParser
+          jsx={this.state.content}
+          bindings={{
+            file: this.state.fileData,
+            moment: moment,
+            profile: this.profile.key
+          }}
+        />
+      )
     ) : (
       <div dangerouslySetInnerHTML={{ __html: this.state.content }} />
     );
