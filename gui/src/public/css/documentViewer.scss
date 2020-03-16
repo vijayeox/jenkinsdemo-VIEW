@@ -1,10 +1,9 @@
-.border {
-  border: 1px solid #275362;
-}
-
 .borderActive {
   border: 2px solid #275362;
   box-shadow: 0px 0px 3px 1px #275362;
+  transform: scale(1.05);
+  transition-property: transform;
+  transition-duration: 1s;
 }
 
 .docListDiv {
@@ -25,12 +24,22 @@
 
 .docListBody {
   text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 15px;
+
+  p {
+    margin: 10px 0px;
+    line-height: normal;
+    font-size: 2.3vh;
+    font-weight: 500;
+  }
 }
 
 .docIcon {
-  font-size: xx-large;
-  padding-top: 5px;
-  padding-bottom: 10px;
+  font-size: 3.5vh;
+  padding: 10px 10px;
 }
 
 .iframeDoc {
@@ -42,18 +51,13 @@
   width: -moz-available;
 }
 
-.react-pdf__Page {
-  overflow: auto;
-  text-align: -webkit-center;
-  text-align: -moz-center;
-}
-
 .docViewerComponent {
   display: flex;
-  height: 100%;
+  height: inherit;
 
   .docListBody.border {
     cursor: pointer;
+    border: 1px solid #275362 !important;
   }
 
   .accordion {
@@ -66,6 +70,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .image-download-button {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    bottom: 5px;
+    right: 5px;
+    height: 35px;
+    justify-content: space-around;
+    text-shadow: 0 0 2px #000;
+    color: lightyellow;
   }
 
   .card {
@@ -93,15 +110,19 @@
     flex-direction: column;
     border-radius: 15px;
     color: #343a40;
+
+    .card {
+      border: unset !important;
+    }
   }
   .docItems.card {
-    height: 6rem;
-    margin: 5px;
+    max-height: 3rem;
+    margin: 0.9vh;
     border-radius: 15px;
   }
 }
 
-.singleFile{
+.singleFile {
   padding: 1em;
   border-bottom: 1px solid;
 }
