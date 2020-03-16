@@ -1,14 +1,13 @@
 import React from "react";
+import { Button } from "@progress/kendo-react-buttons";
+import moment from "moment";
+
 import FormRender from "./FormRender";
 import Document from "./Document";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
-import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
-import Loader from "react-loader-spinner";
-import moment from "moment";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./Styles/PageComponentStyles.scss";
 
 class Page extends React.Component {
@@ -37,13 +36,12 @@ class Page extends React.Component {
     document
       .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
-
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.pageId !== prevProps.pageId) {
-      var PageRenderDiv = document.querySelector(".PageRender")
-      this.loader.show(PageRenderDiv)
+      var PageRenderDiv = document.querySelector(".PageRender");
+      this.loader.show(PageRenderDiv);
       this.setState({ pageContent: [], pageId: this.props.pageId });
       this.loadPage(this.props.pageId);
     }
@@ -71,105 +69,95 @@ class Page extends React.Component {
       } else {
         this.setState({ pageContent: [] });
       }
-      this.loader.destroy()
+      this.loader.destroy();
     });
   }
 
   renderButtons(e, action) {
     var actionButtons = [];
-    Object.keys(action).map(function (key, index) {
+    Object.keys(action).map(function(key, index) {
       var string = this.replaceParams(action[key].rule, e);
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
-          width: "auto"
-        }
+            width: "auto"
+          }
         : {
-          width: "auto",
-          // paddingTop: "5px",
-          color: "white",
-          fontWeight: "600"
-        };
+            width: "auto",
+            // paddingTop: "5px",
+            color: "white",
+            fontWeight: "600"
+          };
       showButton
         ? actionButtons.push(
-          <abbr title={action[key].name} key={index}>
-            <Button
-              primary={true}
-              className=" btn manage-btn k-grid-edit-command"
-              onClick={() => this.buttonAction(action[key], e)}
-              style={buttonStyles}
-            >
-              {action[key].icon ? (
-                <i className={action[key].icon + " manageIcons"}></i>
-              ) : (
+            <abbr title={action[key].name} key={index}>
+              <Button
+                primary={true}
+                className=" btn manage-btn k-grid-edit-command"
+                onClick={() => this.buttonAction(action[key], e)}
+                style={buttonStyles}
+              >
+                {action[key].icon ? (
+                  <i className={action[key].icon + " manageIcons"}></i>
+                ) : (
                   action[key].name
                 )}
-            </Button>
-          </abbr>
-        )
+              </Button>
+            </abbr>
+          )
         : null;
     }, this);
     return actionButtons;
   }
 
   renderRow(e, config) {
-    var url = config[0].content.route
+    var url = config[0].content.route;
     var dataString = this.prepareDataRoute(url, e);
 
-    return <OX_Grid
-      appId={this.appId}
-      osjsCore={this.core}
-      data={dataString}
-      gridToolbar={config[0].content.toolbarTemplate}
-      columnConfig={config[0].content.columnConfig}
-    />
+    return (
+      <OX_Grid
+        appId={this.appId}
+        osjsCore={this.core}
+        data={dataString}
+        gridToolbar={config[0].content.toolbarTemplate}
+        columnConfig={config[0].content.columnConfig}
+      />
+    );
   }
-
 
   async buttonAction(action, rowData) {
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
       this.setState({
-        pageContent: []
+        pageContent: [],
+        showLoader: true
       });
       var that = this;
-      setTimeout(function () {
-        action.details.every(async (item, index) => {
-          if (item.type == "Update") {
+      var copyPageContent = [];
+      var fileId;
+      action.details.every(async (item, index) => {
+        if (item.type == "Update") {
+          const response = await that.updateActionHandler(item, rowData);
+          if (response.status == "success") {
+          } else {
             that.setState({
-              showLoader: true
+              pageContent: action.details.slice(0, index)
             });
-            const response = await that.updateActionHandler(item, rowData);
-            if (response.status == "success") {
-              console.log(response);
-            } else {
-              that.setState({
-                pageContent: action.details.slice(0, index)
-              });
-              return false;
-            }
-          } else if (item.type == "View") {
-            that.setState({
-              currentRow: rowData
-            });
+            return false;
+          }
+        } else {
+          if (item.params) {
             if (item.params.uuid) {
-              var fileId = that.replaceParams(item.params.uuid, rowData);
-              that.setState({
-                fileId: fileId
-              });
+              fileId = that.replaceParams(item.params.uuid, rowData);
+            }
+            if (item.params.page_id) {
               that.loadPage(item.params.page_id);
             }
-          } else {
-            let pageContent = that.state.pageContent;
-            pageContent.push(item);
-            that.setState({
-              pageContent: pageContent,
-              currentRow: rowData
-            });
           }
-        });
-      }, 500);
+          copyPageContent.push(item);
+        }
+      });
       let ev = new CustomEvent("updateBreadcrumb", {
         detail: action,
         bubbles: true
@@ -179,7 +167,10 @@ class Page extends React.Component {
         .dispatchEvent(ev);
     }
     this.setState({
-      showLoader: false
+      fileId: fileId,
+      showLoader: false,
+      currentRow: rowData,
+      pageContent: copyPageContent
     });
   }
 
@@ -222,7 +213,7 @@ class Page extends React.Component {
       if (!params) {
         params = {};
       }
-      params['current_date'] = moment().format("YYYY-MM-DD");
+      params["current_date"] = moment().format("YYYY-MM-DD");
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
       return result;
@@ -309,11 +300,17 @@ class Page extends React.Component {
               });
             }
           }
-          var dataString = this.prepareDataRoute(itemContent.route, this.state.currentRow);
-          console.log(this.state.currentRow)
+          var dataString = this.prepareDataRoute(
+            itemContent.route,
+            this.state.currentRow
+          );
           content.push(
             <OX_Grid
-              rowTemplate={itemContent.expandable ? e => this.renderRow(e, itemContent.rowConfig) : null}
+              rowTemplate={
+                itemContent.expandable
+                  ? e => this.renderRow(e, itemContent.rowConfig)
+                  : null
+              }
               appId={this.appId}
               key={i}
               osjsCore={this.core}
@@ -364,12 +361,9 @@ class Page extends React.Component {
           );
           break;
         case "DocumentViewer":
-          var itemContent = data[i].content;
-          var url = "";
-          let fileId = "";
           if (this.state.fileId) {
-            fileId = this.state.fileId;
-            url = "app/" + this.appId + "/file/" + fileId + "/document";
+            var url =
+              "app/" + this.appId + "/file/" + this.state.fileId + "/document";
           } else {
             break;
           }
@@ -379,6 +373,7 @@ class Page extends React.Component {
               key={i}
               core={this.core}
               url={url}
+              params={data[i].params}
             />
           );
           break;
@@ -422,7 +417,7 @@ class Page extends React.Component {
       this.state.pageContent.length > 0 &&
       !this.state.showLoader
     ) {
-      this.loader.destroy()
+      this.loader.destroy();
       var pageRender = this.renderContent(this.state.pageContent);
       return (
         <div id={this.contentDivID} className="AppBuilderPage">
@@ -430,11 +425,9 @@ class Page extends React.Component {
         </div>
       );
     }
-    this.loader.show()
-    return <></>
+    this.loader.show();
+    return <></>;
   }
-
-
 }
 
 export default Page;

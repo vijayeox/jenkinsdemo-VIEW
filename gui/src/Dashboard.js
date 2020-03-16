@@ -69,7 +69,7 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       this.updateGraph();
     }
-    window.addEventListener('message', this.widgetDrillDownhMessageHandler, false);
+    window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentWillUnmount() {
@@ -82,7 +82,7 @@ class Dashboard extends Component {
         delete this.renderedWidgets[elementId];
       }
     }
-    window.removeEventListener('message', this.widgetDrillDownhMessageHandler, false);
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
   componentDidUpdate(prevProps) {
@@ -112,9 +112,14 @@ class Dashboard extends Component {
     }
   };
 
-    widgetDrillDownhMessageHandler = (event) => {
-        let data = event.data;
-        if (data['action'] !== 'oxzion-widget-drillDown') {
+    widgetDrillDownMessageHandler = (event) => {
+        let eventData = event.data;
+        let action = eventData['action'];
+        if ((action !== 'oxzion-widget-drillDown') && (action !== 'oxzion-widget-rollUp')) {
+            return;
+        }
+        let target = eventData['target'];
+        if (target && (target !== 'widget')) {
             return;
         }
 
@@ -125,29 +130,32 @@ class Dashboard extends Component {
                 if (widget.dispose) {
                     widget.dispose();
                 }
-                delete thiz.renderedCharts[elementId];
+                delete thiz.renderedWidgets[elementId];
             }
         }
 
-        let elementId = data['elementId'];
-        let widgetId = data['widgetId'];
+        let elementId = eventData['elementId'];
+        let widgetId = eventData['widgetId'];
         cleanup(elementId);
 
-        let newContext = WidgetDrillDownHelper.prepareWidgetForDrillDown(elementId, widgetId);
-        widgetId = newContext['widgetId'];
+        let newWidgetId = eventData['newWidgetId'];
+        if (newWidgetId) {
+            widgetId = newWidgetId;
+        }
 
         let url = `analytics/widget/${widgetId}?data=true`;
-        let filter = newContext['filter'];
-        if (filter) {
+        let filter = eventData['filter'];
+        if (filter && ('' !== filter)) {
             url = url + '&filter=' + encodeURIComponent(filter);
         }
+
         var self = this;
         this.helper.request('v1', url, null, 'get').
         then(response => {
             let element = document.getElementById(elementId);
-            let widgetObject = WidgetRenderer.render(element, response.data.widget)
+            let widgetObject = WidgetRenderer.render(element, response.data.widget, eventData);
             if (widgetObject) {
-                self.renderedWidgets[widgetId] = widgetObject;
+                self.renderedWidgets[elementId] = widgetObject;
             }
         }).
         catch(response => {

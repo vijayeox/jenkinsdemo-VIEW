@@ -554,7 +554,7 @@ class FormRender extends React.Component {
               form.setPage(parseInt(that.state.page));
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                // breadcrumbs.style.display = "none";
+                breadcrumbs.style.display = "none";
               }
             }
           }
@@ -632,7 +632,7 @@ class FormRender extends React.Component {
             if (form.wizard && form.wizard.display == "wizard") {
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                // breadcrumbs.style.display = "none";
+                breadcrumbs.style.display = "none";
               }
             }
             eachComponent(form.root.components, function (component) {
@@ -1128,7 +1128,6 @@ componentDidMount() {
         }else{
           this.loadWorkflow(form);
         }
-        
       });
       
     });

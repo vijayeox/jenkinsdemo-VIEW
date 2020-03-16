@@ -13,14 +13,14 @@ import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
 class WidgetRenderer {
-    static render(element, widget) {
+    static render(element, widget, props) {
         let widgetTagName = element.tagName.toUpperCase();
         switch(widget.renderer) {
             case 'JsAggregate':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw(`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderAggregateValue(element, widget.configuration, widget.data);
+                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data);
             break;
 
             case 'amCharts':
@@ -28,7 +28,7 @@ class WidgetRenderer {
                     throw(`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderAmCharts(element, widget.configuration, widget.data);
+                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data);
                 }
                 catch(e) {
                     console.error(e);
@@ -54,7 +54,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderAggregateValue(element, configuration, data) {
+    static renderAggregateValue(element, configuration, props, data) {
         let displayValue = null;
         if (configuration) {
             if (configuration.numberFormat) {
@@ -71,10 +71,37 @@ class WidgetRenderer {
         return null;
     }
 
-    static renderAmCharts(element, configuration, data) {
+    static overrideConfigurationProps(configuration, props) {
+        if (!configuration || !props) {
+            return configuration;
+        }
+        let widgetTitle = props['widgetTitle'];
+        if (widgetTitle && ('' !== widgetTitle)) {
+            let configTitles = configuration['titles'];
+            if (configTitles && (configTitles.length > 0)) {
+                let title = configTitles[0];
+                title['text'] = widgetTitle;
+            }
+        }
+        let widgetFooter = props['widgetFooter'];
+        if (widgetFooter && ('' !== widgetFooter)) {
+            let chContainer = configuration['chartContainer'];
+            if (chContainer) {
+                let footers = chContainer['children'];
+                if (footers && (footers.length > 0)) {
+                    let footer = footers[0];
+                    footer['text'] = widgetFooter;
+                }
+            }
+        }
+        return configuration;
+    }
+
+    static renderAmCharts(element, configuration, props, data) {
         let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
         data = transformedConfig.chartData;
+        configuration = WidgetRenderer.overrideConfigurationProps(configuration, props);
 
         let series = configuration.series;
 
@@ -162,10 +189,28 @@ class WidgetRenderer {
             }
         }
 
-        let isDrilledDown = false;
-        if (isDrilledDown) {
-            element.insertAdjacentHTML('beforeend', 
-                '<div class="oxzion-widget-back-button"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></div>');
+        if (WidgetDrillDownHelper.isDrilledDown(element)) {
+            let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+            let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+            if (!buttonElement) {
+                element.insertAdjacentHTML('beforeend', 
+                    '<div class="oxzion-widget-roll-up-button" title="Back">' + 
+                        '<i class="fa fa-arrow-circle-left" aria-hidden="true"></i>' + 
+                    '</div>');
+                rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+                buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+                buttonElement.addEventListener('click', event => {
+                    WidgetDrillDownHelper.rollUpClicked(
+                        WidgetDrillDownHelper.findWidgetElement(event.originalTarget));
+                });
+            }
+        }
+        else {
+            let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
+            let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+            if (buttonElement) {
+                buttonElement.remove();
+            }
         }
 
         return chart;
@@ -182,7 +227,7 @@ class WidgetRenderer {
                 if (!element) {
                     throw('Did not find widget element when moving up the node hierarchy of map chart click event.');
                 }
-                if (element.hasAttribute('data-oxzion-widget-id')) {
+                if (element.hasAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE)) {
                     return element;
                 }
             }
@@ -310,7 +355,8 @@ class WidgetRenderer {
         // 2. open URL if available (use url property, property binding, and adapter)
         polygonTemplate.events.on("hit", function(event) {
             let dataContext = {
-                'state':event.target.dataItem.dataContext.name
+                'code':event.target.dataItem.dataContext.id.substring(3),
+                'name':event.target.dataItem.dataContext.name
             };
             WidgetDrillDownHelper.drillDownClicked(findWidgetElement(event.target), dataContext);
 

@@ -19,8 +19,8 @@ figure.oxzion-widget > figcaption
     display:none;
 }
 
-figure.oxzion-widget > div.oxzion-widget-back-button, 
-div.oxzion-widget > div.oxzion-widget-back-button {
+figure.oxzion-widget > div.oxzion-widget-roll-up-button, 
+div.oxzion-widget > div.oxzion-widget-roll-up-button {
     z-index:2;
     position:absolute;
     top:0px;
