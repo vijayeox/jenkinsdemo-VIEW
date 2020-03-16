@@ -105,8 +105,12 @@ export default class DocumentViewerComponent extends Base {
     var row = `<div class="row" style="padding: 15px;" >
     <div class="col-md-12" >`+ fileList +`</div>
     </div>
-    </div><div id="filePreviewModal" class="modal" style="position:absolute"><div style="height:inherit;display: block;background-color: white;"><span id="closeFile" class="close" style="font-size:2em">&times;</span><div id="filePreviewWindow" style="height:inherit"></div></div></div>`;
-    console.log(row);
+    <div id="filePreviewModal" class="modal" style="position:absolute">
+    <div style="height:inherit;display: block;background-color: white;">
+    <span id="closeFile" class="close" style="font-size:2em">&times;</span>
+    <div id="filePreviewWindow" style="height:inherit"></div>
+    </div>
+    </div>`;
     var content = super.render(row);
     return content;
   }
