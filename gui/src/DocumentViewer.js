@@ -32,7 +32,10 @@ export default class DocumentViewer extends Component {
         if (response.data) {
           var documentsList = {};
           this.documentTypes.map((docType, index) => {
-            if (response.data[docType.field].length > 0) {
+            if (
+              response.data[docType.field] &&
+              response.data[docType.field].length > 0
+            ) {
               documentsList[docType.field] = response.data[docType.field];
             }
           });
