@@ -199,6 +199,8 @@
       color : #fff;
       background-color: #37adbf;
   }
-
+  .formio-form nav[aria-label=navigation]{
+    display:none;
+  }
 
 }
