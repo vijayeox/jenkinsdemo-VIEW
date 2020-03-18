@@ -32,12 +32,11 @@ export default class DocumentViewer extends Component {
         if (response.data) {
           var documentsList = {};
           this.documentTypes.map((docType, index) => {
-            var docItem = [];
-            if (response.data[docType.field]) {
-              Object.keys(response.data[docType.field]).forEach(function(key) {
-                docItem.push(response.data[docType.field][key]);
-              });
-              documentsList[docType.field] = docItem;
+            if (
+              response.data[docType.field] &&
+              response.data[docType.field].length > 0
+            ) {
+              documentsList[docType.field] = response.data[docType.field];
             }
           });
           if (Object.keys(documentsList).length > 0) {
@@ -78,7 +77,7 @@ export default class DocumentViewer extends Component {
                         <Card
                           className="docItems"
                           onClick={e => {
-                            doc != this.state.selectedDocument
+                            doc.file != this.state.selectedDocument.file
                               ? this.handleDocumentClick(doc)
                               : null;
                           }}
@@ -86,15 +85,19 @@ export default class DocumentViewer extends Component {
                         >
                           <div
                             className={
-                              doc == this.state.selectedDocument
-                                ? "card-body docListBody borderActive"
-                                : "card-body docListBody border"
+                              doc.file == this.state.selectedDocument.file
+                                ? "docListBody borderActive"
+                                : "docListBody border"
                             }
                           >
                             <i
-                              className={"docIcon " + this.getDocIcon(doc)}
+                              className={"docIcon " + this.getDocIcon(doc.type)}
                             ></i>
-                            <p>{doc.substring(doc.lastIndexOf("/") + 1)}</p>
+                            <p>
+                              {doc.originalName.length > 20
+                                ? this.chopFileName(doc.originalName)
+                                : doc.originalName}
+                            </p>
                           </div>
                         </Card>
                       );
@@ -109,8 +112,8 @@ export default class DocumentViewer extends Component {
     return accordionHTML;
   }
 
-  getDocIcon(document) {
-    var type = document.split(".")[1];
+  getDocIcon(type) {
+    var type = type.split("/")[1].toLowerCase();
     if (type == "png" || type == "jpg" || type == "jpeg") {
       return "fa fa-picture-o";
     } else if (type == "pdf") {
@@ -130,6 +133,12 @@ export default class DocumentViewer extends Component {
     }
   }
 
+  chopFileName = title => {
+    let type = "...." + title.split(".")[1];
+    var displayTitle = title.substring(0, 20) + type;
+    return displayTitle;
+  };
+
   handleDocumentClick = doc => {
     var documentViewerDiv = document.querySelector(".docViewerWindow");
     this.loader.show(documentViewerDiv);
@@ -140,19 +149,25 @@ export default class DocumentViewer extends Component {
 
   displayDocumentData = documentData => {
     var url;
-    var type = documentData.split(".")[1];
+    var type = documentData.type.split("/")[1].toLowerCase();
     if (type == "png" || type == "jpg" || type == "jpeg") {
-      url = this.baseUrl + this.appId + "/" + documentData;
+      url = this.baseUrl + this.appId + "/" + documentData.file;
       return (
-        <img
-          onLoad={() => this.loader.destroy()}
-          className="img-fluid"
-          style={{ height: "100%" }}
-          src={url}
-        />
+        <React.Fragment>
+          <img
+            onLoad={() => this.loader.destroy()}
+            className="img-fluid"
+            style={{ height: "100%" }}
+            src={url}
+          />
+          <a href={url} download className="image-download-button">
+            <i class="fa fa-download" aria-hidden="true"></i>
+            Download
+          </a>
+        </React.Fragment>
       );
     } else if (type == "mp4" || type == "avi") {
-      url = this.baseUrl + this.appId + "/" + documentData;
+      url = this.baseUrl + this.appId + "/" + documentData.file;
       return (
         <video
           autoplay
@@ -178,7 +193,7 @@ export default class DocumentViewer extends Component {
         this.baseUrl +
         this.appId +
         "/" +
-        documentData;
+        documentData.file;
       return (
         <iframe
           onLoad={() => {
@@ -192,7 +207,7 @@ export default class DocumentViewer extends Component {
         ></iframe>
       );
     } else {
-      url = this.baseUrl + this.appId + "/" + documentData;
+      url = this.baseUrl + this.appId + "/" + documentData.file;
       window.open(url, "_self");
       var url2 =
         this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.png";

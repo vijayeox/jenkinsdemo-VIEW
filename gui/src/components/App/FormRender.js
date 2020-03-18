@@ -554,7 +554,7 @@ class FormRender extends React.Component {
               form.setPage(parseInt(that.state.page));
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                breadcrumbs.style.display = "none";
+                // breadcrumbs.style.display = "none";
               }
             }
           }
@@ -616,10 +616,11 @@ class FormRender extends React.Component {
             console.log(changed);
             if (changed && changed.changed) {
               var component = changed.changed.component;
+              var instance = changed.changed.instance;
               var properties = component.properties;
               if (properties && (Object.keys(properties).length > 0)) {
                 if (component != undefined) {
-                  that.runProps(component, form, properties, changed.data);
+                  that.runProps(component, form, properties, changed.data,instance);
                 } else {
                   if (changed.changed != undefined) {
                     that.runProps(changed.changed, form, changed.changed.properties, changed.data);
@@ -632,7 +633,7 @@ class FormRender extends React.Component {
             if (form.wizard && form.wizard.display == "wizard") {
               var breadcrumbs = document.getElementById(form.wizardKey + "-header");
               if (breadcrumbs) {
-                breadcrumbs.style.display = "none";
+                // breadcrumbs.style.display = "none";
               }
             }
             eachComponent(form.root.components, function (component) {
@@ -831,7 +832,7 @@ postDelegateRefresh(form,properties){
   }
 });
 }
-runProps(component,form,properties,formdata){
+runProps(component,form,properties,formdata,instance=null){
   if(formdata.data){
     formdata = formdata.data;
   }
@@ -951,11 +952,31 @@ runProps(component,form,properties,formdata){
           }
         }
       } 
+
+       if (properties["clear_field"]) {
+        var processed = false;
+        if(instance){
+          if(instance.rowIndex != null){            
+            var instancePath = instance.path.split('.');
+            var instanceRowindex = instance.rowIndex;
+            formdata[instancePath[0]][instanceRowindex][properties["clear_field"]] = "";
+            form.setSubmission({data : formdata});
+            processed = true;
+          }
+        } 
+        if(!processed){
+          var targetComponent = form.getComponent(properties["clear_field"]);
+          if (targetComponent) {
+            targetComponent.setValue("");
+          } 
+        } 
+      }
+
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
          var targetComponent = form.getComponent(item);
-         if(targetComponent.component && targetComponent.component.properties){
+         if(targetComponent && targetComponent.component && targetComponent.component.properties){
             that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
             console.log(targetComponent);
             that.runDelegates(form, targetComponent.component["properties"]);

@@ -308,7 +308,7 @@ export default class ConvergePayCheckoutComponent extends Base {
     <img src="./apps/DiveInsurance/img/cards_image.jpg" class="img-fluid" style="height: 60px;float: right;">
     </div>
     </div>
-    <div class="row"><div class="col-md-12">Please enter your Name as Per Card Details</div></div><br/>
+    <div class="row"><div class="col-md-12">Please enter your name as per card details</div></div><br/>
     <div class="row">
     <div class="col-md-6"> 
     <div class="form-group">

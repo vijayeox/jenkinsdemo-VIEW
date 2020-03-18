@@ -90,7 +90,7 @@ export default class DocumentViewerComponent extends Base {
           url = component.uiUrl+"/ViewerJS/#" + component.wrapperUrl+component.appId+'/'+files[prop];
         }
         fileList += `<div class="docList" key="`+prop+`">
-        <div class="fileDiv"><div class="singleFile row" id="selectFile_`+prop+`" data-downloadurl="`+component.wrapperUrl+component.appId+'/'+files[prop]+`" data-file="`+prop+`" data-url="`+url+`"><span class="col-md-11 selectFile" style="line-height: 1.5; vertical-align: middle;padding: .375rem .75rem;">`+icon+' '+files[prop].substring(files[prop].lastIndexOf('/')+1)+`</span><span class="col-md-1"><button class="btn btn-sm btn-info selectFile" ><i class="fa fa-eye"></i></button><button class="btn btn-sm btn-info downloadFile" style="margin-left:5px;" ><i class="fa fa-download"></i></button>
+        <div class="fileDiv"><div class="singleFile row" id="selectFile_`+prop+`" data-downloadurl="`+component.wrapperUrl+component.appId+'/'+files[prop]+`" data-file="`+prop+`" data-url="`+url+`"><span class="col-md-10 selectFile" style="line-height: 1.5; vertical-align: middle;padding: .375rem .75rem;">`+icon+' '+files[prop].substring(files[prop].lastIndexOf('/')+1)+`</span><span class="col-md-1"><button class="btn btn-sm btn-info selectFile" ><i class="fa fa-eye"></i></button></span><span class="col-md-1"><button class="btn btn-sm btn-info downloadFile" style="margin-left:5px;" ><i class="fa fa-download"></i></button>
         </span></div></div>
         </div>`;
       }
