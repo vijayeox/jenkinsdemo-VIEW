@@ -10,18 +10,24 @@ export default class DocumentViewer extends Component {
     this.appId = this.props.appId;
     this.state = {
       selectedDocument: undefined,
-      documentsList: undefined
+      documentsList: undefined,
+      documentTypes: []
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
     this.baseUrl = this.core.config("wrapper.url");
-    this.documentTypes = this.props.params.documentTypes;
     this.getDocumentsList = this.getDocumentsList.bind(this);
     this.getDocumentsList();
   }
 
   async getDocumentsListService(url) {
-    let response = await this.helper.request("v1", "/" + url, {}, "get");
+    let response = await this.helper.request(
+      "v1",
+      "/app/" + this.appId + "/" + url,
+      {},
+      "get"
+    );
+
     return response;
   }
 
@@ -31,18 +37,20 @@ export default class DocumentViewer extends Component {
       this.getDocumentsListService(this.props.url).then(response => {
         if (response.data) {
           var documentsList = {};
-          this.documentTypes.map((docType, index) => {
+          var documentTypes = Object.keys(response.data);
+          documentTypes.map((docType, index) => {
             if (
-              response.data[docType.field] &&
-              response.data[docType.field].length > 0
+              response.data[docType] &&
+              response.data[docType].length > 0
             ) {
-              documentsList[docType.field] = response.data[docType.field];
+              documentsList[docType] = response.data[docType];
             }
           });
           if (Object.keys(documentsList).length > 0) {
             this.setState({
               documentsList: documentsList,
-              selectedDocument: documentsList[this.documentTypes[0].field][0]
+              selectedDocument: documentsList[documentTypes[0]][0],
+              documentTypes: documentTypes
             });
           }
           this.loader.destroy();
@@ -60,19 +68,19 @@ export default class DocumentViewer extends Component {
 
   generateDocumentList() {
     var accordionHTML = [];
-    if (this.documentTypes) {
-      this.documentTypes.map((docType, index) => {
-        this.state.documentsList[docType.field]
+    if (this.state.documentTypes) {
+      this.state.documentTypes.map((docType, index) => {
+        this.state.documentsList[docType]
           ? accordionHTML.push(
               <Card key={index}>
                 <Card.Header>
-                  <Accordion.Toggle as={Button} eventKey={docType.field}>
-                    {docType.title}
+                  <Accordion.Toggle as={Button} eventKey={docType}>
+                    {docType}
                   </Accordion.Toggle>
                 </Card.Header>
-                <Accordion.Collapse eventKey={docType.field}>
+                <Accordion.Collapse eventKey={docType}>
                   <Card.Body>
-                    {this.state.documentsList[docType.field].map((doc, i) => {
+                    {this.state.documentsList[docType].map((doc, i) => {
                       return (
                         <Card
                           className="docItems"
@@ -224,7 +232,7 @@ export default class DocumentViewer extends Component {
       return (
         <div className="docViewerComponent">
           <div className="col-md-3 docListDiv">
-            <Accordion defaultActiveKey={this.documentTypes[0].field}>
+            <Accordion defaultActiveKey={this.state.documentTypes[0]}>
               {this.generateDocumentList()}
             </Accordion>
           </div>
