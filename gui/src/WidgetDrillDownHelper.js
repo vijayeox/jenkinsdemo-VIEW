@@ -170,7 +170,7 @@ class WidgetDrillDownHelper {
                             'openCategoryY'
                         ]);
                         WidgetDrillDownHelper.drillDownClicked(
-                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
+                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
                 break;
                 case 'LineSeries':
@@ -186,7 +186,7 @@ class WidgetDrillDownHelper {
                     segmentEvts['hit'] = function(evt) {
                         let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
                         WidgetDrillDownHelper.drillDownClicked(
-                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
+                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
     
                     if (!ser['bullets']) {
@@ -201,7 +201,7 @@ class WidgetDrillDownHelper {
                         bulletEvts['hit'] = function(evt) {
                             let dataContext = evt.target.dataItem.dataContext;
                             WidgetDrillDownHelper.drillDownClicked(
-                                WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.originalTarget : evt.target), dataContext);
+                                WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                         };
                     });
                 break;
@@ -331,12 +331,14 @@ console.log('Hit function', evt);
 
         //Clone the context.
         context = JSON.parse(JSON.stringify(context));
-        delete context[WidgetDrillDownHelper.CTX_PROP_FILTER]; //Filter should be picked up from the context at the top of the drill down stack.
+        //Filter, widget title and widget footer should be picked up from the context at the top of the drill down stack.
+        delete context[WidgetDrillDownHelper.CTX_PROP_FILTER];
+        delete context[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE];
+        delete context[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER];
 
         //Filter, widget title and widget footer should be picked up from the context at the top of the drill down stack.
-        let tempContext = null;
         if (drillDownContext.length > 0) {
-            tempContext = drillDownContext[drillDownContext.length - 1];
+            let tempContext = drillDownContext[drillDownContext.length - 1];
             WidgetDrillDownHelper._assignIfDefined(context, 
                 WidgetDrillDownHelper.CTX_PROP_FILTER, tempContext[WidgetDrillDownHelper.CTX_PROP_FILTER]);
             WidgetDrillDownHelper._assignIfDefined(context, 
