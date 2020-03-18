@@ -698,7 +698,19 @@ class FormRender extends React.Component {
                                   valueArray[componentKey] = response.data[componentKey];
                                 }
                                 valueArray = Object.assign({}, valueArray);
-                                changed[properties["destinationDataKey"]].push(valueArray);
+                                if(changed[properties["destinationDataKey"]].length > 1){
+                                  changed[properties["destinationDataKey"]].push(valueArray);
+                                } else {
+                                  if(changed[properties["destinationDataKey"]].length = 1){
+                                    if(Object.getOwnPropertyNames(changed[properties["destinationDataKey"]][0]).length === 0){
+                                      changed[properties["destinationDataKey"]][0] = valueArray;
+                                    } else {
+                                      changed[properties["destinationDataKey"]].push(valueArray);
+                                    }
+                                  } else {
+                                    changed[properties["destinationDataKey"]].push(valueArray);
+                                  }
+                                }
                               }
                               if (properties["clearSource"]) {
                                 changed[properties["sourceDataKey"]] = "";
@@ -719,8 +731,7 @@ class FormRender extends React.Component {
                         var responseArray = [];
                         for (var responseDataItem in response.data) {
                           if (response.data.hasOwnProperty(responseDataItem)) {
-                            responseArray[responseDataItem] =
-                              response.data[responseDataItem];
+                            responseArray[responseDataItem] = response.data[responseDataItem];
                           }
                         }
                         if (response.data) {
