@@ -200,8 +200,9 @@ class WidgetRenderer {
                 rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
                 buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
                 buttonElement.addEventListener('click', event => {
+                    let target = event.target;
                     WidgetDrillDownHelper.rollUpClicked(
-                        WidgetDrillDownHelper.findWidgetElement(event.originalTarget));
+                        WidgetDrillDownHelper.findWidgetElement(target));
                 });
             }
         }

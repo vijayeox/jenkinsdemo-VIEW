@@ -2,6 +2,28 @@
 class WidgetDrillDownHelper {
     static OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE = 'data-oxzion-drilldownctx';
     static OXZION_WIDGET_ID_ATTRIBUTE = 'data-oxzion-widget-id';
+    static OXZION_ELEMENT_ID_ATTRIBUTE = 'id';
+
+    static ACTION_DRILL_DOWN = 'oxzion-widget-drillDown';
+    static ACTION_ROLL_UP = 'oxzion-widget-rollUp';
+
+    static MSG_PROP_ACTION = 'action';
+    static MSG_PROP_ELEMENT_ID = 'elementId';
+    static MSG_PROP_TARGET = 'target';
+    static MSG_PROP_WIDGET_ID = 'widgetId';
+    static MSG_PROP_NEXT_WIDGET_ID = 'nextWidgetId';
+    static MSG_PROP_FILTER = 'filter';
+    static MSG_PROP_WIDGET_TITLE = 'widgetTitle';
+    static MSG_PROP_WIDGET_FOOTER = 'widgetFooter';
+
+    static CTX_PROP_WIDGET_ID = WidgetDrillDownHelper.MSG_PROP_WIDGET_ID;
+    static CTX_PROP_NEXT_WIDGET_ID = WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID;
+    static CTX_PROP_TARGET = WidgetDrillDownHelper.MSG_PROP_TARGET;
+    static CTX_PROP_FILTER = WidgetDrillDownHelper.MSG_PROP_FILTER;
+    static CTX_PROP_WIDGET_TITLE = WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE;
+    static CTX_PROP_WIDGET_FOOTER = WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER;
+    static CTX_PROP_IS_BOUND = 'isBound';
+    static CTX_PROP_MAX_DEPTH = 'maxDepth';
 
     static bindDrillDownDataContext(templateString, dataContext) {
         if (!templateString || ('' === templateString) || !dataContext) {
@@ -42,35 +64,48 @@ class WidgetDrillDownHelper {
             throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
         }
 
-        let elementId = widgetElement.getAttribute('id');
-        let messageContent = {
-            'action':'oxzion-widget-drillDown',
-            'widgetId':widgetId,
-            'elementId':elementId
-        };
+        let elementId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_ELEMENT_ID_ATTRIBUTE);
+        let messageContent = {};
+        messageContent[WidgetDrillDownHelper.MSG_PROP_ACTION] = WidgetDrillDownHelper.ACTION_DRILL_DOWN;
+        messageContent[WidgetDrillDownHelper.MSG_PROP_WIDGET_ID] = widgetId;
+        messageContent[WidgetDrillDownHelper.MSG_PROP_ELEMENT_ID] = elementId;
 
-        let newWidgetId = widgetId;
         let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
         if (!drillDownContext || (0 === drillDownContext.length)) {
             throw(`Drill down conetxt is not found for widget id ${widgetId}.`);
         }
         let context = drillDownContext[drillDownContext.length - 1];
-        let replaceWith = context['replaceWith'];
-        if (replaceWith) {
-            messageContent['newWidgetId'] = replaceWith;
-            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, replaceWith);
+
+        let target = context[WidgetDrillDownHelper.CTX_PROP_TARGET];
+        if (!target || ('' === target)) {
+            target = 'widget'; //Default to widget target.
         }
-        let target = context['target'];
-        if (target) {
-            messageContent['target'] = target;
+        messageContent[WidgetDrillDownHelper.MSG_PROP_TARGET] = target;
+
+        switch(target) {
+            case 'widget':
+                let nextWidgetId = context[WidgetDrillDownHelper.CTX_PROP_NEXT_WIDGET_ID];
+                if (!nextWidgetId) {
+                    nextWidgetId = widgetId; //Drill down will render the same widget with filter.
+                }
+                messageContent[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID] = nextWidgetId;
+                widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, nextWidgetId);
+            break;
+
+            case 'dashboard':
+                //Implement code for sending message to render new dashboard.
+            break;
+
+            default:
+                throw `Unknown drill down target ${target}`;
         }
 
-        bindProperty(context, messageContent, 'filter');
-        bindProperty(context, messageContent, 'widgetTitle');
-        bindProperty(context, messageContent, 'widgetFooter');
+        bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_FILTER);
+        bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE);
+        bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER);
 
-        context['isBound'] = true;
+        context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND] = true;
         //Update the widget element attribute containing drill down context stack.
         widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, JSON.stringify(drillDownContext));
 
@@ -193,11 +228,11 @@ console.log('Hit function', evt);
             return false;
         }
 
-        let maxDepth = drillDown['maxDepth'];
+        let maxDepth = drillDown[WidgetDrillDownHelper.CTX_PROP_MAX_DEPTH];
         let context = JSON.parse(JSON.stringify(drillDown)); //Clone drillDown context.
-        delete context['maxDepth'];
-        context['widgetId'] = element.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
-        context['isBound'] = false;
+        delete context[WidgetDrillDownHelper.CTX_PROP_MAX_DEPTH];
+        context[WidgetDrillDownHelper.CTX_PROP_WIDGET_ID] = element.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
+        context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND] = false;
 
         let drillDownContext = null;
         if (element.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
@@ -228,11 +263,18 @@ console.log('Hit function', evt);
         let drillDownContext = JSON.parse(strAttribute);
         for (let i=0; i < drillDownContext.length; i++) {
             let context = drillDownContext[i];
-            if (context['isBound']) {
+            if (context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
                 return true;
             }
         }
         return false;
+    }
+
+    static _assignIfDefined(map, property, value) {
+        if (!value || ('' === value)) {
+            return;
+        }
+        map[property] = value;
     }
 
     static rollUpClicked(widgetElement) {
@@ -242,17 +284,23 @@ console.log('Hit function', evt);
         }
 
         let context = WidgetDrillDownHelper.unwindDrillDownContextStack(widgetElement);
-        let elementId = widgetElement.getAttribute('id');
-        let messageContent = {
-            'action':'oxzion-widget-rollUp',
-            'widgetId':widgetId,
-            'elementId':elementId,
-            'filter':context['filter']
-        };
-        let newWidgetId = context['widgetId'];
-        if (newWidgetId !== widgetId) {
-            messageContent['newWidgetId'] = newWidgetId;
-            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, newWidgetId);  
+        let elementId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_ELEMENT_ID_ATTRIBUTE);
+        let messageContent = {};
+        messageContent[WidgetDrillDownHelper.MSG_PROP_ACTION] = WidgetDrillDownHelper.ACTION_ROLL_UP;
+        messageContent[WidgetDrillDownHelper.MSG_PROP_WIDGET_ID] = widgetId;
+        messageContent[WidgetDrillDownHelper.MSG_PROP_ELEMENT_ID] = elementId;
+
+        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+            WidgetDrillDownHelper.MSG_PROP_FILTER, context[WidgetDrillDownHelper.CTX_PROP_FILTER]);
+        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+            WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
+        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+            WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
+
+        let nextWidgetId = context[WidgetDrillDownHelper.CTX_PROP_WIDGET_ID];
+        if (nextWidgetId !== widgetId) {
+            messageContent[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID] = nextWidgetId;
+            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, nextWidgetId);  
         }
 
         console.log('Posting rollUp message to window.', messageContent);
@@ -272,10 +320,10 @@ console.log('Hit function', evt);
         }
 
         let context = drillDownContext.pop();
-        if (!context['isBound']) {
+        if (!context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
             context = drillDownContext.pop();
         }        
-        if (!context['isBound']) {
+        if (!context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
             throw(`Unbound context not found neither at top nor at 2nd position from top of drill down stack for widget id ${widgetId}.`);
         }
         //Update the widget element attribute containing drill down context stack.
@@ -283,16 +331,18 @@ console.log('Hit function', evt);
 
         //Clone the context.
         context = JSON.parse(JSON.stringify(context));
-        delete context['filter']; //Filter should be picked up from the context at the top of the drill down stack.
+        delete context[WidgetDrillDownHelper.CTX_PROP_FILTER]; //Filter should be picked up from the context at the top of the drill down stack.
 
-        //Filter should be picked up from the context at the top of the drill down stack.
+        //Filter, widget title and widget footer should be picked up from the context at the top of the drill down stack.
         let tempContext = null;
         if (drillDownContext.length > 0) {
             tempContext = drillDownContext[drillDownContext.length - 1];
-            let filter = tempContext['filter'];
-            if (filter) {
-                context['filter'] = filter;
-            }
+            WidgetDrillDownHelper._assignIfDefined(context, 
+                WidgetDrillDownHelper.CTX_PROP_FILTER, tempContext[WidgetDrillDownHelper.CTX_PROP_FILTER]);
+            WidgetDrillDownHelper._assignIfDefined(context, 
+                WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
+            WidgetDrillDownHelper._assignIfDefined(context, 
+                WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
         }
 
         return context;

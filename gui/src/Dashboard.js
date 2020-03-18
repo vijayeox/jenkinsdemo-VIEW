@@ -98,10 +98,10 @@ class Dashboard extends Component {
   updateGraph = () => {
     if (this.state.htmlData != null) {
       let root = document;
-      var widgets = root.getElementsByClassName("oxzion-widget");
+      var widgets = root.getElementsByClassName('oxzion-widget');
       for (let widget of widgets) {
         var attributes = widget.attributes;
-        var widgetUUId = attributes['data-oxzion-widget-id'].value;
+        var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId)
           .then(response => {
             let widgetObject = WidgetRenderer.render(widget, response.data.widget)
@@ -114,11 +114,11 @@ class Dashboard extends Component {
 
     widgetDrillDownMessageHandler = (event) => {
         let eventData = event.data;
-        let action = eventData['action'];
-        if ((action !== 'oxzion-widget-drillDown') && (action !== 'oxzion-widget-rollUp')) {
+        let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
+        if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
             return;
         }
-        let target = eventData['target'];
+        let target = eventData[WidgetDrillDownHelper.MSG_PROP_TARGET];
         if (target && (target !== 'widget')) {
             return;
         }
@@ -134,17 +134,17 @@ class Dashboard extends Component {
             }
         }
 
-        let elementId = eventData['elementId'];
-        let widgetId = eventData['widgetId'];
+        let elementId = eventData[WidgetDrillDownHelper.MSG_PROP_ELEMENT_ID];
+        let widgetId = eventData[WidgetDrillDownHelper.MSG_PROP_WIDGET_ID];
         cleanup(elementId);
 
-        let newWidgetId = eventData['newWidgetId'];
-        if (newWidgetId) {
-            widgetId = newWidgetId;
+        let nextWidgetId = eventData[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID];
+        if (nextWidgetId) {
+            widgetId = nextWidgetId;
         }
 
         let url = `analytics/widget/${widgetId}?data=true`;
-        let filter = eventData['filter'];
+        let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
         if (filter && ('' !== filter)) {
             url = url + '&filter=' + encodeURIComponent(filter);
         }
