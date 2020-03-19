@@ -128,6 +128,7 @@ export default class Core extends CoreBase {
     this._attachEvents();
     this.emit('osjs/core:boot');
 
+    var that = this;
     return super.boot()
       .then(() => {
         this.emit('osjs/core:booted');
@@ -145,14 +146,13 @@ export default class Core extends CoreBase {
           let formData = new FormData();
           formData.append('jwt', jwt);
           let xhr = new XMLHttpRequest();
-          var that = this;
-          xhr.open('POST', this.config('wrapper.url') + 'validatetoken', false);
+          xhr.open('POST', that.config('wrapper.url') + 'validatetoken', false);
           xhr.onload = function() {
             let data = JSON.parse(this.responseText);
             if(data['status'] === 'success' && data['message'] === 'Token Valid') {
               console.log('token validated');
               autoLogin = true;
-            } else if(data['status'] === 'error' && data['message'] === 'Invalid JWT Token') {
+            } else if(data['status'] === 'error' && data['message'] === 'Token Expired') {
               //console.log('token has expired. make request to get new');
               const rtoken = lsHelper.get('REFRESH_token');
               let formData = new FormData();
@@ -169,9 +169,6 @@ export default class Core extends CoreBase {
                   let refresh = data['data']['refresh_token'];
                   lsHelper.set('AUTH_token', jwt);
                   lsHelper.set('REFRESH_token', refresh);
-                }
-                else{
-                  window.localStorage.clear();
                 }
               };
               xhr.send(formData);
