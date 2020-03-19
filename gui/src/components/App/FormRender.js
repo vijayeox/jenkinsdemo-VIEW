@@ -701,8 +701,8 @@ class FormRender extends React.Component {
                                 if(changed[properties["destinationDataKey"]].length > 1){
                                   changed[properties["destinationDataKey"]].push(valueArray);
                                 } else {
-                                  if(changed[properties["destinationDataKey"]].length = 1){
-                                    if(Object.getOwnPropertyNames(changed[properties["destinationDataKey"]][0]).length === 0){
+                                  if(changed[properties["destinationDataKey"]].length == 1){
+                                    if(changed[properties["destinationDataKey"]] && Object.getOwnPropertyNames(changed[properties["destinationDataKey"]][0]).length === 0){
                                       changed[properties["destinationDataKey"]][0] = valueArray;
                                     } else {
                                       changed[properties["destinationDataKey"]].push(valueArray);
