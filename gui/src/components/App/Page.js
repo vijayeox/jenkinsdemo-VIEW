@@ -3,7 +3,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
 
 import FormRender from "./FormRender";
-import Document from "./Document";
+import HTMLViewer from "./HTMLViewer";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import DocumentViewer from "../../DocumentViewer";
@@ -137,6 +137,7 @@ class Page extends React.Component {
       var copyPageContent = [];
       var fileId;
       action.details.every(async (item, index) => {
+        var copyItem = item;
         if (item.type == "Update") {
           const response = await that.updateActionHandler(item, rowData);
           if (response.status == "success") {
@@ -148,14 +149,14 @@ class Page extends React.Component {
           }
         } else {
           if (item.params) {
-            if (item.params.uuid) {
-              fileId = that.replaceParams(item.params.uuid, rowData);
-            }
             if (item.params.page_id) {
               that.loadPage(item.params.page_id);
             }
           }
-          copyPageContent.push(item);
+          if (item.url) {
+            copyItem.url = that.replaceParams(item.url, rowData);
+          }
+          copyPageContent.push(copyItem);
         }
       });
       let ev = new CustomEvent("updateBreadcrumb", {
@@ -277,7 +278,6 @@ class Page extends React.Component {
               appId={this.appId}
               content={data[i].content}
               formId={data[i].form_id}
-              config={this.menu}
               pipeline={data[i].pipeline}
               parentWorkflowInstanceId={workflowInstanceId}
               postSubmitCallback={this.stepBackBreadcrumb}
@@ -361,19 +361,12 @@ class Page extends React.Component {
           );
           break;
         case "DocumentViewer":
-          if (this.state.fileId) {
-            var url =
-              "app/" + this.appId + "/file/" + this.state.fileId + "/document";
-          } else {
-            break;
-          }
           content.push(
             <DocumentViewer
               appId={this.appId}
               key={i}
               core={this.core}
-              url={url}
-              params={data[i].params}
+              url={data[i].url}
             />
           );
           break;
@@ -390,14 +383,14 @@ class Page extends React.Component {
           break;
         default:
           content.push(
-            <Document
+            <HTMLViewer
               key={i}
               core={this.core}
               key={i}
               appId={this.appId}
               content={data[i].content}
-              config={this.menu}
-              fileId={this.state.fileId}
+              url={data[i].url}
+              fileData={data[i].useFileData ? this.state.currentRow : undefined}
             />
           );
           break;
