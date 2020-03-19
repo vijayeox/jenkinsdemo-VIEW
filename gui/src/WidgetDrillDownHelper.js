@@ -173,6 +173,25 @@ class WidgetDrillDownHelper {
                             WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
                 break;
+                case 'PieSeries':
+                    if (!ser['slices']) {
+                        ser['slices'] = {};
+                    }
+                    let slices = ser['slices'];
+                    if (!slices['template']) {
+                        slices['template'] = {};
+                    }
+                    let template = slices['template'];
+                    if (!template['events']) {
+                        template['events'] = {};
+                    }
+                    let events = template['events'];
+                    events['hit'] = function(evt) {
+                        let dataContext = evt.target.dataItem.dataContext;
+                        WidgetDrillDownHelper.drillDownClicked(
+                            WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
+                    };
+                break;
                 case 'LineSeries':
                     if (!ser['segments']) {
                         ser['segments'] = {};
