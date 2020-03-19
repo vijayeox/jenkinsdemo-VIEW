@@ -102,20 +102,4 @@ const init = () => {
   osjs.boot();
 };
 
-function CheckAuthToken() {
-  var AuthToken = localStorage.getItem("AUTH_token");
-  if(!AuthToken)
-  {
-    alert("Your session has expired!.");
-    location.reload();
-  }
-}
-
-var AuthToken = localStorage.getItem("AUTH_token");
-if(AuthToken)
-{
-  var temp = AuthToken;
-  setInterval(CheckAuthToken, 10000);
-}
-
 window.addEventListener('DOMContentLoaded', () => init());

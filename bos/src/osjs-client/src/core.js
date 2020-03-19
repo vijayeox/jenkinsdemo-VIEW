@@ -128,6 +128,7 @@ export default class Core extends CoreBase {
     this._attachEvents();
     this.emit('osjs/core:boot');
 
+    var that = this;
     return super.boot()
       .then(() => {
         this.emit('osjs/core:booted');
@@ -145,7 +146,7 @@ export default class Core extends CoreBase {
           let formData = new FormData();
           formData.append('jwt', jwt);
           let xhr = new XMLHttpRequest();
-          xhr.open('POST', this.config('wrapper.url') + 'validatetoken', false);
+          xhr.open('POST', that.config('wrapper.url') + 'validatetoken', false);
           xhr.onload = function() {
             let data = JSON.parse(this.responseText);
             if(data['status'] === 'success' && data['message'] === 'Token Valid') {
@@ -158,7 +159,7 @@ export default class Core extends CoreBase {
               formData.append('jwt', jwt);
               formData.append('refresh_token', rtoken['key']);
               let xhr = new XMLHttpRequest();
-              xhr.open('POST', this.config('wrapper.url')+ 'refreshtoken', false);
+              xhr.open('POST', that.config('wrapper.url')+ 'refreshtoken', false);
               xhr.onload = function() {
                 let data = JSON.parse(this.responseText);
                 if(data['status'] === 'success') {

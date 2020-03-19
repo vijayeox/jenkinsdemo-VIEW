@@ -51,7 +51,8 @@ class AmChartEditor extends AbstractEditor {
                 this.amChart = null;
             }
             try {
-                this.amChart = WidgetRenderer.renderAmCharts(previewElement, jsonChartConfiguration, this.data);
+                let props = {}; //Props is the property list to override things like widget title, footer etc.
+                this.amChart = WidgetRenderer.renderAmCharts(previewElement, jsonChartConfiguration, props, this.data);
             }
             catch(renderError) {
                 console.error(renderError);

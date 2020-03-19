@@ -46,7 +46,8 @@ class AggregateValueEditor extends AbstractEditor {
         let previewElement = document.querySelector('div#widgetPreview');
         previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
         try {
-            WidgetRenderer.renderAggregateValue(previewElement, jsonWidgetConfiguration, this.data);
+            let props = {}; //Props is the property list to override things like widget title, footer etc.
+            WidgetRenderer.renderAggregateValue(previewElement, jsonWidgetConfiguration, props, this.data);
         }
         catch(renderError) {
             console.error(renderError);
