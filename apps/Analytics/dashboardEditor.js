@@ -404,6 +404,12 @@ class DashboardEditor extends React.Component {
     }
 
     componentDidMount() {
+        if(this.state.dashboardId==null) 
+        {
+            let loader=this.core.make('oxzion/splash');
+            loader.destroy()
+        }
+
         window.addEventListener('message', this.editorDialogMessageHandler, false);
         window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
         JavascriptLoader.loadScript(this.getJsLibraryList());
