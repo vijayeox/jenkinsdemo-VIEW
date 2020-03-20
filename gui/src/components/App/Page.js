@@ -390,7 +390,7 @@ class Page extends React.Component {
               appId={this.appId}
               content={data[i].content}
               url={data[i].url}
-              fileData={data[i].useFileData ? this.state.currentRow : undefined}
+              fileData={data[i].useRowData ? this.state.currentRow : undefined}
             />
           );
           break;
