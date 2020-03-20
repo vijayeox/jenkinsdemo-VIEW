@@ -196,6 +196,8 @@ class Query extends React.Component {
       if (mode === "hide") {
         element.classList.add("disappear")
         btn.classList.remove("disappear")
+        this.setState({ inputs: {} })
+
       }
       else {
         element.classList.remove("disappear")
@@ -392,12 +394,15 @@ class Query extends React.Component {
             </Tab>
           </Tabs>
         </div>
+        {
+          this.state.showQueryModal &&
         <QueryModal
           osjsCore={this.core}
           modalType={this.state.modalType}
           show={this.state.showQueryModal}
           refreshGrid={this.refresh}
           content={this.state.modalContent}
+          hideQueryForm={()=>this.toggleQueryForm("hide")}
           onHide={() => this.setState({ showQueryModal: false })}
           configuration={this.state.inputs["configuration"]}
           datasourcename={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][0] : ""}
@@ -405,6 +410,7 @@ class Query extends React.Component {
           notification={this.notif}
           resetInput={() => this.setState({ inputs: {} })}
         />
+  }
       </div>
     );
   }
