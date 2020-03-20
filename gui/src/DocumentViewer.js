@@ -38,6 +38,7 @@ export default class DocumentViewer extends Component {
         if (response.data) {
           var documentsList = {};
           var documentTypes = Object.keys(response.data);
+          this.setState({ documentTypes: documentTypes });
           documentTypes.map((docType, index) => {
             if (
               response.data[docType] &&
@@ -47,11 +48,22 @@ export default class DocumentViewer extends Component {
             }
           });
           if (Object.keys(documentsList).length > 0) {
-            this.setState({
-              documentsList: documentsList,
-              selectedDocument: documentsList[documentTypes[0]][0],
-              documentTypes: documentTypes
-            });
+            if(documentsList[documentTypes[0]] && documentsList[documentTypes[0]][0]){
+              this.setState({
+                documentsList: documentsList,
+                selectedDocument: documentsList[documentTypes[0]][0],
+              });
+            } else {
+              for (var i = 0; i < documentTypes.length; i++) {
+                if(documentsList[documentTypes[i]] && documentsList[documentTypes[i]][0]){
+                  this.setState({
+                    documentsList: documentsList,
+                    selectedDocument: documentsList[documentTypes[i]][0],
+                  });
+                  break;
+                }
+              }
+            }
           }
           this.loader.destroy();
         }
