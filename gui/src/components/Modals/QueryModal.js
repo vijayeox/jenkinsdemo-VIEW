@@ -66,10 +66,10 @@ function QueryModal(props) {
     Footer = (<Button variant="success" onClick={() => queryOperation("Activated")}>Activate</Button>)
     DisabledFields = true
   }
-  async function  validateForm() {
+  async function  validateForm(operation) {
     let formValid = true
     var error = errors
-    if(input["queryname"]){
+    if(operation && operation==="Created" && input["queryname"]){
      let response = await helper.request(
         "v1",
         `analytics/query?show_deleted=true&filter=[{"filter":{"logic":"and","filters":[{"field":"name","operator":"eq","value":"${input["queryname"]}"}]},"skip":0}]`,
@@ -97,7 +97,7 @@ function QueryModal(props) {
   }
 
   async function queryOperation(operation) {
-    let formValid = await validateForm()
+    let formValid = await validateForm(operation)
     if (formValid === true) {
       let requestUrl = ""
       let method = ""
