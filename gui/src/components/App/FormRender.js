@@ -50,6 +50,7 @@ class FormRender extends React.Component {
     if (this.props.cacheId) {
       this.setState({ cacheId: this.props.cacheId });
     }
+    this.appUrl = "/app/"+this.state.appId;
     this.formDivID = "formio_" + formID;
     this.loaderDivID = "formio_loader_"+formID;
     this.formErrorDivId = "formio_error_"+formID;
@@ -77,9 +78,24 @@ class FormRender extends React.Component {
       document.getElementById(this.formDivID).style.display = "block";
     }
   }
+  hideBreadCrumb(state=true){
+    if (this.state.currentForm && this.state.currentForm.wizard) {
+      if (this.state.currentForm.wizard && this.state.currentForm.wizard.display == "wizard") {
+        var breadcrumbs = document.getElementById(this.state.currentForm.wizardKey + "-header");
+        if (breadcrumbs) {
+        // breadcrumbs.style.display = "none";
+        }
+      }
+    }
+  }
+  formSendEvent(eventName,params){
+    var evt = new CustomEvent(eventName, params);
+    if(this.state.currentForm){
+      this.state.currentForm.element.dispatchEvent(evt);
+    }
+  }
   async callDelegate(delegate, params) {
-    let delegateData = await this.helper.request("v1","/app/" + this.state.appId + "/delegate/" + delegate,params,"post");
-    return delegateData;
+    return await this.helper.request("v1",this.appUrl + "/delegate/" + delegate,params,"post");
   }
   async callPipeline(commands, submission) {
     var params = [];
@@ -93,27 +109,23 @@ class FormRender extends React.Component {
         params["commands"] = commands;
       }
     }
-    let delegateData = await this.helper.request("v1","/app/" + this.state.appId + "/pipeline",params,"post");
-    return delegateData;
+    return await this.helper.request("v1",this.appUrl + "/pipeline",params,"post");
   }
   async callPayment(params) {
-    let delegateData = await this.helper.request("v1","/app/" + this.state.appId + "/paymentgateway/initiate",params,"post");
-    return delegateData;
+    return await this.helper.request("v1",this.appUrl + "/paymentgateway/initiate",params,"post");
   }
   async storePayment(params) {
-    let delegateData = await this.helper.request("v1","/app/"+this.state.appId+"/transaction/"+params.transaction_id+"/status",params.data,"post");
-    return delegateData;
+    return await this.helper.request("v1",this.appUrl+"/transaction/"+params.transaction_id+"/status",params.data,"post");
   }
   async getCacheData() {
-    let cacheData = await this.helper.request("v1","/app/" + this.state.appId + "/cache",{},"get");
-    return cacheData;
+    return await this.helper.request("v1",this.appUrl + "/cache",{},"get");
   }
 
   async storeCache(params) {
     if (this.state.page) {
       params.page = this.state.page;
     }
-    var route = "/app/" + this.state.appId + "/storecache";
+    var route = this.appUrl + "/storecache";
     if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
@@ -134,52 +146,38 @@ class FormRender extends React.Component {
       workflowId: this.state.workflowId,
       route: route
     });
-    let response = await this.helper.request("v1","/app/" + this.state.appId + "/errorlog",params,"post");
-    return;
+    return await this.helper.request("v1",this.appUrl + "/errorlog",params,"post");
   }
   async deleteCacheData() {
-    var route = "/app/" + this.state.appId + "/deletecache";
+    var route = this.appUrl + "/deletecache";
     if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
-    let cacheData = await this.helper.request("v1", route, {}, "delete").then(response => {
+    return await this.helper.request("v1", route, {}, "delete").then(response => {
       this.setState({ cacheId: null });
       return response;
     });
-    return cacheData;
   }
 
   async getPayment() {
-    let delegateData = await this.helper.request("v1","/app/" + this.state.appId + "/paymentgateway",{},"get");
-    return delegateData;
+    return await this.helper.request("v1",this.appUrl + "/paymentgateway",{},"get");
   }
   async getWorkflow() {
     // call to api using wrapper
-    let pageContent = await this.helper.request("v1","/app/" + this.state.appId + "/form/" + this.state.formId + "/workflow",{},"get");
-    return pageContent;
+    return await this.helper.request("v1",this.appUrl + "/form/" + this.state.formId + "/workflow",{},"get");
   }
   async getForm() {
     // call to api using wrapper
-    let form = await this.helper.request("v1","/app/" + this.state.appId + "/form/" + this.state.formId,{},"get");
-    return form;
+    return await this.helper.request("v1",this.appUrl + "/form/" + this.state.formId,{},"get");
   }
 
   async getFileData() {
     // call to api using wrapper
-    let fileData = await this.helper.request("v1","/app/"+this.state.appId+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
-    return fileData;
-  }
-
-  async getActivity() {
-    // call to api using wrapper
-    let formContent = await this.helper.request("v1","/activity/" + this.state.activityInstanceId + "/form",{},"get");
-    return formContent;
+    return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
   }
   async getActivityInstance() {
     // call to api using wrapper
-    let formContent = await this.helper.request("v1","/app/" +this.state.appId + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");
-    return formContent;
-  }
+    return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  }
   async saveForm(form, data) {
     if (!form) {
       form = this.state.currentForm;
@@ -260,10 +258,10 @@ class FormRender extends React.Component {
           }
           route = route + "/submit";
         } else {
-          route = "/app/" + this.state.appId + "/form/" + this.state.formId + "/file";
+          route = this.appUrl + "/form/" + this.state.formId + "/file";
           method = "post";
           if (this.state.instanceId) {
-            route ="/app/" + this.state.appId + "/form/" +this.state.formId + "/file/" + this.state.instanceId;
+            route =this.appUrl + "/form/" +this.state.formId + "/file/" + this.state.instanceId;
             method = "put";
           }
         }
@@ -328,8 +326,7 @@ class FormRender extends React.Component {
     }
 
     async getFormContents(url) {
-      let formData = await this.helper.request("v1", url, {}, "get");
-      return formData;
+      return await this.helper.request("v1", url, {}, "get");
     }
 
     processProperties(form){
@@ -410,9 +407,11 @@ class FormRender extends React.Component {
                 if(form){
                    that.processProperties(form);
                 }else{
-                	setTimeout(function(){ that.createForm().then(form=> {
-						        that.processProperties(form);
-                	}) }, 2000);
+                	setTimeout(function() {
+                    that.createForm().then(form=> {
+						          that.processProperties(form);
+                	   });
+                  }, 2000);
                 }
               }
             });
@@ -454,24 +453,16 @@ class FormRender extends React.Component {
         var options = {};
         if (this.state.content["properties"]) {
           if (this.state.content["properties"]["clickable"]) {
-            options.breadcrumbSettings = {
-              clickable: eval(this.state.content["properties"]["clickable"])
-            };
+            options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
           }
           if (this.state.content["properties"]["showPrevious"]) {
-            options.buttonSettings = {
-              showPrevious: eval(this.state.content["properties"]["showPrevious"])
-            };
+            options.buttonSettings = { showPrevious: eval(this.state.content["properties"]["showPrevious"]) };
           }
           if (this.state.content["properties"]["showNext"]) {
-            options.buttonSettings = {
-              showNext: eval(this.state.content["properties"]["showNext"])
-            };
+            options.buttonSettings = { showNext: eval(this.state.content["properties"]["showNext"]) };
           }
           if (this.state.content["properties"]["showCancel"]) {
-            options.buttonSettings = {
-              showCancel: eval(this.state.content["properties"]["showCancel"])
-            };
+            options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
           }
         }
         var hooks = {
@@ -504,10 +495,7 @@ class FormRender extends React.Component {
           if (that.state.page && form.wizard) {
             if (form.wizard && form.wizard.display == "wizard") {
               form.setPage(parseInt(that.state.page));
-              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
-              if (breadcrumbs) {
-                // breadcrumbs.style.display = "none";
-              }
+              that.hideBreadCrumb(true);
             }
           }
           if(that.state.data !=  undefined){
@@ -515,14 +503,7 @@ class FormRender extends React.Component {
           }
           form.on("submit", async function (submission) {
             var form_data = that.cleanData(submission.data);
-            var response_data = await that.saveForm(null, form_data);
-            console.log(response_data);
-            // Not able to get the returned response here from saveForm (Bharat)
-            // if (response_data.status == "success") {
-            //   form.emit("submitDone", response_data);
-            // } else {
-            //   form.emit("error", response_data);
-            // }
+            return await that.saveForm(null, form_data);
           });
           form.on("prevPage", changed => {
             form.emit("render");
@@ -548,23 +529,6 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            // for (var dataItem in form.submission.data) {
-            //   if (typeof form.submission.data[dataItem] == "object") {
-            //     if (form.submission.data[dataItem]) {
-            //       var checkComponent = form.getComponent(dataItem);
-            //       if (checkComponent && checkComponent.type == "datagrid") {
-            //         for (var rowItem in Object.keys(form.submission.data[dataItem])) {
-            //           if (Array.isArray(form.submission.data[dataItem][rowItem])) {
-            //             if(Object.keys(form.submission.data[dataItem][rowItem]).length == 0){
-            //               console.log(form.submission.data[dataItem][rowItem])
-            //               form.submission.data[dataItem][rowItem] = Object.assign({}, form.submission.data[dataItem][rowItem]);
-            //             }
-            //           }
-            //         }
-            //       }
-            //     }
-            //   }
-            // }
             console.log(changed);
             if (changed && changed.changed) {
               var component = changed.changed.component;
@@ -582,12 +546,7 @@ class FormRender extends React.Component {
             }
           });
           form.on("render", function () {
-            if (form.wizard && form.wizard.display == "wizard") {
-              var breadcrumbs = document.getElementById(form.wizardKey + "-header");
-              if (breadcrumbs) {
-                // breadcrumbs.style.display = "none";
-              }
-            }
+            that.hideBreadCrumb(true);
             eachComponent(form.root.components, function (component) {
               if (component) {
                 if (component.component.properties && component.component.properties.custom_list) {
@@ -681,12 +640,12 @@ class FormRender extends React.Component {
                       that.showFormLoader(true,0);
                       that.callDelegate(properties["delegate"], paramData).then(response => {
                         var responseArray = [];
-                        for (var responseDataItem in response.data) {
-                          if (response.data.hasOwnProperty(responseDataItem)) {
-                            responseArray[responseDataItem] = response.data[responseDataItem];
-                          }
-                        }
                         if (response.data) {
+                          for (var responseDataItem in response.data) {
+                            if (response.data.hasOwnProperty(responseDataItem)) {
+                              responseArray[responseDataItem] = response.data[responseDataItem];
+                            }
+                          }
                           if (properties["validationKey"]) {
                             if (properties["validationKey"] && response.data[properties["validationKey"]]) {
                               var valueArray = [];
@@ -751,112 +710,84 @@ class FormRender extends React.Component {
               e.preventDefault();
               e.stopPropagation();
               e.stopImmediatePropagation();
-              var evt = new CustomEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
-                form.element.dispatchEvent(evt);
+              that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
               }, true);
             form.emit("render");
           });
           that.setState({ currentForm: form });
+          console.log(form)
           return form;
         });
       }
       return formCreated;
-}
-triggerComponent(form,targetProperties){
-  var targetList = targetProperties.split(',');
-  targetList.map(item => {
-    var targetComponent = form.getComponent(item);
-    setTimeout(function(){
-      if(targetComponent.type == 'datagrid'){
-        targetComponent.triggerRedraw();
-      }
-    },3000);
-  });
-};
+    }
+  triggerComponent(form,targetProperties){
+    var targetList = targetProperties.split(',');
+    targetList.map(item => {
+      var targetComponent = form.getComponent(item);
+      setTimeout(function(){
+        if(targetComponent.type == 'datagrid'){
+          targetComponent.triggerRedraw();
+        }
+      },3000);
+    });
+  };
 
-postDelegateRefresh(form,properties){
-  var targetList = properties["post_delegate_refresh"].split(',');
-  targetList.map(item => {
-    var targetComponent = form.getComponent(item);
-    console.log(targetComponent);
-    if(targetComponent.component && targetComponent.component["properties"]){
-      if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
-        targetComponent.triggerRedraw();
-      }
-      if(targetComponent.component['properties']){
-        this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
-      } else {
-        if(targetComponent.component && targetComponent.component.properties){
-          this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-        } 
-      }
-    }
-  });
-}
-runProps(component,form,properties,formdata,instance=null){
-  if(formdata.data){
-    formdata = formdata.data;
-  }
-  var that =this;
-  if(properties && (Object.keys(properties).length > 0)){
-    if (properties["delegate"]) {
-      that.showFormLoader(true,0);
-      this.callDelegate(properties["delegate"],this.cleanData(formdata)).then(response => {
-        if (response) {
-          if (response.data) {
-            var formData = { data: this.formatFormData(response.data) };
-            form.setSubmission(formData).then(response2 =>{
-              if (properties["post_delegate_refresh"]) {
-                this.postDelegateRefresh(form,properties);
-              }
-              form.setPristine(true);
-            });
-          }
-          that.showFormLoader(false,0);
+  postDelegateRefresh(form,properties){
+    var targetList = properties["post_delegate_refresh"].split(',');
+    targetList.map(item => {
+      var targetComponent = form.getComponent(item);
+      console.log(targetComponent);
+      if(targetComponent.component && targetComponent.component["properties"]){
+        if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
+          targetComponent.triggerRedraw();
         }
-      });
-    }
-    if (properties["target"]) {
-      var targetComponent = form.getComponent(properties["target"]);
-      var value;
-      if (component.dataValue != undefined && targetComponent != undefined) {
-        value = formdata[component.dataValue];
-        if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
-          formdata[component.key] = formdata[component.dataValue.value];
-        } else if (component.dataValue.value != undefined) {
-          value = component.dataValue.value;
-        } else if(formdata[component.dataValue] != undefined){
-          value = formdata[component.dataValue];
+        if(targetComponent.component['properties']){
+          this.runProps(targetComponent,form,targetComponent.component['properties'],form.submission.data);
         } else {
-          value = component.dataValue;
+          if(targetComponent.component && targetComponent.component.properties){
+            this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
+          } 
         }
-        if(value == undefined){
-          if(formdata[formdata[component.key]]){
-            value = formdata[component.key];
+      }
+    });
+  }
+  runProps(component,form,properties,formdata,instance=null){
+    if(formdata.data){
+      formdata = formdata.data;
+    }
+    var that = this;
+    if(properties && (Object.keys(properties).length > 0)){
+      if (properties["delegate"]) {
+        that.showFormLoader(true,0);
+        this.callDelegate(properties["delegate"],this.cleanData(formdata)).then(response => {
+          if (response) {
+            if (response.data) {
+              var formData = { data: this.formatFormData(response.data) };
+              form.setSubmission(formData).then(response2 =>{
+                if (properties["post_delegate_refresh"]) {
+                  this.postDelegateRefresh(form,properties);
+                }
+                form.setPristine(true);
+              });
+            }
+            that.showFormLoader(false,0);
           }
-        }
-        if(value != undefined){
-          targetComponent.setValue(value);
-          form.submission.data[targetComponent.key] = value; 
-        }
-      } else {
-        if (component != undefined && targetComponent != undefined) {
-          if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
-            value = formdata[component.value.value];
-          } else  if (component.value != undefined && component.value.value != undefined) {
-            value = component.value.value;
-          } else if(formdata[component.value] != undefined){
-            value = formdata[component.value];
-          } else if(formdata[formdata[component.key]] != undefined){
-            value = formdata[formdata[component.key]];
-          } else if(formdata[formdata[component.key]] != undefined){
-            value = formdata[formdata[component.key]];
-          } else if(formdata[formdata[component.key].value] != undefined){
-            value = formdata[formdata[component.key].value];
-          }else if(formdata[component.key] != undefined){
-            value = formdata[component.key];
+        });
+      }
+      if (properties["target"]) {
+        var targetComponent = form.getComponent(properties["target"]);
+        var value;
+        if (component.dataValue != undefined && targetComponent != undefined) {
+          value = formdata[component.dataValue];
+          if (component.dataValue != undefined && component.dataValue.value != undefined && formdata[component.dataValue.value] != undefined) {
+            formdata[component.key] = formdata[component.dataValue.value];
+          } else if (component.dataValue.value != undefined) {
+            value = component.dataValue.value;
+          } else if(formdata[component.dataValue] != undefined){
+            value = formdata[component.dataValue];
           } else {
-            value = component.value;
+            value = component.dataValue;
           }
           if(value == undefined){
             if(formdata[formdata[component.key]]){
@@ -865,40 +796,68 @@ runProps(component,form,properties,formdata,instance=null){
           }
           if(value != undefined){
             targetComponent.setValue(value);
-            form.submission.data[targetComponent.key] = value;
+            form.submission.data[targetComponent.key] = value; 
           }
         } else {
-          if (document.getElementById(properties["target"])) {
-            value = formdata[component.value];
-            if (component.value != undefined && component.value.value != undefined) {
+          if (component != undefined && targetComponent != undefined) {
+            if (component.value != undefined && component.value.value != undefined && formdata[component.value.value] != undefined) {
               value = formdata[component.value.value];
-            } else if (value && value != undefined) {
-              value = value;
+            } else  if (component.value != undefined && component.value.value != undefined) {
+              value = component.value.value;
+            } else if(formdata[component.value] != undefined){
+              value = formdata[component.value];
             } else if(formdata[formdata[component.key]] != undefined){
               value = formdata[formdata[component.key]];
-            } else if(formdata[component.key] != undefined){
+            } else if(formdata[formdata[component.key]] != undefined){
+              value = formdata[formdata[component.key]];
+            } else if(formdata[formdata[component.key].value] != undefined){
+              value = formdata[formdata[component.key].value];
+            }else if(formdata[component.key] != undefined){
               value = formdata[component.key];
             } else {
-              if (component.value != undefined && component.value.value != undefined) {
-                value = component.value.value;
-              } else {
-                value = component.value;
-              }
+              value = component.value;
             }
             if(value == undefined){
               if(formdata[formdata[component.key]]){
                 value = formdata[component.key];
               }
             }
-            document.getElementById(properties["target"]).value  = value;
+            if(value != undefined){
+              targetComponent.setValue(value);
+              form.submission.data[targetComponent.key] = value;
+            }
+          } else {
+            if (document.getElementById(properties["target"])) {
+              value = formdata[component.value];
+              if (component.value != undefined && component.value.value != undefined) {
+                value = formdata[component.value.value];
+              } else if (value && value != undefined) {
+                value = value;
+              } else if(formdata[formdata[component.key]] != undefined){
+                value = formdata[formdata[component.key]];
+              } else if(formdata[component.key] != undefined){
+                value = formdata[component.key];
+              } else {
+                if (component.value != undefined && component.value.value != undefined) {
+                  value = component.value.value;
+                } else {
+                  value = component.value;
+                }
+              }
+              if(value == undefined){
+                if(formdata[formdata[component.key]]){
+                  value = formdata[component.key];
+                }
+              }
+              document.getElementById(properties["target"]).value  = value;
+            }
           }
         }
+        if(targetComponent && targetComponent.component && targetComponent.component.properties){
+          that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
+          form.setPristine(true);
+        }
       }
-      if(targetComponent && targetComponent.component && targetComponent.component.properties){
-        that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
-        form.setPristine(true);
-      }
-    }
       if (properties["negate"]) {
         var targetComponent = form.getComponent(properties["negate"]);
         if (component.value && targetComponent) {
@@ -912,9 +871,8 @@ runProps(component,form,properties,formdata,instance=null){
             targetComponent.setValue(!formdata[component.key]);
           }
         }
-      } 
-
-       if (properties["clear_field"]) {
+      }
+      if (properties["clear_field"]) {
         var processed = false;
         if(instance){
           if(instance.rowIndex != null){            
@@ -936,151 +894,150 @@ runProps(component,form,properties,formdata,instance=null){
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
         targetList.map(item => {
-         var targetComponent = form.getComponent(item);
-         if(targetComponent && targetComponent.component && targetComponent.component.properties){
+          var targetComponent = form.getComponent(item);
+          if(targetComponent && targetComponent.component && targetComponent.component.properties){
             that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
-            console.log(targetComponent);
             that.runDelegates(form, targetComponent.component["properties"]);
-         }
-       });
+          }
+        });
+      }
+      form.setPristine(true);
     }
-    form.setPristine(true);
   }
-}
-runDelegates(form, properties) {
-  if (properties) {
-    if (properties["delegate"]) {
-      this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
-        this.showFormLoader(false,0);
-        if (response.data) {
-          form.setSubmission({data:this.formatFormData(response.data)});
-        }
-      });
-    }
-    if (properties["commands"]) {
-      var that = this;
-      this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
-        that.showFormLoader(false,0);
-        if (response.status == "success") {
+  runDelegates(form, properties) {
+    if (properties) {
+      if (properties["delegate"]) {
+        this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
+          this.showFormLoader(false,0);
           if (response.data) {
-             form.setSubmission({data:that.formatFormData(response.data)}).then(response2 =>{
-              if (properties["post_delegate_refresh"]) {
-                this.postDelegateRefresh(form,properties);
-              }else{
-                that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
-              }  
-            });
+            form.setSubmission({data:this.formatFormData(response.data)});
           }
-        }
-      });
-    }
-    if (properties["payment_confirmation_page"]) {
-      var elements = document.getElementsByClassName("btn-wizard-nav-submit");
-      this.getPayment(form.submission.data).then(response => {
-        var responseArray = [];
-        if (response.data) {
-          var evt = new CustomEvent("paymentDetails", { cancelable: true,detail: response.data[0] });
-          form.element.dispatchEvent(evt);
-        }
-      });
-      var that = this;
-      form.element.removeEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
-      form.element.addEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
-      form.element.addEventListener("paymentSuccess", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        that.showFormLoader(true,0);
-        var transactionIdComponent = form.getComponent("transaction_id");
-        that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
-          that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
-          var formsave = that.saveForm(form,that.state.currentForm.submission.data);
-          var transactionStatusComponent = form.getComponent("transaction_status");
-          transactionStatusComponent.setValue(e.detail.status);
-          if (formsave) {
-            that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
-          } else {
-            that.notif.current.notify("Error",e.detail.message,"danger");
+        });
+      }
+      if (properties["commands"]) {
+        var that = this;
+        this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
+          that.showFormLoader(false,0);
+          if (response.status == "success") {
+            if (response.data) {
+               form.setSubmission({data:that.formatFormData(response.data)}).then(response2 =>{
+                if (properties["post_delegate_refresh"]) {
+                  this.postDelegateRefresh(form,properties);
+                }else{
+                  that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
+                }  
+              });
+            }
           }
-          that.showFormLoader(false,0);
         });
-      },false);
-      form.element.addEventListener("tokenFailure",function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        if(e.detail.error){
-          that.notif.current.notify("Error", e.detail.message, "danger");
-        }
-      },false);
-      form.element.addEventListener("paymentDeclined",function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var transactionIdComponent = form.getComponent("transaction_id");
-        that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
-          that.notif.current.notify("Error", e.detail.message, "danger");
-          that.showFormLoader(false,0);
+      }
+      if (properties["payment_confirmation_page"]) {
+        var elements = document.getElementsByClassName("btn-wizard-nav-submit");
+        this.getPayment(form.submission.data).then(response => {
+          var responseArray = [];
+          if (response.data) {
+            this.formSendEvent("paymentDetails", { cancelable: true,detail: response.data[0] });
+          }
         });
-      },false);
-      form.element.addEventListener("paymentCancelled",function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        that.notif.current.notify("Warning", e.detail.message, "danger");
-        that.showFormLoader(false,0);
-      },false);
-      form.element.addEventListener("paymentError", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var transactionIdComponent = form.getComponent("transaction_id");
-        that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
-          that.notif.current.notify("Error", e.detail.message, "danger");
+        var that = this;
+        form.element.removeEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
+        form.element.addEventListener("requestPaymentToken",function(e) { that.requestPaymentToken(that,form, e)},false);
+        form.element.addEventListener("paymentSuccess", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          that.showFormLoader(true,0);
+          var transactionIdComponent = form.getComponent("transaction_id");
+          that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
+            that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
+            var formsave = that.saveForm(form,that.state.currentForm.submission.data);
+            var transactionStatusComponent = form.getComponent("transaction_status");
+            transactionStatusComponent.setValue(e.detail.status);
+            if (formsave) {
+              that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
+            } else {
+              that.notif.current.notify("Error",e.detail.message,"danger");
+            }
+            that.showFormLoader(false,0);
+          });
+        },false);
+        form.element.addEventListener("tokenFailure",function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          if(e.detail.error){
+            that.notif.current.notify("Error", e.detail.message, "danger");
+          }
+        },false);
+        form.element.addEventListener("paymentDeclined",function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          var transactionIdComponent = form.getComponent("transaction_id");
+          that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
+            that.notif.current.notify("Error", e.detail.message, "danger");
+            that.showFormLoader(false,0);
+          });
+        },false);
+        form.element.addEventListener("paymentCancelled",function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          that.notif.current.notify("Warning", e.detail.message, "danger");
           that.showFormLoader(false,0);
-        });
-      },false);
-      form.element.addEventListener("paymentPending", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        that.showFormLoader(true,0);
-        that.notif.current.notify("Information",e.detail.message,"default");
-      },false);
-    }
-  }
-}
-requestPaymentToken(that,form,e){
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
-  that.showFormLoader(true,0);
-  let requestbody = {firstname: e.detail.firstname,lastname: e.detail.lastname,amount: e.detail.amount};
-  that.callPayment(e.detail).then(response => {
-    var transactionIdComponent = form.getComponent("transaction_id");
-    if (response.data.transaction.id && response.data.token) {
-      transactionIdComponent.setValue(response.data.transaction.id);
-      var evt = new CustomEvent("getPaymentToken", { detail: response.data });
-      form.element.dispatchEvent(evt);
-    } else {
-      that.notif.current.notify("Error","Transaction Token Failed!","danger");
-    }
-    that.showFormLoader(false,0);
-  });
-}
-parseResponseData = data => {
-  var parsedData = {};
-  Object.keys(data).forEach(key => {
-    try {
-      parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
-    } catch (error) {
-      if(data[key] != undefined){
-        parsedData[key] = data[key];
+        },false);
+        form.element.addEventListener("paymentError", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          var transactionIdComponent = form.getComponent("transaction_id");
+          that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data}).then(response => {
+            that.notif.current.notify("Error", e.detail.message, "danger");
+            that.showFormLoader(false,0);
+          });
+        },false);
+        form.element.addEventListener("paymentPending", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          that.showFormLoader(true,0);
+          that.notif.current.notify("Information",e.detail.message,"default");
+        },false);
       }
     }
-  });
-  return parsedData;
-};
+  }
+  requestPaymentToken(that,form,e){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    that.showFormLoader(true,0);
+    let requestbody = {firstname: e.detail.firstname,lastname: e.detail.lastname,amount: e.detail.amount};
+    that.callPayment(e.detail).then(response => {
+      var transactionIdComponent = form.getComponent("transaction_id");
+      if(response.data){
+        if (response.data.transaction.id && response.data.token) {
+          transactionIdComponent.setValue(response.data.transaction.id);
+          that.formSendEvent("getPaymentToken", { detail: response.data });
+        } else {
+          that.notif.current.notify("Error","Transaction Token Failed!","danger");
+        }
+      }
+      that.showFormLoader(false,0);
+    });
+  }
+  parseResponseData = data => {
+    var parsedData = {};
+    Object.keys(data).forEach(key => {
+      try {
+        parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
+      } catch (error) {
+        if(data[key] != undefined){
+          parsedData[key] = data[key];
+        }
+      }
+    });
+    return parsedData;
+  };
 
   componentDidMount() {
     this.showFormLoader(true,1);
@@ -1162,11 +1119,9 @@ parseResponseData = data => {
   }
   async PushDataPOST(api, method, item, body) {
     if (method == "put") {
-      let response = await helper.request("v1","/" + api + "/" + item,body,"filepost");
-      return response;
+      return await helper.request("v1","/" + api + "/" + item,body,"filepost");
     } else if (method == "post") {
-      let response = await helper.request("v1", "/" + api, body, "filepost");
-      return response;
+      return await helper.request("v1", "/" + api, body, "filepost");
     }
   }
   render() {
