@@ -114,7 +114,7 @@ export default class DocumentViewer extends Component {
                               className={"docIcon " + this.getDocIcon(doc.type)}
                             ></i>
                             <p>
-                              {doc.originalName.length > 34
+                              {doc.originalName.length > 30
                                 ? this.chopFileName(doc.originalName)
                                 : doc.originalName}
                             </p>
@@ -155,7 +155,7 @@ export default class DocumentViewer extends Component {
 
   chopFileName = title => {
     let type = "...." + title.split(".")[1];
-    var displayTitle = title.substring(0, 30) + type;
+    var displayTitle = title.substring(0, 26) + type;
     return displayTitle;
   };
 
