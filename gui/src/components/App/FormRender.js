@@ -1112,7 +1112,7 @@ parseResponseData = data => {
           this.createForm().then(form => {
             if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
               var that = this;
-              form.setSubmission({data: parsedData}).then(respone=> {
+              form.setSubmission({data: parsedData.data}).then(respone=> {
                 that.processProperties(form);
               });
             }else{
