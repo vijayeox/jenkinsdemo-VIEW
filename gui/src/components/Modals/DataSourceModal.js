@@ -5,6 +5,7 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 function DataSourceModal(props) {
 
   const [input, setInput] = useState({})
+  const [errors, setErrors] = useState({})
   const allowedOperation = {
     ACTIVATE: "Activated",
     CREATE: "Created",
@@ -41,56 +42,99 @@ function DataSourceModal(props) {
     }
   }
 
-
-  function dataSourceOperation(operation) {
-
-    let helper = props.osjsCore.make("oxzion/restClient");
-    let requestUrl = ""
-    let method = ""
-    let formData = {}
-
-    if (operation !== undefined && operation !== allowedOperation.DELETE) {
-      formData["name"] = input["name"];
-      formData["type"] = input["type"];
-      formData["configuration"] = input["configuration"];
-
-      if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
-        //pass additional form inputs required for edit operation
-        formData["uuid"] = props.content.uuid
-        formData["version"] = props.content.version;
-        requestUrl = "analytics/datasource/" + props.content.uuid;
-        operation === "Activated" ? formData["isdeleted"] = "0" : null
-        method = "put"
+  async function validateForm(operation) {
+    let formValid = true
+    var error = errors
+    if (operation && (operation === "Created" || operation === "Edited") && input["name"]) {
+      let helper = props.osjsCore.make("oxzion/restClient");
+      let response = await helper.request(
+        "v1",
+        `analytics/datasource?show_deleted=true&filter=[{"filter":{"logic":"and","filters":[{"field":"name","operator":"eq","value":"${input["name"]}"}]},"skip":0}]`,
+        {},
+        "get"
+      )
+      let result = response.data
+      //edit modal can have the same
+      if ((operation === "Created" && result.length !== 0)) {
+        formValid = false
+        error["name"] = "* Datasource name already exists, please choose a different one"
       }
-      else {
-        requestUrl = "analytics/datasource";
-        method = "filepost"
+      else if (operation === "Edited" && result.length !== 0) {
+        if ((props.content.name).toLowerCase() !== (input["name"]).toLowerCase()) {
+          formValid = false
+          error["name"] = "* Datasource name already exists, please choose a different one"
+        }
       }
     }
-    else if (operation === allowedOperation.DELETE) {
-      requestUrl = "analytics/datasource/" + props.content.uuid + "?version=" + props.content.version
-      method = "delete"
+    if (!input["name"]) {
+      formValid = false
+      error["name"] = "* Please enter the datasource name"
     }
+    if (!input["type"]) {
+      formValid = false
+      error["type"] = "* Please enter the datasource type"
+    }
+    if (!input["configuration"]) {
+      formValid = false
+      error["configuration"] = "* Please enter the configuration"
+    }
+    setErrors({ ...error })
+    return formValid
+  }
+  async function dataSourceOperation(operation) {
+    let formValid = await validateForm(operation)
+    if (formValid === true) {
+      let helper = props.osjsCore.make("oxzion/restClient");
+      let requestUrl = ""
+      let method = ""
+      let formData = {}
 
-    helper.request(
-      "v1",
-      requestUrl,
-      formData,
-      method
-    )
-      .then(response => {
-        props.refreshGrid.current.child.current.refresh()
-        notify(response, operation)
-        props.onHide()
-      })
-      .catch(err => {
-        console.log(err)
-      })
+      if (operation !== undefined && operation !== allowedOperation.DELETE) {
+        formData["name"] = input["name"];
+        formData["type"] = input["type"];
+        formData["configuration"] = input["configuration"];
+
+        if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
+          //pass additional form inputs required for edit operation
+          formData["uuid"] = props.content.uuid
+          formData["version"] = props.content.version;
+          requestUrl = "analytics/datasource/" + props.content.uuid;
+          operation === "Activated" ? formData["isdeleted"] = "0" : null
+          method = "put"
+        }
+        else {
+          requestUrl = "analytics/datasource";
+          method = "filepost"
+        }
+      }
+      else if (operation === allowedOperation.DELETE) {
+        requestUrl = "analytics/datasource/" + props.content.uuid + "?version=" + props.content.version
+        method = "delete"
+      }
+
+      helper.request(
+        "v1",
+        requestUrl,
+        formData,
+        method
+      )
+        .then(response => {
+          props.refreshGrid.current.child.current.refresh()
+          notify(response, operation)
+          props.onHide()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
   }
 
   function handleChange(e) {
     let name = e.target.name;
     let value = e.target.value;
+    let error = errors
+    error[e.target.name] = ""
+    setErrors({ ...error })
     setInput({ ...input, [name]: value });
   }
   var Footer = null
@@ -117,7 +161,7 @@ function DataSourceModal(props) {
   return (
     <Modal
       show={props.show}
-      onHide={()=>props.onHide()}
+      onHide={() => props.onHide()}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -133,19 +177,29 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Name</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="name" value={input["name"]?input["name"]:""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control type="text" name="name" value={input["name"] ? input["name"] : ""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Text className="text-muted errorMsg">
+                {errors["name"]}
+              </Form.Text>
             </Col>
+
           </Form.Group>
           <Form.Group as={Row}>
             <Form.Label column lg="3">Type</Form.Label>
             <Col lg="9">
-              <Form.Control type="text" name="type" value={input["type"]?input["type"]:""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control type="text" name="type" value={input["type"] ? input["type"] : ""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Text className="text-muted errorMsg">
+                {errors["type"]}
+              </Form.Text>
             </Col>
           </Form.Group>
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">
-              <Form.Control as="textarea" rows="4" name="configuration" value={input["configuration"]?input["configuration"]:""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control as="textarea" rows="4" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Text className="text-muted errorMsg">
+                {errors["configuration"]}
+              </Form.Text>
             </Col>
           </Form.Group>
         </Form>

@@ -199,6 +199,8 @@ class DataSource extends React.Component {
             })
           }
         />
+          {
+          this.state.showModal &&
         <DataSourceModal
           osjsCore={this.core}
           modalType={this.state.modalType}
@@ -209,6 +211,7 @@ class DataSource extends React.Component {
           notification={this.notif}
           refreshGrid={this.refresh}
         />
+          }
       </div>
     );
   }

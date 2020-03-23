@@ -136,11 +136,16 @@ class Page extends React.Component {
       var that = this;
       var copyPageContent = [];
       var fileId;
+      var checkForTypeUpdate = false;
       action.details.every(async (item, index) => {
         var copyItem = item;
         if (item.type == "Update") {
+          checkForTypeUpdate = true;
           const response = await that.updateActionHandler(item, rowData);
           if (response.status == "success") {
+            this.setState({
+              showLoader: false
+            });
           } else {
             that.setState({
               pageContent: action.details.slice(0, index)
@@ -169,7 +174,7 @@ class Page extends React.Component {
     }
     this.setState({
       fileId: fileId,
-      showLoader: false,
+      showLoader: checkForTypeUpdate ? true : false,
       currentRow: rowData,
       pageContent: copyPageContent
     });
@@ -390,7 +395,7 @@ class Page extends React.Component {
               appId={this.appId}
               content={data[i].content}
               url={data[i].url}
-              fileData={data[i].useFileData ? this.state.currentRow : undefined}
+              fileData={data[i].useRowData ? this.state.currentRow : undefined}
             />
           );
           break;
@@ -419,7 +424,7 @@ class Page extends React.Component {
       );
     }
     this.loader.show();
-    return <></>;
+    return <div></div>;
   }
 }
 

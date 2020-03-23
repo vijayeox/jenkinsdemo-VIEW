@@ -164,7 +164,7 @@ class Query extends React.Component {
                 key={"manage" + action[key].name}
                 className=" btn manage-btn k-grid-edit-command"
                 variant="primary"
-                onClick={() => that.runQuery(e)}
+                onClick={() => that.buttonAction(action[key], e)}
                 style={buttonStyles}
               >
                 {action[key].icon ? (
@@ -186,6 +186,8 @@ class Query extends React.Component {
         this.setState({ showQueryModal: true, modalContent: item, modalType: "Delete" })
       else if (action.name === "toggleActivate" && item.isdeleted == "1")
         this.setState({ showQueryModal: true, modalContent: item, modalType: "Activate" })
+      else if (action.name === "execute" && item.isdeleted == "0")
+        this.setState({ showQueryModal: true, modalContent: item, modalType: "Execute" })
     }
   }
 
@@ -196,6 +198,8 @@ class Query extends React.Component {
       if (mode === "hide") {
         element.classList.add("disappear")
         btn.classList.remove("disappear")
+        this.setState({ inputs: {} })
+
       }
       else {
         element.classList.remove("disappear")
@@ -392,12 +396,16 @@ class Query extends React.Component {
             </Tab>
           </Tabs>
         </div>
+        {
+          this.state.showQueryModal &&
         <QueryModal
+          runQuery={(content)=>this.runQuery(content)}
           osjsCore={this.core}
           modalType={this.state.modalType}
           show={this.state.showQueryModal}
           refreshGrid={this.refresh}
           content={this.state.modalContent}
+          hideQueryForm={()=>this.toggleQueryForm("hide")}
           onHide={() => this.setState({ showQueryModal: false })}
           configuration={this.state.inputs["configuration"]}
           datasourcename={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][0] : ""}
@@ -405,6 +413,7 @@ class Query extends React.Component {
           notification={this.notif}
           resetInput={() => this.setState({ inputs: {} })}
         />
+  }
       </div>
     );
   }

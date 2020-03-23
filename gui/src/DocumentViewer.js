@@ -38,6 +38,7 @@ export default class DocumentViewer extends Component {
         if (response.data) {
           var documentsList = {};
           var documentTypes = Object.keys(response.data);
+          this.setState({ documentTypes: documentTypes });
           documentTypes.map((docType, index) => {
             if (
               response.data[docType] &&
@@ -47,11 +48,22 @@ export default class DocumentViewer extends Component {
             }
           });
           if (Object.keys(documentsList).length > 0) {
-            this.setState({
-              documentsList: documentsList,
-              selectedDocument: documentsList[documentTypes[0]][0],
-              documentTypes: documentTypes
-            });
+            if(documentsList[documentTypes[0]] && documentsList[documentTypes[0]][0]){
+              this.setState({
+                documentsList: documentsList,
+                selectedDocument: documentsList[documentTypes[0]][0],
+              });
+            } else {
+              for (var i = 0; i < documentTypes.length; i++) {
+                if(documentsList[documentTypes[i]] && documentsList[documentTypes[i]][0]){
+                  this.setState({
+                    documentsList: documentsList,
+                    selectedDocument: documentsList[documentTypes[i]][0],
+                  });
+                  break;
+                }
+              }
+            }
           }
           this.loader.destroy();
         }
@@ -102,7 +114,7 @@ export default class DocumentViewer extends Component {
                               className={"docIcon " + this.getDocIcon(doc.type)}
                             ></i>
                             <p>
-                              {doc.originalName.length > 34
+                              {doc.originalName.length > 30
                                 ? this.chopFileName(doc.originalName)
                                 : doc.originalName}
                             </p>
@@ -143,7 +155,7 @@ export default class DocumentViewer extends Component {
 
   chopFileName = title => {
     let type = "...." + title.split(".")[1];
-    var displayTitle = title.substring(0, 30) + type;
+    var displayTitle = title.substring(0, 26) + type;
     return displayTitle;
   };
 

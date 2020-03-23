@@ -5,6 +5,7 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 function QueryModal(props) {
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
+  const helper = props.osjsCore.make("oxzion/restClient");
 
   useEffect(() => {
     if (props.content !== undefined) {
@@ -65,53 +66,73 @@ function QueryModal(props) {
     Footer = (<Button variant="success" onClick={() => queryOperation("Activated")}>Activate</Button>)
     DisabledFields = true
   }
-  function validateForm() {
+  else if (props.modalType === "Execute") {
+    Footer = (<Button variant="success" onClick={() => queryOperation("Executed")}>Execute</Button>)
+  }
+  async function  validateForm(operation) {
     let formValid = true
     var error = errors
+    if(operation && operation==="Created" && input["queryname"]){
+     let response = await helper.request(
+        "v1",
+        `analytics/query?show_deleted=true&filter=[{"filter":{"logic":"and","filters":[{"field":"name","operator":"eq","value":"${input["queryname"]}"}]},"skip":0}]`,
+        {},
+        "get"
+      )
+        let result = response.data.data
+        if(result.length!==0)
+        {
+          formValid = false
+          error["queryname"] = "* Query name already exists, please choose a different one"
+        }
+     
+    }
     if (!input["queryname"]) {
       formValid = false
       error["queryname"] = "* Please enter the query name"
     }
     if (!input["visibility"]) {
       formValid = false
-      error["visibility"] = "* Please enter the configuration"
+      error["visibility"] = "* Please choose the visibility"
     }
     setErrors({ ...error })
     return formValid
   }
 
-  function queryOperation(operation) {
-    let helper = props.osjsCore.make("oxzion/restClient");
-    let requestUrl = ""
-    let method = ""
-    let formData = {}
-
-    if (operation === "Created" || operation === "Activated") {
-
-      formData["name"] = input["queryname"]
-      formData["datasource_id"] = input["datasourceuuid"]
-      formData["configuration"] = props.configuration
-      formData["ispublic"] = input["visibility"]
-      if (operation === "Activated") {
-        formData["configuration"] = props.configuration
-        formData["version"] = input["version"]
-        formData["isdeleted"] = "0"
-        requestUrl = "analytics/query/" + input["uuid"]
-        method = "put"
-      }
-      else {
-        requestUrl = "analytics/query"
-        method = "filepost"
-      }
-    }
-    else if (operation === "Deleted") {
-      requestUrl = "analytics/query/" + input["uuid"] + "?version=" + input["version"]
-      method = "delete"
-    }
-
-
-    let formValid = validateForm()
+  async function queryOperation(operation) {
+    let formValid = await validateForm(operation)
     if (formValid === true) {
+      let requestUrl = ""
+      let method = ""
+      let formData = {}
+      if( operation === "Executed"){
+        props.onHide()
+        props.runQuery(props.content);
+      }
+      else if (operation === "Created" || operation === "Activated") {
+  
+        
+        formData["name"] = input["queryname"]
+        formData["datasource_id"] = input["datasourceuuid"]
+        formData["configuration"] = props.configuration
+        formData["ispublic"] = input["visibility"]
+        if (operation === "Activated") {
+          formData["configuration"] = props.configuration
+          formData["version"] = input["version"]
+          formData["isdeleted"] = "0"
+          requestUrl = "analytics/query/" + input["uuid"]
+          method = "put"
+        }
+        else {
+          requestUrl = "analytics/query"
+          method = "filepost"
+        }
+      }
+      else if (operation === "Deleted") {
+        requestUrl = "analytics/query/" + input["uuid"] + "?version=" + input["version"]
+        method = "delete"
+      }
+  
       helper.request(
         "v1",
         requestUrl,
@@ -119,10 +140,18 @@ function QueryModal(props) {
         method
       )
         .then(response => {
-          props.refreshGrid.current.child.current.refresh()
-          notify(response, operation)
-          props.resetInput()
-          props.onHide()
+          if(response.status=="success")
+          {
+            props.refreshGrid.current.child.current.refresh()
+            notify(response, operation)
+            props.resetInput()
+            props.hideQueryForm()
+            props.onHide()
+          }
+          else if(response.status=="error")
+          {
+            alert("error")
+          }
         })
         .catch(err => {
           console.log(err)
@@ -133,7 +162,11 @@ function QueryModal(props) {
   return (
     <Modal
       show={props.show}
-      onHide={()=>props.onHide()}
+      onHide={()=>{
+        setInput({})
+        props.onHide()
+      }
+    }
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
