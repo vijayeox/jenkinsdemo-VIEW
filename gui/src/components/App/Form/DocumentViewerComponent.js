@@ -68,9 +68,11 @@ export default class DocumentViewerComponent extends Base {
           event.stopPropagation();
         });
       });
-      document.getElementById('closeFile').addEventListener('click', function(event){
-        document.getElementById('filePreviewModal').style.display='none'
-      });
+      if(document.getElementById('closeFile')){
+        document.getElementById('closeFile').addEventListener('click', function(event){
+          document.getElementById('filePreviewModal').style.display='none'
+        });
+      }
     }
   }
   getFileList(files,component){
