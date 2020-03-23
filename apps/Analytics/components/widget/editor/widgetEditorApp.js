@@ -341,6 +341,7 @@ class WidgetEditorApp extends React.Component {
             // called on create widget
             console.log(this.state.visibility)
             params["visualization_uuid"] = this.state.visualizationID
+            params["ispublic"] = this.state.visibility;
             return window.postDataRequest('analytics/widget', params, 'post');
         }
         else {
@@ -396,6 +397,11 @@ class WidgetEditorApp extends React.Component {
                 this.copyWidget()
             })
         }
+    }
+    selectVisibility(e){
+        const selectedIndex = event.target.options.selectedIndex;
+        console.log(e.target.value)
+        console.log(e)
     }
     toggleWidgetDiv() {
         this.setState({ flipped: true })
@@ -523,10 +529,10 @@ class WidgetEditorApp extends React.Component {
                                 <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" onChange={(e) => this.setState({visibility:e.target.value})}>
+                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility} onChange={(e) => this.setState({visibility:e.target.value})}>
                                     <option disabled value="-1" key="-1"></option>
-                                    <option key="1" value="inline">public</option>
-                                    <option key="2" value="chart">private</option>
+                                    <option key="1" value="1">public</option>
+                                    <option key="2" value="0">private</option>
                                 </select>
                             </div>
                         </div>
