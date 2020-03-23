@@ -74,7 +74,9 @@ class Navigation extends React.Component {
   postSubmitCallback = () => {
     this.props.selectLoad(this.homepage);
     this.child.current.clearBreadcrumb();
-    history.push("/");
+    if(history){
+      history.push("/");
+    }
   }
 
   render() {
