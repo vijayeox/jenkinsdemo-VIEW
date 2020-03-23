@@ -1069,10 +1069,14 @@ class FormRender extends React.Component {
           this.createForm().then(form => {
             if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
               var that = this;
-              form.setSubmission({data: parsedData.data}).then(respone=> {
-                that.processProperties(form);
-              });
-            }else{
+              if(parsedData.data){
+                form.setSubmission({data: parsedData.data}).then(respone=> {
+                  that.processProperties(form);
+                });
+              } else {
+                this.loadWorkflow(form);
+              }
+            } else {
               this.loadWorkflow(form);
             }
           });
