@@ -265,8 +265,8 @@ class FormRender extends React.Component {
             method = "put";
           }
         }
-        var response = await that.helper.request("v1", route, this.cleanData(data), method).then(async response => {
-          that.showFormLoader(false,0);
+        var response = await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
+          this.showFormLoader(false,0);
           if (response.status == "success") {
             var cache = await this.deleteCacheData().then(response2 => {
               if (response2.status == "success") {
