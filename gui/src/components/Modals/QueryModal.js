@@ -66,6 +66,9 @@ function QueryModal(props) {
     Footer = (<Button variant="success" onClick={() => queryOperation("Activated")}>Activate</Button>)
     DisabledFields = true
   }
+  else if (props.modalType === "Execute") {
+    Footer = (<Button variant="success" onClick={() => queryOperation("Executed")}>Execute</Button>)
+  }
   async function  validateForm(operation) {
     let formValid = true
     var error = errors
@@ -90,7 +93,7 @@ function QueryModal(props) {
     }
     if (!input["visibility"]) {
       formValid = false
-      error["visibility"] = "* Please enter the configuration"
+      error["visibility"] = "* Please choose the visibility"
     }
     setErrors({ ...error })
     return formValid
@@ -102,8 +105,11 @@ function QueryModal(props) {
       let requestUrl = ""
       let method = ""
       let formData = {}
-  
-      if (operation === "Created" || operation === "Activated") {
+      if( operation === "Executed"){
+        props.onHide()
+        props.runQuery(props.content);
+      }
+      else if (operation === "Created" || operation === "Activated") {
   
         
         formData["name"] = input["queryname"]
