@@ -30,6 +30,7 @@ class WidgetEditorApp extends React.Component {
             widgetPermissions: {},
             widgetOwner: 0,
             visualizationID: '',
+            visibility:0,
             errors: {
             },
             visualizationOptions: [],
@@ -53,7 +54,7 @@ class WidgetEditorApp extends React.Component {
         });
         this.refs.editor.makeReadOnly(flag);
     }
-
+   
     loadWidget = (uuid) => {
         let thiz = this;
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
@@ -114,6 +115,9 @@ class WidgetEditorApp extends React.Component {
 
     copyWidget = (e) => {
         this.makeReadOnly(false);
+    }
+    createWidget = (e) =>{
+        this.makeReadOnly(false)
     }
 
     deleteWidget = (e) => {
@@ -334,7 +338,9 @@ class WidgetEditorApp extends React.Component {
             'name': state.widgetName
         };
         if (this.state.flipped) {
-            params["visualization"] = this.state.visualizationID
+            // called on create widget
+            console.log(this.state.visibility)
+            params["visualization_uuid"] = this.state.visualizationID
             return window.postDataRequest('analytics/widget', params, 'post');
         }
         else {
@@ -419,14 +425,14 @@ class WidgetEditorApp extends React.Component {
                                 </select>
                             </div>
 
-                            {/* { this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+                            { this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Create widget"
                                         onClick={() => this.toggleWidgetDiv()}>
                                         <span className="fa fa-plus" aria-hidden="true"></span>
                                     </button>
                                 </div>
-                            }       */}
+                            }      
                             {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && this.state.widgetOwner == 1) &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
@@ -482,7 +488,7 @@ class WidgetEditorApp extends React.Component {
                         }
                     </FrontSide>
                     <BackSide style={{ padding: "0px" }}>
-                        <button type="button" className="btn btn-primary add-series-button" title="Create widget"
+                        <button type="button" className="btn btn-primary add-series-button" title="Go Back"
                             onClick={() => this.setState({ flipped: false })} >
                             <span className="fa fa-arrow-left" aria-hidden="true"></span>
                         </button>
@@ -517,7 +523,7 @@ class WidgetEditorApp extends React.Component {
                                 <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget">
+                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" onChange={(e) => this.setState({visibility:e.target.value})}>
                                     <option disabled value="-1" key="-1"></option>
                                     <option key="1" value="inline">public</option>
                                     <option key="2" value="chart">private</option>
