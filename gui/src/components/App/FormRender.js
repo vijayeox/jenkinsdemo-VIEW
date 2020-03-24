@@ -1029,7 +1029,11 @@ class FormRender extends React.Component {
     var parsedData = {};
     Object.keys(data).forEach(key => {
       try {
-        parsedData[key] = data[key] ? JSON.parse(data[key]) : "";
+        parsedData[key] = (typeof data[key] === 'string') ? JSON.parse(data[key]) :
+                          (data[key] == undefined || data[key] == null) ? "" : data[key];
+        if(parsedData[key] == "" && data[key] && parsedData[key] != data[key]){
+          parsedData[key] = data[key];
+        }
       } catch (error) {
         if(data[key] != undefined){
           parsedData[key] = data[key];
@@ -1070,7 +1074,7 @@ class FormRender extends React.Component {
             if(Object.keys(parsedData).length > 1){//to account for only workflow_uuid
               var that = this;
               if(parsedData.data){
-                form.setSubmission({data: parsedData.data}).then(respone=> {
+                form.setSubmission({data: this.formatFormData(parsedData.data)}).then(respone=> {
                   that.processProperties(form);
                 });
               } else {
