@@ -23,6 +23,10 @@ export default class DocumentViewerComponent extends Base {
       type: 'documentviewer'
     }, ...extend);
   }
+   setValue(value) {
+    this.value = JSON.stringify(value);
+    this.dataValue = JSON.stringify(value);
+  }
   get defaultSchema() {
     return DocumentViewerComponent.schema();
   }
@@ -33,19 +37,27 @@ export default class DocumentViewerComponent extends Base {
     weight: 70,
     schema: DocumentViewerComponent.schema()
   }
-    onChange(flags, fromRoot){
+  // onChange(flags, fromRoot){
+    bindHandlers(){
+      var component = this.component
+      if(component.bindHandlers){
+        return;
+      }      
       var dataValue = this.dataValue;
       if(typeof dataValue == 'string'){
        dataValue = JSON.parse(dataValue);
      }
-     var component = this.component
+     // var component = this.component
      var that =this;
      var evt = new CustomEvent("getAppDetails", {detail:{} });
      this.form.element.dispatchEvent(evt);
      this.fileList = this.getFileList(dataValue,component);
      this.redraw();
      if(dataValue && dataValue != undefined){
-      var elements = document.getElementsByClassName("selectFile");
+      var elements = document.getElementsByClassName(component.key + "-selectFile");
+      if(elements.length > 0){
+        component.bindHandlers = true;
+      }
       Array.from(elements).forEach(function(element) {
         element.addEventListener('click', function(event){
           var file = this.parentElement.parentElement.getAttribute("data-file");
@@ -54,13 +66,20 @@ export default class DocumentViewerComponent extends Base {
           if(!url){
             url = this.parentElement.parentElement.getAttribute("data-url");
           }
-          document.getElementById('filePreviewModal').style.display = "block";
-          document.getElementById('filePreviewModal').style.height = that.form.element.parentElement.parentElement.clientHeight + 'px';
-          document.getElementById('filePreviewWindow').innerHTML = '<iframe src="'+url+'" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="'+url+'"></iframe>';
+          document.getElementById(component.key + '-filePreviewModal').style.display = "block";
+          // document.getElementById(component.key + '-filePreviewModal').style.height = that.form.element.parentElement.parentElement.clientHeight + 'px';
+
+          var fileType = this.parentElement.parentElement.getAttribute("data-type");
+          console.log(fileType);
+          if(fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg'){
+              document.getElementById(component.key + '-filePreviewWindow').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;" key="'+url+'"></img>';            
+          }else{
+              document.getElementById(component.key + '-filePreviewWindow').innerHTML = '<iframe src="'+url+'" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="'+url+'"></iframe>';
+          }          
           event.stopPropagation();
         });
       });
-      var downloadElements = document.getElementsByClassName("downloadFile");
+      var downloadElements = document.getElementsByClassName(component.key + "-downloadFile");
       Array.from(downloadElements).forEach(function(element) {
         element.addEventListener('click', function(event){
           var url = this.parentElement.parentElement.getAttribute("data-downloadurl");
@@ -68,9 +87,10 @@ export default class DocumentViewerComponent extends Base {
           event.stopPropagation();
         });
       });
-      if(document.getElementById('closeFile')){
-        document.getElementById('closeFile').addEventListener('click', function(event){
-          document.getElementById('filePreviewModal').style.display='none'
+      var closeFile = document.getElementById(component.key + '-closeFile');
+      if(closeFile){
+        closeFile.addEventListener('click', function(event){
+          document.getElementById(component.key + '-filePreviewModal').style.display='none'
         });
       }
     }
@@ -79,20 +99,25 @@ export default class DocumentViewerComponent extends Base {
     var fileList = '';
     if(files){
       for (var prop in files) {
-        var type = files[prop].substr(files[prop].lastIndexOf('.') + 1);
+        var file = (files[prop]['file']) ? files[prop]['file'] : files[prop];
+        var fileName = (files[prop]['originalName']) ? files[prop]['originalName'] : file.substring(file.lastIndexOf('/')+1);
+        var type = (file.substr(file.lastIndexOf('.') + 1));
         var url = '';
         var icon = "<i class='fa fa-file-o'></i>";
         if (type == "pdf") {
-          url = component.uiUrl+"/ViewerJS/#" + component.wrapperUrl+component.appId+'/'+files[prop];
+          url = component.uiUrl+"/ViewerJS/#" + component.wrapperUrl+component.appId+'/'+file;
           icon = "<i class='fa fa-file-pdf-o'></i>";
-        } else if (type == "image") {
-          url = documentData;
-          icon = "<i class='fa fa-picture-o'></i>";
         } else {
-          url = component.uiUrl+"/ViewerJS/#" + component.wrapperUrl+component.appId+'/'+files[prop];
-        }
+          url = component.wrapperUrl+component.appId+'/'+file;
+          icon = "<i class='fa fa-picture-o'></i>";
+        } 
+        // else {
+        //   url = component.wrapperUrl+"/"+component.appId+'/'+file;
+        //   window.open(url, "_self");
+        // }
         fileList += `<div class="docList" key="`+prop+`">
-        <div class="fileDiv"><div class="singleFile row" id="selectFile_`+prop+`" data-downloadurl="`+component.wrapperUrl+component.appId+'/'+files[prop]+`" data-file="`+prop+`" data-url="`+url+`"><span class="col-md-10 selectFile" style="line-height: 1.5; vertical-align: middle;padding: .375rem .75rem;">`+icon+' '+files[prop].substring(files[prop].lastIndexOf('/')+1)+`</span><span class="col-md-1"><button class="btn btn-sm btn-info selectFile" ><i class="fa fa-eye"></i></button></span><span class="col-md-1"><button class="btn btn-sm btn-info downloadFile" style="margin-left:5px;" ><i class="fa fa-download"></i></button>
+        <div class="fileDiv">
+        <div class="singleFile row" id="selectFile_`+prop+`" data-downloadurl="`+component.wrapperUrl+component.appId+'/'+file+`" data-file="`+prop+`" data-type="`+type+`" data-url="`+url+`"><span class="col-md-10 `+ component.key + `-selectFile" style="line-height: 1.5; vertical-align: middle;padding: .375rem .75rem;">`+icon+' '+fileName+`</span><span class="col-md-1"><button class="btn btn-sm btn-info `+component.key+ `-selectFile" ><i class="fa fa-eye"></i></button></span><span class="col-md-1"><button class="btn btn-sm btn-info `+component.key+ `-downloadFile" style="margin-left:5px;" ><i class="fa fa-download"></i></button>
         </span></div></div>
         </div>`;
       }
@@ -107,13 +132,17 @@ export default class DocumentViewerComponent extends Base {
     var row = `<div class="row" style="padding: 15px;" >
     <div class="col-md-12" >`+ fileList +`</div>
     </div>
-    <div id="filePreviewModal" class="modal" style="position:absolute">
+    <div id="`+this.component.key+`-filePreviewModal" class="modal">
     <div style="height:inherit;display: block;background-color: white;">
-    <span id="closeFile" class="close" style="font-size:2em">&times;</span>
-    <div id="filePreviewWindow" style="height:inherit"></div>
+    <span id="`+this.component.key+`-closeFile" class="close" style="font-size:2em">&times;</span>
+    <div id="`+this.component.key+`-filePreviewWindow" style="height:inherit"></div>
     </div>
     </div>`;
     var content = super.render(row);
+    var that = this;
+    setTimeout(function(){
+     that.bindHandlers();
+   },200);
     return content;
   }
 

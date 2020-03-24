@@ -59,6 +59,16 @@ class WidgetEditorApp extends React.Component {
         let thiz = this;
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
             then(function (responseData) {
+                if ('error' === responseData.status) {
+                    console.error('Could not load widget.');
+                    console.error(responseData);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops ...',
+                        text: 'Could not load a widget. Please try after some time.'
+                    });
+                    return;
+                }
                 let widget = responseData.widget;
                 thiz.setState((state) => {
                     widget.align = state.widget.align; //Retain align in widget object.
@@ -86,7 +96,7 @@ class WidgetEditorApp extends React.Component {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',
-                    text: 'Could not load widget. Please try after some time.'
+                    text: 'Could not load a widget. Please try after some time.'
                 });
             });
     }
@@ -125,7 +135,7 @@ class WidgetEditorApp extends React.Component {
                             return (
                                 <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                             )
-                        })
+                        });
                         thiz.setState({
                             htmlWidgetOptions: widgetList, widget: {
                                 align: null,
@@ -133,8 +143,7 @@ class WidgetEditorApp extends React.Component {
                                 type: null
                             },
                             showModal: false
-                        })
-
+                        });
                     })
                     .catch(function (response) {
                         thiz.setState({ showModal: false })

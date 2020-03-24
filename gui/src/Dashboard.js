@@ -65,6 +65,15 @@ class Dashboard extends Component {
           });
           this.loader.destroy()
         }
+      }).
+      catch(function (response) {
+          console.error('Could not load widget.');
+          console.error(response);
+          Swal.fire({
+              type: 'error',
+              title: 'Oops ...',
+              text: 'Could not load widget. Please try after some time.'
+           });
       });
     } else if (this.state.htmlData != null) {
       this.updateGraph();
@@ -99,18 +108,30 @@ class Dashboard extends Component {
     if (this.state.htmlData != null) {
       let root = document;
       var widgets = root.getElementsByClassName('oxzion-widget');
+      let thiz = this;
       for (let widget of widgets) {
         
         var attributes = widget.attributes;
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
        
-        let response = await this.getWidgetByUuid(widgetUUId)
+        let response = await this.getWidgetByUuid(widgetUUId);
+          if ('error' === response.status) {
+              console.error('Could not load widget.');
+              console.error(response);
+              Swal.fire({
+                  type: 'error',
+                  title: 'Oops ...',
+                  text: 'Could not load a widget. Please try after some time.'
+              });
+              thiz.loader.destroy();
+              return;
+          }
           let widgetObject = WidgetRenderer.render(widget, response.data.widget)
           if (widgetObject !== null)
             this.renderedWidgets[widgetUUId] = widgetObject
         }
     }
-    this.loader.destroy()
+    this.loader.destroy();
   };
 
   widgetDrillDownMessageHandler = (event) => {
