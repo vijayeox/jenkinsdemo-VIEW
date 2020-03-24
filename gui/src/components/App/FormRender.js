@@ -878,6 +878,13 @@ class FormRender extends React.Component {
           if(instance.rowIndex != null){            
             var instancePath = instance.path.split('.');
             var instanceRowindex = instance.rowIndex;
+            var targetComponent = form.getComponent(instancePath[0]);
+            if(targetComponent){
+              var componentList = targetComponent.getComponent(properties['clear_field']);
+              if(componentList[instance.rowIndex]){
+                componentList[instance.rowIndex].setValue("");
+              }
+            }
             formdata[instancePath[0]][instanceRowindex][properties["clear_field"]] = "";
             form.setSubmission({data : formdata});
             processed = true;
