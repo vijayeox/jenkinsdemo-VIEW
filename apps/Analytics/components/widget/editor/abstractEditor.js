@@ -11,6 +11,8 @@ class AbstractEditor extends React.Component {
             readOnly: true,
             queries: [],
             configuration: '',
+            drillDownFilter:'',
+            drillDownWidget:'',
             expression: '',
             errors:{
                 configuration:null,

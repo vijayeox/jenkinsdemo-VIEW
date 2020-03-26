@@ -15,6 +15,8 @@ import SliderComponent from "./Form/SliderComponent";
 import FortePayCheckoutComponent from "./Form/Payment/FortePayCheckoutComponent";
 import DocumentViewerComponent from "./Form/DocumentViewerComponent";
 import RadioCardComponent from "./Form/RadioCardComponent";
+import PhoneNumberComponent from "./Form/PhoneNumberComponent";
+import CountryComponent from "./Form/CountryComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -71,11 +73,19 @@ class FormRender extends React.Component {
   }
   showFormError(state=true){
     if(state){
-      document.getElementById(this.formErrorDivId).style.display = "block";
-      document.getElementById(this.formDivID).style.display = "none";
+      if(document.getElementById(this.formErrorDivId)){
+        document.getElementById(this.formErrorDivId).style.display = "block";
+      }
+      if(document.getElementById(this.formDivID)){
+        document.getElementById(this.formDivID).style.display = "none";
+      }
     } else {
-      document.getElementById(this.formErrorDivId).style.display = "none";
-      document.getElementById(this.formDivID).style.display = "block";
+      if(document.getElementById(this.formErrorDivId)){
+        document.getElementById(this.formErrorDivId).style.display = "none";
+      }
+      if(document.getElementById(this.formDivID)){
+        document.getElementById(this.formDivID).style.display = "block";
+      }
     }
   }
   hideBreadCrumb(state=true){
@@ -179,6 +189,8 @@ class FormRender extends React.Component {
     // call to api using wrapper
     return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  }
   async saveForm(form, data) {
+    this.showFormLoader(true,0);
+    var that = this;
     if (!form) {
       form = this.state.currentForm;
     }
@@ -210,17 +222,18 @@ class FormRender extends React.Component {
           }
         }
       }
-      var that = this;
       await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           that.showFormLoader(false,0);
           if (response.status == "success") {
-            if (response.data) {
-              form.setSubmission({data:this.formatFormData(response.data)}).then(function (){
-                that.processProperties(form);
-              });
-              form.triggerChange();
-            }
+            //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
+            // if (response.data) {
+              // form.setSubmission({data:this.formatFormData(response.data)}).then(function (){
+              //   that.processProperties(form);
+              // });
+              // form.triggerChange();
+            // }
             await this.deleteCacheData().then(response2 => {
+              that.showFormLoader(false,0);
               if (response2.status == "success") {
                 this.props.postSubmitCallback();
               }
@@ -229,10 +242,12 @@ class FormRender extends React.Component {
           } else {
             if (response.errors) {
               await this.storeError(data, response.errors, "pipeline");
+              that.showFormLoader(false,0);
               this.notif.current.notify("Error",response.errors[0].message, "danger");
               return response;
             } else {
               await this.storeCache(data);
+              that.showFormLoader(false,0);
               this.notif.current.notify("Error", "Form Submission Failed", "danger");
             }
           }
@@ -266,9 +281,9 @@ class FormRender extends React.Component {
           }
         }
         var response = await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
-          this.showFormLoader(false,0);
           if (response.status == "success") {
             var cache = await this.deleteCacheData().then(response2 => {
+              that.showFormLoader(false,0);
               if (response2.status == "success") {
                 this.props.postSubmitCallback();
               }
@@ -279,10 +294,12 @@ class FormRender extends React.Component {
             async cacheResponse => {
               if (response.data.errors) {
                 var storeError = await this.storeError(data,response.data.errors,route).then(storeErrorResponse => {
+                  that.showFormLoader(false,0);
                   this.notif.current.notify("Error","Form Submission Failed","danger");
                   return storeErrorResponse;
                 });
               } else {
+                that.showFormLoader(false,0);
                 return storeErrorResponse;
               }
             });
@@ -449,6 +466,8 @@ class FormRender extends React.Component {
       Formio.registerComponent("fortepay", FortePayCheckoutComponent);
       Formio.registerComponent("documentviewer", DocumentViewerComponent);
       Formio.registerComponent("radiocard", RadioCardComponent);
+      Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
+      Formio.registerComponent("selectcountry", CountryComponent);
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -529,7 +548,7 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            console.log(changed);
+            console.log(changed)
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
@@ -738,7 +757,7 @@ class FormRender extends React.Component {
     targetList.map(item => {
       var targetComponent = form.getComponent(item);
       console.log(targetComponent);
-      if(targetComponent.component && targetComponent.component["properties"]){
+      if(targetComponent && targetComponent.component && targetComponent.component["properties"]){
         if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
           targetComponent.triggerRedraw();
         }

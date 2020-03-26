@@ -22,6 +22,7 @@ class SearchPage extends React.Component {
       query: "",
       columnConfig: this.props.columnConfig,
       filterColumns: this.props.filterColumns,
+      placeholder: this.props.placeholder,
       filter: []
     };
     var itemContent = this.props.content;
@@ -91,6 +92,7 @@ class SearchPage extends React.Component {
   }
 
   render() {
+    var placeholder = this.placeholder?this.placeholder:"Search for...";
     return (
       <div className="searchResults">
         <div className="searchPageDiv">
@@ -103,7 +105,7 @@ class SearchPage extends React.Component {
             </svg>
             <input
               className="searchInput"
-              placeholder="Search for..."
+              placeholder={placeholder}
               ref={input => (this.search = input)}
               onChange={this.handleInputChange}
             />
