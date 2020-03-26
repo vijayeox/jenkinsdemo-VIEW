@@ -9,7 +9,11 @@ class AmChartEditor extends AbstractEditor {
     constructor(props) {
         super(props);
         this.state.selectedTab = 'chart';
-        this.amChart = null;
+        this.state.drillDownWidgetTitle = '',
+            this.state.drillDownWidgetFooter = '',
+            this.state.hasMaxDepth = false,
+            this.state.maxDepth = null,
+            this.amChart = null;
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             CHART_CONFIGURATION_INVALID_JSON: 'Chart configuration JSON is invalid',
@@ -21,6 +25,7 @@ class AmChartEditor extends AbstractEditor {
 
     configurationChanged = (evt) => {
         let thiz = this;
+
         let value = evt.target.value;
         this.setState((state) => {
             state.configuration = value;
@@ -40,7 +45,7 @@ class AmChartEditor extends AbstractEditor {
 
     refreshChartPreview = () => {
         let thiz = this
-
+        console.log(this.state.something)
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {
@@ -86,41 +91,50 @@ class AmChartEditor extends AbstractEditor {
 
     refreshViews = () => {
 
+
         if (this.state.selectedTab === 'chart') {
             this.refreshChartPreview();
         }
+
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
-            this.setState({ drillDownFilter: configuration["oxzion-meta"]["drillDown"]["filter"], drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] })
+            let hasMaxDepth = false
+            let maxDepth = -1
+            if (this.props.widget.uuid === configuration["oxzion-meta"]["drillDown"]["nextWidgetId"]) {
+                hasMaxDepth = true
+                maxDepth = configuration["oxzion-meta"]["drillDown"]["maxDepth"] || -1
+            }
+            this.setState({
+                drillDownFilter: configuration["oxzion-meta"]["drillDown"]["filter"] || '',
+                drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
+                drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
+                drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
+                hasMaxDepth: hasMaxDepth,
+                maxDepth:maxDepth
+
+            })
         }
         else {
-            this.setState({ drillDownFilter: '', drillDownWidget: '' })
+            this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false })
         }
-    }
-
-    changeDrillDownWidget = (e) => {
-        let widget = e.target.value
-        this.setState({ drillDownWidget: widget })
-    }
-
-    changeDrillDownFilter = (e) => {
-        let filter = e.target.value
-        this.setState({ drillDownFilter: filter })
     }
 
 
     ApplyDrillDown = () => {
-        if (this.state.drillDownWidget === "") {
+        if (this.state.drillDownWidget === "" || this.state.drillDownFilter === "") {
             //do validation
-            alert("Please choose a drill down Widget!!")
+            alert("Drill down Widget / Filter field cannot be left blank")
         }
         else {
-            let configuration = this.state.configuration!==""?JSON.parse(this.state.configuration):undefined
+            let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
             let drillDownObject = {
                 "filter": this.state.drillDownFilter,
-                "nextWidgetId": this.state.drillDownWidget
+                "nextWidgetId": this.state.drillDownWidget,
             }
+            this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
+            this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
+            this.state.hasMaxDepth && this.state.maxDepth!=-1 &&(drillDownObject["maxDepth"] = this.state.maxDepth)
             if (configuration) {
                 if (configuration["oxzion-meta"]) {
                     configuration["oxzion-meta"]["drillDown"] = drillDownObject
@@ -138,7 +152,7 @@ class AmChartEditor extends AbstractEditor {
                     }
                 }
             }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2) })
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: "chart" })
         }
 
     }
@@ -329,6 +343,13 @@ class AmChartEditor extends AbstractEditor {
             thiz.configurationTabSelected('chart');
         });
     }
+    handleDrillDownChange(e){
+        let maxDepth=false
+        if(this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value){
+            maxDepth=true
+        }
+        this.setState({ drillDownWidget: e.target.value,hasMaxDepth:maxDepth })
+    }
 
     render() {
         let thiz = this;
@@ -460,25 +481,25 @@ class AmChartEditor extends AbstractEditor {
                                     <Tab eventKey="drilldown" title="Drill Down">
                                         <div className="drilldown-div">
                                             <Form.Group as={Row}>
-                                                <Form.Label column lg="2">Filter</Form.Label>
-                                                <Col lg="10">
+                                                <Form.Label column lg="3">Filter</Form.Label>
+                                                <Col lg="9">
                                                     <Form.Control
                                                         as="textarea"
                                                         name="drilldownfilter"
-                                                        onChange={(e) => this.changeDrillDownFilter(e)}
+                                                        onChange={(e) => this.setState({ drillDownFilter: e.target.value })}
                                                         value={this.state.drillDownFilter}
                                                         disabled={this.state.readOnly}
                                                     />
                                                 </Col>
                                             </Form.Group>
                                             <Form.Group as={Row}>
-                                                <Form.Label column lg="2">Widget</Form.Label>
-                                                <Col lg="10">
+                                                <Form.Label column lg="3">Widget</Form.Label>
+                                                <Col lg="9">
                                                     <Form.Control
                                                         as="select"
                                                         name="drilldownwidget"
                                                         value={this.state.drillDownWidget !== '' ? this.state.drillDownWidget : "-1"}
-                                                        onChange={(e) => this.changeDrillDownWidget(e)}
+                                                        onChange={(e) => this.handleDrillDownChange(e)}
                                                         disabled={this.state.readOnly}
                                                     >
                                                         <option key="-1" value="-1"></option>
@@ -487,6 +508,49 @@ class AmChartEditor extends AbstractEditor {
 
                                                 </Col>
                                             </Form.Group>
+                                            <Form.Group as={Row}>
+                                                <Form.Label column lg="3">Title</Form.Label>
+                                                <Col lg="9">
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="drillDownWidgetTitle"
+                                                        onChange={(e) => this.setState({ drillDownWidgetTitle: e.target.value })}
+                                                        value={this.state.drillDownWidgetTitle || ''}
+                                                        disabled={this.state.readOnly}
+                                                    />
+                                                </Col>
+                                            </Form.Group>
+                                            <Form.Group as={Row}>
+                                                <Form.Label column lg="3">Footer</Form.Label>
+                                                <Col lg="9">
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="drillDownwidgetFooter"
+                                                        onChange={(e) => this.setState({ drillDownWidgetFooter: e.target.value })}
+                                                        value={this.state.drillDownWidgetFooter || ''}
+                                                        disabled={this.state.readOnly}
+                                                    />
+
+                                                </Col>
+                                            </Form.Group>
+                                            {this.state.hasMaxDepth &&
+                                                <Form.Group as={Row}>
+                                                    <Form.Label column lg="3">Max Depth</Form.Label>
+                                                    <Col lg="9">
+                                                        <Form.Control
+                                                            as="select"
+                                                            name="drillDownwidgetFooter"
+                                                            value={this.state.maxDepth?this.state.maxDepth:-1}
+                                                            onChange={(e)=>this.setState({maxDepth:e.target.value})}
+                                                            disabled={this.state.readOnly}
+                                                        >
+                                                            <option key="-1" value={-1}></option>
+                                                            <option key="2" value={2}>2</option>
+                                                            <option key="3" value={3}>3</option>
+                                                            <option key="4" value={4}>4</option>
+                                                        </Form.Control>
+                                                    </Col>
+                                                </Form.Group>}
 
                                             <Button variant="primary" type="button" onClick={() => this.ApplyDrillDown()}>
                                                 Apply DrillDown
