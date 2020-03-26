@@ -116,7 +116,7 @@ class AmChartEditor extends AbstractEditor {
             alert("Please choose a drill down Widget!!")
         }
         else {
-            let configuration = JSON.parse(this.state.configuration)
+            let configuration = this.state.configuration!==""?JSON.parse(this.state.configuration):undefined
             let drillDownObject = {
                 "filter": this.state.drillDownFilter,
                 "nextWidgetId": this.state.drillDownWidget
