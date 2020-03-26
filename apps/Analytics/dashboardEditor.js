@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Overlay, Tooltip, Button } from 'react-bootstrap';
+import { Overlay, Tooltip, Button, Form } from 'react-bootstrap';
 import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 

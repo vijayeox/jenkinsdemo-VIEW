@@ -29,8 +29,9 @@ class WidgetEditorApp extends React.Component {
             widgetName: '',
             widgetPermissions: {},
             widgetOwner: 0,
+            visualization: null,
             visualizationID: '',
-            visibility:0,
+            visibility: null,
             errors: {
             },
             visualizationOptions: [],
@@ -54,7 +55,7 @@ class WidgetEditorApp extends React.Component {
         });
         this.refs.editor.makeReadOnly(flag);
     }
-   
+
     loadWidget = (uuid) => {
         let thiz = this;
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
@@ -116,9 +117,7 @@ class WidgetEditorApp extends React.Component {
     copyWidget = (e) => {
         this.makeReadOnly(false);
     }
-    createWidget = (e) =>{
-        this.makeReadOnly(false)
-    }
+
 
     deleteWidget = (e) => {
         let thiz = this;
@@ -388,23 +387,24 @@ class WidgetEditorApp extends React.Component {
         return !this.state.readOnly;
     }
     selectVisualization(e) {
-        const selectedIndex = event.target.options.selectedIndex;
-        let visualizationid = event.target.options[selectedIndex].getAttribute('data-key')
+        const selectedIndex = e.target.options.selectedIndex;
+        let visualizationid = e.target.options[selectedIndex].getAttribute('data-key')
+        let visualization = e.target.options[selectedIndex].value
         let newWidget = { type: "" }
         if (e.target.value !== undefined) {
             newWidget.type = e.target.value
-            this.setState({ widget: newWidget, visualizationID: visualizationid }, () => {
-                this.copyWidget()
+            this.setState({ widget: newWidget, visualizationID: visualizationid, visualization: visualization }, () => {
+                this.makeReadOnly(false);
             })
         }
     }
-    selectVisibility(e){
+    selectVisibility(e) {
         const selectedIndex = event.target.options.selectedIndex;
         console.log(e.target.value)
         console.log(e)
     }
     toggleWidgetDiv() {
-        this.setState({ flipped: true })
+        this.setState({ flipped: true, widgetName: '' })
         console.log(document.getElementById("cke_139_uiElement"))
     }
 
@@ -431,14 +431,14 @@ class WidgetEditorApp extends React.Component {
                                 </select>
                             </div>
 
-                            { this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+                            {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Create widget"
                                         onClick={() => this.toggleWidgetDiv()}>
                                         <span className="fa fa-plus" aria-hidden="true"></span>
                                     </button>
                                 </div>
-                            }      
+                            }
                             {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && this.state.widgetOwner == 1) &&
                                 <div className="col-1" style={{ maxWidth: "3em" }}>
                                     <button type="button" className="btn btn-primary add-series-button" title="Delete widget"
@@ -482,7 +482,7 @@ class WidgetEditorApp extends React.Component {
                         {!this.state.flipped &&
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
@@ -494,7 +494,7 @@ class WidgetEditorApp extends React.Component {
                         }
                     </FrontSide>
                     <BackSide style={{ padding: "0px" }}>
-                        <button type="button" className="btn btn-primary add-series-button" title="Go Back"
+                        <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px" }}
                             onClick={() => this.setState({ flipped: false })} >
                             <span className="fa fa-arrow-left" aria-hidden="true"></span>
                         </button>
@@ -519,9 +519,9 @@ class WidgetEditorApp extends React.Component {
                                 <label htmlFor="selectVisualization" className="right-align col-form-label form-control-sm">Visualization</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectVisualization" name="selectVisualization" className="form-control form-control-sm" placeholder="Select Visualization"
+                                <select id="selectVisualization" name="selectVisualization" className="form-control form-control-sm" placeholder="Select Visualization" value={this.state.visualization != null ? this.state.visualization : -1}
                                     onChange={(event) => this.selectVisualization(event)}>
-                                    <option key="-1" val="-1"></option>
+                                    <option key="-1" value="-1" disabled></option>
                                     {this.state.visualizationOptions}
                                 </select>
                             </div>
@@ -529,7 +529,7 @@ class WidgetEditorApp extends React.Component {
                                 <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility} onChange={(e) => this.setState({visibility:e.target.value})}>
+                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
                                     <option disabled value="-1" key="-1"></option>
                                     <option key="1" value="1">public</option>
                                     <option key="2" value="0">private</option>
@@ -540,7 +540,7 @@ class WidgetEditorApp extends React.Component {
                         {this.state.flipped ?
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
