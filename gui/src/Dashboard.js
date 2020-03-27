@@ -51,13 +51,15 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.loader.show()
     if (this.uuid) {
+      let thiz = this;
+      this.loader.show()
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
         if (response.status == "success") {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
+          thiz.loader.destroy();
           this.updateGraph();
         } else {
           this.setState({
@@ -73,7 +75,8 @@ class Dashboard extends Component {
               type: 'error',
               title: 'Oops ...',
               text: 'Could not load widget. Please try after some time.'
-           });
+          });
+          thiz.loader.destroy();
       });
     } else if (this.state.htmlData != null) {
       this.updateGraph();
@@ -105,33 +108,39 @@ class Dashboard extends Component {
   }
 
   updateGraph = async () => {
-    if (this.state.htmlData != null) {
-      let root = document;
-      var widgets = root.getElementsByClassName('oxzion-widget');
-      let thiz = this;
-      for (let widget of widgets) {
-        
-        var attributes = widget.attributes;
-        var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
-       
-        let response = await this.getWidgetByUuid(widgetUUId);
-          if ('error' === response.status) {
-              console.error('Could not load widget.');
-              console.error(response);
-              Swal.fire({
-                  type: 'error',
-                  title: 'Oops ...',
-                  text: 'Could not load a widget. Please try after some time.'
-              });
-              thiz.loader.destroy();
-              return;
-          }
-          let widgetObject = WidgetRenderer.render(widget, response.data.widget)
-          if (widgetObject !== null)
-            this.renderedWidgets[widgetUUId] = widgetObject
+    if (null === this.state.htmlData) {
+        return;
+    }
+    let root = document;
+    var widgets = root.getElementsByClassName('oxzion-widget');
+    let thiz = this;
+    this.loader.show();
+    let errorFound = false;
+    for (let widget of widgets) {        
+      var attributes = widget.attributes;
+      var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
+      let response = await this.getWidgetByUuid(widgetUUId);
+      if ('error' === response.status) {
+        console.error('Could not load widget.');
+        console.error(response);
+        errorFound = true;
+      }
+      else {
+        let widgetObject = WidgetRenderer.render(widget, response.data.widget);
+        if (widgetObject) {
+          this.renderedWidgets[widgetUUId] = widgetObject;
         }
+      }
     }
     this.loader.destroy();
+    if (errorFound) {
+      Swal.fire({
+        type: 'error',
+        title: 'Oops ...',
+        text: 'Could not load one or more widget(s). Please try after some time.'
+      });
+      return;
+    }
   };
 
   widgetDrillDownMessageHandler = (event) => {

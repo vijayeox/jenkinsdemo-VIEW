@@ -32,13 +32,12 @@ class Dashboard extends React.Component {
     this.notif = React.createRef();
     this.restClient = this.core.make('oxzion/restClient');
     this.deleteDashboard = this.deleteDashboard.bind(this)
-    this.loader = null;
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.fetchDashboards()
   }
-  
+
 
   async getUserDetails(uuid) {
     let helper2 = this.core.make("oxzion/restClient");
@@ -63,7 +62,7 @@ class Dashboard extends React.Component {
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
-    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
     let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
@@ -89,6 +88,7 @@ class Dashboard extends React.Component {
       this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
+
   setTitle(title) { }
 
   handleChange(event) {
@@ -117,6 +117,7 @@ class Dashboard extends React.Component {
       this.setState({ inputs: {} })
     }
   }
+
   editDashboard() {
     var element = document.getElementById("dashboard-editor-div");
     element != undefined && element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
@@ -126,11 +127,12 @@ class Dashboard extends React.Component {
   createDashboard() {
     var element = document.getElementById("dashboard-editor-div");
     element != undefined &&
-    element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
+      element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
     let inputs = { ...this.state.inputs }
     inputs["dashname"] !== undefined && delete inputs.dashname
     this.setState({ flipped: true, uuid: "", inputs: inputs, loadEditor: true })
   }
+
   render() {
     return (
       <div className="dashboard">
@@ -143,9 +145,9 @@ class Dashboard extends React.Component {
         >
           <FrontSide>
             {this.userProfile.key.privileges.MANAGE_DASHBOARD_CREATE &&
-             <div className="row">
-               <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
-             </div>
+              <div className="row">
+                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+              </div>
             }
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <>
@@ -208,13 +210,16 @@ class Dashboard extends React.Component {
                     <span>Dashboard Previewer</span>
                   </div>
                   <div className="dasboard-viewer-content">
-                    <DashboardViewer
-                      key={this.state.uuid}
-                      uuid={this.state.uuid}
-                      core={this.core}
-                      setTitle={this.props.setTitle}
-                      proc={this.props.proc}
-                    />
+                    {
+                      this.state.uuid !== "" &&
+                      <DashboardViewer
+                        key={this.state.uuid}
+                        uuid={this.state.uuid}
+                        core={this.core}
+                        setTitle={this.props.setTitle}
+                        proc={this.props.proc}
+                      />
+                    }
                   </div>
 
                 </div>
@@ -252,7 +257,7 @@ class Dashboard extends React.Component {
             </div>
           </BackSide>
         </Flippy>
-        
+
         <DashboardEditorModal
           osjsCore={this.core}
           modalType={this.state.modalType}

@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select/creatable'
 
 const FilterFields = function (props) {
-    const { rows, index, fieldName, dataType, onUpdate, removeField } = props;
+    const { filters, index, fieldType, dataType, onUpdate, removeField,fieldName } = props;
     const filtersOptions = {
         "dateoptions": [{ "Between": "gte&&lte" }, { "<": "lt" }, { ">": "gt" }, { "=": "eq" }],
         "textoptions": [{ "Starts With": "startswith" }, { "contains": "contains" }],
@@ -19,7 +19,13 @@ const FilterFields = function (props) {
             <Col sm="2">
                 <Form.Group  >
                     <Form.Label>Field Name</Form.Label>
-                    <Form.Control type="text" value={fieldName} disabled />
+                    <Form.Control type="text" name="fieldName" value={fieldName} onChange={(e) => onUpdate(e, index)} />
+                </Form.Group>
+            </Col>
+            <Col sm="2">
+                <Form.Group  >
+                    <Form.Label>Data Type</Form.Label>
+                    <Form.Control type="text" value={fieldType} disabled />
                 </Form.Group>
             </Col>
             {
@@ -28,11 +34,11 @@ const FilterFields = function (props) {
                     <Col sm="2">
                         <Form.Group controlId="formGridData">
                             <Form.Label>Data Type</Form.Label>
-                            <Form.Control name="dataType" as="select" onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["dataType"] : ""} >
+                            <Form.Control name="dataType" as="select" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["dataType"] : ""} >
 
                                 <option disabled key="-1" value=""></option>
-                                {dataTypeOptions.map(item => {
-                                    return (<option>{item}</option>)
+                                {dataTypeOptions.map((item,index) => {
+                                    return (<option key={index}>{item}</option>)
                                 })}
                             </Form.Control>
                         </Form.Group>
@@ -45,14 +51,14 @@ const FilterFields = function (props) {
                     {
                         dataType === "date" || dataType === "text" || dataType === "numeric"
                             ?
-                            <Form.Control as="select" name={"options"} onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["options"] : ""}>
+                            <Form.Control as="select" name={"options"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["options"] : ""}>
                                 <option disabled key="-1" value=""></option>
-                                {filtersOptions[dataType + 'options'].map(item => {
-                                    return (<option value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
+                                {filtersOptions[dataType + 'options'].map((item,index) => {
+                                    return (<option key={index} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
                                 })}
                             </Form.Control>
                             :
-                            <Form.Control as="select" name={"options"} onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["options"] : ""}>
+                            <Form.Control as="select" name={"options"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["options"] : ""}>
                                 <option disabled key="-1" value=""></option>
                             </Form.Control>
                     }
@@ -64,11 +70,11 @@ const FilterFields = function (props) {
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
                         ?
-                        rows[index]["options"] !== "gte&&lte" ?
+                        filters[index]["options"] !== "gte&&lte" ?
                             <DatePicker
                                 key={index}
                                 dateFormat="dd/MM/yyyy"
-                                selected={rows[index]["startDate"]}
+                                selected={filters[index]["startDate"]}
                                 showMonthDropdown
                                 showYearDropdown
                                 dropdownMode="select"
@@ -89,12 +95,12 @@ const FilterFields = function (props) {
                             :
                             <div className="dates-container">
                                 <DatePicker
-                                    selected={rows[index]["startDate"]}
+                                    selected={filters[index]["startDate"]}
                                     dateFormat="dd/MM/yyyy"
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
-                                    startDate={rows[index]["startDate"]}
-                                    endDate={rows[index]["endDate"]}
+                                    startDate={filters[index]["startDate"]}
+                                    endDate={filters[index]["endDate"]}
                                     showMonthDropdown
                                     showYearDropdown
                                     popperPlacement="bottom"
@@ -112,13 +118,13 @@ const FilterFields = function (props) {
                                     dropdownMode="select"
                                 />
                                 <DatePicker
-                                    selected={rows[index]["endDate"]}
+                                    selected={filters[index]["endDate"]}
                                     dateFormat="dd/MM/yyyy"
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
-                                    startDate={rows[index]["startDate"]}
-                                    endDate={rows[index]["endDate"]}
-                                    minDate={rows[index]["startDate"]}
+                                    startDate={filters[index]["startDate"]}
+                                    endDate={filters[index]["endDate"]}
+                                    minDate={filters[index]["startDate"]}
                                     showMonthDropdown
                                     showYearDropdown
                                     popperPlacement="bottom"
@@ -137,12 +143,12 @@ const FilterFields = function (props) {
                                 />
                             </div>
                         :
-                        <Form.Control type="text" name="defaultvalue" onChange={(e) => onUpdate(e, index)} value={rows[index] !== undefined ? rows[index]["defaultvalue"] : ""} />}
+                        <Form.Control type="text" name="defaultvalue" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["defaultvalue"] : ""} />}
                 </Form.Group>
             </Col>
             <Col style={{ marginBottom: "1em" }}>
                 <Form.Group>
-                    <Button onClick={(e) => removeField(index, fieldName)}>x</Button>
+                    <Button onClick={(e) => removeField(index, fieldType)}>x</Button>
                 </Form.Group>
             </Col>
         </Form.Row>)
@@ -163,45 +169,48 @@ class DashboardEditorFilter extends React.Component {
             inputFields: [],
             startDate: new Date(),
             availableFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }],
-            rows: []
+            filters: []
         }
     }
 
     removeField(index, field) {
         var availableOptions = [...this.state.availableFilterOption];
-        let rows = [...this.state.rows]
+        let filters = [...this.state.filters]
 
         if (index > -1) {
-            delete rows[index]
+            delete filters[index]
             //add back the option to the filter list
-            if (field === "text" || field === "date") {
-                let newItem = { value: field, label: field }
-                availableOptions.push(newItem)
-                this.setState({ rows: rows, availableFilterOption: availableOptions })
-            }
-            else {
-                this.setState({ rows: rows })
-            }
+            // if (field === "text" || field === "date") {
+            //     let newItem = { value: field, label: field }
+            //     availableOptions.push(newItem)
+            //     this.setState({ filters: filters, availableFilterOption: availableOptions })
+            // }
+            // else {
+                this.setState({ filters: filters })
+            // }
         }
     }
 
-    createField(fieldname) {
+    createField(fieldType) {
         var availableOptions = [...this.state.availableFilterOption];
-        let rows = [...this.state.rows]
+        let filters = [...this.state.filters]
         let newoption = null
-        let length = rows !== undefined ? rows.length : 0
-        if (fieldname === "date") {
-            rows.push({ fieldName: fieldname, dataType: "date", options: "", value: new Date(), key: length })
-        } else if (fieldname === "text") {
-            rows.push({ fieldName: fieldname, dataType: "text", options: "", value: "", key: length })
+        let length = filters !== undefined ? filters.length : 0
+        if (fieldType === "date") {
+            filters.push({ fieldName:'',fieldType: fieldType, dataType: "date", options: "", value: new Date(), key: length })
+        } else if (fieldType === "text") {
+            filters.push({ fieldName:'',fieldType: fieldType, dataType: "text", options: "", value: "", key: length })
         } else {
-            rows.push({ fieldName: fieldname, dataType: "", options: "", value: "", key: length })
+            filters.push({ fieldName:'',fieldType: fieldType, dataType: "", options: "", value: "", key: length })
         }
         //removing filter from option list 
-        newoption = availableOptions.filter(function (obj) {
-            return obj.value !== fieldname;
-        });
-        this.setState({ availableFilterOption: newoption, rows: rows })
+        // newoption = availableOptions.filter(function (obj) {
+        //     return obj.value !== fieldname;
+        // });
+        // this.setState({ availableFilterOption: newoption, filters: filters })
+        
+        this.setState({  filters: filters })
+
     }
 
     handleChange(e) {
@@ -210,7 +219,7 @@ class DashboardEditorFilter extends React.Component {
         this.setState({ input: { ...this.state.input, [name]: value } })
     }
 
-    updateRow(e, index, type) {
+    updateFilterRow(e, index, type) {
         let name
         let value
         if (type === "startDate" || type === "endDate") {
@@ -221,18 +230,18 @@ class DashboardEditorFilter extends React.Component {
             name = e.target.name
             value = e.target.value
         }
-        let rows = [...this.state.rows]
-        rows[index][name] = value
-        this.setState({ rows })
+        let filters = [...this.state.filters]
+        filters[index][name] = value
+        this.setState({ filters })
     }
     handleSelect(e) {
         let name = e.value;
         let value = e.label;
         if (e.__isNew__) {
-            let rows = [...this.state.rows]
-            let length = rows !== undefined ? rows.length : 0
-            rows.push({ fieldName: name, dataType: "", options: "", value: "", key: length })
-            this.setState({ input: { ...this.state.input, "filtertype": "" }, rows })
+            let filters = [...this.state.filters]
+            let length = filters !== undefined ? filters.length : 0
+            filters.push({ fieldName:'',fieldType: name, dataType: "", options: "", value: "", key: length })
+            this.setState({ input: { ...this.state.input, "filtertype": "" }, filters })
         } else {
             this.createField(e.value)
             this.setState({ input: { ...this.state.input, "filtertype": "" } })
@@ -251,8 +260,8 @@ class DashboardEditorFilter extends React.Component {
 
         let restClient = this.props.core.make('oxzion/restClient');
         let filters
-        if (this.state.rows !== undefined) {
-            filters = this.state.rows.filter(function (obj) {
+        if (this.state.filters !== undefined) {
+            filters = this.state.filters.filter(function (obj) {
                 return obj !== undefined && obj.value !== undefined;
             });
         }
@@ -291,17 +300,18 @@ class DashboardEditorFilter extends React.Component {
                     </button>
                 </Row>
                 <Form className="create-filter-form">
-                    {this.state.rows.filter(obj => obj !== undefined).map((row, index) => {
+                    {this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
                         return <FilterFields
-                            index={row.key}
-                            rows={this.state.rows}
+                            index={filterRow.key}
+                            filters={this.state.filters}
                             input={this.state.input}
                             key={index}
-                            dataType={row.dataType || ""}
-                            value={row.value || this.state.input[row.fieldName + "defaultvalue"]}
+                            dataType={filterRow.dataType || ""}
+                            value={filterRow.value || this.state.input[filterRow.fieldType + "defaultvalue"]}
                             removeField={this.removeField}
-                            fieldName={row.fieldName}
-                            onUpdate={(e, index, type) => this.updateRow(e, index, type)}
+                            fieldType={filterRow.fieldType}
+                            fieldName={filterRow.fieldName}
+                            onUpdate={(e, index, type) => this.updateFilterRow(e, index, type)}
                             onChange={(e) => this.handleChange(e)}
                         />
                     })
