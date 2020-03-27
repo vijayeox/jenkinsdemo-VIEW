@@ -360,19 +360,27 @@ class AmChartEditor extends AbstractEditor {
         return validForm
     }
     handleDrillDownChange(e) {
-        let hasMaxDepth = this.state.hasMaxDepth
-        if (e.target.name == "drillDownMaxDepth") {
-            hasMaxDepth = true
-
-        }
-        else if (e.target.name == "drillDownWidget" && this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value) {
-            hasMaxDepth = true
-        }
-
-
+        let hasMaxDepth = false
         let errors = { ...this.state.errors }
         errors["drillDown"][e.target.name] = ""
-        this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
+        
+        if (e.target.name == "drillDownMaxDepth") {
+            hasMaxDepth = true
+            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
+
+        }
+        else if ( e.target.name == "drillDownWidget") {
+            hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value)
+            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else
+        {
+            this.setState({ [e.target.name]: e.target.value,  errors: errors })
+
+        }
+
+
+        
     }
 
     render() {
@@ -615,14 +623,14 @@ class AmChartEditor extends AbstractEditor {
                                         value="" disabled={true} />
                                 </div>
                             }
-                            {
+                            {/* {
                                 ((this.state.selectedTab === "drilldown")) &&
                                 <div className="row">
                                     <div className="col-5">Chart1</div>
                                     <div className="col-2">-></div>
                                     <div className="col-5">chart2</div>
                                 </div>
-                            }
+                            } */}
                         </div>
                     </div>
                 </div>
