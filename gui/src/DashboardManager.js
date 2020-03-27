@@ -144,7 +144,7 @@ class Dashboard extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-            {this.userProfile.key.privileges.MANAGE_DASHBOARD_CREATE &&
+            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
               <div className="row">
                 <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
               </div>
