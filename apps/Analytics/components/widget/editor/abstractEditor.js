@@ -17,6 +17,7 @@ class AbstractEditor extends React.Component {
             errors:{
                 configuration:null,
                 expression: null,
+                drillDown:{},
                 queries: []
             }
         };
