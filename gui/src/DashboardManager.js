@@ -63,7 +63,7 @@ class Dashboard extends React.Component {
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
-    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
     let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
@@ -89,6 +89,7 @@ class Dashboard extends React.Component {
       this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
+
   setTitle(title) { }
 
   handleChange(event) {
@@ -117,6 +118,7 @@ class Dashboard extends React.Component {
       this.setState({ inputs: {} })
     }
   }
+
   editDashboard() {
     var element = document.getElementById("dashboard-editor-div");
     element != undefined && element.classList.remove("hide-dash-editor") //fixes dropdown bug in mozilla firefox cused due to charts
@@ -131,6 +133,7 @@ class Dashboard extends React.Component {
     inputs["dashname"] !== undefined && delete inputs.dashname
     this.setState({ flipped: true, uuid: "", inputs: inputs, loadEditor: true })
   }
+
   render() {
     return (
       <div className="dashboard">
