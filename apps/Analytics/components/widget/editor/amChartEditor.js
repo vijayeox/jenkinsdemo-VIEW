@@ -125,8 +125,10 @@ class AmChartEditor extends AbstractEditor {
         if (this.validateDrillDownForm()) {
             let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
             let drillDownObject = {
+                "target":"widget",
                 "filter": this.state.drillDownFilter,
-                "nextWidgetId": this.state.drillDownWidget,
+                "nextWidgetId": this.state.drillDownWidget
+               
             }
             this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
             this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
