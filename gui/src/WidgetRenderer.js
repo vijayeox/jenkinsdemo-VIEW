@@ -154,7 +154,8 @@ class WidgetRenderer {
                 }
             }
             else {
-                throw('Specify chart type in oxzion-meta object.');
+                console.error('Failed to detect chart type (specify chart type in oxzion-meta property of chart configuration JSON).', configuration);
+                throw('Specify chart type in oxzion-meta property.');
             }
         }
 
