@@ -12,7 +12,6 @@ import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 
-
 class WidgetEditorApp extends React.Component {
     constructor(props) {
         super(props);
@@ -39,6 +38,11 @@ class WidgetEditorApp extends React.Component {
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
+    }
+
+    _sendUnlimitedWidgetListRequest = (params, method) => {
+        return window.postDataRequest('analytics/widget?filter=' + 
+            encodeURIComponent('[{"take":500,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]'), params, method);
     }
 
     inputChanged = (e) => {
@@ -126,7 +130,7 @@ class WidgetEditorApp extends React.Component {
             .then(function (response) {
 
                 //fetch the updated widget list after delete
-                window.postDataRequest('analytics/widget')
+                thiz._sendUnlimitedWidgetListRequest()
                     .then(function (response) {
                         let widgetData = response.data;
                         let widgetList = []
@@ -176,7 +180,7 @@ class WidgetEditorApp extends React.Component {
     componentDidMount() {
         window.widgetEditorApp = this;
         let thiz = this;
-        window.postDataRequest('analytics/widget')
+        this._sendUnlimitedWidgetListRequest()
             .then(function (response) {
                 let widgetData = response.data;
                 let widgetList = []
@@ -341,7 +345,7 @@ class WidgetEditorApp extends React.Component {
             console.log(this.state.visibility)
             params["visualization_uuid"] = this.state.visualizationID
             params["ispublic"] = this.state.visibility;
-            return window.postDataRequest('analytics/widget', params, 'post');
+            return this._sendUnlimitedWidgetListRequest(params, 'post');
         }
         else {
             return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
