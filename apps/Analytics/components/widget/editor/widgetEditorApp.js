@@ -410,8 +410,6 @@ class WidgetEditorApp extends React.Component {
             params["visualization_uuid"] = state.visualizationID
             params["ispublic"] = state.visibility;
             return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'post');
-            //TODO: Refresh the widget list after creating new widget.
-            //return this._sendUnlimitedWidgetListRequest(params, 'post');
         }
         else {
             switch(state.mode) {
