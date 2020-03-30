@@ -275,6 +275,10 @@ class Page extends React.Component {
             data[i].workflowInstanceId,
             this.state.currentRow
           );
+          var fileId = this.replaceParams(
+            data[i].fileId,
+            this.state.currentRow
+          );
           content.push(
             <FormRender
               key={i}
@@ -282,7 +286,9 @@ class Page extends React.Component {
               core={this.core}
               appId={this.appId}
               content={data[i].content}
+              fileId={fileId}
               formId={data[i].form_id}
+              page={data[i].page}
               pipeline={data[i].pipeline}
               parentWorkflowInstanceId={workflowInstanceId}
               postSubmitCallback={this.stepBackBreadcrumb}
