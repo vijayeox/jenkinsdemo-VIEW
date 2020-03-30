@@ -101,3 +101,15 @@
 .drilldown-div .btn{
     margin-left: 0em;
 }
+
+.action-button-box {
+    padding-left:0px;
+    padding-right:0px;
+    min-width:210px;
+}
+
+.action-button-box > button {
+    margin-left:5px;
+    margin-right:5px;
+}
+
