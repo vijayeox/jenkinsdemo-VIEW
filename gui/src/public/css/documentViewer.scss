@@ -18,8 +18,27 @@
 // }
 
 .docList {
-  margin-bottom: 10px;
   cursor: pointer;
+}
+
+.closeButton {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  height: 80px;
+  overflow: hidden;
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  -webkit-transition: background-color 0.15s;
+  transition: background-color 0.15s;
+  width: 80px;
+}
+
+.documentsWrap {
+  margin-top: 10px;
+  border: solid lightgray;
+  border-radius: 10px;
 }
 
 .docListBody {
@@ -134,6 +153,12 @@
 }
 
 .singleFile {
-  padding: 1em;
-  border-bottom: 1px solid;
+  padding: 0.5em 1em 0.5em 0.2em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .fileIcon {
+    padding-right: 5px;
+  }
 }
