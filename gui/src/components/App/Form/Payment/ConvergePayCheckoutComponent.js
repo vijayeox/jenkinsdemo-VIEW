@@ -276,6 +276,7 @@ export default class ConvergePayCheckoutComponent extends Base {
       }
     });
     var that = this;
+    var billing_amount = that.component.amount_field? that.data[that.component.amount_field]:that.data["amount"];
     function renderWithPrefix(prefix) {
       that.component.prefix = "$";
       var ret = that.renderTemplate("input", {
@@ -291,7 +292,7 @@ export default class ConvergePayCheckoutComponent extends Base {
             id: "convergepay-amount",
             placeholder: "Amount to be payed",
             hideLabel: "true",
-            value: that.data["amount"]
+            value: billing_amount
           }
         }
       });
