@@ -22,7 +22,9 @@ class DashboardEditor extends React.Component {
             version: 1,
             contentChanged: false,
             editorMode: 'initial',
-            errors: {}
+            errors: {},
+            filterConfiguration: [],
+            showFilterDiv: false
         };
         this.initialState = { ...this.state }
         this.renderedCharts = {};
@@ -47,12 +49,12 @@ class DashboardEditor extends React.Component {
                     break;
                 case 'permissions':
                     thisInstance.userProfile = thisInstance.core.make("oxzion/profile").get();
-                    let permissions=thisInstance.userProfile.key.privileges;
-                    let preparedData={
-                        "permissions":permissions,
-                        "corrid":eventData.params["OX_CORR_ID"]
+                    let permissions = thisInstance.userProfile.key.privileges;
+                    let preparedData = {
+                        "permissions": permissions,
+                        "corrid": eventData.params["OX_CORR_ID"]
                     }
-                    editorDialog.postMessage({"data":preparedData},'*')
+                    editorDialog.postMessage({ "data": preparedData }, '*')
                 default:
                     console.warn(`Unhandled editor dialog message action:${eventData.action}`);
             }
@@ -209,7 +211,8 @@ class DashboardEditor extends React.Component {
             'version': this.state.version,
             'name': this.state.dashboardName,
             'description': this.state.dashboardDescription,
-            'dashboard_type': "html"
+            'dashboard_type': "html",
+            'filter_configuration': JSON.stringify(this.state.filterConfiguration)
         };
         let url = 'analytics/dashboard';
         let method = '';
@@ -267,7 +270,8 @@ class DashboardEditor extends React.Component {
                     thisInstance.setState({
                         version: dashboard.version,
                         dashboardName: dashboard.name ? dashboard.name : '',
-                        dashboardDescription: dashboard.description ? dashboard.description : ''
+                        dashboardDescription: dashboard.description ? dashboard.description : '',
+                        filterConfiguration: JSON.parse(dashboard.filter_configuration)
                     });
                     editor.setData(response.dashboard.content);
                 },
@@ -404,9 +408,8 @@ class DashboardEditor extends React.Component {
     }
 
     componentDidMount() {
-        if(this.state.dashboardId==null) 
-        {
-            let loader=this.core.make('oxzion/splash');
+        if (this.state.dashboardId == null) {
+            let loader = this.core.make('oxzion/splash');
             loader.destroy()
         }
 
@@ -434,10 +437,13 @@ class DashboardEditor extends React.Component {
     }
 
     displayFilterDiv() {
-        var element = document.getElementById("filter-form-container");
-        element.classList.remove("disappear");
-        document.getElementById("dashboard-container").classList.add("disappear")
-        document.getElementById("dashboard-filter-btn").disabled = true
+        this.setState({ showFilterDiv: true }, state => {
+
+            var element = document.getElementById("filter-form-container");
+            element.classList.remove("disappear");
+            document.getElementById("dashboard-container").classList.add("disappear")
+            document.getElementById("dashboard-filter-btn").disabled = true
+        })
     }
 
     render() {
@@ -448,13 +454,19 @@ class DashboardEditor extends React.Component {
                     <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
                     <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true"></i>Filter</Button>
                 </div>
-                <div>
-                    <DashboardEditorFilter 
-                     notif={this.props.notif}
-                      dashboardId={this.props.dashboardId} 
-                      dashboardVersion={this.state.version} 
-                      core={this.core}
-                      />
+                <div>{
+                    this.state.showFilterDiv &&
+                    <DashboardEditorFilter
+                        hideFilterDiv={() => this.setState({ showFilterDiv: false })}
+                        setFilter={(filter) => this.setState({ filterConfiguration: filter })}
+                        notif={this.props.notif}
+                        dashboardId={this.props.dashboardId}
+                        dashboardVersion={this.state.version}
+                        filterConfiguration={this.state.filterConfiguration}
+                        core={this.core}
+                    />
+                }
+
                 </div>
                 <div id="dashboard-container">
                     <div className="form-group row">
