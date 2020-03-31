@@ -39,10 +39,11 @@ class WidgetEditorApp extends React.Component {
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
+        this.baseState = this.state
     }
 
     _sendUnlimitedWidgetListRequest = (params, method) => {
-        return window.postDataRequest('analytics/widget?filter=' + 
+        return window.postDataRequest('analytics/widget?filter=' +
             encodeURIComponent('[{"take":500,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]'), params, method);
     }
 
@@ -60,6 +61,7 @@ class WidgetEditorApp extends React.Component {
         });
         this.refs.editor.makeReadOnly(flag);
     }
+
 
     loadWidget = (uuid) => {
         let thiz = this;
@@ -483,9 +485,11 @@ class WidgetEditorApp extends React.Component {
     }
 
     toggleWidgetDiv() {
-        this.setState({ 
+        let widget = this.baseState.widget
+        this.setState({
             flipped: true, 
             widgetName: '', 
+            widget: widget, 
             mode:'create' 
         });
     }
@@ -547,8 +551,7 @@ class WidgetEditorApp extends React.Component {
                                 </>
                                 }
                             </div>
-
-                            {!this.state.readOnly &&
+                            {!this.state.readOnly && !this.state.flipped &&
                                 <>
                                     <div className="col-2 right-align">
                                         <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
@@ -583,62 +586,65 @@ class WidgetEditorApp extends React.Component {
                         }
                     </FrontSide>
                     <BackSide style={{ padding: "0px" }}>
-                        <button type="button" className="btn btn-primary" title="Go Back" style={{ borderRadius: "26px" }}
-                            onClick={() => this.setState({ flipped: false })} >
-                            <span className="fa fa-arrow-left" aria-hidden="true"></span>
-                        </button>
+                        {this.state.flipped &&
+                            <>
+                                <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px" }}
+                                    onClick={() => this.setState({ flipped: false })} >
+                                    <span className="fa fa-arrow-left" aria-hidden="true"></span>
+                                </button>
 
-                        <div className="row create-widget-div" >
-                            <div className="col-1 right-align">
-                                <label htmlFor="selectWidget" className="right-align col-form-label form-control-sm">Name</label>
-                            </div>
-                            <div className="col-3">
-                                <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
-                                    onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.isWidgetNameValid}
-                                />
-                                <Overlay target={this.refs.widgetName} show={this.state.errors.widgetName != null} placement="bottom">
-                                    {props => (
-                                        <Tooltip id="widgetName-tooltip" {...props} className="error-tooltip">
-                                            {this.state.errors.widgetName}
-                                        </Tooltip>
-                                    )}
-                                </Overlay>
-                            </div>
-                            <div className="col-1 right-align">
-                                <label htmlFor="selectVisualization" className="right-align col-form-label form-control-sm">Visualization</label>
-                            </div>
-                            <div className="col-3">
-                                <select id="selectVisualization" name="selectVisualization" className="form-control form-control-sm" placeholder="Select Visualization" value={this.state.visualization != null ? this.state.visualization : -1}
-                                    onChange={(event) => this.selectVisualization(event)}>
-                                    <option key="-1" value="-1" disabled></option>
-                                    {this.state.visualizationOptions}
-                                </select>
-                            </div>
-                            <div className="col-1 right-align">
-                                <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
-                            </div>
-                            <div className="col-3">
-                                <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
-                                    <option disabled value="-1" key="-1"></option>
-                                    <option key="1" value="1">public</option>
-                                    <option key="2" value="0">private</option>
-                                </select>
-                            </div>
-                        </div>
+                                <div className="row create-widget-div" >
+                                    <div className="col-1 right-align">
+                                        <label htmlFor="selectWidget" className="right-align col-form-label form-control-sm">Name</label>
+                                    </div>
+                                    <div className="col-3">
+                                        <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
+                                            onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.isWidgetNameValid}
+                                        />
+                                        <Overlay target={this.refs.widgetName} show={this.state.errors.widgetName != null} placement="bottom">
+                                            {props => (
+                                                <Tooltip id="widgetName-tooltip" {...props} className="error-tooltip">
+                                                    {this.state.errors.widgetName}
+                                                </Tooltip>
+                                            )}
+                                        </Overlay>
+                                    </div>
+                                    <div className="col-1 right-align">
+                                        <label htmlFor="selectVisualization" className="right-align col-form-label form-control-sm">Visualization</label>
+                                    </div>
+                                    <div className="col-3">
+                                        <select id="selectVisualization" name="selectVisualization" className="form-control form-control-sm" placeholder="Select Visualization" value={this.state.visualization != null ? this.state.visualization : -1}
+                                            onChange={(event) => this.selectVisualization(event)}>
+                                            <option key="-1" value="-1" disabled></option>
+                                            {this.state.visualizationOptions}
+                                        </select>
+                                    </div>
+                                    <div className="col-1 right-align">
+                                        <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
+                                    </div>
+                                    <div className="col-3">
+                                        <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
+                                            <option disabled value="-1" key="-1"></option>
+                                            <option key="1" value="1">public</option>
+                                            <option key="2" value="0">private</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                        {this.state.flipped ?
-                            <div className="row">
-                                {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
-                                }
-                                {(this.state.widget.type === 'table') &&
-                                    <TableEditor ref="editor" widget={this.state.widget} />
-                                }
-                                {(this.state.widget.type === 'inline') &&
-                                    <AggregateValueEditor ref="editor" widget={this.state.widget} />
-                                }
-                            </div> : null}
 
+                                <div className="row">
+                                    {(this.state.widget.type === 'chart') &&
+                                        <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
+                                    }
+                                    {(this.state.widget.type === 'table') &&
+                                        <TableEditor ref="editor" widget={this.state.widget} />
+                                    }
+                                    {(this.state.widget.type === 'inline') &&
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
+                                    }
+                                </div>
+                            </>
+                        }
                     </BackSide>
                 </Flippy>
                 <WidgetModal

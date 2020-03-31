@@ -1,5 +1,7 @@
-import Base from 'formiojs/components/_classes/component/Component';
-import editForm from 'formiojs/components/table/Table.form';
+import Base from "formiojs/components/_classes/component/Component";
+import editForm from "formiojs/components/table/Table.form";
+import "viewerjs/dist/viewer.css";
+import Viewer from "viewerjs";
 
 export default class DocumentViewerComponent extends Base {
   constructor(component, options, data) {
@@ -9,21 +11,30 @@ export default class DocumentViewerComponent extends Base {
     component.uiUrl = null;
     this.form = this.getRoot();
     var that = this;
-    component.wrapperUrl = '<p> No Files to Display</p>';
-    that.form.element.addEventListener('appDetails', function (e) {
-      component.core = e.detail.core;
-      component.appId = e.detail.appId;
-      component.uiUrl = e.detail.uiUrl;
-      component.wrapperUrl = e.detail.wrapperUrl;
-    },true);
+    component.wrapperUrl = "<p> No Files to Display</p>";
+    that.form.element.addEventListener(
+      "appDetails",
+      function(e) {
+        component.core = e.detail.core;
+        component.appId = e.detail.appId;
+        component.uiUrl = e.detail.uiUrl;
+        component.wrapperUrl = e.detail.wrapperUrl;
+      },
+      true
+    );
   }
+
+  //disable
   static schema(...extend) {
-    return Base.schema({
-      label: 'documentviewer',
-      type: 'documentviewer'
-    }, ...extend);
+    return Base.schema(
+      {
+        label: "documentviewer",
+        type: "documentviewer"
+      },
+      ...extend
+    );
   }
-   setValue(value) {
+  setValue(value) {
     this.value = JSON.stringify(value);
     this.dataValue = JSON.stringify(value);
   }
@@ -31,131 +42,245 @@ export default class DocumentViewerComponent extends Base {
     return DocumentViewerComponent.schema();
   }
   static builderInfo = {
-    title: 'Document',
-    group: 'basic',
-    icon: 'fa fa-file',
+    title: "Document",
+    group: "basic",
+    icon: "fa fa-file",
     weight: 70,
     schema: DocumentViewerComponent.schema()
+  };
+  //disable
+
+  displayImage(show, src) {
+    if (show) {
+      this.imageViewer ? this.imageViewer.destroy() : null;
+      this.imageViewer = new Viewer(document.getElementById(src), {
+        inline: true,
+        button: false,
+        navbar: false,
+        toolbar: {
+          zoomIn: true,
+          zoomOut: true,
+          oneToOne: true,
+          reset: true,
+          rotateLeft: true,
+          rotateRight: true,
+          flipHorizontal: true,
+          flipVertical: true
+        }
+      });
+    } else {
+      this.imageViewer ? this.imageViewer.destroy() : null;
+    }
   }
   // onChange(flags, fromRoot){
-    bindHandlers(){
-      var component = this.component
-      if(component.bindHandlers){
-        return;
-      }      
-      var dataValue = this.dataValue;
-      if(typeof dataValue == 'string'){
-       dataValue = JSON.parse(dataValue);
-     }
-     // var component = this.component
-     var that =this;
-     var evt = new CustomEvent("getAppDetails", {detail:{} });
-     this.form.element.dispatchEvent(evt);
-     this.fileList = this.getFileList(dataValue,component);
-     this.redraw();
-     if(dataValue && dataValue != undefined){
-      var elements = document.getElementsByClassName(component.key + "-selectFile");
-      if(elements.length > 0){
+  bindHandlers() {
+    var component = this.component;
+    if (component.bindHandlers) {
+      return;
+    }
+    var dataValue = this.dataValue;
+    if (typeof dataValue == "string") {
+      dataValue = JSON.parse(dataValue);
+    }
+    // var component = this.component
+    var that = this;
+    var evt = new CustomEvent("getAppDetails", { detail: {} });
+    this.form.element.dispatchEvent(evt);
+    this.fileList = this.generateFileList(dataValue, component);
+    this.redraw();
+    if (dataValue && dataValue != undefined) {
+      var elements = document.getElementsByClassName(
+        component.key + "-selectFile"
+      );
+      if (elements.length > 0) {
         component.bindHandlers = true;
       }
+
       Array.from(elements).forEach(function(element) {
-        element.addEventListener('click', function(event){
+        element.addEventListener("click", function(event) {
           var file = this.parentElement.parentElement.getAttribute("data-file");
 
           var url = this.parentElement.getAttribute("data-url");
-          if(!url){
+          if (!url) {
             url = this.parentElement.parentElement.getAttribute("data-url");
           }
-          document.getElementById(component.key + '-filePreviewModal').style.display = "block";
-          // document.getElementById(component.key + '-filePreviewModal').style.height = that.form.element.parentElement.parentElement.clientHeight + 'px';
-
-          var fileType = this.parentElement.parentElement.getAttribute("data-type");
+          document.getElementById(
+            component.key + "-filePreviewModal"
+          ).style.display = "block";
+          var fileType = this.parentElement.parentElement
+            .getAttribute("data-type")
+            .toLowerCase();
           console.log(fileType);
-          if(fileType == 'png' || fileType == 'jpeg' || fileType == 'jpg'){
-              document.getElementById(component.key + '-filePreviewWindow').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;" key="'+url+'"></img>';            
-          }else{
-              document.getElementById(component.key + '-filePreviewWindow').innerHTML = '<iframe src="'+url+'" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="'+url+'"></iframe>';
-          }          
+          if (fileType == "png" || fileType == "jpeg" || fileType == "jpg") {
+            document.getElementById(
+              component.key + "-filePreviewWindow"
+            ).innerHTML =
+              '<img id="imagesPreview" src="' +
+              url +
+              '" style="display:none;" key="' +
+              url +
+              '"></img>';
+            that.displayImage(true, component.key + "-filePreviewWindow");
+          } else {
+            document.getElementById(
+              component.key + "-filePreviewWindow"
+            ).innerHTML =
+              '<iframe src="' +
+              url +
+              '" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="' +
+              url +
+              '"></iframe>';
+          }
           event.stopPropagation();
         });
       });
-      var downloadElements = document.getElementsByClassName(component.key + "-downloadFile");
+
+      var downloadElements = document.getElementsByClassName(
+        component.key + "-downloadFile"
+      );
       Array.from(downloadElements).forEach(function(element) {
-        element.addEventListener('click', function(event){
-          var url = this.parentElement.parentElement.getAttribute("data-downloadurl");
-          window.open(url,'_blank');
+        element.addEventListener("click", function(event) {
+          var url = this.parentElement.parentElement.getAttribute(
+            "data-downloadurl"
+          );
+          url = url ? url : this.parentElement.getAttribute("data-downloadurl");
+          window.open(url, "_blank");
           event.stopPropagation();
         });
       });
-      var closeFile = document.getElementById(component.key + '-closeFile');
-      if(closeFile){
-        closeFile.addEventListener('click', function(event){
-          document.getElementById(component.key + '-filePreviewModal').style.display='none'
+
+      var closeFile = document.getElementById(component.key + "-closeFile");
+      if (closeFile) {
+        closeFile.addEventListener("click", function(event) {
+          that.displayImage(false);
+          document.getElementById(
+            component.key + "-filePreviewModal"
+          ).style.display = "none";
         });
       }
     }
   }
-  getFileList(files,component){
-    var fileList = '';
-    if(files){
+
+  generateFileList(files, component) {
+    var fileList = `<h5>` + component.label + `</h5><div class="documentsWrap">`;
+    if (files) {
       for (var prop in files) {
-        var file = (files[prop]['file']) ? files[prop]['file'] : files[prop];
-        var fileName = (files[prop]['originalName']) ? files[prop]['originalName'] : file.substring(file.lastIndexOf('/')+1);
-        var type = (file.substr(file.lastIndexOf('.') + 1));
-        var url = '';
-        var icon = "<i class='fa fa-file-o'></i>";
+        var file = files[prop]["file"] ? files[prop]["file"] : files[prop];
+        var fileName = files[prop]["originalName"]
+          ? files[prop]["originalName"]
+          : file.substring(file.lastIndexOf("/") + 1);
+        var type = (file.substr(file.lastIndexOf(".") + 1)).toLowerCase();
+        var url, icon, disableView;
         if (type == "pdf") {
-          url = component.uiUrl+"/ViewerJS/#" + component.wrapperUrl+component.appId+'/'+file;
+          url =
+            component.uiUrl +
+            "/ViewerJS/#" +
+            component.wrapperUrl +
+            component.appId +
+            "/" +
+            file;
           icon = "<i class='fa fa-file-pdf-o'></i>";
-        } else {
-          url = component.wrapperUrl+component.appId+'/'+file;
+          disableView = false;
+        } else if (type == "png" || type == "jpeg" || type == "jpg") {
+          url = component.wrapperUrl + component.appId + "/" + file;
           icon = "<i class='fa fa-picture-o'></i>";
-        } 
-        // else {
-        //   url = component.wrapperUrl+"/"+component.appId+'/'+file;
-        //   window.open(url, "_self");
-        // }
-        fileList += `<div class="docList" key="`+prop+`">
-        <div class="fileDiv">
-        <div class="singleFile row" id="selectFile_`+prop+`" data-downloadurl="`+component.wrapperUrl+component.appId+'/'+file+`" data-file="`+prop+`" data-type="`+type+`" data-url="`+url+`"><span class="col-md-10 `+ component.key + `-selectFile" style="line-height: 1.5; vertical-align: middle;padding: .375rem .75rem;">`+icon+' '+fileName+`</span><span class="col-md-1"><button class="btn btn-sm btn-info `+component.key+ `-selectFile" ><i class="fa fa-eye"></i></button></span><span class="col-md-1"><button class="btn btn-sm btn-info `+component.key+ `-downloadFile" style="margin-left:5px;" ><i class="fa fa-download"></i></button>
-        </span></div></div>
-        </div>`;
+          disableView = false;
+        } else {
+          icon = "<i class='fa fa-file-o fileIcon'></i>";
+          disableView = true;
+        }
+        fileList +=
+          `<div class="docList" key="` +
+          prop +
+          `">
+           <div class="fileDiv">
+          <div class="singleFile" ` +
+          prop +
+          `" data-downloadurl="` +
+          component.wrapperUrl +
+          component.appId +
+          "/" +
+          file +
+          `" data-file="` +
+          prop +
+          `" data-type="` +
+          type +
+          `" data-url="` +
+          url +
+          `">
+            <span class="col-md-10 ` +
+          component.key +
+          `-downloadFile">` +
+          icon +
+          "&nbsp;&nbsp;" +
+          fileName +
+          `</span>
+            <span class="col-md-1">
+              <button` +
+          (disableView ? ` hidden ` : "") +
+          ` class="btn btn-sm btn-info ` +
+          component.key +
+          `-selectFile" >
+                <i class="fa fa-eye"></i>
+              </button>
+            </span>
+            <span class="col-md-1">
+              <button class="btn btn-sm btn-info ` +
+          component.key +
+          `-downloadFile" style="margin-left:5px;" >
+                <i class="fa fa-download"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>`;
       }
+      fileList += "</div>";
     } else {
-      fileList = '<p> No Files to Display</p>';
+      fileList = "<p> No Files to Display</p>";
     }
     return fileList;
   }
 
   render(children) {
-    var fileList = this.fileList?this.fileList:null;
-    var row = `<div class="row" style="padding: 15px;" >
-    <div class="col-md-12" >`+ fileList +`</div>
+    var fileList = this.fileList ? this.fileList : null;
+    var row =
+      `<div class="row">
+    <div class="col-md-12" >` +
+      fileList +
+      `</div>
     </div>
-    <div id="`+this.component.key+`-filePreviewModal" class="modal">
+    <div id="` +
+      this.component.key +
+      `-filePreviewModal" class="modal">
     <div style="height:inherit;display: block;background-color: white;">
-    <span id="`+this.component.key+`-closeFile" class="close" style="font-size:2em">&times;</span>
-    <div id="`+this.component.key+`-filePreviewWindow" style="height:inherit"></div>
+    <div id="` +
+      this.component.key +
+      `-closeFile" class="viewer-button viewer-close" style="z-index:111"></div>
+    <div id="` +
+      this.component.key +
+      `-filePreviewWindow" style="height:inherit"></div>
     </div>
     </div>`;
-    var content = super.render(row);
     var that = this;
-    setTimeout(function(){
-     that.bindHandlers();
-   },200);
-    return content;
+    setTimeout(function() {
+      that.bindHandlers();
+    }, 200);
+    return super.render(row);
   }
+
+  //disable
 
   attach(element) {
     return super.attach(element);
   }
-  static editForm = editForm
+  static editForm = editForm;
 
   elementInfo() {
     const info = super.elementInfo();
-    info.type = 'input';
-    info.attr.type = 'hidden';
-    info.changeEvent = 'change';
+    info.type = "input";
+    info.attr.type = "hidden";
+    info.changeEvent = "change";
     return info;
   }
   build(element) {
