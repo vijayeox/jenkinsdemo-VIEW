@@ -92,7 +92,7 @@ class SearchPage extends React.Component {
   }
 
   render() {
-    var placeholder = this.placeholder?this.placeholder:"Search for...";
+    var placeholder = this.state.placeholder?this.state.placeholder:"Search for...";
     return (
       <div className="searchResults">
         <div className="searchPageDiv">

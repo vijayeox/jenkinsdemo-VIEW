@@ -231,30 +231,32 @@ class Dashboard extends React.Component {
             }
           </FrontSide>
           <BackSide>
-            <div id="dashboard-editor-div">
-              {
-                this.state.loadEditor &&
-                <DashboardEditor
-                  args={this.core}
-                  notif={this.notif}
-                  setTitle={this.setTitle}
-                  key={this.state.uuid}
-                  dashboardId={this.state.uuid}
-                  flipCard={(status) => {
-                    if (status === "Saved") {
-                      //refreshing the dashboardData
-                      this.fetchDashboards()
+            {this.state.flipped &&
+              <div id="dashboard-editor-div">
+                {
+                  this.state.loadEditor &&
+                  <DashboardEditor
+                    args={this.core}
+                    notif={this.notif}
+                    setTitle={this.setTitle}
+                    key={this.state.uuid}
+                    dashboardId={this.state.uuid}
+                    flipCard={(status) => {
+                      if (status === "Saved") {
+                        //refreshing the dashboardData
+                        this.fetchDashboards()
 
-                    }
-                    else if (status === "") {
-                      var element = document.getElementById("dashboard-editor-div");
-                      element.classList.add("hide-dash-editor");
-                    }
-                    this.setState({ flipped: false, loadEditor: false })
-                  }}
-                />
-              }
-            </div>
+                      }
+                      else if (status === "") {
+                        var element = document.getElementById("dashboard-editor-div");
+                        element.classList.add("hide-dash-editor");
+                      }
+                      this.setState({ flipped: false, loadEditor: false })
+                    }}
+                  />
+                }
+              </div>
+            }
           </BackSide>
         </Flippy>
 
