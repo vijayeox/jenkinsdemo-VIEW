@@ -345,6 +345,7 @@ class Page extends React.Component {
           break;
         case "Search":
           var itemContent = JSON.parse(data[i].content);
+          var placeholder = itemContent.placeholder;
           var columnConfig = itemContent.columnConfig;
           if (itemContent.actions) {
             if (columnConfig[columnConfig.length - 1].title == "Actions") {
@@ -368,6 +369,7 @@ class Page extends React.Component {
               appId={this.appId}
               entityId={itemContent.entityId}
               columnConfig={columnConfig}
+              placeholder={placeholder}
             />
           );
           break;
