@@ -942,10 +942,7 @@ class FormRender extends React.Component {
       }
       if (properties["commands"]) {
         var that = this;
-        var merge_data = merge(this.cleanData(form.submission.data), {
-          form_props: { fileId: that.props.fileId, url: that.props.url }
-        });
-        this.callPipeline(properties["commands"],merge_data).then(response => {
+        this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
           that.showFormLoader(false,0);
           if (response.status == "success") {
             if (response.data) {
