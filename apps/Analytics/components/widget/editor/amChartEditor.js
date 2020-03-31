@@ -20,7 +20,6 @@ class AmChartEditor extends AbstractEditor {
             QUERY_NEEDED: 'Query should be selected',
             EXPRESSION_INVALID_JSON: 'Expression JSON is invalid',
         };
-        console.log(this.props)
     }
 
     configurationChanged = (evt) => {
@@ -44,8 +43,6 @@ class AmChartEditor extends AbstractEditor {
     }
 
     refreshChartPreview = () => {
-        let thiz = this
-        console.log(this.state.something)
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {

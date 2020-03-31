@@ -98,7 +98,13 @@ window.onDialogEvent = function(dialogEvent) {
                     widgetEditorApp.saveWidget().
                         then(function(response) {
                             let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
-                            data['id'] = response.newWidgetUuid;
+                            let mode = widgetEditorApp.getEditorMode();
+                            if (mode === 'edit') {
+                                data['id'] = response['uuid'];
+                            }
+                            else {
+                                data['id'] = response['newWidgetUuid'];
+                            }
                             closeDialogWindow(data);
                         }).
                         catch(function(response) {
