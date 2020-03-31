@@ -65,12 +65,12 @@ export default class CountryComponent extends Base {
         var city = this.renderTemplate('input', { 
             input: {
                 type: 'input',
-                ref: `city`,
-                name: 'city',
-                id : "city",
+                ref: `selectcity`,
+                name: 'selectcity',
+                id : "selectcity",
                 attr: {
-                    key:'city',
-                    id:'city',
+                    key:'selectcity',
+                    id:'selectcity',
                     hideLabel: 'true',
                     class:"form-control",
                     placeholder: "Enter City"
@@ -106,15 +106,17 @@ export default class CountryComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) { 
+        $('#selectcountry').val("");
         document.getElementById("selectcountry").addEventListener("input" , (e) => this.updateValue({country: e.target.value}));
         document.getElementById("selectstate").addEventListener("input" , (e) => this.updateValue({...this.data['address'],state: e.target.value}));
-        document.getElementById("city").addEventListener("input" , (e) => this.updateValue({...this.data['address'],city: e.target.value}));
+        document.getElementById("selectcity").addEventListener("input" , (e) => this.updateValue({...this.data['address'],city: e.target.value}));
         
         $('#selectcountry').append(`<option value = "" disabled selected >Select Country</option>`);
+        
         $('#selectstate').append(`<option value = "" disabled selected >Select State</option>`)
-        console.log(this.data["address"])
         var options = Country.countryList;
         arrayColumn('#selectcountry',options,'country');
+        
         function arrayColumn(id,array, columnName) {
             return array.map(function(value,index) {
                
@@ -130,7 +132,7 @@ export default class CountryComponent extends Base {
         $('#selectcountry').change(function(e){
             selectedCountry = $(this).val()
             $('#selectstate').empty().append(`<option value = "" disabled selected >Select State</option>`);
-            $('#city').val("")
+            $('#selectcity').val("")
             let obj = options.find(o => o.country === selectedCountry);
             if(obj){
                 values = obj.states;
