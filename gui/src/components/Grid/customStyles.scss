@@ -111,7 +111,7 @@
   }
   .k-pager-wrap .k-link,
   .k-pager-wrap .k-pager-nav {
-    color: #275362;
+    color: black;
   }
 
   .k-button {
@@ -120,6 +120,15 @@
 
   .k-header {
     font-size: small;
+    border-left-width: 1px;
+  }
+
+  .k-grid-header-wrap{
+    border-left-width: 1px;
+  }
+
+  .k-grid-pager{
+    border-width: 1px;
   }
 
   .k-grid-table {
