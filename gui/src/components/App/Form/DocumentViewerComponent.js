@@ -169,8 +169,13 @@ export default class DocumentViewerComponent extends Base {
         var fileName = files[prop]["originalName"]
           ? files[prop]["originalName"]
           : file.substring(file.lastIndexOf("/") + 1);
-        var type = (file.substr(file.lastIndexOf(".") + 1)).toLowerCase();
-        var url, icon, disableView;
+          var type;
+          if(file && file.file_url){
+            type = (file.file_url.substr(file.file_url.lastIndexOf(".") + 1)).toLowerCase();
+          } else {
+            type = (file.substr(file.lastIndexOf(".") + 1)).toLowerCase();
+          }
+        var url, icon, disableView,downloadUrl;
         if (type == "pdf") {
           url =
             component.uiUrl +
@@ -179,10 +184,21 @@ export default class DocumentViewerComponent extends Base {
             component.appId +
             "/" +
             file;
+            if(file && file.file_url){
+            downloadUrl = component.wrapperUrl + component.appId  + "/" + file.file_url;
+          } else {
+            downloadUrl = component.wrapperUrl + component.appId + "/" + file;
+          }
           icon = "<i class='fa fa-file-pdf-o'></i>";
           disableView = false;
         } else if (type == "png" || type == "jpeg" || type == "jpg") {
           url = component.wrapperUrl + component.appId + "/" + file;
+          if(file && file.file_url){
+            url = component.wrapperUrl + component.appId + "/" + file.file_url;
+            downloadUrl = component.wrapperUrl + component.appId + "/" + file.file_url;
+          } else {
+            downloadUrl = url;
+          }
           icon = "<i class='fa fa-picture-o'></i>";
           disableView = false;
         } else {
@@ -197,10 +213,7 @@ export default class DocumentViewerComponent extends Base {
           <div class="singleFile" ` +
           prop +
           `" data-downloadurl="` +
-          component.wrapperUrl +
-          component.appId +
-          "/" +
-          file +
+          downloadUrl +
           `" data-file="` +
           prop +
           `" data-type="` +
