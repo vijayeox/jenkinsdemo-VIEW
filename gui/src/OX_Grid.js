@@ -26,45 +26,12 @@ export default class OX_Grid extends React.Component {
     this.child = React.createRef();
     this.userprofile = this.props.osjsCore.make("oxzion/profile").get().key;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
-    var apiUrl = this.props.data;
-    var defaultFilters = {};
-    if (this.props.gridDefaultFilters) {
-      defaultFilters = this.props.gridDefaultFilters;
-    }
-    if (typeof this.props.data == "string") {
-      var splitUrl = this.props.data.split("?");
-      if (splitUrl[1]) {
-        apiUrl = splitUrl[0];
-        var getUrlParams = decodeURI(splitUrl[1])
-          .replace("?", "")
-          .split("&")
-          .map(param => param.split("="))
-          .reduce((values, [key, value]) => {
-            values[key] = value;
-            return values;
-          }, {});
-        if (getUrlParams.filter) {
-          try {
-            defaultFilters = JSON.parse(getUrlParams.filter);
-          } catch (e) {
-            console.log(getUrlParams.filter);
-            console.log(e);
-            defaultFilters = getUrlParams.filter;
-          }
-        } else {
-          apiUrl = this.props.data;
-        }
-      }
-    }
-    if (this.rawDataPresent) {
-      apiUrl = undefined;
-    }
     this.state = {
       gridData: this.rawDataPresent ? this.props.data : [],
-      api: apiUrl,
-      dataState: defaultFilters,
-      apiActivityCompleted: this.rawDataPresent ? true : false,
-      gridDefaultFilters: defaultFilters
+      dataState: this.props.gridDefaultFilters
+        ? this.props.gridDefaultFilters
+        : {},
+      apiActivityCompleted: this.rawDataPresent ? true : false
     };
   }
 
@@ -95,6 +62,32 @@ export default class OX_Grid extends React.Component {
   componentWillReceiveProps(props) {
     if (props.gridDefaultFilters) {
       this.setState({ dataState: props.gridDefaultFilters });
+    }
+  }
+
+  parseDefaultFilters() {
+    var splitUrl = this.props.data.split("?");
+    if (splitUrl[1]) {
+      apiUrl = splitUrl[0];
+      var getUrlParams = decodeURI(splitUrl[1])
+        .replace("?", "")
+        .split("&")
+        .map(param => param.split("="))
+        .reduce((values, [key, value]) => {
+          values[key] = value;
+          return values;
+        }, {});
+      if (getUrlParams.filter) {
+        try {
+          defaultFilters = JSON.parse(getUrlParams.filter);
+        } catch (e) {
+          console.log(getUrlParams.filter);
+          console.log(e);
+          defaultFilters = getUrlParams.filter;
+        }
+      } else {
+        apiUrl = this.props.data;
+      }
     }
   }
 
@@ -274,7 +267,7 @@ export default class OX_Grid extends React.Component {
 
   render() {
     return (
-      <div style={{ height: "94%" }} className="GridCustomStyle">
+      <div style={{ height: "100%" }} className="GridCustomStyle">
         {this.rawDataPresent ? (
           <DataOperation
             args={this.props.osjsCore}
@@ -287,7 +280,7 @@ export default class OX_Grid extends React.Component {
           <DataLoader
             ref={this.child}
             args={this.props.osjsCore}
-            url={this.state.api}
+            url={this.props.data}
             dataState={this.state.dataState}
             onDataRecieved={this.dataRecieved}
             columnConfig={this.props.columnConfig}
@@ -433,7 +426,7 @@ OX_Grid.propTypes = {
   resizable: PropTypes.bool,
   reorderable: PropTypes.bool,
   rowTemplate: PropTypes.func,
-  sortable: PropTypes.bool,
+  sortable: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   expandable: PropTypes.bool
 };
 
