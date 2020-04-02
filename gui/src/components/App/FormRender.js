@@ -931,12 +931,16 @@ class FormRender extends React.Component {
     }
   }
   runDelegates(form, properties) {
+    var PageRenderDiv = document.querySelector(".PageRender");
+    this.loader.show(PageRenderDiv);
     if (properties) {
       if (properties["delegate"]) {
         this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
           this.showFormLoader(false,0);
           if (response.data) {
-            form.setSubmission({data:this.formatFormData(response.data)});
+            form.setSubmission({data:this.formatFormData(response.data)}).then(response2=>{
+              this.loader.destroy();
+            });
           }
         });
       }
@@ -951,7 +955,8 @@ class FormRender extends React.Component {
                   this.postDelegateRefresh(form,properties);
                 }else{
                   that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
-                }  
+                }
+                 this.loader.destroy();
               });
             }
           }
