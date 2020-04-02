@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
-
+import Swal from "sweetalert2";
 import FormRender from "./FormRender";
 import HTMLViewer from "./HTMLViewer";
 import OX_Grid from "../../OX_Grid";
@@ -129,6 +129,7 @@ class Page extends React.Component {
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
+      var pageDetails = this.state.pageContent;
       this.setState({
         pageContent: [],
         showLoader: true
@@ -147,8 +148,14 @@ class Page extends React.Component {
               showLoader: false
             });
           } else {
+              Swal.fire({
+          icon: "error",
+          title: response.message,
+          showConfirmButton: true
+        });
             that.setState({
-              pageContent: action.details.slice(0, index)
+              pageContent: pageDetails,
+              showLoader:false
             });
             return false;
           }
