@@ -156,7 +156,7 @@ export default class DocumentViewerComponent extends Base {
 
   generateFileList(files, component) {
     var fileList = `<h5>` + component.label + `</h5><div class="documentsWrap">`;
-    if (files && Array.isArray(files) && files.length) {
+    if (files) {
       for (var prop in files) {
         var file = files[prop]["file"] ? files[prop]["file"] : files[prop];
         var fileName = files[prop]["originalName"]
