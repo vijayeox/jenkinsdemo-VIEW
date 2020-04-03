@@ -118,6 +118,7 @@ class Dashboard extends Component {
     let errorFound = false;
     for (let widget of widgets) {        
       var attributes = widget.attributes;
+      //dispose 
       var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
       let response = await this.getWidgetByUuid(widgetUUId);
       if ('error' === response.status) {
@@ -126,6 +127,7 @@ class Dashboard extends Component {
         errorFound = true;
       }
       else {
+        //dispose
         let widgetObject = WidgetRenderer.render(widget, response.data.widget);
         if (widgetObject) {
           this.renderedWidgets[widgetUUId] = widgetObject;

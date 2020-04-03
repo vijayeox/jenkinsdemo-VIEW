@@ -79,91 +79,84 @@ export default class DocumentViewerComponent extends Base {
       return;
     }
     var dataValue = this.dataValue;
-    if (typeof dataValue == "string") {
+    var value = this.value;
+    try{
       dataValue = JSON.parse(dataValue);
+    } catch(e){
+      console.log(dataValue + 'Not a JSON');
     }
-    // var component = this.component
+    try{
+      value = JSON.parse(value);
+      value = JSON.parse(value);
+    } catch(e){
+      console.log(value + 'Not a JSON');
+    }
     var that = this;
     var evt = new CustomEvent("getAppDetails", { detail: {} });
     this.form.element.dispatchEvent(evt);
-    this.fileList = this.generateFileList(dataValue, component);
+    if(value && value != undefined){
+      this.fileList = this.generateFileList(value, component);
+    } else {
+      this.fileList = this.generateFileList(dataValue, component);
+    }
     this.redraw();
-    if (dataValue && dataValue != undefined) {
-      var elements = document.getElementsByClassName(
-        component.key + "-selectFile"
-      );
+    if ((dataValue && dataValue != undefined)||(value && value != undefined)) {
+      var elements = document.getElementsByClassName(component.key + "-selectFile");
       if (elements.length > 0) {
         component.bindHandlers = true;
       }
-
-      Array.from(elements).forEach(function(element) {
-        element.addEventListener("click", function(event) {
+    }
+  }
+  attach(element){
+    var that = this;
+    if(element){
+    var elements = element.getElementsByClassName(
+        that.key + "-selectFile"
+      );
+      Array.from(elements).forEach(function(ele) {
+        ele.addEventListener("click", function(event) {
           var file = this.parentElement.parentElement.getAttribute("data-file");
-
           var url = this.parentElement.getAttribute("data-url");
           if (!url) {
             url = this.parentElement.parentElement.getAttribute("data-url");
           }
-          document.getElementById(
-            component.key + "-filePreviewModal"
-          ).style.display = "block";
-          var fileType = this.parentElement.parentElement
-            .getAttribute("data-type")
-            .toLowerCase();
-          console.log(fileType);
+          document.getElementById(that.key + "-filePreviewModal").style.display = "block";
+          var fileType = this.parentElement.parentElement.getAttribute("data-type").toLowerCase();
           if (fileType == "png" || fileType == "jpeg" || fileType == "jpg") {
-            document.getElementById(
-              component.key + "-filePreviewWindow"
-            ).innerHTML =
-              '<img id="imagesPreview" src="' +
-              url +
-              '" style="display:none;" key="' +
-              url +
-              '"></img>';
-            that.displayImage(true, component.key + "-filePreviewWindow");
+            document.getElementById(that.key + "-filePreviewWindow").innerHTML = '<img id="imagesPreview" src="' + url + '" style="display:none;" key="' + url +'"></img>';
+            that.displayImage(true, that.key + "-filePreviewWindow");
           } else {
-            document.getElementById(
-              component.key + "-filePreviewWindow"
-            ).innerHTML =
-              '<iframe src="' +
-              url +
-              '" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="' +
-              url +
-              '"></iframe>';
+            document.getElementById(that.key + "-filePreviewWindow").innerHTML ='<iframe src="' + url +'" allowTransparency="true" frameborder="0" scrolling="yes" style="width:100%;height:100%;" class="iframeDoc" key="' +url + '"></iframe>';
           }
           event.stopPropagation();
         });
       });
 
-      var downloadElements = document.getElementsByClassName(
-        component.key + "-downloadFile"
-      );
-      Array.from(downloadElements).forEach(function(element) {
-        element.addEventListener("click", function(event) {
-          var url = this.parentElement.parentElement.getAttribute(
-            "data-downloadurl"
-          );
+      var downloadElements = element.getElementsByClassName(that.key + "-downloadFile");
+      Array.from(downloadElements).forEach(function(ele) {
+        ele.addEventListener("click", function(event) {
+          var url = this.parentElement.parentElement.getAttribute("data-downloadurl");
           url = url ? url : this.parentElement.getAttribute("data-downloadurl");
           window.open(url, "_blank");
           event.stopPropagation();
         });
       });
-
-      var closeFile = document.getElementById(component.key + "-closeFile");
+      var closeFile = document.getElementById(that.key + "-closeFile");
       if (closeFile) {
         closeFile.addEventListener("click", function(event) {
           that.displayImage(false);
           document.getElementById(
-            component.key + "-filePreviewModal"
+            that.key + "-filePreviewModal"
           ).style.display = "none";
         });
       }
     }
+      return super.attach(element);
   }
 
   generateFileList(files, component) {
     var fileList = `<h5>` + component.label + `</h5><div class="documentsWrap">`;
-    if (files) {
+    if (files && Array.isArray(files) && files.length) {
       for (var prop in files) {
         var file = files[prop]["file"] ? files[prop]["file"] : files[prop];
         var fileName = files[prop]["originalName"]
@@ -283,10 +276,6 @@ export default class DocumentViewerComponent extends Base {
   }
 
   //disable
-
-  attach(element) {
-    return super.attach(element);
-  }
   static editForm = editForm;
 
   elementInfo() {
