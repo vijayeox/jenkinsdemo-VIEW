@@ -1,13 +1,14 @@
 import React from "react";
 import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
-
+import Swal from "sweetalert2";
 import FormRender from "./FormRender";
 import HTMLViewer from "./HTMLViewer";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
+import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
 
 class Page extends React.Component {
@@ -129,6 +130,7 @@ class Page extends React.Component {
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
+      var pageDetails = this.state.pageContent;
       this.setState({
         pageContent: [],
         showLoader: true
@@ -147,8 +149,14 @@ class Page extends React.Component {
               showLoader: false
             });
           } else {
+            Swal.fire({
+              icon: "error",
+              title: response.message,
+              showConfirmButton: true
+            });
             that.setState({
-              pageContent: action.details.slice(0, index)
+              pageContent: pageDetails,
+              showLoader: false
             });
             return false;
           }
@@ -194,9 +202,9 @@ class Page extends React.Component {
   }
 
   replaceParams(route, params) {
-    if (!params) {
-      return route;
-    }
+    var finalParams = merge(params ? params : {}, {
+      current_date: moment().format("YYYY-MM-DD")
+    });
     var regex = /\{\{.*?\}\}/g;
     let m;
     while ((m = regex.exec(route)) !== null) {
@@ -208,7 +216,10 @@ class Page extends React.Component {
       // The result can be accessed through the `m`-variable.
       m.forEach((match, groupIndex) => {
         // console.log(`Found match, group ${groupIndex}: ${match}`);
-        route = route.replace(match, params[match.replace(/\{\{|\}\}/g, "")]);
+        route = route.replace(
+          match,
+          finalParams[match.replace(/\{\{|\}\}/g, "")]
+        );
       });
     }
     return route;
@@ -219,7 +230,6 @@ class Page extends React.Component {
       if (!params) {
         params = {};
       }
-      params["current_date"] = moment().format("YYYY-MM-DD");
       var result = this.replaceParams(route, params);
       result = "app/" + this.appId + "/" + result;
       return result;
@@ -327,9 +337,9 @@ class Page extends React.Component {
               osjsCore={this.core}
               data={dataString}
               gridDefaultFilters={
-                itemContent.defaultFilter
-                  ? this.replaceParams(itemContent.defaultFilter)
-                  : null
+                itemContent.defaultFilters
+                  ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                  : undefined
               }
               gridOperations={itemContent.operations}
               gridToolbar={itemContent.toolbarTemplate}
@@ -431,7 +441,8 @@ class Page extends React.Component {
         </div>
       );
     }
-    this.loader.show();
+    var PageRenderDiv = document.querySelector(".PageRender");
+    this.loader.show(PageRenderDiv);
     return <div></div>;
   }
 }

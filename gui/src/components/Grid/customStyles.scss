@@ -7,6 +7,9 @@
     overflow-y: scroll;
     cursor: pointer;
     min-height: 200px;
+    table {
+      user-select: text;
+    }
   }
 
   input {
@@ -123,11 +126,11 @@
     border-left-width: 1px;
   }
 
-  .k-grid-header-wrap{
+  .k-grid-header-wrap {
     border-left-width: 1px;
   }
 
-  .k-grid-pager{
+  .k-grid-pager {
     border-width: 1px;
   }
 

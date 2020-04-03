@@ -4,7 +4,7 @@ import { Overlay, Tooltip, Button, Form } from 'react-bootstrap';
 import { dashboardEditor as section } from './metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 
-import { WidgetRenderer, DashboardEditorFilter } from './GUIComponents';
+import { WidgetRenderer, DashboardFilter } from './GUIComponents';
 import Swal from 'sweetalert2';
 import '../../gui/src/public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
@@ -456,10 +456,11 @@ class DashboardEditor extends React.Component {
                 </div>
                 <div>{
                     this.state.showFilterDiv &&
-                    <DashboardEditorFilter
+                    <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
                         setFilter={(filter) => this.setState({ filterConfiguration: filter })}
                         notif={this.props.notif}
+                        filterMode="CREATE" 
                         dashboardId={this.props.dashboardId}
                         dashboardVersion={this.state.version}
                         filterConfiguration={this.state.filterConfiguration}
