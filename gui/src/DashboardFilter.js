@@ -162,7 +162,7 @@ const FilterFields = function (props) {
 }
 
 
-class DashboardEditorFilter extends React.Component {
+class DashboardFilter extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -364,7 +364,7 @@ class DashboardEditorFilter extends React.Component {
                         />
                     })
                     }
-                    {
+                    {   // Rendered on dashboard Edtior
                         this.props.filterMode==="CREATE" &&
                         <Form.Group>
                         <Form.Label> Choose/Create Filters </Form.Label>
@@ -378,7 +378,7 @@ class DashboardEditorFilter extends React.Component {
                         />
                     </Form.Group>
                     }
-                    {
+                    {   // Rendered on dashboard Viewer
                         this.props.filterMode==="APPLY" &&
                     <Form.Group>
                         <Form.Label> Choose/Apply Filters </Form.Label>
@@ -402,4 +402,4 @@ class DashboardEditorFilter extends React.Component {
         )
     }
 }
-export default DashboardEditorFilter
+export default DashboardFilter

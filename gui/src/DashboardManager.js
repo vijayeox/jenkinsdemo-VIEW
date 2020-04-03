@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
-import { Notification, DashboardViewer, DashboardEditorFilter } from '../../apps/Analytics/GUIComponents'
+import { Notification, DashboardViewer, DashboardFilter } from '../../apps/Analytics/GUIComponents'
 import { Button, Form, Col, Row } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
@@ -171,11 +171,11 @@ class Dashboard extends React.Component {
             <div className="filterDiv">
 
               {this.state.showFilter &&
-                <DashboardEditorFilter
+                <DashboardFilter
                   core={this.core}
                   filterMode="APPLY" 
                   hideFilterDiv={()=>this.hideFilter()}
-                  filterConfiguration={JSON.parse(this.state.filterConfiguration)}
+                  filterConfiguration={this.state.filterConfiguration?JSON.parse(this.state.filterConfiguration):[]}
                 />
               }
             </div>

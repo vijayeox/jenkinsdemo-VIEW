@@ -12,7 +12,7 @@ import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
 import DataSource from './src/DataSource'
 import Query from './src/Query'
-import DashboardEditorFilter from './src/DashboardEditorFilter'
+import DashboardFilter from './src/DashboardFilter'
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -28,5 +28,5 @@ export {
   WidgetRenderer,
   DataSource,
   Query,
-  DashboardEditorFilter
+  DashboardFilter
 };
