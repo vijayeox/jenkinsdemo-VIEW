@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
-import { Notification, DashboardViewer } from '../../apps/Analytics/GUIComponents'
+import { Notification, DashboardViewer, DashboardEditorFilter } from '../../apps/Analytics/GUIComponents'
 import { Button, Form, Col, Row } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
@@ -24,7 +24,9 @@ class Dashboard extends React.Component {
       dashList: [],
       inputs: {},
       dashboardBody: "",
-      loadEditor: false
+      loadEditor: false,
+      filterConfiguration: [],
+      showFilter: false
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -70,7 +72,7 @@ class Dashboard extends React.Component {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid }))
+            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration }))
             : that.setState({ inputs: this.state.inputs })
         })
       }
@@ -79,7 +81,7 @@ class Dashboard extends React.Component {
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration })
           }
         })
       }
@@ -107,7 +109,7 @@ class Dashboard extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"] })
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"] ,showFilter:false})
   }
 
   deleteDashboard() {
@@ -133,6 +135,22 @@ class Dashboard extends React.Component {
     this.setState({ flipped: true, uuid: "", inputs: inputs, loadEditor: true })
   }
 
+  showFilter(){
+    this.setState({ showFilter: true }, state => {
+      var element = document.getElementById("filter-form-container");
+      element.classList.remove("disappear");
+      var element = document.getElementById("dashboard-preview-container");
+      element.classList.add("disappear");
+  })
+  }
+
+  hideFilter(){
+
+    this.setState({showFilter:false})
+    var element = document.getElementById("dashboard-preview-container");
+      element.classList.remove("disappear");
+  }
+
   render() {
     return (
       <div className="dashboard">
@@ -149,8 +167,21 @@ class Dashboard extends React.Component {
                 <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
               </div>
             }
+
+            <div className="filterDiv">
+
+              {this.state.showFilter &&
+                <DashboardEditorFilter
+                  core={this.core}
+                  filterMode="APPLY" 
+                  hideFilterDiv={()=>this.hideFilter()}
+                  filterConfiguration={JSON.parse(this.state.filterConfiguration)}
+                />
+              }
+            </div>
+
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
-              <>
+              <div id="dashboard-preview-container">
                 <div className="dash-manager-bar">
                   <Form className="dashboard-manager-items">
                     <Row>
@@ -175,6 +206,9 @@ class Dashboard extends React.Component {
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
                           <>
+                           <Button onClick={() => this.showFilter()} title="Edit Dashboard">
+                                <i className="fa fa-filter" aria-hidden="true"></i>
+                              </Button>
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
                                 <i className="fa fa-pen" aria-hidden="true"></i>
@@ -223,7 +257,7 @@ class Dashboard extends React.Component {
                   </div>
 
                 </div>
-              </>
+              </div>
               :
               <div className="dashboard-viewer-div" style={{ textAlign: "center", fontWeight: "bolder", fontSize: "20px" }}>
                 {this.state.dashboardBody}

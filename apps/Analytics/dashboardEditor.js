@@ -460,6 +460,7 @@ class DashboardEditor extends React.Component {
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
                         setFilter={(filter) => this.setState({ filterConfiguration: filter })}
                         notif={this.props.notif}
+                        filterMode="CREATE" 
                         dashboardId={this.props.dashboardId}
                         dashboardVersion={this.state.version}
                         filterConfiguration={this.state.filterConfiguration}
