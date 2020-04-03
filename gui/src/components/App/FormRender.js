@@ -936,14 +936,14 @@ class FormRender extends React.Component {
         this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
           this.showFormLoader(false,0);
           if (response.data) {
-            form.setSubmission({data:this.formatFormData(response.data)});
+            form.setSubmission({ data: this.formatFormData(response.data) });
           }
         });
       }
       if (properties["commands"]) {
         var that = this;
+        that.showFormLoader(true,0);
         this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
-          that.showFormLoader(false,0);
           if (response.status == "success") {
             if (response.data) {
                form.setSubmission({data:that.formatFormData(response.data)}).then(response2 =>{
@@ -951,7 +951,8 @@ class FormRender extends React.Component {
                   this.postDelegateRefresh(form,properties);
                 }else{
                   that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
-                }  
+                }
+                  that.showFormLoader(false,0);
               });
             }
           }
