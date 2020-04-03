@@ -320,6 +320,7 @@ class FormRender extends React.Component {
     }
 
     cleanData(formData) {
+      formData = JSON.parse(JSON.stringify(formData));// Cloning the formdata to avoid original data being removed
       formData.privileges = undefined;
       formData.userprofile = undefined;
       formData.countryList = undefined;
