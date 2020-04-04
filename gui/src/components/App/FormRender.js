@@ -488,6 +488,10 @@ class FormRender extends React.Component {
         var hooks = {
           beforeNext: (currentPage, submission, next) => {
             var form_data = JSON.parse(JSON.stringify(submission.data));
+            if (currentPage.component["properties"]["set_property"]) {
+              var property = JSON.parse(currentPage.component["properties"]["set_property"]);
+              submission.data[property.property] = property.value;
+            }
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(that.cleanData(form_data));
             next(null);
@@ -534,7 +538,6 @@ class FormRender extends React.Component {
             that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
             if (form.pages[changed.page]["properties"]["delegate"]) {
-              if (form.pages[changed.page]["properties"]["delegate"]) {
                 var form_data = that.cleanData(form.submission.data);
                 that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
                   if (response) {
@@ -544,7 +547,6 @@ class FormRender extends React.Component {
                     }
                   }
                 });
-              }
             }
           });
 
