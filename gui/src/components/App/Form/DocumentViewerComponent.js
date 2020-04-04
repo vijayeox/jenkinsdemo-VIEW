@@ -85,22 +85,12 @@ export default class DocumentViewerComponent extends Base {
     } catch(e){
       console.log(dataValue + 'Not a JSON');
     }
-    try{
-      value = JSON.parse(value);
-      value = JSON.parse(value);
-    } catch(e){
-      console.log(value + 'Not a JSON');
-    }
     var that = this;
     var evt = new CustomEvent("getAppDetails", { detail: {} });
     this.form.element.dispatchEvent(evt);
-    if(value && value != undefined){
-      this.fileList = this.generateFileList(value, component);
-    } else {
-      this.fileList = this.generateFileList(dataValue, component);
-    }
+    this.fileList = this.generateFileList(dataValue, component);
     this.redraw();
-    if ((dataValue && dataValue != undefined)||(value && value != undefined)) {
+    if (dataValue && dataValue != undefined) {
       var elements = document.getElementsByClassName(component.key + "-selectFile");
       if (elements.length > 0) {
         component.bindHandlers = true;
