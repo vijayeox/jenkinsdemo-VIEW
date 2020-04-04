@@ -222,7 +222,7 @@ class FormRender extends React.Component {
           }
         }
       }
-      await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
+      return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           that.showFormLoader(false,0);
           if (response.status == "success") {
             //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
@@ -280,7 +280,7 @@ class FormRender extends React.Component {
             method = "put";
           }
         }
-        var response = await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
+        return await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
           if (response.status == "success") {
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
@@ -306,7 +306,6 @@ class FormRender extends React.Component {
           }
           return response;
         });
-        return response;
       }
     }
 
@@ -533,17 +532,22 @@ class FormRender extends React.Component {
               if(submitErrors.length > 0){
                 next([]);
               } else {
-                var response = await that.saveForm(null, that.cleanData(submission.data));
-                next(null);
+                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                  if(response.status=='success'){
+                    next(null);
+                  } else {
+                    next([response.errors[0].message]);
+                  }
+                });
               }
             } else {
-              var response = await that.saveForm(null, that.cleanData(submission.data));
-              if(response.status=='success'){
-                form.emit('submitDone', submission);
-              } else {
-                form.emit('submitDone', submission);
-                next([response.errors[0].message]);
-              }
+              var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                if(response.status=='success'){
+                  next(null);
+                } else {
+                  next([response.errors[0].message]);
+                }
+              });
             }
           }
         };
