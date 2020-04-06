@@ -6,16 +6,21 @@ class Slider extends React.Component {
     super(props);
     this.core = this.props.args;
     this.loader = this.core.make("oxzion/splash");
-    
     this.state = {
       announcements: [],
       currentIndex: 0,
       translateValue: 0,
       indexCount: 0,
-      isPaneOpen: false,
+      isPanelOpen: false,
       loading: true,
-      focusData: []
+      focusData: [],
     };
+    this.refreshAnc = this.refreshAnc.bind(this);
+    this.goToPrevSlide = this.goToPrevSlide.bind(this);
+    this.goToNextSlide = this.goToNextSlide.bind(this);
+    document
+      .querySelector('div[data-id="annoucementsWindow"]')
+      .addEventListener("updateAnnouncements", this.refreshAnc, false);
   }
 
   async getAnnouncements() {
@@ -23,9 +28,18 @@ class Slider extends React.Component {
     let announ = await helper.request("v1", "/announcement", {}, "get");
     return announ;
   }
-  componentDidMount() {
-    this.setState({ loading: true });
-    this.getAnnouncements().then(response => {
+
+  refreshAnc() {
+    this.setState({
+      announcements: [],
+      currentIndex: 0,
+      translateValue: 0,
+      indexCount: 0,
+      isPanelOpen: false,
+      loading: true,
+      focusData: [],
+    });
+    this.getAnnouncements().then((response) => {
       let data = response.data;
       let baseUrl = this.core.config("wrapper.url");
 
@@ -36,154 +50,205 @@ class Slider extends React.Component {
       }
       this.setState({
         announcements: data,
-        indexCount: data.length - 1
+        indexCount: data.length - 1,
       });
       this.setState({ loading: false });
+      var that = this;
+      if (data.length > 1) {
+        clearInterval(this.autoScroll);
+        this.autoScroll = setInterval(function () {
+          !that.state.isPanelOpen ? that.goToNextSlide() : null;
+        }, 10000);
+      }
     });
+  }
 
-    this.goToPrevSlide = this.goToPrevSlide.bind(this);
-    this.goToNextSlide = this.goToNextSlide.bind(this);
+  componentDidMount() {
+    this.refreshAnc();
   }
 
   goToPrevSlide() {
     if (this.state.currentIndex === 0) {
-      return this.setState(prevState => ({
+      return this.setState((prevState) => ({
         currentIndex: prevState.indexCount,
         translateValue:
-          prevState.translateValue + -this.slideWidth() * prevState.indexCount
+          prevState.translateValue + -this.slideWidth() * prevState.indexCount,
       }));
     }
-
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       currentIndex: prevState.currentIndex - 1,
-      translateValue: prevState.translateValue + this.slideWidth()
+      translateValue: prevState.translateValue + this.slideWidth(),
     }));
   }
 
   goToNextSlide() {
-    // Exiting the method early if we are at the end of the images array.
-    // We also want to reset currentIndex and translateValue, so we return
-    // to the first image in the array.
     if (this.state.currentIndex === this.state.announcements.length - 1) {
       return this.setState({
         currentIndex: 0,
-        translateValue: 0
+        translateValue: 0,
       });
     }
-    // This will not run if we met the if condition above
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       currentIndex: prevState.currentIndex + 1,
-      translateValue: prevState.translateValue + -this.slideWidth()
+      translateValue: prevState.translateValue + -this.slideWidth(),
     }));
   }
 
   slideWidth() {
-    return document.querySelector(".slide").clientWidth;
+    if (document.querySelector(".slide")) {
+      return document.querySelector(".slide").clientWidth;
+    } else {
+      return "";
+    }
   }
 
   renderCard(data) {
-    let lengthyDesc = data.description.length < 150 ? "" : "...";
     const isImage = data.media_type == "image";
-    return (
-      <div className="App row slide" style={{ margin: 0 }} key={Math.random()}>
-        <div className="Announcement-visuals col s12">
-          {isImage ? <Img data={data} /> : <Video autoplay muted data={data} />}
-        </div>
-        <div className="Announcement-content col">
-          <h5 style={{ paddingTop: "10px" }}> {data.name} </h5>
-          {data.description ? (
-            <p> {data.description.slice(0, 150) + lengthyDesc} </p>
-          ) : null}
-          {data.description ? (
-            data.description.length < 150 ? null : (
+    if (!data.fallback) {
+      return (
+        <div
+          className="slide"
+          style={{ margin: 0 }}
+          key={Math.random()}
+        >
+          <div
+            className="Announcement-visuals col s12"
+            onWheel={(e) => {
+              e.deltaY > 0 ? this.goToNextSlide() : this.goToPrevSlide();
+            }}
+          >
+            {isImage ? (
+              <Img data={data} />
+            ) : (
+              <Video autoplay muted data={data} />
+            )}
+          </div>
+          <div className="Announcement-content col">
+            {data.description ? (
               <button
-                className="readMore"
+                className="actionButton"
+                style={{ margin: "3.8vh" }}
                 onClick={() => {
-                  this.setState({ isPaneOpen: true, focusData: data });
+                  this.setState({ isPanelOpen: true, focusData: data });
                 }}
               >
                 READ MORE
               </button>
-            )
-          ) : null}
+            ) : null}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div
+          className="slide"
+          style={{ margin: 0 }}
+          key={Math.random()}
+        >
+          <div
+            className="Announcement-visuals col s12"
+            style={{ flexDirection: "column" }}
+          >
+            <div className="fallbackImage">
+              <Img data={data} />
+            </div>
+          </div>
+          <div className="Announcement-content col fallbackText">
+            <h5 style={{ paddingTop: "15px" }}> {data.name} </h5>
+            <p> {data.description} </p>
+          </div>
+        </div>
+      );
+    }
   }
 
   render() {
     if (this.state.loading == false) {
+      this.loader.destroy();
       return (
-        <div className="announcement-slider" ref={ref => (this.el = ref)}>
+        <div className="announcement-slider" ref={(ref) => (this.el = ref)}>
           <div
             className="slider-wrapper"
             style={{
               transform: `translateX(${this.state.translateValue}px)`,
-              transition: "transform ease-out 0.45s"
+              transition: "transform ease-out 0.45s",
             }}
           >
             {this.state.announcements.length >= 1
               ? this.state.announcements.map((announcement, i) =>
-                  this.renderCard(announcement)
+                  this.renderCard(announcement, true)
                 )
               : null}
           </div>
-
           {this.state.announcements.length == 0 ? (
             this.renderCard({
               name: "No Announcements have been posted for you right now.",
               description: "Stay Tuned for updates!",
               media_type: "image",
               media: "https://svgshare.com/i/DqC.svg",
-              uuid: "empty"
+              uuid: "empty",
+              fallback: true,
             })
           ) : this.state.announcements.length > 1 ? (
-            <div>
+            <div
+              className="arrowWrap"
+              style={{ display: this.state.isPanelOpen ? "none" : "flex" }}
+            >
               <LeftArrow goToPrevSlide={this.goToPrevSlide} />
-
               <RightArrow goToNextSlide={this.goToNextSlide} />
             </div>
           ) : null}
-
           <SlidingPanel
             type={"bottom"}
-            isOpen={this.state.isPaneOpen}
-            closeFunc={() => this.setState({ isPaneOpen: false })}
+            isOpen={this.state.isPanelOpen}
+            closeFunc={() => this.setState({ isPanelOpen: false })}
           >
-            <center style={{ margin: "2%", colour: "white" }}>
-              <h6
-                style={{
-                  fontSize: "1.5rem",
-                  padding: "20px",
-                  maxWidth: "70%"
-                }}
-              >
-                {this.state.focusData.name}
-              </h6>
+            <div className="popup-content">
+              <h6>{this.state.focusData.name}</h6>
               <p className="mainText">{this.state.focusData.description}</p>
-              <button
-                onClick={() => {
-                  this.setState({
-                    isPaneOpen: false
-                  });
-                }}
-                className="readMore"
-                style={{ margin: "3%" }}
-                src="https://img.icons8.com/flat_round/344/circled-left-2.png"
-              >
-                BACK
-              </button>
-            </center>
+              <div className="buttonWrap">
+                {this.state.focusData.link ? (
+                  <button
+                    onClick={() =>
+                      window.open(this.state.focusData.link, "_blank")
+                    }
+                    className="actionButton popupButtons"
+                  >
+                    VIST LINK
+                  </button>
+                ) : null}
+                <button
+                  onClick={() => {
+                    this.setState({
+                      isPanelOpen: false,
+                    });
+                  }}
+                  className="actionButton popupButtons"
+                >
+                  CLOSE
+                </button>
+              </div>
+            </div>
           </SlidingPanel>
         </div>
       );
     }
-    return  <div className="announcement-splash-loader" dangerouslySetInnerHTML={{ __html: this.loader.renderHtml() }} />;
+    var renderLoader = document.querySelector(".announcement-slider");
+    this.loader.show(renderLoader);
+    return <div />;
   }
 }
 
 const Img = ({ data }) => {
-  return <img id="Announ-visual" src={data.media} alt="Announcement Banner" />;
+  return (
+    <img
+      id="Announ-visual"
+      src={data.media}
+      alt="Announcement Banner"
+      onClick={data.link ? () => window.open(data.link, "_blank") : null}
+      style={data.link ? { cursor: "pointer" } : null}
+    />
+  );
 };
 
 const Video = ({ data }) => {
@@ -195,7 +260,7 @@ const Video = ({ data }) => {
   );
 };
 
-const LeftArrow = props => {
+const LeftArrow = (props) => {
   return (
     <div className="backArrow arrow" onClick={props.goToPrevSlide}>
       <i className="fa fa-arrow-left fa-2x" aria-hidden="true" />
@@ -203,7 +268,7 @@ const LeftArrow = props => {
   );
 };
 
-const RightArrow = props => {
+const RightArrow = (props) => {
   return (
     <div className="nextArrow arrow" onClick={props.goToNextSlide}>
       <i className="fa fa-arrow-right fa-2x" aria-hidden="true" />
