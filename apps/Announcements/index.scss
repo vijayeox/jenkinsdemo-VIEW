@@ -1,28 +1,10 @@
 .osjs-window[data-id="annoucementsWindow"] {
-  .osjs-window-button[data-action="minimize"] > div {
-    background-position: 50% 50%;
-    background-image: url("./close.svg");
-  }
+  // .osjs-window-button[data-action="minimize"] > div {
+  //   background-position: 50% 50%;
+  //   background-image: url("./close.svg");
+  // }
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
-  $primary: rgb(182, 157, 230);
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  #root {
-    height: 100%;
-  }
-
-  .App {
-    height: 100%;
-  }
 
   .Announcement-visuals {
     background-color: grey;
@@ -30,14 +12,28 @@
     display: flex;
     justify-content: center;
     height: 100%;
+    width: 100%;
     position: absolute;
     top: 0px;
+    align-content: center;
   }
 
-  .Announcement-visuals > img {
-    width: auto;
-    height: 100%;
-    max-width: 100%;
+  .fallbackImage {
+    height: 45%;
+    width: 100%;
+  }
+
+  .fallbackText {
+    background-color: #3c3a3abf;
+    height: 15vh;
+  }
+
+  .Announcement-visuals {
+    img {
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+    }
   }
 
   .Announcement-content {
@@ -46,7 +42,6 @@
     text-align: center;
     bottom: 0px;
     height: auto;
-    background-color: #0000006b;
     color: white;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
       "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
@@ -71,21 +66,11 @@
     white-space: nowrap;
   }
 
-  p {
-    white-space: normal;
-    letter-spacing: 0.03em;
-    text-rendering: optimizelegibility;
-    line-height: 1.2em;
-    margin-left: 6%;
-    margin-right: 6%;
-    margin-bottom: 1%;
-    word-break: break-word;
-  }
-
   .slider-wrapper {
     position: relative;
     height: 100%;
     width: 100%;
+    z-index: 10;
   }
 
   .slide {
@@ -95,74 +80,46 @@
     width: 100%;
   }
 
-  .arrow {
-    height: 50px;
-    width: 50px;
-    display: flex;
+  .arrowWrap {
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform ease-in 0.1s;
-    opacity: 0.3;
-  }
-
-  div.arrow:hover {
-    opacity: 1;
-    background-color: white;
-  }
-
-  .nextArrow {
+    top: 0px;
     position: absolute;
-    bottom: 30px;
-    right: 0;
-    z-index: 999;
-    color: gray;
-    opacity: 0.3;
-    background-color: white;
-    margin-right: 1%;
-    margin-bottom: 20%;
-  }
 
-  .backArrow {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    z-index: 999;
-    color: gray;
-    opacity: 0.3;
-    background-color: white;
-    margin-left: 1%;
-    margin-bottom: 20%;
-  }
+    .arrow {
+      height: 50px;
+      width: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform ease-in 0.1s;
+      opacity: 0.3;
+    }
 
-  .fa-arrow-right:before,
-  .fa-arrow-left:before {
-    color: #222;
-  }
+    div.arrow:hover {
+      opacity: 1;
+      background-color: white;
+    }
 
-  .mainText {
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-font-smoothing: antialiased !important;
-    text-rendering: optimizelegibility !important;
-    letter-spacing: 0.03em;
-    max-width: 34em;
-    margin: auto;
-    padding: 0 1em;
-    font-family: "Open Sans", sans-serif;
-    justify-content: center;
-    font-size: 1rem;
-    text-align: center;
-  }
+    .backArrow {
+      z-index: 100;
+      color: gray;
+      opacity: 0.3;
+      background-color: white;
+      margin-left: 1%;
+    }
 
-  .backButton {
-    margin: 15px;
-    &:hover {
-      box-shadow: 0 2px 6px -1px rgba($primary, 0.65);
-      &:active {
-        transform: scale(0.99);
-      }
+    .nextArrow {
+      z-index: 100;
+      color: gray;
+      opacity: 0.3;
+      background-color: white;
+      margin-right: 1%;
     }
   }
 
@@ -188,36 +145,71 @@
       height: inherit;
       width: inherit;
     }
+    .popup-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+
+      h6 {
+        font-size: 1.5rem;
+        margin-bottom: 3vh;
+        margin-top: 4vh;
+        max-width: 70%;
+        user-select: text;
+      }
+
+      .mainText {
+        user-select: text;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased !important;
+        -moz-font-smoothing: antialiased !important;
+        text-rendering: optimizelegibility !important;
+        letter-spacing: 0.03em;
+        max-width: 80%;
+        font-family: "Open Sans", sans-serif;
+        justify-content: center;
+        font-size: 16px;
+        text-align: center;
+        line-height: 135%;
+        margin-bottom: auto;
+        margin-left: auto;
+        margin-right: auto;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      .buttonWrap {
+        margin: 3%;
+        width: 15rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .popupButtons {
+        margin-left: 6%;
+        margin-right: 6%;
+      }
+    }
   }
 
-  .announcement-splash-loader{
-    padding: 13%;
-    text-align: center;
-  }
-  .readMore {
+  .actionButton {
     -webkit-appearance: none;
     width: auto;
     min-width: 100px;
     border-radius: 24px;
     text-align: center;
     padding: 9px 15px;
-    margin-top: 5px;
-    background-color: #b08bf8;
+    background-color: #275362;
     color: #fff;
     font-size: 14px;
-    margin-left: auto;
     font-weight: 500;
-    box-shadow: 0px 2px 6px -1px rgba(0, 0, 0, 0.13);
+    box-shadow: 2px 2px 6px 1px #000000b5;
     border: none;
-    transition: all 0.3s ease;
     outline: 0;
-    margin-bottom: 10px;
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 2px 6px -1px rgba($primary, 0.65);
-      &:active {
-        transform: scale(0.99);
-      }
+    &:active {
+      transform: scale(0.99);
     }
   }
 }

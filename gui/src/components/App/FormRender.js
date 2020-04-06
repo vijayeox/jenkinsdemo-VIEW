@@ -222,7 +222,7 @@ class FormRender extends React.Component {
           }
         }
       }
-      await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
+      return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           that.showFormLoader(false,0);
           if (response.status == "success") {
             //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
@@ -280,7 +280,7 @@ class FormRender extends React.Component {
             method = "put";
           }
         }
-        var response = await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
+        return await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
           if (response.status == "success") {
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
@@ -290,10 +290,10 @@ class FormRender extends React.Component {
             });
             return response;
           } else {
-            var storeCache = await this.storeCache(data).then(
+            var storeCache = await this.storeCache(this.cleanData(data)).then(
             async cacheResponse => {
               if (response.data.errors) {
-                var storeError = await this.storeError(data,response.data.errors,route).then(storeErrorResponse => {
+                var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
                   that.showFormLoader(false,0);
                   this.notif.current.notify("Error","Form Submission Failed","danger");
                   return storeErrorResponse;
@@ -306,7 +306,6 @@ class FormRender extends React.Component {
           }
           return response;
         });
-        return response;
       }
     }
 
@@ -320,6 +319,16 @@ class FormRender extends React.Component {
     }
 
     cleanData(formData) {
+      // Remove Protected fields from being sent to server
+      this.state.currentForm.everyComponent(function (comp) {
+        var protectedFields = comp.component.protected;
+        if(protectedFields){
+          delete formData[comp.component.key];
+        }
+        if(comp.component.persistent==false){
+          delete formData[comp.component.key];
+        }
+      });
       formData = JSON.parse(JSON.stringify(formData));// Cloning the formdata to avoid original data being removed
       formData.privileges = undefined;
       formData.userprofile = undefined;
@@ -488,6 +497,10 @@ class FormRender extends React.Component {
         var hooks = {
           beforeNext: (currentPage, submission, next) => {
             var form_data = JSON.parse(JSON.stringify(submission.data));
+            if (currentPage.component["properties"]["set_property"]) {
+              var property = JSON.parse(currentPage.component["properties"]["set_property"]);
+              submission.data[property.property] = property.value;
+            }
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(that.cleanData(form_data));
             next(null);
@@ -508,6 +521,34 @@ class FormRender extends React.Component {
                 that.props.postSubmitCallback();
               }
             });
+          },
+          beforeSubmit: async (submission,next) => {
+            var submitErrors = [];
+            if(that.state.currentForm.isValid(submission.data, true)==false){
+              that.state.currentForm.checkValidity(submission.data, true,submission.data);
+              that.state.currentForm.errors.forEach((error) => {
+                submitErrors.push(error.message);
+              });
+              if(submitErrors.length > 0){
+                next([]);
+              } else {
+                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                  if(response.status=='success'){
+                    next(null);
+                  } else {
+                    next([response.errors[0].message]);
+                  }
+                });
+              }
+            } else {
+              var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                if(response.status=='success'){
+                  next(null);
+                } else {
+                  next([response.errors[0].message]);
+                }
+              });
+            }
           }
         };
         options.hooks = hooks;
@@ -522,8 +563,7 @@ class FormRender extends React.Component {
             form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
-            var form_data = that.cleanData(submission.data);
-            return await that.saveForm(null, form_data);
+            form.emit('submitDone', submission);
           });
           form.on("prevPage", changed => {
             form.emit("render");
@@ -534,7 +574,6 @@ class FormRender extends React.Component {
             that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
             if (form.pages[changed.page]["properties"]["delegate"]) {
-              if (form.pages[changed.page]["properties"]["delegate"]) {
                 var form_data = that.cleanData(form.submission.data);
                 that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
                   if (response) {
@@ -544,7 +583,6 @@ class FormRender extends React.Component {
                     }
                   }
                 });
-              }
             }
           });
 
