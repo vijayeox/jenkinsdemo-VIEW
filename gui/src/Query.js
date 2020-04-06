@@ -234,26 +234,35 @@ class Query extends React.Component {
       var end = window.performance.now();
       var runtime = end - start;
       if (response.status === "success") {
+        
+
         let columnNames
         let columnNameObj = []
         if (response.data !== undefined) {
-          columnNames = Object.keys(response.data.result[0])
-          // prepare column names for OX_Grid
-          if (columnNames != undefined) {
-            columnNames.map(name => {
-              columnNameObj.push({ 'title': name, 'field': name })
-            })
-          }
-          this.setState({ queryResult: response.data.result, queryColumns: columnNameObj, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
-          if (document.getElementById("result-tab-div") !== null) {
-            this.destroyResult()
+          //if response is a array show OX_GRID
+           if(Array.isArray(response.data.result))
+           {
+            columnNames = Object.keys(response.data.result[0])
+           }
+            // prepare column names for OX_Grid
+            if (columnNames != undefined) {
+              columnNames.map(name => {
+                columnNameObj.push({ 'title': name, 'field': name })
+              })
+            }
             this.setState({ queryResult: response.data.result, queryColumns: columnNameObj, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
-            this.renderResult()
-          }
-          else {
-            this.setState({ queryResult: response.data.result, queryColumns: columnNameObj, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
-            this.renderResult()
-          }
+            if (document.getElementById("result-tab-div") !== null) {
+              this.destroyResult()
+              this.setState({ queryResult: response.data.result, queryColumns: columnNameObj, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
+              this.renderResult()
+            }
+            else {
+              this.setState({ queryResult: response.data.result, queryColumns: columnNameObj, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
+              this.renderResult()
+            }
+           
+          
+        
         }
         else {
           this.setState({ queryResult: response.data.result, elapsedTime: runtime, queryName: queryname ,activeTab: "results" })
@@ -274,10 +283,11 @@ class Query extends React.Component {
       }
     }
     catch (err) {
+      console.log(err)
       this.loader.destroy()
       this.notif.current.notify(
         "Error",
-        "Operation failed ",
+        "Operation failed",
         "danger"
       )
     }

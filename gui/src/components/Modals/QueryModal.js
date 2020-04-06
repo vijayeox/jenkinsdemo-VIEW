@@ -32,11 +32,11 @@ function QueryModal(props) {
       props.resetInput()
         }
     else {
-      props.notification.current.notify(
-        "Error",
-        "Operation failed " + response.message,
-        "danger"
-      )
+      // props.notification.current.notify(
+      //   "Error",
+      //   "Operation failed " + response.message,
+      //   "danger"
+      // )
     }
   }
 
