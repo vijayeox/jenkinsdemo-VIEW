@@ -49,6 +49,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   }
 
   // move to gui
+  .k-grid .k-alt {
+    color: unset;
+  }
 
   .k-clear-value {
     display: none !important;

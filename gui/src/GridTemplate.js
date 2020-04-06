@@ -32,7 +32,7 @@ export default class GridTemplate extends React.Component {
   }
 
   componentDidMount() {
-    $(document).ready(function() {
+    $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
@@ -40,21 +40,21 @@ export default class GridTemplate extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.config.api !== prevProps.config.api) {
       this.setState({
-        api: this.props.config.api
+        api: this.props.config.api,
       });
     }
   }
 
-  dataStateChange = e => {
+  dataStateChange = (e) => {
     this.setState({
       ...this.state,
-      dataState: e.data
+      dataState: e.data,
     });
   };
 
-  dataRecieved = data => {
+  dataRecieved = (data) => {
     this.setState({
-      gridData: data
+      gridData: data,
     });
   };
 
@@ -65,11 +65,11 @@ export default class GridTemplate extends React.Component {
         table.push(
           <GridColumn
             key={i}
-            width="200px"
+            width="150px"
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
-            cell={props => (
+            cell={(props) => (
               <LogoCell {...props} myProp={this.props} url={this.baseUrl} />
             )}
           />
@@ -82,15 +82,27 @@ export default class GridTemplate extends React.Component {
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
-            cell={props => <LogoCell2 {...props} myProp={this.props} />}
+            cell={(props) => <LogoCell2 {...props} myProp={this.props} />}
           />
         );
       } else {
+        var checkCellTemplate = undefined;
+        if (this.props.config.column[i]) {
+          if (this.props.config.column[i].cellTemplate) {
+            checkCellTemplate = this.props.config.column[i].cellTemplate;
+          }
+        }
         table.push(
           <GridColumn
             field={this.props.config.column[i].field}
             key={i}
             title={this.props.config.column[i].title}
+            cell={
+              checkCellTemplate
+                ? (item) =>
+                checkCellTemplate(item.dataItem)
+                : undefined
+            }
           />
         );
       }
@@ -114,7 +126,7 @@ export default class GridTemplate extends React.Component {
     }
   }
 
-  refreshHandler = serverResponse => {
+  refreshHandler = (serverResponse) => {
     if (serverResponse.status == "success") {
       this.notif.current.notify(
         "Success",
@@ -152,7 +164,7 @@ export default class GridTemplate extends React.Component {
           scrollable={"scrollable"}
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
-          onRowClick={e => {
+          onRowClick={(e) => {
             this.props.permission.canEdit
               ? this.props.manageGrid.edit(e.dataItem, { diableField: false })
               : this.props.manageGrid.edit(e.dataItem, { diableField: true });
@@ -167,7 +179,7 @@ export default class GridTemplate extends React.Component {
                   style={{
                     display: "flex",
                     width: "110%",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
                   <div style={{ marginLeft: "10px" }}>
@@ -313,7 +325,7 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
           <button
             type="button"
             className="btn manage-btn k-grid-remove-command"
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               Swal.fire({
                 title: "Are you sure?",
@@ -327,8 +339,8 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                 confirmButtonColor: "#d33",
                 showCancelButton: true,
                 cancelButtonColor: "#3085d6",
-                target: ".Window_Admin"
-              }).then(result => {
+                target: ".Window_Admin",
+              }).then((result) => {
                 if (result.value) {
                   remove(this.props.dataItem);
                 }

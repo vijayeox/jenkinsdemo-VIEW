@@ -1,5 +1,6 @@
 import React from "react";
 import { Window } from "@progress/kendo-react-dialogs";
+import { Input } from "@progress/kendo-react-inputs";
 import TextareaAutosize from "react-textarea-autosize";
 import scrollIntoView from "scroll-into-view-if-needed";
 import { FileUploader, Notification } from "../../GUIComponents";
@@ -50,11 +51,14 @@ export default class DialogContainer extends React.Component {
         media: fileCode,
         status: "1",
         description: this.state.ancInEdit.description,
+        link: this.state.ancInEdit.link,
         media_type: this.state.ancInEdit.media_type,
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
         ),
-        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
+        end_date: new Moment(this.state.ancInEdit.end_date).format(
+          "YYYY-MM-DD"
+        )
       },
       "post"
     );
@@ -71,11 +75,14 @@ export default class DialogContainer extends React.Component {
         media: fileCode,
         status: "1",
         description: this.state.ancInEdit.description,
+        link: this.state.ancInEdit.link,
         media_type: this.state.ancInEdit.media_type,
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
         ),
-        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
+        end_date: new Moment(this.state.ancInEdit.end_date).format(
+          "YYYY-MM-DD"
+        )
       },
       "put"
     );
@@ -99,25 +106,29 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  media_typeChange = value => {
+  media_typeChange = (value) => {
     let ancInEdit = { ...this.state.ancInEdit };
     ancInEdit.media_type = value;
     this.setState({ ancInEdit: ancInEdit });
   };
 
   editTriggerFunction(file) {
-    this.editAnnouncements(file).then(response => {
-       this.loader.destroy();
+    this.editAnnouncements(file).then((response) => {
+      this.loader.destroy();
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
       } else {
-        this.notif.current.notify("Error",response.message ? response.message : null,"danger")
+        this.notif.current.notify(
+          "Error",
+          response.message ? response.message : null,
+          "danger"
+        );
       }
     });
   }
 
-  onDialogInputChange = event => {
+  onDialogInputChange = (event) => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -130,14 +141,14 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  handleSubmit = event => {
-    this.loader.show();
+  handleSubmit = (event) => {
     event.preventDefault();
     if (this.props.formAction == "put") {
       if (this.fUpload.current.state.selectedFile.length == 0) {
         this.editTriggerFunction(this.props.dataItem.media);
       } else {
-        this.pushFile().then(response => {
+        this.loader.show();
+        this.pushFile().then((response) => {
           var addResponse = response.data.filename[0];
           this.editTriggerFunction(addResponse);
         });
@@ -151,17 +162,18 @@ export default class DialogContainer extends React.Component {
           behavior: "smooth",
           inline: "nearest"
         });
-      
+
         this.notif.current.notify(
           "No Media Selected",
           "Please select a banner for the Announcement.",
           "warning"
-        )
+        );
       } else {
-        this.pushFile().then(response => {
+        this.loader.show();
+        this.pushFile().then((response) => {
           var addResponse = response.data.filename[0];
-          this.pushData(addResponse).then(response => {
-             this.loader.destroy();
+          this.pushData(addResponse).then((response) => {
+            this.loader.destroy();
             if (response.status == "success") {
               this.props.action(response);
               this.props.cancel();
@@ -170,7 +182,7 @@ export default class DialogContainer extends React.Component {
                 "Error",
                 response.message ? response.message : null,
                 "danger"
-              )
+              );
             }
           });
         });
@@ -192,7 +204,7 @@ export default class DialogContainer extends React.Component {
             ) : null}
             <div className="form-group">
               <label className="required-label">Announcement Title</label>
-              <input
+              <Input
                 type="text"
                 className="form-control"
                 name="name"
@@ -201,11 +213,14 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
+                validationMessage={
+                  "Please give a Title for the Announcement"
+                }
                 readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group text-area-custom">
-              <label className="required-label">Description</label>
+              <label>Description</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
@@ -215,8 +230,25 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Description"
                 style={{ marginTop: "5px", minHeight: "100px" }}
-                required={true}
                 readOnly={this.props.diableField ? true : false}
+              />
+            </div>
+            <div className="form-group">
+              <label>External Link</label>
+              <Input
+                type="url"
+                pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+                className="form-control"
+                name="link"
+                value={this.state.ancInEdit.link || ""}
+                maxLength="2048"
+                onChange={this.onDialogInputChange}
+                placeholder="Enter External Link"
+                readOnly={this.props.diableField ? true : false}
+                validityStyles={this.state.triggerValidation}
+                validationMessage={
+                  "Please enter a valid URL starting with https://"
+                }
               />
             </div>
 
@@ -234,7 +266,7 @@ export default class DialogContainer extends React.Component {
                           new Date().getTime() + 365 * 24 * 60 * 60 * 1000
                         )
                       }
-                      change={e => this.valueChange("start_date", e)}
+                      change={(e) => this.valueChange("start_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
                     />
@@ -252,7 +284,7 @@ export default class DialogContainer extends React.Component {
                           new Date().getTime() + 365 * 24 * 60 * 60 * 1000
                         )
                       }
-                      change={e => this.valueChange("end_date", e)}
+                      change={(e) => this.valueChange("end_date", e)}
                       required={true}
                       disabled={this.props.diableField ? true : false}
                     />

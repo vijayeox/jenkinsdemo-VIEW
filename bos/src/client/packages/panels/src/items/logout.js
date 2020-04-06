@@ -60,15 +60,12 @@ export default class LogoutPanelItem extends PanelItem {
     };
     const confirm = () => {
       MySwal.fire({
-        title: 'Are you sure?',
-        text: 'Do you really want to logout now?',
-        imageUrl: "https://image.flaticon.com/icons/svg/529/529873.svg",
-        imageWidth: 75,
-        imageHeight: 75,
+        title: 'Would You Like To Logout?',
+        position: "top-end",
         confirmButtonText: 'Logout',
-        confirmButtonColor: '#d33',
+        confirmButtonColor: '#ed4522',
         showCancelButton: true,
-        cancelButtonColor: '#66bb6a',
+        cancelButtonColor: '#275362',
         target: ".osjs-root"
       }).then((result) => {
         if (result.value) {

@@ -3,7 +3,7 @@ import { TitleBar } from "./components/titlebar";
 import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import DialogContainer from "./dialog/DialogContainerAnnounc";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 class Announcement extends React.Component {
   constructor(props) {
@@ -15,9 +15,9 @@ class Announcement extends React.Component {
       permission: {
         canAdd: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
         canEdit: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
-        canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE
+        canDelete: this.props.userProfile.privileges.MANAGE_ANNOUNCEMENT_WRITE,
       },
-      selectedOrg: this.props.userProfile.orgid
+      selectedOrg: this.props.userProfile.orgid,
     };
 
     this.notif = React.createRef();
@@ -30,10 +30,10 @@ class Announcement extends React.Component {
     let addGroups = await helper.request(
       "v1",
       "organization/" +
-      this.state.selectedOrg +
-      "/announcement/" +
-      dataItem +
-      "/save",
+        this.state.selectedOrg +
+        "/announcement/" +
+        dataItem +
+        "/save",
       {
         groups: dataObject
       },
@@ -53,8 +53,8 @@ class Announcement extends React.Component {
     return groupUsers;
   }
 
-  addAncUsers = dataItem => {
-    this.getAnnouncementGroups(dataItem.uuid).then(response => {
+  addAncUsers = (dataItem) => {
+    this.getAnnouncementGroups(dataItem.uuid).then((response) => {
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
         config: {
@@ -127,11 +127,11 @@ class Announcement extends React.Component {
     return Object.assign({}, item);
   }
 
-  orgChange = event => {
+  orgChange = (event) => {
     this.setState({ selectedOrg: event.target.value });
   };
 
-  remove = dataItem => {
+  remove = (dataItem) => {
     DeleteEntry(
       "organization/" + this.state.selectedOrg + "/announcement",
       dataItem.uuid
@@ -193,9 +193,16 @@ class Announcement extends React.Component {
               },
               {
                 title: "Description",
-                field: "description"
+                field: "description",
+                cellTemplate: (data) => {
+                  return (
+                    <td>
+                      {data.description ? data.description.slice(0, 50) : "No Description Added"}
+                    </td>
+                  );
+                },
               }
-            ]
+            ],
           }}
           manageGrid={{
             add: this.insert,
