@@ -23,7 +23,7 @@ import "@progress/kendo-theme-bootstrap/dist/all.css";
 export default class OX_Grid extends React.Component {
   constructor(props) {
     super(props);
-    this.child = React.createRef();
+    this.baseUrl = this.props.osjsCore.config("wrapper.url");
     this.userprofile = this.props.osjsCore.make("oxzion/profile").get().key;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
@@ -33,6 +33,8 @@ export default class OX_Grid extends React.Component {
         : {},
       apiActivityCompleted: this.rawDataPresent ? true : false
     };
+    this.child = React.createRef();
+    this.refreshHandler = this.refreshHandler.bind(this);
   }
 
   componentDidMount() {
@@ -122,6 +124,7 @@ export default class OX_Grid extends React.Component {
                     dataItem={item.dataItem}
                     type={"cellTemplate"}
                     userProfile={this.userprofile}
+                    baseUrl={this.baseUrl}
                   />
                 )
               : undefined
@@ -147,6 +150,7 @@ export default class OX_Grid extends React.Component {
           orderIndex={dataItem.orderIndex ? dataItem.orderIndex : undefined}
           reorderable={dataItem.reorderable ? dataItem.reorderable : undefined}
           resizable={dataItem.resizable ? dataItem.resizable : undefined}
+          sortable={dataItem.sortable ? dataItem.sortable : undefined}
           width={dataItem.width ? dataItem.width : undefined}
           title={dataItem.title ? dataItem.title : undefined}
         />
@@ -166,6 +170,10 @@ export default class OX_Grid extends React.Component {
     this.forceUpdate();
   };
 
+  refreshHandler = () => {
+    this.child.current.refresh();
+  };
+  
   noRecordsJSX() {
     return (
       <GridNoRecords>
@@ -267,7 +275,10 @@ export default class OX_Grid extends React.Component {
 
   render() {
     return (
-      <div style={{ height: "100%" }} className="GridCustomStyle">
+      <div
+        style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }}
+        className="GridCustomStyle"
+      >
         {this.rawDataPresent ? (
           <DataOperation
             args={this.props.osjsCore}
@@ -391,7 +402,8 @@ class CustomCell extends GridCell {
           bindings={{
             item: this.props.dataItem,
             moment: moment,
-            profile: this.props.userProfile
+            profile: this.props.userProfile,
+            baseUrl: this.props.baseUrl
           }}
           jsx={this.props.cellTemplate}
         />
@@ -416,7 +428,7 @@ OX_Grid.propTypes = {
   checkBoxSelection: PropTypes.func,
   columnConfig: PropTypes.array.isRequired,
   gridDefaultFilters: PropTypes.object,
-  gridToolbar: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  gridToolbar: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   gridNoRecords: PropTypes.element,
   gridStyles: PropTypes.object,
   groupable: PropTypes.bool,
