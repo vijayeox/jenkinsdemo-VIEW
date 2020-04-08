@@ -196,7 +196,7 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9">
-              <Form.Control as="textarea" rows="4" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
+              <Form.Control as="textarea" rows="10" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
               <Form.Text className="text-muted errorMsg">
                 {errors["configuration"]}
               </Form.Text>
