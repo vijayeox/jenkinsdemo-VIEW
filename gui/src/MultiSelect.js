@@ -200,7 +200,7 @@ async ExistingUsers(api, selectedEntity) {
             className="col-10 justify-content-center"
             style={{ margin: "auto" }}
           >
-            <div style={{ margin: "auto", width: "85%", paddingTop: "15px" }}>
+            <div style={{ margin: "auto", width: "85%", padding: "10px 0px" }}>
               <MSelect
                 data={this.state.userList}
                 onChange={this.handleChange}
@@ -215,7 +215,7 @@ async ExistingUsers(api, selectedEntity) {
                 dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
-                placeholder={"Click to add " + this.props.config.title}
+                placeholder={"Click to add " + this.props.config.members}
               />
             </div>
           </div>
