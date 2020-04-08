@@ -117,8 +117,10 @@ class Dashboard extends Component {
 
       })
       console.log(filterParams)
-
+      filterParams && filterParams.length!=0?
       this.updateGraph(filterParams)
+      :
+      this.updateGraph()
 
     }
 
