@@ -271,7 +271,7 @@ class DashboardEditor extends React.Component {
                         version: dashboard.version,
                         dashboardName: dashboard.name ? dashboard.name : '',
                         dashboardDescription: dashboard.description ? dashboard.description : '',
-                        filterConfiguration: JSON.parse(dashboard.filter_configuration)
+                        filterConfiguration: (dashboard.filter_configuration!="" ? JSON.parse(dashboard.filter_configuration):[])
                     });
                     editor.setData(response.dashboard.content);
                 },

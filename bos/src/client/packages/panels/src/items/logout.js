@@ -63,9 +63,9 @@ export default class LogoutPanelItem extends PanelItem {
         title: 'Would You Like To Logout?',
         position: "top-end",
         confirmButtonText: 'Logout',
-        confirmButtonColor: '#ed4522',
+        confirmButtonColor: '#275362',
         showCancelButton: true,
-        cancelButtonColor: '#275362',
+        cancelButtonColor: '#7b7878',
         target: ".osjs-root"
       }).then((result) => {
         if (result.value) {

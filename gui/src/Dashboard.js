@@ -8,8 +8,10 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.core;
+
     this.state = {
-      htmlData: this.props.htmlData ? this.props.htmlData : null
+      htmlData: this.props.htmlData ? this.props.htmlData : null,
+      dashboardFilter: this.props.dashboardFilter
     };
     this.content = this.props.content;
     this.renderedWidgets = {};
@@ -40,10 +42,12 @@ class Dashboard extends Component {
     );
     return response;
   }
-  async getWidgetByUuid(uuid) {
+  async getWidgetByUuid(uuid, filterParams) {
+
+    let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
       "v1",
-      "analytics/widget/" + uuid + '?data=true',
+      "analytics/widget/" + uuid + '?data=true' + filterParameter,
       {},
       "get"
     );
@@ -60,6 +64,7 @@ class Dashboard extends Component {
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
           thiz.loader.destroy();
+
           this.updateGraph();
         } else {
           this.setState({
@@ -68,16 +73,16 @@ class Dashboard extends Component {
           this.loader.destroy()
         }
       }).
-      catch(function (response) {
+        catch(function (response) {
           console.error('Could not load widget.');
           console.error(response);
           Swal.fire({
-              type: 'error',
-              title: 'Oops ...',
-              text: 'Could not load widget. Please try after some time.'
+            type: 'error',
+            title: 'Oops ...',
+            text: 'Could not load widget. Please try after some time.'
           });
           thiz.loader.destroy();
-      });
+        });
     } else if (this.state.htmlData != null) {
       this.updateGraph();
     }
@@ -98,6 +103,27 @@ class Dashboard extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.dashboardFilter != this.props.dashboardFilter) {
+      let filterParams = []
+      this.props.dashboardFilter.map((filter, index) => {
+        let filterarray = []
+        filterarray.push(filter["field"])
+        filterarray.push(filter["operator"])
+        filterarray.push(filter["value"])
+        if (index > 0)
+          filterParams.push("AND")
+
+        filterParams.push(filterarray)
+
+      })
+      console.log(filterParams)
+      filterParams && filterParams.length!=0?
+      this.updateGraph(filterParams)
+      :
+      this.updateGraph()
+
+    }
+
     // if (this.props.htmlData) {
     //   if (this.props.htmlData !== prevProps.htmlData) {
     //     this.setState({
@@ -107,27 +133,44 @@ class Dashboard extends Component {
     // }
   }
 
-  updateGraph = async () => {
+  updateGraph = async (filterParams) => {
     if (null === this.state.htmlData) {
-        return;
+      return;
     }
     let root = document;
     var widgets = root.getElementsByClassName('oxzion-widget');
     let thiz = this;
     this.loader.show();
     let errorFound = false;
-    for (let widget of widgets) {        
+
+    //dispose and render if already exist
+    for (let elementId in this.renderedWidgets) {
+      let widget = this.renderedWidgets[elementId];
+      if (widget) {
+        if (widget.dispose) {
+          widget.dispose();
+        }
+        delete this.renderedWidgets[elementId];
+      }
+    }
+    for (let widget of widgets) {
       var attributes = widget.attributes;
+      console.log(attributes)
       //dispose 
+
       var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
-      let response = await this.getWidgetByUuid(widgetUUId);
+      let response = await this.getWidgetByUuid(widgetUUId, filterParams);
       if ('error' === response.status) {
         console.error('Could not load widget.');
         console.error(response);
         errorFound = true;
       }
       else {
-        //dispose
+        //dispose if widget exists
+
+        // response.data.widget["configuration"]["filter"]=[{"store":"New York"}]
+        //  response.data.widget["queries"][0]["configuration"]["filter"]={"store":"TX"}
+        //       console.log(response.data.widget["queries"][0])
         let widgetObject = WidgetRenderer.render(widget, response.data.widget);
         if (widgetObject) {
           this.renderedWidgets[widgetUUId] = widgetObject;

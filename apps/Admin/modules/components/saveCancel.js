@@ -6,6 +6,7 @@ export default class SaveCancel extends React.Component {
         <div className="col-12 text-center">
           {this.props.hideSave ? null : (
             <button
+              disabled={this.props.disableSave}
               type="submit"
               className="btn btn-success col-sm-2 mr-3"
               form={this.props.save}

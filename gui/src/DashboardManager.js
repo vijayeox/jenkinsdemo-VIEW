@@ -26,7 +26,8 @@ class Dashboard extends React.Component {
       dashboardBody: "",
       loadEditor: false,
       filterConfiguration: [],
-      showFilter: false
+      showFilter: false,
+      dashboardFilter: []
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -109,7 +110,7 @@ class Dashboard extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"] ,showFilter:false})
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false })
   }
 
   deleteDashboard() {
@@ -135,20 +136,25 @@ class Dashboard extends React.Component {
     this.setState({ flipped: true, uuid: "", inputs: inputs, loadEditor: true })
   }
 
-  showFilter(){
+  showFilter() {
     this.setState({ showFilter: true }, state => {
       var element = document.getElementById("filter-form-container");
       element.classList.remove("disappear");
       var element = document.getElementById("dashboard-preview-container");
       element.classList.add("disappear");
-  })
+    })
   }
 
-  hideFilter(){
+  hideFilter() {
 
-    this.setState({showFilter:false})
+    this.setState({ showFilter: false })
     var element = document.getElementById("dashboard-preview-container");
-      element.classList.remove("disappear");
+    element.classList.remove("disappear");
+  }
+
+  applyDashboardFilter(filter) {
+    this.setState({ dashboardFilter: filter })
+    this.hideFilter()
   }
 
   render() {
@@ -173,9 +179,10 @@ class Dashboard extends React.Component {
               {this.state.showFilter &&
                 <DashboardFilter
                   core={this.core}
-                  filterMode="APPLY" 
-                  hideFilterDiv={()=>this.hideFilter()}
-                  filterConfiguration={this.state.filterConfiguration?JSON.parse(this.state.filterConfiguration):[]}
+                  filterMode="APPLY"
+                  hideFilterDiv={() => this.hideFilter()}
+                  filterConfiguration={this.state.filterConfiguration ? JSON.parse(this.state.filterConfiguration) : []}
+                  setDashboardFilter={(filter) => this.applyDashboardFilter(filter)}
                 />
               }
             </div>
@@ -206,9 +213,9 @@ class Dashboard extends React.Component {
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
                           <>
-                           <Button onClick={() => this.showFilter()} title="Edit Dashboard">
-                                <i className="fa fa-filter" aria-hidden="true"></i>
-                              </Button>
+                            <Button onClick={() => this.showFilter()} title="Edit Dashboard">
+                              <i className="fa fa-filter" aria-hidden="true"></i>
+                            </Button>
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
                                 <i className="fa fa-pen" aria-hidden="true"></i>
@@ -252,6 +259,7 @@ class Dashboard extends React.Component {
                         core={this.core}
                         setTitle={this.props.setTitle}
                         proc={this.props.proc}
+                        dashboardFilter={this.state.dashboardFilter}
                       />
                     }
                   </div>

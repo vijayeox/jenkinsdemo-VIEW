@@ -253,7 +253,7 @@ const Img = ({ data }) => {
 
 const Video = ({ data }) => {
   return (
-    <video controls="controls" id="video" preload="none" autoPlay={true}>
+    <video controls="controls" id="video" preload="none" autoPlay={true} muted>
       <source id="mp4" src={data.media} type="video/mp4" />
       Video goes here
     </video>

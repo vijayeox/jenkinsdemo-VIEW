@@ -140,7 +140,7 @@ class Page extends React.Component {
       var fileId;
       var checkForTypeUpdate = false;
       action.details.every(async (item, index) => {
-        var copyItem = item;
+        var copyItem = JSON.parse(JSON.stringify(item));
         if (item.type == "Update") {
           checkForTypeUpdate = true;
           const response = await that.updateActionHandler(item, rowData);
