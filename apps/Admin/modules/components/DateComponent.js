@@ -55,6 +55,7 @@ export default class DateComponent extends React.Component {
         value={this.state.value}
         min={this.state.minValue}
         max={this.props.max}
+        validationMessage={this.props.validationMessage}
         onChange={this.props.change}
         required={this.props.required}
         disabled={this.props.disabled ? true : false}
