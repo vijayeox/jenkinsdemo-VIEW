@@ -341,6 +341,7 @@ class Page extends React.Component {
                   ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
                   : undefined
               }
+              forceDefaultFilters={itemContent.forceDefaultFilters}
               gridOperations={itemContent.operations}
               gridToolbar={itemContent.toolbarTemplate}
               filterable={itemContent.filterable}
