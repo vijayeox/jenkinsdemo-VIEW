@@ -18,7 +18,10 @@ function QueryResult(props) {
                 <div className="col query-result-details">Query Name: <span>{props.queryName?props.queryName:"Test Query"}</span></div>
                 <div className="col query-result-details">Execution Time:<span>{props.elapsedTime.toFixed(2)}ms</span></div>
             </div>
+           
             <div className="query-result-tab" id="query-result-tab">
+            {
+                Array.isArray(props.queryResult)?
                 <OX_Grid
                     ref={refreshGrid}
                     osjsCore={props.core}
@@ -29,6 +32,12 @@ function QueryResult(props) {
                     pageable={true}
                     columnConfig={columnNames || [{}]}
                 />
+                :
+                <div className="query-result-text-tab">
+                <span>RESULT:</span><span style={{marginLeft:"2em"}}>{props.queryResult}</span> 
+                </div>
+            }
+                
             </div>
         </>
     )

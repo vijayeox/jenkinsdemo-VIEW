@@ -442,6 +442,7 @@ export default class DialogContainer extends React.Component {
                     dataItemKey="uuid"
                     placeholder={"Select User Roles"}
                     disabled={this.props.diableField ? true : false}
+                    validityStyles={false}
                     required={true}
                   />
                 </div>

@@ -123,7 +123,8 @@ class Home extends React.Component {
                 React.createElement(currentValue.component, {
                   args: this.core,
                   userProfile: this.userProfile,
-                  menu: this.showMenu
+                  menu: this.showMenu,
+                  name: currentValue.name
                 }),
                 document.getElementById("componentsBox")
               );

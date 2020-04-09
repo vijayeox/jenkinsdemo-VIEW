@@ -629,6 +629,7 @@ export default class DialogContainer extends React.Component {
                   ref={this.fUpload}
                   required={true}
                   media_type={"image"}
+                  enableVideo={false}
                   acceptFileTypes={"image/*"}
                   media_URL={this.props.dataItem.logo}
                   title={"Upload Organization Logo"}

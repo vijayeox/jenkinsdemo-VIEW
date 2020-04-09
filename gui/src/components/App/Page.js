@@ -140,7 +140,7 @@ class Page extends React.Component {
       var fileId;
       var checkForTypeUpdate = false;
       action.details.every(async (item, index) => {
-        var copyItem = item;
+        var copyItem = JSON.parse(JSON.stringify(item));
         if (item.type == "Update") {
           checkForTypeUpdate = true;
           const response = await that.updateActionHandler(item, rowData);
@@ -341,6 +341,7 @@ class Page extends React.Component {
                   ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
                   : undefined
               }
+              forceDefaultFilters={itemContent.forceDefaultFilters}
               gridOperations={itemContent.operations}
               gridToolbar={itemContent.toolbarTemplate}
               filterable={itemContent.filterable}
