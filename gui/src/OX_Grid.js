@@ -292,6 +292,8 @@ export default class OX_Grid extends React.Component {
             ref={this.child}
             args={this.props.osjsCore}
             url={this.props.data}
+            gridDefaultFilters={this.props.gridDefaultFilters}
+            forceDefaultFilters={this.props.forceDefaultFilters}
             dataState={this.state.dataState}
             onDataRecieved={this.dataRecieved}
             columnConfig={this.props.columnConfig}

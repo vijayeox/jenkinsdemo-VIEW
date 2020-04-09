@@ -446,6 +446,10 @@ class DashboardEditor extends React.Component {
         })
     }
 
+    setFilter(filter){
+        this.setState({ filterConfiguration: filter })
+    }
+
     render() {
         return (
             <form className="dashboard-editor-form">
@@ -458,7 +462,7 @@ class DashboardEditor extends React.Component {
                     this.state.showFilterDiv &&
                     <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
-                        setFilter={(filter) => this.setState({ filterConfiguration: filter })}
+                        setFilter={(filter) =>this.setFilter(filter) }
                         notif={this.props.notif}
                         filterMode="CREATE" 
                         dashboardId={this.props.dashboardId}

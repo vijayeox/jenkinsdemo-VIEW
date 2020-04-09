@@ -68,6 +68,15 @@ export class DataLoader extends React.Component {
 
   prepareQueryFilters = filterConfig => {
     var gridConfig = JSON.parse(JSON.stringify(filterConfig));
+    if (this.props.forceDefaultFilters) {
+      try {
+        if (gridConfig.sort.length == 0 || gridConfig.sort == null) {
+          gridConfig.sort = this.props.gridDefaultFilters.sort
+            ? this.props.gridDefaultFilters.sort
+            : gridConfig.sort;
+        }
+      } catch {}
+    }
     this.props.columnConfig.map(ColumnItem => {
       if (ColumnItem.filterFormat && gridConfig.filter) {
         gridConfig.filter.filters.map((filterItem1, i) => {
@@ -116,8 +125,10 @@ export class DataLoader extends React.Component {
       return;
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
+    // if(typeof this.timeout === 'number'){
+    //   window.clearTimeout(this.timeout);      
+    // }
+    // this.timeout = window.setTimeout(() => {
       this.getData(this.state.url).then(response => {
         this.lastSuccess = this.pending;
         this.pending = "";
@@ -126,12 +137,12 @@ export class DataLoader extends React.Component {
             data: response.data,
             total: response.total ? response.total : null
           });
+         this.loader.destroy()
         } else {
           this.requestDataIfNeeded();
         }
       });
-      this.loader.destroy()
-    }, 1000);
+    // }, 2000);
   };
 
   render() {
