@@ -138,6 +138,7 @@ class Preferences extends Component {
     );
     var fields = this.state.fields;
     this.state.fields["soundnotification"]?"":fields["soundnotification"]="true";
+    this.state.fields["Greetingmessage"]?"":fields["Greetingmessage"]="true";
     this.state.fields["emailalerts"]?"":fields["emailalerts"]="true";
     this.setState({
       fields
@@ -276,6 +277,33 @@ class Preferences extends Component {
                   value="false"
                   onChange={this.handleChange}
                   checked={this.state.fields["soundnotification"] == "false"}
+                />
+                <span className="m-2 radioLabel">Off</span>
+              </label>
+            </div>
+          </div>
+          <div className="row marginsize">
+            <div className="col-md-4" id="Greetingmessage">
+              <Form.Label>Greeting message:</Form.Label>
+            </div>
+            <div className="col-md-8">
+              <label id="name">
+                <input
+                  className="preferencesRadio"
+                  type="radio"
+                  name="Greetingmessage"
+                  value="true"
+                  onChange={this.handleChange}
+                  checked={this.state.fields["Greetingmessage"] == "true"}
+                />
+                <span className="m-2 radioLabel">On</span>
+                <input
+                  className="preferencesRadio"
+                  type="radio"
+                  name="Greetingmessage"
+                  value="false"
+                  onChange={this.handleChange}
+                  checked={this.state.fields["Greetingmessage"] == "false"}
                 />
                 <span className="m-2 radioLabel">Off</span>
               </label>
