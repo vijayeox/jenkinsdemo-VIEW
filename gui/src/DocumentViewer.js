@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Accordion from "react-bootstrap/Accordion";
+import { useAccordionToggle } from "react-bootstrap/AccordionToggle";
 import { Card, Button } from "react-bootstrap";
 import "./public/css/documentViewer.scss";
 
@@ -11,7 +12,8 @@ export default class DocumentViewer extends Component {
     this.state = {
       selectedDocument: undefined,
       documentsList: undefined,
-      documentTypes: []
+      documentTypes: [],
+      activeCard: ""
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
@@ -40,25 +42,30 @@ export default class DocumentViewer extends Component {
           var documentTypes = Object.keys(response.data);
           this.setState({ documentTypes: documentTypes });
           documentTypes.map((docType, index) => {
-            if (
-              response.data[docType] &&
-              response.data[docType].length > 0
-            ) {
+            if (response.data[docType] && response.data[docType].length > 0) {
               documentsList[docType] = response.data[docType];
             }
           });
           if (Object.keys(documentsList).length > 0) {
-            if(documentsList[documentTypes[0]] && documentsList[documentTypes[0]][0]){
+            if (
+              documentsList[documentTypes[0]] &&
+              documentsList[documentTypes[0]][0]
+            ) {
               this.setState({
                 documentsList: documentsList,
                 selectedDocument: documentsList[documentTypes[0]][0],
+                activeCard: documentTypes[0]
               });
             } else {
               for (var i = 0; i < documentTypes.length; i++) {
-                if(documentsList[documentTypes[i]] && documentsList[documentTypes[i]][0]){
+                if (
+                  documentsList[documentTypes[i]] &&
+                  documentsList[documentTypes[i]][0]
+                ) {
                   this.setState({
                     documentsList: documentsList,
                     selectedDocument: documentsList[documentTypes[i]][0],
+                    activeCard: documentTypes[i]
                   });
                   break;
                 }
@@ -86,9 +93,18 @@ export default class DocumentViewer extends Component {
           ? accordionHTML.push(
               <Card key={index}>
                 <Card.Header>
-                  <Accordion.Toggle as={Button} eventKey={docType}>
+                  <CustomToggle
+                    eventKey={docType}
+                    currentSelected={this.state.activeCard}
+                    update={(item) => {
+                      this.setState({
+                        activeCard: item,
+                        selectedDocument: this.state.documentsList[item][0]
+                      });
+                    }}
+                  >
                     {docType}
-                  </Accordion.Toggle>
+                  </CustomToggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey={docType}>
                   <Card.Body>
@@ -96,7 +112,7 @@ export default class DocumentViewer extends Component {
                       return (
                         <Card
                           className="docItems"
-                          onClick={e => {
+                          onClick={(e) => {
                             doc.file != this.state.selectedDocument.file
                               ? this.handleDocumentClick(doc)
                               : null;
@@ -267,4 +283,28 @@ export default class DocumentViewer extends Component {
       this.getDocumentsList();
     }
   }
+}
+
+function CustomToggle(props) {
+  return (
+    <Button
+      variant="primary"
+      onClick={
+        props.currentSelected !== props.eventKey
+          ? useAccordionToggle(props.eventKey, () =>
+              props.update.call(undefined, props.eventKey)
+            )
+          : null
+      }
+    >
+      <i
+        className={
+          props.currentSelected == props.eventKey
+            ? "docIcon fa fa-caret-right rotate90"
+            : "docIcon fa fa-caret-right"
+        }
+      ></i>
+      {props.children}
+    </Button>
+  );
 }
