@@ -313,6 +313,12 @@ class DashboardFilter extends React.Component {
         formData["filters"] = filters
         if (this.props.filterMode === "CREATE") {
             this.props.setFilter(filters)
+            this.hideFilterDiv()
+            this.props.notif.current.notify(
+                "Filter Applied Successfully",
+                "Please save the dashboard in order to keep the changes",
+                "success"
+              )
         }
         else if (this.props.filterMode === "APPLY") {
 
@@ -320,6 +326,9 @@ class DashboardFilter extends React.Component {
             console.log("IMPLEMENTING")
             console.log(filters)
         }
+
+        
+        
 
         //uncomment once api is implemented
 
@@ -396,7 +405,7 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     <Row >
-                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
+                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filter</Button>
 
                     </Row>
 
