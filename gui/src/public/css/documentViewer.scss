@@ -1,78 +1,71 @@
-.borderActive {
-  border: 2px solid #275362;
-  box-shadow: 0px 0px 3px 1px #275362;
-  transform: scale(1.03);
-  transition-property: transform;
-  transition-duration: 1s;
-}
-
-.docListDiv {
-  height: 100%;
-}
-
-// @media only screen and (max-width: 770px) {
-//   .docListDiv {
-//     position: inherit;
-//     height: auto;
-//   }
-// }
-
-.docList {
-  cursor: pointer;
-}
-
-.closeButton {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  cursor: pointer;
-  height: 80px;
-  overflow: hidden;
-  position: absolute;
-  right: -40px;
-  top: -40px;
-  -webkit-transition: background-color 0.15s;
-  transition: background-color 0.15s;
-  width: 80px;
-}
-
-.documentsWrap {
-  margin-top: 10px;
-  border: solid lightgray;
-  border-radius: 10px;
-}
-
-.docListBody {
-  text-align: left;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 15px;
-
-  p {
-    margin: 5px 5px;
-    line-height: normal;
-    font-size: 2.2vh;
-    font-weight: 500;
-  }
-}
-
-.docIcon {
-  font-size: 3.5vh;
-  padding: 5px 10px;
-}
-
-.iframeDoc {
-  height: 100% !important;
-  width: 100% !important;
-  height: -moz-available;
-  height: fill-available;
-  width: -webkit-fill-available;
-  width: -moz-available;
-}
-
 .docViewerComponent {
   display: flex;
   height: inherit;
+
+  .borderActive {
+    border: 2px solid #275362;
+    box-shadow: 0px 0px 3px 1px #275362;
+    transform: scale(1.03);
+    transition-property: transform;
+    transition-duration: 1s;
+  }
+
+  .docListDiv {
+    height: 100%;
+  }
+
+  .docList {
+    cursor: pointer;
+  }
+
+  .closeButton {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+    height: 80px;
+    overflow: hidden;
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    -webkit-transition: background-color 0.15s;
+    transition: background-color 0.15s;
+    width: 80px;
+  }
+
+  .documentsWrap {
+    margin-top: 10px;
+    border: solid lightgray;
+    border-radius: 10px;
+  }
+
+  .docListBody {
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 15px;
+
+    p {
+      margin: 5px 5px;
+      line-height: normal;
+      font-size: 2.2vh;
+      font-weight: 500;
+    }
+  }
+
+  .docIcon {
+    font-size: 3.2vh;
+    padding: 5px 10px;
+  }
+
+  .iframeDoc {
+    height: 100% !important;
+    width: 100% !important;
+    height: -moz-available;
+    height: fill-available;
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
 
   .docListBody.border {
     cursor: pointer;
@@ -89,6 +82,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .rotate90 {
+    transform: rotate(90deg);
+    transition: -webkit-transform 0.2s ease-in;
   }
 
   .image-download-button {
@@ -125,7 +123,14 @@
         color: white;
         font-weight: bolder;
         font-size: 1.15em;
-        padding: 0.75rem 1.25rem;
+        padding: 0.3rem 1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        align-content: center;
+        justify-content: start;
+        width: 100%;
+        margin: 0px;
       }
       .btn-primary:focus {
         outline: 0;
@@ -133,7 +138,6 @@
       }
     }
   }
-
   .card-body {
     padding: 5px;
     display: flex;
@@ -149,16 +153,5 @@
     max-height: 3rem;
     margin: 0.4vh;
     border-radius: 15px;
-  }
-}
-
-.singleFile {
-  padding: 0.5em 1em 0.5em 0.2em;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  .fileIcon {
-    padding-right: 5px;
   }
 }
