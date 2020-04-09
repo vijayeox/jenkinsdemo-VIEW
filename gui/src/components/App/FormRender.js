@@ -573,17 +573,17 @@ class FormRender extends React.Component {
             form.emit("render");
             that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
-            if (form.pages[changed.page]["properties"]["delegate"]) {
-                var form_data = that.cleanData(form.submission.data);
-                that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
-                  if (response) {
-                    that.showFormLoader(false,0);
-                    if (response.data) {
-                      form.setSubmission({ data: that.formatFormData(response.data) });
-                    }
-                  }
-                });
-            }
+            // if (form.pages[changed.page]["properties"]["delegate"]) {
+            //     var form_data = that.cleanData(form.submission.data);
+            //     that.callDelegate(form.pages[changed.page]["properties"]["delegate"], form_data).then(response => {
+            //       if (response) {
+            //         that.showFormLoader(false,0);
+            //         if (response.data) {
+            //           form.setSubmission({ data: that.formatFormData(response.data) });
+            //         }
+            //       }
+            //     });
+            // }
           });
 
           form.on("change", function (changed) {
