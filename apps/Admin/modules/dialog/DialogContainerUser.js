@@ -4,11 +4,10 @@ import { Window } from "@progress/kendo-react-dialogs";
 import { Input } from "@progress/kendo-react-inputs";
 import { Ripple } from "@progress/kendo-react-ripple";
 import { MultiSelect } from "@progress/kendo-react-dropdowns";
-import { GetSingleEntityData, PushData } from "../components/apiCalls";
+import { PushData } from "../components/apiCalls";
 import { Notification } from "../../GUIComponents";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
-
-import Codes from "../data/Codes";
+import countryStateList from "../data/country-state-codes";
 import ReactTooltip from "react-tooltip";
 import Moment from "moment";
 
@@ -16,49 +15,86 @@ export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    let countryList = countryStateList.map((item) => item.country);
     this.state = {
       userInEdit: [],
       roleList: [],
-      managerName: undefined
+      projectList: [],
+      countryList: countryList,
+      stateList: []
     };
     this.notif = React.createRef();
+    this.loader = this.core.make("oxzion/splash");
+    this.adminWindow = document.getElementsByClassName("Window_Admin")[0];
   }
 
   UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
-      this.getUserDetails(this.props.dataItem.uuid).then(response => {
-        this.setState({
-          userInEdit: response.data
-        });
-
-        GetSingleEntityData(
-          "organization/" +
+      this.loader.show(this.adminWindow);
+      this.getData(
+        "organization/" +
           this.props.selectedOrg +
           "/user/" +
-          response.data.managerid +
+          this.props.dataItem.uuid +
           "/profile"
-        ).then(response => {
+      ).then((response) => {
+        var apiResponse = response.data;
+        this.getData(
+          "organization/" +
+            this.props.selectedOrg +
+            "/user/" +
+            this.props.dataItem.uuid +
+            "/pr"
+        ).then((response2) => {
+          var tempProjects = [];
+          var userPrjList = response2.data.projects;
+          for (var i = 0; i <= userPrjList.length - 1; i++) {
+            var prjName = userPrjList[i].name;
+            var prjId = userPrjList[i].uuid;
+            tempProjects.push({ uuid: prjId, name: prjName });
+          }
+          apiResponse.project = tempProjects;
+          apiResponse.manager_name = {
+            id: apiResponse.managerid,
+            name: apiResponse.manager_name
+          };
           this.setState({
-            managerName: {
-              id: "111",
-              name: response.data.name
-            }
+            userInEdit: apiResponse
           });
         });
       });
+      this.loader.destroy();
     }
+    this.loader.show(this.adminWindow);
 
-    this.getRolesList().then(response => {
-      var tempUsers = [];
-      for (var i = 0; i <= response.data.length - 1; i++) {
-        var userName = response.data[i].name;
-        var userid = response.data[i].uuid;
-        tempUsers.push({ uuid: userid, name: userName });
+    this.getData("organization/" + this.props.selectedOrg + "/roles").then(
+      (response) => {
+        var tempUsers = [];
+        for (var i = 0; i <= response.data.length - 1; i++) {
+          var userName = response.data[i].name;
+          var userid = response.data[i].uuid;
+          tempUsers.push({ uuid: userid, name: userName });
+        }
+        this.setState({
+          roleList: tempUsers
+        });
       }
-      this.setState({
-        roleList: tempUsers
-      });
-    });
+    );
+
+    this.getData("organization/" + this.props.selectedOrg + "/projects").then(
+      (response) => {
+        var tempProjects = [];
+        for (var i = 0; i <= response.data.length - 1; i++) {
+          var prjName = response.data[i].name;
+          var prjId = response.data[i].uuid;
+          tempProjects.push({ uuid: prjId, name: prjName });
+        }
+        this.setState({
+          projectList: tempProjects
+        });
+        this.loader.destroy();
+      }
+    );
   }
 
   componentDidMount() {
@@ -77,40 +113,32 @@ export default class DialogContainer extends React.Component {
     }
   }
 
-  async getRolesList() {
+  async getData(route) {
     let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request(
-      "v1",
-      "organization/" + this.props.selectedOrg + "/roles",
-      {},
-      "get"
-    );
-    return rolesList;
-  }
-
-  async getUserDetails(uuid) {
-    let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request(
-      "v1",
-      "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
-      {},
-      "get"
-    );
+    let rolesList = await helper2.request("v1", route, {}, "get");
     return rolesList;
   }
 
   managerValueChange = (field, event) => {
     let userInEdit = { ...this.state.userInEdit };
     userInEdit[field] = event.target.value;
-    this.setState({ userInEdit: userInEdit, managerName: event.target.value });
+    userInEdit["manager_name"] = event.target.value;
+    this.setState({ userInEdit: userInEdit });
   };
 
   valueChange = (field, event) => {
     if (field == "role") {
       let userInEdit = { ...this.state.userInEdit };
       userInEdit[field] = event.target.value;
-      const selectedRole = event.target.value.map(x => x.id);
-      userInEdit["selectedRole"] = selectedRole;
+      this.setState({ userInEdit: userInEdit });
+    } else if (field == "project") {
+      let userInEdit = { ...this.state.userInEdit };
+      userInEdit[field] = event.target.value;
+      this.setState({ userInEdit: userInEdit });
+    } else if (field == "country") {
+      let userInEdit = { ...this.state.userInEdit };
+      userInEdit[field] = event.target.value;
+      userInEdit["state"] = "";
       this.setState({ userInEdit: userInEdit });
     } else {
       let userInEdit = { ...this.state.userInEdit };
@@ -119,7 +147,7 @@ export default class DialogContainer extends React.Component {
     }
   };
 
-  onDialogInputChange = event => {
+  onDialogInputChange = (event) => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -139,7 +167,7 @@ export default class DialogContainer extends React.Component {
         "Invalid Email ID",
         "Please enter a valid email address.",
         "warning"
-      )
+      );
       return true;
     }
   }
@@ -151,16 +179,17 @@ export default class DialogContainer extends React.Component {
         "Invalid Email ID",
         "Please enter a valid email address.",
         "warning"
-      )
+      );
       return true;
     }
   }
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     event.preventDefault();
     if (this.validateEmail(document.getElementById("email-id").value)) {
       return;
     }
+    this.loader.show(this.adminWindow);
     var userRoles = [];
     for (var i = 0; i <= this.state.userInEdit.role.length - 1; i++) {
       var uid = { uuid: this.state.userInEdit.role[i].uuid };
@@ -183,16 +212,18 @@ export default class DialogContainer extends React.Component {
           gender: this.state.userInEdit.gender,
           managerid: this.state.userInEdit.managerid,
           role: userRoles,
+          project: this.state.userInEdit.project,
           date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
             "YYYY-MM-DD"
           ),
-          address1:" ",
-          city:" ",
-          state:" ",
-          zip:" ",
+          address1: "",
+          city: "",
+          state: this.state.userInEdit.state,
+          zip: "",
           country: this.state.userInEdit.country
         }
-      ).then(response => {
+      ).then((response) => {
+        this.loader.destroy();
         if (response.status == "success") {
           this.props.action(response);
           this.props.cancel();
@@ -201,7 +232,7 @@ export default class DialogContainer extends React.Component {
             "Error",
             response.message ? response.message : null,
             "danger"
-          )
+          );
         }
       });
     } else if (this.props.formAction == "put") {
@@ -217,15 +248,16 @@ export default class DialogContainer extends React.Component {
         gender: this.state.userInEdit.gender,
         managerid: this.state.userInEdit.managerid,
         role: userRoles,
+        project: this.state.userInEdit.project,
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
           "YYYY-MM-DD"
         ),
-        address1:"",
-        city:"",
-        state:"",
-        zip:"",
+        address1: "",
+        city: "",
+        state: this.state.userInEdit.state,
+        zip: "",
         country: this.state.userInEdit.country
-      }).then(response => {
+      }).then((response) => {
         if (response.status == "success") {
           this.props.action(response);
           this.props.cancel();
@@ -234,10 +266,24 @@ export default class DialogContainer extends React.Component {
             "Error",
             response.message ? response.message : null,
             "danger"
-          )
+          );
         }
       });
     }
+  };
+
+  prepareStateData = () => {
+    if (this.state.userInEdit.country) {
+      let obj = countryStateList.find(
+        (o) => o.country === this.state.userInEdit.country
+      );
+      if (obj) {
+        return obj.states;
+      }
+    } else {
+      return [];
+    }
+    return [];
   };
 
   render() {
@@ -256,7 +302,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col">
+                <div className="col-sm-6">
                   <label className="required-label">First Name</label>
                   <Input
                     type="text"
@@ -271,7 +317,7 @@ export default class DialogContainer extends React.Component {
                     validationMessage={"Please enter a valid First Name"}
                   />
                 </div>
-                <div className="col">
+                <div className="col-sm-6">
                   <label className="required-label">Last Name</label>
                   <Input
                     type="text"
@@ -291,7 +337,7 @@ export default class DialogContainer extends React.Component {
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col">
+                <div className="col-sm-6">
                   <label className="required-label">Email</label>
                   <Input
                     type="text"
@@ -307,11 +353,8 @@ export default class DialogContainer extends React.Component {
                     validationMessage={"Please enter a valid Email Address"}
                   />
                 </div>
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="form-row">
-                <div className="col">
+
+                <div className="col-sm-6">
                   <label className="required-label">User Name</label>
                   <Input
                     type="text"
@@ -327,7 +370,29 @@ export default class DialogContainer extends React.Component {
                     data-tip="Changing the username will reset the User's chat history."
                   />
                 </div>
-                <div className="col">
+              </div>
+            </div>
+            <div className="form-group">
+              <div className="form-row">
+                <div className="col-sm-6">
+                  <label>Manager Assigned</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/users"
+                      }
+                      preFetch={true}
+                      selectedItem={this.state.userInEdit.manager_name}
+                      selectedEntityType={"object"}
+                      onDataChange={(e) =>
+                        this.managerValueChange("managerid", e)
+                      }
+                      disableItem={this.props.diableField}
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-6">
                   <label className="required-label">Designation</label>
                   <Input
                     type="text"
@@ -347,18 +412,55 @@ export default class DialogContainer extends React.Component {
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col-4">
+                <div className="col-sm-6">
+                  <label className="required-label">Country</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={this.state.countryList}
+                      selectedItem={this.state.userInEdit.country}
+                      preFetch={true}
+                      onDataChange={(e) => this.valueChange("country", e)}
+                      required={true}
+                      validationMessage={
+                        "Please select a country from the list."
+                      }
+                      disableItem={this.props.diableField}
+                    />
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <label className="required-label">State</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={this.prepareStateData()}
+                      selectedItem={this.state.userInEdit.state}
+                      preFetch={true}
+                      onDataChange={(e) => this.valueChange("state", e)}
+                      required={true}
+                      validationMessage={"Please select a state from the list."}
+                      disableItem={this.props.diableField}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <div className="form-row">
+                <div className="col-sm-6">
                   <label className="required-label">Gender</label>
-                  <div className="pt-2">
+                  <div>
                     <Ripple>
-                      <span className="col-6">
+                      <span className="col-sm-6">
                         <input
                           type="radio"
                           id="mRadio"
                           name="gender"
                           value="Male"
                           className="k-radio"
-                          onChange={e => this.valueChange("gender", e)}
+                          onChange={(e) => this.valueChange("gender", e)}
                           checked={this.state.userInEdit.gender == "Male"}
                           disabled={this.props.diableField ? true : false}
                           required
@@ -370,14 +472,14 @@ export default class DialogContainer extends React.Component {
                           Male
                         </label>
                       </span>
-                      <span className="col-4">
+                      <span className="col-sm-6">
                         <input
                           type="radio"
                           id="fRadio"
                           name="gender"
                           value="Female"
                           className="k-radio pl-2"
-                          onChange={e => this.valueChange("gender", e)}
+                          onChange={(e) => this.valueChange("gender", e)}
                           checked={this.state.userInEdit.gender == "Female"}
                           disabled={this.props.diableField ? true : false}
                           required
@@ -392,35 +494,33 @@ export default class DialogContainer extends React.Component {
                     </Ripple>
                   </div>
                 </div>
-                <div className="col-4">
-                  <label>Manager Assigned</label>
+
+                <div className="col-sm-3">
+                  <label className="required-label">Date Of Birth</label>
                   <div>
-                    <DropDown
-                      args={this.core}
-                      mainList={
-                        "organization/" + this.props.selectedOrg + "/users"
-                      }
-                      preFetch={true}
-                      selectedItem={this.state.managerName}
-                      selectedEntityType={"object"}
-                      onDataChange={e =>
-                        this.managerValueChange("managerid", e)
-                      }
-                      disableItem={this.props.diableField}
+                    <DateComponent
+                      format={this.props.userPreferences.dateformat}
+                      value={this.state.userInEdit.date_of_birth}
+                      change={(e) => this.valueChange("date_of_birth", e)}
+                      required={true}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
-                <div className="col-4">
-                  <label className="required-label">Country</label>
+                <div className="col-sm-3">
+                  <label className="required-label">Date Of Join</label>
                   <div>
-                    <DropDown
-                      args={this.core}
-                      rawData={Codes}
-                      selectedItem={this.state.userInEdit.country}
-                      preFetch={true}
-                      onDataChange={e => this.valueChange("country", e)}
+                    <DateComponent
+                      format={this.props.userPreferences.dateformat}
+                      value={this.state.userInEdit.date_of_join}
+                      min={
+                        this.state.userInEdit.date_of_birth
+                          ? this.state.userInEdit.date_of_birth
+                          : undefined
+                      }
+                      change={(e) => this.valueChange("date_of_join", e)}
                       required={true}
-                      disableItem={this.props.diableField}
+                      disabled={this.props.diableField ? true : false}
                     />
                   </div>
                 </div>
@@ -433,7 +533,7 @@ export default class DialogContainer extends React.Component {
                   <label className="required-label">Role</label>
                   <MultiSelect
                     data={this.state.roleList}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.valueChange("role", e);
                     }}
                     value={this.state.userInEdit.role}
@@ -442,41 +542,33 @@ export default class DialogContainer extends React.Component {
                     dataItemKey="uuid"
                     placeholder={"Select User Roles"}
                     disabled={this.props.diableField ? true : false}
+                    validationMessage={
+                      "Please assign atleast one of role to the user."
+                    }
                     validityStyles={false}
                     required={true}
                   />
                 </div>
-                <div className="col-3">
-                  <label className="required-label">Date Of Birth</label>
-                  <div>
-                    <DateComponent
-                      format={this.props.userPreferences.dateformat}
-                      value={this.state.userInEdit.date_of_birth}
-                      change={e => this.valueChange("date_of_birth", e)}
-                      required={true}
-                      disabled={this.props.diableField ? true : false}
-                    />
-                  </div>
-                </div>
-                <div className="col-3">
-                  <label className="required-label">Date Of Join</label>
-                  <div>
-                    <DateComponent
-                      format={this.props.userPreferences.dateformat}
-                      value={this.state.userInEdit.date_of_join}
-                      min={
-                        this.state.userInEdit.date_of_birth
-                          ? this.state.userInEdit.date_of_birth
-                          : undefined
-                      }
-                      change={e => this.valueChange("date_of_join", e)}
-                      required={true}
-                      disabled={this.props.diableField ? true : false}
-                    />
-                  </div>
+
+                <div className="col-6">
+                  <label>Add User To Projects</label>
+                  <MultiSelect
+                    data={this.state.projectList}
+                    onChange={(e) => {
+                      this.valueChange("project", e);
+                    }}
+                    value={this.state.userInEdit.project}
+                    clearButton={false}
+                    textField="name"
+                    dataItemKey="uuid"
+                    placeholder={"Select User Projects"}
+                    disabled={this.props.diableField ? true : false}
+                    validityStyles={false}
+                  />
                 </div>
               </div>
             </div>
+
             <div style={{ margin: "75px" }} />
           </form>
         </div>
