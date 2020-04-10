@@ -21,39 +21,39 @@ class MultiSelect extends React.Component {
     this.getMainList = this.getMainList.bind(this);
   }
   async ExcludeUsers(api, excludeList, term, size) {
-  if (term) {
-    var query = {
-      filter: {
-        logic: "and",
-        filters: [{ field: "name", operator: "contains", value: term }]
-      },
-      skip: 0,
-      take: size
-    };
-  } else {
-    var query = {
-      skip: 0,
-      take: size
-    };
-  }
+    if (term) {
+      var query = {
+        filter: {
+          logic: "and",
+          filters: [{ field: "name", operator: "contains", value: term }]
+        },
+        skip: 0,
+        take: size
+      };
+    } else {
+      var query = {
+        skip: 0,
+        take: size
+      };
+    }
 
-  let response = await this.helper.request(
-    "v1",
-    "/" + api,
-    { exclude: excludeList, filter: "[" + JSON.stringify(query) + "]" },
-    "post"
-  );
-  return response;
-}
-async ExistingUsers(api, selectedEntity) {
-  let response = await this.helper.request(
-    "v1",
-    "/" + api + "/" + selectedEntity + "/users",
-    {},
-    "get"
-  );
-  return response;
-}
+    let response = await this.helper.request(
+      "v1",
+      "/" + api,
+      { exclude: excludeList, filter: "[" + JSON.stringify(query) + "]" },
+      "post"
+    );
+    return response;
+  }
+  async ExistingUsers(api, selectedEntity) {
+    let response = await this.helper.request(
+      "v1",
+      "/" + api + "/" + selectedEntity + "/users",
+      {},
+      "get"
+    );
+    return response;
+  }
 
   componentDidMount() {
     let loader = this.core.make("oxzion/splash");
@@ -69,7 +69,7 @@ async ExistingUsers(api, selectedEntity) {
       this.ExistingUsers(
         this.props.config.subList,
         this.props.config.dataItem.uuid
-      ).then(response => {
+      ).then((response) => {
         var tempUsers = [];
         for (var i = 0; i <= response.data.length - 1; i++) {
           var userName = response.data[i].name;
@@ -93,7 +93,7 @@ async ExistingUsers(api, selectedEntity) {
 
   getMainList = (query, size) => {
     var excludeUsersList = [];
-    this.state.selectedUsers.map(dataItem => {
+    this.state.selectedUsers.map((dataItem) => {
       excludeUsersList.push(dataItem.uuid);
     });
     this.ExcludeUsers(
@@ -101,7 +101,7 @@ async ExistingUsers(api, selectedEntity) {
       excludeUsersList,
       query,
       size
-    ).then(response => {
+    ).then((response) => {
       var tempUsers = [];
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
@@ -118,7 +118,7 @@ async ExistingUsers(api, selectedEntity) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  filterChange = e => {
+  filterChange = (e) => {
     this.setState({
       filterValue: e.filter.value.length > 0
     });
@@ -146,7 +146,7 @@ async ExistingUsers(api, selectedEntity) {
     }
   }
 
-  listNoDataRender = element => {
+  listNoDataRender = (element) => {
     const noData = (
       <h4 style={{ fontSize: "1em" }}>
         <span style={{ fontSize: "2.5em" }}>
@@ -162,7 +162,7 @@ async ExistingUsers(api, selectedEntity) {
   };
 
   tagRender = () => {
-    $(document).ready(function(item) {
+    $(document).ready(function (item) {
       $(".k-searchbar")
         .children()
         .attr({
@@ -172,9 +172,9 @@ async ExistingUsers(api, selectedEntity) {
     });
   };
 
-  deleteRecord = item => {
+  deleteRecord = (item) => {
     const selectedUsers = this.state.selectedUsers.slice();
-    const index = selectedUsers.findIndex(p => p.uuid === item.uuid);
+    const index = selectedUsers.findIndex((p) => p.uuid === item.uuid);
     if (index !== -1) {
       selectedUsers.splice(index, 1);
       this.setState({
@@ -215,6 +215,7 @@ async ExistingUsers(api, selectedEntity) {
                 dataItemKey="uuid"
                 tagRender={this.tagRender}
                 listNoDataRender={this.listNoDataRender}
+                validationMessage={this.props.validationMessage}
                 placeholder={"Click to add " + this.props.config.members}
               />
             </div>
@@ -291,7 +292,7 @@ function cellWithEditing(remove, title) {
                     showCancelButton: true,
                     cancelButtonColor: "#3085d6",
                     target: ".Window_Admin"
-                  }).then(result => {
+                  }).then((result) => {
                     if (result.value) {
                       remove(this.props.dataItem);
                     }
