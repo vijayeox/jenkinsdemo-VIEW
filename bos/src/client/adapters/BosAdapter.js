@@ -41,6 +41,8 @@ export class BosAdapter extends ServiceProvider {
     });
 
     this.core.on("osjs/core:started", () => {
+      var userDetails = this.core.make("oxzion/profile").get();
+      if (userDetails["key"]["icon"]["Greetingmessage"] == true){
       var myDate = new Date();
       var hrs = myDate.getHours();
       var greet;
@@ -48,7 +50,7 @@ export class BosAdapter extends ServiceProvider {
       else if (hrs >= 12 && hrs <= 17) greet = "Good Afternoon";
       else if (hrs >= 17 && hrs <= 24) greet = "Good Evening";
       //console.log(this.core.make('oxzion/profile').get().UserInfo();
-      var userDetails = this.core.make("oxzion/profile").get();
+      
       this.core.make("osjs/notification", {
         timeout: 10000,
         icon: userDetails["key"]["icon"],
@@ -56,6 +58,7 @@ export class BosAdapter extends ServiceProvider {
         message:
           "Hello and " + greet + " " + userDetails["key"]["firstname"] + "!"
       });
+    }
     });
 
     this.core.on("oxzion/application:launch", params => {

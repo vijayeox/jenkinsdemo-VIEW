@@ -170,7 +170,10 @@ export default class Core extends CoreBase {
                   lsHelper.set('AUTH_token', jwt);
                   lsHelper.set('REFRESH_token', refresh);
                 }
-              };
+                else{
+                  window.localStorage.clear();
+                }
+               };
               xhr.send(formData);
             }
           };
