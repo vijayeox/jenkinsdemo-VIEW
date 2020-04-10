@@ -980,9 +980,7 @@ class FormRender extends React.Component {
                 }else{
                   that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
                 }
-                setTimeout(function() {
-                     that.showFormLoader(false,0);
-                  }, 5000);
+                that.showFormLoader(false,0);
               });
             }
           }
