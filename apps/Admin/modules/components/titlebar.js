@@ -5,14 +5,22 @@ import { Button } from "@progress/kendo-react-buttons";
 export class TitleBar extends React.Component {
   render() {
     return (
-      <div style={{ paddingTop: "12px", marginLeft: "0px" }}>
+      <div
+        style={{ paddingTop: "12px", marginLeft: "0px" }}
+        className="adminTitleBar"
+      >
         <div
           style={{ marginLeft: "15px", position: "absolute", zIndex: "101" }}
         >
           <Button
             onClick={this.props.menu}
             primary={true}
-            style={{ width: "45px", height: "45px" }}
+            style={{
+              width: "45px",
+              height: "45px",
+              position: "relative",
+              bottom: "3px"
+            }}
           >
             <i className="fa fa-bars"></i>
           </Button>
