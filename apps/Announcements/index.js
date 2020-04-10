@@ -5,7 +5,6 @@ import Slider from './slider.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const trayOptions = {};
 let tray = null;
 // Our launcher
 const register = (core, args, options, metadata) => {
