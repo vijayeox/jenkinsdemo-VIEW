@@ -102,6 +102,10 @@ class User extends React.Component {
                 field: "name"
               },
               {
+                title: "Email",
+                field: "email"
+              },
+              {
                 title: "Designation",
                 field: "designation"
               },
