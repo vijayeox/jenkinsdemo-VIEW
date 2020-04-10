@@ -1,4 +1,7 @@
 // ---SweetAlert2 Fixes (Start)---
+// body.swal2-height-auto {
+//   height: inherit !important;
+// }
 
 body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   overflow-y: visible !important;
@@ -15,7 +18,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
   @import "./node_modules/react-phone-number-input/style.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
-  @import "./node_modules/@progress/kendo-theme-default/dist/all.css";
 
   .k-grid-norecords {
     width: inherit !important;
@@ -68,8 +70,8 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   // ---- react-phone-number
 
   .react-phone-number-input__icon {
-    width: 29px;
-    height: 22px;
+    width: 40px;
+    height: 30px;
   }
 
   .react-phone-number-input__row {
@@ -138,6 +140,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
       img,
       video {
         width: 90%;
+        max-width: 400px;
       }
     }
     .k-file-validation-message {
@@ -151,14 +154,18 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   .manage-btn {
     background-color: $primary-color;
     border-radius: 10px;
-    padding: 7px;
+    padding: 5px;
     font-size: 15px;
+    height: 2.2rem;
+    width: 2.2rem;
+    margin: 0px 5px;
   }
 
   tr {
     th.k-header {
-      font-size: larger;
-      background-color: #275362;
+      font-size: large;
+      padding: 0.4rem 0.6rem;
+      background-color: $primary-color;
       color: #f8f0ee;
       font-weight: bolder;
       font-family: "Century Gothic", "Futura", "Didact Gothic", san-serif;
@@ -189,6 +196,12 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     max-width: -moz-available;
     max-width: -webkit-fill-available;
     max-width: fill-available;
+    max-height: 100px;
+  }
+
+  .tdImage {
+    display: block;
+    text-align: center;
   }
 
   legend.form-label {
@@ -657,10 +670,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     }
   }
 
-  .privelegeGridcellFix {
-    padding-left: 20px;
-  }
-
   .custom-file-container__custom-file {
     width: 85% !important;
   }
@@ -738,20 +747,9 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     cursor: pointer;
   }
 
-  .k-dropdown {
-    background-color: #9e9e9e;
-  }
-
-  form {
-    .k-dropdown {
-      background-color: #9e9e9e;
-      height: 2.5rem;
-    }
-  }
-
   .k-dialog {
-    width: 70%;
-    height: 90%;
+    width: 60%;
+    height: 85%;
     margin-top: 25px;
   }
 
@@ -764,13 +762,20 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     cursor: pointer;
   }
 
-  .k-grid {
-    margin: 15px;
-    width: 100%;
+  .gridTemplateWrap {
+    .k-grid {
+      margin: 15px;
+      width: 100%;
+      font-size: 14px;
 
-    .k-pager-wrap .k-pager-sizes > select {
-      width: 5rem;
+      .k-pager-wrap .k-pager-sizes > select {
+        width: 5rem;
+      }
     }
+  }
+
+  .k-header.k-grid-toolbar {
+    border: unset;
   }
 
   .k-tooltip-validation {
@@ -794,12 +799,11 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     text-align: center;
   }
 
-  .k-widget.k-state-invalid > .k-dropdown-wrap {
+  .k-widget.k-state-invalid > .k-dropdown-wrap,
+  .k-widget.k-state-invalid > .k-multiselect-wrap {
     border-color: #919191;
-  }
-
-  .k-widget.k-state-invalid > .k-dropdown-wrap {
     color: #919191;
+    box-shadow: none;
   }
 
   .k-textbox.k-state-invalid {
@@ -808,10 +812,32 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   .k-widget.k-state-invalid > .k-dateinput-wrap {
     color: #696969;
+    box-shadow: none;
+  }
+
+  .k-widget.k-state-invalid > .k-picker-wrap {
+    color: #f2f2f2;
+    box-shadow: none;
+  }
+
+  .k-picker-wrap .k-select {
+    padding: 0.55rem;
+    position: relative;
+    top: 1px;
   }
 
   .k-filtercell .k-filtercell-wrapper {
     align-items: center;
+  }
+
+  .k-header.k-sorted {
+    .k-icon {
+      color: #ed4522;
+    }
+    .k-i-sort-asc-sm::before,
+    .k-i-sort-desc-sm::before {
+      font-size: 20px;
+    }
   }
 
   .select-wrapper {
@@ -861,6 +887,12 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     font-weight: 500;
   }
 
+  .adminTitleBar {
+    .k-widget.k-dropdown.k-header {
+      font-size: 14px;
+    }
+  }
+
   .block {
     height: 105px;
     width: 125px;
@@ -875,6 +907,29 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   .row {
     margin-bottom: 0px !important;
+  }
+
+  .privelegeGridcellFix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .k-checkbox:checked::before {
+      width: unset;
+      height: unset;
+      font-size: 14px;
+      font-weight: 900;
+      top: 55%;
+    }
+    .k-checkbox:checked {
+      background-color: $primary-color;
+      border: solid 1px #9e9e9e;
+    }
+  }
+
+  input.k-checkbox.k-textbox {
+    height: 25px;
+    width: 25px;
   }
 
   input[type="number"]::-webkit-inner-spin-button,
@@ -918,12 +973,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     float: right;
   }
 
-  .k-widget.k-state-invalid > .k-picker-wrap {
-    border-color: #f2f2f2;
-    color: #f2f2f2;
-    border: solid 0.5vh;
-  }
-
   .radioLabel {
     font-size: 1rem;
     font-weight: 500;
@@ -941,14 +990,42 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
       margin: unset;
     }
   }
+
+  .k-button.k-primary {
+    background-color: $primary-color;
+    border-color: $primary-color;
+  }
+
+  .k-datepicker {
+    width: inherit;
+  }
   .k-multiselect-wrap li.k-button {
     margin-bottom: 0.5rem;
     margin-right: 0.5rem;
     padding: 4px 8px;
   }
+  .k-picker-wrap.k-state-focused {
+    border: unset;
+    box-shadow: unset;
+  }
+  .k-picker-wrap {
+    border: unset;
+    height: calc(2.25rem + 2px);
+    .k-widget.k-dateinput {
+      width: 70%;
+      flex: unset;
+    }
+  }
 
-  .k-dateinput-wrap > input {
-    padding-left: 5%;
+  .k-dateinput-wrap {
+    border-radius: 10px;
+    height: 32px;
+    input {
+      height: inherit !important;
+      border: 2px solid #dadada !important;
+      border-radius: 7px !important;
+      padding: 2px !important;
+    }
   }
 
   .text-area-custom {

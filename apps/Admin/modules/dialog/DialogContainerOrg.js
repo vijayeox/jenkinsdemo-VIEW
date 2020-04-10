@@ -8,25 +8,23 @@ import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
 import { filterBy } from "@progress/kendo-data-query";
 import scrollIntoView from "scroll-into-view-if-needed";
 import PhoneInput from "react-phone-number-input";
-import Codes from "../data/Codes";
+import countryStateList from "../data/country-state-codes";
 import timezoneCode from "OxzionGUI/public/js/Timezones.js";
-
 import { DropDownList } from "@progress/kendo-react-dropdowns";
-
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-const MySwal = withReactContent(Swal);
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
+    let countryList = countryStateList.map((item) => item.country);
     this.state = {
       orgInEdit: this.props.dataItem || null,
       contactName: null,
       timeZoneValue: [],
-      timezoneList: timezoneCode
+      timezoneList: timezoneCode,
+      countryList: countryList
     };
     this.countryByIP = undefined;
     this.fUpload = React.createRef();
@@ -141,7 +139,7 @@ export default class DialogContainer extends React.Component {
   }
 
   activateOrganization(tempData) {
-    MySwal.fire({
+    Swal.fire({
       title: "Organization already exists",
       text: "Do you want to reactivate the Organization?",
       imageUrl: "apps/Admin/091-email-1.svg",
@@ -407,7 +405,7 @@ export default class DialogContainer extends React.Component {
                   <div>
                     <DropDown
                       args={this.core}
-                      rawData={Codes}
+                      rawData={this.state.countryList}
                       selectedItem={this.state.orgInEdit.country}
                       onDataChange={e => this.dropdownChange("country", e)}
                       required={true}

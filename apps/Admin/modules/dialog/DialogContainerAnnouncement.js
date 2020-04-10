@@ -6,13 +6,14 @@ import scrollIntoView from "scroll-into-view-if-needed";
 import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DateComponent } from "../components/index";
 import Moment from "moment";
-export default class DialogContainer extends React.Component {
+export default class DialogContainerAnnouncement extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
     this.url = this.core.config("wrapper.url");
     this.state = {
-      ancInEdit: this.props.dataItem || null
+      ancInEdit: this.props.dataItem || null,
+      disableSave: false
     };
     this.fUpload = React.createRef();
     this.notif = React.createRef();
@@ -56,9 +57,7 @@ export default class DialogContainer extends React.Component {
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
         ),
-        end_date: new Moment(this.state.ancInEdit.end_date).format(
-          "YYYY-MM-DD"
-        )
+        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "post"
     );
@@ -80,9 +79,7 @@ export default class DialogContainer extends React.Component {
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
         ),
-        end_date: new Moment(this.state.ancInEdit.end_date).format(
-          "YYYY-MM-DD"
-        )
+        end_date: new Moment(this.state.ancInEdit.end_date).format("YYYY-MM-DD")
       },
       "put"
     );
@@ -144,10 +141,13 @@ export default class DialogContainer extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.props.formAction == "put") {
+      this.setState({
+        disableSave: true
+      });
+      this.loader.show();
       if (this.fUpload.current.state.selectedFile.length == 0) {
         this.editTriggerFunction(this.props.dataItem.media);
       } else {
-        this.loader.show();
         this.pushFile().then((response) => {
           var addResponse = response.data.filename[0];
           this.editTriggerFunction(addResponse);
@@ -169,6 +169,9 @@ export default class DialogContainer extends React.Component {
           "warning"
         );
       } else {
+        this.setState({
+          disableSave: true
+        });
         this.loader.show();
         this.pushFile().then((response) => {
           var addResponse = response.data.filename[0];
@@ -213,9 +216,7 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter Announcement Title"
                 required={true}
-                validationMessage={
-                  "Please give a Title for the Announcement"
-                }
+                validationMessage={"Please give a Title for the Announcement"}
                 readOnly={this.props.diableField ? true : false}
               />
             </div>
@@ -245,7 +246,6 @@ export default class DialogContainer extends React.Component {
                 onChange={this.onDialogInputChange}
                 placeholder="Enter External Link"
                 readOnly={this.props.diableField ? true : false}
-                validityStyles={this.state.triggerValidation}
                 validationMessage={
                   "Please enter a valid URL starting with https://"
                 }
@@ -268,6 +268,9 @@ export default class DialogContainer extends React.Component {
                       }
                       change={(e) => this.valueChange("start_date", e)}
                       required={true}
+                      validationMessage={
+                        "Please select the start date for the Announcement"
+                      }
                       disabled={this.props.diableField ? true : false}
                     />
                   </div>
@@ -286,6 +289,9 @@ export default class DialogContainer extends React.Component {
                       }
                       change={(e) => this.valueChange("end_date", e)}
                       required={true}
+                      validationMessage={
+                        "Please select the end date for the Announcement"
+                      }
                       disabled={this.props.diableField ? true : false}
                     />
                   </div>
@@ -303,6 +309,7 @@ export default class DialogContainer extends React.Component {
                       ? this.url + "resource/" + this.props.dataItem.media
                       : undefined
                   }
+                  enableVideo={true}
                   acceptFileTypes={"image/*, video/mp4"}
                   media_typeChange={this.media_typeChange}
                   media_type={this.state.ancInEdit.media_type}
@@ -317,6 +324,7 @@ export default class DialogContainer extends React.Component {
           save="ancForm"
           cancel={this.props.cancel}
           hideSave={this.props.diableField}
+          disableSave={this.state.disableSave}
         />
       </Window>
     );

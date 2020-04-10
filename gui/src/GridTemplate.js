@@ -10,8 +10,7 @@ import { GridCell } from "@progress/kendo-react-grid";
 import DataLoader from "./components/Grid/DataLoader";
 import Swal from "sweetalert2";
 import $ from "jquery";
-
-// import "@progress/kendo-theme-default/dist/all.css";
+import "@progress/kendo-theme-bootstrap/dist/all.css";
 
 export default class GridTemplate extends React.Component {
   constructor(props) {
@@ -40,7 +39,7 @@ export default class GridTemplate extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.config.api !== prevProps.config.api) {
       this.setState({
-        api: this.props.config.api,
+        api: this.props.config.api
       });
     }
   }
@@ -48,13 +47,13 @@ export default class GridTemplate extends React.Component {
   dataStateChange = (e) => {
     this.setState({
       ...this.state,
-      dataState: e.data,
+      dataState: e.data
     });
   };
 
   dataRecieved = (data) => {
     this.setState({
-      gridData: data,
+      gridData: data
     });
   };
 
@@ -99,8 +98,7 @@ export default class GridTemplate extends React.Component {
             title={this.props.config.column[i].title}
             cell={
               checkCellTemplate
-                ? (item) =>
-                checkCellTemplate(item.dataItem)
+                ? (item) => checkCellTemplate(item.dataItem)
                 : undefined
             }
           />
@@ -149,7 +147,10 @@ export default class GridTemplate extends React.Component {
 
   render() {
     return (
-      <div style={{ height: "90%", display: "flex", marginTop: "10px" }}>
+      <div
+        className="gridTemplateWrap"
+        style={{ height: "90%", display: "flex", marginTop: "10px" }}
+      >
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
@@ -179,7 +180,7 @@ export default class GridTemplate extends React.Component {
                   style={{
                     display: "flex",
                     width: "110%",
-                    alignItems: "center",
+                    alignItems: "center"
                   }}
                 >
                   <div style={{ marginLeft: "10px" }}>
@@ -214,7 +215,6 @@ export default class GridTemplate extends React.Component {
             this.props.permission.canDelete) && (
             <GridColumn
               title="Manage"
-              width="190px"
               minResizableWidth={170}
               cell={CellWithEditing(
                 this.props.config.title,
@@ -239,7 +239,12 @@ class AddButton extends React.Component {
       <button
         onClick={this.props.args}
         className="k-button"
-        style={{ position: "absolute", top: "7px", right: "10px" }}
+        style={{
+          position: "absolute",
+          top: "3px",
+          right: "10px",
+          fontSize: "14px"
+        }}
       >
         <i className="fa fa-plus-circle" style={{ fontSize: "20px" }}></i>
 
@@ -339,7 +344,7 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                 confirmButtonColor: "#d33",
                 showCancelButton: true,
                 cancelButtonColor: "#3085d6",
-                target: ".Window_Admin",
+                target: ".Window_Admin"
               }).then((result) => {
                 if (result.value) {
                   remove(this.props.dataItem);

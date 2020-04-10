@@ -246,7 +246,7 @@ export default class DocumentViewer extends Component {
       url = this.baseUrl + this.appId + "/" + documentData.file;
       window.open(url, "_self");
       var url2 =
-        this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.png";
+        this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.jpg";
       this.loader.destroy();
       return (
         <img className="img-fluid" style={{ height: "100%" }} src={url2} />
