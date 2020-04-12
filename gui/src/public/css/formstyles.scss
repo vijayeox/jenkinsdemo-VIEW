@@ -19,6 +19,11 @@
   border-color: transparent;
     padding: 0;
   }
+  .formio-component.has-feedback .invalid-feedback {
+    display: block;
+    color: inherit;
+    margin-top: 4px;
+  }
   .page-link {
     color: #275362;
   }
