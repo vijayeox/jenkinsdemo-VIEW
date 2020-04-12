@@ -15,9 +15,7 @@ export default class PhoneNumberComponent extends Base {
     static schema() {
         return Base.schema({
           type: 'phonenumber',
-          label:'phonenumber',
-        
-       
+          label:'phonenumber'       
         });
     }
     static builderInfo = {
@@ -35,17 +33,16 @@ export default class PhoneNumberComponent extends Base {
    * @returns {string}
    */
     render(children) { 
-        console.log("hello")
         var country = this.renderTemplate('input', { 
             input: {
                 type: 'select',
-                ref: `phone_country`,
+                ref: this.component.key+'_phone_country',
                 name: 'phone_country',
-                id : "phone_country",
+                id : this.component.key+"_phone_country",
                 
                 attr: {
-                    key:'phone_country',
-                    id:'phone_country',
+                    key:this.component.key+'_phone_country',
+                    id:this.component.key+'_phone_country',
                     hideLabel: 'true',
                     class:"form-control",
                     
@@ -55,13 +52,13 @@ export default class PhoneNumberComponent extends Base {
         var phoneNumber = this.renderTemplate('input' , {
             input: {
                 type: 'input',
-                ref: "phone_no",
+                ref: this.component.key+"_phone_no",
                 attr: {
                     type: 'tel',
-                    key: "phone_no",
-                    id: "phone_no",
+                    key: this.component.key+"_phone_no",
+                    id: this.component.key+"_phone_no",
                     class:"form-control",
-                    placeholder: "Enter Phone No",
+                    placeholder: this.component.placeholder?this.component.placeholder:"Enter Phone No",
                 }
             }
         })
@@ -82,13 +79,14 @@ export default class PhoneNumberComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) {
-        $('#phone_country').append(`<option value = "" disabled selected  data_descr="Code"></option>`)
+        var that = this;
+        $("#"+this.key+"_phone_country").append(`<option value = "" disabled selected  data_descr="Code"></option>`)
     
         var options = phoneList.phoneList;
         arrayColumn(options,'name','code','dial_code');
         function arrayColumn(array, columnName,code,dial_code) {
             return array.map(function(value,index) {
-                $('#phone_country').append(`<option value = "${value[code]}" dail_code="${value[dial_code]}" data_descr="${value[columnName]}" ></option>`)
+                $("#"+this.key+"_phone_country").append(`<option value = "${value[code]}" dail_code="${value[dial_code]}" data_descr="${value[columnName]}" ></option>`)
             })
         }
 
@@ -100,7 +98,7 @@ export default class PhoneNumberComponent extends Base {
         function focus() {
             [].forEach.call(this.options, function(o) {
               o.textContent = o.getAttribute('data_descr') ;
-              $('#phone_country').val("")
+              $("#"+this.key+"_phone_country").val("")
             });
         }
         var dail_code;
@@ -110,17 +108,17 @@ export default class PhoneNumberComponent extends Base {
             
             });
         }
-        [].forEach.call(document.querySelectorAll('#phone_country'), function(s) {
+        [].forEach.call(document.querySelectorAll("#"+this.key+"_phone_country"), function(s) {
             s.addEventListener('focus', focus);
             s.addEventListener('blur', blur);
             blur.call(s);
         });
         var selectedValue ,obj;
-        $('#phone_country').change(function(e) {
+        $("#"+this.key+"_phone_country").change(function(e) {
             selectedValue = $(this).val();
             obj = options.find(o => o.code === selectedValue);
             this.blur()
-            var value = document.getElementById("phone_no").value;
+            var value = document.getElementById(this.key+"_phone_no").value;
             if(value !== "") {
                 var phone = new AsYouType(selectedValue).input(value);
                 $('input[type="tel"]').val(phone);
@@ -135,7 +133,7 @@ export default class PhoneNumberComponent extends Base {
             $('input[type="tel"]').val(phone);
             // this.updateValue(phone);
         })
-        document.getElementById("phone_no").addEventListener("input", (e) => {
+        document.getElementById(this.key+"_phone_no").addEventListener("input", (e) => {
             var phone =new AsYouType(selectedValue).input(e.target.value);
             // this.updateValue({"dail_code":obj["dial_code"],"phoneNumber":phone});
         })
