@@ -17,6 +17,11 @@
   .docList {
     cursor: pointer;
   }
+  .fileName {
+    line-height: 2;
+    display: inline-block;
+    vertical-align: middle;
+  }
 
   .closeButton {
     background-color: rgba(0, 0, 0, 0.5);
