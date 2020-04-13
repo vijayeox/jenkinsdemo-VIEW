@@ -159,4 +159,15 @@
     margin: 0.4vh;
     border-radius: 15px;
   }
+
+  .singleFile {
+    padding: 0.5em 1em 0.5em 0.2em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .fileIcon {
+      padding-right: 5px;
+    }
+  }
 }

@@ -24,5 +24,6 @@ rm -Rf apps/Task
 rm -Rf apps/Contacts
 rm -Rf apps/TaskAdmin
 rm -Rf apps/Textpad
+rm -Rf apps/Demo
 ./build.sh bos
 echo build completed successfully

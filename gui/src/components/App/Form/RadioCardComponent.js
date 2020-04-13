@@ -3,13 +3,14 @@ import editForm from 'formiojs/components/table/Table.form'
 import $ from 'jquery';
 import { element } from 'prop-types';
 
+
 export default class RadioCardComponent extends Base {
     constructor(component, options, data) {
         super(component, options, data);
         this.data = data;
         this.form = this.getRoot();
         var that = this;
-        console.log(this.data)
+        
 
     }
     static schema() {
@@ -37,11 +38,12 @@ export default class RadioCardComponent extends Base {
         let that = this;
         let content = '';
         let component = '<div class="row">';
-        let defaultRange = that.data["defaultRange"].split(",").map(i => +i);
+        let defaultRange = that.data[this.component.key+"-defaultRange"].split(",").map(i => +i);
+        console.log(defaultRange)
         for(let i = 0 ; i< defaultRange.length; i++) {
             let cell = '<div class="col-md-2">'
             cell += `<label class="labels">
-                        <input id="${i}" type="radio" name="product" class="card-input-element" value="${defaultRange[i]}" />
+                        <input id="${this.component.key}-${i}" name="${this.component.key}" type="radio" name="product" class="card-input-element" value="${defaultRange[i]}" />
                         <div class="card card-input">
                             <div class="card-body" style="text-align: center">
                                 ${defaultRange[i]}
@@ -68,24 +70,23 @@ export default class RadioCardComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) { 
-    //    var value = this.dataValue;
-    if(this.dataValue){
-        $('input[type=radio][value=' + this.dataValue + ']').prop("checked",true);
-        this.updateValue(this.dataValue);
-    }
+        if(this.dataValue){
+            $('input[type=radio][name='+this.component.key+'][value=' + this.dataValue + ']').prop("checked",true);
+            this.updateValue(this.dataValue);
+        }
       
-        // $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
+        
         if(this.component.range){
-            var defaultRange = this.data["defaultRange"].split(",").map(i => +i);
+            var defaultRange = this.data[this.component.key+"-defaultRange"].split(",").map(i => +i);
             for(let i = 0 ; i< defaultRange.length; i++) { 
                 if(!this.component.range.includes(defaultRange[i])){
-                    $('input[type=radio][value=' + defaultRange[i] + ']').prop("disabled",true);
+                    $('input[type=radio][name$='+this.component.key+'][value=' + defaultRange[i] + ']').prop("disabled",true);
                 }
             }
         }
         
         if(this.data['rangeValue']){
-            $('input[type=radio][value=' + this.data['rangeValue'] + ']').prop("checked",true);
+            $('input[#'+this.component.key+'-'+i+'][value=' + this.data['rangeValue'] + ']').prop("checked",true);
             this.updateValue(this.data['rangeValue'])
         }
     
@@ -106,3 +107,4 @@ export default class RadioCardComponent extends Base {
     }
    
 }
+     
