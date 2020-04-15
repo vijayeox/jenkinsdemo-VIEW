@@ -6,12 +6,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 let tray = null;
+var i, finalposition = {};
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make("osjs/application", { args, options, metadata });
   let trayInitialized = false;
   // Create  a new Window instance
+  let session = core.make('osjs/settings').get('osjs/session');
+  let sessions = Object.entries(session);
+  for (i = 0; i < sessions.length; i++) {
+    if (session[i] && session[i].name == "Announcements"){
+      finalposition = session[i].windows[i].position ? session[i].windows[i].position : {left: 700, top: 200};
+    }
+  }
+  
   const createProcWindow = () => {
     var win = proc
       .createWindow({
@@ -19,7 +28,7 @@ const register = (core, args, options, metadata) => {
         title: metadata.title.en_EN,
         icon: proc.resource(icon_white),
         dimension: { width: 800, height: 450 },
-        // position: { left: 700, top: 200 },
+        position:  finalposition,
         attributes: {
           minDimension: { width: 800, height: 450 },
           gravity: "center",
