@@ -16,8 +16,8 @@ const register = (core, args, options, metadata) => {
   let session = core.make('osjs/settings').get('osjs/session');
   let sessions = Object.entries(session);
   for (i = 0; i < sessions.length; i++) {
-    if (session[i] && session[i].name == "Announcements"){
-      finalposition = session[i].windows[i].position ? session[i].windows[i].position : {left: 700, top: 200};
+    if (typeof(session[i].windows[i].position) != "undefined" && session[i].name == "Announcements"){
+      finalposition = session[i].windows[i].position;
     }
   }
   
@@ -28,7 +28,7 @@ const register = (core, args, options, metadata) => {
         title: metadata.title.en_EN,
         icon: proc.resource(icon_white),
         dimension: { width: 800, height: 450 },
-        position:  finalposition,
+        position:  finalposition ? finalposition : {left: 700, top: 200},
         attributes: {
           minDimension: { width: 800, height: 450 },
           gravity: "center",

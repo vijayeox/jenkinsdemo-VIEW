@@ -157,8 +157,8 @@
       let session = core.make('osjs/settings').get('osjs/session');
       let sessions = Object.entries(session);
       for (i = 0; i < sessions.length; i++) {
-        if (session[i] && session[i].name == "Chat"){
-          finalposition = session[i].windows[i].position ? session[i].windows[i].position : {left: 200, top: 400};
+        if (typeof(session[i].windows[i].position) != "undefined" && session[i].name == "Chat"){
+          finalposition = session[i].windows[i].position;
         }
       }
       // Create  a new Window instance
@@ -168,7 +168,7 @@
           icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
           dimension: {width: 400, height: 500},
-          position: finalposition,
+          position: finalposition ? finalposition : {left: 200, top: 400},
           attributes : {
             visibility: 'restricted',
             closeable: false
