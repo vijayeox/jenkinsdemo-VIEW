@@ -353,9 +353,10 @@ class FormRender extends React.Component {
     }
 
     async getFormContents(url) {
-      return await this.helper.request("v1", url, {}, "get");
+      return this.props.urlPostParams
+        ? await this.helper.request("v1", url, this.props.urlPostParams, "post")
+        : await this.helper.request("v1", url, {}, "get");
     }
-
     processProperties(form){
       if (form._form["properties"]) {
         this.runDelegates(form, form._form["properties"]);
