@@ -674,6 +674,7 @@ class FormRender extends React.Component {
                                 changed[properties["sourceDataKey"]] = "";
                               }
                             }
+                            changed[properties["validationKey"]] = response.data[properties["validationKey"]];
                             form.setSubmission({ data: that.formatFormData(changed) }).then(response2 => {
                               destinationComponent.triggerRedraw();
                             });
