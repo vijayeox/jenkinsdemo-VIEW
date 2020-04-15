@@ -38,7 +38,7 @@ export default class SliderComponent extends Base {
 	 */
 
 	render(children) {
-		
+		console.log(this.component.sliderRange)
 		let content = '';
 		let list = "<ul class='ticks' id='tickmarks'>";
 		var max = this.component.sliderRange.length-1,
@@ -57,7 +57,7 @@ export default class SliderComponent extends Base {
 
 		return super.render(`
 			<div class="range">
-				<input type="range" min="${min}" id="slider" max="${max}" list="tickmarks" value="${value}">
+				<input type="range" min="${min}" id="${this.component.key}" name='${this.component.key}' max="${max}" list="tickmarks" value="${value}">
 				<span class="range-thumb">$</span>
 				<!-- You could generate the ticks based on your min, max & step values. -->
 			</div><br/>
@@ -73,7 +73,7 @@ export default class SliderComponent extends Base {
    */
 	attach(element) {
 		var sheet = document.createElement('style'),
-			$rangeInput = $('input[type="range"]'),
+			$rangeInput = $('input[type="range"][name='+this.component.key+']'),
 			prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'],
 			min = 0,
 			max = this.component.sliderRange.length-1,

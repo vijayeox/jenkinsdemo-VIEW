@@ -188,6 +188,8 @@ class Query extends React.Component {
         this.setState({ showQueryModal: true, modalContent: item, modalType: "Activate" })
       else if (action.name === "execute" && item.isdeleted == "0")
         this.setState({ showQueryModal: true, modalContent: item, modalType: "Execute" })
+      else if(action.name==="edit" &&item.isdeleted == "0")
+      this.setState({ showQueryModal: true, modalContent: item, modalType: "Edit" })
     }
   }
 
@@ -388,6 +390,9 @@ class Query extends React.Component {
                         this.renderButtons(e, [
                           {
                             name: "execute", rule: "{{isdeleted}}==0", icon: "fa fa-gear"
+                          },
+                             {
+                            name:"edit", rule:"{{isdeleted}}==0",icon: "fa fa-edit"
                           },
                           {
                             name: "toggleActivate", rule: "{{isdeleted}}==0", icon: "fa fa-trash"

@@ -1,7 +1,7 @@
 import Base from 'formiojs/components/_classes/component/Component'
 import editForm from 'formiojs/components/table/Table.form'
 import $ from 'jquery';
-import { element } from 'prop-types';
+import Components from 'formiojs/components/Components';
 
 
 export default class RadioCardComponent extends Base {
@@ -16,13 +16,15 @@ export default class RadioCardComponent extends Base {
     static schema() {
         return Base.schema({
           type: 'radiocard',
-          label:'radioCard'
+          label:'radioCard',
+          input: false,
+          persistent: false,
         });
     }
     
     static builderInfo = {
         title: 'radiocard',
-        group: 'basic',
+        group: 'custom',
         icon: 'fa fa-calender',
         weight: 70,
         schema: RadioCardComponent.schema()
@@ -80,13 +82,13 @@ export default class RadioCardComponent extends Base {
             var defaultRange = this.data[this.component.key+"-defaultRange"].split(",").map(i => +i);
             for(let i = 0 ; i< defaultRange.length; i++) { 
                 if(!this.component.range.includes(defaultRange[i])){
-                    $('input[type=radio][name$='+this.component.key+'][value=' + defaultRange[i] + ']').prop("disabled",true);
+                    $('input[type=radio][name='+this.component.key+'][value=' + defaultRange[i] + ']').prop("disabled",true);
                 }
             }
         }
         
         if(this.data['rangeValue']){
-            $('input[#'+this.component.key+'-'+i+'][value=' + this.data['rangeValue'] + ']').prop("checked",true);
+            $('input[type=radio][name='+this.component.key+'][value=' + this.data['rangeValue'] + ']').prop("checked",true);
             this.updateValue(this.data['rangeValue'])
         }
     
@@ -107,4 +109,5 @@ export default class RadioCardComponent extends Base {
     }
    
 }
+Components.addComponent('radiocard', RadioCardComponent);
      
