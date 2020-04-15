@@ -16,8 +16,8 @@ const register = (core, args, options, metadata) => {
   let session = core.make('osjs/settings').get('osjs/session');
   let sessions = Object.entries(session);
   for (i = 0; i < sessions.length; i++) {
-    if (typeof(session[i].windows[i].position) != "undefined" && session[i].name == "Announcements"){
-      finalposition = session[i].windows[i].position;
+    if (Object.keys(session[i].windows[0]).length && session[i].name == "Announcements"){
+      finalposition = session[i].windows[0].position;
     }
   }
   
