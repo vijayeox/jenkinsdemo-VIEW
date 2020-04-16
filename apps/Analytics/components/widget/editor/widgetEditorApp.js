@@ -417,6 +417,7 @@ class WidgetEditorApp extends React.Component {
             switch (state.mode) {
                 case 'edit':
                     params['uuid'] = widgetId;
+                    params["ispublic"] = parseInt(state.visibility);
                     params['version'] = state.widget.version;
                     return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'put');
                     break;
