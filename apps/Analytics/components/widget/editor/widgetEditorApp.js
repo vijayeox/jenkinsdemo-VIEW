@@ -85,16 +85,16 @@ class WidgetEditorApp extends React.Component {
                     state.widgetOwner = widget.is_owner
                     return state;
                 },
-                () => {
-                    if (thiz.refs.editor) {
-                        thiz.refs.editor.setWidgetData({
-                            data: widget.data,
-                            configuration: widget.configuration,
-                            queries: widget.queries,
-                            expression: widget.expression
-                        });
-                    }
-                });
+                    () => {
+                        if (thiz.refs.editor) {
+                            thiz.refs.editor.setWidgetData({
+                                data: widget.data,
+                                configuration: widget.configuration,
+                                queries: widget.queries,
+                                expression: widget.expression
+                            });
+                        }
+                    });
                 thiz.makeReadOnly(true);
             }).
             catch(function (responseData) {
@@ -123,14 +123,14 @@ class WidgetEditorApp extends React.Component {
     copyWidget = (e) => {
         this.makeReadOnly(false);
         this.setState({
-            mode:'copy'
+            mode: 'copy'
         });
     }
 
     editWidget = (e) => {
         this.makeReadOnly(false);
         this.setState({
-            mode:'edit'
+            mode: 'edit'
         });
     }
 
@@ -287,7 +287,7 @@ class WidgetEditorApp extends React.Component {
                         if (responseWidget) {
                             thiz.setErrorMessage('widgetName', 'Widget name is already in use. Please provide another name.');
                             resolvePromise(false);
-                            console.log('Widget copy is in progress. Given widget name is in use. Error.');                            
+                            console.log('Widget copy is in progress. Given widget name is in use. Error.');
                         }
                         else {
                             console.log('Widget copy is in progress. Given widget name not found. Ok to continue.');
@@ -372,17 +372,17 @@ class WidgetEditorApp extends React.Component {
     getWidgetStateForCkEditorPlugin() {
         let widget = this.state.widget;
         let type = null;
-        switch(widget.type) {
+        switch (widget.type) {
             case 'aggregate':
             case 'inline':
                 type = 'inline';
-            break;
+                break;
 
             case 'chart':
             case 'table':
             case 'grid':
                 type = 'block';
-            break;
+                break;
         }
         return {
             align: widget.align,
@@ -410,20 +410,21 @@ class WidgetEditorApp extends React.Component {
         if (state.flipped) {
             // called on create widget
             params["visualization_uuid"] = state.visualizationID
-            params["ispublic"] = state.visibility;
+            params["ispublic"] = parseInt(state.visibility);
             return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'post');
         }
         else {
-            switch(state.mode) {
+            switch (state.mode) {
                 case 'edit':
                     params['uuid'] = widgetId;
                     params['version'] = state.widget.version;
                     return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'put');
-                break;
-                
+                    break;
+
                 case 'copy':
+                    params["ispublic"] = parseInt(state.visibility);
                     return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
-                break;
+                    break;
             }
         }
     }
@@ -487,10 +488,10 @@ class WidgetEditorApp extends React.Component {
     toggleWidgetDiv() {
         let widget = this.baseState.widget
         this.setState({
-            flipped: true, 
-            widgetName: '', 
-            widget: widget, 
-            mode:'create' 
+            flipped: true,
+            widgetName: '',
+            widget: widget,
+            mode: 'create'
         });
     }
 
@@ -505,7 +506,7 @@ class WidgetEditorApp extends React.Component {
                 >
                     <FrontSide>
                         <div className="form-group row no-left-margin no-right-margin">
-                            <div className="col-1 right-align" style={{maxWidth:'5em', paddingLeft:'0px'}}>
+                            <div className="col-1 right-align" style={{ maxWidth: '5em', paddingLeft: '0px' }}>
                                 <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
                             </div>
                             <div className="col-3">
@@ -518,37 +519,37 @@ class WidgetEditorApp extends React.Component {
                             </div>
 
                             <div className="action-button-box col-2">
-                                {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Create widget"
-                                        onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
-                                        <span className="fa fa-plus" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Create widget"
+                                            onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
+                                            <span className="fa fa-plus" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Delete widget"
-                                        onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
-                                        <span className="fa fa-trash" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Delete widget"
+                                            onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
+                                            <span className="fa fa-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Copy widget"
-                                        onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
-                                        <span className="fa fa-copy" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Copy widget"
+                                            onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
+                                            <span className="fa fa-copy" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Edit widget"
-                                        onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
-                                        <span className="fa fa-edit" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Edit widget"
+                                            onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
+                                            <span className="fa fa-edit" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
                             </div>
                             {!this.state.readOnly && !this.state.flipped &&
@@ -567,6 +568,15 @@ class WidgetEditorApp extends React.Component {
                                                 </Tooltip>
                                             )}
                                         </Overlay>
+                                    </div>
+                                    <div>
+                                        <select id="visibility" name="visibility" className="form-control form-control-sm" placeholder="Select visibility"
+                                            value={this.state.visibility} onChange={this.inputChanged}
+                                        >
+                                            <option key="" value="">-Select Visibility-</option>
+                                            <option key="1" value="1">public</option>
+                                            <option key="2" value="0">private</option>
+                                        </select>
                                     </div>
                                 </>
                             }
