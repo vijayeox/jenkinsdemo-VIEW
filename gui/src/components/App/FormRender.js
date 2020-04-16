@@ -1171,7 +1171,7 @@ class FormRender extends React.Component {
     await this.callPipeline(commands, commands).then(response => {
       if (response.status == "success") {
         if (response.data.data && response.data.form_data) {
-          var data = response.data.data;
+          var data = response.data;
           this.setState({
             content: JSON.parse(data.template),
             data: this.addAddlData(response.data.form_data),
