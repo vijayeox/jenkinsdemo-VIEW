@@ -169,6 +169,12 @@ class Page extends React.Component {
           if (item.url) {
             copyItem.url = that.replaceParams(item.url, rowData);
           }
+          if (item.urlPostParams) {
+            copyItem.urlPostParams = that.replaceParams(
+              item.urlPostParams,
+              rowData
+            );
+          }
           copyPageContent.push(copyItem);
         }
       });
@@ -203,26 +209,34 @@ class Page extends React.Component {
 
   replaceParams(route, params) {
     var finalParams = merge(params ? params : {}, {
-      current_date: moment().format("YYYY-MM-DD")
+      current_date: moment().format("YYYY-MM-DD"),
+      appId: this.appId
     });
-    var regex = /\{\{.*?\}\}/g;
-    let m;
-    while ((m = regex.exec(route)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
+    if (typeof route == "object") {
+      var final_route = JSON.parse(JSON.stringify(route));
+      Object.keys(route).map((item) => {
+        final_route[item] = params[item] ? params[item] : route[item];
+      });      
+      return final_route;
+    } else {
+      var regex = /\{\{.*?\}\}/g;
+      let m;
+      while ((m = regex.exec(route)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match, groupIndex) => {
+          // console.log(`Found match, group ${groupIndex}: ${match}`);
+          route = route.replace(
+            match,
+            finalParams[match.replace(/\{\{|\}\}/g, "")]
+          );
+        });
       }
-
-      // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
-        // console.log(`Found match, group ${groupIndex}: ${match}`);
-        route = route.replace(
-          match,
-          finalParams[match.replace(/\{\{|\}\}/g, "")]
-        );
-      });
+      return route;
     }
-    return route;
   }
 
   prepareDataRoute(route, params) {
@@ -293,6 +307,7 @@ class Page extends React.Component {
             <FormRender
               key={i}
               url={dataString}
+              urlPostParams={data[i].urlPostParams}
               core={this.core}
               appId={this.appId}
               content={data[i].content}
