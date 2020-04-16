@@ -31,7 +31,6 @@ const register = (core, args, options, metadata) => {
         position:  finalposition ? finalposition : {left: 700, top: 200},
         attributes: {
           minDimension: { width: 800, height: 450 },
-          gravity: "center",
           visibility: "restricted",
           closeable: false,
         },
