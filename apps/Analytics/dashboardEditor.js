@@ -24,7 +24,8 @@ class DashboardEditor extends React.Component {
             editorMode: 'initial',
             errors: {},
             filterConfiguration: [],
-            showFilterDiv: false
+            showFilterDiv: false,
+            visibility:-1
         };
         this.initialState = { ...this.state }
         this.renderedCharts = {};
@@ -212,7 +213,8 @@ class DashboardEditor extends React.Component {
             'name': this.state.dashboardName,
             'description': this.state.dashboardDescription,
             'dashboard_type': "html",
-            'filter_configuration': JSON.stringify(this.state.filterConfiguration)
+            'filter_configuration': JSON.stringify(this.state.filterConfiguration),
+            'ispublic':this.state.visibility
         };
         let url = 'analytics/dashboard';
         let method = '';
@@ -271,7 +273,8 @@ class DashboardEditor extends React.Component {
                         version: dashboard.version,
                         dashboardName: dashboard.name ? dashboard.name : '',
                         dashboardDescription: dashboard.description ? dashboard.description : '',
-                        filterConfiguration: (dashboard.filter_configuration!="" ? JSON.parse(dashboard.filter_configuration):[])
+                        filterConfiguration: (dashboard.filter_configuration!="" ? JSON.parse(dashboard.filter_configuration):[]),
+                        visibility:parseInt(dashboard.ispublic)
                     });
                     editor.setData(response.dashboard.content);
                 },
@@ -503,6 +506,15 @@ class DashboardEditor extends React.Component {
                                         </Tooltip>
                                     )}
                                 </Overlay>
+                            </>
+                        </div>
+                        <div className="col-2">
+                            <>
+                            <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
+                                            <option disabled value={-1} key="-1">Select Visibility</option>
+                                            <option key="1" value={1}>public</option>
+                                            <option key="2" value={0}>private</option>
+                                        </select>
                             </>
                         </div>
 
