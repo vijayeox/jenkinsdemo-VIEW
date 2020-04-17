@@ -37,12 +37,12 @@ export default class CountryComponent extends Base {
         var country = this.renderTemplate('input', { 
             input: {
                 type: 'select',
-                ref: `selectcountry`,
-                name: 'selectcountry',
-                id : "selectcountry",
+                ref: `${this.component.key}-selectcountry`,
+                name: `${this.component.key}-selectcountry`,
+                id : `${this.component.key}-selectcountry`,
                 attr: {
-                    key:'selectcountry',
-                    id:'selectcountry',
+                    key:`${this.component.key}-selectcountry`,
+                    id: `${this.component.key}-selectcountry`,
                     hideLabel: 'true',
                     class:"form-control",
                 },
@@ -51,12 +51,12 @@ export default class CountryComponent extends Base {
         var state = this.renderTemplate('input', { 
             input: {
                 type: 'select',
-                ref: `selectstate`,
-                name: 'selectstate',
-                id : "selectstate",
+                ref: `${this.component.key}-selectstate`,
+                name: `${this.component.key}-selectstate`,
+                id : `${this.component.key}-selectstate`,
                 attr: {
-                    key:'selectstate',
-                    id:'selectstate',
+                    key:`${this.component.key}-selectstate`,
+                    id: `${this.component.key}-selectstate`,
                     hideLabel: 'true',
                     class:"form-control",
                 },
@@ -65,12 +65,12 @@ export default class CountryComponent extends Base {
         var city = this.renderTemplate('input', { 
             input: {
                 type: 'input',
-                ref: `selectcity`,
-                name: 'selectcity',
-                id : "selectcity",
+                ref: `${this.component.key}-selectcity`,
+                name: `${this.component.key}-selectcity`,
+                id : `${this.component.key}-selectcity`,
                 attr: {
-                    key:'selectcity',
-                    id:'selectcity',
+                    key: `${this.component.key}-selectcity`,
+                    id: `${this.component.key}-selectcity`,
                     hideLabel: 'true',
                     class:"form-control",
                     placeholder: "Enter City"
@@ -106,16 +106,16 @@ export default class CountryComponent extends Base {
    * @returns {Promise}
    */
 	attach(element) { 
-        $('#selectcountry').val("");
-        document.getElementById("selectcountry").addEventListener("input" , (e) => this.updateValue({country: e.target.value}));
-        document.getElementById("selectstate").addEventListener("input" , (e) => this.updateValue({...this.data['address'],state: e.target.value}));
-        document.getElementById("selectcity").addEventListener("input" , (e) => this.updateValue({...this.data['address'],city: e.target.value}));
+        $('#'+this.component.key+'-selectcountry').val("");
+        document.getElementById(this.component.key+"-selectcountry").addEventListener("input" , (e) => this.updateValue({country: e.target.value}));
+        document.getElementById(this.component.key+"-selectstate").addEventListener("input" , (e) => this.updateValue({...this.data[this.component.key],state: e.target.value}));
+        document.getElementById(this.component.key+"-selectcity").addEventListener("input" , (e) => this.updateValue({...this.data[this.component.key],city: e.target.value}));
         
-        $('#selectcountry').append(`<option value = "" disabled selected >Select Country</option>`);
+        $('#'+this.component.key+'-selectcountry').append(`<option value = "" disabled selected >Select Country</option>`);
         
-        $('#selectstate').append(`<option value = "" disabled selected >Select State</option>`)
+        $('#'+this.component.key+'-selectstate').append(`<option value = "" disabled selected >Select State</option>`)
         var options = Country.countryList;
-        arrayColumn('#selectcountry',options,'country');
+        arrayColumn('#'+this.component.key+'-selectcountry',options,'country');
         
         function arrayColumn(id,array, columnName) {
             return array.map(function(value,index) {
@@ -129,14 +129,18 @@ export default class CountryComponent extends Base {
             })
         }
         var selectedCountry, values;
-        $('#selectcountry').change(function(e){
+        var selectState = $('#'+this.component.key+'-selectstate');
+        var selectCity = $('#'+this.component.key+'-selectcity');
+        var state = '#'+this.component.key+'-selectstate'
+        $('#'+this.component.key+'-selectcountry').change(function(e){
+            console.log(selectState)
             selectedCountry = $(this).val()
-            $('#selectstate').empty().append(`<option value = "" disabled selected >Select State</option>`);
-            $('#selectcity').val("")
+            selectState.empty().append(`<option value = "" disabled selected >Select State</option>`);
+            selectCity.val("")
             let obj = options.find(o => o.country === selectedCountry);
             if(obj){
                 values = obj.states;
-                arrayColumn('#selectstate',values);
+                arrayColumn(state,values);
             }
         })
         // if(this.data['address']['country'] && this.data['address']['state'] && this.data['address']['city'] )
