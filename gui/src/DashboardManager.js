@@ -156,6 +156,22 @@ class Dashboard extends React.Component {
     this.setState({ dashboardFilter: filter })
     this.hideFilter()
   }
+  getDashboardFilters(){
+    if(this.state.filterConfiguration){
+      try{
+        let validJson=JSON.parse(this.state.filterConfiguration)
+        return validJson
+      }
+      catch(e)
+        {
+          console.error("Invalid json filter found in the database");
+          return []
+        }
+    } 
+    else{
+      return []
+    }
+  }
 
   render() {
     return (
@@ -181,7 +197,7 @@ class Dashboard extends React.Component {
                   core={this.core}
                   filterMode="APPLY"
                   hideFilterDiv={() => this.hideFilter()}
-                  filterConfiguration={this.state.filterConfiguration ? JSON.parse(this.state.filterConfiguration) : []}
+                  filterConfiguration={this.getDashboardFilters()}
                   setDashboardFilter={(filter) => this.applyDashboardFilter(filter)}
                 />
               }
