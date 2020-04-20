@@ -1,12 +1,11 @@
-import React, { Component } from "react";
-import { Tabs, Tab, TabPanel, TabList } from "react-web-tabs";
+import {React,ReactDOM,ReactWebTabs} from "oxziongui";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
 import Themes from "./tabs/Themes";
 import Background from "./tabs/Background";
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -29,55 +28,55 @@ class App extends Component {
 
   render() {
     return (
-      <Tabs defaultTab="vertical-tab-one">
-        <TabList className="tabLayout">
-          <Tab tabFor="vertical-tab-one">
+      <ReactWebTabs.Tabs defaultTab="vertical-tab-one">
+        <ReactWebTabs.TabList className="tabLayout">
+          <ReactWebTabs.Tab tabFor="vertical-tab-one">
             <i className="fa fa-user-circle" />
             <span>Edit Profile</span>
-          </Tab>
-          <Tab tabFor="vertical-tab-two">
+          </ReactWebTabs.Tab>
+          <ReactWebTabs.Tab tabFor="vertical-tab-two">
             <i className="fa fa-key" />
             <span>Change Password</span>
-          </Tab>
-          <Tab tabFor="vertical-tab-three">
+          </ReactWebTabs.Tab>
+          <ReactWebTabs.Tab tabFor="vertical-tab-three">
             <i className="fa fa-cog" />
             <span>Preferences</span>
-          </Tab>
-        </TabList>
-        <TabPanel
+          </ReactWebTabs.Tab>
+        </ReactWebTabs.TabList>
+        <ReactWebTabs.TabPanel
           tabId="vertical-tab-one"
           className="tab1"
           render={({ selected }) =>
             selected ? <EditProfile args={this.core} /> : null
           }
-        ></TabPanel>
-        <TabPanel
+        ></ReactWebTabs.TabPanel>
+        <ReactWebTabs.TabPanel
           tabId="vertical-tab-two"
           className="tab1"
           render={({ selected }) => (selected ? <ChangePassword args={this.core}/> : null)}
-        ></TabPanel>
-        <TabPanel
+        ></ReactWebTabs.TabPanel>
+        <ReactWebTabs.TabPanel
           tabId="vertical-tab-three"
           className="tab1"
           render={({ selected }) =>
             selected ? <Preferences args={this.core} /> : null
           }
-        ></TabPanel>
-        <TabPanel
+        ></ReactWebTabs.TabPanel>
+        <ReactWebTabs.TabPanel
           tabId="vertical-tab-four"
           className="tab1"
           render={({ selected }) =>
             selected ? <Background args={this.core} win={this.win} /> : null
           }
-        ></TabPanel>
-        <TabPanel
+        ></ReactWebTabs.TabPanel>
+        <ReactWebTabs.TabPanel
           tabId="vertical-tab-five"
           className="tab1"
           render={({ selected }) =>
             selected ? <Themes args={this.core} /> : null
           }
-        ></TabPanel>
-      </Tabs>
+        ></ReactWebTabs.TabPanel>
+      </ReactWebTabs.Tabs>
     );
   }
 }

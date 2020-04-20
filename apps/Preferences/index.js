@@ -1,7 +1,6 @@
 import osjs from 'osjs';
-import React from 'react';
+import {React,ReactDOM} from "oxziongui";
 import {name as applicationName} from './metadata.json';
-import ReactDOM from 'react-dom'
 import App from './App.js';
 
 // Our launcher
