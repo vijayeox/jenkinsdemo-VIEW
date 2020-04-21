@@ -18,13 +18,16 @@ import DataOperation from "./components/Grid/DataOperation";
 import CustomFilter from "./components/Grid/CustomFilter";
 
 import "./components/Grid/customStyles.scss";
-import "@progress/kendo-theme-bootstrap/dist/all.css";
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
     super(props);
-    this.baseUrl = this.props.osjsCore.config("wrapper.url");
-    this.userprofile = this.props.osjsCore.make("oxzion/profile").get().key;
+    this.baseUrl = this.props.osjsCore
+      ? this.props.osjsCore.config("wrapper.url")
+      : undefined;
+    this.userprofile = this.props.osjsCore
+      ? this.props.osjsCore.make("oxzion/profile").get().key
+      : undefined;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
       gridData: this.rawDataPresent ? this.props.data : [],
@@ -64,6 +67,9 @@ export default class OX_Grid extends React.Component {
   componentWillReceiveProps(props) {
     if (props.gridDefaultFilters) {
       this.setState({ dataState: props.gridDefaultFilters });
+    }
+    if (props.data) {
+      this.setState();
     }
   }
 
@@ -322,6 +328,7 @@ export default class OX_Grid extends React.Component {
           resizable={this.props.resizable}
           reorderable={this.props.reorderable}
           sortable={this.props.sortable}
+          scrollable={this.props.scrollable}
           onDataStateChange={this.dataStateChange}
           onExpandChange={this.props.expandable ? this.expandChange : null}
           onHeaderSelectionChange={this.headerSelectionChange}
@@ -422,7 +429,8 @@ class DetailComponent extends GridDetailRow {
 }
 
 OX_Grid.defaultProps = {
-  data: []
+  data: [],
+  scrollable: "scrollable"
 };
 
 OX_Grid.propTypes = {
