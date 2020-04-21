@@ -92,17 +92,30 @@ export default class Tray {
 
     console.debug('Created new tray entry', entry);
 
-    this.entries.push(entry);
+    var pos = options.pos;
+    var app_array = this.entries;
+    if (pos) { 
+      if (app_array[pos]){
+        do{
+          pos++;
+        }while(app_array[pos]);
+        app_array[pos] = entry;
+      }else
+      app_array[pos] = entry;
+    }
+    else
+    app_array.push(entry);
+    
 
     this.core.emit('osjs/tray:create', entry);
-    this.core.emit('osjs/tray:update', this.entries);
+    this.core.emit('osjs/tray:update', app_array);
 
     const obj = {
       entry,
       update: u => {
         Object.keys(u).forEach(k => (entry[k] = u[k]));
 
-        this.core.emit('osjs/tray:update', this.entries);
+        this.core.emit('osjs/tray:update', app_array);
       },
       destroy: () => this.remove(entry)
     };

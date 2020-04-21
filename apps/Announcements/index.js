@@ -60,6 +60,7 @@ const register = (core, args, options, metadata) => {
             icon: proc.resource(metadata.icon_white),
             badge: "badgeCheck",
             count: announcementsCount,
+            pos: 3,
             onclick: () => {
               win.raise();
               win.focus();

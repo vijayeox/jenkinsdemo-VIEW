@@ -231,6 +231,7 @@
             trayInitialized = true;
             trayOptions.title = "Chat";
             trayOptions.icon = proc.resource(metadata.icon_white);
+            trayOptions.pos = 2;
             trayOptions.onclick = () => {
                       console.log(proc);
                       win.raise();
