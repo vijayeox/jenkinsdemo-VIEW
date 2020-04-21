@@ -47,6 +47,14 @@ class Navigation extends React.Component {
                 }
               });
               history.push("/");
+            } else {
+              this.child.current.updateBreadCrumb({detail:appParams});
+              let ev = new CustomEvent("updatePageView", {
+                detail: appParams.detail,
+                bubbles: true
+              });
+              document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
+              history.push("/");
             }
           } catch (e) {
             console.log("No params!");
@@ -105,7 +113,14 @@ class Navigation extends React.Component {
             app={this.props.appId}
             core={this.core}
           />
-        ) : null}
+        ) : (
+          <Page
+            config={this.props.config}
+            proc={this.props.proc}
+            app={this.props.appId}
+            core={this.core}
+          />
+        )}
         {(this.state.selected.activityInstanceId &&
           this.state.selected.activityInstanceId) ||
         this.state.selected.pipeline ? (
