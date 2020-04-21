@@ -38,6 +38,7 @@ class FormRender extends React.Component {
       activityId: this.props.activityId,
       instanceId: this.props.instanceId,
       formId: this.props.formId,
+      fileId: this.props.fileId,
       paymentDetails: null,
       hasPayment: false,
       content: this.props.content,
@@ -185,6 +186,11 @@ class FormRender extends React.Component {
     // call to api using wrapper
     return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
   }
+
+  async getFileDataById() {
+    // call to api using wrapper
+    return await this.helper.request("v1",this.appUrl+"/file/"+this.props.fileId+"/data",{},"get");
+  }
   async getActivityInstance() {
     // call to api using wrapper
     return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  }
@@ -221,6 +227,10 @@ class FormRender extends React.Component {
             form.submission.data["instanceId"] = $this.state.instanceId;
           }
         }
+      }
+      if(this.props.fileId){
+        form.submission.data.fileId = this.state.fileId;
+        form.submission.data["workflow_instance_id"] = undefined;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           that.showFormLoader(false,0);
@@ -390,7 +400,30 @@ class FormRender extends React.Component {
             }
           }
         });
-      } else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+      }else  if (this.state.fileId) {
+        this.getFileDataById().then((response) => {
+          if (response.status == "success") {
+            this.getForm().then((response2) => {
+              if (response2.status == "success") {
+                if (!that.state.content) {
+                  that.setState({
+                    content: JSON.parse(response2.data.template),
+                    data: that.formatFormData(response.data.data)
+                  });
+                }
+                if (form) {
+                  that.processProperties(form);
+                } else {
+                    that.createForm().then((form) => {
+                      that.processProperties(form);
+                    });
+                }
+              }
+            });
+          }
+        });
+      } 
+      else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({ workflowInstanceId: response.data.workflow_instance_id });
