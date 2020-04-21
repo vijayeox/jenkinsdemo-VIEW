@@ -4,6 +4,7 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import FormRender from "./FormRender";
 import HTMLViewer from "./HTMLViewer";
+import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import DocumentViewer from "../../DocumentViewer";
@@ -29,7 +30,7 @@ class Page extends React.Component {
       fileId: null,
       currentRow: []
     };
-    this.loadPage(this.props.pageId);
+    this.props.pageId ? this.loadPage(this.props.pageId) : null;
     this.updatePageView = this.updatePageView.bind(this);
   }
 
@@ -95,7 +96,20 @@ class Page extends React.Component {
               <Button
                 primary={true}
                 className=" btn manage-btn k-grid-edit-command"
-                onClick={() => this.buttonAction(action[key], e)}
+                onClick={() => {
+                  action[key].confirmationMessage
+                    ? Swal.fire({
+                        title: action[key].confirmationMessage,
+                        confirmButtonText: "Agree",
+                        confirmButtonColor: "#275362",
+                        showCancelButton: true,
+                        cancelButtonColor: "#7b7878",
+                        target: ".PageRender"
+                      }).then((result) => {
+                        result.value ? this.buttonAction(action[key], e) : null;
+                      })
+                    : this.buttonAction(action[key], e);
+                }}
                 style={buttonStyles}
               >
                 {action[key].icon ? (
@@ -329,6 +343,7 @@ class Page extends React.Component {
             } else {
               columnConfig.push({
                 title: "Actions",
+                width: "200px",
                 cell: e => this.renderButtons(e, itemContent.actions),
                 filterCell: {
                   type: "empty"
@@ -409,6 +424,17 @@ class Page extends React.Component {
             />
           );
           break;
+          case "Comment":
+            content.push(
+              <CommentsView
+                appId={this.appId}
+                key={i}
+                core={this.core}
+                postSubmitCallback={this.stepBackBreadcrumb}
+                url={data[i].url}
+              />
+            );
+            break;
         case "Dashboard":
           content.push(
             <Dashboard
