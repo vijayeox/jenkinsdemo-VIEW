@@ -158,7 +158,6 @@ button {
     }
     input:not(:placeholder-shown) + label {
       transform: translateY(-20px);
-      opacity: 0.7;
     }
     input:not(:valid):not(:focus) + label + .icon {
       animation-name: shake-shake;
