@@ -1,9 +1,7 @@
-import React, { Component } from "react";
+import {React,Notification,ReactBootstrap} from "oxziongui";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "OxzionGUI/Notification"
-import { Form, Button } from 'react-bootstrap'
-class Themes extends Component {
+class Themes extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -171,12 +169,12 @@ class Themes extends Component {
     return (
       <div className="componentDiv">
         <Notification ref={this.notif} />
-        <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
+        <ReactBootstrap.Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize" >
             <div
               className="col-md-4"
             >
-              <Form.Label>Style:</Form.Label>
+              <ReactBootstrap.Form.Label>Style:</ReactBootstrap.Form.Label>
               {/* <label id="styleLabel">Style:</label> */}
             </div>
             <div className="col-md-8 themeStylediv">
@@ -199,7 +197,7 @@ class Themes extends Component {
             <div
               className="col-md-4"
             >
-              <Form.Label>Icons:</Form.Label>
+              <ReactBootstrap.Form.Label>Icons:</ReactBootstrap.Form.Label>
 
               {/* <label id="iconsLabel">Icons:</label> */}
             </div>
@@ -223,7 +221,7 @@ class Themes extends Component {
             <div
               className="col-md-4"
             >
-              <Form.Label>Icons:</Form.Label>
+              <ReactBootstrap.Form.Label>Icons:</ReactBootstrap.Form.Label>
 
               {/* <label id="soundsLabel">Sounds:</label> */}
             </div>
@@ -245,13 +243,13 @@ class Themes extends Component {
 
           <div className="row">
             <div className="col-md-12 input-field" >
-              <Button type="submit" className="pull-right preferenceForm-btn">Submit</Button>
+              <ReactBootstrap.Button type="submit" className="pull-right preferenceForm-btn">Submit</ReactBootstrap.Button>
               {/* <button className="k-button k-primary" type="submit">
                 Save
               </button> */}
             </div>
           </div>
-        </Form>
+        </ReactBootstrap.Form>
       </div>
     );
   }

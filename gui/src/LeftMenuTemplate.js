@@ -13,7 +13,7 @@ import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 import Navigation from "./Navigation";
 import "./public/css/LeftMenuTemplate.scss";
 
-class LeftMenuTemplate extends React.Component {
+export default class LeftMenuTemplate extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.core;
@@ -95,4 +95,3 @@ class LeftMenuTemplate extends React.Component {
     );
   }
 }
-export default LeftMenuTemplate;

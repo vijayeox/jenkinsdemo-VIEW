@@ -1,12 +1,7 @@
-import React, { Component } from "react";
+import {React,ReactDOM,Notification,DateFormats,Timezones,ReactBootstrap} from "oxziongui";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "OxzionGUI/Notification"
-
-import DateFormats from "OxzionGUI/public/js/DateFormats";
-import Timezones from "OxzionGUI/public/js/Timezones";
-import { Form, Button } from 'react-bootstrap'
-class Preferences extends Component {
+class Preferences extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -218,10 +213,10 @@ class Preferences extends Component {
     return (
       //  <>
       //  <Notification ref={this.notif} />
-      //   <Form onSubmit={this.handleSubmit} className="preferenceForm"> 
-      //       <Form.Group>
-      //         <Form.Label>Sound Notification</Form.Label>
-      //         <Form.Check
+      //   <ReactBootstrap.Form onSubmit={this.handleSubmit} className="preferenceForm"> 
+      //       <ReactBootstrap.Form.Group>
+      //         <ReactBootstrap.Form.Label>Sound Notification</ReactBootstrap.Form.Label>
+      //         <ReactBootstrap.Form.Check
       //           type="radio"
       //           name="soundnotification"
       //           value="true"
@@ -229,7 +224,7 @@ class Preferences extends Component {
       //           onChange={this.handleChange}
       //           checked={this.state.fields["soundnotification"] == "true"}
       //         />
-      //          <Form.Check
+      //          <ReactBootstrap.Form.Check
       //           type="radio"
       //           name="soundnotification"
       //           value="false"
@@ -237,27 +232,27 @@ class Preferences extends Component {
       //           onChange={this.handleChange}
       //           checked={this.state.fields["soundnotification"] == "false"}
       //         />
-      //       </Form.Group>
-      //       <Form.Group>
-      //         <Form.Label></Form.Label>
-      //         <Form.Control/>
-      //       </Form.Group>
-      //       <Form.Group>
-      //         <Form.Label></Form.Label>
-      //         <Form.Control/>
-      //       </Form.Group>
-      //       <Form.Group>
-      //         <Form.Label></Form.Label>
-      //         <Form.Control/>
-      //       </Form.Group>
-      //   </Form>
+      //       </ReactBootstrap.Form.Group>
+      //       <ReactBootstrap.Form.Group>
+      //         <ReactBootstrap.Form.Label></ReactBootstrap.Form.Label>
+      //         <ReactBootstrap.Form.Control/>
+      //       </ReactBootstrap.Form.Group>
+      //       <ReactBootstrap.Form.Group>
+      //         <ReactBootstrap.Form.Label></ReactBootstrap.Form.Label>
+      //         <ReactBootstrap.Form.Control/>
+      //       </ReactBootstrap.Form.Group>
+      //       <ReactBootstrap.Form.Group>
+      //         <ReactBootstrap.Form.Label></ReactBootstrap.Form.Label>
+      //         <ReactBootstrap.Form.Control/>
+      //       </ReactBootstrap.Form.Group>
+      //   </ReactBootstrap.Form>
       //  </>
       <div className="componentDiv">
         <Notification ref={this.notif} />
-        <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
+        <ReactBootstrap.Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
             <div className="col-md-4" id="sound">
-              <Form.Label>Sound Notification:</Form.Label>
+              <ReactBootstrap.Form.Label>Sound Notification:</ReactBootstrap.Form.Label>
             </div>
             <div className="col-md-8">
               <label id="name">
@@ -284,7 +279,7 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-md-4" id="Greetingmessage">
-              <Form.Label>Greeting message:</Form.Label>
+              <ReactBootstrap.Form.Label>Greeting message:</ReactBootstrap.Form.Label>
             </div>
             <div className="col-md-8">
               <label id="name">
@@ -311,7 +306,7 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-md-4" id="emailalert">
-              <Form.Label>Email Alerts:</Form.Label>
+              <ReactBootstrap.Form.Label>Email Alerts:</ReactBootstrap.Form.Label>
             </div>
             <div className="col-md-8">
               <label id="name">
@@ -338,7 +333,7 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-md-4" id="localtimezone">
-              <Form.Label>Local Time Zone:</Form.Label>
+              <ReactBootstrap.Form.Label>Local Time Zone:</ReactBootstrap.Form.Label>
             </div>
             <div className="col-md-8 timezonediv">
               <select
@@ -358,7 +353,7 @@ class Preferences extends Component {
           </div>
           <div className="row marginsize">
             <div className="input-field col-md-4" id="datef">
-              <Form.Label>Date Format:</Form.Label>
+              <ReactBootstrap.Form.Label>Date Format:</ReactBootstrap.Form.Label>
             </div>
             <div className="input-field col-md-8">
               <select
@@ -378,10 +373,10 @@ class Preferences extends Component {
 
           <div className="row marginsize">
             <div className="col-md-12 input-field">
-              <Button className="pull-right preferenceForm-btn" type="submit">Submit</Button>
+              <ReactBootstrap.Button className="pull-right preferenceForm-btn" type="submit">Submit</ReactBootstrap.Button>
             </div>
           </div>
-        </Form>
+        </ReactBootstrap.Form>
       </div>
     );
   }

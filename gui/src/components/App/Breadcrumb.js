@@ -80,7 +80,6 @@ class Breadcrumb extends React.Component {
         ? content.push(
             <span className="breadcrumbs-item" key={index}>
               {index == "0" ? null : (
-                // "/"
                 <i
                   className="fa fa-chevron-right"
                   style={{

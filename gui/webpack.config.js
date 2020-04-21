@@ -5,8 +5,6 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const mode = process.env.NODE_ENV || "development";
 const minimize = mode === "production";
 const plugins = [];
-const pkg = require("./package.json");
-const libraryName = pkg.name;
 
 if (mode === "production") {
   plugins.push(
@@ -20,12 +18,12 @@ if (mode === "production") {
 
 module.exports = {
   output: {
-    path: path.join(__dirname, "./dist"),
-    filename: "GridTemplate.js",
-    library: libraryName,
-    libraryTarget: "umd",
-    publicPath: "/dist/",
-    umdNamedDefine: true
+    library: 'oxziongui',
+    path: path.resolve(__dirname, "dist"),
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    sourceMapFilename: '[file].map',
+    filename: '[name].js'
   },
   mode,
   devtool: "source-map",
@@ -35,9 +33,24 @@ module.exports = {
   },
   optimization: {
     minimize,
-    minimizer: [
-    new OptimizeCSSAssetsPlugin({})
-    ]
+    chunkIds: "named",
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          chunks: "initial",
+          minChunks: 2,
+          maxInitialRequests: 5, // The default limit is too small to showcase the effect
+          minSize: 0 // This is example is too small to create commons chunks
+        },
+        vendor: {
+          test: /node_modules/,
+          chunks: "initial",
+          name: "vendor",
+          priority: 10,
+          enforce: true
+        }
+      }
+    }
   },
   plugins: [
     new MiniCssExtractPlugin({

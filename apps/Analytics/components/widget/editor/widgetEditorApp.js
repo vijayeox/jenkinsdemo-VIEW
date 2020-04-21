@@ -36,6 +36,7 @@ class WidgetEditorApp extends React.Component {
             },
             visualizationOptions: [],
             htmlWidgetOptions: [],
+            selectableWidgetOptions: [],
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
@@ -83,6 +84,7 @@ class WidgetEditorApp extends React.Component {
                     state.widget = widget;
                     state.widgetName = widget.name;
                     state.widgetOwner = widget.is_owner
+                    state.visibility=widget.ispublic
                     return state;
                 },
                     () => {
@@ -149,10 +151,14 @@ class WidgetEditorApp extends React.Component {
                     .then(function (response) {
                         let widgetData = response.data;
                         let widgetList = []
+                        let selectableWidgetList = []
                         widgetList = widgetData.map(widget => {
                             return (
                                 <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                             )
+                        });
+                        widgetData.map(widget => {
+                            selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                         });
                         thiz.setState({
                             htmlWidgetOptions: widgetList, widget: {
@@ -160,6 +166,7 @@ class WidgetEditorApp extends React.Component {
                                 uuid: null,
                                 type: null
                             },
+                            selectableWidgetOptions: selectableWidgetList,
                             showModal: false
                         });
                     })
@@ -200,7 +207,11 @@ class WidgetEditorApp extends React.Component {
                         <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                     )
                 })
-                thiz.setState({ htmlWidgetOptions: widgetList })
+                let selectableWidgetList = []
+                widgetData.map(widget => {
+                    selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
+                });
+                thiz.setState({ htmlWidgetOptions: widgetList, selectableWidgetOptions: selectableWidgetList })
             })
             .catch(function (response) {
                 Swal.fire({
@@ -555,8 +566,8 @@ class WidgetEditorApp extends React.Component {
                             </div>
                             {!this.state.readOnly && !this.state.flipped &&
                                 <>
-                                    <div className="col-2 right-align">
-                                        <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
+                                    <div className="left-align">
+                                        <label htmlFor="widgetName" className="left-align col-form-label form-control-sm">Widget Name</label>
                                     </div>
                                     <div className="col-3">
                                         <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
@@ -572,9 +583,9 @@ class WidgetEditorApp extends React.Component {
                                     </div>
                                     <div>
                                         <select id="visibility" name="visibility" className="form-control form-control-sm" placeholder="Select visibility"
-                                            value={this.state.visibility} onChange={this.inputChanged}
+                                            value={this.state.visibility} onChange={this.inputChanged} disabled={this.state.readOnly}
                                         >
-                                            <option key="" value="">-Select Visibility-</option>
+                                            <option key="" value="" disabled>-Select Visibility-</option>
                                             <option key="1" value="1">public</option>
                                             <option key="2" value="0">private</option>
                                         </select>
@@ -585,7 +596,7 @@ class WidgetEditorApp extends React.Component {
                         {!this.state.flipped &&
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} selectWidgetOptions={this.state.selectableWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />

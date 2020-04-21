@@ -47,6 +47,14 @@ class Navigation extends React.Component {
                 }
               });
               history.push("/");
+            } else {
+              this.child.current.updateBreadCrumb({detail:appParams});
+              let ev = new CustomEvent("updatePageView", {
+                detail: appParams.detail,
+                bubbles: true
+              });
+              document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
+              history.push("/");
             }
           } catch (e) {
             console.log("No params!");
@@ -105,7 +113,14 @@ class Navigation extends React.Component {
             app={this.props.appId}
             core={this.core}
           />
-        ) : null}
+        ) : (
+          <Page
+            config={this.props.config}
+            proc={this.props.proc}
+            app={this.props.appId}
+            core={this.core}
+          />
+        )}
         {(this.state.selected.activityInstanceId &&
           this.state.selected.activityInstanceId) ||
         this.state.selected.pipeline ? (
@@ -125,3 +140,21 @@ class Navigation extends React.Component {
   }
 }
 export default Navigation;
+
+// The params to open a specific page must be sent in the following format:
+// http://localhost:8081/?app=DiveInsurance
+                      //  &params= {
+                                  //   "name": "Quote Approval",
+                                  //   "detail": [{
+                                  //     "type": "Form",
+                                  //     "pipeline": {
+                                  //       "activityInstanceId": "629256b1-82f4-11ea-ba01-bacc68b07eda",
+                                  //       "workflowInstanceId": "5e8ea8c0-82f4-11ea-ba01-bacc68b07eda",
+                                  //       "commands": [{
+                                  //         "command": "claimForm"
+                                  //       }, {
+                                  //         "command": "instanceForm"
+                                  //       }]
+                                  //     }
+                                  //   }]
+                                  // }

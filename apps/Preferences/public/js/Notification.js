@@ -1,4 +1,4 @@
-import React from "react";
+import {React} from "oxziongui";
 import ReactNotification from "react-notifications-component";
 
 class Notification extends React.Component {

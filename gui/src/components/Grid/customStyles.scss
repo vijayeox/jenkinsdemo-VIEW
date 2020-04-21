@@ -3,12 +3,19 @@
     height: 100%;
   }
 
+  .k-grid-header-wrap{
+    table{
+      min-width: 1000px;
+    }
+  }
+
   .k-grid-content {
     overflow-y: scroll;
     cursor: pointer;
     min-height: 200px;
     table {
       user-select: text;
+      min-width: 1000px;
     }
   }
 
@@ -158,5 +165,9 @@
     font-size: 1.1em;
     color: #ffffff;
     display: block;
+  }
+
+  .fa-comments-o.manageIcons{
+    font-size: 1.4em;
   }
 }
