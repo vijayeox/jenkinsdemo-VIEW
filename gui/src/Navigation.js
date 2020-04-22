@@ -20,8 +20,10 @@ class Navigation extends React.Component {
     this.breadcrumbDiv = this.appId + "_breadcrumbParent";
     this.contentDivID = this.appId + "_Content";
     this.getMenulist().then(response => {
-      this.props.menuLoad(response["data"]);
-      this.homepage = response["data"][0];
+      if (response.data) {
+        this.props.menuLoad(response["data"]);
+        this.homepage = response["data"][0];
+      }
       if (this.params && this.params.page) {
         this.child.current.clearBreadcrumb();
         this.setState({ selected: { page_id: this.params.page } });
