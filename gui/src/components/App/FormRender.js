@@ -92,7 +92,7 @@ class FormRender extends React.Component {
         document.getElementById(this.formDivID).style.display = "block";
       }
     }
-    showFormLoader(false,0);
+    this.showFormLoader(false,0);
   }
   hideBreadCrumb(state=true){
     if (this.state.currentForm && this.state.currentForm.wizard) {
