@@ -72,7 +72,7 @@ class FormRender extends React.Component {
       this.showFormError(false);
     }
   }
-  showFormError(state=true){
+  showFormError(state=true, errorMessage){
     if(state){
       if(document.getElementById(this.formErrorDivId)){
         document.getElementById(this.formErrorDivId).style.display = "block";
@@ -88,6 +88,15 @@ class FormRender extends React.Component {
         document.getElementById(this.formDivID).style.display = "block";
       }
     }
+    
+    errorMessage? Swal.fire({
+      position: "top-end",
+      icon: "danger",
+      title: errorMessage,
+      showConfirmButton: false,
+      timer: 2100
+    }): null;
+    
   }
   hideBreadCrumb(state=true){
     if (this.state.currentForm && this.state.currentForm.wizard) {
