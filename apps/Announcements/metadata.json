@@ -10,10 +10,10 @@
   "hidden": true,
   "internal": true,
   "title": {
-    "en_EN": "Announcements"
+    "en_EN": "Announcement"
   },
   "description": {
-    "en_EN": "Announcements"
+    "en_EN": "Announcement"
   },
   "files": [
     "main.js",
