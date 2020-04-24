@@ -45,7 +45,8 @@ class FormRender extends React.Component {
       data: this.addAddlData(this.props.data),
       page: this.props.page,
       currentForm: null,
-      formLevelDelegateCalled: false
+      formLevelDelegateCalled: false,
+      formErrorMessage: 'Form seems to have an error while loading ,Please Try Again.'
     };
     this.helper = this.core.make("oxzion/restClient");
     this.notif = React.createRef();
@@ -72,7 +73,10 @@ class FormRender extends React.Component {
       this.showFormError(false);
     }
   }
-  showFormError(state=true){
+  showFormError(state=true, errorMessage){
+    errorMessage ? this.setState({
+      formErrorMessage : errorMessage
+    }) : null;
     if(state){
       if(document.getElementById(this.formErrorDivId)){
         document.getElementById(this.formErrorDivId).style.display = "block";
@@ -1175,7 +1179,7 @@ class FormRender extends React.Component {
             }
           });
         } else {
-          this.showFormError(true);
+          this.showFormError(true,response.message);
         }
       });
     } else if (this.props.pipeline) {
@@ -1203,11 +1207,17 @@ class FormRender extends React.Component {
   async loadFormWithCommands(commands) {
     await this.callPipeline(commands, commands).then(response => {
       if (response.status == "success") {
-        if (response.data.data && response.data.form_data) {
+        if (response.data.data) {
           var data = response.data;
+          var tempdata = null;
+          if(data.data){
+              tempdata = data.data
+          } else if(data.form_data){
+              tempdata = data.form_data;
+          }
           this.setState({
             content: JSON.parse(data.template),
-            data: this.addAddlData(response.data.form_data),
+            data: this.addAddlData(tempdata),
             formId: data.id,
             workflowId: response.data.workflow_id
           });
@@ -1226,7 +1236,7 @@ class FormRender extends React.Component {
     return (<div>
       <Notification ref={this.notif} />
       <div id={this.loaderDivID}></div>
-      <div id={this.formErrorDivId} style={{display:"none"}}><h3>Form seems to have an error while loading ,Please Try Again.</h3></div>
+      <div id={this.formErrorDivId} style={{display:"none"}}><h3>{this.state.formErrorMessage}</h3></div>
         <div className="form-render" id={this.formDivID}></div>
         </div>);
   }

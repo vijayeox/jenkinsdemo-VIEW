@@ -13,8 +13,8 @@ class CommentsView extends React.Component {
     this.profileAdapter = this.core.make("oxzion/profile");
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
+    this.loader = this.core.make("oxzion/splash");
     this.state = {
-      content: this.props.content,
       fileData: this.props.fileData,
       dataReady: this.props.url ? false : true,
       commentsList: [],
@@ -23,6 +23,25 @@ class CommentsView extends React.Component {
       fileId: "",
       userList: []
     };
+  }
+
+  componentDidMount() {
+    if (this.props.url != undefined) {
+      this.getFileDetails(this.props.url).then((response) => {
+        if (response.status == "success") {
+          this.setState({
+            fileData: response.data.data,
+            commentsList: this.formatFormData(response.data.data).comments
+              ? this.formatFormData(response.data.data).comments.map((i) => {
+                  return { id: this.uuidv4(), text: i };
+                })
+              : [],
+            dataReady: true,
+            fileId: response.data.uuid
+          });
+        }
+      });
+    }
   }
 
   async getFileDetails(url) {
@@ -60,25 +79,6 @@ class CommentsView extends React.Component {
       "get"
     );
     return response;
-  }
-
-  componentDidMount() {
-    if (this.props.url != undefined) {
-      this.getFileDetails(this.props.url).then((response) => {
-        if (response.status == "success") {
-          this.setState({
-            fileData: response.data.data,
-            commentsList: this.formatFormData(response.data.data).comments
-              ? this.formatFormData(response.data.data).comments.map((i) => {
-                  return { id: this.uuidv4(), text: i };
-                })
-              : [],
-            dataReady: true,
-            fileId: response.data.uuid
-          });
-        }
-      });
-    }
   }
 
   fetchCommentData() {
@@ -133,12 +133,6 @@ class CommentsView extends React.Component {
       "post"
     );
     return fileData;
-  }
-
-  componentDidUpdate(prevProps) {
-    // if (this.props.content !== prevProps.content) {
-    //   this.setState({ content: this.props.content });
-    // }
   }
 
   formatFormData(data) {
@@ -256,11 +250,11 @@ class CommentsView extends React.Component {
   };
 
   render() {
-    return (
-      this.state.dataReady && (
+    if (this.state.dataReady) {
+      return (
         <div className="commentsPage">
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <div className="flexCol col-10 commentBox">
+            <div className="flexCol col-11 commentBox">
               <MentionsInput
                 value={this.state.value}
                 onChange={this.handleChange}
@@ -281,10 +275,9 @@ class CommentsView extends React.Component {
                 {this.state.value.length + "/1000"}
               </div>
             </div>
-            <div className="col-2 flexCol" style={{ justifyContent: "center" }}>
+            <div className="col-1 flexCol" style={{ justifyContent: "center" }}>
               <Button
                 primary={true}
-                className=" btn manage-btn k-grid-edit-command"
                 onClick={() => {
                   this.saveFileData();
                 }}
@@ -311,7 +304,7 @@ class CommentsView extends React.Component {
                   { field: "text", title: "Previous Comments" },
                   {
                     title: "Actions",
-                    width: "100px",
+                    width: "75px",
                     cell: (e) => this.renderButtons(e, ["Delete"]),
                     filterCell: {
                       type: "empty"
@@ -322,8 +315,12 @@ class CommentsView extends React.Component {
             </div>
           </div>
         </div>
-      )
-    );
+      );
+    } else {
+      var PageRenderDiv = document.querySelector(".PageRender");
+      this.loader.show(PageRenderDiv);
+      return <div></div>;
+    }
   }
 }
 

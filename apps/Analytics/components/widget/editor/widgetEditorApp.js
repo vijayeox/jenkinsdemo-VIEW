@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';
 import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
+import Select from 'react-select'
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 
 class WidgetEditorApp extends React.Component {
@@ -35,7 +36,6 @@ class WidgetEditorApp extends React.Component {
             errors: {
             },
             visualizationOptions: [],
-            htmlWidgetOptions: [],
             selectableWidgetOptions: [],
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
@@ -84,7 +84,7 @@ class WidgetEditorApp extends React.Component {
                     state.widget = widget;
                     state.widgetName = widget.name;
                     state.widgetOwner = widget.is_owner
-                    state.visibility=widget.ispublic
+                    state.visibility = widget.ispublic
                     return state;
                 },
                     () => {
@@ -112,6 +112,18 @@ class WidgetEditorApp extends React.Component {
 
     widgetSelectionChanged = (e) => {
         let widgetId = e.target.value;
+        if (widgetId === this.state.widget.uuid) {
+            return;
+        }
+        this.setState((state) => {
+            state.widget.align = null;
+            return state;
+        });
+        this.loadWidget(widgetId);
+    }
+
+    selectableWidgetSelectionChanged = (e) => {
+        let widgetId = e.value;
         if (widgetId === this.state.widget.uuid) {
             return;
         }
@@ -161,7 +173,7 @@ class WidgetEditorApp extends React.Component {
                             selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                         });
                         thiz.setState({
-                            htmlWidgetOptions: widgetList, widget: {
+                            widget: {
                                 align: null,
                                 uuid: null,
                                 type: null
@@ -211,7 +223,7 @@ class WidgetEditorApp extends React.Component {
                 widgetData.map(widget => {
                     selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                 });
-                thiz.setState({ htmlWidgetOptions: widgetList, selectableWidgetOptions: selectableWidgetList })
+                thiz.setState({ selectableWidgetOptions: selectableWidgetList })
             })
             .catch(function (response) {
                 Swal.fire({
@@ -522,12 +534,15 @@ class WidgetEditorApp extends React.Component {
                                 <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectWidget" name="selectWidget" className="form-control form-control-sm" placeholder="Select widget"
-                                    value={this.state.widget.uuid ? this.state.widget.uuid : ''} onChange={this.widgetSelectionChanged}
-                                    disabled={this.state.isPreLoadedWidget}>
-                                    <option key="" value="">-Select widget-</option>
-                                    {this.state.htmlWidgetOptions}
-                                </select>
+                                <Select
+                                    placeholder="Choose Widget"
+                                    name="selectWidget"
+                                    id="selectWidget"
+                                    isDisabled={this.state.isPreLoadedWidget}
+                                    onChange={this.selectableWidgetSelectionChanged}
+                                    value={this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
+                                    options={this.state.selectableWidgetOptions}
+                                />
                             </div>
 
                             <div className="action-button-box col-2">
@@ -596,7 +611,7 @@ class WidgetEditorApp extends React.Component {
                         {!this.state.flipped &&
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} selectWidgetOptions={this.state.selectableWidgetOptions} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
@@ -656,7 +671,7 @@ class WidgetEditorApp extends React.Component {
 
                                 <div className="row">
                                     {(this.state.widget.type === 'chart') &&
-                                        <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
+                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                     }
                                     {(this.state.widget.type === 'table') &&
                                         <TableEditor ref="editor" widget={this.state.widget} />

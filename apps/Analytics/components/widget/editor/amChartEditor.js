@@ -98,7 +98,6 @@ class AmChartEditor extends AbstractEditor {
         if (this.state.selectedTab === 'chart') {
             this.refreshChartPreview();
         }
-
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
@@ -115,17 +114,15 @@ class AmChartEditor extends AbstractEditor {
                 drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
                 hasMaxDepth: hasMaxDepth,
                 drillDownMaxDepth: maxDepth
-
             }, state => this.setWidgetType())
         }
         else {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
         }
-
     }
 
     setWidgetType() {
-        let selectedWidgetOption = this.props.selectWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+        let selectedWidgetOption = this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
         let selectedWidget = selectedWidgetOption[0]["type"]
         let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
         this.setState({ drillDownWidgetType: widgetType })
@@ -410,7 +407,7 @@ class AmChartEditor extends AbstractEditor {
         }
         else if (name == "drillDownWidgetType") {
 
-            let filteredWidgetList = this.props.selectWidgetOptions.filter(option => option.type == value)
+            let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
             this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
         }
         else {
@@ -583,8 +580,8 @@ class AmChartEditor extends AbstractEditor {
                                                         id="drillDownWidget"
                                                         isDisabled={this.state.readOnly}
                                                         onChange={(e) => this.handleSelect(e, "drillDownWidget")}
-                                                        value={this.props.selectWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
-                                                        options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectWidgetOptions}
+                                                        value={this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
                                                     />
                                                     <Form.Text className="text-muted errorMsg">
                                                         {this.state.errors.drillDown["drillDownWidget"]}
