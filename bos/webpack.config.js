@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const {
   DefinePlugin
 } = webpack;
@@ -31,16 +32,44 @@ module.exports = {
       path.resolve(__dirname, 'src/core/core.js'),
       path.resolve(__dirname, 'src/client/index.js'),
       path.resolve(__dirname, 'src/client/assets/scss/index.scss')
+    ],
+    oxziongui:[
+      path.resolve(__dirname, "../gui/index.js")
     ]
   },
+  output: {
+    library: 'oxziongui',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    sourceMapFilename: '[file].map',
+    filename: '[name].js'
+  },
   performance: {
-    maxEntrypointSize: 500 * 1024,
-    maxAssetSize: 500 * 1024
+    maxEntrypointSize: 600 * 1024,
+    maxAssetSize: 600 * 1024
   },
   optimization: {
-    minimize,
+    minimizer: [
+      new UglifyJSPlugin({
+        sourceMap: true,
+        uglifyOptions: {
+          compress: {
+            inline: false
+          }
+        }
+      })
+    ],
+    runtimeChunk: false,
     splitChunks: {
-      chunks: 'all'
+      cacheGroups: {
+        default: false,
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor_app',
+          chunks: 'all',
+          minChunks: 2
+        }
+      }
     }
   },
   plugins: [
@@ -97,6 +126,22 @@ module.exports = {
             }
           },
         ]
+      },
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              '@babel/react', '@babel/env'
+            ],
+            plugins: [
+              require.resolve("@babel/plugin-transform-runtime"),
+              '@babel/proposal-class-properties'
+            ]
+          }
+        }
       }
     ]
   }

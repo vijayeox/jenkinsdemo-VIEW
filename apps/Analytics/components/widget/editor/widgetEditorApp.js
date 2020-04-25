@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';
 import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
+import Select from 'react-select'
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 
 class WidgetEditorApp extends React.Component {
@@ -35,7 +36,7 @@ class WidgetEditorApp extends React.Component {
             errors: {
             },
             visualizationOptions: [],
-            htmlWidgetOptions: [],
+            selectableWidgetOptions: [],
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
@@ -83,18 +84,19 @@ class WidgetEditorApp extends React.Component {
                     state.widget = widget;
                     state.widgetName = widget.name;
                     state.widgetOwner = widget.is_owner
+                    state.visibility = widget.ispublic
                     return state;
                 },
-                () => {
-                    if (thiz.refs.editor) {
-                        thiz.refs.editor.setWidgetData({
-                            data: widget.data,
-                            configuration: widget.configuration,
-                            queries: widget.queries,
-                            expression: widget.expression
-                        });
-                    }
-                });
+                    () => {
+                        if (thiz.refs.editor) {
+                            thiz.refs.editor.setWidgetData({
+                                data: widget.data,
+                                configuration: widget.configuration,
+                                queries: widget.queries,
+                                expression: widget.expression
+                            });
+                        }
+                    });
                 thiz.makeReadOnly(true);
             }).
             catch(function (responseData) {
@@ -120,17 +122,29 @@ class WidgetEditorApp extends React.Component {
         this.loadWidget(widgetId);
     }
 
+    selectableWidgetSelectionChanged = (e) => {
+        let widgetId = e.value;
+        if (widgetId === this.state.widget.uuid) {
+            return;
+        }
+        this.setState((state) => {
+            state.widget.align = null;
+            return state;
+        });
+        this.loadWidget(widgetId);
+    }
+
     copyWidget = (e) => {
         this.makeReadOnly(false);
         this.setState({
-            mode:'copy'
+            mode: 'copy'
         });
     }
 
     editWidget = (e) => {
         this.makeReadOnly(false);
         this.setState({
-            mode:'edit'
+            mode: 'edit'
         });
     }
 
@@ -149,17 +163,22 @@ class WidgetEditorApp extends React.Component {
                     .then(function (response) {
                         let widgetData = response.data;
                         let widgetList = []
+                        let selectableWidgetList = []
                         widgetList = widgetData.map(widget => {
                             return (
                                 <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                             )
                         });
+                        widgetData.map(widget => {
+                            selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
+                        });
                         thiz.setState({
-                            htmlWidgetOptions: widgetList, widget: {
+                            widget: {
                                 align: null,
                                 uuid: null,
                                 type: null
                             },
+                            selectableWidgetOptions: selectableWidgetList,
                             showModal: false
                         });
                     })
@@ -200,7 +219,11 @@ class WidgetEditorApp extends React.Component {
                         <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                     )
                 })
-                thiz.setState({ htmlWidgetOptions: widgetList })
+                let selectableWidgetList = []
+                widgetData.map(widget => {
+                    selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
+                });
+                thiz.setState({ selectableWidgetOptions: selectableWidgetList })
             })
             .catch(function (response) {
                 Swal.fire({
@@ -287,7 +310,7 @@ class WidgetEditorApp extends React.Component {
                         if (responseWidget) {
                             thiz.setErrorMessage('widgetName', 'Widget name is already in use. Please provide another name.');
                             resolvePromise(false);
-                            console.log('Widget copy is in progress. Given widget name is in use. Error.');                            
+                            console.log('Widget copy is in progress. Given widget name is in use. Error.');
                         }
                         else {
                             console.log('Widget copy is in progress. Given widget name not found. Ok to continue.');
@@ -372,17 +395,17 @@ class WidgetEditorApp extends React.Component {
     getWidgetStateForCkEditorPlugin() {
         let widget = this.state.widget;
         let type = null;
-        switch(widget.type) {
+        switch (widget.type) {
             case 'aggregate':
             case 'inline':
                 type = 'inline';
-            break;
+                break;
 
             case 'chart':
             case 'table':
             case 'grid':
                 type = 'block';
-            break;
+                break;
         }
         return {
             align: widget.align,
@@ -410,20 +433,22 @@ class WidgetEditorApp extends React.Component {
         if (state.flipped) {
             // called on create widget
             params["visualization_uuid"] = state.visualizationID
-            params["ispublic"] = state.visibility;
+            params["ispublic"] = parseInt(state.visibility);
             return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'post');
         }
         else {
-            switch(state.mode) {
+            switch (state.mode) {
                 case 'edit':
                     params['uuid'] = widgetId;
+                    params["ispublic"] = parseInt(state.visibility);
                     params['version'] = state.widget.version;
                     return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'put');
-                break;
-                
+                    break;
+
                 case 'copy':
+                    params["ispublic"] = parseInt(state.visibility);
                     return window.postDataRequest('analytics/widget/' + state.widget.uuid + '/copy', params, 'post');
-                break;
+                    break;
             }
         }
     }
@@ -487,10 +512,10 @@ class WidgetEditorApp extends React.Component {
     toggleWidgetDiv() {
         let widget = this.baseState.widget
         this.setState({
-            flipped: true, 
-            widgetName: '', 
-            widget: widget, 
-            mode:'create' 
+            flipped: true,
+            widgetName: '',
+            widget: widget,
+            mode: 'create'
         });
     }
 
@@ -505,56 +530,59 @@ class WidgetEditorApp extends React.Component {
                 >
                     <FrontSide>
                         <div className="form-group row no-left-margin no-right-margin">
-                            <div className="col-1 right-align" style={{maxWidth:'5em', paddingLeft:'0px'}}>
+                            <div className="col-1 right-align" style={{ maxWidth: '5em', paddingLeft: '0px' }}>
                                 <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
                             </div>
                             <div className="col-3">
-                                <select id="selectWidget" name="selectWidget" className="form-control form-control-sm" placeholder="Select widget"
-                                    value={this.state.widget.uuid ? this.state.widget.uuid : ''} onChange={this.widgetSelectionChanged}
-                                    disabled={this.state.isPreLoadedWidget}>
-                                    <option key="" value="">-Select widget-</option>
-                                    {this.state.htmlWidgetOptions}
-                                </select>
+                                <Select
+                                    placeholder="Choose Widget"
+                                    name="selectWidget"
+                                    id="selectWidget"
+                                    isDisabled={this.state.isPreLoadedWidget}
+                                    onChange={this.selectableWidgetSelectionChanged}
+                                    value={this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
+                                    options={this.state.selectableWidgetOptions}
+                                />
                             </div>
 
                             <div className="action-button-box col-2">
-                                {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Create widget"
-                                        onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
-                                        <span className="fa fa-plus" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Create widget"
+                                            onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
+                                            <span className="fa fa-plus" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Delete widget"
-                                        onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
-                                        <span className="fa fa-trash" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Delete widget"
+                                            onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
+                                            <span className="fa fa-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Copy widget"
-                                        onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
-                                        <span className="fa fa-copy" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Copy widget"
+                                            onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
+                                            <span className="fa fa-copy" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) && 
-                                <>
-                                    <button type="button" className="btn btn-primary" title="Edit widget"
-                                        onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
-                                        <span className="fa fa-edit" aria-hidden="true"></span>
-                                    </button>
-                                </>
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary" title="Edit widget"
+                                            onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
+                                            <span className="fa fa-edit" aria-hidden="true"></span>
+                                        </button>
+                                    </>
                                 }
                             </div>
                             {!this.state.readOnly && !this.state.flipped &&
                                 <>
-                                    <div className="col-2 right-align">
-                                        <label htmlFor="widgetName" className="right-align col-form-label form-control-sm">Widget Name</label>
+                                    <div className="left-align">
+                                        <label htmlFor="widgetName" className="left-align col-form-label form-control-sm">Widget Name</label>
                                     </div>
                                     <div className="col-3">
                                         <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
@@ -568,13 +596,22 @@ class WidgetEditorApp extends React.Component {
                                             )}
                                         </Overlay>
                                     </div>
+                                    <div>
+                                        <select id="visibility" name="visibility" className="form-control form-control-sm" placeholder="Select visibility"
+                                            value={this.state.visibility} onChange={this.inputChanged} disabled={this.state.readOnly}
+                                        >
+                                            <option key="" value="" disabled>-Select Visibility-</option>
+                                            <option key="1" value="1">public</option>
+                                            <option key="2" value="0">private</option>
+                                        </select>
+                                    </div>
                                 </>
                             }
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
                                 {(this.state.widget.type === 'chart') &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
@@ -634,7 +671,7 @@ class WidgetEditorApp extends React.Component {
 
                                 <div className="row">
                                     {(this.state.widget.type === 'chart') &&
-                                        <AmChartEditor ref="editor" widget={this.state.widget} widgetOptions={this.state.htmlWidgetOptions} />
+                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                     }
                                     {(this.state.widget.type === 'table') &&
                                         <TableEditor ref="editor" widget={this.state.widget} />

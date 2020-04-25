@@ -4,6 +4,13 @@ import { Form, Row, Col, Button } from 'react-bootstrap'
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select/creatable'
 
+const customStyles = {
+    control: base => ({
+      ...base,
+      height: 35,
+      minHeight: 35
+    })
+  };
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
@@ -14,6 +21,7 @@ const FilterFields = function (props) {
     const dataTypeOptions = [
         "numeric"
     ]
+    
     const diabledFields = filterMode == "APPLY"
     return (
         <Form.Row>
@@ -150,7 +158,29 @@ const FilterFields = function (props) {
                                 />
                             </div>
                         :
-                        <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />}
+                             filterMode=="Create"?
+                            <Select
+                            styles={customStyles}
+                            name="value"
+                            id="value"
+                            onChange={(e) => onUpdate(e,index,"defaultValue")}
+                            value=""
+                            options={filters[index]["value"]}
+                        />
+                        :
+                        <Select
+                        styles={customStyles}
+                        name="value"
+                        id="value"
+                        onChange={(e) => onUpdate(e,index,"defaultValue")}
+                        value={filters[index]["value"]["selected"]?filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]):""}
+                        options={filters[index]["value"]}
+                    />
+
+
+                        
+                        // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
+                    }
                 </Form.Group>
             </Col>
             <Col style={{ marginBottom: "1em" }}>
@@ -245,15 +275,45 @@ class DashboardFilter extends React.Component {
     updateFilterRow(e, index, type) {
         let name
         let value
+        let defaultValues=[]
+        let filters = [...this.state.filters]
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
+        }
+        else if(type=="defaultValue"){
+            let selectedoption={"value":e.value,"label":e.value}
+            name="value"
+            let filterValue=filters[index]?filters[index][name]:[]
+            try{
+                defaultValues=typeof filterValue=="string"?JSON.parse(filterValue):filterValue
+                
+
+            }
+            catch(e){
+                console.error("Filter value found is a invalid json")
+                defaultValues=[]
+
+            }
+           
+            if(defaultValues){
+                var valueExists = defaultValues.filter(filterdefault=>filterdefault.value==e.value);
+                //if option already exists in the list
+                if(valueExists.length==0){
+                    defaultValues.push(selectedoption)
+                    defaultValues["selected"]=selectedoption.value
+                }
+                else{
+                    defaultValues["selected"]=selectedoption.value
+                }
+            }
+            value=defaultValues
         }
         else {
             name = e.target.name
             value = e.target.value
         }
-        let filters = [...this.state.filters]
+       
         filters[index][name] = value
         this.setState({ filters })
     }

@@ -1,14 +1,6 @@
-import React, { Component } from "react";
-import CountryCodes from "OxzionGUI/public/js/CountryCodes";
+import {React,ReactDOM,Notification,CountryCodes,AvatarImageCropper,ReactBootstrap,Webcam,KendoReactDateInputs,KendoReactEditor,PhoneInput} from "oxziongui";
 import Moment from "moment";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Notification from "OxzionGUI/Notification"
-import { Form, Row, Button } from 'react-bootstrap'
-import AvatarImageCropper from "react-avatar-image-cropper";
 import image2base64 from "image-to-base64";
-import Webcam from "react-webcam";
-import PhoneInput from "react-phone-number-input";
-import { Editor, EditorTools } from "@progress/kendo-react-editor";
 import Countries from '../public/js/countries'
 import states from '../public/js/states'
 const {
@@ -26,9 +18,9 @@ const {
   Redo,
   Link,
   Unlink
-} = EditorTools;
+} = KendoReactEditor.EditorTools;
 
-class EditProfile extends Component {
+class EditProfile extends React.Component {
   constructor(props) {
     super(props);
 
@@ -442,49 +434,49 @@ class EditProfile extends Component {
 
   render() {
     return (
-      <Form className="edit-profile-form preferenceForm">
+      <ReactBootstrap.Form className="edit-profile-form preferenceForm">
         <div className="componentDiv">
           <Notification ref={this.notif} />
           <div className="formmargin">
-            <Row>
+            <ReactBootstrap.Row>
               <div className='col-md-6'>
                 {this.profileImageData()}
                 {this.chooseImageData()}
                 {this.chooseWebCamData()}
               </div>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">First Name</Form.Label>
-                  <Form.Control
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">First Name</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     placeholder="First Name"
                     name="firstname"
                     value={this.state.fields.firstname ? this.state.fields.firstname : ""}
                     onChange={this.handleChange}
                     required />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["firstname"]}
-                  </Form.Text>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label className="mandatory">Last Name</Form.Label>
-                  <Form.Control
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Last Name</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     placeholder="Last Name"
                     name="lastname"
                     value={this.state.fields.lastname ? this.state.fields.lastname : ""}
                     onChange={this.handleChange}
                     required />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["lastname"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
 
-            </Row>
-            <Form.Group>
-              <Form.Label className="mandatory">Email</Form.Label>
-              <Form.Control
+            </ReactBootstrap.Row>
+            <ReactBootstrap.Form.Group>
+              <ReactBootstrap.Form.Label className="mandatory">Email</ReactBootstrap.Form.Label>
+              <ReactBootstrap.Form.Control
                 type="email"
                 placeholder="Last Name"
                 name="Email"
@@ -492,15 +484,15 @@ class EditProfile extends Component {
                 value={this.state.fields.email ? this.state.fields.email : ""}
                 onChange={this.handleChange}
               />
-            </Form.Group>
-            <Row>
+            </ReactBootstrap.Form.Group>
+            <ReactBootstrap.Row>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">Gender</Form.Label>
-                  <Row><br /></Row>
-                  <Row>
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Gender</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Row><br /></ReactBootstrap.Row>
+                  <ReactBootstrap.Row>
                     <div className='col-md-6'>
-                      <Form.Check
+                      <ReactBootstrap.Form.Check
                         type="radio"
                         name="gender"
                         label="Male"
@@ -511,7 +503,7 @@ class EditProfile extends Component {
                       />
                     </div>
                     <div className='col-md-6'>
-                      <Form.Check
+                      <ReactBootstrap.Form.Check
                         type="radio"
                         name="gender"
                         label="Female"
@@ -522,16 +514,16 @@ class EditProfile extends Component {
                       />
                     </div>
 
-                  </Row>
-                  <Form.Text className="text-muted errorMsg">
+                  </ReactBootstrap.Row>
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["gender"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory" id="rowdob">Date of Birth</Form.Label>
-                  <DatePicker
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory" id="rowdob">Date of Birth</ReactBootstrap.Form.Label>
+                  <KendoReactDateInputs.DatePicker
                     format={this.state.dateformat}
                     name="date_of_birth"
                     value={
@@ -542,32 +534,32 @@ class EditProfile extends Component {
                     onChange={this.handleDOBChange}
                     readOnly
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["date_of_birth"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
-            </Row>
-            <Row>
+            </ReactBootstrap.Row>
+            <ReactBootstrap.Row>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">Address 1</Form.Label>
-                  <Form.Control
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Address 1</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="address1"
                     value={this.state.fields.address1 ? this.state.fields.address1 : ""}
                     onChange={this.handleChange}
                     required
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["address1"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label>Address 2</Form.Label>
-                  <Form.Control
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label>Address 2</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="address2"
                     value={this.state.fields.address2 ? this.state.fields.address2 : ""}
@@ -575,15 +567,15 @@ class EditProfile extends Component {
                     required
                   />
                 
-                </Form.Group>
+                </ReactBootstrap.Form.Group>
               </div>
-            </Row>
-            <Row>
+            </ReactBootstrap.Row>
+            <ReactBootstrap.Row>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">
                     Country
-              </Form.Label>
+              </ReactBootstrap.Form.Label>
                   <select
                     value={
                       this.state.fields.country ? this.state.fields.country : ""
@@ -597,16 +589,16 @@ class EditProfile extends Component {
                       </option>
                     ))}
                   </select>
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["country"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">
                     State
-              </Form.Label>
+              </ReactBootstrap.Form.Label>
 
                   <select
                     value={
@@ -637,47 +629,47 @@ class EditProfile extends Component {
                         }
                     })}
                   </select>
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["state"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
-            </Row>
-            <Row>
+            </ReactBootstrap.Row>
+            <ReactBootstrap.Row>
             <div className='col-md-6'>
-            <Form.Group>
-                  <Form.Label className="mandatory">City</Form.Label>
-                  <Form.Control
+            <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">City</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="city"
                     value={this.state.fields.city ? this.state.fields.city : ""}
                     onChange={this.handleChange}
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["city"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
               <div className='col-md-6'>
-            <Form.Group>
-                  <Form.Label className="mandatory">Postal Code</Form.Label>
-                  <Form.Control
+            <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Postal Code</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="zip"
                     value={this.state.fields.zip ? this.state.fields.zip : null}
                     onChange={this.handleChange}
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["zip"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
-            </Row>
+            </ReactBootstrap.Row>
            
-            <Row>
+            <ReactBootstrap.Row>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label className="mandatory">Contact Number</Form.Label>
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Contact Number</ReactBootstrap.Form.Label>
                   <PhoneInput
                     international={false}
                     country="US"
@@ -688,48 +680,48 @@ class EditProfile extends Component {
                     value={this.state.fields.phone ? this.state.fields.phone : ""}
                     onChange={phone => this.handlePhoneChange(phone)}
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["phone"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
               <div className='col-md-6'>
-                <Form.Group>
-                  <Form.Label>Website</Form.Label>
-                  <Form.Control
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label>Website</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="website"
                     value={this.state.fields.website ? this.state.fields.website : ""}
                     onChange={this.handleChange}
                   />
-                </Form.Group>
+                </ReactBootstrap.Form.Group>
 
 
 
 
               </div>
-            </Row>
+            </ReactBootstrap.Row>
 
           
-            <Row>
+            <ReactBootstrap.Row>
               <div className='col-md-12'>
-                <Form.Group>
-                  <Form.Label className="mandatory">Interest</Form.Label>
-                  <Form.Control
+                <ReactBootstrap.Form.Group>
+                  <ReactBootstrap.Form.Label className="mandatory">Interest</ReactBootstrap.Form.Label>
+                  <ReactBootstrap.Form.Control
                     type="text"
                     name="interest"
                     value={this.state.fields.interest ? this.state.fields.interest : ""}
                     onChange={this.handleChange}
                   />
-                  <Form.Text className="text-muted errorMsg">
+                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["interest"]}
-                  </Form.Text>
-                </Form.Group>
+                  </ReactBootstrap.Form.Text>
+                </ReactBootstrap.Form.Group>
               </div>
-            </Row>
-            <Form.Group>
-              <Form.Label>About Me</Form.Label>
-              <Editor
+            </ReactBootstrap.Row>
+            <ReactBootstrap.Form.Group>
+              <ReactBootstrap.Form.Label>About Me</ReactBootstrap.Form.Label>
+              <KendoReactEditor.Editor
                 style={{ height: "20vh", overflow: "auto" }}
                 name="about"
                 tools={[
@@ -749,11 +741,11 @@ class EditProfile extends Component {
                   )
                 }
               />
-            </Form.Group>
-            <Button type="button" className="pull-right preferenceForm-btn" onClick={this.handleSubmit}>Save</Button>
+            </ReactBootstrap.Form.Group>
+            <ReactBootstrap.Button type="button" className="pull-right preferenceForm-btn" onClick={this.handleSubmit}>Save</ReactBootstrap.Button>
           </div>
         </div>
-      </Form>
+      </ReactBootstrap.Form>
     );
   }
 }

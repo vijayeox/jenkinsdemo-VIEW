@@ -109,7 +109,7 @@ class Dashboard extends Component {
         let filterarray = []
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
-        filterarray.push(filter["value"])
+        filterarray.push(filter["value"]["selected"])
         if (index > 0)
           filterParams.push("AND")
 

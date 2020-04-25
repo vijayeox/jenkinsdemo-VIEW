@@ -3,13 +3,16 @@ import AbstractEditor from './abstractEditor';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
+import Select from 'react-select'
 import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button } from 'react-bootstrap';
 
 class AmChartEditor extends AbstractEditor {
     constructor(props) {
         super(props);
         this.state.selectedTab = 'chart';
+        this.state.filteredWidgetList = [];
         this.state.drillDownWidgetTitle = '',
+            this.state.drillDownWidgetType = "",
             this.state.drillDownWidgetFooter = '',
             this.state.hasMaxDepth = false,
             this.state.drillDownMaxDepth = -1,
@@ -20,7 +23,10 @@ class AmChartEditor extends AbstractEditor {
             QUERY_NEEDED: 'Query should be selected',
             EXPRESSION_INVALID_JSON: 'Expression JSON is invalid',
         };
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }]
     }
+
+
 
     configurationChanged = (evt) => {
         let thiz = this;
@@ -92,7 +98,6 @@ class AmChartEditor extends AbstractEditor {
         if (this.state.selectedTab === 'chart') {
             this.refreshChartPreview();
         }
-
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
@@ -109,23 +114,28 @@ class AmChartEditor extends AbstractEditor {
                 drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
                 hasMaxDepth: hasMaxDepth,
                 drillDownMaxDepth: maxDepth
-
-            })
+            }, state => this.setWidgetType())
         }
         else {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
         }
     }
 
+    setWidgetType() {
+        let selectedWidgetOption = this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+        let selectedWidget = selectedWidgetOption[0]["type"]
+        let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
+        this.setState({ drillDownWidgetType: widgetType })
+    }
 
     ApplyDrillDown = () => {
         if (this.validateDrillDownForm()) {
             let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
             let drillDownObject = {
-                "target":"widget",
+                "target": "widget",
                 "filter": this.state.drillDownFilter,
                 "nextWidgetId": this.state.drillDownWidget
-               
+
             }
             this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
             this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
@@ -362,24 +372,62 @@ class AmChartEditor extends AbstractEditor {
         let hasMaxDepth = false
         let errors = { ...this.state.errors }
         errors["drillDown"][e.target.name] = ""
-        
+
         if (e.target.name == "drillDownMaxDepth") {
             hasMaxDepth = true
             this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
 
         }
-        else if ( e.target.name == "drillDownWidget") {
+        else if (e.target.name == "drillDownWidget") {
             hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value)
             this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
         }
-        else
-        {
-            this.setState({ [e.target.name]: e.target.value,  errors: errors })
+        else {
+            this.setState({ [e.target.name]: e.target.value, errors: errors })
 
         }
 
 
-        
+
+    }
+
+    refreshPreview(){
+        if (this.state.selectedTab === 'chart') {
+            this.refreshChartPreview();
+        }
+        else if(this.state.selectedTab ==='query')
+        {
+            this.refreshQueryPreview()
+        }
+        else if(this.state.selectedTab === 'expression')
+        {
+            this.expressionBlurred()
+        }
+    }
+
+    handleSelect(e, type) {
+        let hasMaxDepth = false
+        let errors = { ...this.state.errors }
+        let name = type
+        let value = e.value
+        errors["drillDown"][name] = ""
+        if (name == "drillDownMaxDepth") {
+            hasMaxDepth = true
+            this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else if (name == "drillDownWidget") {
+            hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === value)
+            this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else if (name == "drillDownWidgetType") {
+
+            let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
+            this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+        }
+        else {
+            this.setState({ [name]: value, errors: errors })
+
+        }
     }
 
     render() {
@@ -528,17 +576,27 @@ class AmChartEditor extends AbstractEditor {
                                             </Form.Group>
                                             <Form.Group as={Row}>
                                                 <Form.Label column lg="3">Widget</Form.Label>
-                                                <Col lg="9">
-                                                    <Form.Control
-                                                        as="select"
+                                                <Col lg="3">
+                                                    <Select
+                                                        placeholder="Type"
+                                                        name="drillDownWidgetType"
+                                                        id="drillDownWidgetType"
+                                                        onChange={(e) => this.handleSelect(e, "drillDownWidgetType")}
+                                                        value={this.state.drillDownWidgetType ? this.state.drillDownWidgetType : ""}
+                                                        options={this.widgetTypes}
+                                                        isDisabled={this.state.readOnly}
+                                                    />
+                                                </Col>
+                                                <Col lg="6">
+                                                    <Select
+                                                        placeholder="Choose Widget"
                                                         name="drillDownWidget"
-                                                        value={this.state.drillDownWidget !== '' ? this.state.drillDownWidget : "-1"}
-                                                        onChange={(e) => this.handleDrillDownChange(e)}
-                                                        disabled={this.state.readOnly}
-                                                    >
-                                                        <option key="-1" value="-1"></option>
-                                                        {this.props.widgetOptions}
-                                                    </Form.Control>
+                                                        id="drillDownWidget"
+                                                        isDisabled={this.state.readOnly}
+                                                        onChange={(e) => this.handleSelect(e, "drillDownWidget")}
+                                                        value={this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
+                                                    />
                                                     <Form.Text className="text-muted errorMsg">
                                                         {this.state.errors.drillDown["drillDownWidget"]}
                                                     </Form.Text>
@@ -607,7 +665,7 @@ class AmChartEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview
+                            Preview <span id="chartRefreshBtn" onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'chart') &&
@@ -622,14 +680,6 @@ class AmChartEditor extends AbstractEditor {
                                         value="" disabled={true} />
                                 </div>
                             }
-                            {/* {
-                                ((this.state.selectedTab === "drilldown")) &&
-                                <div className="row">
-                                    <div className="col-5">Chart1</div>
-                                    <div className="col-2">-></div>
-                                    <div className="col-5">chart2</div>
-                                </div>
-                            } */}
                         </div>
                     </div>
                 </div>

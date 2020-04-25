@@ -36,41 +36,24 @@ export default class DocumentViewer extends Component {
   getDocumentsList = () => {
     if (this.props.url) {
       this.loader.show();
-      this.getDocumentsListService(this.props.url).then(response => {
+      this.getDocumentsListService(this.props.url).then((response) => {
         if (response.data) {
           var documentsList = {};
           var documentTypes = Object.keys(response.data);
-          this.setState({ documentTypes: documentTypes });
-          documentTypes.map((docType, index) => {
+          documentTypes.map((docType) => {
             if (response.data[docType] && response.data[docType].length > 0) {
               documentsList[docType] = response.data[docType];
             }
           });
           if (Object.keys(documentsList).length > 0) {
-            if (
-              documentsList[documentTypes[0]] &&
-              documentsList[documentTypes[0]][0]
-            ) {
-              this.setState({
-                documentsList: documentsList,
-                selectedDocument: documentsList[documentTypes[0]][0],
-                activeCard: documentTypes[0]
-              });
-            } else {
-              for (var i = 0; i < documentTypes.length; i++) {
-                if (
-                  documentsList[documentTypes[i]] &&
-                  documentsList[documentTypes[i]][0]
-                ) {
-                  this.setState({
-                    documentsList: documentsList,
-                    selectedDocument: documentsList[documentTypes[i]][0],
-                    activeCard: documentTypes[i]
-                  });
-                  break;
-                }
-              }
-            }
+            var validDocTypes = Object.keys(documentsList);
+            console.log(validDocTypes);
+            this.setState({
+              documentsList: documentsList,
+              selectedDocument: documentsList[validDocTypes[0]][0],
+              activeCard: validDocTypes[0],
+              documentTypes: validDocTypes
+            });
           }
           this.loader.destroy();
         }

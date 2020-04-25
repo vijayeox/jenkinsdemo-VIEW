@@ -1,9 +1,6 @@
-import React, { Component } from "react";
-import Notification from "OxzionGUI/Notification"
-import { Form, InputGroup, Button, Col, Row } from 'react-bootstrap'
-import { Tooltip } from 'reactstrap'
+import {React,ReactDOM,Notification,ReactStrap,ReactBootstrap} from "oxziongui";
 
-class ChangePassword extends Component {
+class ChangePassword extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -202,36 +199,36 @@ class ChangePassword extends Component {
   init() { }
   render() {
     return (
-      <Form onSubmit={this.handleSubmit} className="confirm-password-form preferenceForm">
+      <ReactBootstrap.Form onSubmit={this.handleSubmit} className="confirm-password-form preferenceReactBootstrap.Form">
         <Notification ref={this.notif} />
           <div className="row">
           <div className="col-md-12">
-        <Form.Group>
-          <Form.Label>Old Password</Form.Label>
-          <InputGroup>
-            <Form.Control
+        <ReactBootstrap.Form.Group>
+          <ReactBootstrap.Form.Label>Old Password</ReactBootstrap.Form.Label>
+          <ReactBootstrap.InputGroup>
+            <ReactBootstrap.Form.Control
               type={this.state.type}
               name="old_password"
               className="passwordField"
               onChange={this.handleChange}
             />
-            <InputGroup.Append>
-              <Button className="preferenceForm-showbtn" onClick={this.showHide}>{this.state.type === "text" ? "Hide" : "Show"}</Button>
-            </InputGroup.Append>
-          </InputGroup>
-          <Form.Text className="text-muted errorMsg">
+            <ReactBootstrap.InputGroup.Append>
+              <ReactBootstrap.Button className="preferenceReactBootstrap.Form-showbtn" onClick={this.showHide}>{this.state.type === "text" ? "Hide" : "Show"}</ReactBootstrap.Button>
+            </ReactBootstrap.InputGroup.Append>
+          </ReactBootstrap.InputGroup>
+          <ReactBootstrap.Form.Text className="text-muted errorMsg">
             {this.state.errors.old_password}
-          </Form.Text>
-        </Form.Group>
+          </ReactBootstrap.Form.Text>
+        </ReactBootstrap.Form.Group>
       </div>
       </div>
 
           <div className="row">
           <div className="col-md-12">
-        <Form.Group>
-          <Form.Label>New Password</Form.Label>
-          <InputGroup>
-            <Form.Control
+        <ReactBootstrap.Form.Group>
+          <ReactBootstrap.Form.Label>New Password</ReactBootstrap.Form.Label>
+          <ReactBootstrap.InputGroup>
+            <ReactBootstrap.Form.Control
               type={this.state.type1}
               name="new_password"
               onClick={() => this.toggleToolTip(this.state.tooltipOpen)}
@@ -240,48 +237,48 @@ class ChangePassword extends Component {
               className="passwordField"
               onBlur={() => this.toggleToolTip(false)}
             />
-            <InputGroup.Append>
-              <Button className="preferenceForm-showbtn" onClick={this.showHide1}>{this.state.type1 === "text" ? "Hide" : "Show"}</Button>
-            </InputGroup.Append>
-          </InputGroup>
-          <Tooltip target="newPassword" isOpen={this.state.tooltipOpen} placement="bottom-end" style={{ background: "rgb(231, 222, 234)", color: "black", fontSize: ".675rem", width: "200px" }}>
-            <Row style={{ marginLeft: "2px" }}>Password Must Contain</Row>
-            <Row style={{ color: this.state.pass_length, marginLeft: "2px" }} > at least 8 characters</Row>
-            <Row style={{ color: this.state.pass_num, marginLeft: "2px" }}> at least one number (0-9)</Row>
-            <Row style={{ color: this.state.pass_lowcase, marginLeft: "2px" }}> at least one lowercase letter (a-z)</Row>
-            <Row style={{ color: this.state.pass_upcase, marginLeft: "2px" }}> at least one uppercase letter (A-Z)</Row>
-            <Row style={{ color: this.state.pass_spl, marginLeft: "2px" }}>at least one special character</Row>
-          </Tooltip>
-          <Form.Text className="text-muted errorMsg">
+            <ReactBootstrap.InputGroup.Append>
+              <ReactBootstrap.Button className="preferenceReactBootstrap.Form-showbtn" onClick={this.showHide1}>{this.state.type1 === "text" ? "Hide" : "Show"}</ReactBootstrap.Button>
+            </ReactBootstrap.InputGroup.Append>
+          </ReactBootstrap.InputGroup>
+          <ReactStrap.Tooltip target="newPassword" isOpen={this.state.tooltipOpen} placement="bottom-end" style={{ background: "rgb(231, 222, 234)", color: "black", fontSize: ".675rem", width: "200px" }}>
+            <ReactBootstrap.Row style={{ marginLeft: "2px" }}>Password Must Contain</ReactBootstrap.Row>
+            <ReactBootstrap.Row style={{ color: this.state.pass_length, marginLeft: "2px" }} > at least 8 characters</ReactBootstrap.Row>
+            <ReactBootstrap.Row style={{ color: this.state.pass_num, marginLeft: "2px" }}> at least one number (0-9)</ReactBootstrap.Row>
+            <ReactBootstrap.Row style={{ color: this.state.pass_lowcase, marginLeft: "2px" }}> at least one lowercase letter (a-z)</ReactBootstrap.Row>
+            <ReactBootstrap.Row style={{ color: this.state.pass_upcase, marginLeft: "2px" }}> at least one uppercase letter (A-Z)</ReactBootstrap.Row>
+            <ReactBootstrap.Row style={{ color: this.state.pass_spl, marginLeft: "2px" }}>at least one special character</ReactBootstrap.Row>
+          </ReactStrap.Tooltip>
+          <ReactBootstrap.Form.Text className="text-muted errorMsg">
             {this.state.errors.new_password}
-          </Form.Text>
-        </Form.Group>
+          </ReactBootstrap.Form.Text>
+        </ReactBootstrap.Form.Group>
         </div>
         </div>
 
           <div className="row">
           <div className="col-md-12">
-        <Form.Group>
-          <Form.Label>Confirm Password</Form.Label>
-          <InputGroup>
-            <Form.Control
+        <ReactBootstrap.Form.Group>
+          <ReactBootstrap.Form.Label>Confirm Password</ReactBootstrap.Form.Label>
+          <ReactBootstrap.InputGroup>
+            <ReactBootstrap.Form.Control
               type={this.state.type2}
               name="confirm_password"
               className="passwordField"
               onChange={this.handleChange}
             />
-            <InputGroup.Append>
-              <Button className="preferenceForm-showbtn" onClick={this.showHide2}>{this.state.type2 === "text" ? "Hide" : "Show"}</Button>
-            </InputGroup.Append>
-          </InputGroup>
-          <Form.Text className="text-muted errorMsg">
+            <ReactBootstrap.InputGroup.Append>
+              <ReactBootstrap.Button className="preferenceReactBootstrap.Form-showbtn" onClick={this.showHide2}>{this.state.type2 === "text" ? "Hide" : "Show"}</ReactBootstrap.Button>
+            </ReactBootstrap.InputGroup.Append>
+          </ReactBootstrap.InputGroup>
+          <ReactBootstrap.Form.Text className="text-muted errorMsg">
             {this.state.errors.confirm_password}
-          </Form.Text>
-            </Form.Group>
+          </ReactBootstrap.Form.Text>
+            </ReactBootstrap.Form.Group>
       </div>
       </div>
-        <Button type="submit" className="pull-right preferenceForm-btn">Save</Button>
-      </Form>
+        <ReactBootstrap.Button type="submit" className="pull-right preferenceReactBootstrap.Form-btn">Save</ReactBootstrap.Button>
+      </ReactBootstrap.Form>
     );
   }
 }

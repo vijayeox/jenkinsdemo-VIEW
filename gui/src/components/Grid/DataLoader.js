@@ -41,8 +41,13 @@ export class DataLoader extends React.Component {
     if (typeof this.core == "undefined") {
       let response = await fetch(url, this.init);
       let json = await response.json();
-      let data = { data: json.value, total: json["@odata.count"] };
-      return data;
+      if(json.status == 'success'){
+        let data = { data: json.value, total: json["@odata.count"] };
+        return data;
+      } else {
+        let data = { data: [], total: 0 };
+        return data;
+      }
     } else {
       let helper = this.core.make("oxzion/restClient");
       let paramSeperator =
@@ -62,7 +67,11 @@ export class DataLoader extends React.Component {
       }
 
       let data = await helper.request("v1", "/" + route, {}, "get");
-      return data;
+      if(data.status == "success"){
+        return data;
+      } else {
+        return { data: [], total: 0 };
+      }
     }
   }
 

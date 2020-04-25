@@ -1,9 +1,7 @@
-import React, { Component } from "react";
+import {React,ReactDOM,Notification,ReactBootstrap} from "oxziongui";
 import merge from "deepmerge";
 import osjs from "osjs";
-import Notification from "OxzionGUI/Notification"
-import { Form, Button } from 'react-bootstrap'
-class Background extends Component {
+class Background extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -191,10 +189,10 @@ class Background extends Component {
     return (
       <div className="componentDiv">
         <Notification ref={this.notif} />
-        <Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
+        <ReactBootstrap.Form className="formmargin preferenceForm" onSubmit={this.handleSubmit}>
           <div className="row marginsize">
             <div className="col-md-4">
-              <Form.Label>Image:</Form.Label>
+              <ReactBootstrap.Form.Label>Image:</ReactBootstrap.Form.Label>
               {/* <label id="imageLabel">Image:</label> */}
             </div>
             <div className="col-md-4 imagediv">
@@ -226,7 +224,7 @@ class Background extends Component {
           </div>
           <div className="row marginsize">
             <div className="col-md-4">
-              <Form.Label>Style:</Form.Label>
+              <ReactBootstrap.Form.Label>Style:</ReactBootstrap.Form.Label>
             </div>
             <div className="col-md-8 backgroundStylediv">
               <select
@@ -247,10 +245,10 @@ class Background extends Component {
 
           <div className="row">
             <div className="col-12 input-field">
-              <Button className="pull-right preferenceForm-btn" type="submit">Save</Button>
+              <ReactBootstrap.Button className="pull-right preferenceForm-btn" type="submit">Save</ReactBootstrap.Button>
             </div>
           </div>
-        </Form>
+        </ReactBootstrap.Form>
       </div>
     );
   }

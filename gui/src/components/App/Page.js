@@ -4,6 +4,7 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import FormRender from "./FormRender";
 import HTMLViewer from "./HTMLViewer";
+import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import DocumentViewer from "../../DocumentViewer";
@@ -29,7 +30,7 @@ class Page extends React.Component {
       fileId: null,
       currentRow: []
     };
-    this.loadPage(this.props.pageId);
+    this.props.pageId ? this.loadPage(this.props.pageId) : null;
     this.updatePageView = this.updatePageView.bind(this);
   }
 
@@ -95,7 +96,20 @@ class Page extends React.Component {
               <Button
                 primary={true}
                 className=" btn manage-btn k-grid-edit-command"
-                onClick={() => this.buttonAction(action[key], e)}
+                onClick={() => {
+                  action[key].confirmationMessage
+                    ? Swal.fire({
+                        title: action[key].confirmationMessage,
+                        confirmButtonText: "Agree",
+                        confirmButtonColor: "#275362",
+                        showCancelButton: true,
+                        cancelButtonColor: "#7b7878",
+                        target: ".PageRender"
+                      }).then((result) => {
+                        result.value ? this.buttonAction(action[key], e) : null;
+                      })
+                    : this.buttonAction(action[key], e);
+                }}
                 style={buttonStyles}
               >
                 {action[key].icon ? (
@@ -169,6 +183,12 @@ class Page extends React.Component {
           if (item.url) {
             copyItem.url = that.replaceParams(item.url, rowData);
           }
+          if (item.urlPostParams) {
+            copyItem.urlPostParams = that.replaceParams(
+              item.urlPostParams,
+              rowData
+            );
+          }
           copyPageContent.push(copyItem);
         }
       });
@@ -203,26 +223,34 @@ class Page extends React.Component {
 
   replaceParams(route, params) {
     var finalParams = merge(params ? params : {}, {
-      current_date: moment().format("YYYY-MM-DD")
+      current_date: moment().format("YYYY-MM-DD"),
+      appId: this.appId
     });
-    var regex = /\{\{.*?\}\}/g;
-    let m;
-    while ((m = regex.exec(route)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
+    if (typeof route == "object") {
+      var final_route = JSON.parse(JSON.stringify(route));
+      Object.keys(route).map((item) => {
+        final_route[item] = params[item] ? params[item] : route[item];
+      });      
+      return final_route;
+    } else {
+      var regex = /\{\{.*?\}\}/g;
+      let m;
+      while ((m = regex.exec(route)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match, groupIndex) => {
+          // console.log(`Found match, group ${groupIndex}: ${match}`);
+          route = route.replace(
+            match,
+            finalParams[match.replace(/\{\{|\}\}/g, "")]
+          );
+        });
       }
-
-      // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
-        // console.log(`Found match, group ${groupIndex}: ${match}`);
-        route = route.replace(
-          match,
-          finalParams[match.replace(/\{\{|\}\}/g, "")]
-        );
-      });
+      return route;
     }
-    return route;
   }
 
   prepareDataRoute(route, params) {
@@ -293,6 +321,7 @@ class Page extends React.Component {
             <FormRender
               key={i}
               url={dataString}
+              urlPostParams={data[i].urlPostParams}
               core={this.core}
               appId={this.appId}
               content={data[i].content}
@@ -314,6 +343,7 @@ class Page extends React.Component {
             } else {
               columnConfig.push({
                 title: "Actions",
+                width: "200px",
                 cell: e => this.renderButtons(e, itemContent.actions),
                 filterCell: {
                   type: "empty"
@@ -394,6 +424,17 @@ class Page extends React.Component {
             />
           );
           break;
+          case "Comment":
+            content.push(
+              <CommentsView
+                appId={this.appId}
+                key={i}
+                core={this.core}
+                postSubmitCallback={this.stepBackBreadcrumb}
+                url={data[i].url}
+              />
+            );
+            break;
         case "Dashboard":
           content.push(
             <Dashboard
