@@ -352,6 +352,19 @@ class FormRender extends React.Component {
       formData.phoneList = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
+      var componentList = flattenComponents(this.state.currentForm._form.components, true);
+      for (var componentKey in componentList) {
+        var componentItem = componentList[componentKey];
+        if (componentItem && componentItem && componentItem.protected == true) {
+          if (formData[componentKey]) {
+            delete formData[componentKey];
+          }
+        } else if (componentItem && componentItem && componentItem.persistent == false) {
+          if (formData[componentKey]) {
+            delete formData[componentKey];
+          }
+        } else {}
+      }
       Object.keys(formData).sort().forEach(function(key) {
         ordered_data[key] = formData[key];
       });
