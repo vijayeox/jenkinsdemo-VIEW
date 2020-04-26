@@ -391,6 +391,20 @@ class AmChartEditor extends AbstractEditor {
 
     }
 
+    refreshPreview(){
+        if (this.state.selectedTab === 'chart') {
+            this.refreshChartPreview();
+        }
+        else if(this.state.selectedTab ==='query')
+        {
+            this.refreshQueryPreview()
+        }
+        else if(this.state.selectedTab === 'expression')
+        {
+            this.expressionBlurred()
+        }
+    }
+
     handleSelect(e, type) {
         let hasMaxDepth = false
         let errors = { ...this.state.errors }
@@ -651,7 +665,7 @@ class AmChartEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview
+                            Preview <span id="chartRefreshBtn" onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'chart') &&

@@ -272,6 +272,19 @@ class TableEditor extends AbstractEditor {
             thiz.configurationTabSelected('table');
         });
     }
+    refreshPreview(){
+        if (this.state.selectedTab === 'table') {
+            this.refreshTablePreview();
+        }
+        else if(this.state.selectedTab ==='query')
+        {
+            this.refreshQueryPreview()
+        }
+        else if(this.state.selectedTab === 'expression')
+        {
+            this.expressionBlurred()
+        }
+    }
 
     render() {
         let thiz = this;
@@ -408,7 +421,7 @@ class TableEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview
+                            Preview <span id="tableRefreshBtn" onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'table') && 

@@ -197,7 +197,9 @@ class FormRender extends React.Component {
   }
   async getActivityInstance() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  }
+    return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  
+  }
+
   async saveForm(form, data) {
     this.showFormLoader(true,0);
     var that = this;
@@ -251,8 +253,8 @@ class FormRender extends React.Component {
               if (response2.status == "success") {
                 this.props.postSubmitCallback();
               }
-              return response;
             });
+            return response;
           } else {
             if (response.errors) {
               await this.storeError(data, response.errors, "pipeline");
@@ -350,6 +352,19 @@ class FormRender extends React.Component {
       formData.phoneList = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
+      var componentList = flattenComponents(this.state.currentForm._form.components, true);
+      for (var componentKey in componentList) {
+        var componentItem = componentList[componentKey];
+        if (componentItem && componentItem && componentItem.protected == true) {
+          if (formData[componentKey]) {
+            delete formData[componentKey];
+          }
+        } else if (componentItem && componentItem && componentItem.persistent == false) {
+          if (formData[componentKey]) {
+            delete formData[componentKey];
+          }
+        } else {}
+      }
       Object.keys(formData).sort().forEach(function(key) {
         ordered_data[key] = formData[key];
       });

@@ -103,7 +103,7 @@ class Home extends React.Component {
         component: Project
       },
       {
-        name: "Announcements",
+        name: "Announcement",
         api: "ANNOUNCEMENT",
         icon: "apps/Admin/131-laptop.svg",
         component: Announcement
