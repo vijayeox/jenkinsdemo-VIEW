@@ -19,6 +19,11 @@ class Page extends React.Component {
     this.appId = this.props.app;
     this.proc = this.props.proc;
     this.loader = this.core.make("oxzion/splash");
+    this.fetchExternalComponents().then((response) => {
+      this.extGUICompoents = response.guiComponent
+        ? response.guiComponent
+        : undefined;
+    });
 
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
     let pageContent = [];
@@ -40,6 +45,10 @@ class Page extends React.Component {
       .addEventListener("updatePageView", this.updatePageView, false);
   }
 
+  async fetchExternalComponents() {
+    return await import("../../externals/" + this.appId + "/index.js");
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.pageId !== prevProps.pageId) {
       var PageRenderDiv = document.querySelector(".PageRender");
@@ -56,7 +65,7 @@ class Page extends React.Component {
   }
 
   loadPage(pageId) {
-    this.getPageContent(pageId).then(response => {
+    this.getPageContent(pageId).then((response) => {
       if (response.status == "success") {
         this.setState({
           pageContent: response.data.content
@@ -77,7 +86,7 @@ class Page extends React.Component {
 
   renderButtons(e, action) {
     var actionButtons = [];
-    Object.keys(action).map(function(key, index) {
+    Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
       var showButton = eval(string);
       var buttonStyles = action[key].icon
@@ -230,7 +239,7 @@ class Page extends React.Component {
       var final_route = JSON.parse(JSON.stringify(route));
       Object.keys(route).map((item) => {
         final_route[item] = params[item] ? params[item] : route[item];
-      });      
+      });
       return final_route;
     } else {
       var regex = /\{\{.*?\}\}/g;
@@ -301,171 +310,163 @@ class Page extends React.Component {
 
   renderContent(data) {
     var content = [];
-    for (var i = 0; i < data.length; i++) {
-      switch (data[i].type) {
-        case "Form":
-          var dataString = this.prepareDataRoute(
-            data[i].url,
-            this.state.currentRow
-          );
-          // This workflow instance id corresponds to completed workflow instance
-          var workflowInstanceId = this.replaceParams(
-            data[i].workflowInstanceId,
-            this.state.currentRow
-          );
-          var fileId = this.replaceParams(
-            data[i].fileId,
-            this.state.currentRow
-          );
-          content.push(
-            <FormRender
-              key={i}
-              url={dataString}
-              urlPostParams={data[i].urlPostParams}
-              core={this.core}
-              appId={this.appId}
-              content={data[i].content}
-              fileId={fileId}
-              formId={data[i].form_id}
-              page={data[i].page}
-              pipeline={data[i].pipeline}
-              parentWorkflowInstanceId={workflowInstanceId}
-              postSubmitCallback={this.stepBackBreadcrumb}
-            />
-          );
-          break;
-        case "List":
-          var itemContent = data[i].content;
-          var columnConfig = itemContent.columnConfig;
-          if (itemContent.actions) {
-            if (columnConfig[columnConfig.length - 1].title == "Actions") {
-              null;
-            } else {
-              columnConfig.push({
-                title: "Actions",
-                width: "200px",
-                cell: e => this.renderButtons(e, itemContent.actions),
-                filterCell: {
-                  type: "empty"
-                }
-              });
-            }
-          }
-          var dataString = this.prepareDataRoute(
-            itemContent.route,
-            this.state.currentRow
-          );
-          content.push(
-            <OX_Grid
-              rowTemplate={
-                itemContent.expandable
-                  ? e => this.renderRow(e, itemContent.rowConfig)
-                  : null
+    data.map((item, i) => {
+      if (item.type == "Form") {
+        var dataString = this.prepareDataRoute(item.url, this.state.currentRow);
+        // This workflow instance id corresponds to completed workflow instance
+        var workflowInstanceId = this.replaceParams(
+          item.workflowInstanceId,
+          this.state.currentRow
+        );
+        var fileId = this.replaceParams(item.fileId, this.state.currentRow);
+        content.push(
+          <FormRender
+            key={i}
+            url={dataString}
+            urlPostParams={item.urlPostParams}
+            core={this.core}
+            appId={this.appId}
+            content={item.content}
+            fileId={fileId}
+            formId={item.form_id}
+            page={item.page}
+            pipeline={item.pipeline}
+            parentWorkflowInstanceId={workflowInstanceId}
+            postSubmitCallback={this.stepBackBreadcrumb}
+          />
+        );
+      } else if (item.type == "List") {
+        var itemContent = item.content;
+        var columnConfig = itemContent.columnConfig;
+        if (itemContent.actions) {
+          if (columnConfig[columnConfig.length - 1].title == "Actions") {
+            null;
+          } else {
+            columnConfig.push({
+              title: "Actions",
+              width: "200px",
+              cell: (e) => this.renderButtons(e, itemContent.actions),
+              filterCell: {
+                type: "empty"
               }
-              appId={this.appId}
-              key={i}
-              osjsCore={this.core}
-              data={dataString}
-              gridDefaultFilters={
-                itemContent.defaultFilters
-                  ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
-                  : undefined
-              }
-              forceDefaultFilters={itemContent.forceDefaultFilters}
-              gridOperations={itemContent.operations}
-              gridToolbar={itemContent.toolbarTemplate}
-              filterable={itemContent.filterable}
-              reorderable={itemContent.reorderable}
-              resizable={itemContent.resizable}
-              pageable={itemContent.pageable}
-              sortable={itemContent.sortable}
-              columnConfig={columnConfig}
-              expandable={itemContent.expandable}
-            />
-          );
-          break;
-        case "Search":
-          var itemContent = JSON.parse(data[i].content);
-          var placeholder = itemContent.placeholder;
-          var columnConfig = itemContent.columnConfig;
-          if (itemContent.actions) {
-            if (columnConfig[columnConfig.length - 1].title == "Actions") {
-              null;
-            } else {
-              columnConfig.push({
-                title: "Actions",
-                cell: e => this.renderButtons(e, itemContent.actions),
-                filterCell: {
-                  type: "empty"
-                }
-              });
-            }
+            });
           }
-          content.push(
-            <SearchPage
-              key={i}
-              core={this.core}
-              content={itemContent}
-              filterColumns={itemContent.filterColumns}
-              appId={this.appId}
-              entityId={itemContent.entityId}
-              columnConfig={columnConfig}
-              placeholder={placeholder}
-            />
+        }
+        var dataString = this.prepareDataRoute(
+          itemContent.route,
+          this.state.currentRow
+        );
+        content.push(
+          <OX_Grid
+            rowTemplate={
+              itemContent.expandable
+                ? (e) => this.renderRow(e, itemContent.rowConfig)
+                : null
+            }
+            appId={this.appId}
+            key={i}
+            osjsCore={this.core}
+            data={dataString}
+            gridDefaultFilters={
+              itemContent.defaultFilters
+                ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                : undefined
+            }
+            forceDefaultFilters={itemContent.forceDefaultFilters}
+            gridOperations={itemContent.operations}
+            gridToolbar={itemContent.toolbarTemplate}
+            filterable={itemContent.filterable}
+            reorderable={itemContent.reorderable}
+            resizable={itemContent.resizable}
+            pageable={itemContent.pageable}
+            sortable={itemContent.sortable}
+            columnConfig={columnConfig}
+            expandable={itemContent.expandable}
+          />
+        );
+      } else if (item.type == "Search") {
+        var itemContent = JSON.parse(item.content);
+        var placeholder = itemContent.placeholder;
+        var columnConfig = itemContent.columnConfig;
+        if (itemContent.actions) {
+          if (columnConfig[columnConfig.length - 1].title == "Actions") {
+            null;
+          } else {
+            columnConfig.push({
+              title: "Actions",
+              cell: (e) => this.renderButtons(e, itemContent.actions),
+              filterCell: {
+                type: "empty"
+              }
+            });
+          }
+        }
+        content.push(
+          <SearchPage
+            key={i}
+            core={this.core}
+            content={itemContent}
+            filterColumns={itemContent.filterColumns}
+            appId={this.appId}
+            entityId={itemContent.entityId}
+            columnConfig={columnConfig}
+            placeholder={placeholder}
+          />
+        );
+      } else if (item.type == "DocumentViewer") {
+        content.push(
+          <DocumentViewer
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            url={item.url}
+          />
+        );
+      } else if (item.type == "Comment") {
+        content.push(
+          <CommentsView
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            postSubmitCallback={this.stepBackBreadcrumb}
+            url={item.url}
+          />
+        );
+      } else if (item.type == "Dashboard") {
+        content.push(
+          <Dashboard
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            content={item.content}
+            proc={this.proc}
+          />
+        );
+      } else if (item.type == "Document" || item.type == "HTMLViewer") {
+        content.push(
+          <HTMLViewer
+            key={i}
+            core={this.core}
+            key={i}
+            appId={this.appId}
+            content={item.content}
+            url={item.url}
+            fileData={item.useRowData ? this.state.currentRow : undefined}
+          />
+        );
+      } else {
+        let props = item;
+        props.key = i;
+        let guiComponent =
+          this.extGUICompoents && this.extGUICompoents[item.type] ? (
+            React.createElement(this.extGUICompoents[item.type], props)
+          ) : (
+            <h3 key={i}>The compoent used is not available.</h3>
           );
-          break;
-        case "DocumentViewer":
-          content.push(
-            <DocumentViewer
-              appId={this.appId}
-              key={i}
-              core={this.core}
-              url={data[i].url}
-            />
-          );
-          break;
-          case "Comment":
-            content.push(
-              <CommentsView
-                appId={this.appId}
-                key={i}
-                core={this.core}
-                postSubmitCallback={this.stepBackBreadcrumb}
-                url={data[i].url}
-              />
-            );
-            break;
-        case "Dashboard":
-          content.push(
-            <Dashboard
-              appId={this.appId}
-              key={i}
-              core={this.core}
-              content={data[i].content}
-              proc={this.proc}
-            />
-          );
-          break;
-        default:
-          content.push(
-            <HTMLViewer
-              key={i}
-              core={this.core}
-              key={i}
-              appId={this.appId}
-              content={data[i].content}
-              url={data[i].url}
-              fileData={data[i].useRowData ? this.state.currentRow : undefined}
-            />
-          );
-          break;
+        content.push(guiComponent);
       }
-    }
-    if (content.length > 0) {
-      return content;
-    } else {
-      content.push(<h2>No Content Available</h2>);
-    }
+    });
+    !(content.length > 0) ? content.push(<h2>No Content Available</h2>) : null;
     return content;
   }
 
@@ -482,10 +483,11 @@ class Page extends React.Component {
           {pageRender}
         </div>
       );
+    } else {
+      var PageRenderDiv = document.querySelector(".PageRender");
+      this.loader.show(PageRenderDiv);
+      return <div></div>;
     }
-    var PageRenderDiv = document.querySelector(".PageRender");
-    this.loader.show(PageRenderDiv);
-    return <div></div>;
   }
 }
 
