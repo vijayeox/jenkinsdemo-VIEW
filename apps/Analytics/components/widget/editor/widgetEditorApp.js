@@ -434,7 +434,7 @@ class WidgetEditorApp extends React.Component {
             // called on create widget
             params["visualization_uuid"] = state.visualizationID
             params["ispublic"] = parseInt(state.visibility);
-            return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'post');
+            return window.postDataRequest('analytics/widget' ,params, 'post');
         }
         else {
             switch (state.mode) {
