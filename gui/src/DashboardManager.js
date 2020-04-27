@@ -8,7 +8,7 @@ import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "../../apps/Analytics/dashboardEditor"
-
+import Select from 'react-select'
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -94,14 +94,14 @@ class Dashboard extends React.Component {
 
   setTitle(title) { }
 
-  handleChange(event) {
+  handleChange(event, inputName) {
     let inputs = {}
     inputs = { ...this.state.inputs }
     let name
     let value
-    if (event.target.name === "dashname") {
-      name = event.target.name
-      value = JSON.parse(event.target.value)
+    if (inputName && inputName == "dashname") {
+      name = inputName
+      value = JSON.parse(event.value)
       var element = document.getElementById("dashboard-editor-div");
       element != undefined && element.classList.add("hide-dash-editor")
     }
@@ -156,19 +156,18 @@ class Dashboard extends React.Component {
     this.setState({ dashboardFilter: filter })
     this.hideFilter()
   }
-  getDashboardFilters(){
-    if(this.state.filterConfiguration){
-      try{
-        let validJson=JSON.parse(this.state.filterConfiguration)
+  getDashboardFilters() {
+    if (this.state.filterConfiguration) {
+      try {
+        let validJson = JSON.parse(this.state.filterConfiguration)
         return validJson
       }
-      catch(e)
-        {
-          console.error("Invalid json filter found in the database");
-          return []
-        }
-    } 
-    else{
+      catch (e) {
+        console.error("Invalid json filter found in the database");
+        return []
+      }
+    }
+    else {
       return []
     }
   }
@@ -211,18 +210,22 @@ class Dashboard extends React.Component {
                       <Col lg="4" md="4" sm="4">
                         <Form.Group as={Row}>
                           <Col>
-                            <Form.Control
-                              as="select"
-                              onChange={(e) => this.handleChange(e)}
+                            <Select
                               name="dashname"
-                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? JSON.stringify(this.state.inputs["dashname"]) : "-1"}
-                            >
-                              <option key="-1" value="-1" disabled></option>
-                              {this.state.dashList &&
-                                this.state.dashList.map((option, index) => (
-                                  <option key={option.uuid} value={JSON.stringify(option)}>{option.name}</option>
-                                ))}
-                            </Form.Control>
+                              placeholder="Select Dashboard"
+                              id="dashname"
+                              onChange={(e) => this.handleChange(e, "dashname")}
+                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
+                              options={this.state.dashList &&
+                                this.state.dashList.map((option, index) => {
+                                  return {
+                                    value: JSON.stringify(option),
+                                    label: option.name,
+                                    key: option.uuid
+                                  }
+                                })
+                              }
+                            />
                           </Col>
                         </Form.Group>
                       </Col>
