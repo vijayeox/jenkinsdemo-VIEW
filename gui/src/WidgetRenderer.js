@@ -65,6 +65,8 @@ class WidgetRenderer {
             else if (configuration.dateFormat) {
                 let format = configuration.dateFormat;
                 displayValue = dayjs(data).format(format);
+            } else {
+                displayValue = data;
             }
         }
         element.innerHTML = displayValue ? displayValue : ('' + data);
