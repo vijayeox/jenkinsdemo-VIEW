@@ -617,7 +617,7 @@ class WidgetEditorApp extends React.Component {
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
                                 }
-                                {(this.state.widget.type === 'inline') || (this.state.widget.type === 'html') &&
+                                {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                 }
                             </div>
