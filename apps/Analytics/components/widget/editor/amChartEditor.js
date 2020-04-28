@@ -437,7 +437,8 @@ class AmChartEditor extends AbstractEditor {
             let i = 0;
             let options = [<option value="" key={keyPrefix + '00000000-0000-0000-0000-000000000000'}>-Select query-</option>];
             thiz.queryList.map((item, index) => {
-                options.push(<option key={keyPrefix + item.uuid} value={item.uuid}>{item.name}</option>);
+                // options.push(<option key={keyPrefix + item.uuid} value={item.uuid}>{item.name}</option>);
+                options.push({value:item.uuid,label:item.name})
             });
             return options;
         };
@@ -445,19 +446,28 @@ class AmChartEditor extends AbstractEditor {
         function getQuerySelections() {
             let querySelections = [];
             let count = thiz.state.queries.length;
+           
             if (0 === count) {
                 thiz.addQueryToGivenState(thiz.state, null); //Render at least one query selection box.
                 count = 1;
             }
             for (let i = 0; i < count; i++) {
+              
                 querySelections.push(
                     <div className="form-group row" key={'qs-00-' + i}>
                         <div className="col-7" key={'qs-01-' + i}>
-                            <select id={'query' + i} name={'query' + i} ref={'query' + i} className="form-control form-control-sm"
-                                onChange={(e) => { thiz.querySelectionChanged(e, i) }} disabled={thiz.state.readOnly}
-                                value={thiz.state.queries[i] ? thiz.state.queries[i].uuid : ''} key={'qs-02-' + i}>
-                                {getQuerySelectOptoins('qs-03-' + i)}
-                            </select>
+                            <Select
+                             key={'qs-02-' + i}
+                             id={'query' + i} 
+                             name={'query' + i}
+                             ref={'query' + i}
+                             onChange={(e) => { thiz.querySelectionChanged(e, i) }}
+                             isDisabled={thiz.state.readOnly}
+                             value={thiz.state.queries[i] ? getQuerySelectOptoins('qs-03-' + i).filter(
+                                option => option.value == thiz.state.queries[i]['uuid']
+                              ) : ''}
+                            options={getQuerySelectOptoins('qs-03-' + i)}
+                            />
                             <Overlay id={'query-overlay' + i} target={thiz.refs['query' + i]} show={thiz.state.errors.queries[i] != null} placement="right">
                                 {props => (
                                     <Tooltip id={'query-' + i + '-tooltip'} {...props} className="error-tooltip">
