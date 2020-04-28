@@ -102,10 +102,21 @@ export class DataLoader extends React.Component {
       if (ColumnItem.multiFieldFilter && gridConfig.filter) {
         gridConfig.filter.filters.map((filterItem2, i) => {
           if (filterItem2.field == ColumnItem.field) {
+            var newFilters = [];
+            var searchQuery = filterItem2.value.split(" ");
+            searchQuery.map(searchItem=>newFilters.push({
+              field: filterItem2.field,
+              operator:filterItem2. operator,
+              value: searchItem
+            }))
             ColumnItem.multiFieldFilter.map(multiFieldItem => {
               let newFilter = JSON.parse(JSON.stringify(filterItem2));
-              newFilter.field = multiFieldItem;
-              gridConfig.filter.filters.push(newFilter);
+              searchQuery.map(searchItem=>newFilters.push({
+                field: multiFieldItem,
+                operator:newFilter.operator,
+                value: searchItem
+              }))
+              gridConfig.filter.filters = newFilters;
             });
             gridConfig.filter.logic = "or";
           }

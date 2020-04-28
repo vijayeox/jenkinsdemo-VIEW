@@ -247,6 +247,7 @@ class WidgetEditorApp extends React.Component {
             .catch(err => {
                 console.log(err)
             })
+
         //called from globalFunctions
         window.getAllPermission()
             .then(function (response) {
@@ -434,7 +435,7 @@ class WidgetEditorApp extends React.Component {
             // called on create widget
             params["visualization_uuid"] = state.visualizationID
             params["ispublic"] = parseInt(state.visibility);
-            return window.postDataRequest('analytics/widget/' + state.widget.uuid, params, 'post');
+            return window.postDataRequest('analytics/widget' ,params, 'post');
         }
         else {
             switch (state.mode) {
@@ -616,7 +617,7 @@ class WidgetEditorApp extends React.Component {
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
                                 }
-                                {(this.state.widget.type === 'inline') &&
+                                {(this.state.widget.type === 'inline') || (this.state.widget.type === 'html') &&
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                 }
                             </div>
@@ -677,6 +678,9 @@ class WidgetEditorApp extends React.Component {
                                         <TableEditor ref="editor" widget={this.state.widget} />
                                     }
                                     {(this.state.widget.type === 'inline') &&
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
+                                    }
+                                    {(this.state.widget.type === 'html') &&
                                         <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                     }
                                 </div>

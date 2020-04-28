@@ -94,7 +94,13 @@ class Navigation extends React.Component {
   }
   postSubmitCallback = () => {
     this.props.selectLoad(this.homepage);
-    this.child.current.clearBreadcrumb();
+    try {
+      this.homepage.page_id != this.props.selected.page_id
+        ? this.child.current.clearBreadcrumb()
+        : null;
+    } catch {
+      null;
+    }
     if (history) {
       history.push("/");
     }
@@ -105,7 +111,8 @@ class Navigation extends React.Component {
     return (
       <div className="PageRender">
         <div className={this.breadcrumbDiv}>
-          <Breadcrumb ref={this.child} appId={this.appId} />
+          <Breadcrumb ref={this.child} appId={this.appId}
+          homePage={this.postSubmitCallback} />
         </div>
         {this.state.selected.page_id ? (
           <Page
