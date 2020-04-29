@@ -4,7 +4,7 @@ import DialogContainerAnnouncement from "./dialog/DialogContainerAnnouncement";
 export default {
   Organization: {},
   User: {},
-  Announcements: {
+  Announcement: {
     title: "Manage Announcements",
     dialogWindow: DialogContainerAnnouncement,
     listConfig: {
