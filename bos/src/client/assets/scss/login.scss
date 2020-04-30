@@ -42,7 +42,9 @@ img#ox-logo {
   width: 100%;
   height: 100%;
 }
-
+.ox-forgotPWText{
+  margin: 20px 0px;
+}
 #ox-container {
   height: 100%;
 }
@@ -158,6 +160,7 @@ button {
     }
     input:not(:placeholder-shown) + label {
       transform: translateY(-20px);
+      opacity: 1;
     }
     input:not(:valid):not(:focus) + label + .icon {
       animation-name: shake-shake;
