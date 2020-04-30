@@ -549,7 +549,7 @@ class WidgetEditorApp extends React.Component {
                             <div className="action-button-box col-2">
                                 {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                     <>
-                                        <button type="button" className="btn btn-primary" title="Create widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Create widget"
                                             onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
                                             <span className="fa fa-plus" aria-hidden="true"></span>
                                         </button>
@@ -557,7 +557,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary" title="Delete widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Delete widget"
                                             onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
                                             <span className="fa fa-trash" aria-hidden="true"></span>
                                         </button>
@@ -565,7 +565,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary" title="Copy widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Copy widget"
                                             onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
                                             <span className="fa fa-copy" aria-hidden="true"></span>
                                         </button>
@@ -573,7 +573,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary" title="Edit widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit widget"
                                             onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
                                             <span className="fa fa-edit" aria-hidden="true"></span>
                                         </button>
