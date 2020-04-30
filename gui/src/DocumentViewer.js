@@ -170,7 +170,7 @@ export default class DocumentViewer extends Component {
     var url;
     var type = documentData.type.split("/")[1].toLowerCase();
     if (type == "png" || type == "jpg" || type == "jpeg") {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+      url = this.baseUrl + "app/" + this.appId + "/document/" + documentData.originalName+"?docPath="+documentData.file;
       return (
         <React.Fragment>
           <img
@@ -186,7 +186,7 @@ export default class DocumentViewer extends Component {
         </React.Fragment>
       );
     } else if (type == "mp4" || type == "avi") {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+       url = this.baseUrl + "app/" + this.appId + "/document/" + documentData.originalName+"?docPath="+documentData.file;
       return (
         <video
           autoplay
@@ -210,9 +210,11 @@ export default class DocumentViewer extends Component {
         this.core.config("ui.url") +
         "/ViewerJS/#" +
         this.baseUrl +
+        "app/" + 
         this.appId +
-        "/" +
-        documentData.file;
+        "/document/" + 
+        documentData.originalName +
+        "?docPath="+documentData.file;
       return (
         <iframe
           onLoad={() => {
@@ -226,7 +228,8 @@ export default class DocumentViewer extends Component {
         ></iframe>
       );
     } else {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+      url = this.baseUrl + "app/" + this.appId + "/document/" + documentData.originalName+"?docPath="+documentData.file;
+      
       window.open(url, "_self");
       var url2 =
         this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.jpg";
