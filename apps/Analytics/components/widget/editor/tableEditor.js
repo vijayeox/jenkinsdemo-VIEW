@@ -429,7 +429,7 @@ class TableEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview <span id="tableRefreshBtn" onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
+                            Preview <span id="tableRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'table') && 
