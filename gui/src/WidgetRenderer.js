@@ -495,7 +495,8 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-       ReactDOM.render(<WidgetGrid configuration={configuration} data={data} />, canvasElement);
+        ReactDOM.unmountComponentAtNode(canvasElement)
+        ReactDOM.render(<WidgetGrid configuration={configuration} data={data} />, canvasElement);
     }
 }
 
