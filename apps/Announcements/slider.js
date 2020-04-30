@@ -1,4 +1,5 @@
 import React from "react";
+import screenfull from "screenfull";
 import SlidingPanel from "react-sliding-panel";
 
 class Slider extends React.Component {
@@ -13,9 +14,10 @@ class Slider extends React.Component {
       indexCount: 0,
       isPanelOpen: false,
       loading: true,
-      focusData: [],
+      focusData: []
     };
     this.refreshAnc = this.refreshAnc.bind(this);
+    this.refreshTimer = this.refreshTimer.bind(this);
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
     this.goToNextSlide = this.goToNextSlide.bind(this);
     document
@@ -37,7 +39,7 @@ class Slider extends React.Component {
       indexCount: 0,
       isPanelOpen: false,
       loading: true,
-      focusData: [],
+      focusData: []
     });
     this.getAnnouncements().then((response) => {
       let data = response.data;
@@ -48,19 +50,27 @@ class Slider extends React.Component {
           data[i].media = baseUrl + "resource/" + data[i].media;
         }
       }
-      this.setState({
-        announcements: data,
-        indexCount: data.length - 1,
-      });
-      this.setState({ loading: false });
-      var that = this;
-      if (data.length > 1) {
-        clearInterval(this.autoScroll);
-        this.autoScroll = setInterval(function () {
-          !that.state.isPanelOpen ? that.goToNextSlide() : null;
-        }, 10000);
-      }
+      this.setState(
+        {
+          announcements: data,
+          indexCount: data.length - 1,
+          loading: false
+        },
+        () => this.refreshTimer()
+      );
     });
+  }
+
+  refreshTimer() {
+    var that = this;
+    if (this.state.announcements.length > 1) {
+      clearInterval(this.autoScroll);
+      this.autoScroll = setInterval(function () {
+        !screenfull.isFullscreen && !that.state.isPanelOpen
+          ? that.goToNextSlide()
+          : null;
+      }, 10000);
+    }
   }
 
   componentDidMount() {
@@ -72,12 +82,12 @@ class Slider extends React.Component {
       return this.setState((prevState) => ({
         currentIndex: prevState.indexCount,
         translateValue:
-          prevState.translateValue + -this.slideWidth() * prevState.indexCount,
+          prevState.translateValue + -this.slideWidth() * prevState.indexCount
       }));
     }
     this.setState((prevState) => ({
       currentIndex: prevState.currentIndex - 1,
-      translateValue: prevState.translateValue + this.slideWidth(),
+      translateValue: prevState.translateValue + this.slideWidth()
     }));
   }
 
@@ -85,12 +95,12 @@ class Slider extends React.Component {
     if (this.state.currentIndex === this.state.announcements.length - 1) {
       return this.setState({
         currentIndex: 0,
-        translateValue: 0,
+        translateValue: 0
       });
     }
     this.setState((prevState) => ({
       currentIndex: prevState.currentIndex + 1,
-      translateValue: prevState.translateValue + -this.slideWidth(),
+      translateValue: prevState.translateValue + -this.slideWidth()
     }));
   }
 
@@ -106,22 +116,17 @@ class Slider extends React.Component {
     const isImage = data.media_type == "image";
     if (!data.fallback) {
       return (
-        <div
-          className="slide"
-          style={{ margin: 0 }}
-          key={Math.random()}
-        >
+        <div className="slide" style={{ margin: 0 }} key={data.uuid}>
           <div
             className="Announcement-visuals col s12"
             onWheel={(e) => {
-              e.deltaY > 0 ? this.goToNextSlide() : this.goToPrevSlide();
+              if (!screenfull.isFullscreen) {
+                e.deltaY > 0 ? this.goToNextSlide() : this.goToPrevSlide();
+                this.refreshTimer();
+              }
             }}
           >
-            {isImage ? (
-              <Img data={data} />
-            ) : (
-              <Video autoplay muted data={data} />
-            )}
+            {isImage ? <Img data={data} /> : <Video data={data} />}
           </div>
           <div className="Announcement-content col">
             {data.description ? (
@@ -135,16 +140,24 @@ class Slider extends React.Component {
                 READ MORE
               </button>
             ) : null}
+            <button
+              className="actionButton"
+              style={{ margin: "3.8vh" }}
+              onClick={() => {
+                let focusElement = document.getElementById(data.uuid);
+                if (screenfull.isEnabled) {
+                  screenfull.request(focusElement);
+                }
+              }}
+            >
+              FULL SCREEN
+            </button>
           </div>
         </div>
       );
     } else {
       return (
-        <div
-          className="slide"
-          style={{ margin: 0 }}
-          key={Math.random()}
-        >
+        <div className="slide" style={{ margin: 0 }} key={data.uuid}>
           <div
             className="Announcement-visuals col s12"
             style={{ flexDirection: "column" }}
@@ -171,7 +184,7 @@ class Slider extends React.Component {
             className="slider-wrapper"
             style={{
               transform: `translateX(${this.state.translateValue}px)`,
-              transition: "transform ease-out 0.45s",
+              transition: "transform ease-out 0.45s"
             }}
           >
             {this.state.announcements.length >= 1
@@ -186,16 +199,26 @@ class Slider extends React.Component {
               description: "Stay Tuned for updates!",
               media_type: "image",
               media: "https://svgshare.com/i/DqC.svg",
-              uuid: "empty",
-              fallback: true,
+              uuid: "abc-123-321",
+              fallback: true
             })
           ) : this.state.announcements.length > 1 ? (
             <div
               className="arrowWrap"
               style={{ display: this.state.isPanelOpen ? "none" : "flex" }}
             >
-              <LeftArrow goToPrevSlide={this.goToPrevSlide} />
-              <RightArrow goToNextSlide={this.goToNextSlide} />
+              <LeftArrow
+                goToPrevSlide={() => {
+                  this.refreshTimer();
+                  this.goToPrevSlide();
+                }}
+              />
+              <RightArrow
+                goToNextSlide={() => {
+                  this.refreshTimer();
+                  this.goToPrevSlide();
+                }}
+              />
             </div>
           ) : null}
           <SlidingPanel
@@ -220,7 +243,7 @@ class Slider extends React.Component {
                 <button
                   onClick={() => {
                     this.setState({
-                      isPanelOpen: false,
+                      isPanelOpen: false
                     });
                   }}
                   className="actionButton popupButtons"
@@ -242,10 +265,15 @@ class Slider extends React.Component {
 const Img = ({ data }) => {
   return (
     <img
-      id="Announ-visual"
+      id={data.uuid}
       src={data.media}
       alt="Announcement Banner"
-      onClick={data.link ? () => window.open(data.link, "_blank") : null}
+      onClick={() => {
+        data.link && !screenfull.isFullscreen
+          ? window.open(data.link, "_blank")
+          : null;
+        screenfull.isFullscreen ? screenfull.toggle(event.target) : null;
+      }}
       style={data.link ? { cursor: "pointer" } : null}
     />
   );
@@ -253,7 +281,14 @@ const Img = ({ data }) => {
 
 const Video = ({ data }) => {
   return (
-    <video controls="controls" id="video" preload="none" autoPlay={true} muted>
+    <video
+      controls="controls"
+      className="AncVideo"
+      id={data.uuid}
+      preload="none"
+      autoPlay={true}
+      muted
+    >
       <source id="mp4" src={data.media} type="video/mp4" />
       Video goes here
     </video>

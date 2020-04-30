@@ -66,8 +66,10 @@ export class DataLoader extends React.Component {
           "]";
       }
 
-      let data = await helper.request("v1", "/" + route, {}, "get");
-      if(data.status == "success"){
+      let data = this.props.urlPostParams
+        ? await helper.request("v1", "/" + route, this.props.urlPostParams, "post")
+        : await helper.request("v1", "/" + route, {}, "get");
+      if (data.status == "success") {
         return data;
       } else {
         return { data: [], total: 0 };

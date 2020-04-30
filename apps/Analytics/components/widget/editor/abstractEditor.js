@@ -41,6 +41,7 @@ class AbstractEditor extends React.Component {
                         'grouping': configuration ? (configuration.grouping ? JSON.parse(configuration.grouping) : null) : null,
                         'sort': configuration ? (configuration.sort ? JSON.parse(configuration.sort) : null) : null
                     }
+                    
                 });
             });
         }
@@ -64,7 +65,9 @@ class AbstractEditor extends React.Component {
                         'filter': configuration ? (configuration.filter ? JSON.stringify(configuration.filter, null, '    ') : '') : '',
                         'grouping': configuration ? (configuration.grouping ? JSON.stringify(configuration.grouping, null, '') : '') : '',
                         'sort': configuration ? (configuration.sort ? JSON.stringify(configuration.sort, null, '') : '') : ''
-                    }
+                    },
+                    'value':query.uuid,
+                    
                 });
             });
         }
@@ -123,7 +126,7 @@ class AbstractEditor extends React.Component {
 
     querySelectionChanged = (evt, index) => {
         let thiz = this;
-        let value = evt.target.value;
+        let value = evt.value;
         this.setState((state) => {
             let queryObject = state.queries[index];
             queryObject.uuid = value;

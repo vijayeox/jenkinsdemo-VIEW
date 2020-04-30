@@ -367,6 +367,7 @@ class Page extends React.Component {
             key={i}
             osjsCore={this.core}
             data={dataString}
+            urlPostParams={item.urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
                 ? JSON.parse(this.replaceParams(itemContent.defaultFilters))

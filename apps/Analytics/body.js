@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-import { Query, DataSource,DashboardManager,WidgetManager } from './GUIComponents'
+import { Query, DataSource, DashboardManager, WidgetManager } from './GUIComponents'
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
@@ -69,6 +69,7 @@ class Body extends React.Component {
 
   render() {
     let sectionContent;
+    console.log("Inside the body render");
     switch (this.state.displaySection) {
       case SECTION_DATA_SOURCE:
         sectionContent = <DataSource args={this.core} setTitle={this.setTitle} />;
@@ -79,9 +80,9 @@ class Body extends React.Component {
       case SECTION_DASHBOARD:
         sectionContent = <DashboardManager args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
         break;
-        case SECTION_WIDGET:
-          sectionContent = <WidgetManager args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
-          break;
+      case SECTION_WIDGET:
+        sectionContent = <WidgetManager args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+        break;
     }
 
     return (
@@ -98,7 +99,7 @@ class Body extends React.Component {
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
             <i className="fa fa-tasks" aria-hidden="true"></i> Dashboard
                   </a>
-                  <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
             <i className="fa fa-cubes" aria-hidden="true"></i> Widget Manager
                   </a>
         </Menu>
