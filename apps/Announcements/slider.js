@@ -264,18 +264,26 @@ class Slider extends React.Component {
 
 const Img = ({ data }) => {
   return (
-    <img
-      id={data.uuid}
-      src={data.media}
-      alt="Announcement Banner"
-      onClick={() => {
+    <abbr
+      title={
         data.link && !screenfull.isFullscreen
-          ? window.open(data.link, "_blank")
-          : null;
-        screenfull.isFullscreen ? screenfull.toggle(event.target) : null;
-      }}
-      style={data.link ? { cursor: "pointer" } : null}
-    />
+          ? data.link
+          : undefined
+      }
+    >
+      <img
+        id={data.uuid}
+        src={data.media}
+        alt="Announcement Banner"
+        onClick={() => {
+          data.link && !screenfull.isFullscreen
+            ? window.open(data.link, "_blank")
+            : null;
+          screenfull.isFullscreen ? screenfull.toggle(event.target) : null;
+        }}
+        style={data.link ? { cursor: "pointer" } : null}
+      />
+    </abbr>
   );
 };
 
