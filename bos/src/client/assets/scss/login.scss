@@ -27,6 +27,9 @@ img#ox-logo {
     width: 100%;
     height: auto;
 }
+.reactLoginPage{
+  height: 100%;
+}
 .loginContainer {
   width: 100%;
   display: flex !important;
@@ -157,10 +160,10 @@ button {
     }
     input:not(:placeholder-shown) {
       padding: 28px 0px 12px 0px;
+      opacity: 1;
     }
     input:not(:placeholder-shown) + label {
       transform: translateY(-20px);
-      opacity: 1;
     }
     input:not(:valid):not(:focus) + label + .icon {
       animation-name: shake-shake;
