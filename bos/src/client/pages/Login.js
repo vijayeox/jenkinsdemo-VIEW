@@ -3,8 +3,11 @@ import "../assets/scss/login.scss";
 import React from "react";
 import ReactDOM from "react-dom";
 import oxLogo from "../assets/images/eox.png";
+import AnnouncementIcon from "../assets/images/icon_white.svg";
 import ForgotPassword from "./ForgotPassword.js";
 import ResetPasswordPage from "./ResetPasswordPage.js";
+import Slider from "./Slider.js";
+
 
 export default class LoginContainer extends defaultLogin {
   render() {
@@ -107,7 +110,13 @@ class Login extends React.Component {
     } else {
       return (
         <main id="login-container " className="loginContainer row lighten-3 ">
-          <div id="ox-login-form" className="form-wrapper">
+        <div className="col-8">
+        <div className="col text-center" style={{backgroundColor:`#275362`,color:'white',width:"100%"}}>
+        <img id="AnnouncementIcon" className="AnnouncementIcon" src={AnnouncementIcon} />
+        Announcement</div>
+        <Slider core={this.core}/>
+        </div>
+          <div id="ox-login-form" className="col-4">
             <div
               className="form-wrapper__inner"
               id="loginPage"
