@@ -171,7 +171,7 @@ export default class DocumentViewerComponent extends Base {
             "?docPath="+
             file;
             if(file && file.file_url){
-            downloadUrl = component.wrapperUrl + component.appId  + "/" + file.file_url;
+            downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file.file_url;
           } else {
             downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
           }
@@ -181,7 +181,7 @@ export default class DocumentViewerComponent extends Base {
           url = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
           if(file && file.file_url){
             url = component.wrapperUrl + component.appId + "/" + file.file_url;
-            downloadUrl = component.wrapperUrl + component.appId + "/" + file.file_url;
+            downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file.file_url;
           } else {
             downloadUrl = url;
           }
