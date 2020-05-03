@@ -110,10 +110,7 @@ class Login extends React.Component {
     } else {
       return (
         <main id="login-container " className="loginContainer row lighten-3 ">
-        <div className="col-8">
-        <div className="col text-center" style={{backgroundColor:`#275362`,color:'white',width:"100%"}}>
-        <img id="AnnouncementIcon" className="AnnouncementIcon" src={AnnouncementIcon} />
-        Announcement</div>
+        <div className="col-8" style={{padding:`0px`}}>
         <Slider core={this.core}/>
         </div>
           <div id="ox-login-form" className="col-4">
