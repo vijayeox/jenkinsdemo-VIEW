@@ -5,13 +5,13 @@ export default {
   Organization: {},
   User: {},
   Announcement: {
-    title: "Manage Announcements",
+    title: "Manage Announcement",
     dialogWindow: DialogContainerAnnouncement,
     listConfig: {
       route: "announcements",
       toolbarTemplate: (
         <h5 key={1} style={{ margin: "0px" }}>
-          Announcements List
+          Announcement List
         </h5>
       ),
       addButton: { title: "Create Announcement" },
