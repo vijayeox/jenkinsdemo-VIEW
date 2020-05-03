@@ -159,6 +159,7 @@
       for (i = 0; i < sessions.length; i++) {
         if (Object.keys(session[i].windows).length && session[i].name == "Chat"){
           finalposition = session[i].windows[0].position;
+          finalDimension = session[i].windows[0].dimension;
         }
       }
       // Create  a new Window instance
@@ -167,7 +168,7 @@
           id: 'ChatWindow',
           icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
-          dimension: {width: 400, height: 500},
+          dimension: finalDimension ? finalDimension : {width: 400, height: 500},
           position: finalposition ? finalposition : {left: 200, top: 400},
           attributes : {
             visibility: 'restricted',

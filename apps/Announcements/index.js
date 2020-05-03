@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 let tray = null;
-var i, finalposition = {};
+var i, finalposition = {}, finalDimension = {};
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
@@ -18,6 +18,7 @@ const register = (core, args, options, metadata) => {
   for (i = 0; i < sessions.length; i++) {
     if (Object.keys(session[i].windows).length && session[i].name == "Announcements"){
       finalposition = session[i].windows[0].position;
+      finalDimension = session[i].windows[0].dimension;
     }
   }
   
@@ -27,7 +28,7 @@ const register = (core, args, options, metadata) => {
         id: "annoucementsWindow",
         title: metadata.title.en_EN,
         icon: proc.resource(icon_white),
-        dimension: { width: 800, height: 450 },
+        dimension: finalDimension ? finalDimension : { width: 800, height: 450 },
         position:  finalposition ? finalposition : {left: 700, top: 200},
         attributes: {
           minDimension: { width: 800, height: 450 },
