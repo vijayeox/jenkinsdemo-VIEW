@@ -237,7 +237,7 @@ class Slider extends React.Component {
                     }
                     className="actionButton popupButtons"
                   >
-                    VIST LINK
+                    VISIT LINK
                   </button>
                 ) : null}
                 <button
