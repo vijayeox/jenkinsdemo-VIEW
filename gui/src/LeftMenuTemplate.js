@@ -6,13 +6,10 @@ import SideNav, {
   NavIcon,
   NavText,
 } from "@trendmicro/react-sidenav";
-import { Button, ButtonGroup } from "@trendmicro/react-buttons";
-import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
 // Be sure to include styles at some point, probably during your bootstraping
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 import Navigation from "./Navigation";
 import "./public/css/LeftMenuTemplate.scss";
-import { random } from "../amcharts/.internal/core/utils/String";
 
 export default class LeftMenuTemplate extends React.Component {
   constructor(props) {
@@ -82,7 +79,11 @@ export default class LeftMenuTemplate extends React.Component {
                   {menuitem.submenu
                     ? menuitem.submenu.map((subMenu, index2) => {
                         return (
-                          <NavItem eventKey={subMenu} key={random()} expanded={true}>
+                          <NavItem
+                            eventKey={subMenu}
+                            key={Math.floor(Math.random() * 100) + 1}
+                            expanded={true}
+                          >
                             <NavIcon>
                               <abbr
                                 title={subMenu.name}
