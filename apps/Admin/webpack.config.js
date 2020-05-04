@@ -26,12 +26,8 @@ module.exports = {
     path.resolve(__dirname, "index.scss")
   ],
   externals: {
-    osjs: "OSjs"
-  },
-  resolve: {
-    alias: {
-      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
-    }
+    osjs: "OSjs",
+    oxziongui: "oxziongui"
   },
   optimization: {
     minimize

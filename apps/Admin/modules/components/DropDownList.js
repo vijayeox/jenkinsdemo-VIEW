@@ -1,9 +1,7 @@
-import React from "react";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
-import { filterBy } from "@progress/kendo-data-query";
+import {React,KendoReactDropDowns,KendoDataQuery} from "oxziongui";
 import { GetDataSearch } from "../components/apiCalls";
 import withValueField from "./filterForStaticDropdown";
-const DropDownListWithValueField = withValueField(DropDownList);
+const DropDownListWithValueField = withValueField(KendoReactDropDowns.DropDownList);
 
 export default class DropDown extends React.Component {
   constructor(props) {
@@ -77,7 +75,7 @@ export default class DropDown extends React.Component {
 
   filterData(filter) {
     const data = this.masterUserList.slice();
-    return filterBy(data, filter);
+    return KendoDataQuery.filterBy(data, filter);
   }
 
   render() {
@@ -85,7 +83,7 @@ export default class DropDown extends React.Component {
     return (
       <div>
         {this.props.rawData ? (
-          <DropDownList
+          <KendoReactDropDowns.DropDownList
             data={this.state.mainList}
             {...this.inputProps}
             value={this.state.selectedItem}

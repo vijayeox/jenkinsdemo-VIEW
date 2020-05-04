@@ -1,6 +1,5 @@
-import React from "react";
+import {React,ReactDOM,MultiSelect,OX_Grid,Notification} from "oxziongui";
 import { TitleBar } from "./components/titlebar";
-import { Notification, MultiSelect, OX_Grid } from "../GUIComponents";
 import { DeleteEntry } from "./components/apiCalls";
 import Swal from "sweetalert2";
 import config from "./moduleConfig";

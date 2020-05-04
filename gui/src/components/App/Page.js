@@ -473,7 +473,7 @@ class Page extends React.Component {
           this.extGUICompoents && this.extGUICompoents[item.type] ? (
             React.createElement(this.extGUICompoents[item.type], props)
           ) : (
-            <h3 key={i}>The compoent used is not available.</h3>
+            <h3 key={i}>The component used is not available.</h3>
           );
         content.push(guiComponent);
       }

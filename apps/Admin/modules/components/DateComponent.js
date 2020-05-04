@@ -1,6 +1,4 @@
-import React from "react";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import Moment from "moment";
+import {React,KendoReactDateInputs,Moment} from "oxziongui";
 
 export default class DateComponent extends React.Component {
   constructor(props) {
@@ -50,7 +48,7 @@ export default class DateComponent extends React.Component {
 
   render() {
     return (
-      <DatePicker
+      <KendoReactDateInputs.DatePicker
         format={this.dateformat}
         value={this.state.value}
         min={this.state.minValue}

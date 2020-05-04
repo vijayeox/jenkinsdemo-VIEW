@@ -1,9 +1,9 @@
-import React from "react";
+import {React,KendoReactButtons} from "oxziongui";
 import { DropDown } from "./index.js";
-import { Button } from "@progress/kendo-react-buttons";
 
 export class TitleBar extends React.Component {
   render() {
+    console.log(KendoReactButtons)
     return (
       <div
         style={{ paddingTop: "12px", marginLeft: "0px" }}
@@ -12,7 +12,7 @@ export class TitleBar extends React.Component {
         <div
           style={{ marginLeft: "15px", position: "absolute", zIndex: "101" }}
         >
-          <Button
+          <KendoReactButtons.Button
             onClick={this.props.menu}
             primary={true}
             style={{
@@ -23,7 +23,7 @@ export class TitleBar extends React.Component {
             }}
           >
             <i className="fa fa-bars"></i>
-          </Button>
+          </KendoReactButtons.Button>
         </div>
         <div className="col text-center" id="pageTitle">
           {this.props.title}

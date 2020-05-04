@@ -26,7 +26,17 @@ import * as ReactWebTabs from "react-web-tabs";
 import * as Webcam from "react-webcam";
 import * as KendoReactEditor from "@progress/kendo-react-editor";
 import * as KendoReactDateInputs from "@progress/kendo-react-dateinputs";
+import * as KendoReactPopup from "@progress/kendo-react-popup";
+import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
+import * as KendoDataQuery from "@progress/kendo-data-query";
+import * as KendoReactButtons from "@progress/kendo-react-buttons";
+import * as KendoReactWindow from "@progress/kendo-react-dialogs";
+import * as KendoReactGrid from "@progress/kendo-react-grid";
+import * as KendoReactInput from "@progress/kendo-react-inputs";
+import * as KendoReactRipple from "@progress/kendo-react-ripple";
 import PhoneInput from "react-phone-number-input";
+import * as PopupDialog from 'sweetalert2';
+import * as Moment from "moment";
 import './index.scss';
 export {
   LeftMenuTemplate,
@@ -57,5 +67,15 @@ export {
   Webcam,
   KendoReactEditor,
   KendoReactDateInputs,
+  KendoReactPopup,
+  KendoReactDropDowns,
+  KendoDataQuery,
+  KendoReactButtons,
+  KendoReactWindow,
+  KendoReactGrid,
+  KendoReactInput,
+  KendoReactRipple,
+  PopupDialog,
+  Moment,
   PhoneInput
 };

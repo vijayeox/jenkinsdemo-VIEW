@@ -1,16 +1,9 @@
-import React from "react";
-import { Window } from "@progress/kendo-react-dialogs";
+import {React,FileUploader,Notification,Timezones,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
-import { Input } from "@progress/kendo-react-inputs";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
-import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
-import { filterBy } from "@progress/kendo-data-query";
 import scrollIntoView from "scroll-into-view-if-needed";
-import PhoneInput from "react-phone-number-input";
 import countryStateList from "../data/country-state-codes";
-import timezoneCode from "OxzionGUI/public/js/Timezones.js";
-import { DropDownList } from "@progress/kendo-react-dropdowns";
 import Swal from "sweetalert2";
 
 export default class DialogContainer extends React.Component {
@@ -23,7 +16,7 @@ export default class DialogContainer extends React.Component {
       orgInEdit: this.props.dataItem || null,
       contactName: null,
       timeZoneValue: [],
-      timezoneList: timezoneCode,
+      timezoneList: Timezones,
       countryList: countryList
     };
     this.countryByIP = undefined;
@@ -227,6 +220,7 @@ export default class DialogContainer extends React.Component {
       state: this.state.orgInEdit.state,
       country: this.state.orgInEdit.country,
       zip: this.state.orgInEdit.zip,
+      subdomain: this.state.orgInEdit.subdomain,
       logo: logoFile,
       contact: contactData,
       contactid: contact_id || null,
@@ -302,7 +296,7 @@ export default class DialogContainer extends React.Component {
         : "";
     }
     return (
-      <Window onClose={this.props.cancel}>
+      <KendoReactWindow.Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div className="container-fluid">
           <form id="orgForm" onSubmit={this.sendData}>
@@ -314,7 +308,7 @@ export default class DialogContainer extends React.Component {
             ) : null}
             <div className="form-group">
               <label className="required-label">Organization Name</label>
-              <Input
+              <KendoReactInput.Input
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.name || ""}
@@ -348,7 +342,7 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <label className="required-label">City</label>
                   <div>
-                    <Input
+                    <KendoReactInput.Input
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.city || ""}
@@ -365,7 +359,7 @@ export default class DialogContainer extends React.Component {
                 <div className="col">
                   <label className="required-label">State</label>
                   <div>
-                    <Input
+                    <KendoReactInput.Input
                       type="text"
                       className="form-control"
                       value={this.state.orgInEdit.state || ""}
@@ -386,7 +380,7 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col">
                   <label className="required-label">Zip Code</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     value={this.state.orgInEdit.zip || ""}
@@ -407,7 +401,7 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       rawData={this.state.countryList}
                       selectedItem={this.state.orgInEdit.country}
-                      onDataChange={e => this.dropdownChange("country", e)}
+                      onDataChange={(e) => this.dropdownChange("country", e)}
                       required={true}
                     />
                   </div>
@@ -432,7 +426,9 @@ export default class DialogContainer extends React.Component {
                         }
                         preFetch={true}
                         selectedItem={this.state.contactName}
-                        onDataChange={e => this.dropdownChange("contactid", e)}
+                        onDataChange={(e) =>
+                          this.dropdownChange("contactid", e)
+                        }
                         required={true}
                       />
                     </div>
@@ -441,12 +437,28 @@ export default class DialogContainer extends React.Component {
               </div>
             ) : null}
 
+            <div className="form-group text-area-custom">
+              <label className="required-label">Subdomain</label>
+              <TextareaAutosize
+                type="text"
+                className="form-control"
+                value={this.state.orgInEdit.subdomain || ""}
+                name="subdomain"
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Organization Subdomain"
+                maxLength="250"
+                style={{ marginTop: "5px" }}
+                required={true}
+                readOnly={this.props.diableField ? true : false}
+              />
+            </div>
+
             {this.props.formAction == "post" ? (
               <div className="form-group border-box">
                 <label className="required-label">Contact Details</label>
                 <div className="form-row">
                   <div className="col">
-                    <Input
+                    <KendoReactInput.Input
                       className="form-control"
                       type="text"
                       name="firstname"
@@ -463,7 +475,7 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                   <div className="col">
-                    <Input
+                    <KendoReactInput.Input
                       className="form-control"
                       type="text"
                       name="lastname"
@@ -482,7 +494,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="form-row" style={{ marginTop: "10px" }}>
                   <div className="col">
-                    <Input
+                    <KendoReactInput.Input
                       className="form-control"
                       type="text"
                       name="username"
@@ -504,7 +516,7 @@ export default class DialogContainer extends React.Component {
                     <PhoneInput
                       placeholder="Enter phone number"
                       value={contactValue}
-                      onChange={phone => this.onContactPhoneChange(phone)}
+                      onChange={(phone) => this.onContactPhoneChange(phone)}
                       international={false}
                       country="US"
                       maxLength="15"
@@ -514,7 +526,7 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                   <div className="col">
-                    <Input
+                    <KendoReactInput.Input
                       className="form-control"
                       type="email"
                       name="email"
@@ -542,7 +554,9 @@ export default class DialogContainer extends React.Component {
                   <CurrencySelect
                     id={"select-currency"}
                     name={"currency"}
-                    onChange={e => this.valueChange("currency", e.target.value)}
+                    onChange={(e) =>
+                      this.valueChange("currency", e.target.value)
+                    }
                     value={
                       this.state.orgInEdit.preferences
                         ? this.state.orgInEdit.preferences.currency
@@ -579,7 +593,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.preferences.dateformat
                           : ""
                       }
-                      onDataChange={e => {
+                      onDataChange={(e) => {
                         var start = e.target.value.indexOf("(") + 1;
                         var end = e.target.value.indexOf(")");
                         this.valueChange(
@@ -596,20 +610,20 @@ export default class DialogContainer extends React.Component {
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
                   <div>
-                    <DropDownList
+                    <KendoReactDropDowns.DropDownList
                       data={this.state.timezoneList}
                       textField="name"
                       dataItemKey="name"
                       value={this.state.timeZoneValue}
-                      onChange={e =>
+                      onChange={(e) =>
                         this.valueChange("timezone", e.target.value)
                       }
                       style={{ width: "100%" }}
                       popupSettings={{ height: "160px" }}
                       filterable={true}
-                      onFilterChange={e => {
+                      onFilterChange={(e) => {
                         this.setState({
-                          timezoneList: filterBy(timezoneCode, e.filter)
+                          timezoneList: KendoDataQuery.filterBy(Timezones, e.filter)
                         });
                       }}
                       required={true}
@@ -642,7 +656,7 @@ export default class DialogContainer extends React.Component {
           cancel={this.props.cancel}
           hideSave={this.props.diableField}
         />
-      </Window>
+      </KendoReactWindow.Window>
     );
   }
 }

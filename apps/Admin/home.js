@@ -1,5 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import {React,ReactDOM} from "oxziongui";
 import $ from "jquery";
 import Organization from "./modules/Organization";
 import Project from "./modules/Project";

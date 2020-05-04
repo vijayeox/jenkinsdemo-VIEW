@@ -110,7 +110,7 @@ class Login extends React.Component {
     } else {
       return (
         <main id="login-container " className="loginContainer row lighten-3 ">
-        <div className="col-8" style={{padding:`0px`}}>
+        <div className="col-8" style={{display:"flex", flexDirection:"column",justifyContent:"center"}}>
         <Slider core={this.core}/>
         </div>
           <div id="ox-login-form" className="col-4">

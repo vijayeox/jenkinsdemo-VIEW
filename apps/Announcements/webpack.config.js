@@ -23,7 +23,8 @@ module.exports = {
     path.resolve(__dirname, 'index.scss')
   ],
   externals: {
-    osjs: 'OSjs'
+    osjs: 'OSjs',
+    oxziongui: "oxziongui"
   },
   optimization: {
     minimize,

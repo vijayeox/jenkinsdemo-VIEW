@@ -1,4 +1,4 @@
-import React from "react";
+import {React,ReactDOM} from "oxziongui";
 import screenfull from "screenfull";
 import SlidingPanel from "react-sliding-panel";
 
@@ -27,7 +27,7 @@ class Slider extends React.Component {
 
   async getAnnouncements() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement", {}, "get");
+    let announ = await helper.request("v1", "/announcement/a/ANNOUNCEMENT", {}, "get");
     return announ;
   }
 
@@ -237,7 +237,7 @@ class Slider extends React.Component {
                     }
                     className="actionButton popupButtons"
                   >
-                    VIST LINK
+                    VISIT LINK
                   </button>
                 ) : null}
                 <button

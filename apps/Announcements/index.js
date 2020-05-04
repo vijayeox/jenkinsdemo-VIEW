@@ -2,8 +2,7 @@ import osjs from 'osjs';
 import { name as applicationName } from './metadata.json';
 import { icon_white } from './metadata.json';
 import Slider from './slider.js';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import {React,ReactDOM} from "oxziongui";
 
 let tray = null;
 var i, finalposition = {}, finalDimension = {};
@@ -16,7 +15,7 @@ const register = (core, args, options, metadata) => {
   let session = core.make('osjs/settings').get('osjs/session');
   let sessions = Object.entries(session);
   for (i = 0; i < sessions.length; i++) {
-    if (Object.keys(session[i].windows).length && session[i].name == "Announcements"){
+    if (Object.keys(session[i].windows).length && session[i].name == "Announcement"){
       finalposition = session[i].windows[0].position;
       finalDimension = session[i].windows[0].dimension;
     }
@@ -57,7 +56,7 @@ const register = (core, args, options, metadata) => {
         trayInitialized = true;
         tray = core.make("osjs/tray").create(
           {
-            title: "AnnouncementsWindow",
+            title: "AnnouncementWindow",
             icon: proc.resource(metadata.icon_white),
             badge: "badgeCheck",
             count: announcementsCount,

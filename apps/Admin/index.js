@@ -1,7 +1,6 @@
 import osjs from "osjs";
 import { name as applicationName } from "./metadata.json";
-import React from "react";
-import ReactDOM from "react-dom";
+import {React,ReactDOM} from "oxziongui";
 import { icon_white } from "./metadata.json";
 import Home from "./home";
 

@@ -1,5 +1,4 @@
-import React from "react";
-import { GridTemplate, MultiSelect } from "../GUIComponents";
+import {React,GridTemplate,MultiSelect} from "oxziongui";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
 
