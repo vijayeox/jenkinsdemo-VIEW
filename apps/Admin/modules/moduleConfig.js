@@ -1,4 +1,4 @@
-import React from "react";
+import {React} from "oxziongui";
 import DialogContainerAnnouncement from "./dialog/DialogContainerAnnouncement";
 
 export default {

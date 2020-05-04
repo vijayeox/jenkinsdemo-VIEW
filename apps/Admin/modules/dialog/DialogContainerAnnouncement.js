@@ -1,11 +1,7 @@
-import React from "react";
-import { Window } from "@progress/kendo-react-dialogs";
-import { Input } from "@progress/kendo-react-inputs";
+import {React,FileUploader,Notification,KendoReactWindow,KendoReactInput,Moment} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import scrollIntoView from "scroll-into-view-if-needed";
-import { FileUploader, Notification } from "../../GUIComponents";
 import { SaveCancel, DateComponent } from "../components/index";
-import Moment from "moment";
 export default class DialogContainerAnnouncement extends React.Component {
   constructor(props) {
     super(props);
@@ -197,7 +193,7 @@ export default class DialogContainerAnnouncement extends React.Component {
 
   render() {
     return (
-      <Window onClose={this.props.cancel}>
+      <KendoReactWindow.Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div className="container-fluid">
           <form onSubmit={this.handleSubmit} id="ancForm">
@@ -209,7 +205,7 @@ export default class DialogContainerAnnouncement extends React.Component {
             ) : null}
             <div className="form-group">
               <label className="required-label">Announcement Title</label>
-              <Input
+              <KendoReactInput.Input
                 type="text"
                 className="form-control"
                 name="name"
@@ -238,7 +234,7 @@ export default class DialogContainerAnnouncement extends React.Component {
             </div>
             <div className="form-group">
               <label>External Link</label>
-              <Input
+              <KendoReactInput.Input
                 type="url"
                 pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
                 className="form-control"
@@ -371,7 +367,7 @@ export default class DialogContainerAnnouncement extends React.Component {
           hideSave={this.props.diableField}
           disableSave={this.state.disableSave}
         />
-      </Window>
+      </KendoReactWindow.Window>
     );
   }
 }

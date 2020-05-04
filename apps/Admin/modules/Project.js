@@ -1,5 +1,4 @@
-import React from "react";
-import { GridTemplate, Notification, MultiSelect } from "../GUIComponents";
+import {React,GridTemplate,Notification,MultiSelect} from "oxziongui";
 import { DeleteEntry } from "./components/apiCalls";
 import { TitleBar } from "./components/titlebar";
 import DialogContainer from "./dialog/DialogContainerPrj";

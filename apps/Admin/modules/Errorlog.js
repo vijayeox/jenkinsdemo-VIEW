@@ -1,6 +1,5 @@
-import React from "react";
+import {React,OX_Grid} from "oxziongui";
 import { TitleBar } from "./components/titlebar";
-import { OX_Grid } from "../GUIComponents";
 
 class Errorlog extends React.Component {
   constructor(props) {

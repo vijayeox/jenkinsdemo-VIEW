@@ -1,13 +1,6 @@
-import React from "react";
-import { Window } from "@progress/kendo-react-dialogs";
+import {React,Notification,KendoDataQuery,KendoReactGrid,KendoReactWindow,KendoReactInput,KendoReactRipple} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "../../GUIComponents";
 import { SaveCancel } from "../components/index";
-
-import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
-import { Ripple } from "@progress/kendo-react-ripple";
-import { orderBy } from "@progress/kendo-data-query";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -165,7 +158,7 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Window onClose={this.props.cancel}>
+      <KendoReactWindow.Window onClose={this.props.cancel}>
         <div>
           <Notification ref={this.notif} />
           <form id="roleForm" onSubmit={this.submitData}>
@@ -213,11 +206,11 @@ export default class DialogContainer extends React.Component {
             </div>
           </form>
 
-          <Ripple>
+          <KendoReactRipple.Ripple>
             <div className="col-11 pt-3" style={{ margin: "auto" }}>
               <div className="privilegeGrid">
-                <Grid
-                  data={orderBy(this.state.masterList, this.state.sort)}
+                <KendoReactGrid.Grid
+                  data={KendoDataQuery.orderBy(this.state.masterList, this.state.sort)}
                   resizable={true}
                   sortable
                   sort={this.state.sort}
@@ -227,7 +220,7 @@ export default class DialogContainer extends React.Component {
                     });
                   }}
                 >
-                  <GridToolbar>
+                  <KendoReactGrid.GridToolbar>
                     <div>
                       <div
                         style={{
@@ -251,9 +244,9 @@ export default class DialogContainer extends React.Component {
                         ) : null}
                       </div>
                     </div>
-                  </GridToolbar>
-                  <GridColumn title="App Name" field="name" width="100px" />
-                  <GridColumn
+                  </KendoReactGrid.GridToolbar>
+                  <KendoReactGrid.GridColumn title="App Name" field="name" width="100px" />
+                  <KendoReactGrid.GridColumn
                     title="Privilege Name"
                     width="250px"
                     cell={props => (
@@ -263,14 +256,14 @@ export default class DialogContainer extends React.Component {
                     )}
                   />
 
-                  <GridColumn
+                  <KendoReactGrid.GridColumn
                     title="Read"
                     width="80px"
                     cell={props =>
                       props.dataItem.permission & 1 ? (
                         <td>
                           <div className="privelegeGridcellFix">
-                            <Input
+                            <KendoReactInput.Input
                               type="checkbox"
                               refs="read"
                               id={props.dataItem.privilege_name + "R"}
@@ -299,14 +292,14 @@ export default class DialogContainer extends React.Component {
                       )
                     }
                   />
-                  <GridColumn
+                  <KendoReactGrid.GridColumn
                     title="Write"
                     width="80px"
                     cell={props =>
                       props.dataItem.permission & 2 ? (
                         <td>
                           <div className="privelegeGridcellFix">
-                            <Input
+                            <KendoReactInput.Input
                               type="checkbox"
                               refs="write"
                               id={props.dataItem.privilege_name + "W"}
@@ -335,14 +328,14 @@ export default class DialogContainer extends React.Component {
                       )
                     }
                   />
-                  <GridColumn
+                  <KendoReactGrid.GridColumn
                     title="Create"
                     width="80px"
                     cell={props =>
                       props.dataItem.permission & 4 ? (
                         <td>
                           <div className="privelegeGridcellFix">
-                            <Input
+                            <KendoReactInput.Input
                               type="checkbox"
                               refs="create"
                               id={props.dataItem.privilege_name + "C"}
@@ -371,14 +364,14 @@ export default class DialogContainer extends React.Component {
                       )
                     }
                   />
-                  <GridColumn
+                  <KendoReactGrid.GridColumn
                     title="Delete"
                     width="80px"
                     cell={props =>
                       props.dataItem.permission & 8 ? (
                         <td>
                           <div className="privelegeGridcellFix">
-                            <Input
+                            <KendoReactInput.Input
                               type="checkbox"
                               refs="delete"
                               id={props.dataItem.privilege_name + "D"}
@@ -407,14 +400,14 @@ export default class DialogContainer extends React.Component {
                       )
                     }
                   />
-                </Grid>
+                </KendoReactGrid.Grid>
               </div>
               <div style={{ margin: "75px" }} />
             </div>
-          </Ripple>
+          </KendoReactRipple.Ripple>
         </div>
         <SaveCancel save="roleForm" cancel={this.props.cancel} />
-      </Window>
+      </KendoReactWindow.Window>
     );
   }
 }

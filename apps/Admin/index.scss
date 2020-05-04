@@ -20,7 +20,6 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   $primary-color: #275362;
 
   @import url("https://fonts.googleapis.com/css?family=Didact+Gothic");
-  @import "./node_modules/react-phone-number-input/style.css";
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
 
   .k-grid-norecords {

@@ -1,15 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Window } from "@progress/kendo-react-dialogs";
-import { Input } from "@progress/kendo-react-inputs";
-import { Ripple } from "@progress/kendo-react-ripple";
-import { MultiSelect } from "@progress/kendo-react-dropdowns";
+import {React,ReactDOM,Notification,KendoReactDropDowns,KendoReactInput,KendoReactRipple,KendoReactWindow,Moment} from "oxziongui";
 import { PushData } from "../components/apiCalls";
-import { Notification } from "../../GUIComponents";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
 import countryStateList from "../data/country-state-codes";
 import ReactTooltip from "react-tooltip";
-import Moment from "moment";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -288,7 +281,7 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Window onClose={this.props.cancel}>
+      <KendoReactWindow.Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div id="tooltip" />
         <div className="container-fluid">
@@ -304,7 +297,7 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col-sm-6">
                   <label className="required-label">First Name</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     name="firstname"
@@ -319,7 +312,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="col-sm-6">
                   <label className="required-label">Last Name</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     name="lastname"
@@ -339,7 +332,7 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col-sm-6">
                   <label className="required-label">Email</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     id="email-id"
@@ -356,7 +349,7 @@ export default class DialogContainer extends React.Component {
 
                 <div className="col-sm-6">
                   <label className="required-label">User Name</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     name="username"
@@ -394,7 +387,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="col-sm-6">
                   <label className="required-label">Designation</label>
-                  <Input
+                  <KendoReactInput.Input
                     type="text"
                     className="form-control"
                     name="designation"
@@ -452,7 +445,7 @@ export default class DialogContainer extends React.Component {
                 <div className="col-sm-6">
                   <label className="required-label">Gender</label>
                   <div>
-                    <Ripple>
+                    <KendoReactRipple.Ripple>
                       <span className="col-sm-6">
                         <input
                           type="radio"
@@ -491,7 +484,7 @@ export default class DialogContainer extends React.Component {
                           Female
                         </label>
                       </span>
-                    </Ripple>
+                    </KendoReactRipple.Ripple>
                   </div>
                 </div>
 
@@ -531,7 +524,7 @@ export default class DialogContainer extends React.Component {
               <div className="form-row">
                 <div className="col-6">
                   <label className="required-label">Role</label>
-                  <MultiSelect
+                  <KendoReactDropDowns.MultiSelect
                     data={this.state.roleList}
                     onChange={(e) => {
                       this.valueChange("role", e);
@@ -552,7 +545,7 @@ export default class DialogContainer extends React.Component {
 
                 <div className="col-6">
                   <label>Add User To Projects</label>
-                  <MultiSelect
+                  <KendoReactDropDowns.MultiSelect
                     data={this.state.projectList}
                     onChange={(e) => {
                       this.valueChange("project", e);
@@ -573,7 +566,7 @@ export default class DialogContainer extends React.Component {
           </form>
         </div>
         <SaveCancel save="userForm" cancel={this.props.cancel} />
-      </Window>
+      </KendoReactWindow.Window>
     );
   }
 }

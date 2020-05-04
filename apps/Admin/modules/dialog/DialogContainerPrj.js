@@ -1,10 +1,7 @@
-import React from "react";
-import { Window } from "@progress/kendo-react-dialogs";
+import {React,FileUploader,Notification,KendoReactWindow,KendoReactInput} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
-import { Notification } from "../../GUIComponents";
 import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
-import { Input } from "@progress/kendo-react-inputs";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -95,7 +92,7 @@ export default class DialogContainer extends React.Component {
 
   render() {
     return (
-      <Window onClose={this.props.cancel}>
+      <KendoReactWindow.Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div>
           <form id="prjForm" onSubmit={this.sendData}>
@@ -107,7 +104,7 @@ export default class DialogContainer extends React.Component {
             ) : null}
             <div className="form-group">
               <label className="required-label">Project Name</label>
-              <Input
+              <KendoReactInput.Input
                 type="text"
                 className="form-control"
                 name="name"
@@ -164,7 +161,7 @@ export default class DialogContainer extends React.Component {
           cancel={this.props.cancel}
           hideSave={this.props.diableField}
         />
-      </Window>
+      </KendoReactWindow.Window>
     );
   }
 }
