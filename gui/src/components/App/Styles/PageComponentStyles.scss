@@ -1,4 +1,16 @@
 .PageRender {
+  position: relative;
+  padding: 0px 20px;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+
+  .AppBuilderPage {
+    height: calc(100% - 60px);
+    display: flex;
+    flex-direction: column;
+  }
+
   .breadcrumbs {
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
