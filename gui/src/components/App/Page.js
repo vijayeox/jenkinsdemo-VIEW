@@ -255,7 +255,6 @@ class Page extends React.Component {
       var regex = /\{\{.*?\}\}/g;
       let m;
       while ((m = regex.exec(route)) !== null) {
-        console.log(m);
         // This is necessary to avoid infinite loops with zero-width matches
         if (m.index === regex.lastIndex) {
           regex.lastIndex++;
@@ -399,16 +398,15 @@ class Page extends React.Component {
           />
         );
       } else if (item.type == "Search") {
-        var itemContent = JSON.parse(item.content);
-        var placeholder = itemContent.placeholder;
-        var columnConfig = itemContent.columnConfig;
-        if (itemContent.actions) {
+        var placeholder = item.content.placeholder;
+        var columnConfig = item.content.columnConfig;
+        if (item.content.actions) {
           if (columnConfig[columnConfig.length - 1].title == "Actions") {
             null;
           } else {
             columnConfig.push({
               title: "Actions",
-              cell: (e) => this.renderButtons(e, itemContent.actions),
+              cell: (e) => this.renderButtons(e, item.content.actions),
               filterCell: {
                 type: "empty"
               }
@@ -419,10 +417,10 @@ class Page extends React.Component {
           <SearchPage
             key={i}
             core={this.core}
-            content={itemContent}
-            filterColumns={itemContent.filterColumns}
+            content={item.content}
+            filterColumns={item.content.filterColumns}
             appId={this.appId}
-            entityId={itemContent.entityId}
+            entityId={item.content.entityId}
             columnConfig={columnConfig}
             placeholder={placeholder}
           />
