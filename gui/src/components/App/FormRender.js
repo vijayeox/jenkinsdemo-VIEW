@@ -92,6 +92,7 @@ class FormRender extends React.Component {
         document.getElementById(this.formDivID).style.display = "block";
       }
     }
+    this.loader.destroy();
   }
   hideBreadCrumb(state=true){
     if (this.state.currentForm && this.state.currentForm.wizard) {
@@ -838,7 +839,6 @@ class FormRender extends React.Component {
     var targetList = properties["post_delegate_refresh"].split(',');
     targetList.map(item => {
       var targetComponent = form.getComponent(item);
-      console.log(targetComponent);
       if(targetComponent && targetComponent.component && targetComponent.component["properties"]){
         if(targetComponent.type == 'datagrid' || targetComponent.type == 'selectboxes'){
           targetComponent.triggerRedraw();
@@ -1250,7 +1250,7 @@ class FormRender extends React.Component {
   render() {
     return (<div>
       <Notification ref={this.notif} />
-      <div id={this.loaderDivID}></div>
+      <div id={this.loaderDivID} class="formLoader"></div>
       <div id={this.formErrorDivId} style={{display:"none"}}><h3>{this.state.formErrorMessage}</h3></div>
         <div className="form-render" id={this.formDivID}></div>
         </div>);

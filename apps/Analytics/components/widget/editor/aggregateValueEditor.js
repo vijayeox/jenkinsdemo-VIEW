@@ -392,7 +392,7 @@ class AggregateValueEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview <span id="aggregateRefreshBtn" onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
+                            Preview <span id="aggregateRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'widget') && 

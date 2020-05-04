@@ -133,7 +133,7 @@ export default class DocumentViewer extends Component {
 
   getDocIcon(type) {
     var type = type.split("/")[1].toLowerCase();
-    if (type == "png" || type == "jpg" || type == "jpeg") {
+    if (type == "png" || type == "jpg" || type == "jpeg" || type == "gif") {
       return "fa fa-picture-o";
     } else if (type == "pdf") {
       return "fa fa-file-pdf-o";
@@ -169,8 +169,15 @@ export default class DocumentViewer extends Component {
   displayDocumentData = documentData => {
     var url;
     var type = documentData.type.split("/")[1].toLowerCase();
-    if (type == "png" || type == "jpg" || type == "jpeg") {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+    if (type == "png" || type == "jpg" || type == "jpeg" || type == "gif") {
+      url =
+        this.baseUrl +
+        "app/" +
+        this.appId +
+        "/document/" +
+        documentData.originalName +
+        "?docPath=" +
+        documentData.file;
       return (
         <React.Fragment>
           <img
@@ -179,14 +186,26 @@ export default class DocumentViewer extends Component {
             style={{ height: "100%" }}
             src={url}
           />
-          <a href={url} download className="image-download-button">
+          <a
+            href={url}
+            download
+            target="_blank"
+            className="image-download-button"
+          >
             <i class="fa fa-download" aria-hidden="true"></i>
             Download
           </a>
         </React.Fragment>
       );
     } else if (type == "mp4" || type == "avi") {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+      url =
+        this.baseUrl +
+        "app/" +
+        this.appId +
+        "/document/" +
+        documentData.originalName +
+        "?docPath=" +
+        documentData.file;
       return (
         <video
           autoplay
@@ -200,18 +219,16 @@ export default class DocumentViewer extends Component {
           Sorry, your browser doesn't support embedded videos.
         </video>
       );
-    } else if (
-      type == "pdf" ||
-      type == "odt" ||
-      type == "odp" ||
-      type == "ods"
-    ) {
+    } else if (type == "pdf") {
       url =
-        this.core.config("ui.url") +
-        "/ViewerJS/#" +
+        // this.core.config("ui.url") +
+        // "/ViewerJS/#" +
         this.baseUrl +
+        "app/" +
         this.appId +
-        "/" +
+        "/document/" +
+        documentData.originalName +
+        "?docPath=" +
         documentData.file;
       return (
         <iframe
@@ -226,7 +243,15 @@ export default class DocumentViewer extends Component {
         ></iframe>
       );
     } else {
-      url = this.baseUrl + this.appId + "/" + documentData.file;
+      url =
+        this.baseUrl +
+        "app/" +
+        this.appId +
+        "/document/" +
+        documentData.originalName +
+        "?docPath=" +
+        documentData.file;
+
       window.open(url, "_self");
       var url2 =
         this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.jpg";

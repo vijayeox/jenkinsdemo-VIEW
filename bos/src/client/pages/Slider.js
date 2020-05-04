@@ -2,11 +2,11 @@ import React from "react";
 import screenfull from "screenfull";
 import SlidingPanel from "react-sliding-panel";
 
+
 class Slider extends React.Component {
   constructor(props) {
     super(props);
-    this.core = this.props.args;
-    this.loader = this.core.make("oxzion/splash");
+    this.core = this.props.core;
     this.state = {
       announcements: [],
       currentIndex: 0,
@@ -14,20 +14,22 @@ class Slider extends React.Component {
       indexCount: 0,
       isPanelOpen: false,
       loading: true,
-      focusData: []
+      focusData: [],
+      screen: "true"
     };
     this.refreshAnc = this.refreshAnc.bind(this);
     this.refreshTimer = this.refreshTimer.bind(this);
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
     this.goToNextSlide = this.goToNextSlide.bind(this);
-    document
-      .querySelector('div[data-id="annoucementsWindow"]')
-      .addEventListener("updateAnnouncements", this.refreshAnc, false);
   }
 
+render () {
+  return(<div className="col-8">hello</div>);
+}
   async getAnnouncements() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement", {}, "get");
+    let subdomine = window.location.host;
+    let announ = await helper.request("v1", "/homescreen/announcement/"+subdomine, {}, "get");
     return announ;
   }
 
@@ -177,7 +179,6 @@ class Slider extends React.Component {
 
   render() {
     if (this.state.loading == false) {
-      this.loader.destroy();
       return (
         <div className="announcement-slider" ref={(ref) => (this.el = ref)}>
           <div
@@ -193,16 +194,7 @@ class Slider extends React.Component {
                 )
               : null}
           </div>
-          {this.state.announcements.length == 0 ? (
-            this.renderCard({
-              name: "No Announcement have been posted for you right now.",
-              description: "Stay Tuned for updates!",
-              media_type: "image",
-              media: "https://svgshare.com/i/DqC.svg",
-              uuid: "abc-123-321",
-              fallback: true
-            })
-          ) : this.state.announcements.length > 1 ? (
+          {this.state.announcements.length == 0 ? this.state.screen = "false" : this.state.announcements.length > 1 ? (
             <div
               className="arrowWrap"
               style={{ display: this.state.isPanelOpen ? "none" : "flex" }}
@@ -256,34 +248,24 @@ class Slider extends React.Component {
         </div>
       );
     }
-    var renderLoader = document.querySelector(".announcement-slider");
-    this.loader.show(renderLoader);
     return <div />;
   }
 }
 
 const Img = ({ data }) => {
   return (
-    <abbr
-      title={
+    <img
+      id={data.uuid}
+      src={data.media}
+      alt="Announcement Banner"
+      onClick={() => {
         data.link && !screenfull.isFullscreen
-          ? data.link
-          : undefined
-      }
-    >
-      <img
-        id={data.uuid}
-        src={data.media}
-        alt="Announcement Banner"
-        onClick={() => {
-          data.link && !screenfull.isFullscreen
-            ? window.open(data.link, "_blank")
-            : null;
-          screenfull.isFullscreen ? screenfull.toggle(event.target) : null;
-        }}
-        style={data.link ? { cursor: "pointer" } : null}
-      />
-    </abbr>
+          ? window.open(data.link, "_blank")
+          : null;
+        screenfull.isFullscreen ? screenfull.toggle(event.target) : null;
+      }}
+      style={data.link ? { cursor: "pointer" } : null}
+    />
   );
 };
 
@@ -318,5 +300,4 @@ const RightArrow = (props) => {
     </div>
   );
 };
-
 export default Slider;

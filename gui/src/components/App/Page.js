@@ -238,19 +238,32 @@ class Page extends React.Component {
     if (typeof route == "object") {
       var final_route = JSON.parse(JSON.stringify(route));
       Object.keys(route).map((item) => {
-        final_route[item] = params[item] ? params[item] : route[item];
+        if(params[item]){
+          final_route[item] = params[item];
+        } else {
+          if(item == 'appId'){
+            final_route[item] = this.appId;
+          } else if(item == 'fileId' && this.state.fileId){
+            final_route[item] = this.state.fileId;
+          } else {
+            final_route[item] = null;
+          }
+        }
       });
       return final_route;
     } else {
       var regex = /\{\{.*?\}\}/g;
       let m;
       while ((m = regex.exec(route)) !== null) {
+        console.log(m);
         // This is necessary to avoid infinite loops with zero-width matches
         if (m.index === regex.lastIndex) {
           regex.lastIndex++;
         }
         // The result can be accessed through the `m`-variable.
         m.forEach((match, groupIndex) => {
+        console.log(match);
+        console.log(groupIndex);
           // console.log(`Found match, group ${groupIndex}: ${match}`);
           route = route.replace(
             match,
