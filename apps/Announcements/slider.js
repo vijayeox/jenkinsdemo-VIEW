@@ -1,4 +1,4 @@
-import React from "react";
+import {React,ReactDOM} from "oxziongui";
 import screenfull from "screenfull";
 import SlidingPanel from "react-sliding-panel";
 

@@ -2,8 +2,7 @@ import osjs from 'osjs';
 import { name as applicationName } from './metadata.json';
 import { icon_white } from './metadata.json';
 import Slider from './slider.js';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import {React,ReactDOM} from "oxziongui";
 
 let tray = null;
 var i, finalposition = {}, finalDimension = {};
