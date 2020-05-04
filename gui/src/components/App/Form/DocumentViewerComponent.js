@@ -171,10 +171,11 @@ export default class DocumentViewerComponent extends Base {
             "?docPath="+
             file;
             if(file && file.file_url){
-            downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file.file_url;
-          } else {
-            downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
-          }
+              url = component.uiUrl + "/ViewerJS/#" + component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+ "?docPath="+ file.file_url;
+              downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file.file_url;
+            } else {
+              downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
+            }
           icon = "<i class='fa fa-file-pdf-o'></i>";
           disableView = false;
         } else if (type == "png" || type == "jpeg" || type == "jpg") {
