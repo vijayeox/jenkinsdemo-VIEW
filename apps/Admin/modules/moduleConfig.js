@@ -5,13 +5,13 @@ export default {
   Organization: {},
   User: {},
   Announcement: {
-    title: "Manage Announcement",
+    title: "Manage Announcements",
     dialogWindow: DialogContainerAnnouncement,
     listConfig: {
       route: "announcements",
       toolbarTemplate: (
         <h5 key={1} style={{ margin: "0px" }}>
-          Announcement List
+          Announcements List
         </h5>
       ),
       addButton: { title: "Create Announcement" },
@@ -35,6 +35,15 @@ export default {
           field: "description",
           cell:
             '<td>{item.description ? item.description.slice(0, 150) + "..." : "No Description Added"}</td>'
+        },
+        {
+          title: "Type",
+          field: "type",
+          filterCell: {
+            type: "dropdown",
+            listItems: ["ANNOUNCEMENT", "HOMESCREEN"],
+            placeholder: "Select Product"
+          }
         }
       ],
       actions: [

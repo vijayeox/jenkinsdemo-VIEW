@@ -53,6 +53,7 @@ export default class DialogContainerAnnouncement extends React.Component {
         status: "1",
         description: this.state.ancInEdit.description,
         link: this.state.ancInEdit.link,
+        type: this.state.ancInEdit.type,
         media_type: this.state.ancInEdit.media_type,
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
@@ -75,6 +76,7 @@ export default class DialogContainerAnnouncement extends React.Component {
         status: "1",
         description: this.state.ancInEdit.description,
         link: this.state.ancInEdit.link,
+        type: this.state.ancInEdit.type,
         media_type: this.state.ancInEdit.media_type,
         start_date: new Moment(this.state.ancInEdit.start_date).format(
           "YYYY-MM-DD"
@@ -254,7 +256,7 @@ export default class DialogContainerAnnouncement extends React.Component {
 
             <div className="form-group">
               <div className="form-row">
-                <div className="col-4 ">
+                <div className="col-3 ">
                   <label className="required-label">Start Date</label>
                   <div>
                     <DateComponent
@@ -275,7 +277,7 @@ export default class DialogContainerAnnouncement extends React.Component {
                     />
                   </div>
                 </div>
-                <div className="col-4">
+                <div className="col-3">
                   <label className="required-label">End Date</label>
                   <div>
                     <DateComponent
@@ -294,6 +296,49 @@ export default class DialogContainerAnnouncement extends React.Component {
                       }
                       disabled={this.props.diableField ? true : false}
                     />
+                  </div>
+                </div>
+                <div className="col-6">
+                  <label className="required-label">Announcement Type</label>
+                  <div>
+                    <span className="col-sm-6">
+                      <input
+                        type="radio"
+                        id="hRadio"
+                        name="type"
+                        value="HOMESCREEN"
+                        className="k-radio"
+                        onChange={(e) => this.valueChange("type", e)}
+                        checked={this.state.ancInEdit.type == "HOMESCREEN"}
+                        disabled={this.props.diableField ? true : false}
+                        required
+                      />
+                      <label
+                        className="k-radio-label pl-4 radioLabel"
+                        htmlFor="hRadio"
+                      >
+                        Homescreen
+                      </label>
+                    </span>
+                    <span className="col-sm-6">
+                      <input
+                        type="radio"
+                        id="aRadio"
+                        name="type"
+                        value="ANNOUNCEMENT"
+                        className="k-radio pl-2"
+                        onChange={(e) => this.valueChange("type", e)}
+                        checked={this.state.ancInEdit.type == "ANNOUNCEMENT"}
+                        disabled={this.props.diableField ? true : false}
+                        required
+                      />
+                      <label
+                        className="k-radio-label pl-4 radioLabel"
+                        htmlFor="aRadio"
+                      >
+                        Announcement App
+                      </label>
+                    </span>
                   </div>
                 </div>
               </div>

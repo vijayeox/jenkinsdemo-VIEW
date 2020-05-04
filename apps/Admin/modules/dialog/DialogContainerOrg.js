@@ -227,6 +227,7 @@ export default class DialogContainer extends React.Component {
       state: this.state.orgInEdit.state,
       country: this.state.orgInEdit.country,
       zip: this.state.orgInEdit.zip,
+      subdomain: this.state.orgInEdit.subdomain,
       logo: logoFile,
       contact: contactData,
       contactid: contact_id || null,
@@ -407,7 +408,7 @@ export default class DialogContainer extends React.Component {
                       args={this.core}
                       rawData={this.state.countryList}
                       selectedItem={this.state.orgInEdit.country}
-                      onDataChange={e => this.dropdownChange("country", e)}
+                      onDataChange={(e) => this.dropdownChange("country", e)}
                       required={true}
                     />
                   </div>
@@ -432,7 +433,9 @@ export default class DialogContainer extends React.Component {
                         }
                         preFetch={true}
                         selectedItem={this.state.contactName}
-                        onDataChange={e => this.dropdownChange("contactid", e)}
+                        onDataChange={(e) =>
+                          this.dropdownChange("contactid", e)
+                        }
                         required={true}
                       />
                     </div>
@@ -440,6 +443,22 @@ export default class DialogContainer extends React.Component {
                 </div>
               </div>
             ) : null}
+
+            <div className="form-group text-area-custom">
+              <label className="required-label">Subdomain</label>
+              <TextareaAutosize
+                type="text"
+                className="form-control"
+                value={this.state.orgInEdit.subdomain || ""}
+                name="subdomain"
+                onChange={this.onDialogInputChange}
+                placeholder="Enter Organization Subdomain"
+                maxLength="250"
+                style={{ marginTop: "5px" }}
+                required={true}
+                readOnly={this.props.diableField ? true : false}
+              />
+            </div>
 
             {this.props.formAction == "post" ? (
               <div className="form-group border-box">
@@ -504,7 +523,7 @@ export default class DialogContainer extends React.Component {
                     <PhoneInput
                       placeholder="Enter phone number"
                       value={contactValue}
-                      onChange={phone => this.onContactPhoneChange(phone)}
+                      onChange={(phone) => this.onContactPhoneChange(phone)}
                       international={false}
                       country="US"
                       maxLength="15"
@@ -542,7 +561,9 @@ export default class DialogContainer extends React.Component {
                   <CurrencySelect
                     id={"select-currency"}
                     name={"currency"}
-                    onChange={e => this.valueChange("currency", e.target.value)}
+                    onChange={(e) =>
+                      this.valueChange("currency", e.target.value)
+                    }
                     value={
                       this.state.orgInEdit.preferences
                         ? this.state.orgInEdit.preferences.currency
@@ -579,7 +600,7 @@ export default class DialogContainer extends React.Component {
                           ? this.state.orgInEdit.preferences.dateformat
                           : ""
                       }
-                      onDataChange={e => {
+                      onDataChange={(e) => {
                         var start = e.target.value.indexOf("(") + 1;
                         var end = e.target.value.indexOf(")");
                         this.valueChange(
@@ -601,13 +622,13 @@ export default class DialogContainer extends React.Component {
                       textField="name"
                       dataItemKey="name"
                       value={this.state.timeZoneValue}
-                      onChange={e =>
+                      onChange={(e) =>
                         this.valueChange("timezone", e.target.value)
                       }
                       style={{ width: "100%" }}
                       popupSettings={{ height: "160px" }}
                       filterable={true}
-                      onFilterChange={e => {
+                      onFilterChange={(e) => {
                         this.setState({
                           timezoneList: filterBy(timezoneCode, e.filter)
                         });
