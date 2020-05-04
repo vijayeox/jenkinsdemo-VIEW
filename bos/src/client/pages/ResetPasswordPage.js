@@ -87,7 +87,7 @@ class ResetPasswordPage extends React.Component {
 
   render() {
     return (
-      <main id="login-container " className="loginContainer row lighten-3 ">
+      <main id="login-container " className="loginContainer row lighten-3 " style={{flexDirection:"row-reverse"}}>
         <div id="ox-login-form" className="form-wrapper">
           <div
             className="form-wrapper__inner"
