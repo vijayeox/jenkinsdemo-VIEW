@@ -27,7 +27,7 @@ class Slider extends React.Component {
 
   async getAnnouncements() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement", {}, "get");
+    let announ = await helper.request("v1", "/announcement/a/ANNOUNCEMENT", {}, "get");
     return announ;
   }
 
