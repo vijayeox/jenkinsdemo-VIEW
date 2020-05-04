@@ -4,7 +4,7 @@ import SideNav, {
   Nav,
   NavItem,
   NavIcon,
-  NavText
+  NavText,
 } from "@trendmicro/react-sidenav";
 import { Button, ButtonGroup } from "@trendmicro/react-buttons";
 import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
@@ -12,6 +12,7 @@ import Dropdown, { MenuItem } from "@trendmicro/react-dropdown";
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 import Navigation from "./Navigation";
 import "./public/css/LeftMenuTemplate.scss";
+import { random } from "../amcharts/.internal/core/utils/String";
 
 export default class LeftMenuTemplate extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class LeftMenuTemplate extends React.Component {
     this.state = {
       menus: [],
       selected: "",
-      expanded: this.keepExpanded ? true : false
+      expanded: this.keepExpanded ? true : false,
     };
     this.onSelect = this.onSelect.bind(this);
     this.onToggle = this.onToggle.bind(this);
@@ -36,16 +37,19 @@ export default class LeftMenuTemplate extends React.Component {
   }
 
   onSelect(selected) {
-    this.setState({ selected: selected, expanded: this.keepExpanded ? true : false });
+    this.setState({
+      selected: selected,
+      expanded: this.keepExpanded ? true : false,
+    });
   }
   menuLoad(menus) {
     this.setState({
-      menus: menus
+      menus: menus,
     });
   }
   selectLoad(selected) {
     this.setState({
-      selected: selected
+      selected: selected,
     });
   }
 
@@ -58,7 +62,7 @@ export default class LeftMenuTemplate extends React.Component {
           onToggle={this.onToggle}
           expanded={this.state.expanded}
         >
-          { this.keepExpanded ? null :<SideNav.Toggle />}
+          {this.keepExpanded ? null : <SideNav.Toggle />}
           <SideNav.Nav selected={selected}>
             {this.state.menus.map((menuitem, index) => {
               return (
@@ -75,6 +79,35 @@ export default class LeftMenuTemplate extends React.Component {
                   <NavText style={{ paddingRight: 32 }} name={menuitem.name}>
                     {menuitem.name}
                   </NavText>
+                  {menuitem.submenu
+                    ? menuitem.submenu.map((subMenu, index2) => {
+                        return (
+                          <NavItem eventKey={subMenu} key={random()} expanded={true}>
+                            <NavIcon>
+                              <abbr
+                                title={subMenu.name}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <i
+                                  className={subMenu.icon}
+                                  name={subMenu.name}
+                                  style={{
+                                    fontSize: "1.5em",
+                                    verticalAlign: "middle",
+                                  }}
+                                />
+                              </abbr>
+                            </NavIcon>
+                            <NavText
+                              style={{ paddingRight: 32 }}
+                              name={subMenu.name}
+                            >
+                              {subMenu.name}
+                            </NavText>
+                          </NavItem>
+                        );
+                      })
+                    : null}
                 </NavItem>
               );
             })}
