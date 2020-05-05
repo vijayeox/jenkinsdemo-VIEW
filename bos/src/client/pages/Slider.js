@@ -229,7 +229,7 @@ render () {
                     }
                     className="actionButton popupButtons"
                   >
-                    VIST LINK
+                    VISIT LINK
                   </button>
                 ) : null}
                 <button
