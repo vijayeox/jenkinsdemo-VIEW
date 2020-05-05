@@ -233,7 +233,7 @@ class Page extends React.Component {
   replaceParams(route, params) {
     var finalParams = merge(params ? params : {}, {
       current_date: moment().format("YYYY-MM-DD"),
-      fileId: this.state.fileId?this.state.fileId:null
+      fileId: this.state.fileId ? this.state.fileId : null,
       appId: this.appId
     });
     if (typeof route == "object") {
@@ -255,7 +255,7 @@ class Page extends React.Component {
             final_route[item] = route[item];
           }
         }
-      });
+      );
       return final_route;
     } else {
       var regex = /\{\{.*?\}\}/g;
