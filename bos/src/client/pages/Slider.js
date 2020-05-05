@@ -208,7 +208,7 @@ render () {
               <RightArrow
                 goToNextSlide={() => {
                   this.refreshTimer();
-                  this.goToPrevSlide();
+                  this.goToNextSlide();
                 }}
               />
             </div>
