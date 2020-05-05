@@ -216,7 +216,7 @@ class Slider extends React.Component {
               <RightArrow
                 goToNextSlide={() => {
                   this.refreshTimer();
-                  this.goToPrevSlide();
+                  this.goToNextSlide();
                 }}
               />
             </div>

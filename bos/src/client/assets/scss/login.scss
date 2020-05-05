@@ -35,6 +35,7 @@ img#ox-logo {
   display: flex !important;
   flex-direction: row;
   height: 100%;
+    margin: 0 !important;
 }
 #login-container {
   position: fixed;
@@ -205,6 +206,9 @@ $displacement: 3px;
   align-items: center;
   padding: 65px;
 }
+.loginSlider{
+    padding: 0 !important;
+}
 .form-signin__footer {
   justify-content: space-between;
   flex-wrap: wrap;
@@ -284,14 +288,24 @@ $displacement: 3px;
     width: 100%;
     text-align: center;
     position: relative;
-    margin: 30px;
+    margin: 0px;
     overflow: auto;
+    flex: 0 0 100%;
+    max-width: 100%;
   }
   .form-wrapper__inner {
     padding: 30px;
   }
   .ox-imgDiv {
     margin-bottom: 30px;
+  }
+  .loginSlider{
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  .loginContainer{
+    flex-wrap: wrap-reverse !important;
   }
 }
 
@@ -360,13 +374,13 @@ margin:15px;
   flex-direction: column;
 }
 .Announcement-visuals {
-    background-color: grey;
+    background-color: #edf3f2;
     text-align: center;
     display: flex;
     justify-content: center;
     height: 100%;
-    width: 100%;
-    position: absolute;
+    width: 100%!important;
+    position: absolute !important;
     top: 0px;
     align-content: center;
   }
@@ -390,8 +404,8 @@ margin:15px;
   }
 
   .Announcement-content {
-    position: absolute;
-    width: 100%;
+    position: absolute !important;
+    width: 100% !important;
     text-align: center;
     bottom: 0px;
     height: auto;
@@ -416,7 +430,7 @@ margin:15px;
     position: relative;
     width: 100%;
     margin: 0 auto;
-    height: 78%;
+    height: 100%;
     overflow: hidden;
     white-space: nowrap;
   }

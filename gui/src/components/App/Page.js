@@ -233,23 +233,29 @@ class Page extends React.Component {
   replaceParams(route, params) {
     var finalParams = merge(params ? params : {}, {
       current_date: moment().format("YYYY-MM-DD"),
+      fileId: this.state.fileId ? this.state.fileId : null,
       appId: this.appId
     });
     if (typeof route == "object") {
       var final_route = JSON.parse(JSON.stringify(route));
       Object.keys(route).map((item) => {
-        if(params[item]){
-          final_route[item] = params[item];
-        } else {
-          if(item == 'appId'){
-            final_route[item] = this.appId;
-          } else if(item == 'fileId' && this.state.fileId){
-            final_route[item] = this.state.fileId;
+          if(/\{\{.*?\}\}/g.test(route[item])){
+            if(finalParams[item]){
+              final_route[item] = finalParams[item];
+            } else {
+              if(item == 'appId'){
+                final_route[item] = this.appId;
+              } else if(item == 'fileId' && this.state.fileId){
+                final_route[item] = this.state.fileId;
+              } else {
+                final_route[item] = null;
+              }
+            }
           } else {
-            final_route[item] = null;
+            final_route[item] = route[item];
           }
         }
-      });
+      );
       return final_route;
     } else {
       var regex = /\{\{.*?\}\}/g;

@@ -208,7 +208,7 @@ render () {
               <RightArrow
                 goToNextSlide={() => {
                   this.refreshTimer();
-                  this.goToPrevSlide();
+                  this.goToNextSlide();
                 }}
               />
             </div>
@@ -229,7 +229,7 @@ render () {
                     }
                     className="actionButton popupButtons"
                   >
-                    VIST LINK
+                    VISIT LINK
                   </button>
                 ) : null}
                 <button

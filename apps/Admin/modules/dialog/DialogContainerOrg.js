@@ -438,7 +438,7 @@ export default class DialogContainer extends React.Component {
             ) : null}
 
             <div className="form-group text-area-custom">
-              <label className="required-label">Subdomain</label>
+              <label>Subdomain</label>
               <TextareaAutosize
                 type="text"
                 className="form-control"
@@ -448,7 +448,6 @@ export default class DialogContainer extends React.Component {
                 placeholder="Enter Organization Subdomain"
                 maxLength="250"
                 style={{ marginTop: "5px" }}
-                required={true}
                 readOnly={this.props.diableField ? true : false}
               />
             </div>

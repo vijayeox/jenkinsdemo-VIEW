@@ -102,25 +102,65 @@ class Dashboard extends Component {
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
+
+
   componentDidUpdate(prevProps) {
+    //update component when filter is changed
     if (prevProps.dashboardFilter != this.props.dashboardFilter) {
       let filterParams = []
       this.props.dashboardFilter.map((filter, index) => {
         let filterarray = []
-        filterarray.push(filter["field"])
-        filterarray.push(filter["operator"])
-        filterarray.push(filter["value"]["selected"])
-        if (index > 0)
+        if (filter["dataType"] == "date") {
+          var startDate = filter["startDate"]
+          var endDate = null
+          if (filter["startDate"] && filter["endDate"]) {
+            //convert startDate object to string
+            if (typeof startDate !== "string") {
+              startDate = filter["startDate"]
+              startDate = startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            }
+            //date range received
+            if (filter["operator"] == "gte&&lte") {
+              endDate = filter["endDate"]
+              if (typeof endDate !== "string") {
+                endDate = endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              }
+
+              //prepare startDate array
+              filterarray.push(filter["field"])
+              filterarray.push(">=")
+              filterarray.push(startDate)
+
+              filterParams.push(filterarray)
+              filterParams.push("AND")
+
+              //prepare endDate array
+              filterarray = []
+              filterarray.push(filter["field"])
+              filterarray.push("<=")
+              filterarray.push(endDate)
+            }
+          } else {
+            //single date passed
+            filterarray.push(filter["field"])
+            filterarray.push(filter["operator"])
+            filterarray.push(startDate)
+          }
+        } else {
+          filterarray.push(filter["field"])
+          filterarray.push(filter["operator"])
+          filterarray.push(filter["value"]["selected"])
+        }
+        if (index > 0) {
+          //adding And to the filter array when multiple paramters are passed
           filterParams.push("AND")
-
+        }
         filterParams.push(filterarray)
-
       })
-      console.log(filterParams)
-      filterParams && filterParams.length!=0?
-      this.updateGraph(filterParams)
-      :
-      this.updateGraph()
+      filterParams && filterParams.length != 0 ?
+        this.updateGraph(filterParams)
+        :
+        this.updateGraph()
 
     }
 
@@ -190,6 +230,7 @@ class Dashboard extends Component {
 
   widgetDrillDownMessageHandler = (event) => {
     let eventData = event.data;
+
     let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
     if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
       return;
@@ -224,7 +265,6 @@ class Dashboard extends Component {
     if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
     }
-
     var self = this;
     this.helper.request('v1', url, null, 'get').
       then(response => {
@@ -233,6 +273,9 @@ class Dashboard extends Component {
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;
         }
+        if (eventData.elementId) {
+          var widgetDiv = document.getElementById(eventData.elementId);
+        }
       }).
       catch(response => {
         Swal.fire({
@@ -240,6 +283,9 @@ class Dashboard extends Component {
           title: 'Oops...',
           text: 'Could not fetch the widget data. Please try after some time.'
         });
+        if (eventData.elementId) {
+          var widgetDiv = document.getElementById(eventData.elementId);
+        }
       });
   }
 
