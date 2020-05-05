@@ -20,6 +20,7 @@ class Slider extends React.Component {
     this.refreshTimer = this.refreshTimer.bind(this);
     this.goToPrevSlide = this.goToPrevSlide.bind(this);
     this.goToNextSlide = this.goToNextSlide.bind(this);
+    this.HeaderIcon();
     document
       .querySelector('div[data-id="annoucementsWindow"]')
       .addEventListener("updateAnnouncements", this.refreshAnc, false);
@@ -61,6 +62,12 @@ class Slider extends React.Component {
     });
   }
 
+    HeaderIcon (){
+    let parent = document.querySelectorAll(".osjs-window[data-id=annoucementsWindow] div.osjs-window-header")[0];
+    if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
+      let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+    }
+  }
   refreshTimer() {
     var that = this;
     if (this.state.announcements.length > 1) {
