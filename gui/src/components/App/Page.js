@@ -239,7 +239,7 @@ class Page extends React.Component {
     if (typeof route == "object") {
       var final_route = JSON.parse(JSON.stringify(route));
       Object.keys(route).map((item) => {
-          if(/\{\{.*?\}\}/g.test(route.item)){
+          if(/\{\{.*?\}\}/g.test(route[item])){
             if(finalParams[item]){
               final_route[item] = finalParams[item];
             } else {
