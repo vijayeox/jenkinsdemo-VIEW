@@ -45,7 +45,7 @@ const register = (core, args, options, metadata) => {
 
     const getAnnouncements = async () => {
       let helper = core.make("oxzion/restClient");
-      let announ = await helper.request("v1", "/announcement", {}, "get");
+      let announ = await helper.request("v1", "/announcement/a/ANNOUNCEMENT", {}, "get");
       return announ;
     };
 
