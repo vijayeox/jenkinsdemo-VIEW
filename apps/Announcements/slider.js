@@ -74,7 +74,6 @@ class Slider extends React.Component {
     });
   }
 
-  }
   refreshTimer() {
     var that = this;
     if (this.state.announcements.length > 1) {
