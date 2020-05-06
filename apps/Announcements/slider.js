@@ -1,4 +1,4 @@
-import {React,ReactDOM} from "oxziongui";
+import { React, ReactDOM } from "oxziongui";
 import screenfull from "screenfull";
 import SlidingPanel from "react-sliding-panel";
 
@@ -23,11 +23,24 @@ class Slider extends React.Component {
     document
       .querySelector('div[data-id="annoucementsWindow"]')
       .addEventListener("updateAnnouncements", this.refreshAnc, false);
+    let parent = document.querySelectorAll(
+      ".osjs-window[data-id=annoucementsWindow] div.osjs-window-header"
+    )[0];
+    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+      clonedItem.className = "osjs-window-button dummyCloseButton";
+      parent.appendChild(clonedItem);
+    }
   }
 
   async getAnnouncements() {
     let helper = this.core.make("oxzion/restClient");
-    let announ = await helper.request("v1", "/announcement/a/ANNOUNCEMENT", {}, "get");
+    let announ = await helper.request(
+      "v1",
+      "/announcement/a/ANNOUNCEMENT",
+      {},
+      "get"
+    );
     return announ;
   }
 
@@ -264,13 +277,7 @@ class Slider extends React.Component {
 
 const Img = ({ data }) => {
   return (
-    <abbr
-      title={
-        data.link && !screenfull.isFullscreen
-          ? data.link
-          : undefined
-      }
-    >
+    <abbr title={data.link && !screenfull.isFullscreen ? data.link : undefined}>
       <img
         id={data.uuid}
         src={data.media}
