@@ -217,7 +217,7 @@ class DashboardEditor extends React.Component {
             'ispublic':this.state.visibility
         };
         let url = 'analytics/dashboard';
-        let method = '';
+        let method = '';    
         if (this.state.dashboardId) {
             url = url + '/' + this.state.dashboardId;
             method = 'put';

@@ -24,7 +24,7 @@ class WidgetEditorApp extends React.Component {
             widget: {
                 align: widgetConfiguration ? widgetConfiguration.align : null,
                 uuid: widgetConfiguration ? widgetConfiguration.id : null,
-                type: null
+                // type: html
             },
             showModal: false,
             widgetName: '',
@@ -399,6 +399,7 @@ class WidgetEditorApp extends React.Component {
         switch (widget.type) {
             case 'aggregate':
             case 'inline':
+            // case 'html':
                 type = 'inline';
                 break;
 
@@ -407,6 +408,11 @@ class WidgetEditorApp extends React.Component {
             case 'grid':
                 type = 'block';
                 break;
+
+            case 'html':
+                type = 'html';
+                break;
+
         }
         return {
             align: widget.align,
@@ -435,7 +441,7 @@ class WidgetEditorApp extends React.Component {
             // called on create widget
             params["visualization_uuid"] = state.visualizationID
             params["ispublic"] = parseInt(state.visibility);
-            return window.postDataRequest('analytics/widget' ,params, 'post');
+            return window.postDataRequest('analytics/widget', params, 'post');
         }
         else {
             switch (state.mode) {
