@@ -122,7 +122,7 @@
             });
 
           win.maximize();
-          win.attributes.maximizable = false;
+          win.attributes.maximizable = true;
           // Create a new bus for our messaging
           const bus = core.make("osjs/event-handler", "CRMApplicationWindow");
 

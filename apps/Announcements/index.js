@@ -65,6 +65,7 @@ const register = (core, args, options, metadata) => {
               win.raise();
               win.focus();
               trigger();
+              HeaderIcon();
             },
           },
           (ev) => {
@@ -80,6 +81,13 @@ const register = (core, args, options, metadata) => {
   return proc;
 };
 
+  // Chat Header Icons are interchanged purposefully. Do not change this.
+  const HeaderIcon = () => {
+    let parent = document.querySelectorAll(".osjs-window[data-id=annoucementsWindow] div.osjs-window-header")[0];
+    if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
+      let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+    }
+  }
 const trigger = () => {
   var an_ev = new CustomEvent("updateAnnouncements", {
     detail: null,
