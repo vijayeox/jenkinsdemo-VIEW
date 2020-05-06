@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd view/bos
-npm rebuild node-sass
+#npm rebuild node-sass
 cd ..
 ./clean.sh
 ./build.sh gui
