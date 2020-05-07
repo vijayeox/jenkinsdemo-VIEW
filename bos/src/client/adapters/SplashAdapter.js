@@ -7,7 +7,6 @@ export class SplashServiceProvider extends ServiceProvider {
 		this.core = core;
 		this.$loading = document.createElement('div');
 		this.$loading.className = 'osjs-boot-splash';
-		this.$loading.innerHTML = '';
 	}
 	providers() {
 		return [
@@ -17,9 +16,9 @@ export class SplashServiceProvider extends ServiceProvider {
 	init() {
 		this.core.instance('oxzion/splash', () => ({
 			show: (ele) => this.show(ele),
-			destroy: () => this.destroy(),
+			destroy: (ele) => this.destroy(ele),
 			showGrid: () => this.showGrid(),
-			renderHtml:()=> this.renderHtml()
+			renderHtml: () => this.renderHtml()
 		}));
 	}
 	showGrid() {
@@ -37,19 +36,19 @@ export class SplashServiceProvider extends ServiceProvider {
 		gridContent ? this.show(gridContent) : this.show();
 	}
 
-	renderHtml(){
+	renderHtml() {
 		this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
 		return '<img src="./load.svg" height="150" width="150" align="center">'
 	}
 	show(ele) {
-		if (ele) {
-			this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
-			ele.appendChild(this.$loading);
-		}
+
 		if (!this.$loading.parentNode) {
 			if (ele) {
-				this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
-				ele.appendChild(this.$loading);
+				//replacing this.$loading with loader as there may be multiple instance of loader running at the same time
+				let loader = document.createElement('div');
+				loader.className = 'osjs-boot-splash';
+				loader.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
+				ele.appendChild(loader);
 			}
 			else {
 				this.$loading.innerHTML = '<img src="./load.svg" height="300" width="300" align="center">';
@@ -58,9 +57,17 @@ export class SplashServiceProvider extends ServiceProvider {
 			}
 		}
 	}
-	destroy() {
-		if (this.$loading.parentNode) {
-			this.$loading.remove();
+
+	destroy(ele) {
+		if (ele) {
+			var childLoader = ele.querySelector('.osjs-boot-splash')
+			childLoader.remove()
+		}
+		else {
+			if (this.$loading.parentNode) {
+				this.$loading.innerHTML = ""
+				this.$loading.remove()
+			}
 		}
 	}
 }
