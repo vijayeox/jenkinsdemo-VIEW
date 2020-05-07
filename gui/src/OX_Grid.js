@@ -324,6 +324,7 @@ export default class OX_Grid extends React.Component {
               : undefined
           }
           filterable={this.props.filterable}
+          groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}
           resizable={this.props.resizable}
