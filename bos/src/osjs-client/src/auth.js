@@ -100,11 +100,10 @@ export default class Auth {
     }
     
     if (reload) {
-      setTimeout(() => {
-        window.location.reload();
-        // FIXME Reload, not refresh
-        // this.core.boot();
-      }, 1);
+    	this.core.boot();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1);
     }
   }
 

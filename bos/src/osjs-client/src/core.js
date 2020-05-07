@@ -134,10 +134,8 @@ export default class Core extends CoreBase {
         this.emit('osjs/core:booted');
         // auto login check
         let lsHelper = new LocalStorageAdapter;
-        // to check if local storage present in browser
         lsHelper.supported();
         const token = lsHelper.get('AUTH_token');
-        console.log(lsHelper);
         let jwt = null;
         let autoLogin = false;
         //validate token for auto login
@@ -430,7 +428,6 @@ export default class Core extends CoreBase {
       url = this.url(url);
       options = merge(options || {}, this.requestOptions || {});
     }
-    console.log(options);
     return fetch(url, options, type)
       .catch(error => {
         console.warn(error);
