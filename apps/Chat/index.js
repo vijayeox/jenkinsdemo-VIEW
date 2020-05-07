@@ -52,9 +52,13 @@
 
   // Chat Header Icons are interchanged purposefully. Do not change this.
   const HeaderIcon = () => {
-  let parent = document.querySelectorAll(".osjs-window[data-id=ChatWindow] div.osjs-window-header")[0];
-  if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
-    let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+  let parent = document.querySelectorAll(
+      ".osjs-window[data-id=ChatWindow] div.osjs-window-header"
+    )[0];
+    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+      clonedItem.className = "osjs-window-button dummyCloseButton";
+      parent.appendChild(clonedItem);
     }
   }
   
@@ -236,7 +240,6 @@
             trayOptions.onclick = () => {
                       console.log(proc);
                       win.raise();
-                      HeaderIcon();
                       win.focus();
                       resetBadge();
             }

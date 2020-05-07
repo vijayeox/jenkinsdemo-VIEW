@@ -44,6 +44,17 @@
         tray.update(trayOptions);
       }
     };
+      // MailApplicationWindow Header Icons are interchanged purposefully. Do not change this.
+  const HeaderIcon = () => {
+  let parent = document.querySelectorAll(
+      ".osjs-window[data-id=MailApplicationWindow] div.osjs-window-header"
+    )[0];
+    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+      clonedItem.className = "osjs-window-button dummyCloseButton";
+      parent.appendChild(clonedItem);
+    }
+  }
 
     const createIframe = (proc, win) => {
       const iframe = document.createElement("iframe");
@@ -130,6 +141,7 @@
             .on("destroy", () => proc.destroy())
             .render(($content, win) => {
 
+              HeaderIcon();
                 // Context menu is hidden
             win.$icon.addEventListener('click', (ev) => {
               ev.stopPropagation();
@@ -143,7 +155,7 @@
 
               // win.maximize();
               win.minimize();
-              win.attributes.maximizable = false;
+              win.attributes.maximizable = true;
               // Create a new bus for our messaging
               const profile = core.make("oxzion/profile");
               const details = profile.get();
