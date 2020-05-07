@@ -33,7 +33,7 @@
   const trayOptions = {};
   let chatCount = 0;
   let tray = null;
-  var i, finalposition = {}, finalDimension = {};
+  var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
 
   const resetBadge = () => {
     if(trayOptions.count > 0){
@@ -160,6 +160,8 @@
         if (Object.keys(session[i].windows).length && session[i].name == "Chat"){
           finalposition = session[i].windows[0].position;
           finalDimension = session[i].windows[0].dimension;
+          finalMaximised = session[i].windows[0].maximized;
+          finalMinimised = session[i].windows[0].minimized;
         }
       }
       // Create  a new Window instance
@@ -170,6 +172,8 @@
           title: metadata.title.en_EN,
           dimension: finalDimension ? finalDimension : {width: 400, height: 500},
           position: finalposition ? finalposition : {left: 200, top: 400},
+          maximized: finalMaximised,
+          minimized: finalMinimised, 
           attributes : {
             visibility: 'restricted',
             closeable: false
@@ -197,7 +201,12 @@
           });
          
           // console.log(maximize);
-           win.minimize();
+          if(finalMinimised){
+            win.minimize();
+          }
+          if(finalMaximised){
+            win.maximize();
+          }
           const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
           
           const user = core.make('osjs/auth').user();

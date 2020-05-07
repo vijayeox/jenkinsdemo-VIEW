@@ -683,6 +683,7 @@ export default class Window extends EventEmitter {
   minimize() {
     if (this.attributes.minimizable) {
       if (this._toggleState('minimized', true, 'minimize')) {
+        this.state.minimized = true;
         this.blur();
 
         return true;
@@ -707,6 +708,7 @@ export default class Window extends EventEmitter {
   maximize() {
     if (this.attributes.maximizable) {
       if (this._toggleState('maximized', true, 'maximize')) {
+        this.state.maximized = true;
         this.once('transitionend', () => this.emit('resized'));
 
         return true;
@@ -962,6 +964,8 @@ export default class Window extends EventEmitter {
   getSession() {
     return this.attributes.sessionable === false ? null : {
       id: this.id,
+      maximized: this.state.maximized,
+      minimized: this.state.minimized,
       position: Object.assign({}, this.state.position),
       dimension: Object.assign({}, this.state.dimension)
     };
