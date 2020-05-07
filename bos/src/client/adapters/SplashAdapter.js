@@ -67,6 +67,9 @@ export class SplashServiceProvider extends ServiceProvider {
 			if (this.$loading.parentNode) {
 				this.$loading.innerHTML = ""
 				this.$loading.remove()
+			} else {
+				var loader = document.querySelector('.osjs-boot-splash')
+				loader ? loader.remove() : null;
 			}
 		}
 	}
