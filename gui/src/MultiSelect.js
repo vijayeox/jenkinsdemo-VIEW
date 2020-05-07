@@ -123,9 +123,7 @@ class MultiSelect extends React.Component {
       filterValue: e.filter.value.length > 0
     });
     if (e.filter.value.length > 0) {
-      setTimeout(() => {
         this.getMainList(e.filter.value, 20);
-      }, 500);
     } else {
       this.setState({
         userList: []
@@ -277,26 +275,26 @@ function cellWithEditing(remove, title) {
               <button
                 className="k-primary k-button k-grid-edit-command"
                 onClick={() => {
-                  Swal.fire({
-                    title: "Are you sure?",
-                    text:
-                      "You are about to remove " +
-                      this.props.dataItem.name +
-                      ".",
-                    imageUrl:
-                      "https://image.flaticon.com/icons/svg/1006/1006115.svg",
-                    imageWidth: 75,
-                    imageHeight: 75,
-                    confirmButtonText: "OK",
-                    confirmButtonColor: "#d33",
-                    showCancelButton: true,
-                    cancelButtonColor: "#3085d6",
-                    target: ".Window_Admin"
-                  }).then((result) => {
-                    if (result.value) {
-                      remove(this.props.dataItem);
-                    }
-                  });
+                  remove(this.props.dataItem);
+                  // Swal.fire({
+                  //   title: "Are you sure?",
+                  //   text:
+                  //     "You are about to remove " +
+                  //     this.props.dataItem.name +
+                  //     ".",
+                  //   imageUrl:
+                  //     "https://image.flaticon.com/icons/svg/1006/1006115.svg",
+                  //   imageWidth: 75,
+                  //   imageHeight: 75,
+                  //   confirmButtonText: "OK",
+                  //   confirmButtonColor: "#d33",
+                  //   showCancelButton: true,
+                  //   cancelButtonColor: "#3085d6",
+                  //   target: ".Window_Admin"
+                  // }).then((result) => {
+                  //   if (result.value) {
+                  //   }
+                  // });
                 }}
               >
                 Remove
