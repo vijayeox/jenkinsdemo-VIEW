@@ -278,6 +278,7 @@ const Video = ({ data }) => {
       preload="none"
       autoPlay={true}
       muted
+      loop
     >
       <source id="mp4" src={data.media} type="video/mp4" />
       Video goes here
