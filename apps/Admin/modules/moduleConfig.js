@@ -42,7 +42,7 @@ export default {
           filterCell: {
             type: "dropdown",
             listItems: ["ANNOUNCEMENT", "HOMESCREEN"],
-            placeholder: "Select Product"
+            placeholder: "Select Type"
           }
         }
       ],
