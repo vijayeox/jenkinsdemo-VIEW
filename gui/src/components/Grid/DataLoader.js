@@ -41,7 +41,7 @@ export class DataLoader extends React.Component {
           //put notification
           this.pending = undefined;
         }
-        this.loader.destroy();
+        this.loader.destroyGrid();
       });
     }
   }
@@ -186,7 +186,7 @@ export class DataLoader extends React.Component {
             : response.data,
           total: response.total ? response.total : null
         });
-        this.loader.destroy();
+        this.loader.destroyGrid();
       } else {
         this.requestDataIfNeeded();
       }
