@@ -36,7 +36,7 @@
     const trayOptions = {};
     let mailCount = 0;
     let tray = null;
-    var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+    var i, finalposition, finalDimension,finalMaximised = false,finalMinimised = true;
 
     const resetBadge = () => {
       if (trayOptions.count > 0) {
@@ -132,6 +132,8 @@
               title: metadata.title.en_EN,
               position:  finalposition ? finalposition : { left: 150, top: 50},
               dimension: finalDimension ? finalDimension : {width: 900, height: 600},
+              maximized: finalMaximised,
+              minimized: finalMinimised, 
               attributes: {
                 visibility: "restricted",
                 closeable: false,

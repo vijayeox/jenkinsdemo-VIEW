@@ -33,7 +33,7 @@
   const trayOptions = {};
   let chatCount = 0;
   let tray = null;
-  var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+  var i, finalposition, finalDimension, finalMaximised = false,finalMinimised = true;
 
   const resetBadge = () => {
     if(trayOptions.count > 0){
