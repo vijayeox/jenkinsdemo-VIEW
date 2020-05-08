@@ -60,7 +60,7 @@ export default class LogoutPanelItem extends PanelItem {
     };
     const confirm = () => {
       MySwal.fire({
-        title: 'Would You Like To Logout?',
+        title: 'Would you like to logout?',
         position: "top-end",
         confirmButtonText: 'Yes',
         confirmButtonColor: '#275362',

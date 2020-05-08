@@ -8,12 +8,13 @@ import * as am4charts from '../amcharts/charts';
 import * as am4maps from '../amcharts/maps';
 import am4geodata_usaAlbersLow from '@amcharts/amcharts4-geodata/usaAlbersLow';
 import am4themes_animated from '../amcharts/themes/animated';
-import am4themes_kelly from '../amcharts/themes/kelly';
+// import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
 class WidgetRenderer {
     static render(element, widget, props) {
+        am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
         switch (widget.renderer) {
             case 'JsAggregate':
