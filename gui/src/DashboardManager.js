@@ -66,7 +66,7 @@ class Dashboard extends React.Component {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let response = await helper.request('v1', 'analytics/dashboard', {}, 'get');
+    let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {

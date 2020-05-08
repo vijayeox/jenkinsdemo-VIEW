@@ -216,7 +216,7 @@ class DashboardEditor extends React.Component {
             'filter_configuration': JSON.stringify(this.state.filterConfiguration),
             'ispublic':this.state.visibility
         };
-        let url = 'analytics/dashboard';
+        let url = 'analytics/dashboard/?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]';
         let method = '';    
         if (this.state.dashboardId) {
             url = url + '/' + this.state.dashboardId;
