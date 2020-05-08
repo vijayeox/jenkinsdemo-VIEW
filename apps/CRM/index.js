@@ -111,11 +111,9 @@
           icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
           dimension: finalDimension ? finalDimension : {width: 860, height: 550},
-          // attributes: {
-          //   state: {
-          //     maximized: true
-          //   }
-          // }
+          attributes: {
+           minDimension: { width: 800, height: 500 },
+          },
           // dimension: {width: 400, height: 400},
           position:  finalposition ? finalposition :{left: 200, top: 0}
         })

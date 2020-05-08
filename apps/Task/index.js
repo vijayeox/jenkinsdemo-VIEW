@@ -58,7 +58,10 @@
 
   proc.createWindow({ id: "TaskApplicationWindow", icon: proc.resource(proc.metadata.icon_white),
   title: metadata.title.en_EN, dimension: finalDimension ? finalDimension : {width: 400, height: 400},
-    position:  finalposition ? finalposition : {left: 200, top: 0}})
+    position:  finalposition ? finalposition : {left: 200, top: 0},
+          attributes: {
+           minDimension: { width: 800, height: 500 },
+          },})
   .on('destroy', () => proc.destroy())
   .render(($content, win) => {
     // Add our process and window id to iframe URL
