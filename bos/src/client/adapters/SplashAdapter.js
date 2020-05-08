@@ -60,8 +60,9 @@ export class SplashServiceProvider extends ServiceProvider {
 	}
 
 	renderHtml() {
-		this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
-		return '<img src="./load.svg" height="150" width="150" align="center">'
+		// this.$loading.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
+		this.$loading.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
+		return '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
 	}
 
 	show(ele) {
@@ -71,13 +72,13 @@ export class SplashServiceProvider extends ServiceProvider {
 				//replacing this.$loading with loader as there may be multiple instance of loader running at the same time
 				let loader = document.createElement('div');
 				loader.className = 'osjs-boot-splash';
-				loader.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
-				// loader.innerHTML= '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
+				// loader.innerHTML = '<img src="./load.svg" height="150" width="150" align="center">';
+				loader.innerHTML= '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
 				ele.appendChild(loader);
 			}
 			else {
-				this.$loading.innerHTML = '<img src="./load.svg" height="300" width="300" align="center">';
-				// this.$loading.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
+				// this.$loading.innerHTML = '<img src="./load.svg" height="300" width="300" align="center">';
+				this.$loading.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
 
 				ele = this.core.$root;
 				ele.appendChild(this.$loading);
