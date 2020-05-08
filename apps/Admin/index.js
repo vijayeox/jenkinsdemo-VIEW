@@ -30,17 +30,20 @@ const register = (core, args, options, metadata) => {
       id: "AdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon_white),
-      dimension: finalDimension ? finalDimension : {
-        width: 860,
-        height: 555
-      },
-      minDimension: {
-        width: 860,
-        height: 555
-      },
-      position:  finalposition ? finalposition : {
-        left: 150,
-        top: 50
+      attributes: {
+        classNames: ["Window_Admin"],
+        dimension: finalDimension ? finalDimension : {
+          width: 860,
+          height: 555
+        },
+        minDimension: {
+          width: 850,
+          height: 520
+        },
+        position:  finalposition ? finalposition : {
+          left: 150,
+          top: 50
+        }
       }
     })
     .on("destroy", () => proc.destroy())
