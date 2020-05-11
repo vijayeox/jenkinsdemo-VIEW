@@ -178,9 +178,9 @@ class Login extends React.Component {
                 </span>
               </div>
             </div>
-            <div className="footer-links">
+            <footer className="footer-links">
               <a href="https://www.eoxvantage.com">About Us</a>
-            </div>
+            </footer>
           </div>
         </main>
       );

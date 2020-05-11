@@ -8,12 +8,13 @@ import * as am4charts from '../amcharts/charts';
 import * as am4maps from '../amcharts/maps';
 import am4geodata_usaAlbersLow from '@amcharts/amcharts4-geodata/usaAlbersLow';
 import am4themes_animated from '../amcharts/themes/animated';
-import am4themes_kelly from '../amcharts/themes/kelly';
+// import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
 
 class WidgetRenderer {
     static render(element, widget, props) {
+        am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
         switch (widget.renderer) {
             case 'JsAggregate':
@@ -49,12 +50,39 @@ class WidgetRenderer {
                 }
                 break;
 
+            case 'HTML':
+                    if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
+                        throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
+                    }
+                    return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
+                    break;
+    
             default:
                 throw (`Unexpected widget renderer "${widget.renderer}"`);
         }
     }
 
     static renderAggregateValue(element, configuration, props, data) {
+        let displayValue = null;
+        if (configuration) {
+            if (configuration.numberFormat) {
+                let format = configuration.numberFormat;
+                let num = numeral(data);
+                displayValue = num.format(format);
+            }
+            else if (configuration.dateFormat) {
+                let format = configuration.dateFormat;
+                displayValue = dayjs(data).format(format);
+            } else {
+                displayValue = data;
+            }
+        }
+        element.innerHTML = displayValue ? displayValue : ('' + data);
+        return null;
+    }
+
+
+    static renderhtml(element, configuration, props, data) {
         let displayValue = null;
         if (configuration) {
             if (configuration.numberFormat) {

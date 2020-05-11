@@ -149,27 +149,20 @@ export default class DocumentViewerComponent extends Base {
     if (files) {
       for (var prop in files) {
         var file = files[prop]["file"] ? files[prop]["file"] : files[prop];
-        var fileName = files[prop]["originalName"]
-          ? files[prop]["originalName"]
-          : file.substring(file.lastIndexOf("/") + 1);
-          var type;
-          if(file && file.file_url){
-            type = (file.file_url.substr(file.file_url.lastIndexOf(".") + 1)).toLowerCase();
-          } else {
+        var fileName = files[prop]["originalName"] ? files[prop]["originalName"] : file.substring(file.lastIndexOf("/") + 1);
+        var type;
+        if(file && file.file_url){
+          type = (file.file_url.substr(file.file_url.lastIndexOf(".") + 1)).toLowerCase();
+        } else {
+          if(file && file != undefined){
             type = (file.substr(file.lastIndexOf(".") + 1)).toLowerCase();
+          } else {
+            continue;
           }
+        }
         var url, icon, disableView,downloadUrl;
         if (type == "pdf") {
-          url =
-            component.uiUrl +
-            "/ViewerJS/#" +
-            component.wrapperUrl +
-            "app/" +
-            component.appId +
-            "/document/" + 
-            fileName+
-            "?docPath="+
-            file;
+          url = component.uiUrl + "/ViewerJS/#" + component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+ "?docPath="+file;
             if(file && file.file_url){
               url = component.uiUrl + "/ViewerJS/#" + component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+ "?docPath="+ file.file_url;
               downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file.file_url;

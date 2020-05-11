@@ -57,15 +57,13 @@ class Dashboard extends Component {
   componentDidMount() {
     if (this.uuid) {
       let thiz = this;
-      this.loader.show()
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
         if (response.status == "success") {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
-          thiz.loader.destroy();
-
           this.updateGraph();
+
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -163,14 +161,6 @@ class Dashboard extends Component {
         this.updateGraph()
 
     }
-
-    // if (this.props.htmlData) {
-    //   if (this.props.htmlData !== prevProps.htmlData) {
-    //     this.setState({
-    //       htmlData: this.props.htmlData
-    //     });
-    //   }
-    // }
   }
 
   updateGraph = async (filterParams) => {
@@ -182,7 +172,7 @@ class Dashboard extends Component {
     let thiz = this;
     this.loader.show();
     let errorFound = false;
-
+    let widgetCounter = 0 //keeps count of widget rendered asynchronously
     //dispose and render if already exist
     for (let elementId in this.renderedWidgets) {
       let widget = this.renderedWidgets[elementId];
@@ -193,31 +183,38 @@ class Dashboard extends Component {
         delete this.renderedWidgets[elementId];
       }
     }
-    for (let widget of widgets) {
-      var attributes = widget.attributes;
-      console.log(attributes)
-      //dispose 
-
-      var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
-      let response = await this.getWidgetByUuid(widgetUUId, filterParams);
-      if ('error' === response.status) {
-        console.error('Could not load widget.');
-        console.error(response);
-        errorFound = true;
-      }
-      else {
-        //dispose if widget exists
-
-        // response.data.widget["configuration"]["filter"]=[{"store":"New York"}]
-        //  response.data.widget["queries"][0]["configuration"]["filter"]={"store":"TX"}
-        //       console.log(response.data.widget["queries"][0])
-        let widgetObject = WidgetRenderer.render(widget, response.data.widget);
-        if (widgetObject) {
-          this.renderedWidgets[widgetUUId] = widgetObject;
-        }
+    
+    if(widgets.length==0){
+      this.loader.destroy()
+    }
+    else{
+      for (let widget of widgets) {
+        var attributes = widget.attributes;
+        console.log(attributes)
+        //dispose 
+  
+        var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
+        this.getWidgetByUuid(widgetUUId, filterParams)
+        .then(response=>{
+          widgetCounter++
+          if ('error' === response.status) {
+            console.error('Could not load widget.');
+            console.error(response);
+            errorFound = true;
+          }
+          else {
+            //dispose if widget exists
+            let widgetObject = WidgetRenderer.render(widget, response.data.widget);
+            if (widgetObject) {
+              this.renderedWidgets[widgetUUId] = widgetObject;
+            }
+          }
+          if(widgetCounter==widgets.length){
+            this.loader.destroy();
+          }
+        })
       }
     }
-    this.loader.destroy();
     if (errorFound) {
       Swal.fire({
         type: 'error',
@@ -230,7 +227,6 @@ class Dashboard extends Component {
 
   widgetDrillDownMessageHandler = (event) => {
     let eventData = event.data;
-
     let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
     if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
       return;
@@ -265,6 +261,11 @@ class Dashboard extends Component {
     if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
     }
+    //starting spinner 
+    if (eventData.elementId) {
+      var widgetDiv = document.getElementById(eventData.elementId);
+      this.loader.show(widgetDiv);
+    }
     var self = this;
     this.helper.request('v1', url, null, 'get').
       then(response => {
@@ -276,8 +277,11 @@ class Dashboard extends Component {
         if (eventData.elementId) {
           var widgetDiv = document.getElementById(eventData.elementId);
         }
+        this.loader.destroy(element)
+
       }).
       catch(response => {
+        this.loader.destroy()
         Swal.fire({
           icon: 'error',
           title: 'Oops...',

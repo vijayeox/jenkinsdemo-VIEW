@@ -38,3 +38,53 @@ $base-margin: 1em;
 .swal2-container{
     z-index: 16777275 !important;
 }
+
+
+  .spinner {
+    width: 50%;
+    text-align: center;
+  }
+  
+  .spinner > div {
+    width: 25px;
+    height: 25px;
+    background-color: #333;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+  
+  .spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+    background-color: #ee4623;
+  }
+  
+  .spinner .bounce2 {
+  margin-right: 3%;
+
+  margin-left: 3%;
+
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+    background-color: #f4ba18;
+  }
+
+    .spinner .bounce3 {
+    background-color: #a3c639;
+  }
+  @-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0) }
+    40% { -webkit-transform: scale(1.0) }
+  }
+  
+  @keyframes sk-bouncedelay {
+    0%, 80%, 100% { 
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    } 40% { 
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+  }

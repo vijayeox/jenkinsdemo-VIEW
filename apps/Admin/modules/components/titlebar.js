@@ -3,7 +3,6 @@ import { DropDown } from "./index.js";
 
 export class TitleBar extends React.Component {
   render() {
-    console.log(KendoReactButtons)
     return (
       <div
         style={{ paddingTop: "12px", marginLeft: "0px" }}

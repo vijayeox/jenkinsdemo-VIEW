@@ -4,7 +4,7 @@
   "category": "collaboration",
   "singleton":true,
   "hidden" : true,
-  "autostart":false,
+  "autostart":true,
   "defaultAppforOrgs" : true,
   "icon": "icon.svg",
   "icon_white": "icon_white.svg",

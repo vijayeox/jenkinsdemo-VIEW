@@ -33,7 +33,7 @@ class Page extends React.Component {
       submission: this.props.submission,
       showLoader: false,
       fileId: null,
-      currentRow: []
+      currentRow: {}
     };
     this.props.pageId ? this.loadPage(this.props.pageId) : null;
     this.updatePageView = this.updatePageView.bind(this);
@@ -64,12 +64,17 @@ class Page extends React.Component {
     });
   }
 
-  loadPage(pageId) {
+  loadPage(pageId, icon, hideLoader) {
     this.getPageContent(pageId).then((response) => {
       if (response.status == "success") {
-        this.setState({
-          pageContent: response.data.content
-        });
+        this.setState(
+          {
+            pageContent: response.data.content
+          },
+          hideLoader ? this.setState({ showLoader: false }) : null
+        );
+        let responseContent = response.data;
+        icon ? (responseContent.icon = icon) : null;
         let ev = new CustomEvent("updateBreadcrumb", {
           detail: response.data,
           bubbles: true
@@ -162,6 +167,7 @@ class Page extends React.Component {
       var copyPageContent = [];
       var fileId;
       var checkForTypeUpdate = false;
+      var updateBreadcrumb = true;
       action.details.every(async (item, index) => {
         var copyItem = JSON.parse(JSON.stringify(item));
         if (item.type == "Update") {
@@ -186,7 +192,9 @@ class Page extends React.Component {
         } else {
           if (item.params) {
             if (item.params.page_id) {
-              that.loadPage(item.params.page_id);
+              updateBreadcrumb = false;
+              checkForTypeUpdate = true;
+              this.loadPage(item.params.page_id, action.icon, true);
             }
           }
           if (item.url) {
@@ -201,27 +209,29 @@ class Page extends React.Component {
           copyPageContent.push(copyItem);
         }
       });
-      let ev = new CustomEvent("updateBreadcrumb", {
-        detail: action,
-        bubbles: true
-      });
-      document
-        .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
-        .dispatchEvent(ev);
+      if (updateBreadcrumb) {
+        let ev = new CustomEvent("updateBreadcrumb", {
+          detail: action,
+          bubbles: true
+        });
+        document
+          .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
+          .dispatchEvent(ev);
+      }
     }
-    this.setState({
+    this.setState((prevState) => ({
       fileId: fileId,
       showLoader: checkForTypeUpdate ? true : false,
-      currentRow: rowData,
+      currentRow: merge(prevState.currentRow, rowData),
       pageContent: copyPageContent
-    });
+    }));
   }
 
   updateActionHandler(details, rowData) {
     var that = this;
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData).then(response => {
+      that.updateCall(queryRoute, rowData).then((response) => {
         that.setState({
           showLoader: false
         });
@@ -239,23 +249,22 @@ class Page extends React.Component {
     if (typeof route == "object") {
       var final_route = JSON.parse(JSON.stringify(route));
       Object.keys(route).map((item) => {
-          if(/\{\{.*?\}\}/g.test(route[item])){
-            if(finalParams[item]){
-              final_route[item] = finalParams[item];
-            } else {
-              if(item == 'appId'){
-                final_route[item] = this.appId;
-              } else if(item == 'fileId' && this.state.fileId){
-                final_route[item] = this.state.fileId;
-              } else {
-                final_route[item] = null;
-              }
-            }
+        if (/\{\{.*?\}\}/g.test(route[item])) {
+          if (finalParams[item]) {
+            final_route[item] = finalParams[item];
           } else {
-            final_route[item] = route[item];
+            if (item == "appId") {
+              final_route[item] = this.appId;
+            } else if (item == "fileId" && this.state.fileId) {
+              final_route[item] = this.state.fileId;
+            } else {
+              final_route[item] = null;
+            }
           }
+        } else {
+          final_route[item] = route[item];
         }
-      );
+      });
       return final_route;
     } else {
       var regex = /\{\{.*?\}\}/g;
@@ -267,8 +276,6 @@ class Page extends React.Component {
         }
         // The result can be accessed through the `m`-variable.
         m.forEach((match, groupIndex) => {
-        console.log(match);
-        console.log(groupIndex);
           // console.log(`Found match, group ${groupIndex}: ${match}`);
           route = route.replace(
             match,
@@ -395,6 +402,7 @@ class Page extends React.Component {
             gridOperations={itemContent.operations}
             gridToolbar={itemContent.toolbarTemplate}
             filterable={itemContent.filterable}
+            groupable={itemContent.groupable}
             reorderable={itemContent.reorderable}
             resizable={itemContent.resizable}
             pageable={itemContent.pageable}
@@ -510,3 +518,4 @@ class Page extends React.Component {
 }
 
 export default Page;
+

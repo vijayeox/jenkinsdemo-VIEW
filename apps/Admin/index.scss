@@ -158,15 +158,15 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     background-color: $primary-color;
     border-radius: 10px;
     padding: 5px;
-    font-size: 15px;
-    height: 2.2rem;
-    width: 2.2rem;
+    font-size: 14px;
+    height: 33px;
+    width: 33px;
     margin: 0px 5px;
   }
 
   tr {
     th.k-header {
-      font-size: large;
+      font-size: 15px;
       padding: 0.4rem 0.6rem;
       background-color: $primary-color;
       color: #f8f0ee;
@@ -756,9 +756,12 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     margin-top: 25px;
   }
 
-  // .k-filtercell-operator {
-  //   display: none;
-  // }
+  .k-grid {
+    font-size: 14px;
+    .k-button{
+    font-size: 14px;
+    }
+  }
 
   .k-grid-content {
     overflow-y: scroll;
@@ -848,7 +851,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   }
 
   .manageIcons {
-    font-size: 20px;
+    font-size: 19px;
     color: #ffffff;
     display: block;
   }

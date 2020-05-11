@@ -188,8 +188,9 @@ export default class Panel extends EventEmitter {
             return;
           }
         } else {
-          document.getElementById('appmenu').classList.remove('appmenu-visible');
-          //document.getElementById('profileMenu').classList.remove('profile-visible');
+          if(document.getElementById('appmenu')){
+            document.getElementById('appmenu').classList.remove('appmenu-visible');
+          }
         }
       }
     };

@@ -33,7 +33,7 @@
   const trayOptions = {};
   let chatCount = 0;
   let tray = null;
-  var i, finalposition = {}, finalDimension = {};
+  var i, finalposition, finalDimension, finalMaximised = false,finalMinimised = true;
 
   const resetBadge = () => {
     if(trayOptions.count > 0){
@@ -52,9 +52,13 @@
 
   // Chat Header Icons are interchanged purposefully. Do not change this.
   const HeaderIcon = () => {
-  let parent = document.querySelectorAll(".osjs-window[data-id=ChatWindow] div.osjs-window-header")[0];
-  if(parent.childNodes[2].getAttribute('data-action') == 'minimize'){
-    let maximize = parent.insertBefore(parent.childNodes[3],parent.childNodes[2]);
+  let parent = document.querySelectorAll(
+      ".osjs-window[data-id=ChatWindow] div.osjs-window-header"
+    )[0];
+    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+      clonedItem.className = "osjs-window-button dummyCloseButton";
+      parent.appendChild(clonedItem);
     }
   }
   
@@ -160,6 +164,8 @@
         if (Object.keys(session[i].windows).length && session[i].name == "Chat"){
           finalposition = session[i].windows[0].position;
           finalDimension = session[i].windows[0].dimension;
+          finalMaximised = session[i].windows[0].maximized;
+          finalMinimised = session[i].windows[0].minimized;
         }
       }
       // Create  a new Window instance
@@ -170,6 +176,8 @@
           title: metadata.title.en_EN,
           dimension: finalDimension ? finalDimension : {width: 400, height: 500},
           position: finalposition ? finalposition : {left: 200, top: 400},
+          maximized: finalMaximised,
+          minimized: finalMinimised, 
           attributes : {
             visibility: 'restricted',
             closeable: false
@@ -197,7 +205,12 @@
           });
          
           // console.log(maximize);
-           win.minimize();
+          if(finalMinimised){
+            win.minimize();
+          }
+          if(finalMaximised){
+            win.maximize();
+          }
           const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
           
           const user = core.make('osjs/auth').user();
@@ -236,7 +249,6 @@
             trayOptions.onclick = () => {
                       console.log(proc);
                       win.raise();
-                      HeaderIcon();
                       win.focus();
                       resetBadge();
             }

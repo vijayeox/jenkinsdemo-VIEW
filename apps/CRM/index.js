@@ -32,6 +32,8 @@
   } from "./metadata.json";
   const baseUrl = process.env.SERVER;
 
+  var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+
   const createIframe = (bus, proc, win, cb) => {
     const iframe = document.createElement("iframe");
     iframe.style.width = "100%";
@@ -92,20 +94,28 @@
         metadata
       });
 
+      let session = core.make('osjs/settings').get('osjs/session');
+      let sessions = Object.entries(session);
+      for (i = 0; i < sessions.length; i++) {
+        if (Object.keys(session[i].windows).length && session[i].name == "CRM"){
+          finalposition = session[i].windows[0].position;
+          finalDimension = session[i].windows[0].dimension;
+          finalMaximised = session[i].windows[0].maximized;
+          finalMinimised = session[i].windows[0].minimized;
+        }
+      }
       // Create  a new Window instance
       const win = proc
         .createWindow({
           id: "CRMApplicationWindow",
           icon: proc.resource(proc.metadata.icon_white),
           title: metadata.title.en_EN,
-          dimension: {width: document.body.clientWidth, height: document.body.clientHeight},
+          dimension: finalDimension ? finalDimension : {width: 860, height: 550},
           attributes: {
-            state: {
-              maximized: true
-            }
-          }
+           minDimension: { width: 800, height: 500 },
+          },
           // dimension: {width: 400, height: 400},
-          // position: {left: 200, top: 0}
+          position:  finalposition ? finalposition :{left: 200, top: 0}
         })
         .on("destroy", () => proc.destroy())
         // .on('init', () => ref.maximize())
@@ -120,9 +130,16 @@
               ev.stopPropagation();
               ev.preventDefault();
             });
-
-          win.maximize();
-          win.attributes.maximizable = false;
+            if (!finalMinimised && !finalMaximised){
+              win.maximize();
+            }
+            if(finalMinimised){
+              win.minimize();
+            }
+            if(finalMaximised){
+              win.maximize();
+            }
+            win.attributes.maximizable = true;
           // Create a new bus for our messaging
           const bus = core.make("osjs/event-handler", "CRMApplicationWindow");
 

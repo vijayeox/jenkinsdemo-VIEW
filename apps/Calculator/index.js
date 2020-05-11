@@ -34,6 +34,9 @@ import {name as applicationName} from './metadata.json';
 import {app, h} from 'hyperapp';
 import {Box, BoxContainer, TextField, Button} from '@osjs/gui';
 
+
+var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+
 const buttons = [
   [
     {name: 'ce', label: 'CE'},
@@ -214,15 +217,39 @@ osjs.register(applicationName, (core, args, options, metadata) => {
     options,
     metadata
   });
+  let session = core.make('osjs/settings').get('osjs/session');
+  let sessions = Object.entries(session);
+  for (i = 0; i < sessions.length; i++) {
+    if (Object.keys(session[i].windows).length && session[i].name == "Calculator"){
+      finalposition = session[i].windows[0].position;
+      finalDimension = session[i].windows[0].dimension;
+      finalMaximised = session[i].windows[0].maximized;
+      finalMinimised = session[i].windows[0].minimized;
+    }
+  }
 
-  proc.createWindow({
+  const createProcWindow = () => {
+          const win = proc
+  .createWindow({
     title,
     id: 'Calculator',
     icon: proc.resource(metadata.icon_white),
-    dimension: {width: 300, height: 500}
+    dimension: finalDimension ? finalDimension : {width: 300, height: 500},
+    position:  finalposition ? finalposition : {left: 150, top: 50},
+    maximized: finalMaximised,
+    minimized: finalMinimised, 
   })
     .on('destroy', () => proc.destroy())
     .render(($content, win) => createApplication($content, win, proc));
+     if(finalMinimised){
+      win.minimize();
+    }
+    if(finalMaximised){
+      win.maximize();
+    }
+  }
+  
+  createProcWindow();
 
   return proc;
 });

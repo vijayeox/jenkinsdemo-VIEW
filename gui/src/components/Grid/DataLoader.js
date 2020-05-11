@@ -1,7 +1,7 @@
 import React from "react";
 import { toODataString } from "@progress/kendo-data-query";
 import moment from "moment";
-import Notification from "./../../Notification";
+import { process } from "@progress/kendo-data-query";
 
 export class DataLoader extends React.Component {
   constructor(props) {
@@ -14,25 +14,34 @@ export class DataLoader extends React.Component {
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
     this.loader = this.core.make("oxzion/splash");
-
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.url !== prevProps.url) {
+    if (
+      this.props.url !== prevProps.url ||
+      this.props.dataState !== prevProps.dataState
+    ) {
       this.setState({
         url: this.props.url
       });
-      this.getData(this.props.url).then(response => {
+      this.getData(this.props.url).then((response) => {
         if (typeof response == "object" && response.status == "success") {
+          if (this.props.dataState.group) {
+            var groupConfig = {
+              group: this.props.dataState.group
+            };
+          }
           this.props.onDataRecieved({
-            data: response.data,
-            total: response.total
+            data: groupConfig
+              ? process(response.data, groupConfig)
+              : response.data,
+            total: response.total ? response.total : null
           });
         } else {
           //put notification
           this.pending = undefined;
         }
-        this.loader.destroy()
+        this.loader.destroyGrid();
       });
     }
   }
@@ -67,7 +76,12 @@ export class DataLoader extends React.Component {
       }
 
       let data = this.props.urlPostParams
-        ? await helper.request("v1", "/" + route, this.props.urlPostParams, "post")
+        ? await helper.request(
+            "v1",
+            "/" + route,
+            this.props.urlPostParams,
+            "post"
+          )
         : await helper.request("v1", "/" + route, {}, "get");
       if (data.status == "success") {
         return data;
@@ -109,11 +123,11 @@ export class DataLoader extends React.Component {
             searchQuery.map(searchItem=>
               newFilters.push({
                 field: filterItem2.field,
-                operator:filterItem2.operator,
+                operator: filterItem2.operator,
                 value: searchItem
               })
-            )
-            ColumnItem.multiFieldFilter.map(multiFieldItem => {
+            );
+            ColumnItem.multiFieldFilter.map((multiFieldItem) => {
               let newFilter = JSON.parse(JSON.stringify(filterItem2));
               searchQuery.map(searchItem=>
                 newFilters.push({
@@ -135,13 +149,13 @@ export class DataLoader extends React.Component {
     return gridConfig;
   };
 
-  refresh = temp => {
-    this.getData(this.state.url).then(response => {
+  refresh = (temp) => {
+    this.getData(this.state.url).then((response) => {
       this.props.onDataRecieved({
         data: response.data,
         total: response.total
       });
-      this.loader.destroy()
+      this.loader.destroy();
     });
   };
 
@@ -154,22 +168,29 @@ export class DataLoader extends React.Component {
     }
     this.pending = toODataString(this.props.dataState, this.props.dataState);
     // if(typeof this.timeout === 'number'){
-    //   window.clearTimeout(this.timeout);      
+    //   window.clearTimeout(this.timeout);
     // }
     // this.timeout = window.setTimeout(() => {
-      this.getData(this.state.url).then(response => {
-        this.lastSuccess = this.pending;
-        this.pending = "";
-        if (toODataString(this.props.dataState) === this.lastSuccess) {
-          this.props.onDataRecieved.call(undefined, {
-            data: response.data,
-            total: response.total ? response.total : null
-          });
-         this.loader.destroy()
-        } else {
-          this.requestDataIfNeeded();
+    this.getData(this.state.url).then((response) => {
+      this.lastSuccess = this.pending;
+      this.pending = "";
+      if (toODataString(this.props.dataState) === this.lastSuccess) {
+        if (this.props.dataState.group) {
+          var groupConfig = {
+            group: this.props.dataState.group
+          };
         }
-      });
+        this.props.onDataRecieved.call(undefined, {
+          data: groupConfig
+            ? process(response.data, groupConfig)
+            : response.data,
+          total: response.total ? response.total : null
+        });
+        this.loader.destroyGrid();
+      } else {
+        this.requestDataIfNeeded();
+      }
+    });
     // }, 2000);
   };
 

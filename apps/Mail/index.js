@@ -36,6 +36,7 @@
     const trayOptions = {};
     let mailCount = 0;
     let tray = null;
+    var i, finalposition, finalDimension,finalMaximised = false,finalMinimised = true;
 
     const resetBadge = () => {
       if (trayOptions.count > 0) {
@@ -44,6 +45,17 @@
         tray.update(trayOptions);
       }
     };
+      // MailApplicationWindow Header Icons are interchanged purposefully. Do not change this.
+  const HeaderIcon = () => {
+  let parent = document.querySelectorAll(
+      ".osjs-window[data-id=MailApplicationWindow] div.osjs-window-header"
+    )[0];
+    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+      clonedItem.className = "osjs-window-button dummyCloseButton";
+      parent.appendChild(clonedItem);
+    }
+  }
 
     const createIframe = (proc, win) => {
       const iframe = document.createElement("iframe");
@@ -100,7 +112,16 @@
           options,
           metadata
         });
-
+        let session = core.make('osjs/settings').get('osjs/session');
+        let sessions = Object.entries(session);
+        for (i = 0; i < sessions.length; i++) {
+          if (Object.keys(session[i].windows).length && session[i].name == "Mail"){
+            finalposition = session[i].windows[0].position;
+            finalDimension = session[i].windows[0].dimension;
+            finalMaximised = session[i].windows[0].maximized;
+            finalMinimised = session[i].windows[0].minimized;
+          }
+        }
         let trayInitialized = false;
         // Create  a new Window instance
         const createProcWindow = () => {
@@ -109,10 +130,10 @@
               id: "MailApplicationWindow",
               icon: proc.resource(proc.metadata.icon_white),
               title: metadata.title.en_EN,
-              dimension: {width: document.body.clientWidth, height: document.body.clientHeight},
-              state: {
-                maximized : true
-              },
+              position:  finalposition ? finalposition : { left: 150, top: 50},
+              dimension: finalDimension ? finalDimension : {width: 900, height: 600},
+              maximized: finalMaximised,
+              minimized: finalMinimised, 
               attributes: {
                 visibility: "restricted",
                 closeable: false,
@@ -130,6 +151,7 @@
             .on("destroy", () => proc.destroy())
             .render(($content, win) => {
 
+              HeaderIcon();
                 // Context menu is hidden
             win.$icon.addEventListener('click', (ev) => {
               ev.stopPropagation();
@@ -141,9 +163,15 @@
               ev.preventDefault();
             });
 
+              if(finalMinimised){
+                win.minimize();
+              }
+              if(finalMaximised){
+                win.maximize();
+              }
               // win.maximize();
-              win.minimize();
-              win.attributes.maximizable = false;
+              // win.minimize();
+              win.attributes.maximizable = true;
               // Create a new bus for our messaging
               const profile = core.make("oxzion/profile");
               const details = profile.get();
@@ -210,7 +238,6 @@
                 trayOptions.onclick = () => {
                   
                   win.raise();
-                  win.maximize();
                   win.focus();
                   resetBadge();
                 }

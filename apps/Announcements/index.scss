@@ -1,8 +1,7 @@
 .osjs-window[data-id="annoucementsWindow"] {
-  // .osjs-window-button[data-action="minimize"] > div {
-  //   background-position: 50% 50%;
-  //   background-image: url("./close.svg");
-  // }
+  .dummyCloseButton > div{
+    background-image: url("./close.svg");
+  }
   @import "./node_modules/bootstrap/dist/css/bootstrap.css";
   @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
 
@@ -31,7 +30,7 @@
   .Announcement-visuals {
     img {
       width: auto;
-      height: 100%;
+      height: auto;
       max-width: 100%;
     }
   }

@@ -34,7 +34,7 @@ export default {
           title: "Description",
           field: "description",
           cell:
-            '<td>{item.description ? item.description.slice(0, 150) + "..." : "No Description Added"}</td>'
+            '<td>{item.description ? item.description.slice(0, 150) : "No Description Added"}</td>'
         },
         {
           title: "Type",
@@ -42,7 +42,7 @@ export default {
           filterCell: {
             type: "dropdown",
             listItems: ["ANNOUNCEMENT", "HOMESCREEN"],
-            placeholder: "Select Product"
+            placeholder: "Select Type"
           }
         }
       ],

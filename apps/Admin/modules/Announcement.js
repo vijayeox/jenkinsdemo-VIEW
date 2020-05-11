@@ -1,4 +1,4 @@
-import {React,ReactDOM,MultiSelect,OX_Grid,Notification} from "oxziongui";
+import { React, ReactDOM, MultiSelect, OX_Grid, Notification } from "oxziongui";
 import { TitleBar } from "./components/titlebar";
 import { DeleteEntry } from "./components/apiCalls";
 import Swal from "sweetalert2";
@@ -8,6 +8,8 @@ class Announcement extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.loader = this.core.make("oxzion/splash");
+    this.adminWindow = document.getElementsByClassName("Window_Admin")[0];
     this.moduleConfig = config[this.props.name];
     this.listConfig = this.moduleConfig.listConfig;
     this.state = {
@@ -75,6 +77,7 @@ class Announcement extends React.Component {
   }
 
   addUsersToEntity = (dataItem) => {
+    this.loader.show(this.adminWindow);
     this.getAnnouncementGroups(dataItem.uuid).then((response) => {
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
@@ -90,9 +93,12 @@ class Announcement extends React.Component {
           closeDialog: this.toggleDialog
         }
       });
-      this.setState({
-        visible: !this.state.visible
-      });
+      this.setState(
+        {
+          visible: !this.state.visible
+        },
+        this.loader.destroy()
+      );
     });
   };
 
@@ -191,7 +197,6 @@ class Announcement extends React.Component {
             type="button"
             className="btn manage-btn"
             onClick={() => {
-              console.log(action[key].type);
               switch (action[key].type) {
                 case "edit":
                   that.edit(e, false);

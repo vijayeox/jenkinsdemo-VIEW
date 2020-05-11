@@ -4,6 +4,7 @@ import {React,ReactDOM} from "oxziongui";
 import { icon_white } from "./metadata.json";
 import Home from "./home";
 
+var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
@@ -12,23 +13,37 @@ const register = (core, args, options, metadata) => {
     options,
     metadata
   });
+    let session = core.make('osjs/settings').get('osjs/session');
+  let sessions = Object.entries(session);
+  for (i = 0; i < sessions.length; i++) {
+    if (Object.keys(session[i].windows).length && session[i].name == "Admin"){
+      finalposition = session[i].windows[0].position;
+      finalDimension = session[i].windows[0].dimension;
+      finalMaximised = session[i].windows[0].maximized;
+      finalMinimised = session[i].windows[0].minimized;
+    }
+  }
   // Create  a new Window instance
-  proc
+ const createProcWindow = () => {
+    var win = proc
     .createWindow({
       id: "AdminWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon_white),
-      dimension: {
-        width: 860,
-        height: 555
-      },
-      minDimension: {
-        width: 860,
-        height: 555
-      },
-      position: {
-        left: 150,
-        top: 50
+      attributes: {
+        classNames: ["Window_Admin"],
+        dimension: finalDimension ? finalDimension : {
+          width: 860,
+          height: 555
+        },
+        minDimension: {
+          width: 850,
+          height: 520
+        },
+        position:  finalposition ? finalposition : {
+          left: 150,
+          top: 50
+        }
       }
     })
     .on("destroy", () => proc.destroy())
@@ -61,6 +76,15 @@ const register = (core, args, options, metadata) => {
       );
     })
     .render($content => ReactDOM.render(<Home args={core} />, $content));
+
+    if(finalMinimised){
+      win.minimize();
+    }
+    if(finalMaximised){
+      win.maximize();
+    }
+  };
+  createProcWindow(proc);
 
   return proc;
 };
