@@ -32,7 +32,7 @@
   } from "./metadata.json";
   const baseUrl = process.env.SERVER;
 
-  var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+  var i, finalposition, finalDimension, finalMaximised, finalMinimised;
 
   const createIframe = (bus, proc, win, cb) => {
     const iframe = document.createElement("iframe");
@@ -130,9 +130,6 @@
               ev.stopPropagation();
               ev.preventDefault();
             });
-            if (!finalMinimised && !finalMaximised){
-              win.maximize();
-            }
             if(finalMinimised){
               win.minimize();
             }

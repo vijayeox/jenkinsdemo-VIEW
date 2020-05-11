@@ -35,7 +35,7 @@ import {app, h} from 'hyperapp';
 import {Box, BoxContainer, TextField, Button} from '@osjs/gui';
 
 
-var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 
 const buttons = [
   [
@@ -236,6 +236,9 @@ osjs.register(applicationName, (core, args, options, metadata) => {
     icon: proc.resource(metadata.icon_white),
     dimension: finalDimension ? finalDimension : {width: 300, height: 500},
     position:  finalposition ? finalposition : {left: 150, top: 50},
+    attributes: {
+     minDimension: { width: 800, height: 500 },
+   },
     maximized: finalMaximised,
     minimized: finalMinimised, 
   })

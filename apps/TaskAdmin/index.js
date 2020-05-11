@@ -30,7 +30,9 @@
   import {
     name as applicationName
   } from "./metadata.json";
-
+  
+  var i, finalposition, finalDimension,finalMaximised,finalMinimised;
+  
   const baseUrl = process.env.SERVER;
   OSjs.make("osjs/packages").register(
     "TaskAdmin",
@@ -41,14 +43,32 @@
         options,
         metadata
       });
+        let session = core.make('osjs/settings').get('osjs/session');
+  let sessions = Object.entries(session);
+  for (i = 0; i < sessions.length; i++) {
+    if (Object.keys(session[i].windows).length && session[i].name == "TaskAdmin"){
+      finalposition = session[i].windows[0].position;
+      finalDimension = session[i].windows[0].dimension;
+      finalMaximised = session[i].windows[0].maximized;
+      finalMinimised = session[i].windows[0].minimized;
+    }
+  }
 
   proc.createWindow({ id: "TaskAdminApplicationWindow", icon: proc.resource(proc.metadata.icon_white),
-  title: metadata.title.en_EN, dimension: {width: 400, height: 400},  state: {
-    maximized : true
-  },})
+  title: metadata.title.en_EN, dimension: finalDimension ? finalDimension : {width: 400, height: 400},
+  position:  finalposition ? finalposition : {left: 350, top: 100} ,
+  attributes: {
+   minDimension: { width: 800, height: 500 },
+ },})
   .on('destroy', () => proc.destroy())
   .render(($content, win) => {
     // Add our process and window id to iframe URL
+    if(finalMinimised){
+      win.minimize();
+    }
+    if(finalMaximised){
+      win.maximize();
+    }
     win.attributes.maximizable = true;
     const profile = core.make("oxzion/profile");
     const details = profile.get();

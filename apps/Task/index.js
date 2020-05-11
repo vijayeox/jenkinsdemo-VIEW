@@ -32,7 +32,7 @@
   } from "./metadata.json";
 
 
-  var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+  var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 
   const baseUrl = process.env.SERVER;
   OSjs.make("osjs/packages").register(
@@ -58,16 +58,13 @@
 
   proc.createWindow({ id: "TaskApplicationWindow", icon: proc.resource(proc.metadata.icon_white),
   title: metadata.title.en_EN, dimension: finalDimension ? finalDimension : {width: 400, height: 400},
-    position:  finalposition ? finalposition : {left: 200, top: 0},
+    position:  finalposition ? finalposition : {left: 300, top: 100},
           attributes: {
            minDimension: { width: 800, height: 500 },
           },})
   .on('destroy', () => proc.destroy())
   .render(($content, win) => {
     // Add our process and window id to iframe URL
-    if (!finalMinimised && !finalMaximised){
-      win.maximize();
-    }
     if(finalMinimised){
       win.minimize();
     }
