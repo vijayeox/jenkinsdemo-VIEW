@@ -1,5 +1,5 @@
-.k-list-container{
-  li.k-item{
+.k-list-container {
+  li.k-item {
     font-size: small;
   }
 }
@@ -9,8 +9,8 @@
     height: 100%;
   }
 
-  .k-grid-header-wrap{
-    table{
+  .k-grid-header-wrap {
+    table {
       min-width: 800px;
     }
   }
@@ -158,22 +158,56 @@
     border-bottom: unset;
   }
 
-  .manage-btn {
-    //manage icons style and style
-    border-radius: 10px;
-    font-family: Roboto;
-    cursor: pointer;
-    width: auto;
-    height: 30px;
+  .gridActions {
+    display: flex;
+    justify-content: space-evenly;
+    cursor: default;
+    flex-wrap: wrap;
+
+    abbr {
+      padding: 3px;
+    }
+
+    .manage-btn {
+      //manage icons style and style
+      border-radius: 10px;
+      font-family: Roboto;
+      cursor: pointer;
+      width: auto;
+      height: 30px;
+    }
+
+    .manageIcons {
+      font-size: 1.1em;
+      color: #ffffff;
+      display: block;
+    }
   }
 
-  .manageIcons {
-    font-size: 1.1em;
-    color: #ffffff;
-    display: block;
-  }
+  // .gridPdfPage {
+  //   display: none;
+  // }
 
-  .fa-comments-o.manageIcons{
+  .fa-comments-o.manageIcons {
     font-size: 1.4em;
+  }
+}
+
+.k-pdf-export {
+  p{
+    font-size: 14px;
+  }
+  
+  .k-master-row {
+    td {
+      font-size: 12px;
+    }
+  }
+
+  .k-header {
+    .k-link{
+      font-size: 12px;
+      font-weight: bold;
+    }
   }
 }
