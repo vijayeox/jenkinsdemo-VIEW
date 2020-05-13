@@ -180,7 +180,8 @@
           minimized: finalMinimised, 
           attributes : {
             visibility: 'restricted',
-            closeable: false
+            closeable: false,
+             minDimension: { width: 350, height: 450},
           }
         })
         // To close the Chat app when the window is destructed

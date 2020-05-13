@@ -5,7 +5,7 @@ import Slider from './slider.js';
 import {React,ReactDOM} from "oxziongui";
 
 let tray = null;
-var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance

@@ -4,7 +4,7 @@ import {React,ReactDOM} from "oxziongui";
 import { icon_white } from "./metadata.json";
 import Home from "./home";
 
-var i, finalposition = {}, finalDimension = {},finalMaximised,finalMinimised;
+var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance

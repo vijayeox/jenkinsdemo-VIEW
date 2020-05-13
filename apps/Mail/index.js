@@ -137,7 +137,7 @@
               attributes: {
                 visibility: "restricted",
                 closeable: false,
-                minimizable: true
+                 minDimension: { width: 800, height: 500 },
               }
             })
             .on("close", () => {
