@@ -392,12 +392,14 @@ class Page extends React.Component {
             key={i}
             osjsCore={this.core}
             data={dataString}
+            parentData={this.state.currentRow}
             urlPostParams={item.urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
                 ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
                 : undefined
             }
+            exportToPDF={itemContent.exportToPDF}
             forceDefaultFilters={itemContent.forceDefaultFilters}
             gridOperations={itemContent.operations}
             gridToolbar={itemContent.toolbarTemplate}
