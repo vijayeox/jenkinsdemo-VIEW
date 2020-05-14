@@ -30,7 +30,7 @@ export default class OX_Grid extends React.Component {
       : undefined;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
-      gridData: this.rawDataPresent ? this.props.data : [],
+      gridData: this.rawDataPresent ? this.props.data : { data: [], total: 0 },
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
@@ -91,6 +91,7 @@ export default class OX_Grid extends React.Component {
           defaultFilters = JSON.parse(getUrlParams.filter);
         } catch (e) {
           console.log(getUrlParams.filter);
+          defaultFilters = getUrlParams.filter;
         }
       } else {
         apiUrl = this.props.data;
@@ -284,6 +285,7 @@ export default class OX_Grid extends React.Component {
 
   renderListOperations = (config) => {
     var operationsList = [];
+    var listData = this.state.gridData.data;
     config.actions.map((i) => {
       let result = eval(i.rule);
       result ? operationsList.push(i) : null;
@@ -445,7 +447,6 @@ export default class OX_Grid extends React.Component {
             }
           >
             <Grid
-              data={this.state.gridData.data}
               data={
                 this.props.exportToPDF.defaultFilters &&
                 this.state.gridData.data
@@ -471,17 +472,9 @@ class CustomCell extends GridCell {
     if (checkType == "function") {
       var cellTemplate = this.props.cellTemplate(this.props.dataItem);
       if (this.props.type == "filterTemplate") {
-        return (
-          <div className="gridActions">
-            {cellTemplate}
-          </div>
-        );
+        return <div className="gridActions">{cellTemplate}</div>;
       } else {
-        return (
-          <td className="gridActions">
-            {cellTemplate}
-          </td>
-        );
+        return <td className="gridActions">{cellTemplate}</td>;
       }
     } else if (checkType == "string") {
       return (
