@@ -20,7 +20,7 @@ class Dashboard extends Component {
       uuid = this.props.uuid;
     }
     if (this.props.content) {
-      var content = JSON.parse(this.props.content)
+      var content = this.props.content
       if (content && content.uuid) {
         uuid = content.uuid;
       }
