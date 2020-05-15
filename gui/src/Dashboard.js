@@ -197,14 +197,15 @@ class Dashboard extends Component {
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
         .then(response=>{
-          response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
-          widgetCounter++
-          if ('error' === response.status) {
-            console.error('Could not load widget.');
-            console.error(response);
-            errorFound = true;
-          }
-          else {
+          if(response.status =="success"){
+            response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
+            widgetCounter++
+            if ('error' === response.status) {
+              console.error('Could not load widget.');
+              console.error(response);
+              errorFound = true;
+            }
+            else {
             //dispose if widget exists
             let widgetObject = WidgetRenderer.render(widget, response.data.widget);
             if (widgetObject) {
@@ -214,7 +215,13 @@ class Dashboard extends Component {
           if(widgetCounter==widgets.length){
             this.loader.destroy();
           }
-        })
+          } else {
+            widgetCounter++
+            if(widgetCounter==widgets.length){
+              this.loader.destroy();
+            }
+          }
+        });
       }
     }
     if (errorFound) {
