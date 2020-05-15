@@ -1,6 +1,7 @@
-import {React,ReactDOM,Notification,CountryCodes,AvatarImageCropper,ReactBootstrap,Webcam,KendoReactDateInputs,KendoReactEditor,PhoneInput} from "oxziongui";
+import {React,ReactDOM,Notification,CountryCodes,ReactBootstrap,Webcam,KendoReactDateInputs,KendoReactEditor,PhoneInput} from "oxziongui";
 import Moment from "moment";
 import image2base64 from "image-to-base64";
+import AvatarImageCropper from "react-avatar-image-cropper";
 import Countries from '../public/js/countries'
 import states from '../public/js/states'
 const {
@@ -286,6 +287,7 @@ class EditProfile extends React.Component {
       var src = window.URL.createObjectURL(file);
       image2base64(src)
         .then(response => {
+          console.log(response);
           var base64Data = "data:image/jpeg;base64," + response;
           this.submitProfilePic(base64Data);
         })
