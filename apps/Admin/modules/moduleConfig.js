@@ -9,6 +9,7 @@ export default {
     dialogWindow: DialogContainerAnnouncement,
     listConfig: {
       route: "announcements",
+      defaultFilters: '{"sort":[{"field":"created_date","dir":"desc"}]}',
       toolbarTemplate: (
         <h5 key={1} style={{ margin: "0px" }}>
           Announcements List
@@ -39,6 +40,7 @@ export default {
         {
           title: "Type",
           field: "type",
+          width: "230px",
           filterCell: {
             type: "dropdown",
             listItems: ["ANNOUNCEMENT", "HOMESCREEN"],

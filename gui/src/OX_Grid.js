@@ -8,15 +8,15 @@ import {
   GridNoRecords,
   GridToolbar
 } from "@progress/kendo-react-grid";
+import { process } from "@progress/kendo-data-query";
+import { GridPDFExport } from "@progress/kendo-react-pdf";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import $ from "jquery";
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
-
 import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
 import CustomFilter from "./components/Grid/CustomFilter";
-
 import "./components/Grid/customStyles.scss";
 
 export default class OX_Grid extends React.Component {
@@ -30,18 +30,19 @@ export default class OX_Grid extends React.Component {
       : undefined;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.state = {
-      gridData: this.rawDataPresent ? this.props.data : [],
+      gridData: this.rawDataPresent ? this.props.data : { data: [], total: 0 },
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
       apiActivityCompleted: this.rawDataPresent ? true : false
     };
+    this.loader = this.props.osjsCore.make("oxzion/splash");
     this.child = React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
   }
 
   componentDidMount() {
-    $(document).ready(function() {
+    $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
     if (!document.getElementsByClassName("PageRender")) {
@@ -50,14 +51,14 @@ export default class OX_Grid extends React.Component {
     }
   }
 
-  dataStateChange = e => {
+  dataStateChange = (e) => {
     this.setState({
       ...this.state,
       dataState: e.data
     });
   };
 
-  dataRecieved = data => {
+  dataRecieved = (data) => {
     this.setState({
       gridData: data,
       apiActivityCompleted: true
@@ -80,7 +81,7 @@ export default class OX_Grid extends React.Component {
       var getUrlParams = decodeURI(splitUrl[1])
         .replace("?", "")
         .split("&")
-        .map(param => param.split("="))
+        .map((param) => param.split("="))
         .reduce((values, [key, value]) => {
           values[key] = value;
           return values;
@@ -90,7 +91,6 @@ export default class OX_Grid extends React.Component {
           defaultFilters = JSON.parse(getUrlParams.filter);
         } catch (e) {
           console.log(getUrlParams.filter);
-          console.log(e);
           defaultFilters = getUrlParams.filter;
         }
       } else {
@@ -99,7 +99,7 @@ export default class OX_Grid extends React.Component {
     }
   }
 
-  createColumns = () => {
+  createColumns = (columnConfig) => {
     let table = [];
     this.props.checkBoxSelection
       ? table.push(
@@ -119,12 +119,12 @@ export default class OX_Grid extends React.Component {
           />
         )
       : null;
-    this.props.columnConfig.map((dataItem, i) => {
+    columnConfig.map((dataItem, i) => {
       table.push(
         <GridColumn
           cell={
             dataItem.cell
-              ? item => (
+              ? (item) => (
                   <CustomCell
                     cellTemplate={dataItem.cell}
                     dataItem={item.dataItem}
@@ -165,21 +165,62 @@ export default class OX_Grid extends React.Component {
     return table;
   };
 
-  expandChange = event => {
+  generateGridToolbar() {
+    let gridToolbarContent = [];
+    if (typeof this.props.gridToolbar == "string") {
+      gridToolbarContent.push(
+        <JsxParser
+          bindings={{
+            item: this.props.dataItem,
+            moment: moment,
+            profile: this.props.userProfile,
+            baseUrl: this.props.baseUrl,
+            gridData: this.state.gridData.data
+          }}
+          jsx={this.props.gridToolbar}
+        />
+      );
+    } else if (this.props.gridToolbar) {
+      gridToolbarContent.push(this.props.gridToolbar);
+    }
+    if (this.props.exportToPDF) {
+      gridToolbarContent.push(
+        <button className="k-button" onClick={this.exportPDF}>
+          Export to PDF
+        </button>
+      );
+    }
+    if (this.props.gridOperations) {
+      gridToolbarContent.length == 0
+        ? gridToolbarContent.push(<div></div>)
+        : null;
+      gridToolbarContent.push(
+        this.renderListOperations(this.props.gridOperations)
+      );
+    }
+    return gridToolbarContent.length > 0 ? gridToolbarContent : false;
+  }
+
+  exportPDF = () => {
+    this.loader.show();
+    this.gridPDFExport.save(this.state.data, this.loader.destroy());
+  };
+
+  expandChange = (event) => {
     event.dataItem.expanded = !event.dataItem.expanded;
     this.forceUpdate();
   };
 
-  headerSelectionChange = event => {
+  headerSelectionChange = (event) => {
     const checked = event.syntheticEvent.target.checked;
-    this.state.gridData.forEach(item => (item.selected = checked));
+    this.state.gridData.forEach((item) => (item.selected = checked));
     this.forceUpdate();
   };
 
   refreshHandler = () => {
     this.child.current.refresh();
   };
-  
+
   noRecordsJSX() {
     return (
       <GridNoRecords>
@@ -214,17 +255,17 @@ export default class OX_Grid extends React.Component {
     );
   }
 
-  selectionChange = event => {
+  selectionChange = (event) => {
     event.dataItem.selected = !event.dataItem.selected;
     this.forceUpdate();
     var selectedItems = [];
-    this.state.gridData.data.map(dataItem => {
+    this.state.gridData.data.map((dataItem) => {
       dataItem.selected ? selectedItems.push(dataItem) : null;
     });
     this.props.checkBoxSelection(selectedItems);
   };
 
-  updatePageContent = config => {
+  updatePageContent = (config) => {
     let eventDiv = document.getElementsByClassName(
       this.props.appId + "_breadcrumbParent"
     )[0];
@@ -242,10 +283,10 @@ export default class OX_Grid extends React.Component {
     eventDiv.dispatchEvent(ev2);
   };
 
-  renderListOperations = config => {
+  renderListOperations = (config) => {
     var operationsList = [];
     var listData = this.state.gridData.data;
-    config.actions.map(i => {
+    config.actions.map((i) => {
       let result = eval(i.rule);
       result ? operationsList.push(i) : null;
     });
@@ -256,7 +297,7 @@ export default class OX_Grid extends React.Component {
           textField="name"
           className="gridOperationDropdown"
           iconClass={config.icon ? config.icon : null}
-          onItemClick={e => {
+          onItemClick={(e) => {
             this.updatePageContent(e.item);
           }}
           popupSettings={{ popupClass: "dropDownButton" }}
@@ -270,7 +311,7 @@ export default class OX_Grid extends React.Component {
         <Button
           style={{ right: "10px", float: "right" }}
           primary={true}
-          onClick={e => this.updatePageContent(operationsList[0])}
+          onClick={(e) => this.updatePageContent(operationsList[0])}
         >
           {operationsList[0].name}
         </Button>
@@ -278,6 +319,41 @@ export default class OX_Grid extends React.Component {
     }
     return null;
   };
+
+  generatePDFTemplate(pageData) {
+    let PDFProps = this.props.exportToPDF;
+    return PDFProps.titleTemplate || PDFProps.JSXtemplate ? (
+      <div>
+        {pageData.pageNum == 1 && PDFProps.titleTemplate ? (
+          <div>
+            <JsxParser
+              bindings={{
+                pageData: pageData,
+                data: this.props.parentData,
+                moment: moment,
+                gridData: this.state.gridData.data
+              }}
+              jsx={PDFProps.titleTemplate}
+            />
+          </div>
+        ) : null}
+
+        {PDFProps.JSXtemplate ? (
+          <JsxParser
+            bindings={{
+              pageData: pageData,
+              data: this.props.parentData,
+              moment: moment,
+              gridData: this.state.gridData.data
+            }}
+            jsx={PDFProps.JSXtemplate}
+          />
+        ) : null}
+      </div>
+    ) : (
+      <div />
+    );
+  }
 
   render() {
     return (
@@ -306,6 +382,7 @@ export default class OX_Grid extends React.Component {
             columnConfig={this.props.columnConfig}
           />
         )}
+
         <Grid
           data={this.state.gridData.data}
           total={
@@ -315,7 +392,7 @@ export default class OX_Grid extends React.Component {
           }
           detail={
             this.props.rowTemplate
-              ? dataItem => (
+              ? (dataItem) => (
                   <DetailComponent
                     rowTemplate={this.props.rowTemplate}
                     dataItem={dataItem.dataItem}
@@ -335,15 +412,14 @@ export default class OX_Grid extends React.Component {
           onExpandChange={this.props.expandable ? this.expandChange : null}
           onHeaderSelectionChange={this.headerSelectionChange}
           onSelectionChange={this.selectionChange}
-          onRowClick={e => {
+          onRowClick={(e) => {
             this.props.onRowClick ? this.props.onRowClick(e) : null;
           }}
           selectedField="selected"
           expandField={this.props.expandable ? "expanded" : null}
           {...this.state.dataState}
         >
-          {(this.props.gridToolbar || this.props.gridOperations) &&
-          this.state.apiActivityCompleted ? (
+          {this.generateGridToolbar() && this.state.apiActivityCompleted ? (
             <GridToolbar>
               <div
                 style={{
@@ -352,26 +428,39 @@ export default class OX_Grid extends React.Component {
                   alignItems: "center"
                 }}
               >
-                {typeof this.props.gridToolbar == "string" ||
-                typeof this.props.gridToolbar == "undefined" ? (
-                  <JsxParser
-                    bindings={{ gridData: this.state.gridData.data }}
-                    jsx={this.props.gridToolbar}
-                  />
-                ) : (
-                  <GridToolbar>{this.props.gridToolbar}</GridToolbar>
-                )}
-                <div>
-                  {this.props.gridOperations
-                    ? this.renderListOperations(this.props.gridOperations)
-                    : null}
-                </div>
+                {this.generateGridToolbar()}
               </div>
             </GridToolbar>
           ) : null}
-          {this.createColumns()}
+          {this.createColumns(this.props.columnConfig)}
           {/* {this.noRecordsJSX()} */}
         </Grid>
+        {this.props.exportToPDF ? (
+          <GridPDFExport
+            pageTemplate={(props) => this.generatePDFTemplate(props)}
+            ref={(pdfExport) => (this.gridPDFExport = pdfExport)}
+            {...this.props.exportToPDF}
+            fileName={
+              this.props.exportToPDF.fileNameTemplate
+                ? eval(this.props.exportToPDF.fileNameTemplate)
+                : undefined
+            }
+          >
+            <Grid
+              data={
+                this.props.exportToPDF.defaultFilters &&
+                this.state.gridData.data
+                  ? process(
+                      this.state.gridData.data,
+                      JSON.parse(this.props.exportToPDF.defaultFilters)
+                    )
+                  : this.state.gridData.data
+              }
+            >
+              {this.createColumns(this.props.exportToPDF.columnConfig)}
+            </Grid>
+          </GridPDFExport>
+        ) : null}
       </div>
     );
   }
@@ -383,29 +472,9 @@ class CustomCell extends GridCell {
     if (checkType == "function") {
       var cellTemplate = this.props.cellTemplate(this.props.dataItem);
       if (this.props.type == "filterTemplate") {
-        return (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              cursor: "default"
-            }}
-          >
-            {cellTemplate}
-          </div>
-        );
+        return <div className="gridActions">{cellTemplate}</div>;
       } else {
-        return (
-          <td
-            style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              cursor: "default"
-            }}
-          >
-            {cellTemplate}
-          </td>
-        );
+        return <td className="gridActions">{cellTemplate}</td>;
       }
     } else if (checkType == "string") {
       return (
@@ -483,3 +552,6 @@ OX_Grid.propTypes = {
 //   "skip":0,
 //   "take":50
 // }
+
+// PDF Processing Kendo
+// https://www.telerik.com/kendo-react-ui/components/pdfprocessing/

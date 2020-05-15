@@ -622,12 +622,23 @@ class FormRender extends React.Component {
           form.on("prevPage", changed => {
             form.emit("render");
             that.setState({ page: changed.page });
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
+            if (elm.length > 0) {
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
+            }
           });
           form.on("nextPage", changed => {
             form.emit("render");
             that.runDelegates(form, form.pages[changed.page].originalComponent['properties']);
             that.setState({ page: changed.page });
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
+            if (elm.length > 0) {
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
+            }
           });
+          form.on("error",errors =>{
+            console.log(errors);
+          })
 
           form.on("change", function (changed) {
             console.log(changed)

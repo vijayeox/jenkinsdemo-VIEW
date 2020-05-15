@@ -33,12 +33,12 @@ const register = (core, args, options, metadata) => {
       attributes: {
         classNames: ["Window_Admin"],
         dimension: finalDimension ? finalDimension : {
-          width: 860,
-          height: 555
+          width: 900,
+          height: 570
         },
         minDimension: {
-          width: 850,
-          height: 520
+          width: 900,
+          height: 570
         },
         position:  finalposition ? finalposition : {
           left: 150,

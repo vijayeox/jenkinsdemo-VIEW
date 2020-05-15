@@ -20,7 +20,7 @@ class Dashboard extends Component {
       uuid = this.props.uuid;
     }
     if (this.props.content) {
-      var content = JSON.parse(this.props.content)
+      var content = this.props.content
       if (content && content.uuid) {
         uuid = content.uuid;
       }
@@ -51,6 +51,8 @@ class Dashboard extends Component {
       {},
       "get"
     );
+
+
     return response;
   }
 
@@ -190,12 +192,12 @@ class Dashboard extends Component {
     else{
       for (let widget of widgets) {
         var attributes = widget.attributes;
-        console.log(attributes)
         //dispose 
   
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
         .then(response=>{
+          response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
           widgetCounter++
           if ('error' === response.status) {
             console.error('Could not load widget.');

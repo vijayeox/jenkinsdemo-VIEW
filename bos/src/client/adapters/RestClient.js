@@ -127,13 +127,15 @@ export class RestClientServiceProvider extends ServiceProvider {
 		}
 		try {
 			if (method == 'get') {
+
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
 					headers: reqHeaders
 
 				})
-
+			
+				console.time(action)
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
