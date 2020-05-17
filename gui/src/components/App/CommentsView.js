@@ -2,10 +2,8 @@ import React from "react";
 import "./Styles/commentsView.scss";
 import defaultStyle from "./Styles/defaultMentionsStyle.js";
 import { MentionsInput, Mention } from "react-mentions";
-// import OX_Grid from "../../OX_Grid";
 import Swal from "sweetalert2";
 import { Button } from "@progress/kendo-react-buttons";
-import "./Pics/avatar.png";
 
 class CommentsView extends React.Component {
   constructor(props) {
@@ -14,7 +12,6 @@ class CommentsView extends React.Component {
     this.profileAdapter = this.core.make("oxzion/profile");
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
-    this.loader = this.core.make("oxzion/splash");
     this.state = {
       fileData: this.props.fileData,
       dataReady: this.props.url ? false : true,
@@ -28,18 +25,22 @@ class CommentsView extends React.Component {
 
   componentDidMount() {
     if (this.props.url != undefined) {
+      this.setState({fileId:this.props.url});
       this.getFileDetails(this.props.url).then((response) => {
         if (response.status == "success") {
-          this.setState({
-            fileData: response.data.data,
-            commentsList: this.formatFormData(response.data.data).comments
-              ? this.formatFormData(response.data.data).comments.map((i) => {
-                  return { id: this.uuidv4(), text: i };
-                })
-              : [],
-            dataReady: true,
-            fileId: response.data.uuid,
-          });
+          if(response.data && response.data.length > 0){
+            this.setState({
+              commentsList: response.data
+              ? this.formatFormData(response.data.map((i) => {
+                              return { id: this.uuidv4(), text: i.text };
+                            }))
+              : []
+            });
+            this.setState({dataReady:true});
+          } else {
+            this.setState({commentsList:[]});
+            this.setState({dataReady:true});
+          }
         }
       });
     }
@@ -53,7 +54,6 @@ class CommentsView extends React.Component {
       {},
       "get"
     );
-    // console.log(fileContent)
     return fileContent;
   }
 
@@ -87,14 +87,12 @@ class CommentsView extends React.Component {
     this.getFileDetails(this.props.url).then((response) => {
       if (response.status == "success") {
         this.setState({
-          fileData: response.data.data,
-          commentsList: this.formatFormData(response.data.data).comments
-            ? this.formatFormData(response.data.data).comments.map((i) => {
-                return { id: this.uuidv4(), text: i };
-              })
+          commentsList: response.data
+            ? this.formatFormData(response.data.map((i) => {
+                return { id: this.uuidv4(), text: i.text };
+              }))
             : [],
-          dataReady: true,
-          fileId: response.data.uuid
+          dataReady: true
         });
       }
     });
@@ -126,62 +124,43 @@ class CommentsView extends React.Component {
     });
   }
 
-  async callPipeline(data) {
+  async saveComments(data) {
     let helper = this.core.make("oxzion/restClient");
     let fileData = await helper.request(
       "v1",
-      "/app/" + this.appId + "/pipeline",
+      "file/"+ this.state.fileId +"/comment",
       data,
       "post"
     );
     return fileData;
   }
-
-  formatFormData(data) {
-    var parsedData = {};
-    Object.keys(data).forEach((key) => {
-      if ((key = "comments")) {
-      }
+    formatFormData(data) {
+    var parsedData = [];
+    for (var i = 0; i < data.length; i++) {
       try {
-        parsedData[key] =
-          typeof data[key] === "string"
-            ? JSON.parse(data[key])
-            : data[key] == undefined || data[key] == null
-            ? ""
-            : data[key];
-        if (
-          parsedData[key] == "" &&
-          data[key] &&
-          parsedData[key] != data[key]
-        ) {
-          parsedData[key] = data[key];
+        parsedData[i] = data[i];
+        parsedData[i]['text'] = typeof data[i]['text'] === "string" ? JSON.parse(data[i]['text']) : data[i]['text'] == undefined || data[i]['text'] == null ? "": data[i]['text'];
+        if ( parsedData[i]['text'] == "" && data[i]['text'] && parsedData[key]['text'] != data[i]['text']) {
+          parsedData[i]['text'] = data[i]['text'];
         }
-        if (parsedData[key] == "[]" && data[key]) {
-          parsedData[key] = [];
+        if (parsedData[key] == "[]" && data[i]['text']) {
+          parsedData[i]['text'] = [];
         }
       } catch (error) {
-        if (data[key] != undefined) {
-          parsedData[key] = data[key];
+        if (data[i]['text'] != undefined) {
+          parsedData[i]['text'] = data[i]['text'];
         }
       }
-    });
+    }
     return parsedData;
   }
 
-  saveFileData(stepBack) {
-    var newData = this.state.commentsList.map((i) => i.text);
-    this.state.mentionData.newPlainTextValue
-      ? newData.unshift(this.state.mentionData.newPlainTextValue)
-      : null;
+  saveComment(stepBack) {
     console.log(this.state.mentionData);
-    const file = {};
-    file.comments = JSON.stringify(newData);
-    file.entity_id = "1";
-    file.uuid = this.state.fileId;
-    file.command = "fileSave";
-    console.log(file);
-
-    this.callPipeline(file).then(() => {
+    const comment = {};
+    comment.text = JSON.stringify(newData);
+    console.log(comment);
+    this.saveComments(comment).then(() => {
       this.setState({
         mentionData: [],
         value: ""
@@ -234,7 +213,7 @@ class CommentsView extends React.Component {
               commentsList: commentsList
             },
             () => {
-              this.saveFileData(false);
+              this.saveComment(false);
             }
           );
         }
@@ -281,15 +260,11 @@ class CommentsView extends React.Component {
             <div className="col-1 flexCol" style={{ justifyContent: "center" }}>
               <Button
                 primary={true}
+                className="commentsSaveButton"
                 onClick={() => {
-                  this.saveFileData();
+                  this.saveComment();
                 }}
-                style={{
-                  width: "auto"
-                }}
-              >
-                Save
-              </Button>
+              ><i className="fa fa-floppy-o"></i></Button>
             </div>
           </div>
 
@@ -300,7 +275,7 @@ class CommentsView extends React.Component {
                   console.log(commentItem.text);
                   return (
                     <div className="message-row other-message">
-                      <img src={"pics/avatar.png"} alt="avatar images" />
+                      <img src={commentItem.icon} alt="avatar images" />
                       <div className="message-text">
                         <h4 className="header"> {commentItem.name}</h4>
                         {commentItem.text}
@@ -318,8 +293,6 @@ class CommentsView extends React.Component {
         </div>
       );
     } else {
-      var PageRenderDiv = document.querySelector(".PageRender");
-      this.loader.show(PageRenderDiv);
       return <div></div>;
     }
   }
