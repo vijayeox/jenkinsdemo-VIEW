@@ -2,9 +2,10 @@ import React from "react";
 import "./Styles/commentsView.scss";
 import defaultStyle from "./Styles/defaultMentionsStyle.js";
 import { MentionsInput, Mention } from "react-mentions";
-import OX_Grid from "../../OX_Grid";
+// import OX_Grid from "../../OX_Grid";
 import Swal from "sweetalert2";
 import { Button } from "@progress/kendo-react-buttons";
+import "./Pics/avatar.png";
 
 class CommentsView extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class CommentsView extends React.Component {
       mentionData: [],
       value: "",
       fileId: "",
-      userList: []
+      userList: [],
     };
   }
 
@@ -37,21 +38,22 @@ class CommentsView extends React.Component {
                 })
               : [],
             dataReady: true,
-            fileId: response.data.uuid
+            fileId: response.data.uuid,
           });
         }
       });
     }
   }
 
-  async getFileDetails(url) {
+  async getFileDetails(fileId) {
     let helper = this.core.make("oxzion/restClient");
     let fileContent = await helper.request(
       "v1",
-      "/app/" + this.appId + "/" + url,
+      "file/"+ fileId +"/comment",
       {},
       "get"
     );
+    // console.log(fileContent)
     return fileContent;
   }
 
@@ -60,7 +62,7 @@ class CommentsView extends React.Component {
       var query = {
         filter: {
           logic: "and",
-          filters: [{ field: "name", operator: "contains", value: term }]
+          filters: [{ field: "name", operator: "contains", value: term }],
         },
         skip: 0,
         take: 10
@@ -251,6 +253,7 @@ class CommentsView extends React.Component {
 
   render() {
     if (this.state.dataReady) {
+      // console.log(dataReady);
       return (
         <div className="commentsPage">
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -291,27 +294,25 @@ class CommentsView extends React.Component {
           </div>
 
           <div>
-            <div className="updates">
-              <OX_Grid
-                appId={this.appId}
-                key={1}
-                osjsCore={this.core}
-                rawDataPresent={true}
-                data={this.state.commentsList}
-                resizable={true}
-                sortable={true}
-                columnConfig={[
-                  { field: "text", title: "Previous Comments" },
-                  {
-                    title: "Actions",
-                    width: "75px",
-                    cell: (e) => this.renderButtons(e, ["Delete"]),
-                    filterCell: {
-                      type: "empty"
-                    }
-                  }
-                ]}
-              />
+            <div id="chat-container">
+              <div id="chat-message-list">
+                {this.state.commentsList.map((commentItem) => {
+                  console.log(commentItem.text);
+                  return (
+                    <div className="message-row other-message">
+                      <img src={"pics/avatar.png"} alt="avatar images" />
+                      <div className="message-text">
+                        <h4 className="header"> {commentItem.name}</h4>
+                        {commentItem.text}
+                      </div>
+                      <div className="message-time">{commentItem.time}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <button id="btn">
+                <i className="fa fa-trash-o" style={{color:"red", fontSize:"30px", background:"none"}}></i>
+              </button>
             </div>
           </div>
         </div>

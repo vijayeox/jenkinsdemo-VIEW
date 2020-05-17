@@ -15,9 +15,7 @@ const register = (core, args, options, metadata) => {
       dimension: {width: 720, height: 550},
       position: {left: 700, top: 200},
       attributes:{  
-      visibility: 'restricted',
-          resizable: false,
-          maximizable: false,   
+      visibility: 'restricted', 
           minimizable: false
  	 }
     })
