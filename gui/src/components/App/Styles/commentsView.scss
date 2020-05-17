@@ -14,6 +14,7 @@
       align-self: center;
       width: 100%;
       margin-bottom: 1rem;
+      
       .update {
         background: $gray-light;
         margin-bottom: 0.5rem;
@@ -36,7 +37,12 @@
           background: $gray-hover;
         }
 
-      
+        .k-button k-primary {
+          width: 60px;
+          height: 40px;
+          margin-left: 30px;
+        }
+
 
         h5,
         h4 {
@@ -122,7 +128,7 @@
     }
 
     // .mentions--multiLine {
-    //   overflow-y: scroll !important;
+    //   overflow-y: scroll !important; 
     // }
     .mentions__suggestions {
       z-index: 1000;
@@ -137,5 +143,103 @@
       padding: 5px 15px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     }
+
+    *{
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+    }
+
+    html, body{
+      height: 100%;	
+    }
+    
+    html{
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(to right, #57c1eb 0%, #246fa8 100%);
+      font-size: 10px;
+    }
+    
+    body{
+    
+      display: grid;
+      place-items: center;
+    
+    }
+    #container{
+      min-width: 800px;
+      max-width: 1000px;
+      max-height: 500px;
+      height: 95vh;
+      background: #fff;
+      border-radius: 15px;
+    
+    
+    }
+    #chat-message-list {
+      grid-area: chat-message-list;
+      padding: 60 20px;
+    
+    }
+    .message-row {
+      display: grid;
+      grid-template-columns: 70%;
+      margin-bottom: 20px;
+    
+    
+    }
+    .message-text {
+      padding: 9px 14px;
+      font-size: 1.6rem;
+      margin-bottom: 5px; 
+      line-height: 20px;
+      max-height: 400px;
+    }
+    .message-time{
+      font-size: 1.3rem;
+      color: #777;
+      margin-left: 5px;
+    }
+    .other-message .message-text{
+      background: #eee;
+      color: #111;
+      border: 1px solid #ddd;
+      border-radius: 14px 14px 14px 14px;
+    }
+    .message-row, .other-message >img{
+      grid-row: span 2;
+      height: 40px;
+      border-radius: 100%;
+      margin-bottom: 5px; 
+    }
+    h4.header{
+      line-height: 25px;
+    }
+    #btn{
+      cursor: pointer;
+      // float: right;
+      color: transparent;
+      position: absolute;
+      top: 180px;
+      left: 900px;
+      right: -420px;
+      border: none;
+      background: none;
+      text-decoration: none;
+      color: white;
+      display: inline-block;
+      margin: 4px 2px;
+      margin: 10px;
+      margin-left: 95%;
+    }
+    
+    #btn:hover {
+      // box-shadow: 0 0 2px 0 teal;
+       border: none;
+       width: 40px;
+       height: 40px;
+       }
+    
   }
-}
+  }
+
