@@ -9,17 +9,36 @@ export class DataLoader extends React.Component {
     this.core = this.props.args;
     this.refresh = this.refresh.bind(this);
     this.state = {
-      url: this.props.url
+      url: this.props.url,
+      dataState: this.props.dataState
     };
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
     this.loader = this.core.make("oxzion/splash");
   }
+  objectEquals(obj1, obj2) {
+    for (var i in obj1) {
+      if (obj1.hasOwnProperty(i)) {
+        if (!obj2.hasOwnProperty(i)) return false;
+        if (obj1[i] != obj2[i]) return false;
+      }
+    }
+    for (var i in obj2) {
+      if (obj2.hasOwnProperty(i)) {
+        if (!obj1.hasOwnProperty(i)) return false;
+        if (obj1[i] != obj2[i]) return false;
+      }
+    }
+    return true;
+  }
 
   componentDidUpdate(prevProps) {
+    if(this.objectEquals(this.props.dataState,prevProps.dataState)){
+      return;
+    }
     if (
       this.props.url !== prevProps.url ||
-      this.props.dataState !== prevProps.dataState
+      !this.objectEquals(this.props.dataState,prevProps.dataState)
     ) {
       this.setState({
         url: this.props.url
@@ -67,12 +86,7 @@ export class DataLoader extends React.Component {
         var filterConfig = this.props.columnConfig
           ? this.prepareQueryFilters(this.props.dataState)
           : this.props.dataState;
-        var route =
-          url +
-          paramSeperator +
-          "filter=[" +
-          JSON.stringify(filterConfig) +
-          "]";
+        var route = url + paramSeperator + "filter=[" + JSON.stringify(filterConfig) + "]";
       }
 
       let data = this.props.urlPostParams
@@ -142,10 +156,9 @@ export class DataLoader extends React.Component {
           }
         });
         gridConfig.filter.filters = newFilters;
-        gridConfig.filter.logic = "or";
+        gridConfig.filter.logic = "and";
       }
     });
-    console.log(gridConfig);
     return gridConfig;
   };
 
@@ -161,8 +174,7 @@ export class DataLoader extends React.Component {
 
   requestDataIfNeeded = () => {
     if (
-      this.pending ||
-      toODataString(this.props.dataState) === this.lastSuccess
+      (this.pending && this.pending != undefined) || toODataString(this.props.dataState) === this.lastSuccess
     ) {
       return;
     }
@@ -173,7 +185,7 @@ export class DataLoader extends React.Component {
     // this.timeout = window.setTimeout(() => {
     this.getData(this.state.url).then((response) => {
       this.lastSuccess = this.pending;
-      this.pending = "";
+      this.pending = undefined;
       if (toODataString(this.props.dataState) === this.lastSuccess) {
         if (this.props.dataState.group) {
           var groupConfig = {
