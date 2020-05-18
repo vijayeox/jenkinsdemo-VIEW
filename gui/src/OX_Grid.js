@@ -374,12 +374,9 @@ export default class OX_Grid extends React.Component {
             ref={this.child}
             args={this.props.osjsCore}
             url={this.props.data}
-            urlPostParams={this.props.urlPostParams}
-            gridDefaultFilters={this.props.gridDefaultFilters}
-            forceDefaultFilters={this.props.forceDefaultFilters}
             dataState={this.state.dataState}
             onDataRecieved={this.dataRecieved}
-            columnConfig={this.props.columnConfig}
+            {...this.props}
           />
         )}
 
@@ -401,6 +398,7 @@ export default class OX_Grid extends React.Component {
               : undefined
           }
           filterable={this.props.filterable}
+          filterOperators={this.props.filterOperators}
           groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}

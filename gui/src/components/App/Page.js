@@ -399,18 +399,10 @@ class Page extends React.Component {
                 ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
                 : undefined
             }
-            exportToPDF={itemContent.exportToPDF}
-            forceDefaultFilters={itemContent.forceDefaultFilters}
             gridOperations={itemContent.operations}
             gridToolbar={itemContent.toolbarTemplate}
-            filterable={itemContent.filterable}
-            groupable={itemContent.groupable}
-            reorderable={itemContent.reorderable}
-            resizable={itemContent.resizable}
-            pageable={itemContent.pageable}
-            sortable={itemContent.sortable}
             columnConfig={columnConfig}
-            expandable={itemContent.expandable}
+            {...itemContent}
           />
         );
       } else if (item.type == "Search") {
