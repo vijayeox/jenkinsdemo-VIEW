@@ -30,3 +30,10 @@ div.oxzion-widget > div.oxzion-widget-roll-up-button {
     cursor:pointer;
 }
 
+div > div.oxzion-widget-drilldown-icon{
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    color: #265160;
+
+}
