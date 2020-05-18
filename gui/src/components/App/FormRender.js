@@ -307,7 +307,7 @@ class FormRender extends React.Component {
             });
             return response;
           } else {
-            var storeCache = await this.storeCache(this.cleanData(data)).then(
+            var storeCache = await this.storeCache(this.removeFilesFromCache(this.cleanData(data))).then(
             async cacheResponse => {
               if (response.data.errors) {
                 var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
@@ -324,6 +324,20 @@ class FormRender extends React.Component {
           return response;
         });
       }
+    }
+    removeFilesFromCache(data){
+      var formData = this.parseResponseData(data);
+      var ordered_data = {};
+      this.state.currentForm.everyComponent(function (comp) {
+        var protectedFields = comp.component.protected;
+        if(protectedFields){
+          delete formData[comp.component.key];
+        }
+        if(comp.component.type=="file"){
+          delete formData[comp.component.key];
+        }
+      });
+      return formData;
     }
 
     formatFormData(data){
@@ -556,7 +570,7 @@ class FormRender extends React.Component {
               submission.data[property.property] = property.value;
             }
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
-            that.storeCache(that.cleanData(form_data));
+            that.storeCache(this.removeFilesFromCache(this.cleanData(form_data)));
             next(null);
           },
           beforeCancel: () => {
@@ -636,9 +650,6 @@ class FormRender extends React.Component {
               scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
             }
           });
-          form.on("error",errors =>{
-            console.log(errors);
-          })
 
           form.on("change", function (changed) {
             console.log(changed)
@@ -829,6 +840,8 @@ class FormRender extends React.Component {
           });
           that.setState({ currentForm: form });
           console.log(form)
+    var componentList = flattenComponents(form._form.components, true);
+    console.log(form);
           return form;
         });
       }
