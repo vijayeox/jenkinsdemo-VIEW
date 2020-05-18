@@ -1,8 +1,18 @@
-import {React,ReactDOM,Notification,CountryCodes,AvatarImageCropper,ReactBootstrap,Webcam,KendoReactDateInputs,KendoReactEditor,PhoneInput} from "oxziongui";
+import {
+  React,
+  ReactDOM,
+  Notification,
+  CountryCodes,
+  AvatarImageCropper,
+  ReactBootstrap,
+  Webcam,
+  KendoReactDateInputs,
+  KendoReactEditor,
+  PhoneInput
+} from "oxziongui";
 import Moment from "moment";
-import image2base64 from "image-to-base64";
-import Countries from '../public/js/countries'
-import states from '../public/js/states'
+import Countries from "../public/js/countries";
+import states from "../public/js/states";
 const {
   Bold,
   Italic,
@@ -26,14 +36,14 @@ class EditProfile extends React.Component {
 
     this.core = this.props.args;
     this.userprofile = this.core.make("oxzion/profile").get();
-    console.log(this.userprofile)
+    console.log(this.userprofile);
     if (
       this.userprofile.key.preferences != undefined ||
       this.userprofile.key.preferences != null
     ) {
       this.userprofile.key.preferences["dateformat"] =
         this.userprofile.key.preferences["dateformat"] &&
-          this.userprofile.key.preferences["dateformat"] != ""
+        this.userprofile.key.preferences["dateformat"] != ""
           ? this.userprofile.key.preferences["dateformat"]
           : "dd-MM-yyyy";
     } else {
@@ -84,29 +94,26 @@ class EditProfile extends React.Component {
       this.setState({
         fields
       });
-    }
-    else {
+    } else {
       //setting state dropdown
       Countries.map((country, key) => {
-        let countryname = country.name
-        let countryid = ""
+        let countryname = country.name;
+        let countryid = "";
         if (this.state.fields.country === countryname) {
-          countryid = "" + country.id
-          this.setState({ selectedCountryID: countryid })
+          countryid = "" + country.id;
+          this.setState({ selectedCountryID: countryid });
         }
-      })
+      });
     }
-
   }
 
-
-  handleDOBChange = event => {
+  handleDOBChange = (event) => {
     let fields = this.state.fields;
     fields.date_of_birth = event.target.value;
     this.setState({ fields: fields });
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({
@@ -114,12 +121,14 @@ class EditProfile extends React.Component {
     });
     if (e.target.name === "country") {
       const selectedIndex = e.target.options.selectedIndex;
-      const countryid = e.target.options[selectedIndex].getAttribute('data-countryid')
-      this.setState({ selectedCountryID: countryid })
+      const countryid = e.target.options[selectedIndex].getAttribute(
+        "data-countryid"
+      );
+      this.setState({ selectedCountryID: countryid });
     }
   };
 
-  handlePhoneChange = phone => {
+  handlePhoneChange = (phone) => {
     let fields = this.state.fields;
     fields["phone"] = phone;
     this.setState({
@@ -127,7 +136,7 @@ class EditProfile extends React.Component {
     });
   };
 
-  handleChangeAboutField = value => {
+  handleChangeAboutField = (value) => {
     let fields = this.state.fields;
     fields["about"] = value;
     this.setState({
@@ -144,7 +153,7 @@ class EditProfile extends React.Component {
         "YYYY-MM-DD"
       );
 
-      Object.keys(this.state.fields).map(key => {
+      Object.keys(this.state.fields).map((key) => {
         if (key == "date_of_birth") {
           formData.date_of_birth = date_of_birth;
         } else if (key == "name") {
@@ -171,13 +180,13 @@ class EditProfile extends React.Component {
           "Error",
           "Update failed: " + editresponse.message,
           "danger"
-        )
+        );
       } else {
         this.notif.current.notify(
           "Success",
           "Profile has been successfully updated.",
           "success"
-        )
+        );
         this.core.make("oxzion/profile").update();
       }
     } else {
@@ -185,7 +194,7 @@ class EditProfile extends React.Component {
         "Error",
         "Please fill all the mandatory fields. ",
         "danger"
-      )
+      );
     }
   }
 
@@ -222,7 +231,7 @@ class EditProfile extends React.Component {
       formIsValid = false;
       errors["address1"] = "*Please enter your address";
     }
-  
+
     if (!fields["state"]) {
       formIsValid = false;
       errors["state"] = "*Please select your state";
@@ -236,7 +245,7 @@ class EditProfile extends React.Component {
       formIsValid = false;
       errors["country"] = "*Please select your country";
     }
-  
+
     if (!fields["city"]) {
       formIsValid = false;
       errors["city"] = "*Please enter your city";
@@ -267,7 +276,7 @@ class EditProfile extends React.Component {
         "Error",
         "Update failed: " + uploadresponse.message,
         "danger"
-      )
+      );
     } else {
       this.setState({
         icon: imageData
@@ -277,28 +286,25 @@ class EditProfile extends React.Component {
         "Success",
         "Profile picture updated successfully.",
         "success"
-      )
+      );
     }
   }
 
-  apply = file => {
+    apply = (file) => {
     if (file) {
-      var src = window.URL.createObjectURL(file);
-      image2base64(src)
-        .then(response => {
-          var base64Data = "data:image/jpeg;base64," + response;
-          this.submitProfilePic(base64Data);
-        })
-        .catch(error => {
-          console.log(error);
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = (reader) => {
+        var base64Data = reader.target.result;
+        this.submitProfilePic(base64Data);
+        this.setState({
+          showImageDiv: 1
         });
-      this.setState({
-        showImageDiv: 1
-      });
+      };
     }
   };
 
-  setRef = webcam => {
+  setRef = (webcam) => {
     this.webcam = webcam;
   };
 
@@ -313,18 +319,18 @@ class EditProfile extends React.Component {
     if (this.state.showImageDiv == 3) {
       if (this.state.imageData == null) {
         const videoConstraints = {
-          width: 150,
-          height: 150,
+          width: 200,
+          height: 200,
           facingMode: "user"
         };
         return (
           <div className="chooseWebcamDiv">
             <Webcam
               audio={false}
-              height={150}
+              height={200}
               ref={this.setRef}
               screenshotFormat="image/jpeg"
-              width={150}
+              width={200}
               videoConstraints={videoConstraints}
               className="webCam"
               imageSmoothing={true}
@@ -402,29 +408,31 @@ class EditProfile extends React.Component {
     if (this.state.showImageDiv == 1) {
       return (
         <div className="profileImageDiv">
-          <img
-            src={this.state.icon}
-            className="rounded-circle displayImage"
-            style={displayImage}
-          />
-          <div className="middle" style={middle}>
-            <div className="text">
-              <p
-                className="btn-sm btn-success imgBtn"
-                onClick={() => {
-                  this.setState({ showImageDiv: 2 });
-                }}
-              >
-                Choose Image <i className="fa fa-image" />
-              </p>
-              <p
-                className="btn-sm btn-success imgBtn"
-                onClick={() => {
-                  this.setState({ showImageDiv: 3 });
-                }}
-              >
-                Take Picture <i className="fa fa-camera" />
-              </p>
+          <div className="displayImage">
+            <img
+              src={this.state.icon}
+              className="rounded-circle displayImage"
+              style={displayImage}
+            />
+            <div className="middle" style={middle}>
+              <div className="text">
+                <p
+                  className="btn-sm btn-success imgBtn"
+                  onClick={() => {
+                    this.setState({ showImageDiv: 2 });
+                  }}
+                >
+                  Choose Image <i className="fa fa-image" />
+                </p>
+                <p
+                  className="btn-sm btn-success imgBtn"
+                  onClick={() => {
+                    this.setState({ showImageDiv: 3 });
+                  }}
+                >
+                  Take Picture <i className="fa fa-camera" />
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -434,318 +442,394 @@ class EditProfile extends React.Component {
 
   render() {
     return (
-      <ReactBootstrap.Form className="edit-profile-form preferenceForm">
-        <div className="componentDiv">
-          <Notification ref={this.notif} />
-          <div className="formmargin">
-            <ReactBootstrap.Row>
-              <div className='col-md-6'>
-                {this.profileImageData()}
-                {this.chooseImageData()}
-                {this.chooseWebCamData()}
-              </div>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">First Name</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    placeholder="First Name"
-                    name="firstname"
-                    value={this.state.fields.firstname ? this.state.fields.firstname : ""}
-                    onChange={this.handleChange}
-                    required />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["firstname"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Last Name</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    placeholder="Last Name"
-                    name="lastname"
-                    value={this.state.fields.lastname ? this.state.fields.lastname : ""}
-                    onChange={this.handleChange}
-                    required />
+      <div className="prefrencesMainDiv">
+        {this.profileImageData()}
+        {this.chooseImageData()}
+        {this.chooseWebCamData()}
+        <ReactBootstrap.Form className="edit-profile-form preferenceForm">
+          <div className="componentDiv">
+            <Notification ref={this.notif} />
+            <div className="formmargin">
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      First Name
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      placeholder="First Name"
+                      name="firstname"
+                      value={
+                        this.state.fields.firstname
+                          ? this.state.fields.firstname
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                      required
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["firstname"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Last Name
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      placeholder="Last Name"
+                      name="lastname"
+                      value={
+                        this.state.fields.lastname
+                          ? this.state.fields.lastname
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </ReactBootstrap.Form.Group>
                   <ReactBootstrap.Form.Text className="text-muted errorMsg">
                     {this.state.errors["lastname"]}
                   </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
+                </div>
+              </ReactBootstrap.Row>
+              <ReactBootstrap.Form.Group>
+                <ReactBootstrap.Form.Label className="mandatory">
+                  Email
+                </ReactBootstrap.Form.Label>
+                <ReactBootstrap.Form.Control
+                  type="email"
+                  placeholder="Email"
+                  name="Email"
+                  disabled
+                  value={this.state.fields.email ? this.state.fields.email : ""}
+                  onChange={this.handleChange}
+                />
+              </ReactBootstrap.Form.Group>
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Gender
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Row>
+                      <br />
+                    </ReactBootstrap.Row>
+                    <ReactBootstrap.Row>
+                      <div className="col-md-6">
+                        <ReactBootstrap.Form.Check
+                          type="radio"
+                          name="gender"
+                          label="Male"
+                          value="Male"
+                          onChange={this.handleChange}
+                          checked={this.state.fields.gender == "Male"}
+                          className="validate"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <ReactBootstrap.Form.Check
+                          type="radio"
+                          name="gender"
+                          label="Female"
+                          value="Female"
+                          onChange={this.handleChange}
+                          checked={this.state.fields.gender == "Female"}
+                          className="validate"
+                        />
+                      </div>
+                    </ReactBootstrap.Row>
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["gender"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label
+                      className="mandatory"
+                      id="rowdob"
+                    >
+                      Date of Birth
+                    </ReactBootstrap.Form.Label>
+                    <KendoReactDateInputs.DatePicker
+                      format={this.state.dateformat}
+                      name="date_of_birth"
+                      value={
+                        this.state.fields.date_of_birth
+                          ? this.state.fields.date_of_birth
+                          : ""
+                      }
+                      onChange={this.handleDOBChange}
+                      readOnly
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["date_of_birth"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Address 1
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="address1"
+                      value={
+                        this.state.fields.address1
+                          ? this.state.fields.address1
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                      required
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["address1"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label>
+                      Address 2
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="address2"
+                      value={
+                        this.state.fields.address2
+                          ? this.state.fields.address2
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Country
+                    </ReactBootstrap.Form.Label>
+                    <select
+                      value={
+                        this.state.fields.country
+                          ? this.state.fields.country
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                      name="country"
+                    >
+                      {Countries.map((country, key) => (
+                        <option
+                          key={key}
+                          data-countryid={country.id}
+                          value={country.name}
+                        >
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["country"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      State
+                    </ReactBootstrap.Form.Label>
 
-            </ReactBootstrap.Row>
-            <ReactBootstrap.Form.Group>
-              <ReactBootstrap.Form.Label className="mandatory">Email</ReactBootstrap.Form.Label>
-              <ReactBootstrap.Form.Control
-                type="email"
-                placeholder="Last Name"
-                name="Email"
-                disabled
-                value={this.state.fields.email ? this.state.fields.email : ""}
-                onChange={this.handleChange}
-              />
-            </ReactBootstrap.Form.Group>
-            <ReactBootstrap.Row>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Gender</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Row><br /></ReactBootstrap.Row>
-                  <ReactBootstrap.Row>
-                    <div className='col-md-6'>
-                      <ReactBootstrap.Form.Check
-                        type="radio"
-                        name="gender"
-                        label="Male"
-                        value="Male"
-                        onChange={this.handleChange}
-                        checked={this.state.fields.gender == "Male"}
-                        className="validate"
-                      />
-                    </div>
-                    <div className='col-md-6'>
-                      <ReactBootstrap.Form.Check
-                        type="radio"
-                        name="gender"
-                        label="Female"
-                        value="Female"
-                        onChange={this.handleChange}
-                        checked={this.state.fields.gender == "Female"}
-                        className="validate"
-                      />
-                    </div>
-
-                  </ReactBootstrap.Row>
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["gender"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory" id="rowdob">Date of Birth</ReactBootstrap.Form.Label>
-                  <KendoReactDateInputs.DatePicker
-                    format={this.state.dateformat}
-                    name="date_of_birth"
-                    value={
-                      this.state.fields.date_of_birth
-                        ? this.state.fields.date_of_birth
-                        : ""
-                    }
-                    onChange={this.handleDOBChange}
-                    readOnly
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["date_of_birth"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-            </ReactBootstrap.Row>
-            <ReactBootstrap.Row>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Address 1</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="address1"
-                    value={this.state.fields.address1 ? this.state.fields.address1 : ""}
-                    onChange={this.handleChange}
-                    required
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["address1"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label>Address 2</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="address2"
-                    value={this.state.fields.address2 ? this.state.fields.address2 : ""}
-                    onChange={this.handleChange}
-                    required
-                  />
-                
-                </ReactBootstrap.Form.Group>
-              </div>
-            </ReactBootstrap.Row>
-            <ReactBootstrap.Row>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">
-                    Country
-              </ReactBootstrap.Form.Label>
-                  <select
-                    value={
-                      this.state.fields.country ? this.state.fields.country : ""
-                    }
-                    onChange={this.handleChange}
-                    name="country"
-                  >
-                    {Countries.map((country, key) => (
-                      <option key={key} data-countryid={country.id} value={country.name}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["country"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">
-                    State
-              </ReactBootstrap.Form.Label>
-
-                  <select
-                    value={
-                      this.state.fields.state ? this.state.fields.state : ""
-                    }
-                    onChange={this.handleChange}
-                    name="state"
-                  >
-                    {states.map((state, key) => {
-                      if (state.country_id === this.state.selectedCountryID)
-                        {
-                          if(key == 0){
-                             return (
-                             <React.Fragment>
-                             <option key={123456} value={"please select"}>
-                          {"please select"}
-                          </option>
-                             <option key={key} data-stateid={state.id} value={state.name}>
-                          {state.name}
-                          </option>
-                          </React.Fragment>)
+                    <select
+                      value={
+                        this.state.fields.state ? this.state.fields.state : ""
+                      }
+                      onChange={this.handleChange}
+                      name="state"
+                    >
+                      {states.map((state, key) => {
+                        if (state.country_id === this.state.selectedCountryID) {
+                          if (key == 0) {
+                            return (
+                              <React.Fragment>
+                                <option key={123456} value={"please select"}>
+                                  {"please select"}
+                                </option>
+                                <option
+                                  key={key}
+                                  data-stateid={state.id}
+                                  value={state.name}
+                                >
+                                  {state.name}
+                                </option>
+                              </React.Fragment>
+                            );
                           } else {
-                             return <option key={key} data-stateid={state.id} value={state.name}>
-                          {state.name}
-                          </option>
+                            return (
+                              <option
+                                key={key}
+                                data-stateid={state.id}
+                                value={state.name}
+                              >
+                                {state.name}
+                              </option>
+                            );
                           }
-                         
                         }
-                    })}
-                  </select>
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["state"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-            </ReactBootstrap.Row>
-            <ReactBootstrap.Row>
-            <div className='col-md-6'>
-            <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">City</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="city"
-                    value={this.state.fields.city ? this.state.fields.city : ""}
-                    onChange={this.handleChange}
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["city"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-              <div className='col-md-6'>
-            <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Postal Code</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="zip"
-                    value={this.state.fields.zip ? this.state.fields.zip : null}
-                    onChange={this.handleChange}
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["zip"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-            </ReactBootstrap.Row>
-           
-            <ReactBootstrap.Row>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Contact Number</ReactBootstrap.Form.Label>
-                  <PhoneInput
-                    international={false}
-                    country="US"
-                    name="phone"
-                    placeholder="Enter phone number"
-                    maxLength="15"
-                    countryOptions={["US", "IN", "CA", "|", "..."]}
-                    value={this.state.fields.phone ? this.state.fields.phone : ""}
-                    onChange={phone => this.handlePhoneChange(phone)}
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["phone"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-              <div className='col-md-6'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label>Website</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="website"
-                    value={this.state.fields.website ? this.state.fields.website : ""}
-                    onChange={this.handleChange}
-                  />
-                </ReactBootstrap.Form.Group>
+                      })}
+                    </select>
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["state"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      City
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="city"
+                      value={
+                        this.state.fields.city ? this.state.fields.city : ""
+                      }
+                      onChange={this.handleChange}
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["city"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Postal Code
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="zip"
+                      value={
+                        this.state.fields.zip ? this.state.fields.zip : null
+                      }
+                      onChange={this.handleChange}
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["zip"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
 
+              <ReactBootstrap.Row>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Contact Number
+                    </ReactBootstrap.Form.Label>
+                    <PhoneInput
+                      international={false}
+                      country="US"
+                      name="phone"
+                      placeholder="Enter phone number"
+                      maxLength="15"
+                      countryOptions={["US", "IN", "CA", "|", "..."]}
+                      value={
+                        this.state.fields.phone ? this.state.fields.phone : ""
+                      }
+                      onChange={(phone) => this.handlePhoneChange(phone)}
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["phone"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+                <div className="col-md-6">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label>
+                      Website
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="website"
+                      value={
+                        this.state.fields.website
+                          ? this.state.fields.website
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                    />
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
 
-
-
-              </div>
-            </ReactBootstrap.Row>
-
-          
-            <ReactBootstrap.Row>
-              <div className='col-md-12'>
-                <ReactBootstrap.Form.Group>
-                  <ReactBootstrap.Form.Label className="mandatory">Interest</ReactBootstrap.Form.Label>
-                  <ReactBootstrap.Form.Control
-                    type="text"
-                    name="interest"
-                    value={this.state.fields.interest ? this.state.fields.interest : ""}
-                    onChange={this.handleChange}
-                  />
-                  <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                    {this.state.errors["interest"]}
-                  </ReactBootstrap.Form.Text>
-                </ReactBootstrap.Form.Group>
-              </div>
-            </ReactBootstrap.Row>
-            <ReactBootstrap.Form.Group>
-              <ReactBootstrap.Form.Label>About Me</ReactBootstrap.Form.Label>
-              <KendoReactEditor.Editor
-                style={{ height: "20vh", overflow: "auto" }}
-                name="about"
-                tools={[
-                  [Bold, Italic, Underline],
-                  [Undo, Redo],
-                  [Link, Unlink],
-                  [AlignLeft, AlignCenter, AlignRight],
-                  [OrderedList, UnorderedList, Indent, Outdent]
-                ]}
-                contentStyle={{ height: 320 }}
-                defaultContent={
-                  this.state.fields.about ? this.state.fields.about : ""
-                }
-                onExecute={event =>
-                  this.handleChangeAboutField(
-                    event.target._contentElement.innerHTML
-                  )
-                }
-              />
-            </ReactBootstrap.Form.Group>
-            <ReactBootstrap.Button type="button" className="pull-right preferenceForm-btn" onClick={this.handleSubmit}>Save</ReactBootstrap.Button>
+              <ReactBootstrap.Row>
+                <div className="col-md-12">
+                  <ReactBootstrap.Form.Group>
+                    <ReactBootstrap.Form.Label className="mandatory">
+                      Interest
+                    </ReactBootstrap.Form.Label>
+                    <ReactBootstrap.Form.Control
+                      type="text"
+                      name="interest"
+                      value={
+                        this.state.fields.interest
+                          ? this.state.fields.interest
+                          : ""
+                      }
+                      onChange={this.handleChange}
+                    />
+                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
+                      {this.state.errors["interest"]}
+                    </ReactBootstrap.Form.Text>
+                  </ReactBootstrap.Form.Group>
+                </div>
+              </ReactBootstrap.Row>
+              <ReactBootstrap.Form.Group>
+                <ReactBootstrap.Form.Label>About Me</ReactBootstrap.Form.Label>
+                <KendoReactEditor.Editor
+                  style={{ height: "20vh", overflow: "auto" }}
+                  name="about"
+                  tools={[
+                    [Bold, Italic, Underline],
+                    [Undo, Redo],
+                    [Link, Unlink],
+                    [AlignLeft, AlignCenter, AlignRight],
+                    [OrderedList, UnorderedList, Indent, Outdent]
+                  ]}
+                  contentStyle={{ height: 320 }}
+                  defaultContent={
+                    this.state.fields.about ? this.state.fields.about : ""
+                  }
+                  onExecute={(event) =>
+                    this.handleChangeAboutField(
+                      event.target._contentElement.innerHTML
+                    )
+                  }
+                />
+              </ReactBootstrap.Form.Group>
+              <ReactBootstrap.Button
+                type="button"
+                className="pull-right preferenceForm-btn"
+                onClick={this.handleSubmit}
+              >
+                Save
+              </ReactBootstrap.Button>
+            </div>
           </div>
-        </div>
-      </ReactBootstrap.Form>
+        </ReactBootstrap.Form>
+      </div>
     );
   }
 }
