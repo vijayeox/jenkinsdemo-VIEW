@@ -12,6 +12,8 @@ import {
 } from "oxziongui";
 import Moment from "moment";
 import Countries from "../public/js/countries";
+import { DateComponent, SaveCancel, DropDown } from "../components/index";
+import countryStateList from "../components/data/country-state-codes";
 import states from "../public/js/states";
 const {
   Bold,
@@ -36,6 +38,7 @@ class EditProfile extends React.Component {
 
     this.core = this.props.args;
     this.userprofile = this.core.make("oxzion/profile").get();
+    let countryList = countryStateList.map((item) => item.country);
     console.log(this.userprofile);
     if (
       this.userprofile.key.preferences != undefined ||
@@ -57,6 +60,7 @@ class EditProfile extends React.Component {
       showImageDiv: 1,
       imageData: null,
       icon: this.userprofile.key.icon + "?" + new Date(),
+      countryList: countryList,
       selectedCountryID: ""
     };
 
@@ -313,6 +317,32 @@ class EditProfile extends React.Component {
     this.setState({
       imageData: imageSrc
     });
+  };
+
+    prepareStateData = () => {
+    if (this.state.fields.country) {
+      let obj = countryStateList.find(
+        (o) => o.country === this.state.fields.country
+      );
+      if (obj) {
+        return obj.states;
+      }
+    } else {
+      return [];
+    }
+    return [];
+  };
+    valueChange = (field, event) => {
+    if (field == "country") {
+      let fields = { ...this.state.fields };
+      fields[field] = event.target.value;
+      fields["state"] = "";
+      this.setState({ fields: fields });
+    } else {
+      let fields = { ...this.state.fields };
+      fields[field] = event.target.value;
+      this.setState({ fields: fields });
+    }
   };
 
   chooseWebCamData = () => {
@@ -613,86 +643,42 @@ class EditProfile extends React.Component {
                   </ReactBootstrap.Form.Group>
                 </div>
               </ReactBootstrap.Row>
-              <ReactBootstrap.Row>
-                <div className="col-md-6">
-                  <ReactBootstrap.Form.Group>
-                    <ReactBootstrap.Form.Label className="mandatory">
-                      Country
-                    </ReactBootstrap.Form.Label>
-                    <select
-                      value={
-                        this.state.fields.country
-                          ? this.state.fields.country
-                          : ""
+              <div className="form-group">
+              <div className="form-row">
+                <div className="col-sm-6">
+                  <label className="required-label">Country</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={this.state.countryList}
+                      selectedItem={this.state.fields.country ? this.state.fields.country : ""}
+                      preFetch={true}
+                      onDataChange={(e) => this.valueChange("country", e)}
+                      required={true}
+                      validationMessage={
+                        "Please select a country from the list."
                       }
-                      onChange={this.handleChange}
-                      name="country"
-                    >
-                      {Countries.map((country, key) => (
-                        <option
-                          key={key}
-                          data-countryid={country.id}
-                          value={country.name}
-                        >
-                          {country.name}
-                        </option>
-                      ))}
-                    </select>
-                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                      {this.state.errors["country"]}
-                    </ReactBootstrap.Form.Text>
-                  </ReactBootstrap.Form.Group>
+                      disableItem={this.props.diableField}
+                    />
+                  </div>
                 </div>
-                <div className="col-md-6">
-                  <ReactBootstrap.Form.Group>
-                    <ReactBootstrap.Form.Label className="mandatory">
-                      State
-                    </ReactBootstrap.Form.Label>
-
-                    <select
-                      value={
-                        this.state.fields.state ? this.state.fields.state : ""
-                      }
-                      onChange={this.handleChange}
-                      name="state"
-                    >
-                      {states.map((state, key) => {
-                        if (state.country_id === this.state.selectedCountryID) {
-                          if (key == 0) {
-                            return (
-                              <React.Fragment>
-                                <option key={123456} value={"please select"}>
-                                  {"please select"}
-                                </option>
-                                <option
-                                  key={key}
-                                  data-stateid={state.id}
-                                  value={state.name}
-                                >
-                                  {state.name}
-                                </option>
-                              </React.Fragment>
-                            );
-                          } else {
-                            return (
-                              <option
-                                key={key}
-                                data-stateid={state.id}
-                                value={state.name}
-                              >
-                                {state.name}
-                              </option>
-                            );
-                          }
-                        }
-                      })}
-                    </select>
-                    <ReactBootstrap.Form.Text className="text-muted errorMsg">
-                      {this.state.errors["state"]}
-                    </ReactBootstrap.Form.Text>
-                  </ReactBootstrap.Form.Group>
+                <div className="col-sm-6">
+                  <label className="required-label">State</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      rawData={this.prepareStateData()}
+                      selectedItem={this.state.fields.state ? this.state.fields.state : ""}
+                      preFetch={true}
+                      onDataChange={(e) => this.valueChange("state", e)}
+                      required={true}
+                      validationMessage={"Please select a state from the list."}
+                      disableItem={this.props.diableField}
+                    />
+                  </div>
                 </div>
-              </ReactBootstrap.Row>
+              </div>
+            </div>
               <ReactBootstrap.Row>
                 <div className="col-md-6">
                   <ReactBootstrap.Form.Group>
