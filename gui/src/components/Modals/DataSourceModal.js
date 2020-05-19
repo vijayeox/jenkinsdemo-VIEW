@@ -12,7 +12,6 @@ function DataSourceModal(props) {
     EDIT: "Edited",
     DELETE: "Deleted"
   }
-
   useEffect(() => {
     if (props.content !== undefined) {
       var { name, type } = props.content;
@@ -188,11 +187,8 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Type</Form.Label>
             <Col lg="9">
-              {/* <Form.Control type="text" name="type" value={input["type"] ? input["type"] : ""} onChange={handleChange} disabled={DisabledFields} /> */}
-
-              <Form.Control type="text" name="type" value={props.datasourcename} disabled />
+              <Form.Control type="text" name="type" value={input["type"] ? input["type"] : ""} onChange={handleChange} disabled={DisabledFields} />
               <Form.Text className="text-muted errorMsg">
-
                 {errors["type"]}
               </Form.Text>
             </Col>
