@@ -11,6 +11,7 @@ import am4themes_animated from '../amcharts/themes/animated';
 // import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
 am4core.useTheme(am4themes_animated);
+am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
     static render(element, widget, props) {
@@ -237,6 +238,7 @@ class WidgetRenderer {
         if (WidgetDrillDownHelper.isDrilledDown(element)) {
             let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
             let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
+            element.cursorOverStyle = am4core.MouseCursorStyle.pointer;
             if (!buttonElement) {
                 element.insertAdjacentHTML('beforeend',
                     '<div class="oxzion-widget-roll-up-button" title="Back">' +
