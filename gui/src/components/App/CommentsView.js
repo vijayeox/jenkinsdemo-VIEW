@@ -32,7 +32,7 @@ class CommentsView extends React.Component {
             this.setState({
               commentsList: response.data
               ? this.formatFormData(response.data.map((i) => {
-                              return { id: this.uuidv4(), text: i.text };
+                              return { id: this.uuidv4(), text: i.text,name:i.name,time: i.time,user_id:i.userId };
                             }))
               : []
             });
@@ -89,7 +89,7 @@ class CommentsView extends React.Component {
         this.setState({
           commentsList: response.data
             ? this.formatFormData(response.data.map((i) => {
-                return { id: this.uuidv4(), text: i.text };
+                return { id: this.uuidv4(), text: i.text,name:i.name,time: i.time,user_id:i.userId };
               }))
             : [],
           dataReady: true
@@ -156,10 +156,8 @@ class CommentsView extends React.Component {
   }
 
   saveComment(stepBack) {
-    console.log(this.state.mentionData);
     const comment = {};
-    comment.text = JSON.stringify(newData);
-    console.log(comment);
+    comment.text = JSON.stringify(this.state.value);
     this.saveComments(comment).then(() => {
       this.setState({
         mentionData: [],
@@ -272,22 +270,21 @@ class CommentsView extends React.Component {
             <div id="chat-container">
               <div id="chat-message-list">
                 {this.state.commentsList.map((commentItem) => {
-                  console.log(commentItem.text);
                   return (
                     <div className="message-row other-message">
-                      <img src={commentItem.icon} alt="avatar images" />
                       <div className="message-text">
-                        <h4 className="header"> {commentItem.name}</h4>
+                        <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
+                        <h6 className="header">{commentItem.name}</h6>
                         {commentItem.text}
                       </div>
                       <div className="message-time">{commentItem.time}</div>
+                    <button className="btn btn-danger btn-xs" id="btn">
+                    <i className="fa fa-trash-o" style={{color:"red", fontSize:"20px", background:"none"}}></i>
+                    </button>
                     </div>
                   );
                 })}
               </div>
-              <button id="btn">
-                <i className="fa fa-trash-o" style={{color:"red", fontSize:"30px", background:"none"}}></i>
-              </button>
             </div>
           </div>
         </div>
