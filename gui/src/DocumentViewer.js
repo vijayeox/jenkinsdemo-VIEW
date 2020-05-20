@@ -74,57 +74,57 @@ export default class DocumentViewer extends Component {
       this.state.documentTypes.map((docType, index) => {
         this.state.documentsList[docType]
           ? accordionHTML.push(
-              <Card key={index}>
-                <Card.Header>
-                  <CustomToggle
-                    eventKey={docType}
-                    currentSelected={this.state.activeCard}
-                    update={(item) => {
-                      this.setState({
-                        activeCard: item,
-                        selectedDocument: this.state.documentsList[item][0]
-                      });
-                    }}
-                  >
-                    {docType}
-                  </CustomToggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey={docType}>
-                  <Card.Body>
-                    {this.state.documentsList[docType].map((doc, i) => {
-                      return (
-                        <Card
-                          className="docItems"
-                          onClick={(e) => {
-                            doc.file != this.state.selectedDocument.file
-                              ? this.handleDocumentClick(doc)
-                              : null;
-                          }}
-                          key={i}
+            <Card key={index}>
+              <Card.Header>
+                <CustomToggle
+                  eventKey={docType}
+                  currentSelected={this.state.activeCard}
+                  update={(item) => {
+                    this.setState({
+                      activeCard: item,
+                      selectedDocument: this.state.documentsList[item][0]
+                    });
+                  }}
+                >
+                  {docType}
+                </CustomToggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey={docType}>
+                <Card.Body>
+                  {this.state.documentsList[docType].map((doc, i) => {
+                    return (
+                      <Card
+                        className="docItems"
+                        onClick={(e) => {
+                          doc.file != this.state.selectedDocument.file
+                            ? this.handleDocumentClick(doc)
+                            : null;
+                        }}
+                        key={i}
+                      >
+                        <div
+                          className={
+                            doc.file == this.state.selectedDocument.file
+                              ? "docListBody borderActive"
+                              : "docListBody border"
+                          }
                         >
-                          <div
-                            className={
-                              doc.file == this.state.selectedDocument.file
-                                ? "docListBody borderActive"
-                                : "docListBody border"
-                            }
-                          >
-                            <i
-                              className={"docIcon " + this.getDocIcon(doc.type)}
-                            ></i>
-                            <p>
-                              {doc.originalName.length > 30
-                                ? this.chopFileName(doc.originalName)
-                                : doc.originalName}
-                            </p>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                  </Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            )
+                          <i
+                            className={"docIcon " + this.getDocIcon(doc.type)}
+                          ></i>
+                          <p>
+                            {doc.originalName.length > 30
+                              ? this.chopFileName(doc.originalName)
+                              : doc.originalName}
+                          </p>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </Card.Body>
+              </Accordion.Collapse>
+            </Card>
+          )
           : null;
       });
     }
@@ -251,13 +251,22 @@ export default class DocumentViewer extends Component {
         documentData.originalName +
         "?docPath=" +
         documentData.file;
-
-      window.open(url, "_self");
       var url2 =
         this.core.config("ui.url") + "/ViewerJS/images/unsupported_file.jpg";
       this.loader.destroy();
       return (
-        <img className="img-fluid" style={{ height: "100%" }} src={url2} />
+        <React.Fragment>
+          <img className="img-fluid" style={{ height: "100%" }} src={url2} />
+          <a
+            href={url}
+            download
+            target="_blank"
+            className="image-download-button"
+          >
+            <i class="fa fa-download" aria-hidden="true"></i>
+            Download
+          </a>
+        </React.Fragment>
       );
     }
   };
@@ -276,8 +285,8 @@ export default class DocumentViewer extends Component {
             {this.state.selectedDocument ? (
               this.displayDocumentData(this.state.selectedDocument)
             ) : (
-              <p>No files to display.</p>
-            )}
+                <p>No files to display.</p>
+              )}
           </div>
         </div>
       );
@@ -300,8 +309,8 @@ function CustomToggle(props) {
       onClick={
         props.currentSelected !== props.eventKey
           ? useAccordionToggle(props.eventKey, () =>
-              props.update.call(undefined, props.eventKey)
-            )
+            props.update.call(undefined, props.eventKey)
+          )
           : null
       }
     >

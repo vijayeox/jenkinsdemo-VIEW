@@ -15,7 +15,7 @@ am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
     static render(element, widget, props) {
-        am4core.options.queue = true //reduces load on the browser
+        // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
         switch (widget.renderer) {
             case 'JsAggregate':

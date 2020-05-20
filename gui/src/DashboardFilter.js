@@ -336,6 +336,7 @@ class DashboardFilter extends React.Component {
             let filters = [...this.state.filters]
             let applyFilterOption = [...this.state.applyFilterOption]
             filters.push(e.value)
+            //removing selected option from the list
             let newoption = applyFilterOption.filter(function (obj) {
                 return obj.label !== e.label;
             });

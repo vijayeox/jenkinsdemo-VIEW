@@ -43,6 +43,8 @@ class Page extends React.Component {
     document
       .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
+      var PageRenderDiv = document.querySelector(".PageRender");
+      this.loader.show(PageRenderDiv);
   }
 
   async fetchExternalComponents() {
@@ -486,7 +488,12 @@ class Page extends React.Component {
         content.push(guiComponent);
       }
     });
-    !(content.length > 0) ? content.push(<h2>No Content Available</h2>) : null;
+    if(content.length > 0){
+      this.loader.destroy();
+    } else {
+      content.push(<h2>No Content Available</h2>);
+      this.loader.destroy();
+    }
     return content;
   }
 
@@ -504,8 +511,6 @@ class Page extends React.Component {
         </div>
       );
     } else {
-      var PageRenderDiv = document.querySelector(".PageRender");
-      this.loader.show(PageRenderDiv);
       return <div></div>;
     }
   }
