@@ -102,7 +102,13 @@ class Dashboard extends Component {
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
-
+preparefilter(filter1,filter2){
+  var filter=[]
+  filter.push(filter1)
+  filter.push("AND")
+  filter.push(filter2)
+  return filter
+}
 
   componentDidUpdate(prevProps) {
     //update component when filter is changed
@@ -125,43 +131,53 @@ class Dashboard extends Component {
               if (typeof endDate !== "string") {
                 endDate = endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               }
-
               //prepare startDate array
               filterarray.push(filter["field"])
               filterarray.push(">=")
               filterarray.push(startDate)
-
               filterParams.push(filterarray)
-              filterParams.push("AND")
+              
 
               //prepare endDate array
               filterarray = []
               filterarray.push(filter["field"])
               filterarray.push("<=")
               filterarray.push(endDate)
+              filterParams.push(filterarray)
             }
           } else {
             //single date passed
             filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
             filterarray.push(startDate)
+            filterParams.push(filterarray)
           }
         } else {
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           filterarray.push(filter["value"]["selected"])
+          filterParams.push(filterarray)
         }
-        if (index > 0) {
-          //adding And to the filter array when multiple paramters are passed
-          filterParams.push("AND")
-        }
-        filterParams.push(filterarray)
       })
-      filterParams && filterParams.length != 0 ?
-        this.updateGraph(filterParams)
-        :
-        this.updateGraph()
+      let preapredFilter
+      if(filterParams && filterParams.length>1){
+        preapredFilter=filterParams[0]
+        for(let i=1;i<filterParams.length;i++){
+          preapredFilter=this.preparefilter(preapredFilter,filterParams[i])
+          
+        }
+      }
 
+      if(filterParams && filterParams.length != 0)
+        {
+          if(filterParams.length>1)
+            this.updateGraph(preapredFilter)
+          else
+            this.updateGraph(filterParams)
+        }     
+       else{
+         this.updateGraph()
+       }
     }
   }
 
