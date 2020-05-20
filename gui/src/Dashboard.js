@@ -11,7 +11,8 @@ class Dashboard extends Component {
 
     this.state = {
       htmlData: this.props.htmlData ? this.props.htmlData : null,
-      dashboardFilter: this.props.dashboardFilter
+      dashboardFilter: this.props.dashboardFilter,
+      widgetCounter: 0
     };
     this.content = this.props.content;
     this.renderedWidgets = {};
@@ -26,6 +27,7 @@ class Dashboard extends Component {
       }
     }
     this.uuid = uuid;
+    this.dashboardDivId = "dashboard_" + this.uuid;
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
     this.props.proc.on("destroy", () => {
@@ -65,12 +67,10 @@ class Dashboard extends Component {
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
           this.updateGraph();
-
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
           });
-          this.loader.destroy()
         }
       }).
         catch(function (response) {
@@ -81,7 +81,6 @@ class Dashboard extends Component {
             title: 'Oops ...',
             text: 'Could not load widget. Please try after some time.'
           });
-          thiz.loader.destroy();
         });
     } else if (this.state.htmlData != null) {
       this.updateGraph();
@@ -182,16 +181,15 @@ preparefilter(filter1,filter2){
   }
 
   updateGraph = async (filterParams) => {
+    console.log(filterParams);
     if (null === this.state.htmlData) {
       return;
     }
     let root = document;
     var widgets = root.getElementsByClassName('oxzion-widget');
     let thiz = this;
-    this.loader.show();
+    // this.loader.show();
     let errorFound = false;
-    let widgetCounter = 0 //keeps count of widget rendered asynchronously
-    //dispose and render if already exist
     for (let elementId in this.renderedWidgets) {
       let widget = this.renderedWidgets[elementId];
       if (widget) {
@@ -203,19 +201,19 @@ preparefilter(filter1,filter2){
     }
     
     if(widgets.length==0){
-      this.loader.destroy()
+      this.loader.destroy();
     }
     else{
       for (let widget of widgets) {
         var attributes = widget.attributes;
         //dispose 
-  
+        var that = this;
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
         .then(response=>{
           if(response.status =="success"){
             response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
-            widgetCounter++
+            that.setState({ widgetCounter: that.state.widgetCounter+1});
             if ('error' === response.status) {
               console.error('Could not load widget.');
               console.error(response);
@@ -228,13 +226,13 @@ preparefilter(filter1,filter2){
               this.renderedWidgets[widgetUUId] = widgetObject;
             }
           }
-          if(widgetCounter==widgets.length){
+          if(that.state.widgetCounter>=widgets.length){
             this.loader.destroy();
           }
           } else {
-            widgetCounter++
-            if(widgetCounter==widgets.length){
-              this.loader.destroy();
+            that.setState({ widgetCounter: that.state.widgetCounter+1});
+            if(this.state.widgetCounter>=widgets.length){
+              that.loader.destroy();
             }
           }
         });
@@ -292,9 +290,9 @@ preparefilter(filter1,filter2){
       this.loader.show(widgetDiv);
     }
     var self = this;
+    let element = document.getElementById(elementId);
     this.helper.request('v1', url, null, 'get').
       then(response => {
-        let element = document.getElementById(elementId);
         let widgetObject = WidgetRenderer.render(element, response.data.widget, eventData);
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;
@@ -303,10 +301,9 @@ preparefilter(filter1,filter2){
           var widgetDiv = document.getElementById(eventData.elementId);
         }
         this.loader.destroy(element)
-
       }).
       catch(response => {
-        this.loader.destroy()
+        this.loader.destroy(element)
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -319,7 +316,7 @@ preparefilter(filter1,filter2){
   }
 
   render() {
-    return <div dangerouslySetInnerHTML={{ __html: this.state.htmlData }} />;
+    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.state.htmlData }} />;
   }
 }
 
