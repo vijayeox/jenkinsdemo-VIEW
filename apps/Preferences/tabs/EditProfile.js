@@ -8,11 +8,11 @@ import {
   Webcam,
   KendoReactDateInputs,
   KendoReactEditor,
-  PhoneInput
+  PhoneInput,
+  DropDown
 } from "oxziongui";
 import Moment from "moment";
 import Countries from "../public/js/countries";
-import { DateComponent, SaveCancel, DropDown } from "../components/index";
 import countryStateList from "../components/data/country-state-codes";
 import states from "../public/js/states";
 const {
