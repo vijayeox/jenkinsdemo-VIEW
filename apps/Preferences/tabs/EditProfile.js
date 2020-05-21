@@ -9,11 +9,11 @@ import {
   KendoReactDateInputs,
   KendoReactEditor,
   PhoneInput,
-  DropDown
+  DropDown,
+  countryStateList
 } from "oxziongui";
 import Moment from "moment";
 import Countries from "../public/js/countries";
-import countryStateList from "../components/data/country-state-codes";
 import states from "../public/js/states";
 const {
   Bold,

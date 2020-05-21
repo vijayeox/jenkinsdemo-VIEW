@@ -42,6 +42,7 @@ import DropDown from "./src/components/DropDownList";
 import SaveCancel from "./src/components/saveCancel.js";
 import DateComponent from "./src/components/DateComponent.js";
 import CurrencySelect from "./src/components/Currency Select/currencySelect";
+import countryStateList from "./src/components/data/country-state-codes";
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -85,5 +86,6 @@ export {
   DateComponent,
   SaveCancel,
   DropDown,
-  CurrencySelect
+  CurrencySelect,
+  countryStateList
 };
