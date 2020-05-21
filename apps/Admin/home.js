@@ -140,15 +140,15 @@ class Home extends React.Component {
     table.push(
       <React.Fragment key={15}>
         {this.userProfile.privileges.MANAGE_ERROR_WRITE ? (
-        <div onClick={this.errorLogAdminClick} className="moduleBtn">
-          <div className="block d1">
-            <img src="apps/Admin/org.svg" />
+          <div onClick={this.errorLogAdminClick} className="moduleBtn">
+            <div className="block d1">
+              <img src="apps/Admin/org.svg" />
+            </div>
+            <div className="titles">Errorlog</div>
           </div>
-          <div className="titles">Errorlog</div>
-        </div>
         ) : null}
         {this.userProfile.privileges.MANAGE_MAILADMIN_WRITE ? (
-          <div key={10} onClick={this.mailAdminClick}>
+          <div key={10} onClick={()=>this.launchExternalApp("MailAdmin")}>
             <div className="block d1">
               <img src="apps/Admin/091-email-1.svg" />
             </div>
@@ -157,11 +157,20 @@ class Home extends React.Component {
         ) : null}
 
         {this.userProfile.privileges.MANAGE_CRMADMIN_WRITE ? (
-          <div onClick={this.crmAdminClick}>
+          <div onClick={()=>this.launchExternalApp("CRMAdmin")}>
             <div className="block d1">
               <img src="apps/Admin/crm-icon.svg" />
             </div>
             <div className="titles">CRM Admin</div>
+          </div>
+        ) : null}
+
+        {!this.userProfile.blackListedApps.Analytics ? (
+          <div onClick={()=>this.launchExternalApp("Analytics")}>
+            <div className="block d1">
+              <img src="apps/Admin/014-analytics.svg" />
+            </div>
+            <div className="titles">OI Builder</div>
           </div>
         ) : null}
       </React.Fragment>
@@ -169,16 +178,11 @@ class Home extends React.Component {
     return table;
   };
 
-  mailAdminClick = e => {
+  launchExternalApp = appName => {
     this.hideMenu();
-    this.core.run("MailAdmin");
+    this.core.run(appName);
   };
-
-  crmAdminClick = e => {
-    this.hideMenu();
-    this.core.run("CRMAdmin");
-  };
-
+  
   errorLogAdminClick = e => {
     this.hideMenu();
     ReactDOM.render(

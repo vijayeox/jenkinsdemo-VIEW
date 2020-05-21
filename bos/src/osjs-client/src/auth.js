@@ -102,7 +102,7 @@ export default class Auth {
     if (reload) {
     	this.core.boot();
       // setTimeout(() => {
-      //   window.location.reload();
+        window.location.reload();
       // }, 1);
     }
   }

@@ -1,8 +1,6 @@
 #!/bin/bash
 
-cd view/bos
 #npm rebuild node-sass
-cd ..
 ./clean.sh
 ./build.sh gui
 ./build.sh iconpacks
