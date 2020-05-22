@@ -78,13 +78,22 @@ export class SplashServiceProvider extends ServiceProvider {
 			}
 			else {
 				// this.$loading.innerHTML = '<img src="./load.svg" height="300" width="300" align="center">';
+				let isFullScreen=document.getElementsByClassName("cke_maximized");
+				if(isFullScreen.length>0){
+					//use this class if ckeditor is maximized
+					this.$loading.className = 'osjs-boot-splash-fullscreen';
+				}
+			
 				this.$loading.innerHTML = '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'
-
 				ele = this.core.$root;
 				ele.appendChild(this.$loading);
+				
+				
 			}
 		}
 	}
+
+	
 
 	destroy(ele) {
 		if (ele) {
