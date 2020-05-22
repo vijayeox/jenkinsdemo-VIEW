@@ -218,7 +218,7 @@ export default class OX_Grid extends React.Component {
   };
 
   refreshHandler = () => {
-    this.child.current.refresh();
+    this.child.current.triggerGetCall();
   };
 
   noRecordsJSX() {
@@ -447,7 +447,8 @@ export default class OX_Grid extends React.Component {
             <Grid
               data={
                 this.props.exportToPDF.defaultFilters &&
-                this.state.gridData.data
+                this.state.gridData.data &&
+                typeof this.state.gridData.data == "array"
                   ? process(
                       this.state.gridData.data,
                       JSON.parse(this.props.exportToPDF.defaultFilters)

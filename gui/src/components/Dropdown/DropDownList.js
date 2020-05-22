@@ -1,8 +1,10 @@
-import React from 'react'
+import React from "react";
 import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
 import * as KendoDataQuery from "@progress/kendo-data-query";
 import withValueField from "./filterForStaticDropdown";
-const DropDownListWithValueField = withValueField(KendoReactDropDowns.DropDownList);
+const DropDownListWithValueField = withValueField(
+  KendoReactDropDowns.DropDownList
+);
 
 export default class DropDown extends React.Component {
   constructor(props) {
@@ -44,6 +46,8 @@ export default class DropDown extends React.Component {
       });
     }
   }
+
+  getMainList = (query, size) => {};
 
   filterChangeAPI = (e) => {
     clearTimeout(this.timeout);
