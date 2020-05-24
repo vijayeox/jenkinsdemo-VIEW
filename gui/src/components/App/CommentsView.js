@@ -271,17 +271,29 @@ class CommentsView extends React.Component {
               <div id="chat-message-list">
                 {this.state.commentsList.map((commentItem) => {
                   return (
-                    <div className="message-row other-message">
-                      <div className="message-text">
-                        <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
-                        <h6 className="header">{commentItem.name}</h6>
-                        {commentItem.text}
-                      </div>
-                      <div className="message-time">{commentItem.time}</div>
-                    <button className="btn btn-danger btn-xs" id="btn">
-                    <i className="fa fa-trash-o" style={{color:"red", fontSize:"20px", background:"none"}}></i>
-                    </button>
+                    <article className="row">
+                    <div className="col-md-1 col-sm-1 hidden-xs">
+                    <figure className="thumbnail">
+                    <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
+                    <figcaption className="text-center">{commentItem.name}</figcaption>
+                    </figure>
                     </div>
+                    <div className="col-md-11 col-sm-11">
+                    <div className="panel panel-default arrow left">
+                    <div className="panel-body">
+                    <header className="text-left">
+                    <time className="comment-date" datetime={commentItem.time}><i className="fa fa-clock-o"></i> {commentItem.time}</time>
+                    </header>
+                    <div className="comment-post">
+                    <p>
+                    {commentItem.text}
+                    </p>
+                    </div>
+                    <p className="text-right"><a href="#" className="btn btn-default btn-sm"><i className="fa fa-trash-o"></i>Delete</a></p>
+                    </div>
+                    </div>
+                    </div>
+                    </article>
                   );
                 })}
               </div>
