@@ -433,6 +433,7 @@ class Page extends React.Component {
             entityId={item.content.entityId}
             columnConfig={columnConfig}
             placeholder={placeholder}
+            {...item.content}
           />
         );
       } else if (item.type == "DocumentViewer") {
