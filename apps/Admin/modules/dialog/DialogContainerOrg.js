@@ -1,9 +1,8 @@
-import {React,FileUploader,Notification,Timezones,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
+import {React,FileUploader,Notification,Timezones,countryStateList,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
 import scrollIntoView from "scroll-into-view-if-needed";
-import countryStateList from "../data/country-state-codes";
 import Swal from "sweetalert2";
 
 export default class DialogContainer extends React.Component {
