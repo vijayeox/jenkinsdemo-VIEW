@@ -32,11 +32,6 @@ justify-content: space-between;
 align-items: center;
 word-break: break-word;
 
-div.col-1 {
-align-items: center;
-display: flex;
-flex-direction: column;
-}
 &:hover {
 background: $gray-hover;
 }
@@ -148,12 +143,6 @@ padding: 5px 15px;
 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-*{
-margin: 0px;
-padding: 0px;
-box-sizing: border-box;
-}
-
 html, body{
 height: 100%;	
 }
@@ -181,64 +170,58 @@ border-radius: 15px;
 
 }
 #chat-message-list {
-grid-area: chat-message-list;
-padding: 60px 20px;
-
-}
-.message-row {
-display: block;
-margin-bottom: 20px;
-}
-.message-text {
-padding: 9px 14px;
-font-size: 1.6rem;
-line-height: 20px;
-max-height: 400px;
-}
-.message-time{
-font-size: 1.3rem;
-color: #777;
-margin-left: 5px;
-text-align: right;
-}
-.other-message .message-text{
-background: #eee;
-color: #111;
-border: 1px solid #ddd;
-border-radius: 14px 14px 14px 14px;
-}
-.other-message img{
-grid-row: span 2;
-height: 40px;
-border-radius: 100%;
-margin-bottom: 5px; 
-}
-h4.header{
-line-height: 25px;
-}
-#btn{
-cursor: pointer;
-// float: right;
-color: transparent;
-position: absolute;
-top: 180px;
-left: 900px;
-right: -420px;
-border: none;
-background: none;
-text-decoration: none;
-color: white;
-display: inline-block;
-margin: 4px 2px;
-margin: 10px;
-margin-left: 95%;
-}
-
-#btn:hover {
-// box-shadow: 0 0 2px 0 teal;
-border: none;
-width: 40px;
-height: 40px;
+  grid-area: chat-message-list;
+  padding: 60px 20px;
+  .panel{
+    border-color: #ddd;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  }
+  .panel.arrow.left:before {
+    left: 0px;
+    top: 30px;
+    border-right-color: inherit;
+    border-width: 16px;
+  }
+  .panel-body {
+    padding: 15px;
+  }
+  .btn-sm{
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+  }
+  figure.thumbnail {
+    display: block;
+    padding: 4px;
+    margin-bottom: 20px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+  .thumbnail img{
+    max-width: 100%;
+  }
+  .panel:before {
+    left: 0px;
+    top: 30px;
+    border-right-color: inherit;
+    border-width: 16px;
+  }
+  .btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+  }
 }
 
 }

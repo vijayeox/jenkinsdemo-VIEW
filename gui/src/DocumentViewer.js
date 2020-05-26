@@ -132,6 +132,7 @@ export default class DocumentViewer extends Component {
   }
 
   getDocIcon(type) {
+    try {
     var type = type.split("/")[1].toLowerCase();
     if (type == "png" || type == "jpg" || type == "jpeg" || type == "gif") {
       return "fa fa-picture-o";
@@ -148,6 +149,9 @@ export default class DocumentViewer extends Component {
     ) {
       return "fa fa-file-word-o";
     } else {
+      return "fa fa-file-o";
+    }
+    } catch(Exception){
       return "fa fa-file-o";
     }
   }

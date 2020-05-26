@@ -7,52 +7,54 @@ export class DataLoader extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
-    this.refresh = this.refresh.bind(this);
     this.state = {
       url: this.props.url,
       dataState: this.props.dataState
     };
     this.init = { method: "GET", accept: "application/json", headers: {} };
     this.timeout = null;
+    this.lastSuccess = undefined;
     this.loader = this.core.make("oxzion/splash");
   }
-  objectEquals(obj1, obj2) {
-    for (var i in obj1) {
-      if (obj1.hasOwnProperty(i)) {
-        if (!obj2.hasOwnProperty(i)) return false;
-        if (obj1[i] != obj2[i]) return false;
-      }
+
+  componentDidMount() {
+    if (this.props.searchOnEnter) {
+      var that = this;
+      document
+        .getElementsByClassName("k-filter-row")[0]
+        .getElementsByClassName("k-textbox")
+        .forEach((item) => {
+          item.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              that.timeout ? clearTimeout(that.timeout) : null;
+              that.triggerGetCall();
+            }
+          });
+        });
     }
-    for (var i in obj2) {
-      if (obj2.hasOwnProperty(i)) {
-        if (!obj1.hasOwnProperty(i)) return false;
-        if (obj1[i] != obj2[i]) return false;
-      }
-    }
-    return true;
   }
 
   componentDidUpdate(prevProps) {
-    if(this.objectEquals(this.props.dataState,prevProps.dataState)){
-      return;
+    if (this.props.url !== prevProps.url) {
+      this.triggerGetCall();
     }
-    if (
-      this.props.url !== prevProps.url ||
-      !this.objectEquals(this.props.dataState,prevProps.dataState)
-    ) {
-      this.setState({
-        url: this.props.url
-      });
-      this.getData(this.props.url).then((response) => {
+  }
+
+  triggerGetCall() {
+    this.loader.showGrid();
+    this.getData(this.props.url).then((response) => {
+      this.lastSuccess = this.pending;
+      this.pending = undefined;
+      if (toODataString(this.props.dataState) === this.lastSuccess) {
         if (typeof response == "object" && response.status == "success") {
           if (this.props.dataState.group) {
             var groupConfig = {
               group: this.props.dataState.group
             };
           }
-          this.props.onDataRecieved({
+          this.props.onDataRecieved.call(undefined, {
             data: groupConfig
-              ? process(response.data, groupConfig)
+              ? process(response.data, groupConfig).data
               : response.data,
             total: response.total ? response.total : null
           });
@@ -60,8 +62,44 @@ export class DataLoader extends React.Component {
           //put notification
           this.pending = undefined;
         }
-        this.loader.destroyGrid();
-      });
+      } else {
+        this.requestDataIfNeeded();
+      }
+      this.loader.destroyGrid();
+    });
+  }
+
+  prepareAPIRoute(url) {
+    let paramSeperator =
+      url !== undefined ? (url.includes("?") ? "&" : "?") : "&";
+    var columnList = this.props.passColumnConfig
+      ? this.props.passColumnConfig.concat(
+          this.props.columnConfig
+            .map((item) => (item.field ? item.field : null))
+            .filter(
+              (el) => el != null && this.props.passColumnConfig.indexOf(el) < 0
+            )
+        )
+      : undefined;
+    if (Object.keys(this.props.dataState).length === 0) {
+      return columnList
+        ? url + paramSeperator + "columns=" + JSON.stringify(columnList)
+        : url;
+    } else {
+      var filterConfig = this.prepareQueryFilters(this.props.dataState);
+      var finalRoute = columnList
+        ? url +
+          paramSeperator +
+          "filter=[" +
+          JSON.stringify(filterConfig) +
+          "]&columns=" +
+          JSON.stringify(columnList)
+        : url +
+          paramSeperator +
+          "filter=[" +
+          JSON.stringify(filterConfig) +
+          "]";
+      return finalRoute;
     }
   }
 
@@ -69,7 +107,7 @@ export class DataLoader extends React.Component {
     if (typeof this.core == "undefined") {
       let response = await fetch(url, this.init);
       let json = await response.json();
-      if(json.status == 'success'){
+      if (json.status == "success") {
         let data = { data: json.value, total: json["@odata.count"] };
         return data;
       } else {
@@ -78,17 +116,7 @@ export class DataLoader extends React.Component {
       }
     } else {
       let helper = this.core.make("oxzion/restClient");
-      let paramSeperator =
-        url !== undefined ? (url.includes("?") ? "&" : "?") : "&";
-      if (Object.keys(this.props.dataState).length === 0) {
-        var route = url;
-      } else {
-        var filterConfig = this.props.columnConfig
-          ? this.prepareQueryFilters(this.props.dataState)
-          : this.props.dataState;
-        var route = url + paramSeperator + "filter=[" + JSON.stringify(filterConfig) + "]";
-      }
-
+      var route = this.prepareAPIRoute(url);
       let data = this.props.urlPostParams
         ? await helper.request(
             "v1",
@@ -105,7 +133,7 @@ export class DataLoader extends React.Component {
     }
   }
 
-  prepareQueryFilters = filterConfig => {
+  prepareQueryFilters = (filterConfig) => {
     var gridConfig = JSON.parse(JSON.stringify(filterConfig));
     if (this.props.forceDefaultFilters) {
       try {
@@ -116,7 +144,10 @@ export class DataLoader extends React.Component {
         }
       } catch {}
     }
-    this.props.columnConfig.map(ColumnItem => {
+    if (this.props.filterLogic && gridConfig.filter) {
+      gridConfig.filter.logic = this.props.filterLogic;
+    }
+    this.props.columnConfig.map((ColumnItem) => {
       if (ColumnItem.filterFormat && gridConfig.filter) {
         gridConfig.filter.filters.map((filterItem1, i) => {
           if (filterItem1.field == ColumnItem.field) {
@@ -134,7 +165,7 @@ export class DataLoader extends React.Component {
         gridConfig.filter.filters.map((filterItem2, i) => {
           if (filterItem2.field == ColumnItem.field) {
             var searchQuery = filterItem2.value.split(" ");
-            searchQuery.map(searchItem=>
+            searchQuery.map((searchItem) =>
               newFilters.push({
                 field: filterItem2.field,
                 operator: filterItem2.operator,
@@ -143,7 +174,7 @@ export class DataLoader extends React.Component {
             );
             ColumnItem.multiFieldFilter.map((multiFieldItem) => {
               let newFilter = JSON.parse(JSON.stringify(filterItem2));
-              searchQuery.map(searchItem=>
+              searchQuery.map((searchItem) =>
                 newFilters.push({
                   field: multiFieldItem,
                   operator: newFilter.operator,
@@ -151,64 +182,54 @@ export class DataLoader extends React.Component {
                 })
               );
             });
+            gridConfig.filter.logic = "or";
           } else {
             newFilters.push(filterItem2);
           }
         });
         gridConfig.filter.filters = newFilters;
-        gridConfig.filter.logic = "and";
       }
     });
     return gridConfig;
   };
 
-  refresh = (temp) => {
-    this.getData(this.state.url).then((response) => {
-      this.props.onDataRecieved({
-        data: response.data,
-        total: response.total
-      });
-      this.loader.destroy();
-    });
-  };
-
   requestDataIfNeeded = () => {
     if (
-      (this.pending && this.pending != undefined) || toODataString(this.props.dataState) === this.lastSuccess
+      (this.pending && this.pending != undefined) ||
+      toODataString(this.props.dataState) === this.lastSuccess
     ) {
       return;
     }
-    this.pending = toODataString(this.props.dataState, this.props.dataState);
-    // if(typeof this.timeout === 'number'){
-    //   window.clearTimeout(this.timeout);
-    // }
-    // this.timeout = window.setTimeout(() => {
-    this.getData(this.state.url).then((response) => {
-      this.lastSuccess = this.pending;
-      this.pending = undefined;
-      if (toODataString(this.props.dataState) === this.lastSuccess) {
-        if (this.props.dataState.group) {
-          var groupConfig = {
-            group: this.props.dataState.group
-          };
-        }
-        this.props.onDataRecieved.call(undefined, {
-          data: groupConfig
-            ? process(response.data, groupConfig)
-            : response.data,
-          total: response.total ? response.total : null
-        });
-        this.loader.destroyGrid();
-      } else {
-        this.requestDataIfNeeded();
-      }
-    });
-    // }, 2000);
+    this.pending = toODataString(this.props.dataState);
+    this.triggerGetCall();
   };
 
   render() {
-    this.requestDataIfNeeded();
-    return <>{this.pending && this.loader.showGrid()}</>;
+    if (this.lastSuccess) {
+      this.timeout ? clearTimeout(this.timeout) : null;
+      this.timeout = setTimeout(() => {
+        this.requestDataIfNeeded();
+      }, 1000);
+    } else {
+      this.requestDataIfNeeded();
+    }
+    return <div></div>;
+  }
+
+    objectEquals(obj1, obj2) {
+    for (var i in obj1) {
+      if (obj1.hasOwnProperty(i)) {
+        if (!obj2.hasOwnProperty(i)) return false;
+        if (obj1[i] != obj2[i]) return false;
+      }
+    }
+    for (var i in obj2) {
+      if (obj2.hasOwnProperty(i)) {
+        if (!obj1.hasOwnProperty(i)) return false;
+        if (obj1[i] != obj2[i]) return false;
+      }
+    }
+    return true;
   }
 }
 export default DataLoader;
