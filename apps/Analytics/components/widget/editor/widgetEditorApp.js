@@ -88,16 +88,21 @@ class WidgetEditorApp extends React.Component {
                     return state;
                 },
                     () => {
-                        if (thiz.refs.editor) {
-                            thiz.refs.editor.setWidgetData({
-                                data: widget.data,
-                                configuration: widget.configuration,
-                                queries: widget.queries,
-                                expression: widget.expression
-                            });
-                        }
+                   
+                            // console.log(thiz.refs.editor)
+                            // if (thiz.refs.editor) {
+                            //     thiz.refs.editor.setWidgetData({
+                            //         data: widget.data,
+                            //         configuration: widget.configuration,
+                            //         queries: widget.queries,
+                            //         expression: widget.expression,
+                            //         readOnly: true
+                            //     });
+                            //     thiz.refs.editor.makeReadOnly(true);
+                            // }
+                
+                      
                     });
-                thiz.makeReadOnly(true);
             }).
             catch(function (responseData) {
                 console.error('Could not load widget.');
@@ -261,6 +266,22 @@ class WidgetEditorApp extends React.Component {
 
         if (thiz.state.widget.uuid) {
             thiz.loadWidget(thiz.state.widget.uuid);
+        }
+
+    }
+
+    componentDidUpdate(){
+        let widget=this.state.widget;
+        if (this.refs.editor && widget.configuration) {
+            console.log(this.refs.editor)
+            this.refs.editor.setWidgetData({
+                data: widget.data,
+                configuration: widget.configuration,
+                queries: widget.queries,
+                expression: widget.expression,
+                readOnly: true
+            });
+            this.refs.editor.makeReadOnly(true);
         }
 
     }

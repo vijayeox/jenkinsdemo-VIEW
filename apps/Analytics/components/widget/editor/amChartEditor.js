@@ -53,8 +53,9 @@ class AmChartEditor extends AbstractEditor {
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {
+         
             //Make sure chart configuratio is valid JSON
-            let jsonChartConfiguration = JSON.parse(this.state.configuration);
+            let jsonChartConfiguration = this.state.configuration!=''?JSON.parse(this.state.configuration):'{}';
             let previewElement = document.querySelector('div#chartPreview');
             previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
             //Chart must be disposed (if exists) before repainting it.
