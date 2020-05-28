@@ -6,16 +6,14 @@ class Notification extends React.Component {
   constructor(props) {
     super(props);
     this.notificationDOMRef = React.createRef();
-    // this.successNotification = this.successNotification.bind(this);
-    // this.failNotification = this.failNotification.bind(this);
   }
-  notify(title, message, type) {
+  notify(title, message, type, container) {
     this.notificationDOMRef.current.addNotification({
       title: title || "",
       message: message || "",
       type: type || "",
       insert: "top",
-      container: "bottom-right",
+      container: container ? container : "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
       dismiss: { duration: 3000 },
