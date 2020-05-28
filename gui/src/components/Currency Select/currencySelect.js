@@ -7,7 +7,7 @@ import _ from "lodash";
 import "./style.css";
 
 const debug = require("debug")("select-currency:info");
-const countries = associateCurrencies(countriesWithCurrency(cc.countries));
+const countries = associateCurrencies(countriesWithCurrency(cc));
 
 function associateCurrencies(countries) {
   return _.map(countries, country => ({
