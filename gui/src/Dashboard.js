@@ -58,6 +58,11 @@ class Dashboard extends Component {
     return response;
   }
 
+  appendToDashboardContainer(htmlData){
+    let container="<div id='dasboard-viewer-content' class='dasboard-viewer-content'>"+htmlData+"</div>"
+    return container
+  }
+
   componentDidMount() {
     if (this.uuid) {
       let thiz = this;
@@ -316,7 +321,7 @@ preparefilter(filter1,filter2){
   }
 
   render() {
-    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.state.htmlData }} />;
+      return  <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData?this.state.htmlData:'') }} />;
   }
 }
 
