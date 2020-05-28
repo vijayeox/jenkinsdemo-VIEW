@@ -1,4 +1,10 @@
-import {React,FileUploader,Notification,KendoReactWindow,KendoReactInput} from "oxziongui";
+import {
+  React,
+  FileUploader,
+  Notification,
+  KendoReactWindow,
+  KendoReactInput,
+} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
@@ -9,7 +15,8 @@ export default class DialogContainer extends React.Component {
     this.core = this.props.args;
     this.state = {
       prjInEdit: this.props.dataItem || null,
-      managerName: undefined
+      managerName: undefined,
+      parentProject : this.props.dataItem.parent_id
     };
     this.notif = React.createRef();
   }
@@ -22,18 +29,18 @@ export default class DialogContainer extends React.Component {
           "/user/" +
           this.props.dataItem.manager_id +
           "/profile"
-      ).then(response => {
+      ).then((response) => {
         this.setState({
           managerName: {
             id: "111",
-            name: response.data.name
-          }
+            name: response.data.name,
+          },
         });
       });
     }
   }
 
-  onDialogInputChange = event => {
+  onDialogInputChange = (event) => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -42,7 +49,7 @@ export default class DialogContainer extends React.Component {
     edited[name] = value;
 
     this.setState({
-      prjInEdit: edited
+      prjInEdit: edited,
     });
   };
 
@@ -50,22 +57,22 @@ export default class DialogContainer extends React.Component {
     const edited = this.state.prjInEdit;
     edited[item] = event.target.value;
     this.setState({
-      prjInEdit: edited
+      prjInEdit: edited,
     });
     item == "manager_id"
       ? this.setState({
-          managerName: event.target.value
+          managerName: event.target.value,
         })
       : null;
   };
 
-  sendData = e => {
+  sendData = (e) => {
     e.preventDefault();
     this.notif.current.notify(
       "Uploading Data",
       "Please wait for a few seconds.",
       "default"
-    )
+    );
     PushData(
       "project",
       this.props.formAction,
@@ -73,10 +80,10 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.prjInEdit.name,
         description: this.state.prjInEdit.description,
-        manager_id: this.state.prjInEdit.manager_id
+        manager_id: this.state.prjInEdit.manager_id,
       },
       this.props.selectedOrg
-    ).then(response => {
+    ).then((response) => {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
@@ -85,7 +92,7 @@ export default class DialogContainer extends React.Component {
           "Error",
           response.message ? response.message : null,
           "danger"
-        )
+        );
       }
     });
   };
@@ -143,7 +150,7 @@ export default class DialogContainer extends React.Component {
                       }
                       selectedItem={this.state.managerName}
                       preFetch={true}
-                      onDataChange={event =>
+                      onDataChange={(event) =>
                         this.listOnChange(event, "manager_id")
                       }
                       required={true}
@@ -152,6 +159,26 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
+                {!this.props.dataItem.parent_id ? (
+                  <div className="col-4">
+                    <label>Parent Project</label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        mainList={
+                          "organization/" + this.props.selectedOrg + "/project"
+                        }
+                        selectedItem={this.state.parentProject}
+                        preFetch={true}
+                        onDataChange={(event) =>
+                          this.listOnChange(event, "manager_id")
+                        }
+                        disableItem={this.props.diableField}
+                        validationMessage={"Please select the Parent project."}
+                      />
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </form>

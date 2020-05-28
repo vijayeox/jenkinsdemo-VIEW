@@ -12,7 +12,7 @@ export default {
       route: "projects",
       defaultFilters: '{"sort":[{"field":"date_created","dir":"desc"}]}',
       toolbarTemplate: (
-        <h5 key={1} style={{ margin: "0px" }}>
+        <h5 key={Math.random()} style={{ margin: "0px" }}>
           Project's List
         </h5>
       ),
@@ -26,10 +26,6 @@ export default {
           title: "Description",
           field: "description",
         },
-        {
-          title: "Subproject",
-          field: "subproject_name",
-        },
       ],
       actions: [
         { name: "Edit Project Details", type: "edit", icon: "fa fa-pencil" },
@@ -37,13 +33,46 @@ export default {
           name: "Add Users To Project",
           type: "assignEntity",
           icon: "fa fa-user-plus",
+          prefetch: false,
+          title: "Project",
+          mainList: "/users/list",
+          subList: "/project",
+          members: "Users",
         },
         {
           name: "Delete Project",
           type: "delete",
           icon: "fa fa-trash manageIcons",
+          route: "/project",
         },
       ],
+      expandable: {
+        subRoute: "project/{{uuid}}/subproject",
+        columnConfig: [
+          {
+            title: "Name",
+            field: "name",
+          },
+          {
+            title: "Description",
+            field: "description",
+          },
+        ],
+        actions: [
+          { name: "Edit Project Details", type: "edit", icon: "fa fa-pencil" },
+          {
+            name: "Add Users To Project",
+            type: "assignEntity",
+            icon: "fa fa-user-plus",
+            prefetch: false,
+          },
+          {
+            name: "Delete Project",
+            type: "delete",
+            icon: "fa fa-trash manageIcons",
+          },
+        ],
+      },
     },
     permission: {
       canAdd: "MANAGE_PROJECT_WRITE",
@@ -58,7 +87,7 @@ export default {
       route: "announcements",
       defaultFilters: '{"sort":[{"field":"created_date","dir":"desc"}]}',
       toolbarTemplate: (
-        <h5 key={1} style={{ margin: "0px" }}>
+        <h5 key={Math.random()} style={{ margin: "0px" }}>
           Announcements List
         </h5>
       ),
@@ -97,7 +126,12 @@ export default {
       ],
       actions: [
         { name: "Edit", type: "edit", icon: "fa fa-pencil" },
-        { name: "Add To Group", type: "assignEntity", icon: "fa fa-users" },
+        {
+          name: "Add To Group",
+          type: "assignEntity",
+          icon: "fa fa-users",
+          prefetch: true,
+        },
         { name: "Delete", type: "delete", icon: "fa fa-trash manageIcons" },
       ],
     },
