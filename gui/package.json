@@ -40,7 +40,6 @@
     "bootstrap": "4.4.1",
     "bootswatch": "4.4.1",
     "canvg": "^3.0.6",
-    "country-code": "0.0.3",
     "css-element-queries": "^1.2.3",
     "deepmerge": "^4.2.2",
     "file-loader": "^4.3.0",

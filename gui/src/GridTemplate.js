@@ -24,7 +24,9 @@ export default class GridTemplate extends React.Component {
         skip: 0,
         sort: this.props.config.sortMode
       },
-      gridData: this.props.gridData,
+      gridData: this.props.gridData
+        ? this.props.gridData
+        : { data: [], total: 0 },
       api: this.props.config.api
     };
     this.notif = React.createRef();
@@ -117,6 +119,7 @@ export default class GridTemplate extends React.Component {
           ref={this.child}
           args={this.core}
           url={this.state.api}
+          columnConfig={this.props.config.column}
           dataState={this.state.dataState}
           onDataRecieved={this.dataRecieved}
         />
@@ -138,7 +141,7 @@ export default class GridTemplate extends React.Component {
         "danger"
       );
     }
-    this.child.current.refresh();
+    this.child.current.triggerGetCall();
   };
 
   emptyCell = () => {
@@ -154,15 +157,14 @@ export default class GridTemplate extends React.Component {
         <Notification ref={this.notif} />
         {this.rawDataPresent()}
         <Grid
-          data={
-            typeof this.state.gridData == "object" ? this.state.gridData : []
-          }
+          data={this.state.gridData.data}
           {...this.state.dataState}
           sortable={{ mode: "multiple" }}
           filterable={true}
           resizable={true}
           reorderable={true}
           scrollable={"scrollable"}
+          total={this.state.gridData.total}
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
           onRowClick={(e) => {

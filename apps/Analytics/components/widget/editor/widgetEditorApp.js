@@ -547,7 +547,7 @@ class WidgetEditorApp extends React.Component {
                                     id="selectWidget"
                                     isDisabled={this.state.isPreLoadedWidget}
                                     onChange={this.selectableWidgetSelectionChanged}
-                                    value={this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
+                                    value={this.state.selectableWidgetOptions.length>0 && this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
                                     options={this.state.selectableWidgetOptions}
                                 />
                             </div>
@@ -617,7 +617,7 @@ class WidgetEditorApp extends React.Component {
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
-                                {(this.state.widget.type === 'chart') &&
+                                {((this.state.widget.type === 'chart') && (this.state.selectableWidgetOptions.length>0)) &&
                                     <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&

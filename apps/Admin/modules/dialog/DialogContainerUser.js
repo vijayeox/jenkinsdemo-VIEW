@@ -1,7 +1,6 @@
-import {React,ReactDOM,Notification,KendoReactDropDowns,KendoReactInput,KendoReactRipple,KendoReactWindow,Moment} from "oxziongui";
+import {React,ReactDOM,Notification,KendoReactDropDowns,countryStateList,KendoReactInput,KendoReactRipple,KendoReactWindow,Moment} from "oxziongui";
 import { PushData } from "../components/apiCalls";
 import { DateComponent, SaveCancel, DropDown } from "../components/index";
-import countryStateList from "../data/country-state-codes";
 import ReactTooltip from "react-tooltip";
 
 export default class DialogContainer extends React.Component {
@@ -9,6 +8,8 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     let countryList = countryStateList.map((item) => item.country);
+    console.log(countryList);
+    
     this.state = {
       userInEdit: [],
       roleList: [],

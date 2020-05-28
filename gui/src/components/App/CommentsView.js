@@ -12,45 +12,28 @@ class CommentsView extends React.Component {
     this.profileAdapter = this.core.make("oxzion/profile");
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
+    this.loader = this.core.make("oxzion/splash");
     this.state = {
       fileData: this.props.fileData,
       dataReady: this.props.url ? false : true,
       commentsList: [],
       mentionData: [],
       value: "",
-      fileId: "",
+      fileId: this.props.url,
       userList: [],
     };
   }
 
   componentDidMount() {
-    if (this.props.url != undefined) {
-      this.setState({fileId:this.props.url});
-      this.getFileDetails(this.props.url).then((response) => {
-        if (response.status == "success") {
-          if(response.data && response.data.length > 0){
-            this.setState({
-              commentsList: response.data
-              ? this.formatFormData(response.data.map((i) => {
-                              return { id: this.uuidv4(), text: i.text,name:i.name,time: i.time,user_id:i.userId };
-                            }))
-              : []
-            });
-            this.setState({dataReady:true});
-          } else {
-            this.setState({commentsList:[]});
-            this.setState({dataReady:true});
-          }
-        }
-      });
-    }
+    this.loader.show();
+    this.fetchCommentData();
   }
 
-  async getFileDetails(fileId) {
+  async getComments() {
     let helper = this.core.make("oxzion/restClient");
     let fileContent = await helper.request(
       "v1",
-      "file/"+ fileId +"/comment",
+      "file/"+ this.state.fileId +"/comment",
       {},
       "get"
     );
@@ -84,7 +67,7 @@ class CommentsView extends React.Component {
   }
 
   fetchCommentData() {
-    this.getFileDetails(this.props.url).then((response) => {
+    this.getComments().then((response) => {
       if (response.status == "success") {
         this.setState({
           commentsList: response.data
@@ -95,6 +78,7 @@ class CommentsView extends React.Component {
           dataReady: true
         });
       }
+      this.loader.destroy();
     });
   }
 
@@ -158,6 +142,7 @@ class CommentsView extends React.Component {
   saveComment(stepBack) {
     const comment = {};
     comment.text = JSON.stringify(this.state.value);
+    this.loader.show();
     this.saveComments(comment).then(() => {
       this.setState({
         mentionData: [],
@@ -271,17 +256,29 @@ class CommentsView extends React.Component {
               <div id="chat-message-list">
                 {this.state.commentsList.map((commentItem) => {
                   return (
-                    <div className="message-row other-message">
-                      <div className="message-text">
-                        <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
-                        <h6 className="header">{commentItem.name}</h6>
-                        {commentItem.text}
-                      </div>
-                      <div className="message-time">{commentItem.time}</div>
-                    <button className="btn btn-danger btn-xs" id="btn">
-                    <i className="fa fa-trash-o" style={{color:"red", fontSize:"20px", background:"none"}}></i>
-                    </button>
+                    <article className="row">
+                    <div className="col-md-1 col-sm-1 hidden-xs">
+                    <figure className="thumbnail">
+                    <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
+                    <figcaption className="text-center">{commentItem.name}</figcaption>
+                    </figure>
                     </div>
+                    <div className="col-md-11 col-sm-11">
+                    <div className="panel panel-default arrow left">
+                    <div className="panel-body">
+                    <header className="text-left">
+                    <time className="comment-date" datetime={commentItem.time}><i className="fa fa-clock-o"></i> {commentItem.time}</time>
+                    </header>
+                    <div className="comment-post">
+                    <p>
+                    {commentItem.text}
+                    </p>
+                    </div>
+                    <p className="text-right"><a href="#" className="btn btn-default btn-sm"><i className="fa fa-trash-o"></i>Delete</a></p>
+                    </div>
+                    </div>
+                    </div>
+                    </article>
                   );
                 })}
               </div>

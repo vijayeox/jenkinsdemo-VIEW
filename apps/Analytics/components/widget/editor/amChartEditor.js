@@ -11,12 +11,13 @@ class AmChartEditor extends AbstractEditor {
         super(props);
         this.state.selectedTab = 'chart';
         this.state.filteredWidgetList = [];
-        this.state.drillDownWidgetTitle = '',
-            this.state.drillDownWidgetType = "",
-            this.state.drillDownWidgetFooter = '',
-            this.state.hasMaxDepth = false,
-            this.state.drillDownMaxDepth = -1,
-            this.amChart = null;
+        this.state.drillDownWidgetTitle = '';
+        this.state.drillDownWidgetType = "";
+        this.state.drillDownWidgetFooter = '';
+        this.state.hasMaxDepth = false;
+        this.state.drillDownMaxDepth = -1;
+        this.amChart = null;
+        this.state.selectableWidgetOptions=props.selectableWidgetOptions;
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             CHART_CONFIGURATION_INVALID_JSON: 'Chart configuration JSON is invalid',
@@ -122,10 +123,12 @@ class AmChartEditor extends AbstractEditor {
     }
 
     setWidgetType() {
-        let selectedWidgetOption = this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
-        let selectedWidget = selectedWidgetOption[0]["type"]
-        let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
-        this.setState({ drillDownWidgetType: widgetType })
+        if(this.state.selectableWidgetOptions.length>0){
+            let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+            let selectedWidget = selectedWidgetOption[0]["type"]
+            let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
+            this.setState({ drillDownWidgetType: widgetType })
+        }
     }
 
     ApplyDrillDown = () => {
@@ -674,7 +677,7 @@ class AmChartEditor extends AbstractEditor {
                 </div>
                 <div className="form-group col">
                     <div className="card" id="previewBox">
-                        <div className="card-header">
+                        <div className="card-header">   
                             Preview <span id="chartRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
