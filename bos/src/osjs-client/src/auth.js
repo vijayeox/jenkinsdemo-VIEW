@@ -161,13 +161,16 @@ export default class Auth {
    * @param {boolean} [reload=true] Reload client afterwards
    */
   logout(reload = true) {
+    this.core.emit('osjs/core:logout-start');
     return this.adapter.logout(reload)
       .then(response => {
         if (!response) {
           return;
         }
-
-        this.shutdown(reload);
+        var that = this;
+        window.setTimeout(function(){
+          that.shutdown(reload);          
+        },2000);
       });
   }
 }

@@ -46,8 +46,14 @@
 
   // To clear Client-side cookie
   const clearClientCookie = () => {
-    document.cookie = 'MMUSERID=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
-    document.cookie = `MMUSERID=;expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=${window.location.hostname};path=/`;
+    var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        console.log(name);
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
   };
 
   // Chat Header Icons are interchanged purposefully. Do not change this.
@@ -89,12 +95,16 @@
         resetBadge();
       });
 
-      core.on('osjs/core:logged-out', () => {
+      core.on('osjs/core:logout-start', () => {        
         clearClientCookie();
+        win.emit('iframe:post', 'logout');
       });
       
       win.on('blur', () => ref.blur());
-      win.on('iframe:post', msg => ref.postMessage(msg, baseUrl));
+      win.on('iframe:post', msg => {
+           ref.postMessage(msg, baseUrl);
+    });
+
       win.on('iframe:get', msg => {
         console.warn('Message from Iframe', msg);
         switch(msg){
@@ -168,6 +178,7 @@
           finalMinimised = session[i].windows[0].minimized;
         }
       }
+
       // Create  a new Window instance
       const createProcWindow = () => {
         let win = proc.createWindow({
