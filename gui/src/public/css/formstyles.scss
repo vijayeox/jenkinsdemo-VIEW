@@ -9,6 +9,18 @@
       }
     }
   }
+  .formio-component-filecomponent .fileSelector{
+    padding: 15px;
+    border: 2px dashed #ddd;
+    text-align: center;
+  }
+  .formio-component-filecomponent .fileSelector .browse{
+    cursor: pointer;
+  }
+  .formio-component-filecomponent .fileSelector .fa {
+    font-size: 20px;
+    margin-right: 5px;
+  }
   label {
     span {
       color: darkslategray;
