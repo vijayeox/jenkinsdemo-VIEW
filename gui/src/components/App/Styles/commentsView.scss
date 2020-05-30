@@ -203,6 +203,7 @@ border-radius: 15px;
     line-height: 1.42857143;
     background-color: #fff;
     border: 1px solid #ddd;
+    text-align: center;
     border-radius: 4px;
     -webkit-transition: all .2s ease-in-out;
     -o-transition: all .2s ease-in-out;
@@ -210,6 +211,7 @@ border-radius: 15px;
   }
   .thumbnail img{
     max-width: 100%;
+    max-height: 60px;
   }
   .panel:before {
     left: 0px;
