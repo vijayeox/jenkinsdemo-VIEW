@@ -653,7 +653,9 @@ export default class Desktop extends EventEmitter {
    */
   getRect() {
     const root = this.core.$root;
-    const {left, top, right, bottom} = createPanelSubtraction(this.panelInfo.panel, this.panelInfo.panels);
+    const { left, top, right, bottom } = this.panelInfo
+      ? createPanelSubtraction(this.panelInfo.panel, this.panelInfo.panels)
+      : this.subtract;
     const width = root.offsetWidth - left - right;
     const height = root.offsetHeight - top - bottom;
 
