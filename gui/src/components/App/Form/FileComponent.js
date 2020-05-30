@@ -72,8 +72,8 @@ export default class FileComponent extends File {
             var fileKey = _this6.component.fileKey || 'file';
             if(_this6.component.storage=='url'){
             var uploadFile = {file:file,data:{name:file.name,type:file.type}}
+            var helper = _this6.component.core.make("oxzion/restClient");
             helper.request("v1","/app/"+_this6.component.appId+_this6.component.url,uploadFile,"fileupload").then(function (response) {
-                console.log(response);
                 if(response.status=='success'){
                     var index = _this6.statuses.indexOf(fileUpload);
                     if (index !== -1) {
@@ -134,7 +134,6 @@ export default class FileComponent extends File {
           }
         });
       }
-        console.log(files);
     }
 
     deleteFile(fileInfo) {
