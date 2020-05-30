@@ -332,7 +332,7 @@ export default class DialogContainerAnnouncement extends React.Component {
                         className="k-radio-label pl-4 radioLabel"
                         htmlFor="aRadio"
                       >
-                        Announcement App
+                        Announcement
                       </label>
                     </span>
                   </div>
