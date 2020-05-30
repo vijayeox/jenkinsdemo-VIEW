@@ -171,7 +171,7 @@ export default class OX_Grid extends React.Component {
       gridToolbarContent.push(
         <JsxParser
           bindings={{
-            item: this.props.dataItem,
+            item: this.props.parentData,
             moment: moment,
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl,

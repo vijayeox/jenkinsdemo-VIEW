@@ -72,7 +72,7 @@ class SearchPage extends React.Component {
       for (var i = this.state.filterColumns.length - 1; i >= 0; i--) {
         filters.push({
           field: this.state.filterColumns[i],
-          operator: "contains",
+          operator: this.props.filterOperator ? this.props.filterOperator : "contains",
           value: this.search.value
         });
       }
@@ -134,6 +134,7 @@ class SearchPage extends React.Component {
                 pageable={this.pageable}
                 sortable={this.sortable}
                 columnConfig={this.state.columnConfig}
+                passColumnConfig ={this.props.passColumnConfig}
               />
             </div>
           </div>

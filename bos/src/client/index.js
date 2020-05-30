@@ -38,7 +38,7 @@
 // https://manual.os-js.org/v3/resource/official/
 //
 
-import 'font-awesome/css/font-awesome.min.css';
+import '@fortawesome/fontawesome-pro/css/fontawesome.min.css';
 
 import {
   Core,

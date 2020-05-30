@@ -89,12 +89,16 @@
         resetBadge();
       });
 
-      core.on('osjs/core:logged-out', () => {
+      core.on('osjs/core:logout-start', () => {        
         clearClientCookie();
+        win.emit('iframe:post', 'logout');
       });
       
       win.on('blur', () => ref.blur());
-      win.on('iframe:post', msg => ref.postMessage(msg, baseUrl));
+      win.on('iframe:post', msg => {
+           ref.postMessage(msg, baseUrl);
+    });
+
       win.on('iframe:get', msg => {
         console.warn('Message from Iframe', msg);
         switch(msg){
@@ -168,6 +172,7 @@
           finalMinimised = session[i].windows[0].minimized;
         }
       }
+
       // Create  a new Window instance
       const createProcWindow = () => {
         let win = proc.createWindow({

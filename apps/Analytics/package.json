@@ -48,7 +48,7 @@
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.2.0",
-    "@fortawesome/fontawesome-free": "^5.10.2",
+    "@fortawesome/fontawesome-pro": "^5.13.0",
     "@oxzion/gui": "file:../../gui",
     "@progress/kendo-react-buttons": "^2.10.0",
     "babel-loader": "^8.0.5",

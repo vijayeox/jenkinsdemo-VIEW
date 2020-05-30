@@ -17,6 +17,7 @@ import DocumentViewerComponent from "./Form/DocumentViewerComponent";
 import RadioCardComponent from "./Form/RadioCardComponent";
 import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
+import FileComponent from "./Form/FileComponent";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -546,6 +547,7 @@ class FormRender extends React.Component {
       Formio.registerComponent("radiocard", RadioCardComponent);
       Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
       Formio.registerComponent("selectcountry", CountryComponent);
+      Formio.registerComponent("file", FileComponent);
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {

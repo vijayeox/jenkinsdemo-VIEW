@@ -98,7 +98,8 @@ const mover = (win, rect) => {
   const {position} = win.state;
 
   return (diffX, diffY) => {
-    const top = Math.max(position.top + diffY, rect.top);
+    // Add 2px space between panel and window so they dont overlap
+    const top = Math.max(position.top + diffY, rect.top + 2);
     const left = position.left + diffX;
 
     return {top, left};

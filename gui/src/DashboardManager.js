@@ -9,6 +9,7 @@ import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "../../apps/Analytics/dashboardEditor"
 import Select from 'react-select'
+import ReactToPrint from 'react-to-print'
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -232,6 +233,14 @@ class Dashboard extends React.Component {
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
                           <>
+                          <ReactToPrint
+                            trigger={() => {
+                              return     <Button  title="Print Dashboard">
+                              <i className="fa fa-print" aria-hidden="true"></i>
+                            </Button>
+                            }}
+                            content={() => this.dashboardViewerRef}
+                          />
                             <Button onClick={() => this.showFilter()} title="Edit Dashboard">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
@@ -269,10 +278,10 @@ class Dashboard extends React.Component {
                   <div className="dashboard-preview-tab">
                     <span>Dashboard Previewer</span>
                   </div>
-                  <div className="dasboard-viewer-content">
                     {
                       this.state.uuid !== "" &&
                       <DashboardViewer
+                        ref={el => (this.dashboardViewerRef = el)}
                         key={this.state.uuid}
                         uuid={this.state.uuid}
                         core={this.core}
@@ -281,7 +290,6 @@ class Dashboard extends React.Component {
                         dashboardFilter={this.state.dashboardFilter}
                       />
                     }
-                  </div>
 
                 </div>
               </div>

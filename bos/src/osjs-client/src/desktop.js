@@ -38,7 +38,7 @@ import * as merge from 'deepmerge';
 const TEMPLATE = subtract => `
   .osjs-root[data-mobile=true] .osjs-window,
   .osjs-window[data-maximized=true] {
-    top: ${subtract.top}px !important;
+    top: ${subtract.top + 2}px !important;
     left: ${subtract.left}px !important;
     right: ${subtract.right}px !important;
     bottom: ${subtract.bottom}px !important;
@@ -204,15 +204,20 @@ export default class Desktop extends EventEmitter {
 
   initUIEvents() {
     this.core.on(['osjs/panel:create', 'osjs/panel:destroy'], (panel, panels = []) => {
-      this.subtract = createPanelSubtraction(panel, panels);
+      this.panelInfo = {panel: panel, panels: panels};
 
-      try {
-        this._updateCSS();
-        Window.getWindows().forEach(w => w.clampToViewport());
-      } catch (e) {
-        console.warn('Panel event error', e);
-      }
-      this.core.emit('osjs/desktop:transform', this.getRect());
+      // delay setting this.subtract until theme is applied
+      themeTimeout ? clearTimeout(themeTimeout) : null;
+      const themeTimeout = setTimeout(() => {
+        this.subtract = createPanelSubtraction(panel, panels);
+        try {
+          this._updateCSS();
+          Window.getWindows().forEach((w) => w.clampToViewport());
+        } catch (e) {
+          console.warn("Panel event error", e);
+        }
+      }, 200);
+      this.core.emit("osjs/desktop:transform", this.getRect());
     });
 
     this.core.on('osjs/window:transitionend', (...args) => {
@@ -648,7 +653,9 @@ export default class Desktop extends EventEmitter {
    */
   getRect() {
     const root = this.core.$root;
-    const {left, top, right, bottom} = this.subtract;
+    const { left, top, right, bottom } = this.panelInfo
+      ? createPanelSubtraction(this.panelInfo.panel, this.panelInfo.panels)
+      : this.subtract;
     const width = root.offsetWidth - left - right;
     const height = root.offsetHeight - top - bottom;
 

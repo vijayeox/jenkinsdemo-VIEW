@@ -11,7 +11,6 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "file-loader": "^3.0.1",
-    "font-awesome": "^4.7.0",
     "url-loader": "^1.1.2"
   },
   "devDependencies": {

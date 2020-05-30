@@ -2,12 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import AutoSuggest from "react-autosuggest";
 import LocaleCurrency from "locale-currency";
-import cc from "country-code";
+import cc from "./country-data-short.json";
 import _ from "lodash";
 import "./style.css";
 
 const debug = require("debug")("select-currency:info");
-const countries = associateCurrencies(countriesWithCurrency(cc.countries));
+const countries = associateCurrencies(countriesWithCurrency(cc));
 
 function associateCurrencies(countries) {
   return _.map(countries, country => ({
