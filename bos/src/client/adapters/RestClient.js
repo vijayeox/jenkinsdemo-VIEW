@@ -182,6 +182,25 @@ export class RestClientServiceProvider extends ServiceProvider {
 						return resp.json();
 					}
 			}
+			else if (method == 'fileupload') {
+				let formData = new FormData();
+				formData.append('file', params.file);
+				for (var k in params.data) {
+					formData.append(k, params.data[k]);
+				}
+				resp = await fetch(urlString,
+					{
+						body: formData,
+						method: "post",
+						credentials: 'include',
+						headers: { "Authorization": "Bearer " + this.token }
+					})
+					if (resp.status == 400 && resp.statusText == 'Bad Request') {
+						// fall through to refresh handling
+					} else {
+						return resp.json();
+					}
+			}
 			else if (method == 'delete') {
 				resp = await fetch(urlString, {
 					method: method,
