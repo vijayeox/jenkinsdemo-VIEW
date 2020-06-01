@@ -1238,7 +1238,49 @@ class FormRender extends React.Component {
         this.loadWorkflow();
       }
     }
+    $("#" + this.loaderDivID).off("customButtonAction");
+    document
+          .getElementById(this.loaderDivID)
+          .addEventListener("customButtonAction", (e)=>this.customButtonAction(e), false);
   }
+
+  customButtonAction = (e) => {
+    console.log(e);
+    e.stopPropagation();
+    e.preventDefault();
+    let actionDetails = e.detail;
+    let formData = actionDetails.formData;
+    if (this.state.workflowId) {
+      formData["workflowId"] = this.state.workflowId;
+    }
+    if (this.state.workflowInstanceId) {
+      formData["workflowInstanceId"] = this.state.workflowInstanceId;
+      if (this.state.activityInstanceId) {
+        formData["activityInstanceId"] = this.state.activityInstanceId;
+        if (this.state.instanceId) {
+          formData["instanceId"] = $this.state.instanceId;
+        }
+      }
+    }
+    if(this.props.fileId){
+      formData.fileId = this.state.fileId;
+      formData["workflow_instance_id"] = undefined;
+    }
+    this.showFormLoader(true, 0);
+    if (actionDetails["commands"]) {
+      this.callPipeline(
+        actionDetails["commands"],
+        this.cleanData(formData)
+      ).then((response) => {
+        this.showFormLoader(false, 0);
+        if (actionDetails.exit) {
+          clearInterval(actionDetails.timerVariable);
+          this.props.postSubmitCallback();
+        }
+      });
+    }
+  };
+  
   componentWillUnmount(){
     if(this.state.currentForm != undefined || this.state.currentForm != null){
       console.log('destroy form object')
