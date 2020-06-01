@@ -210,14 +210,13 @@ class WidgetEditorApp extends React.Component {
                 });
             });
     }
-
     //Set the react app instance on the window so that the window can call this app to get its state before the window closes.
     componentDidMount() {
         window.widgetEditorApp = this;
         let thiz = this;
-        this._sendUnlimitedWidgetListRequest()
-            .then(function (response) {
-                let widgetData = response.data;
+        Promise.all([this._sendUnlimitedWidgetListRequest(),window.postDataRequest('analytics/visualization'),window.getAllPermission()])
+        .then((response)=>{
+            let widgetData = response[0].data;
                 let widgetList = []
                 widgetList = widgetData.map(widget => {
                     return (
@@ -228,52 +227,34 @@ class WidgetEditorApp extends React.Component {
                 widgetData.map(widget => {
                     selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                 });
-                thiz.setState({ selectableWidgetOptions: selectableWidgetList })
-            })
-            .catch(function (response) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'Failed to load widgets. Please try after some time.'
-                });
-            });
 
-        window.postDataRequest('analytics/visualization')
-            .then(function (response) {
-                let visualizationData = response.data;
+                let visualizationData = response[1].data;
                 let visualList = []
                 visualList = visualizationData.map(visualization => {
                     return (
                         <option key={visualization.uuid} data-key={visualization.uuid} value={visualization.type}>{visualization.name}</option>
                     )
                 });
-                thiz.setState({ visualizationOptions: visualList })
-            })
-            .catch(err => {
-                console.log(err)
-            })
 
-        //called from globalFunctions
-        window.getAllPermission()
-            .then(function (response) {
-                //permissions are sent from dashboardEditor
-                const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response.permissions
-                thiz.setState({ widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
+                const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response[2].permissions
+                thiz.setState({ selectableWidgetOptions: selectableWidgetList,visualizationOptions: visualList ,widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
+                if (thiz.state.widget.uuid) {
+                    thiz.loadWidget(thiz.state.widget.uuid);
+                }
             })
-            .catch(err => {
-                console.log(err)
-            })
-
-        if (thiz.state.widget.uuid) {
-            thiz.loadWidget(thiz.state.widget.uuid);
-        }
-
+        .catch(err=>{
+            console.error(err)
+            Swal.fire({
+                type: 'error',
+                title: 'Oops ...',
+                text: 'Failed to load widgets. Please try after some time.'
+            });
+        })
     }
 
     componentDidUpdate(){
         let widget=this.state.widget;
         if (this.refs.editor && widget.configuration) {
-            console.log(this.refs.editor)
             this.refs.editor.setWidgetData({
                 data: widget.data,
                 configuration: widget.configuration,
