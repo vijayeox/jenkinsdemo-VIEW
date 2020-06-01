@@ -153,13 +153,44 @@ class Project extends React.Component {
           "organization/" + this.state.selectedOrg + config.route,
           dataItem.uuid
         ).then((response) => {
-          response.status == "success"
-            ? this.OX_Grid.current.refreshHandler(response)
-            : this.notif.current.notify(
-                "Operation Failed",
-                response.message,
-                "danger"
-              );
+          if (response.message == "Project has subprojects") {
+            Swal.fire({
+              title: "Are you sure?",
+              text:
+                "The following action will delete the project and its subprojects",
+              imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+              imageWidth: 75,
+              imageHeight: 75,
+              confirmButtonText: "Delete",
+              confirmButtonColor: "#d33",
+              showCancelButton: true,
+              cancelButtonColor: "#3085d6",
+              target: this.adminWindow,
+            }).then((result) => {
+              if (result.value) {
+                DeleteEntry(
+                  "organization/" + this.state.selectedOrg + config.route,
+                  dataItem.uuid + "/true"
+                ).then((response) => {
+                  response.status == "success"
+                    ? this.OX_Grid.current.refreshHandler(response)
+                    : this.notif.current.notify(
+                        "Operation Failed",
+                        response.message,
+                        "danger"
+                      );
+                });
+              }
+            });
+          } else if (response.status == "success") {
+            this.OX_Grid.current.refreshHandler(response);
+          } else {
+            this.notif.current.notify(
+              "Operation Failed",
+              response.message,
+              "danger"
+            );
+          }
         });
       }
     });

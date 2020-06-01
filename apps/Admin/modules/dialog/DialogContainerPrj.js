@@ -16,7 +16,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       prjInEdit: this.props.dataItem || null,
       managerName: undefined,
-      parentProject : this.props.dataItem.parent_id
+      parentProject: this.props.dataItem.parent_id,
     };
     this.notif = React.createRef();
   }
@@ -64,6 +64,11 @@ export default class DialogContainer extends React.Component {
           managerName: event.target.value,
         })
       : null;
+    item == "parent_id"
+      ? this.setState({
+          managerName: event.target.value,
+        })
+      : null;
   };
 
   sendData = (e) => {
@@ -81,6 +86,7 @@ export default class DialogContainer extends React.Component {
         name: this.state.prjInEdit.name,
         description: this.state.prjInEdit.description,
         manager_id: this.state.prjInEdit.manager_id,
+        parent_id: this.state.prjInEdit.parent_id,
       },
       this.props.selectedOrg
     ).then((response) => {
@@ -159,26 +165,24 @@ export default class DialogContainer extends React.Component {
                     />
                   </div>
                 </div>
-                {!this.props.dataItem.parent_id ? (
-                  <div className="col-4">
-                    <label>Parent Project</label>
-                    <div>
-                      <DropDown
-                        args={this.core}
-                        mainList={
-                          "organization/" + this.props.selectedOrg + "/project"
-                        }
-                        selectedItem={this.state.parentProject}
-                        preFetch={true}
-                        onDataChange={(event) =>
-                          this.listOnChange(event, "manager_id")
-                        }
-                        disableItem={this.props.diableField}
-                        validationMessage={"Please select the Parent project."}
-                      />
-                    </div>
+                <div className="col-4">
+                  <label>Parent Project</label>
+                  <div>
+                    <DropDown
+                      args={this.core}
+                      mainList={
+                        "organization/" + this.props.selectedOrg + "/projects"
+                      }
+                      selectedItem={this.state.parentProject}
+                      preFetch={true}
+                      onDataChange={(event) =>
+                        this.listOnChange(event, "parent_id")
+                      }
+                      disableItem={this.props.diableField}
+                      validationMessage={"Please select the Parent project."}
+                    />
                   </div>
-                ) : null}
+                </div>
               </div>
             </div>
           </form>
