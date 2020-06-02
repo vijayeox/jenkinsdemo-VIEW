@@ -79,7 +79,7 @@ function WidgetModal(props) {
       method
     )
       .then(response => {
-        props.refreshGrid.current.child.current.refresh()
+        props.refreshGrid.current.child.current.triggerGetCall()
         notify(response, operation)
         props.onHide()
       })
