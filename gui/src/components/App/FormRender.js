@@ -1085,10 +1085,14 @@ class FormRender extends React.Component {
           var transactionIdComponent = form.getComponent("transaction_id");
           that.storePayment({transaction_id: transactionIdComponent.getValue(),data: e.detail.data,status: e.detail.status}).then(response => {
             that.notif.current.notify("Payment has been Successfully completed!","Please wait while we get things ready!","success");
-            if(form.getNextPage() > -1){
+            if(form.getNextPage() == -1){
               var formsave = that.saveForm(form,that.state.currentForm.submission.data);
               var transactionStatusComponent = form.getComponent("transaction_status");
+              var transactionReferenceComponent = form.getComponent("transaction_reference_number");
               transactionStatusComponent.setValue(e.detail.status);
+              if(transactionReferenceComponent !=undefined){
+                transactionStatusComponent.setValue(e.detail.transaction_reference_number);
+              }
               if (formsave) {
                 that.notif.current.notify("Success","Application Has been Successfully Submitted","success");
               } else {

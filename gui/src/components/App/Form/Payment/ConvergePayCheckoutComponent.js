@@ -92,7 +92,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           console.log("approval:" + JSON.stringify(response, null, "\t"));
           var evt = new CustomEvent("paymentSuccess", {
             cancelable: true,
-            detail: { data: response, status: response.ssl_token_response }
+            detail: { data: response, status: response.ssl_token_response, transaction_reference_number:response.ssl_transaction_reference_number }
           });
           that.form.element.dispatchEvent(evt);
         }
