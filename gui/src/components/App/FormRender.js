@@ -653,6 +653,13 @@ class FormRender extends React.Component {
             }
           });
 
+          form.on("error",errors =>{
+            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
+            if (elm.length > 0) {
+              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
+            }
+          });
+
           form.on("change", function (changed) {
             console.log(changed)
             if (changed && changed.changed) {
