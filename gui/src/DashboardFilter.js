@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import DatePicker from 'react-datepicker'
-import { Form, Row, Col, Button } from 'react-bootstrap'
+import { Form, Row, Button } from 'react-bootstrap'
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select/creatable'
 
@@ -32,29 +32,29 @@ const FilterFields = function (props) {
     const visibility = filterMode == "CREATE"
     return (
         <Form.Row>
-            <Col sm="2">
+            <div className="dashboard-filter-field">
                 <Form.Group  >
                     <Form.Label>Filter Description</Form.Label>
-                    <Form.Control type="text" name="filterName" title={disabledFields?"*The entered description will be displayed in dashboard viewer as filter name":null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
+                    <Form.Control type="text" name="filterName" title={disabledFields ? "*The entered description will be displayed in dashboard viewer as filter name" : null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
                 </Form.Group>
-            </Col>
+            </div>
             {visibility &&
-                <Col sm="2">
+                <div className="dashboard-filter-field">
                     <Form.Group  >
                         <Form.Label>Field Name</Form.Label>
                         <Form.Control type="text" name="field" value={field} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
                     </Form.Group>
-                </Col>
+                </div>
             }
             {visibility &&
-                <Col sm="2">
+                <div className="dashboard-filter-field">
                     <Form.Group  >
                         <Form.Label>Data Type</Form.Label>
                         <Form.Control type="text" value={fieldType} disabled />
                     </Form.Group>
-                </Col>
+                </div>
             }
-            <Col sm="2">
+            <div className="dashboard-filter-field">
                 <Form.Group >
                     <Form.Label>Operator</Form.Label>
                     {
@@ -73,8 +73,8 @@ const FilterFields = function (props) {
                     }
 
                 </Form.Group>
-            </Col>
-            <Col sm>
+            </div>
+            <div className="dashboard-filter-field">
                 <Form.Group controlId="formGridPassword">
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
@@ -176,12 +176,13 @@ const FilterFields = function (props) {
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
                     }
                 </Form.Group>
-            </Col>
-            <Col style={{ marginBottom: "1em" }}>
+            </div>
+            <div className="col" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
                 <Form.Group>
+                    <Form.Label></Form.Label>
                     <Button onClick={(e) => removeField(index, fieldType)}>x</Button>
                 </Form.Group>
-            </Col>
+            </div>
         </Form.Row>)
 }
 
