@@ -25,7 +25,7 @@ class DashboardEditor extends React.Component {
             errors: {},
             filterConfiguration: [],
             showFilterDiv: false,
-            visibility:-1
+            dashboardVisibility: -1
         };
         this.initialState = { ...this.state }
         this.renderedCharts = {};
@@ -93,9 +93,16 @@ class DashboardEditor extends React.Component {
         let thiz = this;
         let name = e.target.name;
         let value = e.target.value;
+        var error=this.state.errors
+        if(Object.keys(error).length>0){
+        name=="dashboardName"  && (error.dashboardName=null)
+        name=="dashboardDescription" && (error.dashboardDescription=null)
+        name=="dashboardVisibility"  && (error.dashboardVisibility=null)
+        }
         this.setState({
             [name]: value,
-            contentChanged: true
+            contentChanged: true,
+            errors:error
         });
     }
 
@@ -207,59 +214,62 @@ class DashboardEditor extends React.Component {
     }
 
     saveDashboard = () => {
-        let params = {
-            'content': this.editor.getData(),
-            'version': this.state.version,
-            'name': this.state.dashboardName,
-            'description': this.state.dashboardDescription,
-            'dashboard_type': "html",
-            'filter_configuration': JSON.stringify(this.state.filterConfiguration),
-            'ispublic':this.state.visibility
-        };
-        let url = 'analytics/dashboard';
-        let method = '';    
-        if (this.state.dashboardId) {
-            url = url + '/' + this.state.dashboardId;
-            method = 'put';
-        }
-        else {
-            method = 'post';
-        }
-        let thisInstance = this;
-        this.doRestRequest(url, params, method,
-            function (response) {
-                thisInstance.props.flipCard("Saved")
-
-                let updateState = {
-                    contentChanged: false
-                };
-                if (thisInstance.state.dashboardId) { //Case of updating existing dashboard.
-                    updateState.version = response.dashboard.version;
-                }
-                if (!thisInstance.state.dashboardId) {
-                    updateState.version = 0;
-                    updateState.dashboardId = response.dashboard.uuid;
-                }
-                thisInstance.setState(updateState);
-
-            },
-            function (response) {
-                let versionChanged = false;
-                if (response.data && response.data.reasonCode) {
-                    if (response.data.reasonCode === 'VERSION_CHANGED') {
-                        versionChanged = true;
-
-                    }
-                }
-                Swal.fire({
-                    type: 'error',
-                    title: 'Oops...',
-                    text: versionChanged ?
-                        'Dashboard has been modified by another user. Please reload the data and try again.' :
-                        'Could not save dashboard. Please try after some time.'
-                });
+        //save only if no errors are found
+        if(this.isValidDashboard()){
+            let params = {
+                'content': this.editor.getData(),
+                'version': this.state.version,
+                'name': this.state.dashboardName,
+                'description': this.state.dashboardDescription,
+                'dashboard_type': "html",
+                'filter_configuration': JSON.stringify(this.state.filterConfiguration),
+                'ispublic': this.state.dashboardVisibility
+            };
+            let url = 'analytics/dashboard';
+            let method = '';
+            if (this.state.dashboardId) {
+                url = url + '/' + this.state.dashboardId;
+                method = 'put';
             }
-        );
+            else {
+                method = 'post';
+            }
+            let thisInstance = this;
+            this.doRestRequest(url, params, method,
+                function (response) {
+                    thisInstance.props.flipCard("Saved")
+    
+                    let updateState = {
+                        contentChanged: false
+                    };
+                    if (thisInstance.state.dashboardId) { //Case of updating existing dashboard.
+                        updateState.version = response.dashboard.version;
+                    }
+                    if (!thisInstance.state.dashboardId) {
+                        updateState.version = 0;
+                        updateState.dashboardId = response.dashboard.uuid;
+                    }
+                    thisInstance.setState(updateState);
+    
+                },
+                function (response) {
+                    let versionChanged = false;
+                    if (response.data && response.data.reasonCode) {
+                        if (response.data.reasonCode === 'VERSION_CHANGED') {
+                            versionChanged = true;
+    
+                        }
+                    }
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: versionChanged ?
+                            'Dashboard has been modified by another user. Please reload the data and try again.' :
+                            'Could not save dashboard. Please try after some time.'
+                    });
+                }
+            );
+        } 
     }
 
     getDashboard = (editor) => {
@@ -273,8 +283,8 @@ class DashboardEditor extends React.Component {
                         version: dashboard.version,
                         dashboardName: dashboard.name ? dashboard.name : '',
                         dashboardDescription: dashboard.description ? dashboard.description : '',
-                        filterConfiguration: (dashboard.filter_configuration!="" ? JSON.parse(dashboard.filter_configuration):[]),
-                        visibility:parseInt(dashboard.ispublic)
+                        filterConfiguration: (dashboard.filter_configuration != "" ? JSON.parse(dashboard.filter_configuration) : []),
+                        dashboardVisibility: parseInt(dashboard.ispublic)
                     });
                     editor.setData(response.dashboard.content);
                 },
@@ -453,6 +463,17 @@ class DashboardEditor extends React.Component {
         this.setState({ filterConfiguration: filter })
     }
 
+    isValidDashboard(){
+        let errors = {}
+        // let helper = this.core.make('oxzion/restClient');
+        // let response = await helper.request('v1', `analytics/dashboard/byName?name=${this.state.dashboardName}`, {}, 'get');
+        this.state.dashboardName == '' && (errors.dashboardName = "*Name shouldnt be blank")
+        this.state.dashboardDescription == '' && (errors.dashboardDescription = "*Description should not be blank")
+        this.state.dashboardVisibility == -1 && (errors.dashboardVisibility = "*Please choose a dashboard visibility")
+        this.setState({errors:errors})
+        return Object.keys(errors).length==0
+    }
+
     render() {
         return (
             <form className="dashboard-editor-form">
@@ -465,9 +486,9 @@ class DashboardEditor extends React.Component {
                     this.state.showFilterDiv &&
                     <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
-                        setFilter={(filter) =>this.setFilter(filter) }
+                        setFilter={(filter) => this.setFilter(filter)}
                         notif={this.props.notif}
-                        filterMode="CREATE" 
+                        filterMode="CREATE"
                         dashboardId={this.props.dashboardId}
                         dashboardVersion={this.state.version}
                         filterConfiguration={this.state.filterConfiguration}
@@ -482,7 +503,7 @@ class DashboardEditor extends React.Component {
                         <div className="col-2">
                             <>
                                 <input type="text" id="dashboardName" name="dashboardName" ref="dashboardName" className="form-control form-control-sm"
-                                    onChange={this.inputChanged} value={this.state.dashboardName} onBlur={this.isNameValid}
+                                    onChange={this.inputChanged} value={this.state.dashboardName}
                                     disabled={false} />
                                 <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
                                     {props => (
@@ -510,11 +531,18 @@ class DashboardEditor extends React.Component {
                         </div>
                         <div className="col-2">
                             <>
-                            <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
-                                            <option disabled value={-1} key="-1">Select Visibility</option>
-                                            <option key="1" value={1}>public</option>
-                                            <option key="2" value={0}>private</option>
-                                        </select>
+                                <select id="dashboardVisibility" ref="dashboardVisibility" name="dashboardVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.dashboardVisibility != null ? this.state.dashboardVisibility : -1} onChange={this.inputChanged}>
+                                    <option disabled value={-1} key="-1">Select Visibility</option>
+                                    <option key="1" value={1}>public</option>
+                                    <option key="2" value={0}>private</option>
+                                </select>
+                                <Overlay target={this.refs.dashboardVisibility} show={this.state.errors.dashboardVisibility != null} placement="bottom">
+                                    {props => (
+                                        <Tooltip id="dashboardVisibility-tooltip" {...props} className="error-tooltip">
+                                            {this.state.errors.dashboardVisibility}
+                                        </Tooltip>
+                                    )}
+                                </Overlay>
                             </>
                         </div>
 
