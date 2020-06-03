@@ -186,7 +186,6 @@ preparefilter(filter1,filter2){
   }
 
   updateGraph = async (filterParams) => {
-    console.log(filterParams);
     if (null === this.state.htmlData) {
       return;
     }
