@@ -11,13 +11,8 @@ class AmChartEditor extends AbstractEditor {
         super(props);
         this.state.selectedTab = 'chart';
         this.state.filteredWidgetList = [];
-        this.state.drillDownWidgetTitle = '';
-        this.state.drillDownWidgetType = "";
-        this.state.drillDownWidgetFooter = '';
-        this.state.hasMaxDepth = false;
-        this.state.drillDownMaxDepth = -1;
         this.amChart = null;
-        this.state.selectableWidgetOptions=props.selectableWidgetOptions;
+        this.state.selectableWidgetOptions = props.selectableWidgetOptions;
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             CHART_CONFIGURATION_INVALID_JSON: 'Chart configuration JSON is invalid',
@@ -53,9 +48,9 @@ class AmChartEditor extends AbstractEditor {
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {
-         
+
             //Make sure chart configuratio is valid JSON
-            let jsonChartConfiguration = this.state.configuration!=''?JSON.parse(this.state.configuration):'{}';
+            let jsonChartConfiguration = this.state.configuration != '' ? JSON.parse(this.state.configuration) : '{}';
             let previewElement = document.querySelector('div#chartPreview');
             previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
             //Chart must be disposed (if exists) before repainting it.
@@ -95,28 +90,13 @@ class AmChartEditor extends AbstractEditor {
     }
 
     refreshViews = () => {
-
-
         if (this.state.selectedTab === 'chart') {
             this.refreshChartPreview();
         }
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
-            let hasMaxDepth = false
-            let maxDepth = -1
-            if (this.props.widget.uuid === configuration["oxzion-meta"]["drillDown"]["nextWidgetId"]) {
-                hasMaxDepth = true
-                maxDepth = configuration["oxzion-meta"]["drillDown"]["maxDepth"] || -1
-            }
-            this.setState({
-                drillDownFilter: configuration["oxzion-meta"]["drillDown"]["filter"] || '',
-                drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
-                drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
-                drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
-                hasMaxDepth: hasMaxDepth,
-                drillDownMaxDepth: maxDepth
-            }, state => this.setWidgetType())
+            this.initializeDrillDownValues(configuration)
         }
         else {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
@@ -124,7 +104,7 @@ class AmChartEditor extends AbstractEditor {
     }
 
     setWidgetType() {
-        if(this.state.selectableWidgetOptions.length>0){
+        if (this.state.selectableWidgetOptions.length > 0) {
             let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
             let selectedWidget = selectedWidgetOption[0]["type"]
             let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
@@ -132,42 +112,8 @@ class AmChartEditor extends AbstractEditor {
         }
     }
 
-    ApplyDrillDown = () => {
-        if (this.validateDrillDownForm()) {
-            let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
-            let drillDownObject = {
-                "target": "widget",
-                "filter": this.state.drillDownFilter,
-                "nextWidgetId": this.state.drillDownWidget
-
-            }
-            this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
-            this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
-            this.state.hasMaxDepth && this.state.drillDownMaxDepth != -1 && (drillDownObject["maxDepth"] = parseInt(this.state.drillDownMaxDepth))
-            if (configuration) {
-                if (configuration["oxzion-meta"]) {
-                    configuration["oxzion-meta"]["drillDown"] = drillDownObject
-                }
-                else {
-                    configuration["oxzion-meta"] = {
-                        "drillDown": drillDownObject
-                    }
-                }
-            }
-            else {
-                configuration = {
-                    "oxzion-meta": {
-                        "drillDown": drillDownObject
-                    }
-                }
-            }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: "chart" })
-        }
-
-    }
     isChartTabValid = (state, setErrorState = true) => {
         let isValid = true;
-
         let configuration = state.configuration;
         let errorMessage = null;
         if ('' === configuration) {
@@ -185,7 +131,6 @@ class AmChartEditor extends AbstractEditor {
                 errorMessage = this.ERRORS.CHART_CONFIGURATION_INVALID_JSON;
             }
         }
-
         if (setErrorState) {
             state.errors.configuration = state.readOnly ? null : errorMessage;
         }
@@ -352,59 +297,15 @@ class AmChartEditor extends AbstractEditor {
             thiz.configurationTabSelected('chart');
         });
     }
-    validateDrillDownForm() {
-        //form validation
-        let validForm = true
-        let errors = { ...this.state.errors }
-        errors["drillDown"] = {}
-        if (this.state.drillDownWidget == "") {
-            errors["drillDown"]["drillDownWidget"] = "* Please Choose the Widget to apply Drill down"
-            validForm = false
-        }
-        if (this.state.drillDownFilter == "") {
-            errors["drillDown"]["drillDownFilter"] = "* Please specify the filter to apply Drill down"
-            validForm = false
-        }
-        if (this.state.hasMaxDepth && this.state.drillDownMaxDepth == -1) {
-            errors["drillDown"]["drillDownMaxDepth"] = "* Please Choose the Max Depth to apply Drill down"
-            validForm = false
-        }
-        this.setState({ errors: errors })
-        return validForm
-    }
-    handleDrillDownChange(e) {
-        let hasMaxDepth = false
-        let errors = { ...this.state.errors }
-        errors["drillDown"][e.target.name] = ""
 
-        if (e.target.name == "drillDownMaxDepth") {
-            hasMaxDepth = true
-            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
-
-        }
-        else if (e.target.name == "drillDownWidget") {
-            hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value)
-            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
-        }
-        else {
-            this.setState({ [e.target.name]: e.target.value, errors: errors })
-
-        }
-
-
-
-    }
-
-    refreshPreview(){
+    refreshPreview() {
         if (this.state.selectedTab === 'chart') {
             this.refreshChartPreview();
         }
-        else if(this.state.selectedTab ==='query')
-        {
+        else if (this.state.selectedTab === 'query') {
             this.refreshQueryPreview()
         }
-        else if(this.state.selectedTab === 'expression')
-        {
+        else if (this.state.selectedTab === 'expression') {
             this.expressionBlurred()
         }
     }
@@ -442,7 +343,7 @@ class AmChartEditor extends AbstractEditor {
             let options = [<option value="" key={keyPrefix + '00000000-0000-0000-0000-000000000000'}>-Select query-</option>];
             thiz.queryList.map((item, index) => {
                 // options.push(<option key={keyPrefix + item.uuid} value={item.uuid}>{item.name}</option>);
-                options.push({value:item.uuid,label:item.name})
+                options.push({ value: item.uuid, label: item.name })
             });
             return options;
         };
@@ -450,27 +351,27 @@ class AmChartEditor extends AbstractEditor {
         function getQuerySelections() {
             let querySelections = [];
             let count = thiz.state.queries.length;
-           
+
             if (0 === count) {
                 thiz.addQueryToGivenState(thiz.state, null); //Render at least one query selection box.
                 count = 1;
             }
             for (let i = 0; i < count; i++) {
-              
+
                 querySelections.push(
                     <div className="form-group row" key={'qs-00-' + i}>
                         <div className="col-7" key={'qs-01-' + i}>
                             <Select
-                             key={'qs-02-' + i}
-                             id={'query' + i} 
-                             name={'query' + i}
-                             ref={'query' + i}
-                             onChange={(e) => { thiz.querySelectionChanged(e, i) }}
-                             isDisabled={thiz.state.readOnly}
-                             value={thiz.state.queries[i] ? getQuerySelectOptoins('qs-03-' + i).filter(
-                                option => option.value == thiz.state.queries[i]['uuid']
-                              ) : ''}
-                            options={getQuerySelectOptoins('qs-03-' + i)}
+                                key={'qs-02-' + i}
+                                id={'query' + i}
+                                name={'query' + i}
+                                ref={'query' + i}
+                                onChange={(e) => { thiz.querySelectionChanged(e, i) }}
+                                isDisabled={thiz.state.readOnly}
+                                value={thiz.state.queries[i] ? getQuerySelectOptoins('qs-03-' + i).filter(
+                                    option => option.value == thiz.state.queries[i]['uuid']
+                                ) : ''}
+                                options={getQuerySelectOptoins('qs-03-' + i)}
                             />
                             <Overlay id={'query-overlay' + i} target={thiz.refs['query' + i]} show={thiz.state.errors.queries[i] != null} placement="right">
                                 {props => (
@@ -579,7 +480,7 @@ class AmChartEditor extends AbstractEditor {
                                                     <Form.Control
                                                         as="textarea"
                                                         name="drillDownFilter"
-                                                        onChange={(e) => this.handleDrillDownChange(e)}
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
                                                         value={this.state.drillDownFilter}
                                                         disabled={this.state.readOnly}
                                                     />
@@ -623,7 +524,7 @@ class AmChartEditor extends AbstractEditor {
                                                     <Form.Control
                                                         type="text"
                                                         name="drillDownWidgetTitle"
-                                                        onChange={(e) => this.handleDrillDownChange(e)}
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
                                                         value={this.state.drillDownWidgetTitle || ''}
                                                         disabled={this.state.readOnly}
                                                     />
@@ -635,7 +536,7 @@ class AmChartEditor extends AbstractEditor {
                                                     <Form.Control
                                                         type="text"
                                                         name="drillDownWidgetFooter"
-                                                        onChange={(e) => this.handleDrillDownChange(e)}
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
                                                         value={this.state.drillDownWidgetFooter || ''}
                                                         disabled={this.state.readOnly}
                                                     />
@@ -650,7 +551,7 @@ class AmChartEditor extends AbstractEditor {
                                                             as="select"
                                                             name="drillDownMaxDepth"
                                                             value={this.state.drillDownMaxDepth ? this.state.drillDownMaxDepth : -1}
-                                                            onChange={(e) => this.handleDrillDownChange(e)}
+                                                            onChange={(e) => this.handleDrillDownInputChange(e)}
                                                             disabled={this.state.readOnly}
                                                         >
                                                             <option key="-1" value={-1}></option>
@@ -678,8 +579,8 @@ class AmChartEditor extends AbstractEditor {
                 </div>
                 <div className="form-group col">
                     <div className="card" id="previewBox">
-                        <div className="card-header">   
-                            Preview <span id="chartRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i className="fas fa-sync"></i></span>
+                        <div className="card-header">
+                            Preview <span id="chartRefreshBtn" title="Refresh" style={{ cursor: "pointer" }} onClick={() => this.refreshPreview()}><i className="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'chart') &&
