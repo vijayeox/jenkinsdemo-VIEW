@@ -135,43 +135,6 @@ export default class FileComponent extends File {
         });
       }
     }
-
-    deleteFile(fileInfo) {
-        if(this.component.storage=='url'){
-          return new _nativePromiseOnly.default(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('DELETE', fileInfo.url, true);
-
-            xhr.onload = function () {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                resolve('File deleted');
-            } else {
-                reject(xhr.response || 'Unable to delete file');
-            }
-        };
-
-        xhr.send(null);
-    });
-      } else {
-        super.deleteFile(fileInfo);
-      }
-    }
-
-    downloadFile(file) {
-        console.log(file)
-      if (file.private) {
-        if (formio.submissionId && file.data) {
-          file.data.submission = formio.submissionId;
-        }
-
-        return xhrRequest(file.url, file.name, {}, JSON.stringify(file)).then(function (response) {
-          return response.data;
-        });
-      } // Return the original as there is nothing to do.
-
-
-      return _nativePromiseOnly.default.resolve(file);
-    }
     render(children){
         var evt = new CustomEvent("getAppDetails", { detail: {} });
         this.form.element.dispatchEvent(evt);
