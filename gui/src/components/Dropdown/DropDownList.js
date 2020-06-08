@@ -79,7 +79,7 @@ export default class DropDown extends React.Component {
             onChange={this.props.onDataChange}
             textField={this.props.keyValuePair ? "name" : undefined}
             valueField={this.props.keyValuePair ? "id" : undefined}
-            filterable={true}
+            filterable={this.props.filterable}
             onFilterChange={this.filterChange}
             style={{ width: this.props.width ? this.props.width : "100%" }}
             popupSettings={{ height: "160px" }}
