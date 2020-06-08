@@ -7,10 +7,12 @@ import HTMLViewer from "./HTMLViewer";
 import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
+import RenderButtons from "./RenderButtons";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
+import * as OxzionGUIComponents from "../../../index.js";
 
 class Page extends React.Component {
   constructor(props) {
@@ -43,8 +45,8 @@ class Page extends React.Component {
     document
       .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
       .addEventListener("updatePageView", this.updatePageView, false);
-      var PageRenderDiv = document.querySelector(".PageRender");
-      this.loader.show(PageRenderDiv);
+    var PageRenderDiv = document.querySelector(".PageRender");
+    this.loader.show(PageRenderDiv);
   }
 
   async fetchExternalComponents() {
@@ -61,8 +63,19 @@ class Page extends React.Component {
   }
 
   updatePageView(e) {
+    var breadCrumbUpdate = false;
+    if (e.detail.details && e.detail.name) {
+      breadCrumbUpdate = true;
+      let ev = new CustomEvent("updateBreadcrumb", {
+        detail: e.detail,
+        bubbles: true
+      });
+      document
+        .getElementsByClassName(this.appId + "_breadcrumbParent")[0]
+        .dispatchEvent(ev);
+    }
     this.setState({
-      pageContent: e.detail
+      pageContent: breadCrumbUpdate ? e.detail.details : e.detail
     });
   }
 
@@ -445,6 +458,15 @@ class Page extends React.Component {
             url={item.url}
           />
         );
+      } else if (item.type == "RenderButtons") {
+        content.push(
+          <RenderButtons
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            {...item}
+          />
+        );
       } else if (item.type == "Comment") {
         content.push(
           <CommentsView
@@ -478,18 +500,23 @@ class Page extends React.Component {
           />
         );
       } else {
-        let props = item;
-        props.key = i;
+        this.externalComponent = this.extGUICompoents[item.type];
         let guiComponent =
           this.extGUICompoents && this.extGUICompoents[item.type] ? (
-            React.createElement(this.extGUICompoents[item.type], props)
+            <this.externalComponent
+              {...item}
+              key={i}
+              components={OxzionGUIComponents}
+              appId={this.appId}
+              core={this.core}
+            ></this.externalComponent>
           ) : (
             <h3 key={i}>The component used is not available.</h3>
           );
         content.push(guiComponent);
       }
     });
-    if(content.length > 0){
+    if (content.length > 0) {
       this.loader.destroy();
     } else {
       content.push(<h2>No Content Available</h2>);
@@ -518,4 +545,3 @@ class Page extends React.Component {
 }
 
 export default Page;
-

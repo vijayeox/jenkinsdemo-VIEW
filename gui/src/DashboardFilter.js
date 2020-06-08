@@ -1,16 +1,22 @@
 import React, { useEffect } from 'react'
 import DatePicker from 'react-datepicker'
-import { Form, Row, Col, Button } from 'react-bootstrap'
+import { Form, Row, Button } from 'react-bootstrap'
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select/creatable'
 
 const customStyles = {
     control: base => ({
-      ...base,
-      height: 35,
-      minHeight: 35
+        ...base,
+        height: 35,
+        minHeight: 35
+    }),
+    valueContainer: base => ({
+        ...base,
+        height: 'inherit',
+        minHeight: 'inherit'
     })
-  };
+
+};
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
@@ -21,66 +27,54 @@ const FilterFields = function (props) {
     const dataTypeOptions = [
         "numeric"
     ]
-    
-    const diabledFields = filterMode == "APPLY"
+
+    const disabledFields = filterMode == "APPLY"
+    const visibility = filterMode == "CREATE"
     return (
         <Form.Row>
-            <Col sm="2">
+            <div className="dashboard-filter-field">
                 <Form.Group  >
-                    <Form.Label>Filter Name</Form.Label>
-                    <Form.Control type="text" name="filterName" value={filterName} disabled={diabledFields} onChange={(e) => onUpdate(e, index)} />
+                    <Form.Label>Filter Description</Form.Label>
+                    <Form.Control type="text" name="filterName" title={disabledFields ? "*The entered description will be displayed in dashboard viewer as filter name" : null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
                 </Form.Group>
-            </Col>
-            <Col sm="2">
-                <Form.Group  >
-                    <Form.Label>Field Name</Form.Label>
-                    <Form.Control type="text" name="field" value={field} disabled={diabledFields} onChange={(e) => onUpdate(e, index)} />
-                </Form.Group>
-            </Col>
-            <Col sm="2">
-                <Form.Group  >
-                    <Form.Label>Data Type</Form.Label>
-                    <Form.Control type="text" value={fieldType} disabled />
-                </Form.Group>
-            </Col>
-            {/* {
-                dataType !== "date" && dataType !== "text" 
-                    ?
-                    <Col sm="2">
-                        <Form.Group controlId="formGridData">
-                            <Form.Label>Data Type</Form.Label>
-                            <Form.Control name="dataType" as="select" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["dataType"] : ""} >
-
-                                <option disabled key="-1" value=""></option>
-                                {dataTypeOptions.map((item, index) => {
-                                    return (<option key={index}>{item}</option>)
-                                })}
-                            </Form.Control>
-                        </Form.Group>
-                    </Col>
-                    : null
-            } */}
-            <Col sm="2">
+            </div>
+            {visibility &&
+                <div className="dashboard-filter-field">
+                    <Form.Group  >
+                        <Form.Label>Field Name</Form.Label>
+                        <Form.Control type="text" name="field" value={field} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
+                    </Form.Group>
+                </div>
+            }
+            {visibility &&
+                <div className="dashboard-filter-field">
+                    <Form.Group  >
+                        <Form.Label>Data Type</Form.Label>
+                        <Form.Control type="text" value={fieldType} disabled />
+                    </Form.Group>
+                </div>
+            }
+            <div className="dashboard-filter-field">
                 <Form.Group >
                     <Form.Label>Operator</Form.Label>
                     {
                         dataType === "date" || dataType === "text" || dataType === "numeric"
                             ?
-                            <Form.Control as="select" name={"operator"} disabled={diabledFields} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
+                            <Form.Control as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
                                 <option disabled key="-1" value=""></option>
                                 {filtersOptions[dataType + 'operator'].map((item, mapindex) => {
                                     return (<option key={mapindex} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
                                 })}
                             </Form.Control>
                             :
-                            <Form.Control as="select" name={"operator"} disabled={diabledFields} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
+                            <Form.Control as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
                                 <option disabled key="-1" value=""></option>
                             </Form.Control>
                     }
 
                 </Form.Group>
-            </Col>
-            <Col sm>
+            </div>
+            <div className="dashboard-filter-field">
                 <Form.Group controlId="formGridPassword">
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
@@ -158,36 +152,37 @@ const FilterFields = function (props) {
                                 />
                             </div>
                         :
-                             filterMode=="Create"?
+                        filterMode == "Create" ?
                             <Select
-                            styles={customStyles}
-                            name="value"
-                            id="value"
-                            onChange={(e) => onUpdate(e,index,"defaultValue")}
-                            value=""
-                            options={filters[index]["value"]}
-                        />
-                        :
-                        <Select
-                        styles={customStyles}
-                        name="value"
-                        id="value"
-                        onChange={(e) => onUpdate(e,index,"defaultValue")}
-                        value={filters[index]["value"]["selected"]?filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]):""}
-                        options={filters[index]["value"]}
-                    />
+                                styles={customStyles}
+                                name="value"
+                                id="value"
+                                onChange={(e) => onUpdate(e, index, "defaultValue")}
+                                value=""
+                                options={filters[index]["value"]}
+                            />
+                            :
+                            <Select
+                                styles={customStyles}
+                                name="value"
+                                id="value"
+                                onChange={(e) => onUpdate(e, index, "defaultValue")}
+                                value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
+                                options={filters[index]["value"]}
+                            />
 
 
-                        
+
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
                     }
                 </Form.Group>
-            </Col>
-            <Col style={{ marginBottom: "1em" }}>
+            </div>
+            <div className="col" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
                 <Form.Group>
+                    <Form.Label></Form.Label>
                     <Button onClick={(e) => removeField(index, fieldType)}>x</Button>
                 </Form.Group>
-            </Col>
+            </div>
         </Form.Row>)
 }
 
@@ -205,7 +200,7 @@ class DashboardFilter extends React.Component {
             focused: null,
             inputFields: [],
             startDate: new Date(),
-            createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "numeric" }],
+            createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }],
             applyFilterOption: [],
             filters: this.props.filterConfiguration,
             applyFilters: []
@@ -275,48 +270,45 @@ class DashboardFilter extends React.Component {
     updateFilterRow(e, index, type) {
         let name
         let value
-        let defaultValues=[]
+        let defaultValues = []
         let filters = [...this.state.filters]
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
         }
-        else if(type=="defaultValue"){
-            let selectedoption={"value":e.value,"label":e.value}
-            name="value"
-            let filterValue=filters[index]?filters[index][name]:[]
-            try{
-                defaultValues=typeof filterValue=="string"?JSON.parse(filterValue):filterValue
-                
-
+        else if (type == "defaultValue") {
+            let selectedoption = { "value": e.value, "label": e.value }
+            name = "value"
+            let filterValue = filters[index] ? filters[index][name] : []
+            try {
+                defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
             }
-            catch(e){
+            catch (e) {
                 console.error("Filter value found is a invalid json")
-                defaultValues=[]
+                defaultValues = []
+            }
 
-            }
-           
-            if(defaultValues){
-                var valueExists = defaultValues.filter(filterdefault=>filterdefault.value==e.value);
+            if (defaultValues) {
+                var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
                 //if option already exists in the list
-                if(valueExists.length==0){
+                if (valueExists.length == 0) {
                     defaultValues.push(selectedoption)
-                    defaultValues["selected"]=selectedoption.value
+                    defaultValues["selected"] = selectedoption.value
                 }
-                else{
-                    defaultValues["selected"]=selectedoption.value
+                else {
+                    defaultValues["selected"] = selectedoption.value
                 }
             }
-            value=defaultValues
+            value = defaultValues
         }
         else {
             name = e.target.name
             value = e.target.value
         }
-       
         filters[index][name] = value
         this.setState({ filters })
     }
+
     handleSelect(e) {
         let name = e.value;
         let value = e.label;
@@ -332,7 +324,6 @@ class DashboardFilter extends React.Component {
             }
         }
         else if (this.props.filterMode === "APPLY") {
-
             let filters = [...this.state.filters]
             let applyFilterOption = [...this.state.applyFilterOption]
             filters.push(e.value)
@@ -342,17 +333,13 @@ class DashboardFilter extends React.Component {
             });
             applyFilterOption = newoption
             this.setState({ applyFilterOption: newoption, filters: filters })
-
-
         }
     }
 
     hideFilterDiv() {
-
         var element = document.getElementById("filter-form-container");
         element.classList.add("disappear");
         this.props.hideFilterDiv()
-
         document.getElementById("dashboard-container") && document.getElementById("dashboard-container").classList.remove("disappear")
         document.getElementById("dashboard-filter-btn") && (document.getElementById("dashboard-filter-btn").disabled = false)
 
@@ -379,36 +366,13 @@ class DashboardFilter extends React.Component {
                 "Filter Applied Successfully",
                 "Please save the dashboard in order to keep the changes",
                 "success"
-              )
+            )
         }
         else if (this.props.filterMode === "APPLY") {
-
             this.props.setDashboardFilter(filters)
             console.log("IMPLEMENTING")
             console.log(filters)
         }
-
-        
-        
-
-        //uncomment once api is implemented
-
-        // formData["filters"]="";
-        // this.restClient.request(
-        //     "v1",
-        //     'analytics/dashboard/' + this.props.dashboardId,
-        //     formData,
-        //     "put"
-        //   )
-        //     .then(response => {
-        //       props.refreshGrid.current.child.current.refresh()
-        //       notify(response, operation)
-        //       props.resetInput()
-        //       props.onHide()
-        //     })
-        //     .catch(err => {
-        //       console.log(err)
-        //     })
     }
     render() {
         return (

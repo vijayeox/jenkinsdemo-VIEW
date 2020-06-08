@@ -274,7 +274,6 @@ class CommentsView extends React.Component {
                     {commentItem.text}
                     </p>
                     </div>
-                    <p className="text-right"><a href="#" className="btn btn-default btn-sm"><i className="fa fa-trash-o"></i>Delete</a></p>
                     </div>
                     </div>
                     </div>

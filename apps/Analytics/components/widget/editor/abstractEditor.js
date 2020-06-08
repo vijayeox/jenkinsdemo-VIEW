@@ -11,13 +11,18 @@ class AbstractEditor extends React.Component {
             readOnly: true,
             queries: [],
             configuration: '',
-            drillDownFilter:'',
-            drillDownWidget:'',
+            drillDownFilter: '',
+            drillDownWidget: '',
             expression: '',
-            errors:{
-                configuration:null,
+            drillDownWidgetTitle: '',
+            drillDownWidgetType: "",
+            drillDownWidgetFooter: '',
+            hasMaxDepth: false,
+            drillDownMaxDepth: -1,
+            errors: {
+                configuration: null,
                 expression: null,
-                drillDown:{},
+                drillDown: {},
                 queries: []
             }
         };
@@ -32,42 +37,59 @@ class AbstractEditor extends React.Component {
         //    form fields. Here we convert those JSON strings to java objects.
         let queries = [];
         if (this.state.queries) {
-            this.state.queries.forEach(function(query, index) {
+            this.state.queries.forEach(function (query, index) {
                 let configuration = query['configuration'];
                 queries.push({
-                    'uuid':query['uuid'],
-                    'configuration':{
+                    'uuid': query['uuid'],
+                    'configuration': {
                         'filter': configuration ? (configuration.filter ? JSON.parse(configuration.filter) : null) : null,
                         'grouping': configuration ? (configuration.grouping ? JSON.parse(configuration.grouping) : null) : null,
                         'sort': configuration ? (configuration.sort ? JSON.parse(configuration.sort) : null) : null
                     }
-                    
+
                 });
             });
         }
-        
+
         return {
-            configuration:this.state.configuration ? JSON.parse(this.state.configuration) : null,
-            expression:this.state.expression ? JSON.parse(this.state.expression) : null,
-            queries:queries
+            configuration: this.state.configuration ? JSON.parse(this.state.configuration) : null,
+            expression: this.state.expression ? JSON.parse(this.state.expression) : null,
+            queries: queries
         }
+    }
+
+    initializeDrillDownValues = (configuration) => {
+        let hasMaxDepth = false
+        let maxDepth = -1
+        if (this.props.widget.uuid === configuration["oxzion-meta"]["drillDown"]["nextWidgetId"]) {
+            hasMaxDepth = true
+            maxDepth = configuration["oxzion-meta"]["drillDown"]["maxDepth"] || -1
+        }
+        this.setState({
+            drillDownFilter: configuration["oxzion-meta"]["drillDown"]["filter"] || '',
+            drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
+            drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
+            drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
+            hasMaxDepth: hasMaxDepth,
+            drillDownMaxDepth: maxDepth
+        }, state => this.setWidgetType())
     }
 
     setWidgetData = (widgetData) => {
         this.data = widgetData.data;
         let queries = [];
         if (widgetData.queries) {
-            widgetData.queries.forEach(function(query, index) {
+            widgetData.queries.forEach(function (query, index) {
                 let configuration = query.configuration;
                 queries.push({
-                    'uuid':query.uuid,
-                    'configuration':{
+                    'uuid': query.uuid,
+                    'configuration': {
                         'filter': configuration ? (configuration.filter ? JSON.stringify(configuration.filter, null, '    ') : '') : '',
                         'grouping': configuration ? (configuration.grouping ? JSON.stringify(configuration.grouping, null, '') : '') : '',
                         'sort': configuration ? (configuration.sort ? JSON.stringify(configuration.sort, null, '') : '') : ''
                     },
-                    'value':query.uuid,
-                    
+                    'value': query.uuid,
+
                 });
             });
         }
@@ -77,29 +99,29 @@ class AbstractEditor extends React.Component {
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
             return state;
-        }, 
-        () => {
-            thiz.refreshViews();
-        });
+        },
+            () => {
+                thiz.refreshViews();
+            });
     }
 
     makeReadOnly = (flag) => {
         this.setState({
-            readOnly:flag
+            readOnly: flag
         });
     }
 
     configurationChanged = (evt) => {
         let value = evt.target.value;
         this.setState({
-            configuration : value
+            configuration: value
         });
     }
 
     expressionChanged = (evt) => {
         let value = evt.target.value;
         this.setState({
-            expression : value
+            expression: value
         });
     }
 
@@ -113,7 +135,7 @@ class AbstractEditor extends React.Component {
         try {
             JSON.parse(expression);
         }
-        catch(jsonParseError) {
+        catch (jsonParseError) {
             errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
         }
 
@@ -122,6 +144,78 @@ class AbstractEditor extends React.Component {
             return state;
         });
         return errorMessage ? false : true;
+    }
+
+    ApplyDrillDown = () => {
+        if (this.validateDrillDownForm()) {
+            let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
+            let drillDownObject = {
+                "target": "widget",
+                "filter": this.state.drillDownFilter,
+                "nextWidgetId": this.state.drillDownWidget
+
+            }
+            this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
+            this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
+            this.state.hasMaxDepth && this.state.drillDownMaxDepth != -1 && (drillDownObject["maxDepth"] = parseInt(this.state.drillDownMaxDepth))
+            if (configuration) {
+                if (configuration["oxzion-meta"]) {
+                    configuration["oxzion-meta"]["drillDown"] = drillDownObject
+                }
+                else {
+                    configuration["oxzion-meta"] = {
+                        "drillDown": drillDownObject
+                    }
+                }
+            }
+            else {
+                configuration = {
+                    "oxzion-meta": {
+                        "drillDown": drillDownObject
+                    }
+                }
+            }
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: "chart" })
+        }
+    }
+
+    validateDrillDownForm() {
+        //form validation
+        let validForm = true
+        let errors = { ...this.state.errors }
+        errors["drillDown"] = {}
+        if (this.state.drillDownWidget == "") {
+            errors["drillDown"]["drillDownWidget"] = "* Please Choose the Widget to apply Drill down"
+            validForm = false
+        }
+        if (this.state.drillDownFilter == "") {
+            errors["drillDown"]["drillDownFilter"] = "* Please specify the filter to apply Drill down"
+            validForm = false
+        }
+        if (this.state.hasMaxDepth && this.state.drillDownMaxDepth == -1) {
+            errors["drillDown"]["drillDownMaxDepth"] = "* Please Choose the Max Depth to apply Drill down"
+            validForm = false
+        }
+        this.setState({ errors: errors })
+        return validForm
+    }
+
+    handleDrillDownInputChange(e) {
+        let hasMaxDepth = false
+        let errors = { ...this.state.errors }
+        errors["drillDown"][e.target.name] = ""
+
+        if (e.target.name == "drillDownMaxDepth") {
+            hasMaxDepth = true
+            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else if (e.target.name == "drillDownWidget") {
+            hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === e.target.value)
+            this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else {
+            this.setState({ [e.target.name]: e.target.value, errors: errors })
+        }
     }
 
     querySelectionChanged = (evt, index) => {
@@ -136,9 +230,9 @@ class AbstractEditor extends React.Component {
             state.errors.queries[index] = (value === '') ? thiz.ERRORS.QUERY_NEEDED : null;
             return state;
         },
-        () => {
-            thiz.loadData(thiz.refreshQueryPreview());
-        });
+            () => {
+                thiz.loadData(thiz.refreshQueryPreview());
+            });
     }
 
     clearAllErrors = () => {
@@ -148,14 +242,14 @@ class AbstractEditor extends React.Component {
                 state.errors.configuration = null;
                 state.errors.expression = null;
                 let queryErrors = state.errors.queries;
-                for (let i=0; i < queryErrors.length; i++) {
+                for (let i = 0; i < queryErrors.length; i++) {
                     queryErrors[i] = null;
                 }
                 return state;
             },
-            () => {
-                resolve();
-            });
+                () => {
+                    resolve();
+                });
         });
     }
 
@@ -167,7 +261,7 @@ class AbstractEditor extends React.Component {
             showCloseButton: true,
             showCancelButton: true,
             focusConfirm: false,
-            onOpen:function(element) {
+            onOpen: function (element) {
                 let query = thiz.state.queries[index];
                 if (query) {
                     let value = query.configuration.filter;
@@ -187,7 +281,7 @@ class AbstractEditor extends React.Component {
                             JSON.parse(value);
                             resolve();
                         }
-                        catch(error) {
+                        catch (error) {
                             resolve('Invalid JSON');
                         }
                     }
@@ -199,9 +293,9 @@ class AbstractEditor extends React.Component {
                     state.queries[index].configuration.filter = (result.value === '') ? null : result.value;
                     return state;
                 },
-                () => {
-                    thiz.loadData(thiz.refreshQueryPreview());
-                });
+                    () => {
+                        thiz.loadData(thiz.refreshQueryPreview());
+                    });
             }
         });
     }
@@ -214,7 +308,7 @@ class AbstractEditor extends React.Component {
             showCloseButton: true,
             showCancelButton: true,
             focusConfirm: false,
-            onOpen:function(element) {
+            onOpen: function (element) {
                 let query = thiz.state.queries[index];
                 if (query) {
                     let value = query.configuration.grouping;
@@ -234,7 +328,7 @@ class AbstractEditor extends React.Component {
                             JSON.parse(value);
                             resolve();
                         }
-                        catch(error) {
+                        catch (error) {
                             resolve('Invalid JSON');
                         }
                     }
@@ -246,9 +340,9 @@ class AbstractEditor extends React.Component {
                     state.queries[index].configuration.grouping = (result.value === '') ? null : result.value;
                     return state;
                 },
-                () => {
-                    thiz.loadData(thiz.refreshQueryPreview());
-                });
+                    () => {
+                        thiz.loadData(thiz.refreshQueryPreview());
+                    });
             }
         });
     }
@@ -261,7 +355,7 @@ class AbstractEditor extends React.Component {
             showCloseButton: true,
             showCancelButton: true,
             focusConfirm: false,
-            onOpen:function(element) {
+            onOpen: function (element) {
                 let query = thiz.state.queries[index];
                 if (query) {
                     let value = query.configuration.sort;
@@ -281,7 +375,7 @@ class AbstractEditor extends React.Component {
                             JSON.parse(value);
                             resolve();
                         }
-                        catch(error) {
+                        catch (error) {
                             resolve('Invalid JSON');
                         }
                     }
@@ -293,20 +387,20 @@ class AbstractEditor extends React.Component {
                     state.queries[index].configuration.sort = (result.value === '') ? null : result.value;
                     return state;
                 },
-                () => {
-                    thiz.loadData(thiz.refreshQueryPreview());
-                });
+                    () => {
+                        thiz.loadData(thiz.refreshQueryPreview());
+                    });
             }
         });
     }
 
     addQueryToGivenState = (state, value) => {
         state.queries.push({
-            uuid: value ? value : '', 
+            uuid: value ? value : '',
             configuration: {
-                filter:'', 
-                grouping:'',
-                sort:''
+                filter: '',
+                grouping: '',
+                sort: ''
             }
         });
         state.errors.queries.push(null);
@@ -327,9 +421,9 @@ class AbstractEditor extends React.Component {
             state.errors.queries.splice(index, 1);
             return state;
         },
-        () => {
-            thiz.loadData(thiz.refreshQueryPreview());
-        });
+            () => {
+                thiz.loadData(thiz.refreshQueryPreview());
+            });
     }
 
     loadData = (postLoadCallback) => {
@@ -337,7 +431,7 @@ class AbstractEditor extends React.Component {
         let postUrl = '';
         let method = '';
         //when only single query is passed pass the uuid in url
-        if(this.state.queries && (this.state.queries.length === 1)) {
+        if (this.state.queries && (this.state.queries.length === 1)) {
             postUrl = 'analytics/query/' + this.state.queries[0].uuid + '?data=true';
         } else {
             postUrl = 'analytics/query/data';
@@ -347,13 +441,13 @@ class AbstractEditor extends React.Component {
 
         let thiz = this;
         window.postDataRequest(postUrl, params, method).
-            then(function(responseData) {
+            then(function (responseData) {
                 thiz.data = responseData.query.data;
                 if (postLoadCallback) {
                     postLoadCallback();
                 }
             }).
-            catch(function(responseData) {
+            catch(function (responseData) {
                 console.error('Could not load data.');
                 console.error(responseData);
                 Swal.fire({
@@ -366,16 +460,16 @@ class AbstractEditor extends React.Component {
 
     loadQueries = (postLoadCallback) => {
         let thiz = this;
-        window.postDataRequest('analytics/query?filter=' + 
+        window.postDataRequest('analytics/query?filter=' +
             encodeURIComponent('[{"take":500,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]')).
-            then(function(response) {
+            then(function (response) {
                 thiz.queryList = response.data;
                 thiz.forceUpdate();
                 if (postLoadCallback) {
                     postLoadCallback();
                 }
             }).
-            catch(function(response) {
+            catch(function (response) {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',

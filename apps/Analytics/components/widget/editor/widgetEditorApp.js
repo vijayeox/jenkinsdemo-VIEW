@@ -260,9 +260,9 @@ class WidgetEditorApp extends React.Component {
                 configuration: widget.configuration,
                 queries: widget.queries,
                 expression: widget.expression,
-                readOnly: true
+                readOnly: this.state.readOnly
             });
-            this.refs.editor.makeReadOnly(true);
+            this.refs.editor.makeReadOnly(this.state.readOnly);
         }
 
     }
