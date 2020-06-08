@@ -18,6 +18,7 @@ import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
 import CustomFilter from "./components/Grid/CustomFilter";
 import "./components/Grid/customStyles.scss";
+import InlineComponent from "./components/Grid/InlineComponent";
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
@@ -39,10 +40,11 @@ export default class OX_Grid extends React.Component {
     this.loader = this.props.osjsCore.make("oxzion/splash");
     this.child = React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
+    this.inlineEdit = this.inlineEdit.bind(this);
   }
 
   componentDidMount() {
-    $(document).ready(function () {
+    $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
     if (!document.getElementsByClassName("PageRender")) {
@@ -144,6 +146,8 @@ export default class OX_Grid extends React.Component {
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }
           groupable={dataItem.groupable ? dataItem.groupable : undefined}
+          editor={dataItem.editor ? dataItem.editor : undefined}
+          editable={dataItem.editable}
           headerClassName={
             dataItem.headerClassName ? dataItem.headerClassName : undefined
           }
@@ -162,7 +166,81 @@ export default class OX_Grid extends React.Component {
         />
       );
     });
+
+    this.props.inlineEdit
+      ? table.push(
+          <GridColumn
+            filterable={false}
+            key={Math.random() * 20}
+            reorderable={false}
+            width="175px"
+            title={"Actions"}
+            cell={InlineComponent(
+              this.props.inlineActions,
+              this.inlineEdit,
+              this.refreshHandler
+            )}
+          />
+        )
+      : null;
+
     return table;
+  };
+
+  inlineEdit = (dataItem) => {
+    if (this.state.dataState.group) {
+      if (this.state.dataState.group.length > 0) {
+        var newData = this.state.gridData.data.map((item) => {
+          var newItem = item.items.map((item1) => {
+            return item1.id === dataItem.id
+              ? { ...item1, inEdit: true }
+              : item1;
+          });
+          return {
+            items: newItem,
+            aggregates: item.aggregates,
+            field: item.field,
+            value: item.value
+          };
+        });
+      }
+    } else {
+      var newData = this.state.gridData.data.map((item) => {
+        return item.id === dataItem.id ? { ...item, inEdit: true } : item;
+      });
+    }
+    this.setState({
+      gridData: { data: newData, total: this.state.gridData.total }
+    });
+  };
+
+  itemChange = (event) => {
+    if (this.state.dataState.group) {
+      if (this.state.dataState.group.length > 0) {
+        var data = this.state.gridData.data.map((item) => {
+          var newItem = item.items.map((item1) => {
+            return item1.id === event.dataItem.id
+              ? { ...item1, [event.field]: event.value }
+              : item1;
+          });
+          return {
+            items: newItem,
+            aggregates: item.aggregates,
+            field: item.field,
+            value: item.value
+          };
+        });
+      }
+    } else {
+      var data = this.state.gridData.data.map((item) => {
+        return item.id === event.dataItem.id
+          ? { ...item, [event.field]: event.value }
+          : item;
+      });
+    }
+    this.setState({
+      gridData: { data: data, total: this.state.gridData.total }
+    });
   };
 
   generateGridToolbar() {
@@ -416,6 +494,8 @@ export default class OX_Grid extends React.Component {
           selectedField="selected"
           expandField={this.props.expandable ? "expanded" : null}
           {...this.state.dataState}
+          editField={this.props.inlineEdit ? "inEdit" : undefined}
+          onItemChange={this.itemChange}
         >
           {this.generateGridToolbar() && this.state.apiActivityCompleted ? (
             <GridToolbar>
@@ -512,7 +592,7 @@ OX_Grid.defaultProps = {
       { text: "grid.filterIsNullOperator", operator: "isnull" },
       { text: "grid.filterIsNotNullOperator", operator: "isnotnull" },
       { text: "grid.filterIsEmptyOperator", operator: "isempty" },
-      { text: "grid.filterIsNotEmptyOperator", operator: "isnotempty" },
+      { text: "grid.filterIsNotEmptyOperator", operator: "isnotempty" }
     ],
     numeric: [
       { text: "grid.filterEqOperator", operator: "eq" },
@@ -522,7 +602,7 @@ OX_Grid.defaultProps = {
       { text: "grid.filterLteOperator", operator: "lte" },
       { text: "grid.filterLtOperator", operator: "lt" },
       { text: "grid.filterIsNullOperator", operator: "isnull" },
-      { text: "grid.filterIsNotNullOperator", operator: "isnotnull" },
+      { text: "grid.filterIsNotNullOperator", operator: "isnotnull" }
     ],
     date: [
       { text: "grid.filterEqOperator", operator: "eq" },
@@ -532,10 +612,10 @@ OX_Grid.defaultProps = {
       { text: "grid.filterBeforeOperator", operator: "lt" },
       { text: "grid.filterBeforeOrEqualOperator", operator: "lte" },
       { text: "grid.filterIsNullOperator", operator: "isnull" },
-      { text: "grid.filterIsNotNullOperator", operator: "isnotnull" },
+      { text: "grid.filterIsNotNullOperator", operator: "isnotnull" }
     ],
-    boolean: [{ text: "grid.filterEqOperator", operator: "eq" }],
-  },
+    boolean: [{ text: "grid.filterEqOperator", operator: "eq" }]
+  }
 };
 
 OX_Grid.propTypes = {
