@@ -4,6 +4,7 @@ import defaultStyle from "./Styles/defaultMentionsStyle.js";
 import { MentionsInput, Mention } from "react-mentions";
 import Swal from "sweetalert2";
 import { Button } from "@progress/kendo-react-buttons";
+import moment from "moment";
 
 class CommentsView extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class CommentsView extends React.Component {
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
     this.loader = this.core.make("oxzion/splash");
+    this.userTimezone = this.profile['timezone'];
     this.state = {
       fileData: this.props.fileData,
       dataReady: this.props.url ? false : true,
@@ -267,7 +269,7 @@ class CommentsView extends React.Component {
                     <div className="panel panel-default arrow left">
                     <div className="panel-body">
                     <header className="text-left">
-                    <time className="comment-date" datetime={commentItem.time}><i className="fa fa-clock-o"></i> {commentItem.time}</time>
+                    <time className="comment-date" datetime={moment.utc(commentItem.time, 'YYYY-MM-DD HH:mm:ss').clone().tz(this.userTimezone)}><i className="fa fa-clock-o"></i> {moment.utc(commentItem.time, 'YYYY-MM-DD HH:mm:ss').clone().tz(this.userTimezone).format('YYYY-MM-DD hh:mm:ss a ')}</time>
                     </header>
                     <div className="comment-post">
                     <p>

@@ -18,7 +18,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import CountryCodes from './src/public/js/CountryCodes.js'
 import DateFormats from './src/public/js/DateFormats.js'
-import Timezones from './src/public/js/Timezones.js'
 import AvatarImageCropper from "react-avatar-image-cropper";
 import * as ReactStrap from "reactstrap";
 import * as ReactBootstrap from "react-bootstrap";
@@ -37,6 +36,7 @@ import * as KendoReactRipple from "@progress/kendo-react-ripple";
 import PhoneInput from "react-phone-number-input";
 import * as PopupDialog from 'sweetalert2';
 import * as Moment from "moment";
+import * as MomentTZ from "moment-timezone";
 import './index.scss';
 import DropDown from "./src/components/Dropdown/DropDownList";
 import DateComponent from "./src/components/DateComponent.js";
@@ -81,6 +81,7 @@ export {
   KendoReactRipple,
   PopupDialog,
   Moment,
+  MomentTZ,
   PhoneInput,
   DateComponent,
   DropDown,
