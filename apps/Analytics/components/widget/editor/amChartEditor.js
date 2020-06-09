@@ -13,13 +13,14 @@ class AmChartEditor extends AbstractEditor {
         this.state.filteredWidgetList = [];
         this.amChart = null;
         this.state.selectableWidgetOptions = props.selectableWidgetOptions;
+        this.state.selectableDashboardOptions = props.selectableDashboardOptions;
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             CHART_CONFIGURATION_INVALID_JSON: 'Chart configuration JSON is invalid',
             QUERY_NEEDED: 'Query should be selected',
             EXPRESSION_INVALID_JSON: 'Expression JSON is invalid',
         };
-        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }]
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }, { "label": "Dashboard", "value": "dashboard" }]
     }
 
 
@@ -321,13 +322,19 @@ class AmChartEditor extends AbstractEditor {
             this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
         }
         else if (name == "drillDownWidget") {
-            hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === value)
-            this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+            if (value !== 'dashboard') {
+                hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === value)
+                this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+            }
         }
         else if (name == "drillDownWidgetType") {
-
-            let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
-            this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+            if (value == 'dashboard') {
+                let filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
+                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+            } else {
+                let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
+                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+            }
         }
         else {
             this.setState({ [name]: value, errors: errors })
@@ -502,21 +509,22 @@ class AmChartEditor extends AbstractEditor {
                                                         isDisabled={this.state.readOnly}
                                                     />
                                                 </Col>
+
                                                 <Col lg="6">
                                                     <Select
-                                                        placeholder="Choose Widget"
+                                                        placeholder={this.state.drillDownWidgetType.value == "dashboard" ? "Choose Dashboard" : "Choose Widget"}
                                                         name="drillDownWidget"
                                                         id="drillDownWidget"
                                                         isDisabled={this.state.readOnly}
                                                         onChange={(e) => this.handleSelect(e, "drillDownWidget")}
-                                                        value={this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        value={this.state.drillDownWidgetType.value == "dashboard" ? this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) : this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
                                                         options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
                                                     />
                                                     <Form.Text className="text-muted errorMsg">
                                                         {this.state.errors.drillDown["drillDownWidget"]}
                                                     </Form.Text>
-
                                                 </Col>
+
                                             </Form.Group>
                                             <Form.Group as={Row}>
                                                 <Form.Label column lg="3">Title</Form.Label>
