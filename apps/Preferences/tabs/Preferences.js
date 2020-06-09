@@ -26,7 +26,6 @@ class Preferences extends React.Component {
       initialized: -1,
       languageName: ""
     };
-    console.log(MomentTZ.tz.names());
     this.settingsService = this.core.make("osjs/settings");
     this.packageService = this.core.make("osjs/packages");
     this.desktopService = this.core.make("osjs/desktop");

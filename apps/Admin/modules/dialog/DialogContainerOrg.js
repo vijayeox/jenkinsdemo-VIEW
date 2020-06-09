@@ -1,4 +1,4 @@
-import {React,FileUploader,Notification,Timezones,countryStateList,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
+import {React,FileUploader,Notification,MomentTZ,countryStateList,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
@@ -15,7 +15,7 @@ export default class DialogContainer extends React.Component {
       orgInEdit: this.props.dataItem || null,
       contactName: null,
       timeZoneValue: [],
-      timezoneList: Timezones,
+      timezoneList: MomentTZ.tz.names(),
       countryList: countryList
     };
     this.countryByIP = undefined;
@@ -621,7 +621,7 @@ export default class DialogContainer extends React.Component {
                       filterable={true}
                       onFilterChange={(e) => {
                         this.setState({
-                          timezoneList: KendoDataQuery.filterBy(Timezones, e.filter)
+                          timezoneList: KendoDataQuery.filterBy(MomentTZ.tz.names(), e.filter)
                         });
                       }}
                       required={true}
