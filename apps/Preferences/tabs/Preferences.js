@@ -1,4 +1,4 @@
-import {React,ReactDOM,Notification,DateFormats,Timezones,ReactBootstrap} from "oxziongui";
+import {React,ReactDOM,Notification,DateFormats,MomentTZ,ReactBootstrap} from "oxziongui";
 import merge from "deepmerge";
 import osjs from "osjs";
 class Preferences extends React.Component {
@@ -26,7 +26,6 @@ class Preferences extends React.Component {
       initialized: -1,
       languageName: ""
     };
-
     this.settingsService = this.core.make("osjs/settings");
     this.packageService = this.core.make("osjs/packages");
     this.desktopService = this.core.make("osjs/desktop");
@@ -89,8 +88,6 @@ class Preferences extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
-
-    Timezones.sort((a, b) => a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
   }
 
   getDefaults = () => ({
@@ -343,9 +340,9 @@ class Preferences extends React.Component {
                 className="timezone"
               >
                 {" "}
-                {Timezones.map((timezone, key) => (
-                  <option key={key} value={timezone.name}>
-                    {timezone.name}
+                {MomentTZ.tz.names().map((timezone, key) => (
+                  <option key={key} value={timezone}>
+                    {timezone}
                   </option>
                 ))}
               </select>

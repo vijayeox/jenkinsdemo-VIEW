@@ -128,7 +128,8 @@ export default class ConvergePayCheckoutComponent extends Base {
             detail: {
               firstname: document.getElementById("convergepay-firstname").value,
               lastname: document.getElementById("convergepay-lastname").value,
-              amount: document.getElementById("convergepay-amount").value
+              amount: document.getElementById("convergepay-amount").value,
+              description: document.getElementById("convergepay-description").value
             }
           });
           that.form.element.dispatchEvent(evt);
@@ -232,6 +233,22 @@ export default class ConvergePayCheckoutComponent extends Base {
         }
       }
     });
+    var that = this;
+    var billing_description = that.component.description_field? that.data[that.component.description_field]:"";
+    var description = this.renderTemplate("input", {
+      input: {
+        type: "input",
+        ref: `convergepay-description`,
+        attr: {
+          type: "hidden",
+          key: "convergepay-description",
+          id: "convergepay-description",
+          hideLabel: "true",
+          value: billing_description,
+          class: "form-control"
+        }
+      }
+    });
     var convergepayToken = this.renderTemplate("input", {
       input: {
         type: "input",
@@ -254,6 +271,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           key: "convergepay-firstname",
           class: "form-control",
           lang: "en",
+          required: "true",
           id: "convergepay-firstname",
           placeholder: "First Name",
           hideLabel: "true"
@@ -268,6 +286,7 @@ export default class ConvergePayCheckoutComponent extends Base {
           type: "textfield",
           key: "convergepay-lastname",
           class: "form-control",
+          required: "true",
           lang: "en",
           id: "convergepay-lastname",
           placeholder: "Last Name",
@@ -275,7 +294,6 @@ export default class ConvergePayCheckoutComponent extends Base {
         }
       }
     });
-    var that = this;
     var billing_amount = that.component.amount_field? that.data[that.component.amount_field]:that.data["amount"];
     function renderWithPrefix(prefix) {
       that.component.prefix = "$";
@@ -335,6 +353,7 @@ export default class ConvergePayCheckoutComponent extends Base {
     <div id="paymentPanel" class="card-body">
     ${convergepayToken}
     ${merchanttxnid}
+    ${description}
     <div class="row">
     <div class="convergepay-success" style="display:none;">Payment successful!</div></div></div></div>
     </div>`;

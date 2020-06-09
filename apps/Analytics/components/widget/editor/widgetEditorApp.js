@@ -37,6 +37,7 @@ class WidgetEditorApp extends React.Component {
             },
             visualizationOptions: [],
             selectableWidgetOptions: [],
+            selectableDashboardOptions: [],
             readOnly: true,
             isPreLoadedWidget: widgetConfiguration ? (widgetConfiguration.id ? true : false) : false
         };
@@ -46,6 +47,11 @@ class WidgetEditorApp extends React.Component {
     _sendUnlimitedWidgetListRequest = (params, method) => {
         return window.postDataRequest('analytics/widget?filter=' +
             encodeURIComponent('[{"take":500,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]'), params, method);
+    }
+
+    _sendUnlimitedDashboardListRequest = (params, method) => {
+        return window.postDataRequest('/analytics/dashboard?filter=' +
+            encodeURIComponent('[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":500}]'), params, method);
     }
 
     inputChanged = (e) => {
@@ -88,20 +94,20 @@ class WidgetEditorApp extends React.Component {
                     return state;
                 },
                     () => {
-                   
-                            // console.log(thiz.refs.editor)
-                            // if (thiz.refs.editor) {
-                            //     thiz.refs.editor.setWidgetData({
-                            //         data: widget.data,
-                            //         configuration: widget.configuration,
-                            //         queries: widget.queries,
-                            //         expression: widget.expression,
-                            //         readOnly: true
-                            //     });
-                            //     thiz.refs.editor.makeReadOnly(true);
-                            // }
-                
-                      
+
+                        // console.log(thiz.refs.editor)
+                        // if (thiz.refs.editor) {
+                        //     thiz.refs.editor.setWidgetData({
+                        //         data: widget.data,
+                        //         configuration: widget.configuration,
+                        //         queries: widget.queries,
+                        //         expression: widget.expression,
+                        //         readOnly: true
+                        //     });
+                        //     thiz.refs.editor.makeReadOnly(true);
+                        // }
+
+
                     });
             }).
             catch(function (responseData) {
@@ -160,7 +166,6 @@ class WidgetEditorApp extends React.Component {
 
     deleteWidget = (e) => {
         let thiz = this;
-
         window.postDataRequest('analytics/widget/' + this.state.widget.uuid + "?version=" + this.state.widget.version, {}, "delete")
             .then(function (response) {
                 //fetch the updated widget list after delete
@@ -214,19 +219,41 @@ class WidgetEditorApp extends React.Component {
     componentDidMount() {
         window.widgetEditorApp = this;
         let thiz = this;
-        Promise.all([this._sendUnlimitedWidgetListRequest(),window.postDataRequest('analytics/visualization'),window.getAllPermission()])
-        .then((response)=>{
-            let widgetData = response[0].data;
+        Promise.all([this._sendUnlimitedWidgetListRequest(), window.postDataRequest('analytics/visualization'), window.getAllPermission(), this._sendUnlimitedDashboardListRequest()])
+            .then((response) => {
+                let widgetData = response[0].data;
+                let dashboardData = response[3];
+                let dashboardResult = [];
+
+                for (var i in dashboardData) {
+                    dashboardResult.push([dashboardData[i]]);
+                }
+
                 let widgetList = []
+                let dashboardList = []
                 widgetList = widgetData.map(widget => {
                     return (
                         <option key={widget.uuid} value={widget.uuid}>{widget.name}</option>
                     )
                 })
+
+                dashboardList = dashboardResult.map(dashboard => {
+                    return (
+                        <option key={dashboard.uuid} value={dashboard.uuid}>{dashboard.name}</option>
+                    )
+                })
+
                 let selectableWidgetList = []
                 widgetData.map(widget => {
                     selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                 });
+
+                let selectableDashboardList = []
+                Object.values(response[3]).map(dashboard => {
+                    if (dashboard.uuid) {
+                        selectableDashboardList.push({ "label": dashboard.name, "value": dashboard.uuid, "type": "dashboard" })
+                    }
+                })
 
                 let visualizationData = response[1].data;
                 let visualList = []
@@ -237,23 +264,23 @@ class WidgetEditorApp extends React.Component {
                 });
 
                 const { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } = response[2].permissions
-                thiz.setState({ selectableWidgetOptions: selectableWidgetList,visualizationOptions: visualList ,widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE } })
+                thiz.setState({ selectableWidgetOptions: selectableWidgetList, visualizationOptions: visualList, widgetPermissions: { MANAGE_ANALYTICS_WIDGET_READ, MANAGE_ANALYTICS_WIDGET_WRITE }, selectableDashboardOptions: selectableDashboardList })
                 if (thiz.state.widget.uuid) {
                     thiz.loadWidget(thiz.state.widget.uuid);
                 }
             })
-        .catch(err=>{
-            console.error(err)
-            Swal.fire({
-                type: 'error',
-                title: 'Oops ...',
-                text: 'Failed to load widgets. Please try after some time.'
-            });
-        })
+            .catch(err => {
+                console.error(err)
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops ...',
+                    text: 'Failed to load widgets. Please try after some time.'
+                });
+            })
     }
 
-    componentDidUpdate(){
-        let widget=this.state.widget;
+    componentDidUpdate() {
+        let widget = this.state.widget;
         if (this.refs.editor && widget.configuration) {
             this.refs.editor.setWidgetData({
                 data: widget.data,
@@ -401,7 +428,7 @@ class WidgetEditorApp extends React.Component {
         switch (widget.type) {
             case 'aggregate':
             case 'inline':
-            // case 'html':
+                // case 'html':
                 type = 'inline';
                 break;
 
@@ -549,7 +576,7 @@ class WidgetEditorApp extends React.Component {
                                     id="selectWidget"
                                     isDisabled={this.state.isPreLoadedWidget}
                                     onChange={this.selectableWidgetSelectionChanged}
-                                    value={this.state.selectableWidgetOptions.length>0 && this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
+                                    value={this.state.selectableWidgetOptions.length > 0 && this.state.selectableWidgetOptions.filter(option => option.value == this.state.widget.uuid)}
                                     options={this.state.selectableWidgetOptions}
                                 />
                             </div>
@@ -619,8 +646,8 @@ class WidgetEditorApp extends React.Component {
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
-                                {((this.state.widget.type === 'chart') && (this.state.selectableWidgetOptions.length>0)) &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
+                                {((this.state.widget.type === 'chart') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
+                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
                                     <TableEditor ref="editor" widget={this.state.widget} />
@@ -628,6 +655,7 @@ class WidgetEditorApp extends React.Component {
                                 {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />
                                 }
+
                             </div>
                         }
                     </FrontSide>
@@ -680,7 +708,7 @@ class WidgetEditorApp extends React.Component {
 
                                 <div className="row">
                                     {(this.state.widget.type === 'chart') &&
-                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
+                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'table') &&
                                         <TableEditor ref="editor" widget={this.state.widget} />

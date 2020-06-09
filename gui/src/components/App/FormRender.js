@@ -1161,7 +1161,6 @@ class FormRender extends React.Component {
     e.stopPropagation();
     e.stopImmediatePropagation();
     that.showFormLoader(true,0);
-    let requestbody = {firstname: e.detail.firstname,lastname: e.detail.lastname,amount: e.detail.amount};
     that.callPayment(e.detail).then(response => {
       var transactionIdComponent = form.getComponent("transaction_id");
       if(response.data){
