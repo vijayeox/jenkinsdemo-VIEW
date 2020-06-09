@@ -63,7 +63,6 @@ export {
   ReactDOM,
   CountryCodes,
   DateFormats,
-  Timezones,
   AvatarImageCropper,
   ReactStrap,
   ReactBootstrap,
