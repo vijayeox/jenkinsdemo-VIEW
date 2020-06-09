@@ -92,7 +92,7 @@ export default class WidgetGrid extends React.Component {
         let pagination = this.state.pagination;
         let displayedData = process(this.filteredData, {
             take: pagination.take,
-            skip: pagination.skip,
+            skip: refilter?0:pagination.skip,
             group: this.state.group
         });
         this.setState({
