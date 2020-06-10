@@ -244,6 +244,8 @@ class WidgetEditorApp extends React.Component {
                 })
 
                 let selectableWidgetList = []
+                let visualList = []
+
                 widgetData.map(widget => {
                     selectableWidgetList.push({ "label": widget.name, "value": widget.uuid, "type": widget.type })
                 });
@@ -256,7 +258,7 @@ class WidgetEditorApp extends React.Component {
                 })
 
                 let visualizationData = response[1].data;
-                let visualList = []
+           
                 visualList = visualizationData.map(visualization => {
                     return (
                         <option key={visualization.uuid} data-key={visualization.uuid} value={visualization.type}>{visualization.name}</option>
@@ -650,7 +652,7 @@ class WidgetEditorApp extends React.Component {
                                     <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
-                                    <TableEditor ref="editor" widget={this.state.widget} />
+                                    <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
                                 }
                                 {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
                                     <AggregateValueEditor ref="editor" widget={this.state.widget} />

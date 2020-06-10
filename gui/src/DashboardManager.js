@@ -209,10 +209,11 @@ class Dashboard extends React.Component {
                   <Form className="dashboard-manager-items">
                     <Row>
                       <Col lg="4" md="4" sm="4">
-                        <Form.Group as={Row}>
+                        <Form.Group as={Row} >
                           <Col>
                             <Select
                               name="dashname"
+                             className="react-select-container"
                               placeholder="Select Dashboard"
                               id="dashname"
                               onChange={(e) => this.handleChange(e, "dashname")}

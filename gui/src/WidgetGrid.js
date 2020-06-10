@@ -6,6 +6,7 @@ import { filterBy } from '@progress/kendo-data-query';
 import { orderBy } from '@progress/kendo-data-query';
 import { process } from '@progress/kendo-data-query';
 import { ExcelExport } from '@progress/kendo-react-excel-export';
+import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 
 export default class WidgetGrid extends React.Component {
     constructor(props) {
@@ -14,6 +15,7 @@ export default class WidgetGrid extends React.Component {
         this.allData = props.data ? props.data : [];
         this.filteredData = null;
         let configuration = props.configuration;
+        this.isDrillDownTable = props.isDrillDownTable;
         this.resizable = configuration ? (configuration.resizable ? configuration.resizable : false) : false;
         this.filterable = configuration ? (configuration.filterable ? configuration.filterable : false) : false;
         this.groupable = configuration ? (configuration.groupable ? configuration.groupable : false) : false;
@@ -76,10 +78,10 @@ export default class WidgetGrid extends React.Component {
     }
 
     prepareData = (refilter) => {
-        if(this.allData){
-            this.allData.map(data=>{
+        if (this.allData) {
+            this.allData.map(data => {
                 //trimmimg time from date in order for date filter to work
-                data.date?data.date.setHours(0,0,0,0):null
+                data.date ? data.date.setHours(0, 0, 0, 0) : null
             })
         }
         if (this.state.sort) {
@@ -166,6 +168,12 @@ export default class WidgetGrid extends React.Component {
         console.log(e);
     }
 
+    drillDownClick = (evt) =>{
+       WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target),evt.dataItem)
+       ReactDOM.unmountComponentAtNode(this.props.canvasElement)
+        
+    }
+
     render() {
         let thiz = this;
         function getColumns() {
@@ -196,7 +204,7 @@ export default class WidgetGrid extends React.Component {
             sortable={this.sortable}
             sort={this.state.sort}
             onSortChange={this.gridSortChanged}
-
+            onRowClick={this.drillDownClick}
             groupable={this.groupable}
             group={this.state.group}
             onGroupChange={this.gridGroupChanged}
@@ -209,8 +217,14 @@ export default class WidgetGrid extends React.Component {
 
         return (
             <>
+                {this.isDrillDownTable &&
+                    <div class="oxzion-widget-drilldown-table-icon" title="Drilldown Table">
+                        <i class="fas fa-angle-double-down fa-lg"></i>
+                    </div>
+                }
                 {this.exportToExcel &&
                     <>
+
                         <div style={{
                             float: "right",
                             top: "20px",

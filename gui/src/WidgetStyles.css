@@ -35,5 +35,17 @@ div > div.oxzion-widget-drilldown-icon{
     top: 1%;
     left: 1%;
     color: #265160;
+    z-index: 10;
+  
+}
 
+div > div.oxzion-widget-drilldown-table-icon{
+    color: #265160;
+    z-index: 10;
+    position: relative;
+    float: right;
+    top: 20px;
+    right: 7px;
+    margin-right: 10px;
+    margin-left: 12px;
 }

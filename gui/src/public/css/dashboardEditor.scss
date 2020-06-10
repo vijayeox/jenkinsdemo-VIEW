@@ -68,6 +68,7 @@
 
   .dashboard-filter-field{
     min-width: 155px;
+    margin-right: 5px;
   }
   
   .dates-container input,.create-filter-form input{
@@ -134,6 +135,9 @@ padding-right: 1em;
   .dash-manager-buttons{
     position: absolute;
     right: 1em;
+  }
+  .react-select-container{
+    z-index: 100;
   }
   .dash-manager-buttons .btn{
   margin-right: 7px;
