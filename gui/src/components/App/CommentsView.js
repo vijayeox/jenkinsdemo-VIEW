@@ -314,25 +314,18 @@ class CommentsView extends React.Component {
                             <header className="text-right">
                               <time
                                 className="comment-date"
-                                datetime={
-                                  // moment(commentItem.time)
-                                  // .tz(this.userTimezone)
-                                  // .format(this.userDateFormat + " - HH:mm:ss")}
-                                  moment
-                                    .utc(
-                                      commentItem.time,
-                                      "YYYY-MM-DD HH:mm:ss"
-                                    )
-                                    .clone()
-                                    .tz(this.userTimezone)
-                                }
+                                datetime={moment
+                                  .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
+                                  .clone()
+                                  .tz(this.userTimezone)
+                                  .format(this.userDateFormat + " - HH:mm:ss")}
                               >
                                 <i className="fa fa-clock-o"></i>
                                 {moment
                                   .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
                                   .clone()
                                   .tz(this.userTimezone)
-                                  .format("YYYY-MM-DD HH:mm:ss")}
+                                  .format(this.userDateFormat + " - HH:mm:ss")}
                               </time>
                             </header>
                           </div>
