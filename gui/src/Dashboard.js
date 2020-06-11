@@ -58,8 +58,8 @@ class Dashboard extends Component {
     return response;
   }
 
-  appendToDashboardContainer(htmlData){
-    let container="<div id='dasboard-viewer-content' class='dasboard-viewer-content'>"+htmlData+"</div>"
+  appendToDashboardContainer(htmlData) {
+    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + htmlData + "</div>"
     return container
   }
 
@@ -106,13 +106,13 @@ class Dashboard extends Component {
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
-preparefilter(filter1,filter2){
-  var filter=[]
-  filter.push(filter1)
-  filter.push("AND")
-  filter.push(filter2)
-  return filter
-}
+  preparefilter(filter1, filter2) {
+    var filter = []
+    filter.push(filter1)
+    filter.push("AND")
+    filter.push(filter2)
+    return filter
+  }
 
   componentDidUpdate(prevProps) {
     //update component when filter is changed
@@ -140,7 +140,6 @@ preparefilter(filter1,filter2){
               filterarray.push(">=")
               filterarray.push(startDate)
               filterParams.push(filterarray)
-              
 
               //prepare endDate array
               filterarray = []
@@ -164,24 +163,23 @@ preparefilter(filter1,filter2){
         }
       })
       let preapredFilter
-      if(filterParams && filterParams.length>1){
-        preapredFilter=filterParams[0]
-        for(let i=1;i<filterParams.length;i++){
-          preapredFilter=this.preparefilter(preapredFilter,filterParams[i])
-          
+      if (filterParams && filterParams.length > 1) {
+        preapredFilter = filterParams[0]
+        for (let i = 1; i < filterParams.length; i++) {
+          preapredFilter = this.preparefilter(preapredFilter, filterParams[i])
+
         }
       }
 
-      if(filterParams && filterParams.length != 0)
-        {
-          if(filterParams.length>1)
-            this.updateGraph(preapredFilter)
-          else
-            this.updateGraph(filterParams)
-        }     
-       else{
-         this.updateGraph()
-       }
+      if (filterParams && filterParams.length != 0) {
+        if (filterParams.length > 1)
+          this.updateGraph(preapredFilter)
+        else
+          this.updateGraph(filterParams)
+      }
+      else {
+        this.updateGraph()
+      }
     }
   }
 
@@ -203,43 +201,43 @@ preparefilter(filter1,filter2){
         delete this.renderedWidgets[elementId];
       }
     }
-    
-    if(widgets.length==0){
+
+    if (widgets.length == 0) {
       this.loader.destroy();
     }
-    else{
+    else {
       for (let widget of widgets) {
         var attributes = widget.attributes;
         //dispose 
         var that = this;
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
-        .then(response=>{
-          if(response.status =="success"){
-            response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
-            that.setState({ widgetCounter: that.state.widgetCounter+1});
-            if ('error' === response.status) {
-              console.error('Could not load widget.');
-              console.error(response);
-              errorFound = true;
+          .then(response => {
+            if (response.status == "success") {
+              response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
+              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+              if ('error' === response.status) {
+                console.error('Could not load widget.');
+                console.error(response);
+                errorFound = true;
+              }
+              else {
+                //dispose if widget exists
+                let widgetObject = WidgetRenderer.render(widget, response.data.widget);
+                if (widgetObject) {
+                  this.renderedWidgets[widgetUUId] = widgetObject;
+                }
+              }
+              if (that.state.widgetCounter >= widgets.length) {
+                this.loader.destroy();
+              }
+            } else {
+              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+              if (this.state.widgetCounter >= widgets.length) {
+                that.loader.destroy();
+              }
             }
-            else {
-            //dispose if widget exists
-            let widgetObject = WidgetRenderer.render(widget, response.data.widget);
-            if (widgetObject) {
-              this.renderedWidgets[widgetUUId] = widgetObject;
-            }
-          }
-          if(that.state.widgetCounter>=widgets.length){
-            this.loader.destroy();
-          }
-          } else {
-            that.setState({ widgetCounter: that.state.widgetCounter+1});
-            if(this.state.widgetCounter>=widgets.length){
-              that.loader.destroy();
-            }
-          }
-        });
+          });
       }
     }
     if (errorFound) {
@@ -252,8 +250,20 @@ preparefilter(filter1,filter2){
     }
   };
 
+  async drillDownToDashboard(data) {
+    let event = {};
+    event.value = data.dashboard;
+    let dashboardData = await this.getDashboardHtmlDataByUuid(event.value);
+    event.value = JSON.stringify(dashboardData.data.dashboard)
+    this.props.handleChange(event, "dashname")
+  }
+
   widgetDrillDownMessageHandler = (event) => {
     let eventData = event.data;
+    if (eventData.target == 'dashboard') {
+      this.drillDownToDashboard(eventData);
+    }
+
     let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
     if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
       return;
@@ -320,7 +330,7 @@ preparefilter(filter1,filter2){
   }
 
   render() {
-      return  <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData?this.state.htmlData:'') }} />;
+    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData ? this.state.htmlData : '') }} />;
   }
 }
 

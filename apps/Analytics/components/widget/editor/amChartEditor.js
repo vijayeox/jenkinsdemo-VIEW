@@ -103,7 +103,7 @@ class AmChartEditor extends AbstractEditor {
         }
     }
 
-   
+
 
     isChartTabValid = (state, setErrorState = true) => {
         let isValid = true;
@@ -303,7 +303,7 @@ class AmChartEditor extends AbstractEditor {
         }
     }
 
-   
+
 
     render() {
         let thiz = this;

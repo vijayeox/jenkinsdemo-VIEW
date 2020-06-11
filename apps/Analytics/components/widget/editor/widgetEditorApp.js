@@ -258,7 +258,7 @@ class WidgetEditorApp extends React.Component {
                 })
 
                 let visualizationData = response[1].data;
-           
+
                 visualList = visualizationData.map(visualization => {
                     return (
                         <option key={visualization.uuid} data-key={visualization.uuid} value={visualization.type}>{visualization.name}</option>

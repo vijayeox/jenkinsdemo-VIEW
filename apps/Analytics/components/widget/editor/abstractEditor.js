@@ -19,7 +19,7 @@ class AbstractEditor extends React.Component {
             drillDownWidgetFooter: '',
             hasMaxDepth: false,
             drillDownMaxDepth: -1,
-            filteredWidgetList : [],
+            filteredWidgetList: [],
             errors: {
                 configuration: null,
                 expression: null,
@@ -178,8 +178,8 @@ class AbstractEditor extends React.Component {
         });
         return errorMessage ? false : true;
     }
-    getSelectedWidgetType=()=>{
-        return this.state.drillDownWidgetType.value!=="dashboard"?"widget":"dashboard";
+    getSelectedWidgetType = () => {
+        return this.state.drillDownWidgetType.value !== "dashboard" ? "widget" : "dashboard";
     }
 
     ApplyDrillDown = (widgetType) => {
@@ -189,7 +189,6 @@ class AbstractEditor extends React.Component {
                 "target": this.getSelectedWidgetType(),
                 "filter": this.state.drillDownFilter,
                 "nextWidgetId": this.state.drillDownWidget
-
             }
             this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
             this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
@@ -214,7 +213,7 @@ class AbstractEditor extends React.Component {
             this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType })
         }
     }
-    
+
     setWidgetType() {
         if (this.state.selectableWidgetOptions.length > 0) {
             let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)

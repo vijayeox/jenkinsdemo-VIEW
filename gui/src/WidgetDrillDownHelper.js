@@ -30,12 +30,12 @@ class WidgetDrillDownHelper {
             return templateString;
         }
         let regex = /\${.*?}/;
-        while(true) {
+        while (true) {
             let hits = regex.exec(templateString);
             if (!hits) {
                 break;
             }
-            templateString = templateString.replace(regex, function(matchedSubstring, offset, string) {
+            templateString = templateString.replace(regex, function (matchedSubstring, offset, string) {
                 let key = matchedSubstring.substring(2, (matchedSubstring.length - 1)); //Extract string between ${ and }
                 let value = dataContext[key];
                 if (!value) {
@@ -61,7 +61,7 @@ class WidgetDrillDownHelper {
 
         let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
         if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+            throw (`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
         }
 
         let elementId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_ELEMENT_ID_ATTRIBUTE);
@@ -73,7 +73,7 @@ class WidgetDrillDownHelper {
         let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
         if (!drillDownContext || (0 === drillDownContext.length)) {
-            throw(`Drill down conetxt is not found for widget id ${widgetId}.`);
+            throw (`Drill down conetxt is not found for widget id ${widgetId}.`);
         }
         let context = drillDownContext[drillDownContext.length - 1];
 
@@ -83,7 +83,7 @@ class WidgetDrillDownHelper {
         }
         messageContent[WidgetDrillDownHelper.MSG_PROP_TARGET] = target;
 
-        switch(target) {
+        switch (target) {
             case 'widget':
                 let nextWidgetId = context[WidgetDrillDownHelper.CTX_PROP_NEXT_WIDGET_ID];
                 if (!nextWidgetId) {
@@ -91,11 +91,11 @@ class WidgetDrillDownHelper {
                 }
                 messageContent[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID] = nextWidgetId;
                 widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, nextWidgetId);
-            break;
+                break;
 
             case 'dashboard':
-                //Implement code for sending message to render new dashboard.
-            break;
+                messageContent["dashboard"] = context.nextWidgetId;
+                break;
 
             default:
                 throw `Unknown drill down target ${target}`;
@@ -117,10 +117,10 @@ class WidgetDrillDownHelper {
         if (element.topParent) {
             element = element.topParent.htmlContainer;
         }
-        while(true) {
+        while (true) {
             element = element.parentElement;
             if (!element) {
-                throw('Did not find widget element when moving up the node hierarchy of chart click event.');
+                throw ('Did not find widget element when moving up the node hierarchy of chart click event.');
             }
             if (element.hasAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE)) {
                 return element;
@@ -130,7 +130,7 @@ class WidgetDrillDownHelper {
 
     static getAmchartsDataContext(dataItem, propertyList) {
         let obj = {};
-        propertyList.forEach(function(prop, index, array) {
+        propertyList.forEach(function (prop, index, array) {
             if (dataItem[prop]) {
                 obj[prop] = dataItem[prop];
             }
@@ -143,8 +143,8 @@ class WidgetDrillDownHelper {
             return;
         }
 
-        series.forEach(function(ser) {
-            switch(ser.type) {
+        series.forEach(function (ser) {
+            switch (ser.type) {
                 case 'ColumnSeries':
                     if (!ser['columns']) {
                         ser['columns'] = {};
@@ -153,8 +153,8 @@ class WidgetDrillDownHelper {
                     if (!columns['events']) {
                         columns['events'] = {};
                     }
-                    let  columnEvts = columns['events'];
-                    columnEvts['hit'] = function(evt) {
+                    let columnEvts = columns['events'];
+                    columnEvts['hit'] = function (evt) {
                         let dataContext = WidgetDrillDownHelper.getAmchartsDataContext(evt.target.dataItem, [
                             'valueX',
                             'valueY',
@@ -172,7 +172,7 @@ class WidgetDrillDownHelper {
                         WidgetDrillDownHelper.drillDownClicked(
                             WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
-                break;
+                    break;
                 case 'PieSeries':
                     if (!ser['slices']) {
                         ser['slices'] = {};
@@ -186,12 +186,12 @@ class WidgetDrillDownHelper {
                         template['events'] = {};
                     }
                     let events = template['events'];
-                    events['hit'] = function(evt) {
+                    events['hit'] = function (evt) {
                         let dataContext = evt.target.dataItem.dataContext;
                         WidgetDrillDownHelper.drillDownClicked(
                             WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
-                break;
+                    break;
                 case 'LineSeries':
                     if (!ser['segments']) {
                         ser['segments'] = {};
@@ -202,37 +202,37 @@ class WidgetDrillDownHelper {
                         segments['events'] = {};
                     }
                     let segmentEvts = segments['events'];
-                    segmentEvts['hit'] = function(evt) {
+                    segmentEvts['hit'] = function (evt) {
                         let dataContext = evt.target.dataItem.component.tooltipDataItem.dataContext;
                         WidgetDrillDownHelper.drillDownClicked(
                             WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                     };
-    
+
                     if (!ser['bullets']) {
                         ser['bullets'] = [];
                     }
                     let bullets = ser['bullets'];
-                    bullets.forEach(function(bul) {
+                    bullets.forEach(function (bul) {
                         if (!bul['events']) {
                             bul['events'] = {};
                         }
                         let bulletEvts = bul['events'];
-                        bulletEvts['hit'] = function(evt) {
+                        bulletEvts['hit'] = function (evt) {
                             let dataContext = evt.target.dataItem.dataContext;
                             WidgetDrillDownHelper.drillDownClicked(
                                 WidgetDrillDownHelper.findWidgetElement(evt.event ? evt.event.target : evt.target), dataContext);
                         };
                     });
-                break;
+                    break;
                 case 'FunnelSeries':
                     if (!ser['events']) {
                         ser['events'] = {};
                     }
                     let evts = ser['events'];
-                    evts['hit'] = function(evt) {
-console.log('Hit function', evt);
+                    evts['hit'] = function (evt) {
+                        console.log('Hit function', evt);
                     };
-                break;
+                    break;
             }
         });
     }
@@ -280,7 +280,7 @@ console.log('Hit function', evt);
 
         let strAttribute = element.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
-        for (let i=0; i < drillDownContext.length; i++) {
+        for (let i = 0; i < drillDownContext.length; i++) {
             let context = drillDownContext[i];
             if (context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
                 return true;
@@ -299,7 +299,7 @@ console.log('Hit function', evt);
     static rollUpClicked(widgetElement) {
         let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
         if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+            throw (`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
         }
 
         let context = WidgetDrillDownHelper.unwindDrillDownContextStack(widgetElement);
@@ -309,17 +309,17 @@ console.log('Hit function', evt);
         messageContent[WidgetDrillDownHelper.MSG_PROP_WIDGET_ID] = widgetId;
         messageContent[WidgetDrillDownHelper.MSG_PROP_ELEMENT_ID] = elementId;
 
-        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+        WidgetDrillDownHelper._assignIfDefined(messageContent,
             WidgetDrillDownHelper.MSG_PROP_FILTER, context[WidgetDrillDownHelper.CTX_PROP_FILTER]);
-        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+        WidgetDrillDownHelper._assignIfDefined(messageContent,
             WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
-        WidgetDrillDownHelper._assignIfDefined(messageContent, 
+        WidgetDrillDownHelper._assignIfDefined(messageContent,
             WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
 
         let nextWidgetId = context[WidgetDrillDownHelper.CTX_PROP_WIDGET_ID];
         if (nextWidgetId !== widgetId) {
             messageContent[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID] = nextWidgetId;
-            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, nextWidgetId);  
+            widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE, nextWidgetId);
         }
 
         console.log('Posting rollUp message to window.', messageContent);
@@ -329,21 +329,21 @@ console.log('Hit function', evt);
     static unwindDrillDownContextStack(widgetElement) {
         let widgetId = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE);
         if (!widgetElement.hasAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE)) {
-            throw(`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
+            throw (`Drill down conetxt attribute is not found for widget id ${widgetId}.`);
         }
 
         let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
         if (!drillDownContext || (0 === drillDownContext.length)) {
-            throw(`Drill down conetxt is not found for widget id ${widgetId}.`);
+            throw (`Drill down conetxt is not found for widget id ${widgetId}.`);
         }
 
         let context = drillDownContext.pop();
         if (!context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
             context = drillDownContext.pop();
-        }        
+        }
         if (!context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND]) {
-            throw(`Unbound context not found neither at top nor at 2nd position from top of drill down stack for widget id ${widgetId}.`);
+            throw (`Unbound context not found neither at top nor at 2nd position from top of drill down stack for widget id ${widgetId}.`);
         }
         //Update the widget element attribute containing drill down context stack.
         widgetElement.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, JSON.stringify(drillDownContext));
@@ -358,11 +358,11 @@ console.log('Hit function', evt);
         //Filter, widget title and widget footer should be picked up from the context at the top of the drill down stack.
         if (drillDownContext.length > 0) {
             let tempContext = drillDownContext[drillDownContext.length - 1];
-            WidgetDrillDownHelper._assignIfDefined(context, 
+            WidgetDrillDownHelper._assignIfDefined(context,
                 WidgetDrillDownHelper.CTX_PROP_FILTER, tempContext[WidgetDrillDownHelper.CTX_PROP_FILTER]);
-            WidgetDrillDownHelper._assignIfDefined(context, 
+            WidgetDrillDownHelper._assignIfDefined(context,
                 WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
-            WidgetDrillDownHelper._assignIfDefined(context, 
+            WidgetDrillDownHelper._assignIfDefined(context,
                 WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
         }
 
