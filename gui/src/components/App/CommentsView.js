@@ -14,7 +14,12 @@ class CommentsView extends React.Component {
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
     this.loader = this.core.make("oxzion/splash");
-    this.userTimezone = this.profile['timezone'];
+    this.userTimezone = this.profile.timezone
+      ? this.profile.timezone
+      : moment.tz.guess();
+    this.userDateFormat = this.profile.preferences.dateformat
+      ? this.profile.preferences.dateformat
+      : "YYYY/MM/DD";
     this.state = {
       fileData: this.props.fileData,
       dataReady: this.props.url ? false : true,
@@ -22,7 +27,7 @@ class CommentsView extends React.Component {
       mentionData: [],
       value: "",
       fileId: this.props.url,
-      userList: [],
+      userList: []
     };
   }
 
@@ -35,7 +40,7 @@ class CommentsView extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let fileContent = await helper.request(
       "v1",
-      "file/"+ this.state.fileId +"/comment",
+      "file/" + this.state.fileId + "/comment",
       {},
       "get"
     );
@@ -47,7 +52,7 @@ class CommentsView extends React.Component {
       var query = {
         filter: {
           logic: "and",
-          filters: [{ field: "name", operator: "contains", value: term }],
+          filters: [{ field: "name", operator: "contains", value: term }]
         },
         skip: 0,
         take: 10
@@ -73,9 +78,17 @@ class CommentsView extends React.Component {
       if (response.status == "success") {
         this.setState({
           commentsList: response.data
-            ? this.formatFormData(response.data.map((i) => {
-                return { id: this.uuidv4(), text: i.text,name:i.name,time: i.time,user_id:i.userId };
-              }))
+            ? this.formatFormData(
+                response.data.map((i) => {
+                  return {
+                    id: this.uuidv4(),
+                    text: i.text,
+                    name: i.name,
+                    time: i.time,
+                    user_id: i.userId
+                  };
+                })
+              )
             : [],
           dataReady: true
         });
@@ -114,27 +127,36 @@ class CommentsView extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let fileData = await helper.request(
       "v1",
-      "file/"+ this.state.fileId +"/comment",
+      "file/" + this.state.fileId + "/comment",
       data,
       "post"
     );
     return fileData;
   }
-    formatFormData(data) {
+  formatFormData(data) {
     var parsedData = [];
     for (var i = 0; i < data.length; i++) {
       try {
         parsedData[i] = data[i];
-        parsedData[i]['text'] = typeof data[i]['text'] === "string" ? JSON.parse(data[i]['text']) : data[i]['text'] == undefined || data[i]['text'] == null ? "": data[i]['text'];
-        if ( parsedData[i]['text'] == "" && data[i]['text'] && parsedData[key]['text'] != data[i]['text']) {
-          parsedData[i]['text'] = data[i]['text'];
+        parsedData[i]["text"] =
+          typeof data[i]["text"] === "string"
+            ? JSON.parse(data[i]["text"])
+            : data[i]["text"] == undefined || data[i]["text"] == null
+            ? ""
+            : data[i]["text"];
+        if (
+          parsedData[i]["text"] == "" &&
+          data[i]["text"] &&
+          parsedData[key]["text"] != data[i]["text"]
+        ) {
+          parsedData[i]["text"] = data[i]["text"];
         }
-        if (parsedData[key] == "[]" && data[i]['text']) {
-          parsedData[i]['text'] = [];
+        if (parsedData[key] == "[]" && data[i]["text"]) {
+          parsedData[i]["text"] = [];
         }
       } catch (error) {
-        if (data[i]['text'] != undefined) {
-          parsedData[i]['text'] = data[i]['text'];
+        if (data[i]["text"] != undefined) {
+          parsedData[i]["text"] = data[i]["text"];
         }
       }
     }
@@ -142,12 +164,10 @@ class CommentsView extends React.Component {
   }
 
   saveComment(stepBack) {
-    const comment = {};
-    comment.text = JSON.stringify(this.state.value);
     this.loader.show();
-    this.saveComments(comment).then(() => {
+    this.saveComments({ text: this.state.value }).then(() => {
       this.setState({
-        mentionData: [],
+        mentionData: {},
         value: ""
       });
       this.fetchCommentData();
@@ -209,7 +229,7 @@ class CommentsView extends React.Component {
   handleChange = (event, newValue, newPlainTextValue, mentions) => {
     if (newValue.length < 1000) {
       this.setState({
-        value: newValue,
+        value: newPlainTextValue,
         mentionData: { newValue, newPlainTextValue, mentions }
       });
     }
@@ -243,13 +263,24 @@ class CommentsView extends React.Component {
               </div>
             </div>
             <div className="col-1 flexCol" style={{ justifyContent: "center" }}>
-              <Button
-                primary={true}
-                className="commentsSaveButton"
-                onClick={() => {
-                  this.saveComment();
-                }}
-              ><i className="fa fa-floppy-o"></i></Button>
+              <abbr
+                title={
+                  this.state.value.length == 0
+                    ? "Please enter a comment to save."
+                    : null
+                }
+              >
+                <Button
+                  primary={true}
+                  className="commentsSaveButton"
+                  disabled={this.state.value.length == 0 ? true : false}
+                  onClick={() => {
+                    this.saveComment();
+                  }}
+                >
+                  <i className="fa fa-floppy-o"></i>
+                </Button>
+              </abbr>
             </div>
           </div>
 
@@ -259,26 +290,54 @@ class CommentsView extends React.Component {
                 {this.state.commentsList.map((commentItem) => {
                   return (
                     <article className="row">
-                    <div className="col-md-1 col-sm-1 hidden-xs">
-                    <figure className="thumbnail">
-                    <img src={this.core.config("api.url")+"user/profile/"+commentItem.user_id} alt={commentItem.name} />
-                    <figcaption className="text-center">{commentItem.name}</figcaption>
-                    </figure>
-                    </div>
-                    <div className="col-md-11 col-sm-11">
-                    <div className="panel panel-default arrow left">
-                    <div className="panel-body">
-                    <header className="text-left">
-                    <time className="comment-date" datetime={moment.utc(commentItem.time, 'YYYY-MM-DD HH:mm:ss').clone().tz(this.userTimezone)}><i className="fa fa-clock-o"></i> {moment.utc(commentItem.time, 'YYYY-MM-DD HH:mm:ss').clone().tz(this.userTimezone).format('YYYY-MM-DD hh:mm:ss a ')}</time>
-                    </header>
-                    <div className="comment-post">
-                    <p>
-                    {commentItem.text}
-                    </p>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
+                      <div className="col-md-1 col-sm-1 hidden-xs">
+                        <figure className="thumbnail">
+                          <img
+                            src={
+                              this.core.config("wrapper.url") +
+                              "user/profile/" +
+                              commentItem.user_id
+                            }
+                            alt={commentItem.name}
+                          />
+                          <figcaption className="text-center">
+                            {commentItem.name}
+                          </figcaption>
+                        </figure>
+                      </div>
+                      <div className="col-md-11 col-sm-11">
+                        <div className="panel panel-default arrow left">
+                          <div className="panel-body">
+                            <div className="comment-post">
+                              <p>{commentItem.text}</p>
+                            </div>
+                            <header className="text-right">
+                              <time
+                                className="comment-date"
+                                datetime={
+                                  // moment(commentItem.time)
+                                  // .tz(this.userTimezone)
+                                  // .format(this.userDateFormat + " - HH:mm:ss")}
+                                  moment
+                                    .utc(
+                                      commentItem.time,
+                                      "YYYY-MM-DD HH:mm:ss"
+                                    )
+                                    .clone()
+                                    .tz(this.userTimezone)
+                                }
+                              >
+                                <i className="fa fa-clock-o"></i>
+                                {moment
+                                  .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
+                                  .clone()
+                                  .tz(this.userTimezone)
+                                  .format("YYYY-MM-DD HH:mm:ss")}
+                              </time>
+                            </header>
+                          </div>
+                        </div>
+                      </div>
                     </article>
                   );
                 })}
