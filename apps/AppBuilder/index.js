@@ -1,10 +1,9 @@
 import osjs from "osjs";
+import { React, ReactDOM, FormBuilder } from "oxziongui";
 import { name as applicationName } from "./metadata.json";
-import {React,ReactDOM} from "oxziongui";
 import { icon_white } from "./metadata.json";
-import Home from "./home";
 
-var i, finalposition, finalDimension,finalMaximised,finalMinimised;
+var i, finalposition, finalDimension, finalMaximised, finalMinimised;
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
@@ -13,10 +12,13 @@ const register = (core, args, options, metadata) => {
     options,
     metadata
   });
-    let session = core.make('osjs/settings').get('osjs/session');
+  let session = core.make("osjs/settings").get("osjs/session");
   let sessions = Object.entries(session);
   for (i = 0; i < sessions.length; i++) {
-    if (Object.keys(session[i].windows).length && session[i].name == "AppBuilder"){
+    if (
+      Object.keys(session[i].windows).length &&
+      session[i].name == "AppBuilder"
+    ) {
       finalposition = session[i].windows[0].position;
       finalDimension = session[i].windows[0].dimension;
       finalMaximised = session[i].windows[0].maximized;
@@ -24,65 +26,40 @@ const register = (core, args, options, metadata) => {
     }
   }
   // Create  a new Window instance
- const createProcWindow = () => {
+  const createProcWindow = () => {
     var win = proc
-    .createWindow({
-      id: "FormioWindow",
-      title: metadata.title.en_EN,
-      icon: proc.resource(icon_white),
-      attributes: {
-        classNames: ["Window_Admin"],
-        dimension: finalDimension ? finalDimension : {
-          width: 900,
-          height: 570
-        },
-        minDimension: {
-          width: 900,
-          height: 570
-        },
-        position:  finalposition ? finalposition : {
-          left: 150,
-          top: 50
+      .createWindow({
+        id: "FormioWindow",
+        title: metadata.title.en_EN,
+        icon: proc.resource(icon_white),
+        attributes: {
+          dimension: finalDimension
+            ? finalDimension
+            : {
+                width: 900,
+                height: 570
+              },
+          minDimension: {
+            width: 900,
+            height: 570
+          },
+          position: finalposition
+            ? finalposition
+            : {
+                left: 150,
+                top: 50
+              }
         }
-      }
-    })
-    .on("destroy", () => proc.destroy())
-    .on("resized", config => {
-      event = new CustomEvent("windowResize", {
-        detail: config,
-        bubbles: true,
-        cancelable: true
-      });
-      window.setTimeout(
-        () =>
-          document
-            .getElementsByClassName("Window_Admin")[0]
-            .dispatchEvent(event),
-        0
+      })
+      .on("destroy", () => proc.destroy())
+      .render(($content) =>
+        ReactDOM.render(
+          <div className="formbuilder-warpper">
+            <FormBuilder args={core} />
+          </div>,
+          $content
+        )
       );
-    })
-    .on("maximize", config => {
-      event = new CustomEvent("windowResize", {
-        detail: config.state.dimension,
-        bubbles: true,
-        cancelable: true
-      });
-      window.setTimeout(
-        () =>
-          document
-            .getElementsByClassName("Window_Admin")[0]
-            .dispatchEvent(event),
-        0
-      );
-    })
-    .render($content => ReactDOM.render(<Home args={core} />, $content));
-
-    if(finalMinimised){
-      win.minimize();
-    }
-    if(finalMaximised){
-      win.maximize();
-    }
   };
   createProcWindow(proc);
 
