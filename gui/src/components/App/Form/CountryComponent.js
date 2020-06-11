@@ -20,9 +20,9 @@ export default class CountryComponent extends Base {
     }
     
     static builderInfo = {
-        title: 'country',
-        group: 'basic',
-        icon: 'fa fa-calender',
+        title: 'Country',
+        group: 'Custom',
+        icon: 'fa fa-globe',
         weight: 70,
         schema: CountryComponent.schema()
     }

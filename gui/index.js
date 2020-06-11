@@ -42,6 +42,7 @@ import DropDown from "./src/components/Dropdown/DropDownList";
 import DateComponent from "./src/components/DateComponent.js";
 import CurrencySelect from "./src/components/Currency Select/currencySelect";
 import countryStateList from "./src/components/data/country-state-codes";
+import FormBuilder from './src/components/App/FormBuilder'
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -85,5 +86,6 @@ export {
   DateComponent,
   DropDown,
   CurrencySelect,
-  countryStateList
+  countryStateList,
+  FormBuilder
 };
