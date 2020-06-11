@@ -160,8 +160,8 @@ export default class FortePayCheckoutComponent extends Base {
         }, ...extend );
     }
     static builderInfo = {
-        title: 'Payment',
-        group: 'basic',
+        title: 'FortePayment',
+        group: 'Custom',
         icon: 'fa fa-dollar',
         weight: 70,
         schema: FortePayCheckoutComponent.schema()

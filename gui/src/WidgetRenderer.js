@@ -52,12 +52,12 @@ class WidgetRenderer {
                 break;
 
             case 'HTML':
-                    if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
-                        throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
-                    }
-                    return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
-                    break;
-    
+                if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
+                    throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
+                }
+                return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
+                break;
+
             default:
                 throw (`Unexpected widget renderer "${widget.renderer}"`);
         }
@@ -129,7 +129,7 @@ class WidgetRenderer {
     }
 
     static renderAmCharts(element, configuration, props, data) {
-        let isDrillDownChart=false
+        let isDrillDownChart = false
         let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
         data = transformedConfig.chartData;
@@ -193,7 +193,7 @@ class WidgetRenderer {
 
         if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)) {
             WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
-            isDrillDownChart=true;
+            isDrillDownChart = true;
         }
 
         let elementTagName = element.tagName.toUpperCase();
@@ -210,16 +210,16 @@ class WidgetRenderer {
         }
         if (!canvasElement) {
             throw 'Canvas element not found for drawing the chart.';
-        } 
+        }
 
         let chart = null;
         if ('amCharts-map' === am4ChartType) {
             chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
-            if(isDrillDownChart){
+            if (isDrillDownChart) {
                 canvasElement.insertAdjacentHTML('beforeend',
-                '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
-                '<i class="fas fa-angle-double-down fa-lg"></i>' +
-                '</div>');
+                    '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
+                    '<i class="fas fa-angle-double-down fa-lg"></i>' +
+                    '</div>');
             }
         }
         else {
@@ -227,11 +227,11 @@ class WidgetRenderer {
             if (chart && data) {
                 chart.data = data;
             }
-            if(isDrillDownChart){
+            if (isDrillDownChart) {
                 canvasElement.insertAdjacentHTML('beforeend',
-                '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
-                '<i class="fas fa-angle-double-down fa-lg"></i>' +
-                '</div>');
+                    '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
+                    '<i class="fas fa-angle-double-down fa-lg"></i>' +
+                    '</div>');
             }
         }
 
@@ -259,7 +259,7 @@ class WidgetRenderer {
             if (buttonElement) {
                 buttonElement.remove();
             }
-            
+
         }
         return chart;
     }
@@ -499,6 +499,7 @@ class WidgetRenderer {
     static renderTable(element, configuration, data) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
+        let isDrillDownTable = false;
         switch (elementTagName) {
             case 'DIV':
                 canvasElement = element;
@@ -509,11 +510,16 @@ class WidgetRenderer {
             default:
                 throw `Unexpected table element "${elementTagName}"`;
         }
+        console.log(canvasElement)
         if (!canvasElement) {
             throw 'Canvas element not found for drawing the table/grid.';
         }
 
-        WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)) {
+            // WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
+            isDrillDownTable = true;
+        }
+
         if (WidgetDrillDownHelper.isDrilledDown(element)) {
             let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
             let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
@@ -540,8 +546,11 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-        ReactDOM.unmountComponentAtNode(canvasElement)
-        ReactDOM.render(<WidgetGrid configuration={configuration} data={data} />, canvasElement);
+        // console.log(canvasElement)
+        // ReactDOM.unmountComponentAtNode(canvasElement)
+        // console.log(canvasElement)
+
+        ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
     }
 }
 

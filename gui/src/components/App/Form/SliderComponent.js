@@ -17,9 +17,9 @@ export default class SliderComponent extends Base {
 	}
 
 	static builderInfo = {
-		title: 'Payment',
-		group: 'basic',
-		icon: 'fa fa-calender',
+		title: 'slider',
+		group: 'Custom',
+		icon: 'fa fa-sliders',
 		weight: 70,
 		schema: SliderComponent.schema()
 	}

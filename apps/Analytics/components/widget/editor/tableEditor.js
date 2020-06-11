@@ -3,12 +3,14 @@ import AbstractEditor from './abstractEditor';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
-import {Tabs, Tab, Overlay, Tooltip} from 'react-bootstrap';
+import {Tabs, Tab, Overlay, Tooltip,Form,Row,Col,Button} from 'react-bootstrap';
 import Select from 'react-select'
 class TableEditor extends AbstractEditor {
     constructor(props) {
         super(props);
         this.state.selectedTab = 'table';
+        this.state.selectableWidgetOptions = props.selectableWidgetOptions;
+
         this.ERRORS = {
             TABLE_CONFIGURATION_NEEDED : 'Table configuration is needed',
             TABLE_CONFIGURATION_INVALID_JSON : 'Table configuration JSON is invalid',
@@ -97,6 +99,14 @@ class TableEditor extends AbstractEditor {
     refreshViews = () => {
         //Nothing to do for now. Implement this method to refresh the table if there is
         //table update problem when the widget selection is changed.
+        let configuration = JSON.parse(this.state.configuration)
+        let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
+        if (hasDrillDown) {
+            this.initializeDrillDownValues(configuration)
+        }
+        else {
+            this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
+        }
     }
 
     isTableTabValid = (state, setErrorState = true) => {
@@ -421,6 +431,106 @@ class TableEditor extends AbstractEditor {
                                             </div>
                                         </div>
                                     </Tab>
+                                    <Tab eventKey="drilldown" title="Drill Down">
+                                        <div className="drilldown-div">
+                                            <Form.Group as={Row}>
+                                                <Form.Label column lg="3">Filter</Form.Label>
+                                                <Col lg="9">
+                                                    <Form.Control
+                                                        as="textarea"
+                                                        name="drillDownFilter"
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                        value={this.state.drillDownFilter}
+                                                        disabled={this.state.readOnly}
+                                                    />
+                                                    <Form.Text className="text-muted errorMsg">
+                                                        {this.state.errors.drillDown["drillDownFilter"]}
+                                                    </Form.Text>
+                                                </Col>
+                                            </Form.Group>
+                                            <Form.Group as={Row}>
+                                                <Form.Label column md="3" lg="3">Widget</Form.Label>
+                                                <Col md="3" lg="3">
+                                                    <Select
+                                                        placeholder="Type"
+                                                        name="drillDownWidgetType"
+                                                        id="drillDownWidgetType"
+                                                        onChange={(e) => this.handleSelect(e, "drillDownWidgetType")}
+                                                        value={this.state.drillDownWidgetType ? this.state.drillDownWidgetType : ""}
+                                                        options={this.widgetTypes}
+                                                        isDisabled={this.state.readOnly}
+                                                    />
+                                                </Col>
+                                                <Col md="6" lg="6">
+                                                    <Select
+                                                        placeholder="Choose Widget"
+                                                        name="drillDownWidget"
+                                                        id="drillDownWidget"
+                                                        isDisabled={this.state.readOnly}
+                                                        onChange={(e) => this.handleSelect(e, "drillDownWidget")}
+                                                        value={this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
+                                                    />
+                                                    <Form.Text className="text-muted errorMsg">
+                                                        {this.state.errors.drillDown["drillDownWidget"]}
+                                                    </Form.Text>
+
+                                                </Col>
+                                            </Form.Group>
+                                            <Form.Group as={Row}>
+                                                <Form.Label column lg="3">Title</Form.Label>
+                                                <Col lg="9">
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="drillDownWidgetTitle"
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                        value={this.state.drillDownWidgetTitle || ''}
+                                                        disabled={this.state.readOnly}
+                                                    />
+                                                </Col>
+                                            </Form.Group>
+                                            <Form.Group as={Row}>
+                                                <Form.Label column lg="3">Footer</Form.Label>
+                                                <Col lg="9">
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="drillDownWidgetFooter"
+                                                        onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                        value={this.state.drillDownWidgetFooter || ''}
+                                                        disabled={this.state.readOnly}
+                                                    />
+
+                                                </Col>
+                                            </Form.Group>
+                                            {this.state.hasMaxDepth &&
+                                                <Form.Group as={Row}>
+                                                    <Form.Label column lg="3">Max Depth</Form.Label>
+                                                    <Col lg="9">
+                                                        <Form.Control
+                                                            as="select"
+                                                            name="drillDownMaxDepth"
+                                                            value={this.state.drillDownMaxDepth ? this.state.drillDownMaxDepth : -1}
+                                                            onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                            disabled={this.state.readOnly}
+                                                        >
+                                                            <option key="-1" value={-1}></option>
+                                                            <option key="2" value={2}>2</option>
+                                                            <option key="3" value={3}>3</option>
+                                                            <option key="4" value={4}>4</option>
+                                                        </Form.Control>
+                                                        <Form.Text className="text-muted errorMsg">
+                                                            {this.state.errors.drillDown["drillDownMaxDepth"]}
+                                                        </Form.Text>
+                                                    </Col>
+                                                </Form.Group>}
+
+                                            <Button variant="primary" type="button" disabled={this.state.readOnly} onClick={() => this.ApplyDrillDown("table")}>
+                                                Apply DrillDown
+                                            </Button>
+
+                                        </div>
+
+                                    </Tab>
                                 </Tabs>
                             </div>
                         </div>
@@ -429,7 +539,7 @@ class TableEditor extends AbstractEditor {
                 <div className="form-group col">
                     <div className="card" id="previewBox">
                         <div className="card-header">
-                            Preview <span id="tableRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i class="fas fa-sync"></i></span>
+                            Preview <span id="tableRefreshBtn" title="Refresh" style={{cursor:"pointer"}} onClick={()=>this.refreshPreview()}><i className="fas fa-sync"></i></span>
                         </div>
                         <div className="card-body">
                             {(this.state.selectedTab === 'table') && 

@@ -547,6 +547,13 @@ export default class OX_Grid extends React.Component {
 
 class CustomCell extends GridCell {
   render() {
+    var formatDate = (dateTime, dateTimeFormat)=>{
+      let userTimezone, userDateTimeFomat = null;
+      userTimezone = this.props.userProfile.preferences.timezone ? this.props.userProfile.preferences.timezone : moment.tz.guess();
+      userDateTimeFomat = this.props.userProfile.preferences.dateformat ? this.props.userProfile.preferences.dateformat : "YYYY-MM-DD";
+      dateTimeFormat ? userDateTimeFomat = dateTimeFormat: null;
+      return moment(dateTime).tz(userTimezone).format(userDateTimeFomat);
+    };
     let checkType = typeof this.props.cellTemplate;
     if (checkType == "function") {
       var cellTemplate = this.props.cellTemplate(this.props.dataItem);
@@ -561,6 +568,7 @@ class CustomCell extends GridCell {
           bindings={{
             item: this.props.dataItem,
             moment: moment,
+            formatDate: formatDate,
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl
           }}

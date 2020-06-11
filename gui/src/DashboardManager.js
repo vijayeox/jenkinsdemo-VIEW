@@ -105,8 +105,7 @@ class Dashboard extends React.Component {
       value = JSON.parse(event.value)
       var element = document.getElementById("dashboard-editor-div");
       element != undefined && element.classList.add("hide-dash-editor")
-    }
-    else {
+    } else {
       name = event.target.name
       value = event.target.value
     }
@@ -209,10 +208,11 @@ class Dashboard extends React.Component {
                   <Form className="dashboard-manager-items">
                     <Row>
                       <Col lg="4" md="4" sm="4">
-                        <Form.Group as={Row}>
+                        <Form.Group as={Row} >
                           <Col>
                             <Select
                               name="dashname"
+                              className="react-select-container"
                               placeholder="Select Dashboard"
                               id="dashname"
                               onChange={(e) => this.handleChange(e, "dashname")}
@@ -233,14 +233,14 @@ class Dashboard extends React.Component {
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
                           <>
-                          <ReactToPrint
-                            trigger={() => {
-                              return     <Button  title="Print Dashboard">
-                              <i className="fa fa-print" aria-hidden="true"></i>
-                            </Button>
-                            }}
-                            content={() => this.dashboardViewerRef}
-                          />
+                            <ReactToPrint
+                              trigger={() => {
+                                return <Button title="Print Dashboard">
+                                  <i className="fa fa-print" aria-hidden="true"></i>
+                                </Button>
+                              }}
+                              content={() => this.dashboardViewerRef}
+                            />
                             <Button onClick={() => this.showFilter()} title="Edit Dashboard">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
@@ -278,18 +278,19 @@ class Dashboard extends React.Component {
                   <div className="dashboard-preview-tab">
                     <span>Dashboard Previewer</span>
                   </div>
-                    {
-                      this.state.uuid !== "" &&
-                      <DashboardViewer
-                        ref={el => (this.dashboardViewerRef = el)}
-                        key={this.state.uuid}
-                        uuid={this.state.uuid}
-                        core={this.core}
-                        setTitle={this.props.setTitle}
-                        proc={this.props.proc}
-                        dashboardFilter={this.state.dashboardFilter}
-                      />
-                    }
+                  {
+                    this.state.uuid !== "" &&
+                    <DashboardViewer
+                      handleChange={(e, type) => this.handleChange(e, type)}
+                      ref={el => (this.dashboardViewerRef = el)}
+                      key={this.state.uuid}
+                      uuid={this.state.uuid}
+                      core={this.core}
+                      setTitle={this.props.setTitle}
+                      proc={this.props.proc}
+                      dashboardFilter={this.state.dashboardFilter}
+                    />
+                  }
 
                 </div>
               </div>

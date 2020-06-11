@@ -6,7 +6,7 @@ class Deferred {
 
     constructor() {
         this.corrId = Deferred.generateUUID();
-        this.promise = new Promise((resolve, reject)=> {
+        this.promise = new Promise((resolve, reject) => {
             this.reject = reject; //Here this refers to Deferred instance's this, not Promise instance's this.
             this.resolve = resolve; //Here this refers to Deferred instance's this, not Promise instance's this.
         });
@@ -16,15 +16,15 @@ class Deferred {
 
     static generateUUID() { // Public Domain/MIT
         let d = new Date().getTime();//Timestamp
-        let d2 = (performance && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let d2 = (performance && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             let r = Math.random() * 16;//random number between 0 and 16
-            if(d > 0){  //Use timestamp until depleted
-                r = (d + r)%16 | 0;
-                d = Math.floor(d/16);
+            if (d > 0) {  //Use timestamp until depleted
+                r = (d + r) % 16 | 0;
+                d = Math.floor(d / 16);
             } else {    //Use microseconds since page-load if supported
-                r = (d2 + r)%16 | 0;
-                d2 = Math.floor(d2/16);
+                r = (d2 + r) % 16 | 0;
+                d2 = Math.floor(d2 / 16);
             }
             return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
@@ -43,11 +43,11 @@ class Deferred {
 window.oxzionEditor = null;
 //CkEditor automatically calls window.onDialogEvent function when dialog events occur.
 //Function must be named onDialogEvent - name is not configurable in CkEditor.
-window.onDialogEvent = function(dialogEvent) {
-    switch(dialogEvent.name) {
+window.onDialogEvent = function (dialogEvent) {
+    switch (dialogEvent.name) {
         case 'load':
-            window.addEventListener('message', function(event) {
-                if (event.data.data!=undefined && 'permissions' in event.data.data){
+            window.addEventListener('message', function (event) {
+                if (event.data.data != undefined && 'permissions' in event.data.data) {
                     window.sendAllPermissions(event.data.data)
                 }
                 else
@@ -57,7 +57,7 @@ window.onDialogEvent = function(dialogEvent) {
             window.oxzionEditor = dialogEvent.editor;
             window.startWidgetEditorApp(window.oxzionEditor);
             window.skipUserInputValidation = false;
-        break;
+            break;
         case 'ok':
             function closeDialogWindow(data) {
                 window.oxzionEditor.plugins.oxzion.acceptUserData(window.oxzionEditor, data);
@@ -88,7 +88,7 @@ window.onDialogEvent = function(dialogEvent) {
                 return;
             }
 
-            widgetEditorApp.hasUserInputErrors(true).then(function(hasErrors) {
+            widgetEditorApp.hasUserInputErrors(true).then(function (hasErrors) {
                 console.debug(`hasUserInputErrors promise fulfilled with '${hasErrors}'`);
                 if (hasErrors) {
                     console.debug('User input has errors. Dont close the dialog.');
@@ -96,7 +96,7 @@ window.onDialogEvent = function(dialogEvent) {
                 else {
                     console.debug('Save widget and close the dialog if widget save is successful.');
                     widgetEditorApp.saveWidget().
-                        then(function(response) {
+                        then(function (response) {
                             let data = widgetEditorApp.getWidgetStateForCkEditorPlugin();
                             let mode = widgetEditorApp.getEditorMode();
                             if (mode === 'edit') {
@@ -107,7 +107,7 @@ window.onDialogEvent = function(dialogEvent) {
                             }
                             closeDialogWindow(data);
                         }).
-                        catch(function(response) {
+                        catch(function (response) {
                             console.error(response);
                             Swal.fire({
                                 type: 'error',
@@ -119,21 +119,21 @@ window.onDialogEvent = function(dialogEvent) {
                 }
             });
             throw 'Waiting for validation to complete and/or save widget. Threw exception to prevent dialog window closure.';
-        break;
+            break;
     }
 }
 
 const OXZION_CORRELATION_ID = 'OX_CORR_ID';
-window.postDataRequest = function(url, params, method) {
+window.postDataRequest = function (url, params, method) {
     let deferred = new Deferred();
     if (!params) {
         params = {};
     }
     params[OXZION_CORRELATION_ID] = deferred.corrId;
     var message = {
-        'action':'data', 
-        'url':url,
-        'params':params
+        'action': 'data',
+        'url': url,
+        'params': params
     };
     if (method) {
         message['method'] = method;
@@ -143,7 +143,7 @@ window.postDataRequest = function(url, params, method) {
 }
 
 
-window.handleDataResponse = function(response) {
+window.handleDataResponse = function (response) {
     let corrId = response.params[OXZION_CORRELATION_ID];
     if (!corrId) {
         throw `Response object does not contain ${OXZION_CORRELATION_ID} parameter.`;
@@ -155,31 +155,31 @@ window.handleDataResponse = function(response) {
         console.warn(response);
         return;
     }
-    switch(response.status) {
+    switch (response.status) {
         case 'success':
             deferred.resolve(response);
-        break;
+            break;
         case 'error':
         case 'failure':
             deferred.reject(response);
-        break;
+            break;
     }
 }
 
 // sends message to dashboardEditor
-window.getAllPermission = function(){
+window.getAllPermission = function () {
     let deferred = new Deferred();
-    let params={}
+    let params = {}
     params[OXZION_CORRELATION_ID] = deferred.corrId;
     var message = {
-        'action':'permissions',
-        'params':params 
+        'action': 'permissions',
+        'params': params
     };
     window.top.postMessage(message);
     return deferred.promise
 }
 
-window.sendAllPermissions = function(response){
+window.sendAllPermissions = function (response) {
     let corrId = response.corrid;
     if (!corrId) {
         throw `Response object does not contain ${OXZION_CORRELATION_ID} parameter.`;
@@ -191,7 +191,7 @@ window.sendAllPermissions = function(response){
         console.warn(response);
         return;
     }
-     deferred.resolve(response);
+    deferred.resolve(response);
 }
 
 

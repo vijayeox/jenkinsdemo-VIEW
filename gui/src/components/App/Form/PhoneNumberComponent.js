@@ -19,8 +19,8 @@ export default class PhoneNumberComponent extends Base {
         });
     }
     static builderInfo = {
-        title: 'phonenumber',
-        group: 'basic',
+        title: 'Phonenumber',
+        group: 'Custom',
         icon: 'fa fa-phone',
         weight: 70,
         schema: PhoneNumberComponent.schema()

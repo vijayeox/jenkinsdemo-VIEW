@@ -38,7 +38,7 @@
     "@trendmicro/react-sidenav": "^0.4.5",
     "ansi-colors": "^4.1.1",
     "bootstrap": "4.4.1",
-    "bootswatch": "4.4.1",
+    "bootswatch": "^4.4.1",
     "canvg": "^3.0.6",
     "css-element-queries": "^1.2.3",
     "deepmerge": "^4.2.2",

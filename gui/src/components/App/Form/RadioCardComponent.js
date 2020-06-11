@@ -23,9 +23,9 @@ export default class RadioCardComponent extends Base {
     }
     
     static builderInfo = {
-        title: 'radiocard',
-        group: 'custom',
-        icon: 'fa fa-calender',
+        title: 'Radiocard',
+        group: 'Custom',
+        icon: 'fa fa-square',
         weight: 70,
         schema: RadioCardComponent.schema()
     }

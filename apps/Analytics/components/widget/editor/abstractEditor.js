@@ -19,6 +19,7 @@ class AbstractEditor extends React.Component {
             drillDownWidgetFooter: '',
             hasMaxDepth: false,
             drillDownMaxDepth: -1,
+            filteredWidgetList: [],
             errors: {
                 configuration: null,
                 expression: null,
@@ -26,6 +27,7 @@ class AbstractEditor extends React.Component {
                 queries: []
             }
         };
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }]
         this.queryList = [];
         this.data = null;
     }
@@ -73,6 +75,37 @@ class AbstractEditor extends React.Component {
             hasMaxDepth: hasMaxDepth,
             drillDownMaxDepth: maxDepth
         }, state => this.setWidgetType())
+    }
+
+    handleSelect(e, type) {
+        let hasMaxDepth = false
+        let errors = { ...this.state.errors }
+        let name = type
+        let value = e.value
+        errors["drillDown"][name] = ""
+        if (name == "drillDownMaxDepth") {
+            hasMaxDepth = true
+            this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+        }
+        else if (name == "drillDownWidget") {
+            if (value !== 'dashboard') {
+                hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === value)
+                this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
+            }
+        }
+        else if (name == "drillDownWidgetType") {
+            if (value == 'dashboard') {
+                let filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
+                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+            } else {
+                let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
+                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+            }
+        }
+        else {
+            this.setState({ [name]: value, errors: errors })
+
+        }
     }
 
     setWidgetData = (widgetData) => {
@@ -145,15 +178,17 @@ class AbstractEditor extends React.Component {
         });
         return errorMessage ? false : true;
     }
+    getSelectedWidgetType = () => {
+        return this.state.drillDownWidgetType.value !== "dashboard" ? "widget" : "dashboard";
+    }
 
-    ApplyDrillDown = () => {
+    ApplyDrillDown = (widgetType) => {
         if (this.validateDrillDownForm()) {
             let configuration = this.state.configuration !== "" ? JSON.parse(this.state.configuration) : undefined
             let drillDownObject = {
-                "target": "widget",
+                "target": this.getSelectedWidgetType(),
                 "filter": this.state.drillDownFilter,
                 "nextWidgetId": this.state.drillDownWidget
-
             }
             this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
             this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
@@ -175,7 +210,16 @@ class AbstractEditor extends React.Component {
                     }
                 }
             }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: "chart" })
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType })
+        }
+    }
+
+    setWidgetType() {
+        if (this.state.selectableWidgetOptions.length > 0) {
+            let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+            let selectedWidget = selectedWidgetOption[0]["type"]
+            let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
+            this.setState({ drillDownWidgetType: widgetType })
         }
     }
 
