@@ -552,7 +552,11 @@ class CustomCell extends GridCell {
       userTimezone = this.props.userProfile.preferences.timezone ? this.props.userProfile.preferences.timezone : moment.tz.guess();
       userDateTimeFomat = this.props.userProfile.preferences.dateformat ? this.props.userProfile.preferences.dateformat : "YYYY-MM-DD";
       dateTimeFormat ? userDateTimeFomat = dateTimeFormat: null;
-      return moment(dateTime).tz(userTimezone).format(userDateTimeFomat);
+      return moment(dateTime)
+        .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
+        .clone()
+        .tz(userTimezone)
+        .format(userDateTimeFomat);
     };
     let checkType = typeof this.props.cellTemplate;
     if (checkType == "function") {

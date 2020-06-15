@@ -60,6 +60,12 @@
     }
   }
 
+  nav{
+    .pagination{
+      flex-wrap: wrap;
+    }
+  }
+
   .formio-component-file{
     a:not([href]){
       color: #007bff;
@@ -226,6 +232,13 @@
   }
 
 }
+
+.form-render.forceBredcrumb{
+  .formio-form nav[aria-label=navigation]{
+    display:block;
+  }
+}
+
 .formLoader{
   position: absolute;
   height: 100%;

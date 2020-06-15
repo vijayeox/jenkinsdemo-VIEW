@@ -23,11 +23,11 @@ const FormBuilder = () => {
         Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
         Formio.registerComponent("document", DocumentComponent);
         Formio.registerComponent("fortepay", FortePayCheckoutComponent);
-        Formio.registerComponent("documentviewer", DocumentViewerComponent);
         Formio.registerComponent("radiocard", RadioCardComponent);
         Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
         Formio.registerComponent("country", CountryComponent);
-        Formio.registerComponent("file", FileComponent);
+        // Formio.registerComponent("documentviewer", DocumentViewerComponent);
+        // Formio.registerComponent("file", FileComponent);
         
     })
     const handleChange = (e) => {
@@ -45,7 +45,7 @@ const FormBuilder = () => {
     }
     
     return (
-        <div>
+        <React.Fragment>
             <div className="form-group">
                 <div className="input-group mb-3">
                     <div className="custom-file">
@@ -83,7 +83,7 @@ const FormBuilder = () => {
                 />
             </div>
             
-        </div>
+        </React.Fragment>
     )
 }
 export default FormBuilder
