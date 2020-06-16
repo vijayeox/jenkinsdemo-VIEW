@@ -82,7 +82,7 @@ const FilterFields = function (props) {
                         filters[index]["operator"] !== "gte&&lte" ?
                             <DatePicker
                                 key={index}
-                                dateFormat="dd/MM/yyyy"
+                                dateFormat="yyyy-MM-dd"
                                 selected={Date.parse(filters[index]["startDate"])}
                                 showMonthDropdown
                                 showYearDropdown
@@ -105,7 +105,7 @@ const FilterFields = function (props) {
                             <div className="dates-container">
                                 <DatePicker
                                     selected={Date.parse(filters[index]["startDate"])}
-                                    dateFormat="dd/MM/yyyy"
+                                    dateFormat="yyyy-MM-dd"
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -128,7 +128,7 @@ const FilterFields = function (props) {
                                 />
                                 <DatePicker
                                     selected={Date.parse(filters[index]["endDate"])}
-                                    dateFormat="dd/MM/yyyy"
+                                    dateFormat="yyyy-MM-dd"
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -273,8 +273,10 @@ class DashboardFilter extends React.Component {
         let defaultValues = []
         let filters = [...this.state.filters]
         if (type === "startDate" || type === "endDate") {
+            let parsedDate=e.getFullYear() + "-" + (("0" + (e.getMonth() + 1)).slice(-2)) + "-" + (("0" + e.getDate()).slice(-2))
             name = type
-            value = e
+            value = "date:"+parsedDate
+            
         }
         else if (type == "defaultValue") {
             let selectedoption = { "value": e.value, "label": e.value }

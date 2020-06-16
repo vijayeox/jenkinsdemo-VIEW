@@ -126,13 +126,13 @@ extractFilterValues(){
         //convert startDate object to string
         if (typeof startDate !== "string") {
           startDate = filter["startDate"]
-          startDate = startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
         }
         //date range received
         if (filter["operator"] == "gte&&lte") {
           endDate = filter["endDate"]
           if (typeof endDate !== "string") {
-            endDate = endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
           }
           //prepare startDate array
           filterarray.push(filter["field"])
