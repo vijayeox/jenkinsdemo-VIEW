@@ -185,9 +185,11 @@ extractFilterValues(){
             this.setState({preparedDashboardFilter:preapredFilter},()=>{
               this.updateGraph(preapredFilter)
             })
-          }
-          else
+          } else{
+          this.setState({preparedDashboardFilter:filterParams},()=>{
             this.updateGraph(filterParams)
+          })
+        }
         }     
        else{
          this.updateGraph()
@@ -225,31 +227,31 @@ extractFilterValues(){
         var that = this;
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
-          .then(response => {
-            if (response.status == "success") {
-              response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
-              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
-              if ('error' === response.status) {
-                console.error('Could not load widget.');
-                console.error(response);
-                errorFound = true;
-              }
-              else {
-                //dispose if widget exists
-                let widgetObject = WidgetRenderer.render(widget, response.data.widget);
-                if (widgetObject) {
-                  this.renderedWidgets[widgetUUId] = widgetObject;
-                }
-              }
-              if (that.state.widgetCounter >= widgets.length) {
-                this.loader.destroy();
-              }
-            } else {
-              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
-              if (this.state.widgetCounter >= widgets.length) {
-                that.loader.destroy();
-              }
+        .then(response=>{
+          if(response.status =="success"){
+            response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
+            that.setState({ widgetCounter: that.state.widgetCounter+1});
+            if ('error' === response.status) {
+              console.error('Could not load widget.');
+              console.error(response);
+              errorFound = true;
             }
+            else {
+            //dispose if widget exists
+            let applyingDashboardFilters=this.state.preparedDashboardFilter?true:false;
+            let widgetObject = WidgetRenderer.render(widget, response.data.widget,null,applyingDashboardFilters);
+            if (widgetObject) {
+              this.renderedWidgets[widgetUUId] = widgetObject;
+            }
+          }
+          if(that.state.widgetCounter>=widgets.length){
+            this.loader.destroy();
+          }
+          } else {
+            that.setState({ widgetCounter: that.state.widgetCounter+1});
+            if(this.state.widgetCounter>=widgets.length){
+              that.loader.destroy();
+            }}
           });
       }
     }

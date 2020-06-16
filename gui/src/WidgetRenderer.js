@@ -14,7 +14,7 @@ am4core.useTheme(am4themes_animated);
 am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
-    static render(element, widget, props) {
+    static render(element, widget, props,applyingDashboardFilters) {
         // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
         switch (widget.renderer) {
@@ -30,7 +30,7 @@ class WidgetRenderer {
                     throw (`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data);
+                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data,applyingDashboardFilters);
                 }
                 catch (e) {
                     console.error(e);
@@ -43,7 +43,7 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data);
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data,applyingDashboardFilters);
                 }
                 catch (e) {
                     console.error(e);
@@ -128,8 +128,8 @@ class WidgetRenderer {
         return configuration;
     }
 
-    static renderAmCharts(element, configuration, props, data) {
-        let isDrillDownChart = false
+    static renderAmCharts(element, configuration, props, data,applyingDashboardFilters) {
+        let isDrillDownChart=false
         let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
         data = transformedConfig.chartData;
@@ -191,7 +191,7 @@ class WidgetRenderer {
             }
         }
 
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)) {
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, applyingDashboardFilters)) {
             WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
             isDrillDownChart = true;
         }
@@ -496,7 +496,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderTable(element, configuration, data) {
+    static renderTable(element, configuration, data , applyingDashboardFilters) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         let isDrillDownTable = false;
@@ -510,12 +510,15 @@ class WidgetRenderer {
             default:
                 throw `Unexpected table element "${elementTagName}"`;
         }
-        console.log(canvasElement)
+      
         if (!canvasElement) {
             throw 'Canvas element not found for drawing the table/grid.';
+        } else {
+             //repainting the table if dashboard filter is applied
+             applyingDashboardFilters && ReactDOM.unmountComponentAtNode(canvasElement)
         }
 
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration)) {
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration , applyingDashboardFilters)) {
             // WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
             isDrillDownTable = true;
         }
@@ -546,9 +549,8 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-        // console.log(canvasElement)
-        // ReactDOM.unmountComponentAtNode(canvasElement)
-        // console.log(canvasElement)
+        
+       
 
         ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
     }
