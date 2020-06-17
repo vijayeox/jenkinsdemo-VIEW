@@ -135,6 +135,35 @@ export default class FileComponent extends File {
         });
       }
     }
+    getFile(fileInfo) {
+      const { options = {} } = this.component;
+      const { fileService } = this;
+      if (!fileService) {
+        return alert('File Service not provided');
+      }
+      if (this.component.privateDownload) {
+        fileInfo.private = true;
+      }
+      fileService.downloadFile(fileInfo, options).then((file) => {
+        if (file) {
+          if (['base64', 'indexeddb'].includes(file.storage)) {
+            download(file.url, file.originalName || file.name, file.type);
+          }
+          else {
+            if(fileInfo.url){
+              window.open(fileInfo.url, '_blank');
+            } else {
+              window.open(file.url, '_blank');
+            }
+          }
+        }
+      })
+      .catch((response) => {
+        // Is alert the best way to do this?
+        // User is expecting an immediate notification due to attempting to download a file.
+        alert(response);
+      });
+    }
     render(children){
         var evt = new CustomEvent("getAppDetails", { detail: {} });
         this.form.element.dispatchEvent(evt);
