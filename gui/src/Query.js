@@ -425,6 +425,7 @@ class Query extends React.Component {
           configuration={this.state.inputs["configuration"]}
           datasourcename={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][0] : ""}
           datasourceuuid={this.state.inputs["datasourcename"] != undefined ? this.state.inputs["datasourcename"][1] : ""}
+          dataSourceOptions={this.state.dataSourceOptions}
           notification={this.notif}
           resetInput={() => this.setState({ inputs: {} })}
         />
