@@ -13,6 +13,7 @@ class Dashboard extends Component {
       htmlData: this.props.htmlData ? this.props.htmlData : null,
       dashboardFilter: this.props.dashboardFilter,
       preparedDashboardFilter:null,
+      drilldownDashboardFilter: [],
       widgetCounter: 0
     };
     this.content = this.props.content;
@@ -45,8 +46,8 @@ class Dashboard extends Component {
     );
     return response;
   }
-  async getWidgetByUuid(uuid, filterParams) {
 
+  async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
       "v1",
@@ -54,8 +55,6 @@ class Dashboard extends Component {
       {},
       "get"
     );
-
-
     return response;
   }
 
@@ -72,7 +71,7 @@ class Dashboard extends Component {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
-          this.updateGraph();
+          this.props.drilldownDashboardFilter.length > 0 ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -89,7 +88,7 @@ class Dashboard extends Component {
           });
         });
     } else if (this.state.htmlData != null) {
-      this.updateGraph();
+      (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
     }
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
@@ -216,7 +215,6 @@ extractFilterValues(){
         delete this.renderedWidgets[elementId];
       }
     }
-
     if (widgets.length == 0) {
       this.loader.destroy();
     }
@@ -270,6 +268,8 @@ extractFilterValues(){
     event.value = data.dashboard;
     let dashboardData = await this.getDashboardHtmlDataByUuid(event.value);
     event.value = JSON.stringify(dashboardData.data.dashboard)
+    let drilldownDashboardFilter=JSON.parse(data.filter)
+    event.drilldownDashboardFilter = drilldownDashboardFilter;
     this.props.handleChange(event, "dashname")
   }
 

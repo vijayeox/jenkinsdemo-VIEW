@@ -17,6 +17,7 @@ const customStyles = {
     })
 
 };
+
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
@@ -82,7 +83,7 @@ const FilterFields = function (props) {
                         filters[index]["operator"] !== "gte&&lte" ?
                             <DatePicker
                                 key={index}
-                                dateFormat="yyyy-MM-dd"
+                                dateFormat="dd/MM/yyyy"
                                 selected={Date.parse(filters[index]["startDate"])}
                                 showMonthDropdown
                                 showYearDropdown
@@ -105,7 +106,7 @@ const FilterFields = function (props) {
                             <div className="dates-container">
                                 <DatePicker
                                     selected={Date.parse(filters[index]["startDate"])}
-                                    dateFormat="yyyy-MM-dd"
+                                    dateFormat="dd/MM/yyyy"
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -128,7 +129,7 @@ const FilterFields = function (props) {
                                 />
                                 <DatePicker
                                     selected={Date.parse(filters[index]["endDate"])}
-                                    dateFormat="yyyy-MM-dd"
+                                    dateFormat="dd/MM/yyyy"
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -208,7 +209,6 @@ class DashboardFilter extends React.Component {
     }
 
     removeField(index, field) {
-
         var availableOptions = [...this.state.createFilterOption];
         let filters = [...this.state.filters]
 
@@ -273,10 +273,8 @@ class DashboardFilter extends React.Component {
         let defaultValues = []
         let filters = [...this.state.filters]
         if (type === "startDate" || type === "endDate") {
-            let parsedDate=e.getFullYear() + "-" + (("0" + (e.getMonth() + 1)).slice(-2)) + "-" + (("0" + e.getDate()).slice(-2))
             name = type
-            value = "date:"+parsedDate
-            
+            value = e
         }
         else if (type == "defaultValue") {
             let selectedoption = { "value": e.value, "label": e.value }
@@ -376,6 +374,7 @@ class DashboardFilter extends React.Component {
             console.log(filters)
         }
     }
+    
     render() {
         return (
             <div id="filter-form-container" className="disappear">
