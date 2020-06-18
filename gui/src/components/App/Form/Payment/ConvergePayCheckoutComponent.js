@@ -9,6 +9,7 @@ export default class ConvergePayCheckoutComponent extends Base {
     super(component, options, data);
     this.data = data;
     this.form = this.getRoot();
+
     var that = this;
     var getPaymentToken = function(e) {
       e.preventDefault();
@@ -152,6 +153,20 @@ export default class ConvergePayCheckoutComponent extends Base {
       getPaymentToken,
       false
     );
+    this.form.on("change", changed => {
+      if(changed && changed.changed){
+        var component = changed.changed.component;
+        if(component.key=="amount" && document.getElementById("convergepay-amount")){
+          document.getElementById("convergepay-amount").value = changed.data["amount"];
+        }
+      }
+      if(that.component.amount_field && changed && changed.changed){
+        var component = changed.changed.component;
+        if(component.key==that.component.amount_field && document.getElementById("convergepay-amount")){
+          document.getElementById("convergepay-amount").value = changed.data[that.component.amount_field];
+        }
+      }
+    });
   }
   static schema(...extend) {
     return Base.schema(
