@@ -947,9 +947,9 @@ class FormRender extends React.Component {
               value = formdata[component.value];
             } else if(formdata[formdata[component.key]] != undefined){
               value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key]] != undefined){
+            } else if(formdata[component.key] && formdata[formdata[component.key]] != undefined){
               value = formdata[formdata[component.key]];
-            } else if(formdata[formdata[component.key].value] != undefined){
+            } else if(formdata[component.key] &&formdata[formdata[component.key].value] != undefined){
               value = formdata[formdata[component.key].value];
             }else if(formdata[component.key] != undefined){
               value = formdata[component.key];
