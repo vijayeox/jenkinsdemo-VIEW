@@ -151,7 +151,7 @@ export default class FileComponent extends File {
           }
           else {
             if(fileInfo.url){
-              window.open(fileInfo.url, '_blank');
+              window.open(fileInfo.url.replace(this.component.uiUrl,this.component.wrapperUrl+this.component.appId), '_blank');
             } else {
               window.open(file.url, '_blank');
             }
