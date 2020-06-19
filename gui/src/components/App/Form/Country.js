@@ -14,6 +14,9 @@ var countryList = [{
     "country": "Angola",
     "states": ["Bengo", "Benguela", "Bie", "Cabinda", "Cuando Cubango", "Cuanza Norte", "Cuanza Sul", "Cunene", "Huambo", "Huila", "Luanda", "Lunda Norte", "Lunda Sul", "Malanje", "Moxico", "Namibe", "Uige", "Zaire"]
 }, {
+    "country": "Anguilla",
+    "states": ["Blowing Point", "East End", "George Hill", "Island Harbour", "North Hill", "North Side", "Sandy Ground", "Sandy Hill", "South Hill", "Stoney Ground", "The Farrington", "The Quarter", "The Valley", "West End"]
+}, {
     "country": "Antarctica",
     "states": ["Not Applicable"]
 }, {
@@ -26,6 +29,9 @@ var countryList = [{
     "country": "Armenia",
     "states": ["Aragatsotn", "Ararat", "Armavir", "Gegharkunik", "Kotayk", "Lorri", "Shirak", "Syunik", "Tavush", "Vayots Dzor", "Yerevan"]
 }, {
+    "country": "Aruba",
+    "states": ["Not Applicable"]
+}, {
     "country": "Australia",
     "states": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia and Tasmania"]
 }, {
@@ -35,7 +41,7 @@ var countryList = [{
     "country": "Azerbaijan",
     "states": ["Abseron Rayonu", "Agcabadi Rayonu", "Agdam Rayonu", "Agdas Rayonu", "Agstafa Rayonu", "Agsu Rayonu", "Astara Rayonu", "Balakan Rayonu", "Barda Rayonu", "Beylaqan Rayonu", "Bilasuvar Rayonu", "Cabrayil Rayonu", "Calilabad Rayonu", "Daskasan Rayonu", "Davaci Rayonu", "Fuzuli Rayonu", "Gadabay Rayonu", "Goranboy Rayonu", "Goycay Rayonu", "Haciqabul Rayonu", "Imisli Rayonu", "Ismayilli Rayonu", "Kalbacar Rayonu", "Kurdamir Rayonu", "Lacin Rayonu", "Lankaran Rayonu", "Lerik Rayonu", "Masalli Rayonu", "Neftcala Rayonu", "Oguz Rayonu", "Qabala Rayonu", "Qax Rayonu", "Qazax Rayonu", "Qobustan Rayonu", "Quba Rayonu", "Qubadli Rayonu", "Qusar Rayonu", "Saatli Rayonu", "Sabirabad Rayonu", "Saki Rayonu", "Salyan Rayonu", "Samaxi Rayonu", "Samkir Rayonu", "Samux Rayonu", "Siyazan Rayonu", "Susa Rayonu", "Tartar Rayonu", "Tovuz Rayonu", "Ucar Rayonu", "Xacmaz Rayonu", "Xanlar Rayonu", "Xizi Rayonu", "Xocali Rayonu", "Xocavand Rayonu", "Yardimli Rayonu", "Yevlax Rayonu", "Zangilan Rayonu", "Zaqatala Rayonu", "Zardab Rayonu", "Ali Bayramli Sahari", "Baki Sahari", "Ganca Sahari", "Lankaran Sahari", "Mingacevir Sahari", "Naftalan Sahari", "Saki Sahari", "Sumqayit Sahari", "Susa Sahari", "Xankandi Sahari", "Yevlax Sahari", "Naxcivan Muxtar"]
 }, {
-    "country": "Bahamas",
+    "country": "The Bahamas",
     "states": ["Acklins and Crooked Islands", "Bimini", "Cat Island", "Exuma", "Freeport", "Fresh Creek", "Governors Harbour", "Green Turtle Cay", "Harbour Island", "High Rock", "Inagua", "Kemps Bay", "Long Island", "Marsh Harbour", "Mayaguana", "New Providence", "Nichollstown and Berry Islands", "Ragged Island", "Rock Sound", "Sandy Point", "San Salvador and Rum Cay"]
 }, {
     "country": "Bahrain",
@@ -77,6 +83,9 @@ var countryList = [{
     "country": "Brazil",
     "states": ["Acre", "Alagoas", "Amapa", "Amazonas", "Bahia", "Ceara", "Distrito Federal", "Espirito Santo", "Goias", "Maranhao", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Para", "Paraiba", "Parana", "Pernambuco", "Piaui", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondonia", "Roraima", "Santa Catarina", "Sao Paulo", "Sergipe", "Tocantins"]
 }, {
+    "country": "British Virgin Islands",
+    "states": ["Not Applicable"]
+},{
     "country": "Brunei",
     "states": ["Belait", "Brunei and Muara", "Temburong", "Tutong"]
 }, {
@@ -102,7 +111,10 @@ var countryList = [{
     "states": ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon Territory"]
 }, {
     "country": "Cape Verde",
-    "states": ["Not Applicable"]
+    "states": ["Not Applicable"] 
+}, {
+    "country": "Cayman Islands",
+    "states": ["Not Applicable"] 
 }, {
     "country": "Central African Republic",
     "states": ["Bamingui-Bangoran", "Bangui", "Basse-Kotto", "Haute-Kotto", "Haut-Mbomou", "Kemo", "Lobaye", "Mambere-Kadei", "Mbomou", "Nana-Grebizi", "Nana-Mambere", "Ombella-Mpoko", "Ouaka", "Ouham", "Ouham-Pende", "Sangha-Mbaere", "Vakaga"]
@@ -139,6 +151,9 @@ var countryList = [{
 }, {
     "country": "Cuba",
     "states": ["Camaguey", "Ciego de Avila", "Cienfuegos", "Ciudad de La Habana", "Granma", "Guantanamo", "Holguin", "Isla de la Juventud", "La Habana", "Las Tunas", "Matanzas", "Pinar del Rio", "Sancti Spiritus", "Santiago de Cuba", "Villa Clara"]
+}, {
+    "country": "Curacao",
+    "states": ["Not Applicable"] 
 }, {
     "country": "Cyprus",
     "states": ["Famagusta", "Kyrenia", "Larnaca", "Limassol", "Nicosia", "Paphos"]
@@ -350,6 +365,9 @@ var countryList = [{
     "country": "Marshall Islands",
     "states": ["Not Applicable"]
 }, {
+    "country": "Martinique",
+    "states": ["Not Applicable"]
+}, {
     "country": "Mauritania",
     "states": ["Adrar", "Assaba", "Brakna", "Dakhlet Nouadhibou", "Gorgol", "Guidimaka", "Hodh Ech Chargui", "Hodh El Gharbi", "Inchiri", "Nouakchott", "Tagant", "Tiris Zemmour", "Trarza"]
 }, {
@@ -503,6 +521,12 @@ var countryList = [{
     "country": "Sri Lanka",
     "states": ["Central", "North Central", "North Eastern", "North Western", "Sabaragamuwa", "Southern", "Uva", "Western"]
 }, {
+    "country": "St Kitts and Nevis",
+    "states": ["Not Applicable"]
+}, {
+    "country": "St Lucia",
+    "states": ["Not Applicable"]
+}, {
     "country": "Sudan",
     "states": ["Aali an Nil", "Al Bahr al Ahmar", "Al Buhayrat", "Al Jazirah", "Al Khartum", "Al Qadarif", "Al Wahdah", "An Nil al Abyad", "An Nil al Azraq", "Ash Shamaliyah", "Bahr al Jabal", "Gharb al Istiwaiyah", "Gharb Bahr al Ghazal", "Gharb Darfur", "Gharb Kurdufan", "Janub Darfur", "Janub Kurdufan", "Junqali", "Kassala", "Nahr an Nil", "Shamal Bahr al Ghazal", "Shamal Darfur", "Shamal Kurdufan", "Sharq al Istiwaiyah", "Sinnar", "Warab"]
 }, {
@@ -548,6 +572,9 @@ var countryList = [{
     "country": "Turkey",
     "states": ["Adana", "Adiyaman", "Afyonkarahisar", "Agri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingol", "Bitlis", "Bolu", "Burdur", "Bursa", "Canakkale", "Cankiri", "Corum", "Denizli", "Diyarbakir", "Duzce", "Edirne", "Elazig", "Erzincan", "Erzurum", "Eskisehir", "Gaziantep", "Giresun", "Gumushane", "Hakkari", "Hatay", "Igdir", "Isparta", "Istanbul", "Izmir", "Kahramanmaras", "Karabuk", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirsehir", "Kocaeli", "Konya", "Kutahya", "Malatya", "Manisa", "Mardin", "Mersin", "Mugla", "Mus", "Nevsehir", "Nigde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Sanliurfa", "Siirt", "Sinop", "Sirnak", "Sivas", "Tekirdag", "Tokat", "Trabzon", "Tunceli", "Usak", "Van", "Yalova", "Yozgat", "Zonguldak"]
 }, {
+    "country": "Turks and Caicos",
+    "states": ["Not Applicable"]
+},{
     "country": "Tuvalu",
     "states": ["Not Applicable"]
 }, {
@@ -564,7 +591,7 @@ var countryList = [{
     "states": ["Abu Dhabi", "Ajman", "Al Fujayrah", "Sharjah", "Dubai", "Ras al Khaymah", "Umm al Qaywayn"]
 }, {
     "country": "United States of America",
-    "states": ["Alabama", "Alaska", "American Samoa","Arizona", "Arkansas", "Armed Forces America", "Armed Forces Pacific", "Armed Forces Other", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia","Guam" , "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota","North Mariana Islands" , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico","Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virgin Islands","Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+    "states": ["Alabama", "Alaska", "American Samoa","Arizona", "Arkansas", "Armed Forces America", "Armed Forces Pacific", "Armed Forces Other", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia","Guam" , "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota","Northern Mariana Islands" , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico","Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "USVI", "Utah", "Vermont", "U.S. Virgin Islands","Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
 }, {
     "country": "Uruguay",
     "states": ["Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida", "Lavalleja", "Maldonado", "Montevideo", "Paysandu", "Rio Negro", "Rivera", "Rocha", "Salto", "San Jose", "Soriano", "Tacuarembo", "Treinta y Tres"]
