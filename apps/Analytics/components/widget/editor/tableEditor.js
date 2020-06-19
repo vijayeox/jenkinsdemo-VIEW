@@ -10,6 +10,7 @@ class TableEditor extends AbstractEditor {
         super(props);
         this.state.selectedTab = 'table';
         this.state.selectableWidgetOptions = props.selectableWidgetOptions;
+        this.state.selectableDashboardOptions = props.selectableDashboardOptions;
 
         this.ERRORS = {
             TABLE_CONFIGURATION_NEEDED : 'Table configuration is needed',
@@ -296,6 +297,15 @@ class TableEditor extends AbstractEditor {
         }
     }
 
+    getSelectedDrillDownWidget(){
+        if(this.state.drillDownWidgetType!==""){
+           return this.state.drillDownWidgetType.value == "dashboard" ? 
+                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) 
+            : 
+                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+
+    }
+
     render() {
         let thiz = this;
 
@@ -463,12 +473,12 @@ class TableEditor extends AbstractEditor {
                                                 </Col>
                                                 <Col md="6" lg="6">
                                                     <Select
-                                                        placeholder="Choose Widget"
+                                                        placeholder={this.state.drillDownWidgetType.value == "dashboard" ? "Choose Dashboard" : "Choose Widget"}
                                                         name="drillDownWidget"
                                                         id="drillDownWidget"
                                                         isDisabled={this.state.readOnly}
                                                         onChange={(e) => this.handleSelect(e, "drillDownWidget")}
-                                                        value={this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        value={this.getSelectedDrillDownWidget()}
                                                         options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
                                                     />
                                                     <Form.Text className="text-muted errorMsg">

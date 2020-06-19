@@ -71,11 +71,8 @@ class Dashboard extends Component {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
-          if (Array.isArray(this.props.drilldownDashboardFilter)) {
-            this.props.drilldownDashboardFilter.length > 0 ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
-          } else {
-            this.updateGraph()
-          }
+            (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0 ) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+        
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
