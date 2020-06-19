@@ -1063,7 +1063,11 @@ class FormRender extends React.Component {
       if (properties["commands"]) {
         var that = this;
         that.showFormLoader(true,0);
-        this.callPipeline(properties["commands"],this.cleanData(form.submission.data)).then(response => {
+        var form_data = {
+          ...form.submission.data,
+          fileId: this.state.fileId ? this.state.fileId : null
+        };
+        this.callPipeline(properties["commands"],this.cleanData(form_data)).then(response => {
           if (response.status == "success") {
             if (response.data) {
                form.setSubmission({data:that.formatFormData(response.data)}).then(response2 =>{
