@@ -13,6 +13,7 @@ class AbstractEditor extends React.Component {
             configuration: '',
             drillDownFilter: '',
             drillDownWidget: '',
+            drillDownTarget:'',
             expression: '',
             drillDownWidgetTitle: '',
             drillDownWidgetType: "",
@@ -27,7 +28,7 @@ class AbstractEditor extends React.Component {
                 queries: []
             }
         };
-        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }]
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" },{ "label": "Dashboard", "value": "dashboard" }]
         this.queryList = [];
         this.data = null;
     }
@@ -72,9 +73,10 @@ class AbstractEditor extends React.Component {
             drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
             drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
             drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
+            drillDownTarget:configuration["oxzion-meta"]["drillDown"]["target"] || '',
             hasMaxDepth: hasMaxDepth,
             drillDownMaxDepth: maxDepth
-        }, state => this.setWidgetType())
+        }, state => this.setDrillDownTargetType(this.state.drillDownTarget))
     }
 
     handleSelect(e, type) {
@@ -94,13 +96,14 @@ class AbstractEditor extends React.Component {
             }
         }
         else if (name == "drillDownWidgetType") {
+            let filteredWidgetList =null
             if (value == 'dashboard') {
-                let filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
-                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+                 filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
             } else {
-                let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
-                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+                 filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
             }
+            this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+
         }
         else {
             this.setState({ [name]: value, errors: errors })
@@ -214,12 +217,20 @@ class AbstractEditor extends React.Component {
         }
     }
 
-    setWidgetType() {
+    setDrillDownTargetType(target) {
         if (this.state.selectableWidgetOptions.length > 0) {
-            let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
-            let selectedWidget = selectedWidgetOption[0]["type"]
+            let selectedWidgetOption =null
+            if(target=="dashboard")
+            {
+                selectedWidgetOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+            } else
+            {
+                selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+            }
+            let widget= selectedWidgetOption[0] ? selectedWidgetOption[0]["type"]:''
+            let selectedWidget = widget
             let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
-            this.setState({ drillDownWidgetType: widgetType })
+            this.setState({ drillDownWidgetType: widgetType[0] })
         }
     }
 
