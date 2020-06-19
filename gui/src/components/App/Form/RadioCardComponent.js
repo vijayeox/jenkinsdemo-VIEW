@@ -109,5 +109,5 @@ export default class RadioCardComponent extends Base {
     }
    
 }
-Components.addComponent('radiocard', RadioCardComponent);
+
      
