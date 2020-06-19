@@ -153,12 +153,15 @@ export default class FortePayCheckoutComponent extends Base {
         
     }
     
-    static Schema(...extend) {
-        return Base.schema({
-            type: 'fortePayment',
-            label : 'fortePayment'
-        }, ...extend );
-    }
+    static schema(...extend) {
+        return Base.schema(
+          {
+            label: "Payment",
+            type: "fortepay"
+          },
+          ...extend
+        );
+      }
     static builderInfo = {
         title: 'FortePayment',
         group: 'Custom',
