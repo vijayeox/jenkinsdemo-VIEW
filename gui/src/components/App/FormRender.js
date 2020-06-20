@@ -1192,6 +1192,13 @@ class FormRender extends React.Component {
         if(parsedData[key] == "" && data[key] && parsedData[key] != data[key]){
           parsedData[key] = data[key];
         }
+        if(Array.isArray(parsedData[key])){
+          parsedData[key].forEach((item,index) => {
+            if(typeof item === 'object'){
+              parsedData[key][index] = this.parseResponseData(item);  
+            }
+          });
+        }
       } catch (error) {
         if(data[key] != undefined){
           parsedData[key] = data[key];
