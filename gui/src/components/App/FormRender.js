@@ -1184,6 +1184,8 @@ class FormRender extends React.Component {
     });
   }
   parseResponseData = data => {
+    console.log("Data before being Parsed");
+    console.log(data);
     var parsedData = {};
     Object.keys(data).forEach(key => {
       try {
@@ -1205,7 +1207,34 @@ class FormRender extends React.Component {
         }
       }
     });
+    console.log("Data after being Parsed");
+    console.log(data);
     return parsedData;
+
+    // if (
+    //   data &&
+    //   (typeof data == "string" ||
+    //     Array.isArray(data) ||
+    //     typeof data == "object")
+    // ) {
+    //   if (typeof data == "string") {
+    //     try {
+    //       return JSON.parse(data);
+    //     } catch {
+    //       return data;
+    //     }
+    //   } else if (Array.isArray(data)) {
+    //     return data.map(arrayItem => this.parseData(arrayItem));
+    //   } else if (typeof data == "object") {
+    //     var cleanObject = {};
+    //     Object.keys(data).forEach(key => {
+    //       cleanObject[key] = this.parseData(data[key]);
+    //     });
+    //     return cleanObject;
+    //   }
+    // } else {
+    //   return data;
+    // }
   };
 
   componentDidMount() {
