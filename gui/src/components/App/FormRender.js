@@ -1208,7 +1208,7 @@ class FormRender extends React.Component {
       }
     });
     console.log("Data after being Parsed");
-    console.log(data);
+    console.log(parsedData);
     return parsedData;
 
     // if (
