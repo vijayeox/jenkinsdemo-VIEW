@@ -45,7 +45,15 @@ div > div.oxzion-widget-drilldown-table-icon{
     position: relative;
     float: right;
     top: 20px;
-    right: 7px;
     margin-right: 10px;
     margin-left: 12px;
+}
+
+.oxzion-widget-drilldown-excel-icon{
+    float: right;
+    top: 20px;
+    position: relative;
+    z-index: 10;
+    width: 16px;
+    cursor: pointer;
 }

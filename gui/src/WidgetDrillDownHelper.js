@@ -237,7 +237,7 @@ class WidgetDrillDownHelper {
         });
     }
 
-    static setupDrillDownContextStack(element, configuration) {
+    static setupDrillDownContextStack(element, configuration,applyingDashboardFilter) {
         let meta = configuration['oxzion-meta'];
         if (!meta) {
             return false;
@@ -267,7 +267,8 @@ class WidgetDrillDownHelper {
                 return false;
             }
         }
-        drillDownContext.push(context);
+        !applyingDashboardFilter && drillDownContext.push(context);
+
         let jsonString = JSON.stringify(drillDownContext);
         element.setAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE, jsonString);
         return true;

@@ -10,6 +10,7 @@ import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "../../apps/Analytics/dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +29,8 @@ class Dashboard extends React.Component {
       loadEditor: false,
       filterConfiguration: [],
       showFilter: false,
-      dashboardFilter: []
+      dashboardFilter: [],
+      drilldownDashboardFilter: [],
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -41,7 +43,6 @@ class Dashboard extends React.Component {
   componentDidMount() {
     this.fetchDashboards()
   }
-
 
   async getUserDetails(uuid) {
     let helper2 = this.core.make("oxzion/restClient");
@@ -110,7 +111,7 @@ class Dashboard extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false })
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter})
   }
 
   deleteDashboard() {
@@ -146,7 +147,6 @@ class Dashboard extends React.Component {
   }
 
   hideFilter() {
-
     this.setState({ showFilter: false })
     var element = document.getElementById("dashboard-preview-container");
     element.classList.remove("disappear");
@@ -156,6 +156,7 @@ class Dashboard extends React.Component {
     this.setState({ dashboardFilter: filter })
     this.hideFilter()
   }
+
   getDashboardFilters() {
     if (this.state.filterConfiguration) {
       try {
@@ -190,7 +191,6 @@ class Dashboard extends React.Component {
             }
 
             <div className="filterDiv">
-
               {this.state.showFilter &&
                 <DashboardFilter
                   core={this.core}
@@ -241,7 +241,7 @@ class Dashboard extends React.Component {
                               }}
                               content={() => this.dashboardViewerRef}
                             />
-                            <Button onClick={() => this.showFilter()} title="Edit Dashboard">
+                            <Button onClick={() => this.showFilter()} title="Filter Dashboard">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
@@ -289,6 +289,8 @@ class Dashboard extends React.Component {
                       setTitle={this.props.setTitle}
                       proc={this.props.proc}
                       dashboardFilter={this.state.dashboardFilter}
+                      applyDashboardFilter={filter => this.applyDashboardFilter(filter)}
+                      drilldownDashboardFilter={this.state.drilldownDashboardFilter}
                     />
                   }
 

@@ -17,6 +17,7 @@ const customStyles = {
     })
 
 };
+
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
@@ -208,7 +209,6 @@ class DashboardFilter extends React.Component {
     }
 
     removeField(index, field) {
-
         var availableOptions = [...this.state.createFilterOption];
         let filters = [...this.state.filters]
 
@@ -374,6 +374,7 @@ class DashboardFilter extends React.Component {
             console.log(filters)
         }
     }
+    
     render() {
         return (
             <div id="filter-form-container" className="disappear">

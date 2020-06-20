@@ -56,6 +56,7 @@ export default class WidgetGrid extends React.Component {
     saveAsExcel = () => {
         this.excelExporter.save();
     }
+  
 
     parseData = () => {
         let fieldDataTypeMap = new Map();
@@ -173,9 +174,24 @@ export default class WidgetGrid extends React.Component {
        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
         
     }
+    hasBackButton(){
+        if(this.props.canvasElement && this.props.canvasElement.parentElement){
+        let backbutton=this.props.canvasElement.parentElement.getElementsByClassName('oxzion-widget-roll-up-button')
+        if(backbutton.length>0)
+        return true
+        else
+        return false
+        }
+        else
+        {
+            return false
+        }
+
+    }
 
     render() {
         let thiz = this;
+        let hasBackButton=this.hasBackButton()
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
@@ -218,21 +234,14 @@ export default class WidgetGrid extends React.Component {
         return (
             <>
                 {this.isDrillDownTable &&
-                    <div class="oxzion-widget-drilldown-table-icon" title="Drilldown Table">
-                        <i class="fas fa-angle-double-down fa-lg"></i>
+                    <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton?{right:"5%"}:{right:"7px"}} title="Drilldown Table">
+                        <i className="fas fa-angle-double-down fa-lg"></i>
                     </div>
                 }
                 {this.exportToExcel &&
                     <>
 
-                        <div style={{
-                            float: "right",
-                            top: "20px",
-                            position: "relative",
-                            zIndex: "10",
-                            width: "16px",
-                            cursor: "pointer"
-                        }} onClick={this.saveAsExcel}><i className="fa fa-file-excel"></i></div>
+                        <div className="oxzion-widget-drilldown-excel-icon" style={hasBackButton?{right:"5%"}:{right:"10px"}} onClick={this.saveAsExcel}><i className="fa fa-file-excel "></i></div>
                         <ExcelExport
                             data={this.allData}
                             ref={exporter => this.excelExporter = exporter}
