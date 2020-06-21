@@ -1063,6 +1063,9 @@ class FormRender extends React.Component {
       if (properties["commands"]) {
         var that = this;
         that.showFormLoader(true,0);
+        if(form.submission.data && form.submission.data['fileId']){
+          this.setState({fileId: form.submission.data['fileId']});
+        }
         var form_data = {
           ...form.submission.data,
           fileId: this.state.fileId ? this.state.fileId : null
