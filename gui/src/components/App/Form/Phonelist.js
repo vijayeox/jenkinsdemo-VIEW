@@ -275,6 +275,11 @@ var phoneList = [
 "code": "CU"
 },
 {
+"name": "Curacao",
+"dial_code": "+599",
+"code": "CW"
+},
+{
 "name": "Cyprus",
 "dial_code": "+357",
 "code": "CY"
