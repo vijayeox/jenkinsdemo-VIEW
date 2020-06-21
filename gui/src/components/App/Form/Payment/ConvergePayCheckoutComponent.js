@@ -31,9 +31,21 @@ export default class ConvergePayCheckoutComponent extends Base {
       document.getElementById("convergepay-firstname").disabled = true;
       document.getElementById("convergepay-lastname").disabled = true;
       var paymentData = {
-        ssl_txn_auth_token: e.detail.token,
-        description: document.getElementById("convergepay-description").value
+        ssl_txn_auth_token: e.detail.token
       };
+      if(document.getElementById("convergepay-description") && document.getElementById("convergepay-description").value && document.getElementById("convergepay-description").value !=""){
+        var paymentObj;
+        try{
+          paymentObj = JSON.parse(document.getElementById("convergepay-description").value)
+        } catch(e){
+          paymentObj = document.getElementById("convergepay-description").value
+        }
+        for (var prop in paymentObj) {
+          if (!paymentObj.hasOwnProperty){
+            paymentData[prop] = paymentObj[prop];
+          }
+        }
+      }
       var callback = {
         onError: function(error) {
           document.getElementById("cardPayment").style.display = "none";
