@@ -155,6 +155,11 @@ var phoneList = [
 "code": "IO"
 },
 {
+"name": "British Virgin Islands",
+"dial_code": "+1284",
+"code": "VG"
+},
+{
 "name": "Brunei Darussalam",
 "dial_code": "+673",
 "code": "BN"
@@ -196,7 +201,7 @@ var phoneList = [
 },
 {
 "name": "Cayman Islands",
-"dial_code": "+ 345",
+"dial_code": "+1345",
 "code": "KY"
 },
 {
@@ -925,12 +930,12 @@ var phoneList = [
 "code": "SH"
 },
 {
-"name": "Saint Kitts and Nevis",
+"name": "St Kitts and Nevis",
 "dial_code": "+1869",
 "code": "KN"
 },
 {
-"name": "Saint Lucia",
+"name": "St Lucia",
 "dial_code": "+1758",
 "code": "LC"
 },
@@ -1140,8 +1145,8 @@ var phoneList = [
 "code": "TM"
 },
 {
-"name": "Turks and Caicos Islands",
-"dial_code": "+1649",
+"name": "Turks and Caicos",
+"dial_code": "+1",
 "code": "TC"
 },
 {
