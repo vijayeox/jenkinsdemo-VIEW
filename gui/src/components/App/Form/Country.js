@@ -1,4 +1,7 @@
-var countryList = [{
+var countryList = [ {
+    "country": "United States of America",
+    "states": ["Alabama", "Alaska", "American Samoa","Arizona", "Arkansas", "Armed Forces America", "Armed Forces Pacific", "Armed Forces Other", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia","Guam" , "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota","Northern Mariana Islands" , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico","Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "U.S. Virgin Islands","Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+},{
     "country": "Afghanistan",
     "states": ["Badakhshan", "Badghis", "Baghlan", "Balkh", "Bamian", "Daykondi", "Farah", "Faryab", "Ghazni", "Ghowr", "Helmand", "Herat", "Jowzjan", "Kabul", "Kandahar", "Kapisa", "Khost", "Konar", "Kondoz", "Laghman", "Lowgar", "Nangarhar", "Nimruz", "Nurestan", "Oruzgan", "Paktia", "Paktika", "Panjshir", "Parvan", "Samangan", "Sar-e Pol", "Takhar", "Vardak", "Zabol"]
 }, {
@@ -589,9 +592,6 @@ var countryList = [{
 }, {
     "country": "United Arab Emirates",
     "states": ["Abu Dhabi", "Ajman", "Al Fujayrah", "Sharjah", "Dubai", "Ras al Khaymah", "Umm al Qaywayn"]
-}, {
-    "country": "United States of America",
-    "states": ["Alabama", "Alaska", "American Samoa","Arizona", "Arkansas", "Armed Forces America", "Armed Forces Pacific", "Armed Forces Other", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia","Guam" , "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota","Northern Mariana Islands" , "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico","Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "U.S. Virgin Islands","Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
 }, {
     "country": "Uruguay",
     "states": ["Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida", "Lavalleja", "Maldonado", "Montevideo", "Paysandu", "Rio Negro", "Rivera", "Rocha", "Salto", "San Jose", "Soriano", "Tacuarembo", "Treinta y Tres"]
