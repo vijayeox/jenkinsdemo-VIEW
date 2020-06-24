@@ -365,6 +365,7 @@ export default class OX_Grid extends React.Component {
     var operationsList = [];
     var listData = this.state.gridData.data;
     config.actions.map((i) => {
+      var profile = this.userprofile;
       let result = eval(i.rule);
       result ? operationsList.push(i) : null;
     });
