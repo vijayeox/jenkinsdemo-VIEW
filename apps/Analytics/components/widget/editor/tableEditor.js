@@ -297,14 +297,7 @@ class TableEditor extends AbstractEditor {
         }
     }
 
-    getSelectedDrillDownWidget(){
-        if(this.state.drillDownWidgetType!==""){
-           return this.state.drillDownWidgetType.value == "dashboard" ? 
-                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) 
-            : 
-                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
-
-    }
+  
 
     render() {
         let thiz = this;

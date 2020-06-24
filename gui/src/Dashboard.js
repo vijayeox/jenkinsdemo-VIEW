@@ -237,8 +237,10 @@ extractFilterValues(){
             }
             else {
             //dispose if widget exists
-            let applyingDashboardFilters=this.state.preparedDashboardFilter?true:false;
-            let widgetObject = WidgetRenderer.render(widget, response.data.widget,null,applyingDashboardFilters);
+            let hasDashboardFilters=this.state.preparedDashboardFilter?true:false;
+            let renderproperties={"element":widget,"widget":response.data.widget,"hasDashboardFilters":hasDashboardFilters,"dashboardEditMode":false}
+     
+            let widgetObject = WidgetRenderer.render(renderproperties);
             if (widgetObject) {
               this.renderedWidgets[widgetUUId] = widgetObject;
             }
@@ -331,7 +333,8 @@ extractFilterValues(){
     let element = document.getElementById(elementId);
     this.helper.request('v1', url, null, 'get').
       then(response => {
-        let widgetObject = WidgetRenderer.render(element, response.data.widget, eventData);
+        let renderproperties={"element":element,"widget":response.data.widget,"props":eventData,"dashboardEditMode":false}
+        let widgetObject = WidgetRenderer.render(renderproperties);
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;
         }

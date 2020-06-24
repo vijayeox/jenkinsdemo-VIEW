@@ -392,7 +392,11 @@ class DashboardEditor extends React.Component {
         var thisInstance = this;
         this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get',
             function (response) {
-                let chart = WidgetRenderer.render(widgetElement, response.widget);
+                let renderProperties={}
+                renderProperties["element"]=widgetElement
+                renderProperties["widget"]=response.widget
+                renderProperties["dashboardEditMode"]=true
+                let chart = WidgetRenderer.render(renderProperties);
                 thisInstance.renderedCharts[elementId] = chart;
             },
             function (response) {

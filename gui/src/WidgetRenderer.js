@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, { render } from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
@@ -14,7 +14,10 @@ am4core.useTheme(am4themes_animated);
 am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
-    static render(element, widget, props,applyingDashboardFilters) {
+    // static render(element, widget, props,hasDashboardFilters,dashboardMode) {
+    
+    static render(renderpropertiesObject) {
+        let {element,widget,props,hasDashboardFilters,dashboardEditMode}={...renderpropertiesObject}
         // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
         switch (widget.renderer) {
@@ -22,7 +25,7 @@ class WidgetRenderer {
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data);
+                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data,hasDashboardFilters,dashboardEditMode);
                 break;
 
             case 'amCharts':
@@ -30,7 +33,7 @@ class WidgetRenderer {
                     throw (`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data,applyingDashboardFilters);
+                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data,hasDashboardFilters);
                 }
                 catch (e) {
                     console.error(e);
@@ -43,7 +46,7 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data,applyingDashboardFilters);
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data,hasDashboardFilters);
                 }
                 catch (e) {
                     console.error(e);
@@ -63,8 +66,9 @@ class WidgetRenderer {
         }
     }
 
-    static renderAggregateValue(element, configuration, props, data) {
+    static renderAggregateValue(element, configuration, props, data,hasDashboardFilters,dashboardEditMode) {
         let displayValue = null;
+        let isDrillDownChart=false
         if (configuration) {
             if (configuration.numberFormat) {
                 let format = configuration.numberFormat;
@@ -79,6 +83,33 @@ class WidgetRenderer {
             }
         }
         element.innerHTML = displayValue ? displayValue : ('' + data);
+
+        if (!dashboardEditMode && WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
+
+        //adding relevant css for drilldown aggregate value
+        element.classList.add("oxzion-widget-aggregate-drilldown")
+        //    attaching event to the aggregate value
+            element.addEventListener("click",
+            (evt)=>{
+                let aggregateValue=evt.target.innerHTML
+                let parsedAggregateValue=0
+                if(typeof(aggregateValue)=="string"){
+                    //assuming the value is going to be a formatted numeric value
+                    aggregateValue=aggregateValue.replace(/\,/g,"")
+                    aggregateValue=aggregateValue.replace("$","")
+                    if(parsedAggregateValue=parseFloat(aggregateValue)){
+                        WidgetDrillDownHelper.drillDownClicked(element,{aggregatevalue:parsedAggregateValue})
+                    } else{
+                        throw("Unxepected value passed as dilldownvalue")
+                    }
+                
+
+
+                }
+            });
+            isDrillDownChart = true;
+        }
+      
         return null;
     }
 
@@ -128,7 +159,7 @@ class WidgetRenderer {
         return configuration;
     }
 
-    static renderAmCharts(element, configuration, props, data,applyingDashboardFilters) {
+    static renderAmCharts(element, configuration, props, data,hasDashboardFilters) {
         let isDrillDownChart=false
         let transformedConfig = WidgetTransformer.transform(configuration, data);
         configuration = transformedConfig.chartConfiguration;
@@ -191,7 +222,7 @@ class WidgetRenderer {
             }
         }
 
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, applyingDashboardFilters)) {
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
             WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
             isDrillDownChart = true;
         }
@@ -496,7 +527,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderTable(element, configuration, data , applyingDashboardFilters) {
+    static renderTable(element, configuration, data , hasDashboardFilters) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         let isDrillDownTable = false;
@@ -515,10 +546,10 @@ class WidgetRenderer {
             throw 'Canvas element not found for drawing the table/grid.';
         } else {
              //repainting the table if dashboard filter is applied
-             applyingDashboardFilters && ReactDOM.unmountComponentAtNode(canvasElement)
+             hasDashboardFilters && ReactDOM.unmountComponentAtNode(canvasElement)
         }
 
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration , applyingDashboardFilters)) {
+        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration , hasDashboardFilters)) {
             // WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
             isDrillDownTable = true;
         }
