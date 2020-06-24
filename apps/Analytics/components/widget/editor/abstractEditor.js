@@ -273,6 +273,15 @@ class AbstractEditor extends React.Component {
         }
     }
 
+    getSelectedDrillDownWidget(){
+        if(this.state.drillDownWidgetType!==""){
+           return this.state.drillDownWidgetType.value == "dashboard" ? 
+                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) 
+            : 
+                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+
+    }
+
     querySelectionChanged = (evt, index) => {
         let thiz = this;
         let value = evt.value;

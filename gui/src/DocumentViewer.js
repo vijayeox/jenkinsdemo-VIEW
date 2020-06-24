@@ -47,6 +47,10 @@ export default class DocumentViewer extends Component {
           });
           if (Object.keys(documentsList).length > 0) {
             var validDocTypes = Object.keys(documentsList);
+            validDocTypes = validDocTypes
+              .sort((a, b) => a.localeCompare(b))
+              .filter((item) => item !== "Documents");
+            documentsList.Documents ? validDocTypes.unshift("Documents") : null;
             console.log(validDocTypes);
             this.setState({
               documentsList: documentsList,

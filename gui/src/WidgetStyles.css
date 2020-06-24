@@ -57,3 +57,9 @@ div > div.oxzion-widget-drilldown-table-icon{
     width: 16px;
     cursor: pointer;
 }
+
+.oxzion-widget-aggregate-drilldown{
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}

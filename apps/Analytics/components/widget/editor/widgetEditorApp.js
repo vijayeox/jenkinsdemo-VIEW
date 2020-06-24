@@ -655,7 +655,7 @@ class WidgetEditorApp extends React.Component {
                                     <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                 }
                                 {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
-                                    <AggregateValueEditor ref="editor" widget={this.state.widget} />
+                                    <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                 }
 
                             </div>
@@ -716,10 +716,10 @@ class WidgetEditorApp extends React.Component {
                                         <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'inline') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'html') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                 </div>
                             </>

@@ -651,6 +651,7 @@ class EditProfile extends React.Component {
                     <DropDown
                       args={this.core}
                       rawData={this.state.countryList}
+                      filterable={true}
                       selectedItem={this.state.fields.country ? this.state.fields.country : ""}
                       preFetch={true}
                       onDataChange={(e) => this.valueChange("country", e)}
@@ -668,6 +669,7 @@ class EditProfile extends React.Component {
                     <DropDown
                       args={this.core}
                       rawData={this.prepareStateData()}
+                      filterable={true}
                       selectedItem={this.state.fields.state ? this.state.fields.state : ""}
                       preFetch={true}
                       onDataChange={(e) => this.valueChange("state", e)}
