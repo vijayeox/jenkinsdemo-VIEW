@@ -55,7 +55,7 @@ class EditProfile extends React.Component {
 
     this.state = {
       errors: {},
-      dateformat: this.userprofile.key.preferences["dateformat"],
+      dateformat: "yyyy/mm/dd",
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
