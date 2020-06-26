@@ -241,10 +241,6 @@ class EditProfile extends React.Component {
       errors["state"] = "*Please select your state";
     }
 
-    if (!fields["interest"]) {
-      formIsValid = false;
-      errors["interest"] = "*Please enter your interest";
-    }
     if (!fields["country"]) {
       formIsValid = false;
       errors["country"] = "*Please select your country";
@@ -765,7 +761,7 @@ class EditProfile extends React.Component {
               <ReactBootstrap.Row>
                 <div className="col-md-12">
                   <ReactBootstrap.Form.Group>
-                    <ReactBootstrap.Form.Label className="mandatory">
+                    <ReactBootstrap.Form.Label>
                       Interest
                     </ReactBootstrap.Form.Label>
                     <ReactBootstrap.Form.Control
