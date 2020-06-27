@@ -223,7 +223,12 @@ export default class GridTemplate extends React.Component {
                 this.props.manageGrid.edit,
                 this.props.manageGrid.remove,
                 this.props.manageGrid.addUsers,
-                this.props.permission
+                this.props.permission,
+                {
+                  ...this.props.manageGrid,
+                  core: this.core,
+                  notification: this.notif
+                }
               )}
               sortable={false}
               filterCell={this.emptyCell}
@@ -319,7 +324,14 @@ class LogoCell2 extends React.Component {
   }
 }
 
-function CellWithEditing(title, edit, remove, addUsers, permission) {
+function CellWithEditing(
+  title,
+  edit,
+  remove,
+  addUsers,
+  permission,
+  fullConfig
+) {
   return class extends GridCell {
     constructor(props) {
       super(props);
@@ -359,6 +371,38 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
         </abbr>
       ) : null;
     }
+
+    async passwordReset(username) {
+      let helper = fullConfig.core.make("oxzion/restClient");
+      let response = await helper.request(
+        "v1",
+        "user/me/forgotpassword",
+        { username: username },
+        "post"
+      );
+      return response;
+    }
+
+    triggerPasswordReset = (dataItem) => {
+      console.log(dataItem);
+      this.passwordReset(dataItem.username).then((response) => {
+        response.status == "success"
+          ? fullConfig.notification.current.notify(
+              "Success",
+              "Password reset mail has been sent to " +
+                dataItem.name +
+                " ( " +
+                response.data.username +
+                " )",
+              "success"
+            )
+          : fullConfig.notification.current.notify(
+              "Failed",
+              response.message ? response.message : "Operation Failed",
+              "danger"
+            );
+      });
+    };
 
     render() {
       return (
@@ -412,6 +456,22 @@ function CellWithEditing(title, edit, remove, addUsers, permission) {
                   this.props.dataItem.is_admin == "0") &&
                 this.deleteButton()
               : this.deleteButton()}
+            {fullConfig.resetPassword ? (
+              <React.Fragment>
+                &nbsp; &nbsp;
+                <abbr title={"Reset Password"}>
+                  <button
+                    type="button"
+                    className="btn manage-btn"
+                    onClick={() =>
+                      this.triggerPasswordReset(this.props.dataItem)
+                    }
+                  >
+                    <i className={fullConfig.resetPassword.icon}></i>
+                  </button>
+                </abbr>
+              </React.Fragment>
+            ) : null}
           </center>
         </td>
       );

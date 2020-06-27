@@ -117,7 +117,10 @@ class User extends React.Component {
           manageGrid={{
             add: this.insert,
             edit: this.edit,
-            remove: this.remove
+            remove: this.remove,
+            resetPassword: {
+              icon: "far fa-redo manageIcons"
+            }
           }}
           permission={this.state.permission}
         />
