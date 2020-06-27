@@ -185,6 +185,9 @@ export default class DocumentViewerComponent extends Base {
           icon = "<i class='fa fa-file-o fileIcon'></i>";
           disableView = true;
         }
+        if(typeof file){
+          downloadUrl = component.wrapperUrl + file.url;
+        }
         fileList +=
           `<div class="docList" style="margin:0;" key="` +
           prop +
