@@ -1246,7 +1246,14 @@ class FormRender extends React.Component {
             }
           });
         } else {
-          this.showFormError(true,response.message);
+          var errorMessage ="";
+          if(response.errors && response.errors[0]&& response.errors[0]['message']){
+            errorMessage = response.errors[0]['message'];
+          }
+          if(response.message){
+            errorMessage = response.errors[0]['message'];
+          }
+          this.showFormError(true,errorMessage);
         }
       });
     } else if (this.props.pipeline) {
