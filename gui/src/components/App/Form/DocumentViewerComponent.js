@@ -22,6 +22,15 @@ export default class DocumentViewerComponent extends Base {
       },
       true
     );
+    this.form.on("change", changed => {
+      if(changed.data[this.component.refreshOn]){
+          var that = this;
+          setTimeout(function() {
+            that.setValue(changed.data[that.component.refreshOn]);
+            that.bindHandlers();
+          }, 200);
+      }
+    });
   }
 
   //disable
@@ -74,11 +83,13 @@ export default class DocumentViewerComponent extends Base {
   }
   // onChange(flags, fromRoot){
   bindHandlers() {
-    var component = this.component;
-    if (component.bindHandlers) {
+    if(this.previousValue == this.dataValue){
       return;
     }
+    var component = this.component;
+    this.previousValue = this.dataValue;
     var dataValue = this.dataValue;
+
     var value = this.value;
     try{
       dataValue = JSON.parse(dataValue);
@@ -125,8 +136,11 @@ export default class DocumentViewerComponent extends Base {
       var downloadElements = element.getElementsByClassName(that.key + "-downloadFile");
       Array.from(downloadElements).forEach(function(ele) {
         ele.addEventListener("click", function(event) {
-          var url = this.parentElement.parentElement.getAttribute("data-downloadurl");
-          url = url ? url : this.parentElement.getAttribute("data-downloadurl");
+          var url = this.parentElement.getAttribute("data-url");
+          if (!url) {
+            url = this.parentElement.parentElement.getAttribute("data-url");
+          }
+          // url = url ? url : this.parentElement.getAttribute("data-downloadurl");
           window.open(url, "_blank");
           event.stopPropagation();
         });
