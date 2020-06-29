@@ -81,6 +81,14 @@ class Errorlog extends React.Component {
               field: "error_type"
             },
             {
+              title: "Payload",
+              field: "payload"
+            },
+            {
+              title: "Parameters",
+              field: "params"
+            },
+            {
               title: "Date Created",
               field: "date_created"
             },
