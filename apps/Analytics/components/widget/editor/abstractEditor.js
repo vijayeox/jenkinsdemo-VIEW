@@ -213,7 +213,9 @@ class AbstractEditor extends React.Component {
                     }
                 }
             }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType })
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType },()=>{
+                this.props.syncWidgetState("configuration",this.state.configuration);
+            })
         }
     }
 
@@ -295,6 +297,7 @@ class AbstractEditor extends React.Component {
             return state;
         },
             () => {
+                thiz.props.syncWidgetState("queries",thiz.state.queries)
                 thiz.loadData(thiz.refreshQueryPreview());
             });
     }

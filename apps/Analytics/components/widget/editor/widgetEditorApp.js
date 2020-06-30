@@ -557,6 +557,22 @@ class WidgetEditorApp extends React.Component {
         });
     }
 
+    syncWidgetState(name,value){
+        if(value!=null && value!==""){
+            let widget={...this.state.widget}
+            if(name==="configuration" || name==="expression"){
+                widget[name]=JSON.parse(value)
+            this.setState({widget:widget})
+
+            } else if(name==="queries"){
+                widget[name]=value
+            this.setState({widget:widget})
+
+            }
+        }
+       
+    }
+
     render() {
         return (
             <form className="widget-editor-form">
@@ -649,13 +665,13 @@ class WidgetEditorApp extends React.Component {
                         {!this.state.flipped &&
                             <div className="row">
                                 {((this.state.widget.type === 'chart') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                    <AmChartEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
                                 {(this.state.widget.type === 'table') &&
-                                    <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
+                                    <TableEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                 }
                                 {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
-                                    <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
+                                    <AggregateValueEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                 }
 
                             </div>
@@ -710,16 +726,16 @@ class WidgetEditorApp extends React.Component {
 
                                 <div className="row">
                                     {(this.state.widget.type === 'chart') &&
-                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <AmChartEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'table') &&
-                                        <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <TableEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'inline') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                     {(this.state.widget.type === 'html') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <AggregateValueEditor ref="editor" widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                 </div>
                             </>

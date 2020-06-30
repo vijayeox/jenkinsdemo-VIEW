@@ -26,7 +26,6 @@ class AmChartEditor extends AbstractEditor {
 
     configurationChanged = (evt) => {
         let thiz = this;
-
         let value = evt.target.value;
         this.setState((state) => {
             state.configuration = value;
@@ -39,12 +38,14 @@ class AmChartEditor extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
+        this.props.syncWidgetState("expression",this.state.expression);
         if (this.validateExpression()) {
             this.loadData(this.refreshQueryPreview());
         }
     }
 
     refreshChartPreview = () => {
+        
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         try {
@@ -402,7 +403,11 @@ class AmChartEditor extends AbstractEditor {
                                                 <textarea id="configuration" name="configuration" ref="configuration"
                                                     className="form-control form-control-sm" style={{ fontFamily: 'Monospace' }}
                                                     onChange={this.configurationChanged} value={this.state.configuration}
-                                                    onBlur={this.refreshChartPreview} disabled={this.state.readOnly} />
+                                                    onBlur={()=>{
+                                                        this.props.syncWidgetState("configuration",this.state.configuration);
+                                                        this.refreshChartPreview();
+                                                        }
+                                                        } disabled={this.state.readOnly} />
                                                 <Overlay id="configuration-overlay" target={this.refs.configuration}
                                                     show={this.state.errors.configuration != null} placement="top">
                                                     {props => (
@@ -535,7 +540,10 @@ class AmChartEditor extends AbstractEditor {
                                                     </Col>
                                                 </Form.Group>}
 
-                                            <Button variant="primary" type="button" disabled={this.state.readOnly} onClick={() => this.ApplyDrillDown("chart")}>
+                                            <Button variant="primary" 
+                                                    type="button" 
+                                                    disabled={this.state.readOnly} 
+                                                    onClick={() => {this.ApplyDrillDown("chart")}}>
                                                 Apply DrillDown
                                             </Button>
 

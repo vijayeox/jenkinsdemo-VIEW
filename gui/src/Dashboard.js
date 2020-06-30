@@ -273,7 +273,7 @@ extractFilterValues(){
     event.value = JSON.stringify(dashboardData.data.dashboard)
     let drilldownDashboardFilter=JSON.parse(data.filter)
     event.drilldownDashboardFilter = drilldownDashboardFilter;
-    this.props.handleChange(event, "dashname")
+    this.props.drilldownToDashboard(event, "dashname")
   }
 
   widgetDrillDownMessageHandler = (event) => {
