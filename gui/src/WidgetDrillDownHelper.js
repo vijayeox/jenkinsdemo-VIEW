@@ -73,7 +73,7 @@ class WidgetDrillDownHelper {
         let strAttribute = widgetElement.getAttribute(WidgetDrillDownHelper.OXZION_DRILL_DOWN_CONTEXT_ATTRIBUTE);
         let drillDownContext = JSON.parse(strAttribute);
         if (!drillDownContext || (0 === drillDownContext.length)) {
-            throw (`Drill down conetxt is not found for widget id ${widgetId}.`);
+            throw (`Drill down context is not found for widget id ${widgetId}.`);
         }
         let context = drillDownContext[drillDownContext.length - 1];
 

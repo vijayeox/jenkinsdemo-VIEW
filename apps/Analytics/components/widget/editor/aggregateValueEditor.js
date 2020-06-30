@@ -19,6 +19,7 @@ class AggregateValueEditor extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
+        this.props.syncWidgetState("expression",this.state.expression);
         if (this.validateExpression()) {
             this.loadData(this.refreshQueryPreview());
         }
@@ -354,7 +355,12 @@ class AggregateValueEditor extends AbstractEditor {
                                                 <textarea id="configuration" name="configuration"  ref="configuration" 
                                                     className="form-control form-control-sm" style={{fontFamily:'Monospace'}} 
                                                     onChange={this.configurationChanged} value={this.state.configuration} 
-                                                    onBlur={this.refreshWidgetPreview} disabled={this.state.readOnly} type="text"/>
+                                                    onBlur={()=>{
+                                                        this.props.syncWidgetState("configuration",this.state.configuration);
+                                                        this.refreshChartPreview();
+                                                        }
+                                                        }
+                                                    disabled={this.state.readOnly} type="text"/>
                                                 <Overlay id="configuration-overlay" target={this.refs.configuration} 
                                                     show={this.state.errors.configuration != null} placement="top">
                                                     {props => (
@@ -487,10 +493,13 @@ class AggregateValueEditor extends AbstractEditor {
                                                     </Col>
                                                 </Form.Group>}
 
-                                            <Button variant="primary" type="button" disabled={this.state.readOnly} onClick={() => this.ApplyDrillDown("widget")}>
+                                    
+                                            <Button variant="primary" 
+                                                    type="button" 
+                                                    disabled={this.state.readOnly} 
+                                                    onClick={() => {this.ApplyDrillDown("widget")}}>
                                                 Apply DrillDown
                                             </Button>
-
                                         </div>
 
                                     </Tab>

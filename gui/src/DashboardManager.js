@@ -31,6 +31,7 @@ class Dashboard extends React.Component {
       showFilter: false,
       dashboardFilter: [],
       drilldownDashboardFilter: [],
+      isDrillDownDashboard:false
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -281,7 +282,7 @@ class Dashboard extends React.Component {
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
-                      handleChange={(e, type) => this.handleChange(e, type)}
+                      drilldownToDashboard={(e, type) => this.setState({isDrillDownDashboard:true},()=>{this.handleChange(e, type)})}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}
@@ -291,6 +292,7 @@ class Dashboard extends React.Component {
                       dashboardFilter={this.state.dashboardFilter}
                       applyDashboardFilter={filter => this.applyDashboardFilter(filter)}
                       drilldownDashboardFilter={this.state.drilldownDashboardFilter}
+                      isDrillDownDashboard={this.state.isDrillDownDashboard}
                     />
                   }
 

@@ -1047,6 +1047,13 @@ class FormRender extends React.Component {
           }
         });
       }
+      if (properties["redraw"]) {
+        var targetList = properties["redraw"].split(",");
+        targetList.map((item) => {
+          var targetComponent = form.getComponent(item);
+          targetComponent.redraw();
+        });
+      }
       form.setPristine(true);
     }
   }
