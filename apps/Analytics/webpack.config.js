@@ -31,7 +31,8 @@ module.exports = {
     path:__dirname + '/dist'
   },
   externals: {
-    osjs: 'OSjs'
+    osjs: 'OSjs',
+    oxziongui: "oxziongui"
   },
   resolve: {
     modules: ['node_modules'],
@@ -48,7 +49,7 @@ module.exports = {
             'icon.png', 
             'icon_white.png', 
             'images/', 
-            {from:'static'}, 
+            {from: path.resolve(__dirname, "../../gui/src/ckeditor/")}, 
             {
                 from:'node_modules/@progress/kendo-theme-default/dist/all.css', 
                 to:'kendo-theme-default-all.css'
