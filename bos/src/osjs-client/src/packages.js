@@ -127,6 +127,11 @@ export default class Packages {
 
     this.inited = true;
 
+    let helper = this.core;
+    var AuthToken = localStorage.getItem("AUTH_token");
+    var jwttoken = JSON.parse(AuthToken);
+    setInterval(function(){CheckAuthToken(helper, jwttoken.key);}, 300000);
+
     const manifest = this.core.config('packages.manifest');
 
     return manifest
@@ -445,3 +450,35 @@ export default class Packages {
     });
   }
 }
+
+function CheckAuthToken(helper, jwttoken) {
+  let response = ValidateTokenJWT(helper, jwttoken).then((response) => {
+    if(response["status"]!="success")
+    {
+      let response = RefreshTokenJWT(helper, jwttoken).then((response) => {
+        if(response["status"]!="success")
+        {
+         logout(helper).then((response) => {
+         });
+       }
+     }); 
+    }
+  });
+  return true;
+}
+const ValidateTokenJWT = async (helper, jwttoken) => {
+  let helpers = helper.make("oxzion/restClient");
+  let result = await helpers.request("v1", "/validatetoken", {jwt:jwttoken}, "filepost");
+  return result;
+};
+const logout = async (helper) => {
+ alert("session expired!. Please log in again"); 
+ await helper.make('osjs/session').save();
+ await helper.make('oxzion/usersession').set();
+ helper.make('osjs/auth').logout();
+};
+const RefreshTokenJWT = async (helper, jwttoken) => {
+  let helpers = helper.make("oxzion/restClient");
+  let result = await helpers.request("v1", "/refreshtoken", {jwt:jwttoken}, "filepost");
+  return result;
+};
