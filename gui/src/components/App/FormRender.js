@@ -893,14 +893,15 @@ class FormRender extends React.Component {
           if (response) {
             if (response.data) {
               var formData = { data: this.formatFormData(response.data) };
-              form.submission = formData;
-              if (properties["post_delegate_refresh"]) {
-                this.postDelegateRefresh(form,properties);
-              }
+              form.setSubmission(formData).then(response2 =>{
+                if (properties["post_delegate_refresh"]) {
+                  this.postDelegateRefresh(form,properties);
+                }
               form.setPristine(true);
-            }
+            });
             that.showFormLoader(false,0);
           }
+        }
         });
       }
       if (properties["target"]) {
