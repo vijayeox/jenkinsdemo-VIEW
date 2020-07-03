@@ -659,7 +659,6 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            console.log(changed)
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
@@ -834,11 +833,9 @@ class FormRender extends React.Component {
             }
           });
           form.formReady.then(() => {
-            console.log("formReady");
             that.showFormLoader(false,1);
           });
           form.submissionReady.then(() => {
-            console.log("submissionReady");
             form.element.addEventListener("getAppDetails", function (e) {
               e.preventDefault();
               e.stopPropagation();
@@ -848,9 +845,7 @@ class FormRender extends React.Component {
             form.emit("render");
           });
           that.setState({ currentForm: form });
-          console.log(form)
     var componentList = flattenComponents(form._form.components, true);
-    console.log(form);
           return form;
         });
       }
@@ -898,12 +893,11 @@ class FormRender extends React.Component {
           if (response) {
             if (response.data) {
               var formData = { data: this.formatFormData(response.data) };
-              form.setSubmission(formData).then(response2 =>{
-                if (properties["post_delegate_refresh"]) {
-                  this.postDelegateRefresh(form,properties);
-                }
-                form.setPristine(true);
-              });
+              form.submission = formData;
+              if (properties["post_delegate_refresh"]) {
+                this.postDelegateRefresh(form,properties);
+              }
+              form.setPristine(true);
             }
             that.showFormLoader(false,0);
           }
@@ -1020,7 +1014,7 @@ class FormRender extends React.Component {
               }
             }
             formdata[instancePath[0]][instanceRowindex][properties["clear_field"]] = "";
-            form.setSubmission({data : formdata});
+            form.submission = {data : formdata};
             processed = true;
           }
         } 
@@ -1280,7 +1274,6 @@ class FormRender extends React.Component {
   }
 
   customButtonAction = (e) => {
-    console.log(e);
     e.stopPropagation();
     e.preventDefault();
     let actionDetails = e.detail;
@@ -1318,7 +1311,6 @@ class FormRender extends React.Component {
   
   componentWillUnmount(){
     if(this.state.currentForm != undefined || this.state.currentForm != null){
-      console.log('destroy form object')
       this.state.currentForm.destroy();
     }
   }
