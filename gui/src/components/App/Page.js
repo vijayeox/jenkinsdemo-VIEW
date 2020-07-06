@@ -9,7 +9,7 @@ import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import DocumentViewer from "../../DocumentViewer";
-import Dashboard from "../../Dashboard";
+import DashboardManager from "../../DashboardManager";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
 import * as OxzionGUIComponents from "../../../index.js";
