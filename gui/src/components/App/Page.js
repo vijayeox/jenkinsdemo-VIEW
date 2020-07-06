@@ -9,7 +9,7 @@ import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import DocumentViewer from "../../DocumentViewer";
-import DashboardManager from "../../DashboardManager";
+import Dashboard from "../../Dashboard";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
 import * as OxzionGUIComponents from "../../../index.js";
@@ -35,10 +35,7 @@ class Page extends React.Component {
       submission: this.props.submission,
       showLoader: false,
       fileId: null,
-      currentRow: {},
-      title: '',
-      displaySection: 'DB',
-      sectionData: null,
+      currentRow: {}
     };
     this.props.pageId ? this.loadPage(this.props.pageId) : null;
     this.updatePageView = this.updatePageView.bind(this);
@@ -114,44 +111,44 @@ class Page extends React.Component {
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
-          width: "auto"
-        }
+            width: "auto"
+          }
         : {
-          width: "auto",
-          // paddingTop: "5px",
-          color: "white",
-          fontWeight: "600"
-        };
+            width: "auto",
+            // paddingTop: "5px",
+            color: "white",
+            fontWeight: "600"
+          };
       showButton
         ? actionButtons.push(
-          <abbr title={action[key].name} key={index}>
-            <Button
-              primary={true}
-              className=" btn manage-btn k-grid-edit-command"
-              onClick={() => {
-                action[key].confirmationMessage
-                  ? Swal.fire({
-                    title: action[key].confirmationMessage,
-                    confirmButtonText: "Agree",
-                    confirmButtonColor: "#275362",
-                    showCancelButton: true,
-                    cancelButtonColor: "#7b7878",
-                    target: ".PageRender"
-                  }).then((result) => {
-                    result.value ? this.buttonAction(action[key], e) : null;
-                  })
-                  : this.buttonAction(action[key], e);
-              }}
-              style={buttonStyles}
-            >
-              {action[key].icon ? (
-                <i className={action[key].icon + " manageIcons"}></i>
-              ) : (
+            <abbr title={action[key].name} key={index}>
+              <Button
+                primary={true}
+                className=" btn manage-btn k-grid-edit-command"
+                onClick={() => {
+                  action[key].confirmationMessage
+                    ? Swal.fire({
+                        title: action[key].confirmationMessage,
+                        confirmButtonText: "Agree",
+                        confirmButtonColor: "#275362",
+                        showCancelButton: true,
+                        cancelButtonColor: "#7b7878",
+                        target: ".PageRender"
+                      }).then((result) => {
+                        result.value ? this.buttonAction(action[key], e) : null;
+                      })
+                    : this.buttonAction(action[key], e);
+                }}
+                style={buttonStyles}
+              >
+                {action[key].icon ? (
+                  <i className={action[key].icon + " manageIcons"}></i>
+                ) : (
                   action[key].name
                 )}
-            </Button>
-          </abbr>
-        )
+              </Button>
+            </abbr>
+          )
         : null;
     }, this);
     return actionButtons;
@@ -351,22 +348,6 @@ class Page extends React.Component {
       .dispatchEvent(ev);
   };
 
-  setTitle = (title) => {
-    this.setState({ title: title });
-  }
-
-  switchSection = (section, data) => {
-    this.hideMenu();
-    this.setState({
-      displaySection: section,
-      sectionData: data
-    });
-
-  }
-  editDashboard = (data) => {
-    this.switchSection(SECTION_EDIT_DASHBOARD, data);
-  }
-
   renderContent(data) {
     var content = [];
     data.map((item, i) => {
@@ -403,7 +384,7 @@ class Page extends React.Component {
           } else {
             columnConfig.push({
               title: "Actions",
-              width: itemContent.actionsWidth ? itemContent.actionsWidth : "200px",
+              width: "200px",
               cell: (e) => this.renderButtons(e, itemContent.actions),
               filterCell: {
                 type: "empty"
@@ -498,11 +479,12 @@ class Page extends React.Component {
         );
       } else if (item.type == "Dashboard") {
         content.push(
-          <DashboardManager
-            args={this.core}
-            proc={this.props.proc}
-            setTitle={this.setTitle}
-            editDashboard={this.editDashboard}
+          <Dashboard
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            content={item.content}
+            proc={this.proc}
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
@@ -529,8 +511,8 @@ class Page extends React.Component {
               core={this.core}
             ></this.externalComponent>
           ) : (
-              <h3 key={i}>The component used is not available.</h3>
-            );
+            <h3 key={i}>The component used is not available.</h3>
+          );
         content.push(guiComponent);
       }
     });
