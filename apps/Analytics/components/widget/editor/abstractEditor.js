@@ -8,6 +8,7 @@ class AbstractEditor extends React.Component {
         super(props);
         this.state = {
             selectedTab: null,
+            widgetType:null,
             readOnly: true,
             queries: [],
             configuration: '',
@@ -114,6 +115,7 @@ class AbstractEditor extends React.Component {
     setWidgetData = (widgetData) => {
         this.data = widgetData.data;
         let queries = [];
+        let type=(this.props.type === 'inline' || this.props.type === 'html')?'widget':this.props.type;
         if (widgetData.queries) {
             widgetData.queries.forEach(function (query, index) {
                 let configuration = query.configuration;
@@ -134,6 +136,8 @@ class AbstractEditor extends React.Component {
             state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
+            state.widgetType = type;
+            state.selectedTab = type;
             return state;
         },
             () => {
@@ -537,6 +541,7 @@ class AbstractEditor extends React.Component {
                 }
             }).
             catch(function (response) {
+                console.error(response)
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',
