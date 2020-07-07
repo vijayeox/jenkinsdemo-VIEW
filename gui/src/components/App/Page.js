@@ -140,7 +140,9 @@ class Page extends React.Component {
                   }).then((result) => {
                     result.value ? this.buttonAction(action[key], e) : null;
                   })
-                  : this.buttonAction(action[key], e);
+                  : action[key].details
+                    ? this.buttonAction(action[key], e)
+                    : null;
               }}
               style={buttonStyles}
             >
@@ -430,7 +432,9 @@ class Page extends React.Component {
             urlPostParams={item.urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
-                ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                ? typeof itemContent.defaultFilters == "string"
+                  ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                  : this.replaceParams(itemContent.defaultFilters)
                 : undefined
             }
             gridOperations={itemContent.operations}
