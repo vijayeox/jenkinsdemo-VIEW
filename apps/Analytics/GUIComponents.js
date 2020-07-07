@@ -8,4 +8,4 @@ import DashboardFilter from "OxzionGUI/DashboardFilter"
 import DashboardViewer from "OxzionGUI/Dashboard"
 import DashboardManager from "OxzionGUI/DashboardManager"
 import WidgetManager from "OxzionGUI/WidgetManager"
-export { WidgetManager,DashboardManager,DashboardViewer,WidgetGrid,WidgetRenderer,OX_Grid,Notification,DataSource,Query,DashboardFilter};
+export { WidgetManager, DashboardManager, DashboardViewer, WidgetGrid, WidgetRenderer, OX_Grid, Notification, DataSource, Query, DashboardFilter };

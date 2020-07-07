@@ -59,7 +59,9 @@ module.exports = {
     ...plugins
   ],
   resolve: {
+    
     alias: {
+      OxzionGUI: path.resolve(__dirname, "./src"),
       "react-icons": path.resolve(__dirname, "./node_modules/react-icons")
     }
   },

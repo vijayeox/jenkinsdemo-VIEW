@@ -31,7 +31,7 @@ class Dashboard extends React.Component {
       showFilter: false,
       dashboardFilter: [],
       drilldownDashboardFilter: [],
-      isDrillDownDashboard:false
+      isDrillDownDashboard: false
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -112,7 +112,7 @@ class Dashboard extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter})
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
   }
 
   deleteDashboard() {
@@ -185,7 +185,8 @@ class Dashboard extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+            {
+              this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
               <div className="row">
                 <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
               </div>
@@ -209,27 +210,30 @@ class Dashboard extends React.Component {
                   <Form className="dashboard-manager-items">
                     <Row>
                       <Col lg="4" md="4" sm="4">
-                        <Form.Group as={Row} >
-                          <Col>
-                            <Select
-                              name="dashname"
-                              className="react-select-container"
-                              placeholder="Select Dashboard"
-                              id="dashname"
-                              onChange={(e) => this.handleChange(e, "dashname")}
-                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
-                              options={this.state.dashList &&
-                                this.state.dashList.map((option, index) => {
-                                  return {
-                                    value: JSON.stringify(option),
-                                    label: option.name,
-                                    key: option.uuid
-                                  }
-                                })
-                              }
-                            />
-                          </Col>
-                        </Form.Group>
+                        {
+                          this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                          <Form.Group as={Row} >
+                            <Col>
+                              <Select
+                                name="dashname"
+                                className="react-select-container"
+                                placeholder="Select Dashboard"
+                                id="dashname"
+                                onChange={(e) => this.handleChange(e, "dashname")}
+                                value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
+                                options={this.state.dashList &&
+                                  this.state.dashList.map((option, index) => {
+                                    return {
+                                      value: JSON.stringify(option),
+                                      label: option.name,
+                                      key: option.uuid
+                                    }
+                                  })
+                                }
+                              />
+                            </Col>
+                          </Form.Group>
+                        }
                       </Col>
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
@@ -247,7 +251,7 @@ class Dashboard extends React.Component {
                             </Button>
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
-                                <i className="fa fa-pen" aria-hidden="true"></i>
+                                <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }
                             {
@@ -282,7 +286,7 @@ class Dashboard extends React.Component {
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
-                      drilldownToDashboard={(e, type) => this.setState({isDrillDownDashboard:true},()=>{this.handleChange(e, type)})}
+                      drilldownToDashboard={(e, type) => this.setState({ isDrillDownDashboard: true }, () => { this.handleChange(e, type) })}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}
