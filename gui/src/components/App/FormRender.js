@@ -154,7 +154,12 @@ class FormRender extends React.Component {
     if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
+    params.inDraft = "true";
     params.formId = this.state.formId;
+    params.workflowInstanceId = this.state.workflowInstanceId;
+    params.activityInstanceId = this.state.activityInstanceId;
+    params.workflowId = this.state.workflowId;
+    params.page = this.state.page;
     await this.helper.request("v1", route, params, "post").then(response => {
       this.setState({ cacheId: response.data.id });
       return response;
@@ -423,7 +428,7 @@ class FormRender extends React.Component {
 
     loadWorkflow(form) {
       let that = this;
-      if (this.state.parentWorkflowInstanceId) {
+      if (this.state.parentWorkflowInstanceId && (this.state.workflowInstanceId != null)) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
