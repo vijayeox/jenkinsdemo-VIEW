@@ -384,7 +384,7 @@ class Page extends React.Component {
           } else {
             columnConfig.push({
               title: "Actions",
-              width: itemContent.actionsWidth ? itemContent.actionsWidth : "200px",
+              width: "200px",
               cell: (e) => this.renderButtons(e, itemContent.actions),
               filterCell: {
                 type: "empty"
