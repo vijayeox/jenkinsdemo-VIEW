@@ -7,7 +7,7 @@ class Notification extends React.Component {
     super(props);
     this.notificationDOMRef = React.createRef();
   }
-  notify(title, message, type, container) {
+  notify(title, message, type, container, duration) {
     this.notificationDOMRef.current.addNotification({
       title: title || "",
       message: message || "",
@@ -16,7 +16,7 @@ class Notification extends React.Component {
       container: container ? container : "bottom-right",
       animationIn: ["animated", "bounceIn"],
       animationOut: ["animated", "bounceOut"],
-      dismiss: { duration: 3000 },
+      dismiss: { duration: duration ? duration : 3000  },
       dismissable: { click: true }
     })
   }

@@ -1,4 +1,15 @@
-import {React,FileUploader,Notification,MomentTZ,countryStateList,KendoReactWindow,PhoneInput,KendoReactDropDowns,KendoDataQuery,KendoReactInput} from "oxziongui";
+import {
+  React,
+  FileUploader,
+  Notification,
+  Moment,
+  countryStateList,
+  KendoReactWindow,
+  PhoneInput,
+  KendoReactDropDowns,
+  KendoDataQuery,
+  KendoReactInput
+} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { SaveCancel, DropDown, CurrencySelect } from "../components/index";
@@ -14,8 +25,8 @@ export default class DialogContainer extends React.Component {
     this.state = {
       orgInEdit: this.props.dataItem || null,
       contactName: null,
-      timeZoneValue: [],
-      timezoneList: MomentTZ.tz.names(),
+      timeZoneValue: undefined,
+      timezoneList: Moment.tz.names(),
       countryList: countryList
     };
     this.countryByIP = undefined;
@@ -28,11 +39,7 @@ export default class DialogContainer extends React.Component {
   UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       this.setState({
-        timeZoneValue: {
-          label: this.state.orgInEdit.preferences.timezone,
-          name: this.state.orgInEdit.preferences.timezone,
-          offset: 100
-        }
+        timeZoneValue: this.state.orgInEdit.preferences.timezone
       });
 
       GetSingleEntityData(
@@ -41,7 +48,7 @@ export default class DialogContainer extends React.Component {
           "/user/" +
           this.props.dataItem.contactid +
           "/profile"
-      ).then(response => {
+      ).then((response) => {
         this.setState({
           contactName: {
             id: "111",
@@ -50,11 +57,11 @@ export default class DialogContainer extends React.Component {
         });
       });
     } else {
-      getCountryByIP().then(data => (this.countryByIP = data.country));
+      getCountryByIP().then((data) => (this.countryByIP = data.country));
     }
   }
 
-  onDialogInputChange = event => {
+  onDialogInputChange = (event) => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -67,7 +74,7 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onContactIPChange = event => {
+  onContactIPChange = (event) => {
     let target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
@@ -81,7 +88,7 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  onContactPhoneChange = fullNumber => {
+  onContactPhoneChange = (fullNumber) => {
     let orgInEdit = { ...this.state.orgInEdit };
     orgInEdit["contact"] = orgInEdit["contact"] ? orgInEdit["contact"] : {};
     orgInEdit["contact"]["phone"] = fullNumber;
@@ -106,7 +113,7 @@ export default class DialogContainer extends React.Component {
       orgInEdit["preferences"] = orgInEdit["preferences"]
         ? orgInEdit["preferences"]
         : {};
-      orgInEdit["preferences"][field] = event.name;
+      orgInEdit["preferences"][field] = event;
       this.setState({ orgInEdit: orgInEdit });
     } else {
       let orgInEdit = { ...this.state.orgInEdit };
@@ -142,7 +149,7 @@ export default class DialogContainer extends React.Component {
       showCancelButton: true,
       cancelButtonColor: "#66bb6a",
       target: ".Window_Admin"
-    }).then(result => {
+    }).then((result) => {
       if (result.value) {
         tempData.reactivate = "1";
         PushDataPOST(
@@ -150,7 +157,7 @@ export default class DialogContainer extends React.Component {
           this.props.formAction,
           this.state.orgInEdit.uuid,
           tempData
-        ).then(response => {
+        ).then((response) => {
           if (response.status == "success") {
             this.props.action(response);
             this.props.cancel();
@@ -243,7 +250,7 @@ export default class DialogContainer extends React.Component {
       this.props.formAction,
       this.state.orgInEdit.uuid,
       tempData
-    ).then(response => {
+    ).then((response) => {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
@@ -262,7 +269,7 @@ export default class DialogContainer extends React.Component {
     });
   };
 
-  sendData = e => {
+  sendData = (e) => {
     e.preventDefault();
     if (this.imageExists) {
       this.pushData();
@@ -580,6 +587,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       disableItem={this.props.diableField}
+                      filterable={false}
                       rawData={[
                         "19-06-2019  (dd-MM-yyyy)",
                         "19-Jun-2019 (dd-MMM-yyyy)",
@@ -608,22 +616,14 @@ export default class DialogContainer extends React.Component {
                 <div className="col timeZonePicker">
                   <label className="required-label">Timezone</label>
                   <div>
-                    <KendoReactDropDowns.DropDownList
-                      data={this.state.timezoneList}
-                      textField="name"
-                      dataItemKey="name"
-                      value={this.state.timeZoneValue}
-                      onChange={(e) =>
+                    <DropDown
+                      args={this.core}
+                      rawData={this.state.timezoneList}
+                      selectedItem={this.state.timeZoneValue}
+                      onDataChange={(e) =>
                         this.valueChange("timezone", e.target.value)
                       }
-                      style={{ width: "100%" }}
-                      popupSettings={{ height: "160px" }}
                       filterable={true}
-                      onFilterChange={(e) => {
-                        this.setState({
-                          timezoneList: KendoDataQuery.filterBy(MomentTZ.tz.names(), e.filter)
-                        });
-                      }}
                       required={true}
                     />
                   </div>

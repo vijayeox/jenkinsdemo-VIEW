@@ -25,8 +25,14 @@ if (mode === 'production') {
 }
 
 module.exports = {
+
   mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
+  resolve: {
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../gui/src")
+    }
+  },
   entry: {
     osjs: [
       path.resolve(__dirname, 'src/core/core.js'),
