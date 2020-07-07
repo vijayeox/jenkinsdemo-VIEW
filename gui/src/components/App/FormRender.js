@@ -61,6 +61,14 @@ class FormRender extends React.Component {
     this.formErrorDivId = "formio_error_"+formID;
   }
   showFormLoader(state=true,init=0){
+    if(document.getElementById(this.loaderDivID)){
+      var loaderDiv = document.getElementById(this.loaderDivID);
+      if(document.getElementById(this.formDivID).clientHeight>0){
+        loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight+" px";
+      } else {
+        loaderDiv.style.height = "100%";
+      }
+    }
     if(state){
       this.loader.show(document.getElementById(this.loaderDivID));
       if(init == 1){
@@ -241,7 +249,6 @@ class FormRender extends React.Component {
         form.submission.data["workflow_instance_id"] = undefined;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
-          that.showFormLoader(false,0);
           if (response.status == "success") {
             //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
             // if (response.data) {
@@ -686,8 +693,13 @@ class FormRender extends React.Component {
                         var commands = { commands: [{ command: "getuserlist" }] };
                         that.callPipeline(commands, form.submission).then(response => {
                           that.showFormLoader(false,0);
-                          if (response.data) {
-                            component.setValue(response.data.userlist);
+                          if(response.status=="success"){
+                            if (response.data) {
+                              component.setValue(response.data.userlist);
+                              that.showFormLoader(false,0);
+                            }
+                          } else {
+                            that.showFormLoader(false,0);
                           }
                         });
                         break;
@@ -789,16 +801,22 @@ class FormRender extends React.Component {
                               changed[properties["sourceDataKey"]] = "";
                             }
                           }
-                          form.setSubmission({ data: that.formatFormData(changed) });
-                          destinationComponent.triggerRedraw();
+                          form.setSubmission({ data: that.formatFormData(changed) }).then(response =>{
+                            destinationComponent.triggerRedraw();
+                          });
                         }
                         that.showFormLoader(false,0);
                       });
                     } else {
                       that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
-                        that.showFormLoader(false,0);
-                        if (response.data) {
-                          form.setSubmission({ data: that.formatFormData(response.data) });
+                        if(response.status=='success'){
+                          if (response.data) {
+                            form.setSubmission({ data: that.formatFormData(response.data) }).then(result =>{
+                              that.showFormLoader(false,0);
+                            });
+                          }
+                        } else {
+                          that.showFormLoader(false,0);
                         }
                       });
                     }
@@ -816,16 +834,20 @@ class FormRender extends React.Component {
                 var properties = component.properties;
                 if (properties["commands"]) {
                   that.callPipeline(properties["commands"], that.cleanData(changed)).then(response => {
-                    that.showFormLoader(false,0);
-                    if (response.data) {
-                      try {
-                        var formData = that.formatFormData(response.data);
-                        form.setSubmission({ data: formData }).then(response2 => {
-                          that.runProps(component, form, properties, that.formatFormData(form.submission.data));
-                        });
-                      } catch (e) {
-                        console.log(e);
+                    if(response.status=="success"){
+                      if (response.data) {
+                        try {
+                          var formData = that.formatFormData(response.data);
+                          form.setSubmission({ data: formData }).then(response2 => {
+                            that.runProps(component, form, properties, that.formatFormData(form.submission.data));
+                            that.showFormLoader(false,0);
+                          });
+                        } catch (e) {
+                          console.log(e);
+                        }
                       }
+                    } else {
+                      that.showFormLoader(false,0);
                     }
                   });
                 }
@@ -890,18 +912,20 @@ class FormRender extends React.Component {
       if (properties["delegate"]) {
         that.showFormLoader(true,0);
         this.callDelegate(properties["delegate"],this.cleanData(formdata)).then(response => {
-          if (response) {
+          if (response && response.status=="success") {
             if (response.data) {
               var formData = { data: this.formatFormData(response.data) };
               form.setSubmission(formData).then(response2 =>{
                 if (properties["post_delegate_refresh"]) {
                   this.postDelegateRefresh(form,properties);
                 }
-              form.setPristine(true);
-            });
+                that.showFormLoader(false,0);
+                form.setPristine(true);
+              });
+            }
+          } else {
             that.showFormLoader(false,0);
           }
-        }
         });
       }
       if (properties["target"]) {
@@ -1007,13 +1031,14 @@ class FormRender extends React.Component {
           if(instance.rowIndex != null){            
             var instancePath = instance.path.split('.');
             var instanceRowindex = instance.rowIndex;
-            var targetComponent = form.getComponent(instancePath[0]);
-            if(targetComponent){
-              var componentList = targetComponent.getComponent(properties['clear_field']);
-              if(componentList[instance.rowIndex]){
-                componentList[instance.rowIndex].setValue("");
-              }
-            }
+            // var targetComponent = form.getComponent(instancePath[0]);
+            // if(targetComponent){
+            //   console.log(targetComponent);
+            //   var componentList = targetComponent.getComponent(properties['clear_field']);
+            //   if(componentList[instance.rowIndex]){
+            //     componentList[instance.rowIndex].setValue("");
+            //   }
+            // }
             formdata[instancePath[0]][instanceRowindex][properties["clear_field"]] = "";
             form.submission = {data : formdata};
             processed = true;
@@ -1051,9 +1076,14 @@ class FormRender extends React.Component {
     if (properties) {
       if (properties["delegate"]) {
         this.callDelegate(properties["delegate"],this.cleanData(form.submission.data)).then(response => {
-          this.showFormLoader(false,0);
-          if (response.data) {
-            form.setSubmission({ data: this.formatFormData(response.data) });
+          if(response.status == "success"){
+            if (response.data) {
+              form.setSubmission({ data: this.formatFormData(response.data) }).then(respone=> {
+                this.showFormLoader(false,0);
+              });
+            }
+          } else {
+            this.showFormLoader(false,0);
           }
         });
       }
@@ -1079,6 +1109,8 @@ class FormRender extends React.Component {
                 that.showFormLoader(false,0);
               });
             }
+          } else {
+            that.showFormLoader(false,0);
           }
         });
       }
@@ -1188,7 +1220,7 @@ class FormRender extends React.Component {
     Object.keys(data).forEach(key => {
       try {
         parsedData[key] = (typeof data[key] === 'string') ? JSON.parse(data[key]) :
-                          (data[key] == undefined || data[key] == null) ? "" : data[key];
+        (data[key] == undefined || data[key] == null) ? "" : data[key];
         if(parsedData[key] == "" && data[key] && parsedData[key] != data[key]){
           parsedData[key] = data[key];
         }
