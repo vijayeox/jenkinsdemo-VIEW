@@ -255,7 +255,7 @@ class Dashboard extends React.Component {
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
                             {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              <Button onClick={() => this.editDashboard()} title="Edit Dashboard New">
+                              <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
                                 <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }

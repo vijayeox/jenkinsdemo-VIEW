@@ -20,15 +20,15 @@ module.exports = {
   mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
   entry: {
-    'main':[
-      path.resolve(__dirname, 'index.js'), 
+    'main': [
+      path.resolve(__dirname, 'index.js'),
       path.resolve(__dirname, 'index.scss')
     ],
-    'widgetEditor':path.resolve(__dirname, 'components/widget/editor/widgetEditorApp.js')
+    'widgetEditor': path.resolve(__dirname, '../../gui/src/components/widget/editor/widgetEditorApp.js')
   },
   output: {
     filename: '[name].js',
-    path:__dirname + '/dist'
+    path: __dirname + '/dist'
   },
   externals: {
     osjs: 'OSjs',
@@ -37,7 +37,7 @@ module.exports = {
   resolve: {
     modules: ['node_modules'],
     alias: {
-      react: path.resolve(__dirname,'node_modules/react'),
+      react: path.resolve(__dirname, 'node_modules/react'),
       OxzionGUI: path.resolve(__dirname, "../../gui/src/")
     }
   },
@@ -46,15 +46,15 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-            'icon.png', 
-            'icon_white.png', 
-            'images/', 
-            {from: path.resolve(__dirname, "../../gui/src/ckeditor/")}, 
-            {
-                from:'node_modules/@progress/kendo-theme-default/dist/all.css', 
-                to:'kendo-theme-default-all.css'
-            }
-        ]
+      'icon.png',
+      'icon_white.png',
+      'images/',
+      { from: path.resolve(__dirname, "../../gui/src/ckeditor/") },
+      {
+        from: 'node_modules/@progress/kendo-theme-default/dist/all.css',
+        to: 'kendo-theme-default-all.css'
+      }
+    ]
     ),
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -79,12 +79,12 @@ module.exports = {
           }
         ]
       },
-      { 
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
-        loader: "url-loader?limit=10000&mimetype=application/font-woff" 
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: "url-loader?limit=10000&mimetype=application/font-woff"
       },
-      { 
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
+      {
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: "file-loader"
       },
       {
