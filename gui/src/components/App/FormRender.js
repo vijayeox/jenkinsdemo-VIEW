@@ -31,8 +31,9 @@ class FormRender extends React.Component {
       form: null,
       showLoader: false,
       appId: this.props.appId,
-      workflowId: null,
-      cacheId: null,
+      workflowId: this.props.workflowId?this.props.workflowId:null,
+      cacheId: this.props.cacheId?this.props.cacheId:null,
+      isDraft: this.props.isDraft?this.props.isDraft:false,
       workflowInstanceId: this.props.workflowInstanceId,
       parentWorkflowInstanceId: this.props.parentWorkflowInstanceId,
       activityInstanceId: this.props.activityInstanceId,
@@ -143,7 +144,7 @@ class FormRender extends React.Component {
     return await this.helper.request("v1",this.appUrl+"/transaction/"+params.transaction_id+"/status",params.data,"post");
   }
   async getCacheData() {
-    return await this.helper.request("v1",this.appUrl + "/cache",{},"get");
+    return await this.helper.request("v1",this.appUrl + "/cache/"+this.state.cacheId,{},"get");
   }
 
   async storeCache(params) {
@@ -208,6 +209,10 @@ class FormRender extends React.Component {
   async getFileDataById() {
     // call to api using wrapper
     return await this.helper.request("v1",this.appUrl+"/file/"+this.props.fileId+"/data",{},"get");
+  }
+  async getStartFormWorkflow() {
+    // call to api using wrapper
+    return await this.helper.request("v1",this.appUrl+"/workflow/"+this.state.workflowId+"/startform",{},"get");
   }
   async getActivityInstance() {
     // call to api using wrapper
@@ -427,6 +432,7 @@ class FormRender extends React.Component {
 
     loadWorkflow(form) {
       let that = this;
+      console.log(this.state);
       if (this.state.parentWorkflowInstanceId && (this.state.workflowInstanceId != null)) {
         this.getFileData().then(response => {
           if (response.status == "success") {
@@ -445,6 +451,50 @@ class FormRender extends React.Component {
               this.createForm();
             }
           }
+        });
+      } else if(this.state.workflowId && (this.state.workflowId != null) && this.state.isDraft) {
+        this.getStartFormWorkflow().then(response => {
+          var parsedData = {};
+          var template;
+          if (response.data) {
+            try{
+              parsedData = this.formatFormData(JSON.parse(response.data));
+            } catch(e){
+              parsedData = this.formatFormData(response.data);
+            }
+          }
+          try {
+            template = JSON.parse(parsedData.template);
+          } catch(e){
+            template = parsedData.template;
+          }
+          parsedData.workflow_uuid ? (parsedData.workflow_uuid = parsedData.workflow_uuid) : null;
+          this.setState({
+            content: template,
+            workflowInstanceId: parsedData.workflow_instance_id,
+            activityInstanceId: parsedData.activity_instance_id,
+            workflowId: parsedData.workflow_uuid,
+            formId: parsedData.form_id
+          });
+          that.createForm().then((form) => {
+            this.getCacheData().then((cacheResponse) => {
+              if(Object.keys(cacheResponse.data).length > 1){//to account for only workflow_uuid
+                var that = this;
+                if(cacheResponse.data){
+                  form.setSubmission({data: this.formatFormData(cacheResponse.data)}).then(respone=> {
+                    that.processProperties(form);
+                    if (cacheResponse.data.page && form.wizard) {
+                      if (form.wizard && form.wizard.display == "wizard") {
+                        form.setPage(parseInt(cacheResponse.data.page));
+                        that.hideBreadCrumb(true);
+                      }
+                    }
+                  });
+                }
+              }
+            });
+          });
+
         });
       }else  if (this.state.fileId) {
         this.getFileDataById().then((response) => {
