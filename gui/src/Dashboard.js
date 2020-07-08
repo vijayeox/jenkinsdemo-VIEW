@@ -12,7 +12,7 @@ class Dashboard extends Component {
     this.state = {
       htmlData: this.props.htmlData ? this.props.htmlData : null,
       dashboardFilter: this.props.dashboardFilter,
-      preparedDashboardFilter:null,
+      preparedDashboardFilter: null,
       drilldownDashboardFilter: [],
       widgetCounter: 0
     };
@@ -71,8 +71,8 @@ class Dashboard extends Component {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           });
-            (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0 ) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
-        
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -115,61 +115,61 @@ class Dashboard extends Component {
     return filter
   }
 
-extractFilterValues(){
-  let filterParams = []
-  this.props.dashboardFilter.map((filter, index) => {
-    let filterarray = []
-    if (filter["dataType"] == "date") {
-      var startDate = filter["startDate"]
-      var endDate = null
-      if (filter["startDate"] && filter["endDate"]) {
-        //convert startDate object to string
-        if (typeof startDate !== "string") {
-          startDate = filter["startDate"]
-          startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-        }
-        //date range received
-        if (filter["operator"] == "gte&&lte") {
-          endDate = filter["endDate"]
-          if (typeof endDate !== "string") {
-            endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+  extractFilterValues() {
+    let filterParams = []
+    this.props.dashboardFilter.map((filter, index) => {
+      let filterarray = []
+      if (filter["dataType"] == "date") {
+        var startDate = filter["startDate"]
+        var endDate = null
+        if (filter["startDate"] && filter["endDate"]) {
+          //convert startDate object to string
+          if (typeof startDate !== "string") {
+            startDate = filter["startDate"]
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
-          //prepare startDate array
-          filterarray.push(filter["field"])
-          filterarray.push(">=")
-          filterarray.push(startDate)
-          filterParams.push(filterarray)
-          
+          //date range received
+          if (filter["operator"] == "gte&&lte") {
+            endDate = filter["endDate"]
+            if (typeof endDate !== "string") {
+              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            }
+            //prepare startDate array
+            filterarray.push(filter["field"])
+            filterarray.push(">=")
+            filterarray.push(startDate)
+            filterParams.push(filterarray)
 
-          //prepare endDate array
-          filterarray = []
+
+            //prepare endDate array
+            filterarray = []
+            filterarray.push(filter["field"])
+            filterarray.push("<=")
+            filterarray.push(endDate)
+            filterParams.push(filterarray)
+          }
+        } else {
+          //single date passed
           filterarray.push(filter["field"])
-          filterarray.push("<=")
-          filterarray.push(endDate)
+          filterarray.push(filter["operator"])
+          filterarray.push(startDate)
           filterParams.push(filterarray)
         }
       } else {
-        //single date passed
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
-        filterarray.push(startDate)
+        filterarray.push(filter["value"]["selected"])
         filterParams.push(filterarray)
       }
-    } else {
-      filterarray.push(filter["field"])
-      filterarray.push(filter["operator"])
-      filterarray.push(filter["value"]["selected"])
-      filterParams.push(filterarray)
-    }
-  })
-  return filterParams
-}
+    })
+    return filterParams
+  }
 
   componentDidUpdate(prevProps) {
     //update component when filter is changed
     if (prevProps.dashboardFilter != this.props.dashboardFilter) {
       let filterParams = this.extractFilterValues()
-    
+
       let preapredFilter
       if (filterParams && filterParams.length > 1) {
         preapredFilter = filterParams[0]
@@ -179,21 +179,20 @@ extractFilterValues(){
         }
       }
 
-      if(filterParams && filterParams.length != 0)
-        {
-          if(filterParams.length>1){
-            this.setState({preparedDashboardFilter:preapredFilter},()=>{
-              this.updateGraph(preapredFilter)
-            })
-          } else{
-          this.setState({preparedDashboardFilter:filterParams},()=>{
+      if (filterParams && filterParams.length != 0) {
+        if (filterParams.length > 1) {
+          this.setState({ preparedDashboardFilter: preapredFilter }, () => {
+            this.updateGraph(preapredFilter)
+          })
+        } else {
+          this.setState({ preparedDashboardFilter: filterParams }, () => {
             this.updateGraph(filterParams)
           })
         }
-        }     
-       else{
-         this.updateGraph()
-       }
+      }
+      else {
+        this.updateGraph()
+      }
 
     }
   }
@@ -226,33 +225,34 @@ extractFilterValues(){
         var that = this;
         var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
         this.getWidgetByUuid(widgetUUId, filterParams)
-        .then(response=>{
-          if(response.status =="success"){
-            response.data.widget && console.timeEnd("analytics/widget/"+response.data.widget.uuid+"?data=true")
-            that.setState({ widgetCounter: that.state.widgetCounter+1});
-            if ('error' === response.status) {
-              console.error('Could not load widget.');
-              console.error(response);
-              errorFound = true;
+          .then(response => {
+            if (response.status == "success") {
+              response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
+              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+              if ('error' === response.status) {
+                console.error('Could not load widget.');
+                console.error(response);
+                errorFound = true;
+              }
+              else {
+                //dispose if widget exists
+                let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
+                let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
+
+                let widgetObject = WidgetRenderer.render(renderproperties);
+                if (widgetObject) {
+                  this.renderedWidgets[widgetUUId] = widgetObject;
+                }
+              }
+              if (that.state.widgetCounter >= widgets.length) {
+                this.loader.destroy();
+              }
+            } else {
+              that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+              if (this.state.widgetCounter >= widgets.length) {
+                that.loader.destroy();
+              }
             }
-            else {
-            //dispose if widget exists
-            let hasDashboardFilters=this.state.preparedDashboardFilter?true:false;
-            let renderproperties={"element":widget,"widget":response.data.widget,"hasDashboardFilters":hasDashboardFilters,"dashboardEditMode":false}
-     
-            let widgetObject = WidgetRenderer.render(renderproperties);
-            if (widgetObject) {
-              this.renderedWidgets[widgetUUId] = widgetObject;
-            }
-          }
-          if(that.state.widgetCounter>=widgets.length){
-            this.loader.destroy();
-          }
-          } else {
-            that.setState({ widgetCounter: that.state.widgetCounter+1});
-            if(this.state.widgetCounter>=widgets.length){
-              that.loader.destroy();
-            }}
           });
       }
     }
@@ -271,7 +271,7 @@ extractFilterValues(){
     event.value = data.dashboard;
     let dashboardData = await this.getDashboardHtmlDataByUuid(event.value);
     event.value = JSON.stringify(dashboardData.data.dashboard)
-    let drilldownDashboardFilter=JSON.parse(data.filter)
+    let drilldownDashboardFilter = JSON.parse(data.filter)
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     this.props.drilldownToDashboard(event, "dashname")
   }
@@ -315,13 +315,13 @@ extractFilterValues(){
     let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
 
     //apply dashboard filter if exists
-    if(this.state.preparedDashboardFilter){
+    if (this.state.preparedDashboardFilter) {
       //combining dashboardfilter with widgetfilter
-        let preparedFilter=filter?this.preparefilter(this.state.preparedDashboardFilter,JSON.parse(filter)):this.state.preparedDashboardFilter
-      filter=preparedFilter
+      let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
+      filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
     }
-    else if(filter && ('' !== filter)) {
+    else if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
     }
     //starting spinner 
@@ -333,7 +333,7 @@ extractFilterValues(){
     let element = document.getElementById(elementId);
     this.helper.request('v1', url, null, 'get').
       then(response => {
-        let renderproperties={"element":element,"widget":response.data.widget,"props":eventData,"dashboardEditMode":false}
+        let renderproperties = { "element": element, "widget": response.data.widget, "props": eventData, "dashboardEditMode": false }
         let widgetObject = WidgetRenderer.render(renderproperties);
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;

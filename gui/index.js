@@ -8,6 +8,7 @@ import HTMLViewer from "./src/components/App/HTMLViewer";
 import CommentsView from "./src/components/App/CommentsView";
 import OX_Grid from "./src/OX_Grid";
 import DocumentViewer from "./src/DocumentViewer";
+import DashboardManager from "./src/DashboardManager";
 import Dashboard from "./src/Dashboard";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
@@ -54,6 +55,7 @@ export {
   FormRender,
   OX_Grid,
   DocumentViewer,
+  DashboardManager,
   Dashboard,
   WidgetGrid,
   WidgetRenderer,

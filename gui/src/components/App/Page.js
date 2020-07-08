@@ -530,6 +530,7 @@ class Page extends React.Component {
             proc={this.props.proc}
             setTitle={this.setTitle}
             editDashboard={this.editDashboard}
+            hideEdit={true}
           />
         );
       } else if (item.type == "Dashboard") {
