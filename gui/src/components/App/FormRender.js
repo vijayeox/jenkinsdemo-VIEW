@@ -155,8 +155,12 @@ class FormRender extends React.Component {
       route = route + "/" + this.state.cacheId;
     }
     params.formId = this.state.formId;
+    params.workflowInstanceId = this.state.workflowInstanceId;
+    params.activityInstanceId = this.state.activityInstanceId;
+    params.workflowId = this.state.workflowId;
+    params.page = this.state.page;
     await this.helper.request("v1", route, params, "post").then(response => {
-      this.setState({ cacheId: response.data.id });
+      this.setState({ cacheId: response.data.cacheId });
       return response;
     });
   }
@@ -207,7 +211,7 @@ class FormRender extends React.Component {
   }
   async getActivityInstance() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");  
+    return await this.helper.request("v1",this.appUrl + "/workflowinstance/" + this.state.workflowInstanceId + "/activityinstance/" + this.state.activityInstanceId + "/form",{},"get");
   }
 
   async saveForm(form, data) {
@@ -423,7 +427,7 @@ class FormRender extends React.Component {
 
     loadWorkflow(form) {
       let that = this;
-      if (this.state.parentWorkflowInstanceId) {
+      if (this.state.parentWorkflowInstanceId && (this.state.workflowInstanceId != null)) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
@@ -464,7 +468,7 @@ class FormRender extends React.Component {
             });
           }
         });
-      } 
+      }
       else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
@@ -898,7 +902,7 @@ class FormRender extends React.Component {
         } else {
           if(targetComponent.component && targetComponent.component.properties){
             this.runProps(targetComponent,form,targetComponent.component.properties,form.submission.data);
-          } 
+          }
         }
       }
     });
@@ -949,7 +953,7 @@ class FormRender extends React.Component {
           }
           if(value != undefined){
             targetComponent.setValue(value);
-            form.submission.data[targetComponent.key] = value; 
+            form.submission.data[targetComponent.key] = value;
           }
         } else {
           if (component != undefined && targetComponent != undefined) {
@@ -1028,7 +1032,7 @@ class FormRender extends React.Component {
       if (properties["clear_field"]) {
         var processed = false;
         if(instance){
-          if(instance.rowIndex != null){            
+          if(instance.rowIndex != null){
             var instancePath = instance.path.split('.');
             var instanceRowindex = instance.rowIndex;
             // var targetComponent = form.getComponent(instancePath[0]);
@@ -1043,13 +1047,13 @@ class FormRender extends React.Component {
             form.submission = {data : formdata};
             processed = true;
           }
-        } 
+        }
         if(!processed){
           var targetComponent = form.getComponent(properties["clear_field"]);
           if (targetComponent) {
             targetComponent.setValue("");
-          } 
-        } 
+          }
+        }
       }
 
       if (properties["render"]) {
@@ -1104,7 +1108,7 @@ class FormRender extends React.Component {
                 if (properties["post_delegate_refresh"]) {
                   this.postDelegateRefresh(form,properties);
                 }else{
-                  that.runProps(null,form,properties,that.formatFormData(form.submission.data)); 
+                  that.runProps(null,form,properties,that.formatFormData(form.submission.data));
                 }
                 that.showFormLoader(false,0);
               });
@@ -1341,7 +1345,7 @@ class FormRender extends React.Component {
       });
     }
   };
-  
+
   componentWillUnmount(){
     if(this.state.currentForm != undefined || this.state.currentForm != null){
       this.state.currentForm.destroy();

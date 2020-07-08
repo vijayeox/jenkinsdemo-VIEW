@@ -6,8 +6,6 @@ import {
   countryStateList,
   KendoReactWindow,
   PhoneInput,
-  KendoReactDropDowns,
-  KendoDataQuery,
   KendoReactInput
 } from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
@@ -523,11 +521,10 @@ export default class DialogContainer extends React.Component {
                       value={contactValue}
                       onChange={(phone) => this.onContactPhoneChange(phone)}
                       international={false}
-                      country="US"
                       maxLength="15"
                       required={true}
-                      country={this.countryByIP ? this.countryByIP : "IN"}
-                      countryOptions={["US", "IN", "CA", "|", "..."]}
+                      country={this.countryByIP ? this.countryByIP : "US"}
+                      countryOptionsOrder={["US", "IN", "CA", "|", "..."]}
                     />
                   </div>
                   <div className="col">

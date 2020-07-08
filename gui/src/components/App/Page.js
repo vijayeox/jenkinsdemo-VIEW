@@ -10,6 +10,7 @@ import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import DocumentViewer from "../../DocumentViewer";
 import DashboardManager from "../../DashboardManager";
+import Dashboard from "../../Dashboard";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
 import * as OxzionGUIComponents from "../../../index.js";
@@ -35,6 +36,7 @@ class Page extends React.Component {
       submission: this.props.submission,
       showLoader: false,
       fileId: null,
+      isMenuOpen: false,
       currentRow: {},
       title: '',
       displaySection: 'DB',
@@ -140,7 +142,9 @@ class Page extends React.Component {
                   }).then((result) => {
                     result.value ? this.buttonAction(action[key], e) : null;
                   })
-                  : this.buttonAction(action[key], e);
+                  : action[key].details
+                    ? this.buttonAction(action[key], e)
+                    : null;
               }}
               style={buttonStyles}
             >
@@ -355,6 +359,11 @@ class Page extends React.Component {
     this.setState({ title: title });
   }
 
+
+  hideMenu = () => {
+    this.setState({ isMenuOpen: false });
+  };
+
   switchSection = (section, data) => {
     this.hideMenu();
     this.setState({
@@ -430,7 +439,9 @@ class Page extends React.Component {
             urlPostParams={item.urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
-                ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                ? typeof itemContent.defaultFilters == "string"
+                  ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                  : this.replaceParams(itemContent.defaultFilters)
                 : undefined
             }
             gridOperations={itemContent.operations}
@@ -496,13 +507,23 @@ class Page extends React.Component {
             url={item.url}
           />
         );
-      } else if (item.type == "Dashboard") {
+      } else if (item.type == "DashboardManager") {
         content.push(
           <DashboardManager
             args={this.core}
             proc={this.props.proc}
             setTitle={this.setTitle}
             editDashboard={this.editDashboard}
+          />
+        );
+      } else if (item.type == "Dashboard") {
+        content.push(
+          <Dashboard
+            appId={this.appId}
+            key={i}
+            core={this.core}
+            content={item.content}
+            proc={this.proc}
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
