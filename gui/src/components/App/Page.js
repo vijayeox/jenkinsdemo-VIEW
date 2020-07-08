@@ -386,6 +386,18 @@ class Page extends React.Component {
           item.workflowInstanceId,
           this.state.currentRow
         );
+        var workflowId = this.replaceParams(
+          item.workflowId,
+          this.state.currentRow
+        );
+        var activityInstanceId = this.replaceParams(
+          item.activityInstanceId,
+          this.state.currentRow
+        );
+        var cacheId = this.replaceParams(
+          item.cacheId,
+          this.state.currentRow
+        );
         var fileId = this.replaceParams(item.fileId, this.state.currentRow);
         content.push(
           <FormRender
@@ -399,6 +411,10 @@ class Page extends React.Component {
             formId={item.form_id}
             page={item.page}
             pipeline={item.pipeline}
+            workflowId={workflowId}
+            cacheId={cacheId}
+            isDraft={item.isDraft}
+            activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
             postSubmitCallback={this.stepBackBreadcrumb}
           />
@@ -584,4 +600,3 @@ class Page extends React.Component {
 }
 
 export default Page;
-
