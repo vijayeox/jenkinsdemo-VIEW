@@ -84,7 +84,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       'src/client/assets/images/load.svg',
-      './ViewerJS'
+      './ViewerJS',
+      {from: path.resolve(__dirname, "../gui/src/ckeditor/")}
     ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),

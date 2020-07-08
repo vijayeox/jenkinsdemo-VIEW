@@ -12,6 +12,7 @@
     "prepublishOnly": "npm run test && rm ./dist/* && NODE_ENV=production npm run build && npm run build:esm"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-pro": "^5.13.0",
     "@amcharts/amcharts4": "^4.9.13",
     "@amcharts/amcharts4-geodata": "^4.1.14",
     "@progress/kendo-data-query": "^1.5.3",
