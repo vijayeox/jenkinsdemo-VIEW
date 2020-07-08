@@ -160,7 +160,7 @@ class FormRender extends React.Component {
     params.workflowId = this.state.workflowId;
     params.page = this.state.page;
     await this.helper.request("v1", route, params, "post").then(response => {
-      this.setState({ cacheId: response.data.id });
+      this.setState({ cacheId: response.data.cacheId });
       return response;
     });
   }
