@@ -15,7 +15,7 @@ import DashboardEditor from "./dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
 
-class Dashboard extends React.Component {
+class DashboardManager extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -35,8 +35,8 @@ class Dashboard extends React.Component {
       showFilter: false,
       dashboardFilter: [],
       drilldownDashboardFilter: [],
-      isDrillDownDashboard: false,
-      hideEdit: this.props.hideEdit
+      hideEdit: this.props.hideEdit,
+      dashboardStack:[]
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -74,6 +74,7 @@ class Dashboard extends React.Component {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
+    let dashboardStack=this.state.dashboardStack
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
@@ -81,7 +82,7 @@ class Dashboard extends React.Component {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration }))
+            (inputs["dashname"] = dash, dashboardStack.push({data:dash,drilldownDashboardFilter:this.state.drilldownDashboardFilter}), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack }))
             : that.setState({ inputs: this.state.inputs })
         })
       }
@@ -90,7 +91,8 @@ class Dashboard extends React.Component {
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration })
+            dashboardStack.push({data:dash,drilldownDashboardFilter:this.state.drilldownDashboardFilter})
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack })
           }
         })
       }
@@ -102,23 +104,7 @@ class Dashboard extends React.Component {
 
   setTitle(title) { }
 
-  handleChange(event, inputName) {
-    let inputs = {}
-    inputs = { ...this.state.inputs }
-    let name
-    let value
-    if (inputName && inputName == "dashname") {
-      name = inputName
-      value = JSON.parse(event.value)
-      var element = document.getElementById("dashboard-editor-div");
-      element != undefined && element.classList.add("hide-dash-editor")
-    } else {
-      name = event.target.name
-      value = event.target.value
-    }
-    inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
-  }
+ 
 
   deleteDashboard() {
     let inputs = { ...this.state.inputs }
@@ -176,6 +162,45 @@ class Dashboard extends React.Component {
     }
     else {
       return []
+    }
+  }
+
+  drilldownToDashboard(e,type){
+    //pushing current dashboard details into dashboard stack
+    let dashboardStack=this.state.dashboardStack
+    let value = JSON.parse(e.value)
+    dashboardStack.push({data:value,drilldownDashboardFilter:e.drilldownDashboardFilter})
+    this.setState({dashboardStack:dashboardStack},()=>{this.handleChange(e, type)})
+  }
+
+  handleChange(event, inputName) {
+    let inputs = {}
+    inputs = { ...this.state.inputs }
+    let name
+    let value
+    if (inputName && inputName == "dashname") {
+      var element = document.getElementById("dashboard-editor-div");
+      name = inputName
+      value = JSON.parse(event.value)
+      element != undefined && element.classList.add("hide-dash-editor")
+    } else {
+      name = event.target.name
+      value = event.target.value
+    }
+    inputs[name] = value
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
+  }
+  rollupToDashboard(){
+    let stack=this.state.dashboardStack
+      //removing the last dashboard from stack
+    stack.pop()
+    if(stack && stack.length>0){
+      let dashboard = stack[stack.length -1]
+      let event={}
+      event.value=JSON.stringify(dashboard.data)
+      event.drilldownDashboardFilter=dashboard.drilldownDashboardFilter
+      this.setState({dashboardStack:stack},()=>{this.handleChange(event,"dashname")})
+        
     }
   }
 
@@ -298,7 +323,7 @@ class Dashboard extends React.Component {
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
-                      drilldownToDashboard={(e, type) => this.setState({ isDrillDownDashboard: true }, () => { this.handleChange(e, type) })}
+                      drilldownToDashboard={(e, type) => this.drilldownToDashboard(e,type)}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}
@@ -308,7 +333,8 @@ class Dashboard extends React.Component {
                       dashboardFilter={this.state.dashboardFilter}
                       applyDashboardFilter={filter => this.applyDashboardFilter(filter)}
                       drilldownDashboardFilter={this.state.drilldownDashboardFilter}
-                      isDrillDownDashboard={this.state.isDrillDownDashboard}
+                      dashboardStack={this.state.dashboardStack}
+                      rollupToDashboard={()=>this.rollupToDashboard()}
                     />
                   }
 
@@ -365,5 +391,5 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default DashboardManager;
 

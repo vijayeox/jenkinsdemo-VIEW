@@ -14,7 +14,8 @@ class Dashboard extends Component {
       dashboardFilter: this.props.dashboardFilter,
       preparedDashboardFilter: null,
       drilldownDashboardFilter: [],
-      widgetCounter: 0
+      widgetCounter: 0,
+
     };
     this.content = this.props.content;
     this.renderedWidgets = {};
@@ -35,6 +36,7 @@ class Dashboard extends Component {
     this.props.proc.on("destroy", () => {
       this.removeScriptsFromDom();
     });
+    this.rollupToDashboard = this.rollupToDashboard.bind(this);
   }
 
   async getDashboardHtmlDataByUuid(uuid) {
@@ -47,6 +49,7 @@ class Dashboard extends Component {
     return response;
   }
 
+ 
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
@@ -57,22 +60,39 @@ class Dashboard extends Component {
     );
     return response;
   }
-
+ 
   appendToDashboardContainer(htmlData) {
-    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + htmlData + "</div>"
+    let backButton=""
+    if(this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length>0 ){
+      //rendering back button for drilled down dashboard
+      backButton=`<div id='dashboard-rollup-button' title="Previous Dashboard" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+    }
+    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + backButton + htmlData + "</div>"
     return container
   }
-
+  setupDrillDownListeners(){
+   if(document.getElementById("dashboard-rollup-button")){
+      let backbutton=document.getElementById("dashboard-rollup-button")
+      backbutton.addEventListener('click', event => {
+      this.rollupToDashboard()
+    });
+    }
+  }
   componentDidMount() {
+ 
+   
     if (this.uuid) {
       let thiz = this;
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
         if (response.status == "success") {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
-          });
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
-
+          },()=>{
+            this.setupDrillDownListeners()
+          }
+          );
+            (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0 ) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+        
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -275,7 +295,9 @@ class Dashboard extends Component {
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     this.props.drilldownToDashboard(event, "dashname")
   }
-
+  rollupToDashboard(){
+    this.props.rollupToDashboard()
+  }
   widgetDrillDownMessageHandler = (event) => {
     let eventData = event.data;
     if (eventData.target == 'dashboard') {
@@ -357,7 +379,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData ? this.state.htmlData : '') }} />;
+    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData ? this.state.htmlData : '') }} />
   }
 }
 

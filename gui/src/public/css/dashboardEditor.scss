@@ -169,9 +169,14 @@
   box-shadow: 2px 5px#c6b5b5;
   padding: 1em;
 }
-
-.dashboard-preview-tab {
-  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
+.dashboard-rollup-button{
+color: black;
+cursor: pointer;
+right: 1%;
+position: absolute;
+}
+.dashboard-preview-tab{
+  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65,#1d6365);
   height: 1.3em;
   color: #f2f2f2;
   top: 50%;
