@@ -154,7 +154,6 @@ class FormRender extends React.Component {
     if (this.state.cacheId) {
       route = route + "/" + this.state.cacheId;
     }
-    params.inDraft = "true";
     params.formId = this.state.formId;
     params.workflowInstanceId = this.state.workflowInstanceId;
     params.activityInstanceId = this.state.activityInstanceId;
