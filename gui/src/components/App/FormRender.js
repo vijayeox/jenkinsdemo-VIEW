@@ -433,7 +433,7 @@ class FormRender extends React.Component {
     loadWorkflow(form) {
       let that = this;
       console.log(this.state);
-      if (this.state.parentWorkflowInstanceId && (this.state.workflowInstanceId != null)) {
+      if (this.state.parentWorkflowInstanceId) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);

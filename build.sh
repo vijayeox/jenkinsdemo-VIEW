@@ -86,15 +86,15 @@ while [ "$1" != "" ]; do
     shift
 done
 npm install
+if [ "$BUILD_GUI" = true ] || [ "$BUILD_ALL" = true ] ; then
+    build_project $GUI
+fi
 if [ "$BUILD_APPS" = true ] || [ "$BUILD_ALL" = true ] ; then
     if [ ${#APPS_TO_BUILD[@]} -eq 0 ]; then
         build_projects $APPS
     else    
         build_projects $APPS "${APPS_TO_BUILD[@]}"
     fi
-fi
-if [ "$BUILD_GUI" = true ] || [ "$BUILD_ALL" = true ] ; then
-    build_project $GUI
 fi
 if [ "$BUILD_ICON_PACKS" = true ] || [ "$BUILD_ALL" = true ] ; then
     build_projects $ICON_PACKS
