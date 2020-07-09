@@ -146,7 +146,7 @@ class DashboardEditor extends React.Component {
                         height: 600,
                     }
                 },
-                dialogUrl: './ckeditor/widgetEditorDialog.html'
+                dialogUrl: './widgetEditorDialog.html'
             }
         };
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
