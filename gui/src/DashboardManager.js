@@ -268,13 +268,17 @@ class Dashboard extends React.Component {
                             }
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
-                              <Button
-                                onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
-                                title="Make current dashboard as default dashboard"
-                              >
-                                MAKE DEFAULT
+                              (this.props.hideEdit == false &&
+                                <Button
+                                  onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
+                                  title="Make current dashboard as default dashboard"
+                                >MAKE DEFAULT
                                 </Button>
-                              : <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
+                              )
+                              : (this.props.hideEdit == false &&
+                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard 123</span>
+                              )
+
                             }
                           </>
                         }
