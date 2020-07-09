@@ -266,7 +266,7 @@ class Dashboard extends React.Component {
                                 <i className="fa fa-trash" aria-hidden="true"></i>
                               </Button>
                             }
-                            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                            {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
                               <Button
                                 onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
