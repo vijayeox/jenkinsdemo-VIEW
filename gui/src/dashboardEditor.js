@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
 import './public/css/dashboardEditor.scss'
-// import '@progress/kendo-theme-default/dist/all.css';
+import '@progress/kendo-theme-default/dist/all.css';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
@@ -149,6 +149,7 @@ class DashboardEditor extends React.Component {
                 dialogUrl: './widgetEditorDialog.html'
             }
         };
+    
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo('ckEditorInstance', config);
