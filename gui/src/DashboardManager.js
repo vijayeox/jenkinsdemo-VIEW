@@ -276,7 +276,7 @@ class Dashboard extends React.Component {
                                 </Button>
                               )
                               : (this.props.hideEdit == false &&
-                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard 123</span>
+                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
                               )
 
                             }
