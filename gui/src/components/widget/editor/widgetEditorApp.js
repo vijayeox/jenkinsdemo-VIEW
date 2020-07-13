@@ -556,19 +556,20 @@ class WidgetEditorApp extends React.Component {
     }
 
     syncWidgetState(name,value){
-        if(value!=null && value!==""){
-            let widget={...this.state.widget}
-            if(name==="configuration" || name==="expression"){
-                widget[name]=JSON.parse(value)
-            this.setState({widget:widget})
-
-            } else if(name==="queries"){
-                widget[name]=value
-            this.setState({widget:widget})
-
+        if(this.state.mode=="copy"){
+            if(value!=null && value!==""){
+                let widget={...this.state.widget}
+                if(name==="configuration" || name==="expression"){
+                    widget[name]=JSON.parse(value)
+                this.setState({widget:widget})
+    
+                } else if(name==="queries"){
+                    widget[name]=value
+                this.setState({widget:widget})
+    
+                }
             }
-        }
-       
+        } 
     }
 
     render() {

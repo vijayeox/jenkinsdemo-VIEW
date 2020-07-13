@@ -302,7 +302,7 @@ class AbstractEditor extends React.Component {
         },
             () => {
                 thiz.props.syncWidgetState("queries",thiz.state.queries)
-                thiz.loadData(thiz.refreshQueryPreview());
+                thiz.loadData(thiz.refreshQueryPreview);
             });
     }
 
