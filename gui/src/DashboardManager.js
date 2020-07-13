@@ -26,7 +26,7 @@ class DashboardManager extends React.Component {
       modalType: "",
       modalContent: {},
       flipped: false,
-      uuid: "",
+      uuid: this.props.uuid,
       dashList: [],
       inputs: {},
       dashboardBody: "",
@@ -47,12 +47,15 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDashboards()
+    if (this.props.uuid != "" && this.props.uuid != 0) {
+      this.getDashboardHtmlDataByUuid(this.props.uuid)
+    } else {
+      this.fetchDashboards()
+    }
   }
 
   async getUserDetails(uuid) {
-    let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request(
+    let rolesList = await this.restClient.request(
       "v1",
       "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
@@ -70,6 +73,25 @@ class DashboardManager extends React.Component {
     }
   }
 
+  async getDashboardHtmlDataByUuid(uuid) {
+    let helper = this.restClient;
+    let dashboardStack = this.state.dashboardStack
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
+    let dashData = [];
+    let response = await helper.request(
+      "v1",
+      "analytics/dashboard/" + uuid,
+      {},
+      "get"
+    );
+    let dash = response.data.dashboard;
+    dashData.push({ dashData: response.data });
+    inputs["dashname"] = dash
+    dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+  }
+
+
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
@@ -85,8 +107,7 @@ class DashboardManager extends React.Component {
             (inputs["dashname"] = dash, dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter }), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack }))
             : that.setState({ inputs: this.state.inputs })
         })
-      }
-      else {
+      } else {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
@@ -96,8 +117,7 @@ class DashboardManager extends React.Component {
           }
         })
       }
-    }
-    else {
+    } else {
       this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
@@ -187,7 +207,7 @@ class DashboardManager extends React.Component {
     inputs["dashname"] = value
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
   }
-  
+
   handleChange(event, inputName) {
     let inputs = {}
     inputs = { ...this.state.inputs }
@@ -207,7 +227,7 @@ class DashboardManager extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter ,dashboardStack:dashboardStack})
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
   rollupToDashboard() {
     let stack = this.state.dashboardStack

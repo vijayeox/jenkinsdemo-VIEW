@@ -49,7 +49,7 @@ class Dashboard extends Component {
     return response;
   }
 
- 
+
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
@@ -60,39 +60,38 @@ class Dashboard extends Component {
     );
     return response;
   }
- 
+
   appendToDashboardContainer(htmlData) {
-    let backButton=""
-    if(this.props.dashboardStack && this.props.dashboardStack .length>1 ){
+    let backButton = ""
+    if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
-      backButton=`<div id='dashboard-rollup-button' title="Previous Dashboard" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+      backButton = `<div id='dashboard-rollup-button' title="Previous Dashboard" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
     }
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + backButton + htmlData + "</div>"
     return container
   }
-  setupDrillDownListeners(){
-   if(document.getElementById("dashboard-rollup-button")){
-      let backbutton=document.getElementById("dashboard-rollup-button")
+  setupDrillDownListeners() {
+    if (document.getElementById("dashboard-rollup-button")) {
+      let backbutton = document.getElementById("dashboard-rollup-button")
       backbutton.addEventListener('click', event => {
-      this.rollupToDashboard()
-    });
+        this.rollupToDashboard()
+      });
     }
   }
+
   componentDidMount() {
- 
-   
     if (this.uuid) {
       let thiz = this;
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
         if (response.status == "success") {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
-          },()=>{
+          }, () => {
             this.setupDrillDownListeners()
           }
           );
-            (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0 ) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
-        
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -295,7 +294,7 @@ class Dashboard extends Component {
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     this.props.drilldownToDashboard(event, "dashname")
   }
-  rollupToDashboard(){
+  rollupToDashboard() {
     this.props.rollupToDashboard()
   }
   widgetDrillDownMessageHandler = (event) => {
