@@ -47,7 +47,7 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.uuid != "" && this.props.uuid != 0) {
+    if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
       this.fetchDashboards()
