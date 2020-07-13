@@ -137,11 +137,12 @@ class AbstractEditor extends React.Component {
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
             state.widgetType = type;
-            state.selectedTab = type;
             return state;
         },
             () => {
-                thiz.refreshViews();
+                if (this.state.selectedTab !== '' && this.state.selectedTab=="widget") {
+                    thiz.refreshViews();
+                }
             });
     }
 
