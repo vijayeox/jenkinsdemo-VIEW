@@ -137,11 +137,14 @@ class AbstractEditor extends React.Component {
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
             state.widgetType = type;
-            state.selectedTab = type;
             return state;
         },
             () => {
-                thiz.refreshViews();
+                if (this.state.selectedTab !== '' && this.state.selectedTab=="widget") {
+                    thiz.refreshViews();
+                } else if(this.state.selectedTab !== '' && this.state.selectedTab=="query"){
+                    thiz.refreshQueryPreview()
+                }
             });
     }
 
@@ -301,7 +304,6 @@ class AbstractEditor extends React.Component {
             return state;
         },
             () => {
-                thiz.props.syncWidgetState("queries",thiz.state.queries)
                 thiz.loadData(thiz.refreshQueryPreview);
             });
     }
@@ -514,6 +516,7 @@ class AbstractEditor extends React.Component {
         window.postDataRequest(postUrl, params, method).
             then(function (responseData) {
                 thiz.data = responseData.query.data;
+                thiz.props.syncWidgetState("queries",thiz.state.queries,thiz.data)
                 if (postLoadCallback) {
                     postLoadCallback();
                 }
@@ -527,6 +530,7 @@ class AbstractEditor extends React.Component {
                     text: 'Could not load data. Please try after some time.'
                 });
             });
+
     }
 
     loadQueries = (postLoadCallback) => {

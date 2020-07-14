@@ -524,6 +524,7 @@ class Page extends React.Component {
           />
         );
       } else if (item.type == "DashboardManager") {
+        console.log("Page UUID" + item.content.uuid)
         content.push(
           <DashboardManager
             args={this.core}
@@ -531,6 +532,7 @@ class Page extends React.Component {
             setTitle={this.setTitle}
             editDashboard={this.editDashboard}
             hideEdit={true}
+            uuid={item.content.uuid}
           />
         );
       } else if (item.type == "Dashboard") {

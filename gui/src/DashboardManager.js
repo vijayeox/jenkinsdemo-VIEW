@@ -26,7 +26,7 @@ class DashboardManager extends React.Component {
       modalType: "",
       modalContent: {},
       flipped: false,
-      uuid: "",
+      uuid: this.props.uuid,
       dashList: [],
       inputs: {},
       dashboardBody: "",
@@ -36,7 +36,7 @@ class DashboardManager extends React.Component {
       dashboardFilter: [],
       drilldownDashboardFilter: [],
       hideEdit: this.props.hideEdit,
-      dashboardStack:[]
+      dashboardStack: []
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -47,12 +47,15 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDashboards()
+    if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
+      this.getDashboardHtmlDataByUuid(this.props.uuid)
+    } else {
+      this.fetchDashboards()
+    }
   }
 
   async getUserDetails(uuid) {
-    let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request(
+    let rolesList = await this.restClient.request(
       "v1",
       "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
@@ -70,11 +73,30 @@ class DashboardManager extends React.Component {
     }
   }
 
+  async getDashboardHtmlDataByUuid(uuid) {
+    let helper = this.restClient;
+    let dashboardStack = this.state.dashboardStack
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
+    let dashData = [];
+    let response = await helper.request(
+      "v1",
+      "analytics/dashboard/" + uuid,
+      {},
+      "get"
+    );
+    let dash = response.data.dashboard;
+    dashData.push({ dashData: response.data });
+    inputs["dashname"] = dash
+    dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+  }
+
+
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let dashboardStack=this.state.dashboardStack
+    let dashboardStack = this.state.dashboardStack
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
@@ -82,29 +104,27 @@ class DashboardManager extends React.Component {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, dashboardStack.push({data:dash,drilldownDashboardFilter:this.state.drilldownDashboardFilter}), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack }))
+            (inputs["dashname"] = dash, dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter }), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack }))
             : that.setState({ inputs: this.state.inputs })
         })
-      }
-      else {
+      } else {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            dashboardStack.push({data:dash,drilldownDashboardFilter:this.state.drilldownDashboardFilter})
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack })
+            dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
           }
         })
       }
-    }
-    else {
+    } else {
       this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
 
   setTitle(title) { }
 
- 
+
 
   deleteDashboard() {
     let inputs = { ...this.state.inputs }
@@ -165,12 +185,27 @@ class DashboardManager extends React.Component {
     }
   }
 
-  drilldownToDashboard(e,type){
-    //pushing current dashboard details into dashboard stack
-    let dashboardStack=this.state.dashboardStack
+  drilldownToDashboard(e, type) {
+    //pushing next dashboard details into dashboard stack
+    let dashboardStack = this.state.dashboardStack
     let value = JSON.parse(e.value)
-    dashboardStack.push({data:value,drilldownDashboardFilter:e.drilldownDashboardFilter})
-    this.setState({dashboardStack:dashboardStack},()=>{this.handleChange(e, type)})
+    dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+    this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
+  }
+
+
+  changeDashboard(event) {
+    //defining change dashboard explicitly to support reset dashboard on handle change
+    let inputs = {}
+    inputs = { ...this.state.inputs }
+    let name
+    let value
+    var element = document.getElementById("dashboard-editor-div");
+
+    value = JSON.parse(event.value)
+    element != undefined && element.classList.add("hide-dash-editor")
+    inputs["dashname"] = value
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
   }
 
   handleChange(event, inputName) {
@@ -178,6 +213,10 @@ class DashboardManager extends React.Component {
     inputs = { ...this.state.inputs }
     let name
     let value
+    // resetting stack on manual change of dashboard
+    let dashboardStack = []
+    value = JSON.parse(event.value)
+    dashboardStack.push({ data: value, drilldownDashboardFilter: [] })
     if (inputName && inputName == "dashname") {
       var element = document.getElementById("dashboard-editor-div");
       name = inputName
@@ -188,19 +227,19 @@ class DashboardManager extends React.Component {
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
-  rollupToDashboard(){
-    let stack=this.state.dashboardStack
-      //removing the last dashboard from stack
+  rollupToDashboard() {
+    let stack = this.state.dashboardStack
+    //removing the last dashboard from stack
     stack.pop()
-    if(stack && stack.length>0){
-      let dashboard = stack[stack.length -1]
-      let event={}
-      event.value=JSON.stringify(dashboard.data)
-      event.drilldownDashboardFilter=dashboard.drilldownDashboardFilter
-      this.setState({dashboardStack:stack},()=>{this.handleChange(event,"dashname")})
-        
+    if (stack && stack.length > 0) {
+      let dashboard = stack[stack.length - 1]
+      let event = {}
+      event.value = JSON.stringify(dashboard.data)
+      event.drilldownDashboardFilter = dashboard.drilldownDashboardFilter
+      this.setState({ dashboardStack: stack }, () => { this.changeDashboard(event) })
+
     }
   }
 
@@ -323,7 +362,7 @@ class DashboardManager extends React.Component {
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
-                      drilldownToDashboard={(e, type) => this.drilldownToDashboard(e,type)}
+                      drilldownToDashboard={(e, type) => this.drilldownToDashboard(e, type)}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}
@@ -334,7 +373,7 @@ class DashboardManager extends React.Component {
                       applyDashboardFilter={filter => this.applyDashboardFilter(filter)}
                       drilldownDashboardFilter={this.state.drilldownDashboardFilter}
                       dashboardStack={this.state.dashboardStack}
-                      rollupToDashboard={()=>this.rollupToDashboard()}
+                      rollupToDashboard={() => this.rollupToDashboard()}
                     />
                   }
 
