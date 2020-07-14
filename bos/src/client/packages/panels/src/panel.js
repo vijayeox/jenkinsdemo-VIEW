@@ -164,9 +164,6 @@ export default class Panel extends EventEmitter {
     appmenuElement.classList.add('appmenu');
     appmenuElement.id = 'appmenu';
     this.core.$root.appendChild(appmenuElement);
-    let geoDiv = document.createElement('div');
-    geoDiv.classList.add('geotargetlygeocontent1594566857126');
-    this.core.$root.appendChild(geoDiv);
     if (this.options.position === 'top') {
       appmenuElement.style['margin-top'] = '3.5em';
     } else {
