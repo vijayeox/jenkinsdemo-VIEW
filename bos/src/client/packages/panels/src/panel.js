@@ -72,7 +72,7 @@ export default class Panel extends EventEmitter {
       if(self.inited) {
         self.destroy();
         self.init();
-        self.setPosition(this.options.position);      
+        self.setPosition(this.options.position);
       }
     });
     this.formatDate = this.formatDate.bind(this);
@@ -164,6 +164,9 @@ export default class Panel extends EventEmitter {
     appmenuElement.classList.add('appmenu');
     appmenuElement.id = 'appmenu';
     this.core.$root.appendChild(appmenuElement);
+    let geoDiv = document.createElement('div');
+    geoDiv.classList.add('geotargetlygeocontent1594566857126');
+    this.core.$root.appendChild(geoDiv);
     if (this.options.position === 'top') {
       appmenuElement.style['margin-top'] = '3.5em';
     } else {
