@@ -8,11 +8,13 @@ class AbstractEditor extends React.Component {
         super(props);
         this.state = {
             selectedTab: null,
+            widgetType:null,
             readOnly: true,
             queries: [],
             configuration: '',
             drillDownFilter: '',
             drillDownWidget: '',
+            drillDownTarget:'',
             expression: '',
             drillDownWidgetTitle: '',
             drillDownWidgetType: "",
@@ -27,7 +29,7 @@ class AbstractEditor extends React.Component {
                 queries: []
             }
         };
-        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }]
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" },{ "label": "Dashboard", "value": "dashboard" }]
         this.queryList = [];
         this.data = null;
     }
@@ -72,9 +74,10 @@ class AbstractEditor extends React.Component {
             drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
             drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
             drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
+            drillDownTarget:configuration["oxzion-meta"]["drillDown"]["target"] || '',
             hasMaxDepth: hasMaxDepth,
             drillDownMaxDepth: maxDepth
-        }, state => this.setWidgetType())
+        }, state => this.setDrillDownTargetType(this.state.drillDownTarget))
     }
 
     handleSelect(e, type) {
@@ -94,13 +97,14 @@ class AbstractEditor extends React.Component {
             }
         }
         else if (name == "drillDownWidgetType") {
+            let filteredWidgetList =null
             if (value == 'dashboard') {
-                let filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
-                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+                 filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
             } else {
-                let filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
-                this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+                 filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
             }
+            this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
+
         }
         else {
             this.setState({ [name]: value, errors: errors })
@@ -111,6 +115,7 @@ class AbstractEditor extends React.Component {
     setWidgetData = (widgetData) => {
         this.data = widgetData.data;
         let queries = [];
+        let type=(this.props.type === 'inline' || this.props.type === 'html')?'widget':this.props.type;
         if (widgetData.queries) {
             widgetData.queries.forEach(function (query, index) {
                 let configuration = query.configuration;
@@ -131,10 +136,13 @@ class AbstractEditor extends React.Component {
             state.configuration = widgetData.configuration ? JSON.stringify(widgetData.configuration, null, '    ') : '';
             state.expression = widgetData.expression ? JSON.stringify(widgetData.expression, null, '    ') : '';
             state.queries = queries;
+            state.widgetType = type;
             return state;
         },
             () => {
-                thiz.refreshViews();
+                if (this.state.selectedTab !== '' && this.state.selectedTab=="widget") {
+                    thiz.refreshViews();
+                }
             });
     }
 
@@ -210,16 +218,26 @@ class AbstractEditor extends React.Component {
                     }
                 }
             }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType })
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType },()=>{
+                this.props.syncWidgetState("configuration",this.state.configuration);
+            })
         }
     }
 
-    setWidgetType() {
+    setDrillDownTargetType(target) {
         if (this.state.selectableWidgetOptions.length > 0) {
-            let selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
-            let selectedWidget = selectedWidgetOption[0]["type"]
+            let selectedWidgetOption =null
+            if(target=="dashboard")
+            {
+                selectedWidgetOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+            } else
+            {
+                selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+            }
+            let widget= selectedWidgetOption[0] ? selectedWidgetOption[0]["type"]:''
+            let selectedWidget = widget
             let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
-            this.setState({ drillDownWidgetType: widgetType })
+            this.setState({ drillDownWidgetType: widgetType[0] })
         }
     }
 
@@ -262,6 +280,15 @@ class AbstractEditor extends React.Component {
         }
     }
 
+    getSelectedDrillDownWidget(){
+        if(this.state.drillDownWidgetType!==""){
+           return this.state.drillDownWidgetType.value == "dashboard" ? 
+                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) 
+            : 
+                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+
+    }
+
     querySelectionChanged = (evt, index) => {
         let thiz = this;
         let value = evt.value;
@@ -275,7 +302,8 @@ class AbstractEditor extends React.Component {
             return state;
         },
             () => {
-                thiz.loadData(thiz.refreshQueryPreview());
+                thiz.props.syncWidgetState("queries",thiz.state.queries)
+                thiz.loadData(thiz.refreshQueryPreview);
             });
     }
 
@@ -514,6 +542,7 @@ class AbstractEditor extends React.Component {
                 }
             }).
             catch(function (response) {
+                console.error(response)
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',

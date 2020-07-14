@@ -2,16 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
-import { Notification, DashboardViewer, DashboardFilter } from '../../apps/Analytics/GUIComponents'
+// import { Notification, DashboardViewer, DashboardFilter } from ''
+import Notification from './Notification'
+import DashboardViewer from './Dashboard'
+import DashboardFilter from './DashboardFilter'
+
 import { Button, Form, Col, Row } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
-import DashboardEditor from "../../apps/Analytics/dashboardEditor"
+import DashboardEditor from "./dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
 
-class Dashboard extends React.Component {
+class DashboardManager extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
@@ -22,7 +26,7 @@ class Dashboard extends React.Component {
       modalType: "",
       modalContent: {},
       flipped: false,
-      uuid: "",
+      uuid: this.props.uuid,
       dashList: [],
       inputs: {},
       dashboardBody: "",
@@ -31,6 +35,8 @@ class Dashboard extends React.Component {
       showFilter: false,
       dashboardFilter: [],
       drilldownDashboardFilter: [],
+      hideEdit: this.props.hideEdit,
+      dashboardStack: []
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -41,12 +47,15 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDashboards()
+    if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
+      this.getDashboardHtmlDataByUuid(this.props.uuid)
+    } else {
+      this.fetchDashboards()
+    }
   }
 
   async getUserDetails(uuid) {
-    let helper2 = this.core.make("oxzion/restClient");
-    let rolesList = await helper2.request(
+    let rolesList = await this.restClient.request(
       "v1",
       "organization/" + this.props.selectedOrg + "/user/" + uuid + "/profile",
       {},
@@ -64,10 +73,30 @@ class Dashboard extends React.Component {
     }
   }
 
+  async getDashboardHtmlDataByUuid(uuid) {
+    let helper = this.restClient;
+    let dashboardStack = this.state.dashboardStack
+    let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
+    let dashData = [];
+    let response = await helper.request(
+      "v1",
+      "analytics/dashboard/" + uuid,
+      {},
+      "get"
+    );
+    let dash = response.data.dashboard;
+    dashData.push({ dashData: response.data });
+    inputs["dashname"] = dash
+    dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+  }
+
+
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
+    let dashboardStack = this.state.dashboardStack
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
@@ -75,44 +104,27 @@ class Dashboard extends React.Component {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
           dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration }))
+            (inputs["dashname"] = dash, dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter }), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack }))
             : that.setState({ inputs: this.state.inputs })
         })
-      }
-      else {
+      } else {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration })
+            dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
           }
         })
       }
-    }
-    else {
+    } else {
       this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
     }
   }
 
   setTitle(title) { }
 
-  handleChange(event, inputName) {
-    let inputs = {}
-    inputs = { ...this.state.inputs }
-    let name
-    let value
-    if (inputName && inputName == "dashname") {
-      name = inputName
-      value = JSON.parse(event.value)
-      var element = document.getElementById("dashboard-editor-div");
-      element != undefined && element.classList.add("hide-dash-editor")
-    } else {
-      name = event.target.name
-      value = event.target.value
-    }
-    inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter})
-  }
+
 
   deleteDashboard() {
     let inputs = { ...this.state.inputs }
@@ -173,6 +185,64 @@ class Dashboard extends React.Component {
     }
   }
 
+  drilldownToDashboard(e, type) {
+    //pushing next dashboard details into dashboard stack
+    let dashboardStack = this.state.dashboardStack
+    let value = JSON.parse(e.value)
+    dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+    this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
+  }
+
+
+  changeDashboard(event) {
+    //defining change dashboard explicitly to support reset dashboard on handle change
+    let inputs = {}
+    inputs = { ...this.state.inputs }
+    let name
+    let value
+    var element = document.getElementById("dashboard-editor-div");
+
+    value = JSON.parse(event.value)
+    element != undefined && element.classList.add("hide-dash-editor")
+    inputs["dashname"] = value
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
+  }
+
+  handleChange(event, inputName) {
+    let inputs = {}
+    inputs = { ...this.state.inputs }
+    let name
+    let value
+    // resetting stack on manual change of dashboard
+    let dashboardStack = []
+    value = JSON.parse(event.value)
+    dashboardStack.push({ data: value, drilldownDashboardFilter: [] })
+    if (inputName && inputName == "dashname") {
+      var element = document.getElementById("dashboard-editor-div");
+      name = inputName
+      value = JSON.parse(event.value)
+      element != undefined && element.classList.add("hide-dash-editor")
+    } else {
+      name = event.target.name
+      value = event.target.value
+    }
+    inputs[name] = value
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
+  }
+  rollupToDashboard() {
+    let stack = this.state.dashboardStack
+    //removing the last dashboard from stack
+    stack.pop()
+    if (stack && stack.length > 0) {
+      let dashboard = stack[stack.length - 1]
+      let event = {}
+      event.value = JSON.stringify(dashboard.data)
+      event.drilldownDashboardFilter = dashboard.drilldownDashboardFilter
+      this.setState({ dashboardStack: stack }, () => { this.changeDashboard(event) })
+
+    }
+  }
+
   render() {
     return (
       <div className="dashboard">
@@ -184,7 +254,8 @@ class Dashboard extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+            {
+              !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
               <div className="row">
                 <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
               </div>
@@ -208,27 +279,30 @@ class Dashboard extends React.Component {
                   <Form className="dashboard-manager-items">
                     <Row>
                       <Col lg="4" md="4" sm="4">
-                        <Form.Group as={Row} >
-                          <Col>
-                            <Select
-                              name="dashname"
-                              className="react-select-container"
-                              placeholder="Select Dashboard"
-                              id="dashname"
-                              onChange={(e) => this.handleChange(e, "dashname")}
-                              value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
-                              options={this.state.dashList &&
-                                this.state.dashList.map((option, index) => {
-                                  return {
-                                    value: JSON.stringify(option),
-                                    label: option.name,
-                                    key: option.uuid
-                                  }
-                                })
-                              }
-                            />
-                          </Col>
-                        </Form.Group>
+                        {
+                          !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                          <Form.Group as={Row} >
+                            <Col>
+                              <Select
+                                name="dashname"
+                                className="react-select-container"
+                                placeholder="Select Dashboard"
+                                id="dashname"
+                                onChange={(e) => this.handleChange(e, "dashname")}
+                                value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
+                                options={this.state.dashList &&
+                                  this.state.dashList.map((option, index) => {
+                                    return {
+                                      value: JSON.stringify(option),
+                                      label: option.name,
+                                      key: option.uuid
+                                    }
+                                  })
+                                }
+                              />
+                            </Col>
+                          </Form.Group>
+                        }
                       </Col>
                       <div className="dash-manager-buttons">
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
@@ -244,9 +318,9 @@ class Dashboard extends React.Component {
                             <Button onClick={() => this.showFilter()} title="Filter Dashboard">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
-                            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                            {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
-                                <i className="fa fa-pen" aria-hidden="true"></i>
+                                <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }
                             {
@@ -258,13 +332,17 @@ class Dashboard extends React.Component {
                             }
                             {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
-                              <Button
-                                onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
-                                title="Make current dashboard as default dashboard"
-                              >
-                                MAKE DEFAULT
+                              (this.props.hideEdit == false &&
+                                <Button
+                                  onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
+                                  title="Make current dashboard as default dashboard"
+                                >MAKE DEFAULT
                                 </Button>
-                              : <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
+                              )
+                              : (this.props.hideEdit == false &&
+                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
+                              )
+
                             }
                           </>
                         }
@@ -275,13 +353,16 @@ class Dashboard extends React.Component {
                 </div>
 
                 <div className="dashboard-viewer-div">
-                  <div className="dashboard-preview-tab">
-                    <span>Dashboard Previewer</span>
-                  </div>
+                  {
+                    !this.props.hideEdit &&
+                    <div className="dashboard-preview-tab">
+                      <span>Dashboard Previewer</span>
+                    </div>
+                  }
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
-                      handleChange={(e, type) => this.handleChange(e, type)}
+                      drilldownToDashboard={(e, type) => this.drilldownToDashboard(e, type)}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}
@@ -291,6 +372,8 @@ class Dashboard extends React.Component {
                       dashboardFilter={this.state.dashboardFilter}
                       applyDashboardFilter={filter => this.applyDashboardFilter(filter)}
                       drilldownDashboardFilter={this.state.drilldownDashboardFilter}
+                      dashboardStack={this.state.dashboardStack}
+                      rollupToDashboard={() => this.rollupToDashboard()}
                     />
                   }
 
@@ -347,5 +430,5 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default DashboardManager;
 

@@ -33,6 +33,27 @@ export default class ConvergePayCheckoutComponent extends Base {
       var paymentData = {
         ssl_txn_auth_token: e.detail.token
       };
+      var paymentObj;
+      if(document.getElementById("convergepay-description")){
+        console.log(document.getElementById("convergepay-description"))
+        try{
+          paymentObj = JSON.parse(document.getElementById("convergepay-description").value)
+        } catch(e){
+          paymentObj = document.getElementById("convergepay-description").value
+        }
+      } 
+      if(paymentObj == "") {
+        if(that.component.description){
+          try{
+            paymentObj = JSON.parse(that.form.data[that.component.description]);
+          } catch(e){
+            paymentObj = that.form.data[that.component.description];
+          }
+        }
+      }
+      for (var prop in paymentObj) {
+        paymentData[prop] = paymentObj[prop];
+      }
       var callback = {
         onError: function(error) {
           document.getElementById("cardPayment").style.display = "none";
@@ -50,7 +71,7 @@ export default class ConvergePayCheckoutComponent extends Base {
             "getPaymentToken",
             getPaymentToken,
             false
-          );
+            );
         },
         onCancelled: function() {
           document.getElementById("cardPayment").style.display = "none";
@@ -68,7 +89,7 @@ export default class ConvergePayCheckoutComponent extends Base {
             "getPaymentToken",
             getPaymentToken,
             false
-          );
+            );
         },
         onDeclined: function(response) {
           document.getElementById("cardPayment").style.display = "none";
@@ -86,7 +107,7 @@ export default class ConvergePayCheckoutComponent extends Base {
             "getPaymentToken",
             getPaymentToken,
             false
-          );
+            );
         },
         onApproval: function(response) {
           console.log("Approval Code=" + response["ssl_approval_code"]);
@@ -108,7 +129,7 @@ export default class ConvergePayCheckoutComponent extends Base {
         "getPaymentToken",
         getPaymentToken,
         false
-      );
+        );
     };
 
     var paymentDetails = function(e) {
@@ -117,7 +138,7 @@ export default class ConvergePayCheckoutComponent extends Base {
         "PayWithConverge",
         e.detail.js_url,
         true
-      );
+        );
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -129,8 +150,7 @@ export default class ConvergePayCheckoutComponent extends Base {
             detail: {
               firstname: document.getElementById("convergepay-firstname").value,
               lastname: document.getElementById("convergepay-lastname").value,
-              amount: document.getElementById("convergepay-amount").value,
-              description: document.getElementById("convergepay-description").value
+              amount: document.getElementById("convergepay-amount").value
             }
           });
           that.form.element.dispatchEvent(evt);
@@ -146,13 +166,13 @@ export default class ConvergePayCheckoutComponent extends Base {
       "paymentDetails",
       paymentDetails,
       false
-    );
+      );
     this.form.element.addEventListener("paymentDetails", paymentDetails, false);
     this.form.element.addEventListener(
       "getPaymentToken",
       getPaymentToken,
       false
-    );
+      );
     this.form.on("change", changed => {
       if(changed && changed.changed){
         var component = changed.changed.component;
@@ -166,15 +186,18 @@ export default class ConvergePayCheckoutComponent extends Base {
           document.getElementById("convergepay-amount").value = changed.data[that.component.amount_field];
         }
       }
+      if(document.getElementById("convergepay-description") && changed.data && that.component.description && changed.data[that.component.description]){
+        document.getElementById("convergepay-description").value = changed.data[that.component.description];
+      }
     });
   }
   static schema(...extend) {
     return Base.schema(
-      {
-        label: "Payment",
-        type: "convergepay"
-      },
-      ...extend
+    {
+      label: "Payment",
+      type: "convergepay"
+    },
+    ...extend
     );
   }
   static builderInfo = {
@@ -197,7 +220,7 @@ export default class ConvergePayCheckoutComponent extends Base {
   /**
    * Set CSS classes for pending authorization
    */
-  authorizePending() {
+   authorizePending() {
     this.addClass(this.element, "convergepay-submitting");
     this.removeClass(this.element, "convergepay-error");
     this.removeClass(this.element, "convergepay-submitted");
@@ -206,7 +229,7 @@ export default class ConvergePayCheckoutComponent extends Base {
    * Set CSS classes and display error when error occurs during authorization
    * @param {Object} resultError - The result error returned by convergepay API.
    */
-  authorizeError(resultError) {
+   authorizeError(resultError) {
     this.removeClass(this.element, "convergepay-submitting");
     this.addClass(this.element, "convergepay-submit-error");
     this.removeClass(this.element, "convergepay-submitted");
@@ -225,7 +248,7 @@ export default class ConvergePayCheckoutComponent extends Base {
    * Set CSS classes and save token when authorization successed
    * @param {Object} result - The result returned by convergepay API.
    */
-  authorizeDone(result) {
+   authorizeDone(result) {
     this.removeClass(this.element, "convergepay-submit-error");
     this.removeClass(this.element, "convergepay-submitting");
     this.addClass(this.element, "convergepay-submitted");
@@ -249,7 +272,8 @@ export default class ConvergePayCheckoutComponent extends Base {
       }
     });
     var that = this;
-    var billing_description = that.component.description_field? that.data[that.component.description_field]:"";
+    var billing_description = that.component.description? that.data[that.component.description]:"";
+    billing_description = JSON.stringify(billing_description);
     var description = this.renderTemplate("input", {
       input: {
         type: "input",

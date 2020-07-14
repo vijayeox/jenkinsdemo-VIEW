@@ -9,6 +9,7 @@ import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import DocumentViewer from "../../DocumentViewer";
+import DashboardManager from "../../DashboardManager";
 import Dashboard from "../../Dashboard";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
@@ -35,7 +36,11 @@ class Page extends React.Component {
       submission: this.props.submission,
       showLoader: false,
       fileId: null,
-      currentRow: {}
+      isMenuOpen: false,
+      currentRow: {},
+      title: '',
+      displaySection: 'DB',
+      sectionData: null,
     };
     this.props.pageId ? this.loadPage(this.props.pageId) : null;
     this.updatePageView = this.updatePageView.bind(this);
@@ -111,44 +116,46 @@ class Page extends React.Component {
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
-            width: "auto"
-          }
+          width: "auto"
+        }
         : {
-            width: "auto",
-            // paddingTop: "5px",
-            color: "white",
-            fontWeight: "600"
-          };
+          width: "auto",
+          // paddingTop: "5px",
+          color: "white",
+          fontWeight: "600"
+        };
       showButton
         ? actionButtons.push(
-            <abbr title={action[key].name} key={index}>
-              <Button
-                primary={true}
-                className=" btn manage-btn k-grid-edit-command"
-                onClick={() => {
-                  action[key].confirmationMessage
-                    ? Swal.fire({
-                        title: action[key].confirmationMessage,
-                        confirmButtonText: "Agree",
-                        confirmButtonColor: "#275362",
-                        showCancelButton: true,
-                        cancelButtonColor: "#7b7878",
-                        target: ".PageRender"
-                      }).then((result) => {
-                        result.value ? this.buttonAction(action[key], e) : null;
-                      })
-                    : this.buttonAction(action[key], e);
-                }}
-                style={buttonStyles}
-              >
-                {action[key].icon ? (
-                  <i className={action[key].icon + " manageIcons"}></i>
-                ) : (
+          <abbr title={action[key].name} key={index}>
+            <Button
+              primary={true}
+              className=" btn manage-btn k-grid-edit-command"
+              onClick={() => {
+                action[key].confirmationMessage
+                  ? Swal.fire({
+                    title: action[key].confirmationMessage,
+                    confirmButtonText: "Agree",
+                    confirmButtonColor: "#275362",
+                    showCancelButton: true,
+                    cancelButtonColor: "#7b7878",
+                    target: ".PageRender"
+                  }).then((result) => {
+                    result.value ? this.buttonAction(action[key], e) : null;
+                  })
+                  : action[key].details
+                    ? this.buttonAction(action[key], e)
+                    : null;
+              }}
+              style={buttonStyles}
+            >
+              {action[key].icon ? (
+                <i className={action[key].icon + " manageIcons"}></i>
+              ) : (
                   action[key].name
                 )}
-              </Button>
-            </abbr>
-          )
+            </Button>
+          </abbr>
+        )
         : null;
     }, this);
     return actionButtons;
@@ -348,6 +355,27 @@ class Page extends React.Component {
       .dispatchEvent(ev);
   };
 
+  setTitle = (title) => {
+    this.setState({ title: title });
+  }
+
+
+  hideMenu = () => {
+    this.setState({ isMenuOpen: false });
+  };
+
+  switchSection = (section, data) => {
+    this.hideMenu();
+    this.setState({
+      displaySection: section,
+      sectionData: data
+    });
+
+  }
+  editDashboard = (data) => {
+    this.switchSection('EDB', data);
+  }
+
   renderContent(data) {
     var content = [];
     data.map((item, i) => {
@@ -356,6 +384,18 @@ class Page extends React.Component {
         // This workflow instance id corresponds to completed workflow instance
         var workflowInstanceId = this.replaceParams(
           item.workflowInstanceId,
+          this.state.currentRow
+        );
+        var workflowId = this.replaceParams(
+          item.workflowId,
+          this.state.currentRow
+        );
+        var activityInstanceId = this.replaceParams(
+          item.activityInstanceId,
+          this.state.currentRow
+        );
+        var cacheId = this.replaceParams(
+          item.cacheId,
           this.state.currentRow
         );
         var fileId = this.replaceParams(item.fileId, this.state.currentRow);
@@ -371,6 +411,10 @@ class Page extends React.Component {
             formId={item.form_id}
             page={item.page}
             pipeline={item.pipeline}
+            workflowId={workflowId}
+            cacheId={cacheId}
+            isDraft={item.isDraft}
+            activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
             postSubmitCallback={this.stepBackBreadcrumb}
           />
@@ -384,7 +428,7 @@ class Page extends React.Component {
           } else {
             columnConfig.push({
               title: "Actions",
-              width: "200px",
+              width: itemContent.actionsWidth ? itemContent.actionsWidth : "200px",
               cell: (e) => this.renderButtons(e, itemContent.actions),
               filterCell: {
                 type: "empty"
@@ -411,7 +455,9 @@ class Page extends React.Component {
             urlPostParams={item.urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
-                ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                ? typeof itemContent.defaultFilters == "string"
+                  ? JSON.parse(this.replaceParams(itemContent.defaultFilters))
+                  : this.replaceParams(itemContent.defaultFilters)
                 : undefined
             }
             gridOperations={itemContent.operations}
@@ -477,6 +523,18 @@ class Page extends React.Component {
             url={item.url}
           />
         );
+      } else if (item.type == "DashboardManager") {
+        console.log("Page UUID" + item.content.uuid)
+        content.push(
+          <DashboardManager
+            args={this.core}
+            proc={this.props.proc}
+            setTitle={this.setTitle}
+            editDashboard={this.editDashboard}
+            hideEdit={true}
+            uuid={item.content.uuid}
+          />
+        );
       } else if (item.type == "Dashboard") {
         content.push(
           <Dashboard
@@ -511,8 +569,8 @@ class Page extends React.Component {
               core={this.core}
             ></this.externalComponent>
           ) : (
-            <h3 key={i}>The component used is not available.</h3>
-          );
+              <h3 key={i}>The component used is not available.</h3>
+            );
         content.push(guiComponent);
       }
     });

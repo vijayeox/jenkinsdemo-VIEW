@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Overlay, Tooltip } from 'react-bootstrap';
-import AmChartEditor from './amChartEditor';
 import WidgetModal from './Modal/WidgetModal'
-import AggregateValueEditor from './aggregateValueEditor';
-import TableEditor from './tableEditor';
 import './globalFunctions';
 import Swal from "sweetalert2";
 import '../../../../../gui/src/public/css/sweetalert.css';
@@ -12,6 +9,7 @@ import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
 import Select from 'react-select'
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
+import WidgetEditorBody from './widgetEditorBody'
 
 class WidgetEditorApp extends React.Component {
     constructor(props) {
@@ -557,6 +555,23 @@ class WidgetEditorApp extends React.Component {
         });
     }
 
+    syncWidgetState(name,value){
+        if(this.state.mode=="copy"){
+            if(value!=null && value!==""){
+                let widget={...this.state.widget}
+                if(name==="configuration" || name==="expression"){
+                    widget[name]=JSON.parse(value)
+                this.setState({widget:widget})
+    
+                } else if(name==="queries"){
+                    widget[name]=value
+                this.setState({widget:widget})
+    
+                }
+            }
+        } 
+    }
+
     render() {
         return (
             <form className="widget-editor-form">
@@ -648,16 +663,9 @@ class WidgetEditorApp extends React.Component {
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
-                                {((this.state.widget.type === 'chart') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
-                                    <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                {((this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
-                                {(this.state.widget.type === 'table') &&
-                                    <TableEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} />
-                                }
-                                {((this.state.widget.type === 'inline') || (this.state.widget.type === 'html')) &&
-                                    <AggregateValueEditor ref="editor" widget={this.state.widget} />
-                                }
-
                             </div>
                         }
                     </FrontSide>
@@ -709,18 +717,10 @@ class WidgetEditorApp extends React.Component {
 
 
                                 <div className="row">
-                                    {(this.state.widget.type === 'chart') &&
-                                        <AmChartEditor ref="editor" widget={this.state.widget} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                    {(this.state.widget.type === 'chart' || this.state.widget.type === 'table'|| this.state.widget.type === 'inline' || this.state.widget.type === 'html') &&
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
-                                    {(this.state.widget.type === 'table') &&
-                                        <TableEditor ref="editor" widget={this.state.widget} />
-                                    }
-                                    {(this.state.widget.type === 'inline') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
-                                    }
-                                    {(this.state.widget.type === 'html') &&
-                                        <AggregateValueEditor ref="editor" widget={this.state.widget} />
-                                    }
+                                
                                 </div>
                             </>
                         }

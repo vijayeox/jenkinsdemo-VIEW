@@ -365,6 +365,7 @@ export default class OX_Grid extends React.Component {
     var operationsList = [];
     var listData = this.state.gridData.data;
     config.actions.map((i) => {
+      var profile = this.userprofile;
       let result = eval(i.rule);
       result ? operationsList.push(i) : null;
     });
@@ -558,6 +559,14 @@ class CustomCell extends GridCell {
         .tz(userTimezone)
         .format(userDateTimeFomat);
     };
+    var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
+      let userDateTimeFomat = null;
+      userDateTimeFomat = this.props.userProfile.preferences.dateformat
+        ? this.props.userProfile.preferences.dateformat
+        : "YYYY-MM-DD";
+      dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+      return moment(dateTime).format(userDateTimeFomat);
+    };
     let checkType = typeof this.props.cellTemplate;
     if (checkType == "function") {
       var cellTemplate = this.props.cellTemplate(this.props.dataItem);
@@ -573,6 +582,7 @@ class CustomCell extends GridCell {
             item: this.props.dataItem,
             moment: moment,
             formatDate: formatDate,
+            formatDateWithoutTimezone: formatDateWithoutTimezone,
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl
           }}

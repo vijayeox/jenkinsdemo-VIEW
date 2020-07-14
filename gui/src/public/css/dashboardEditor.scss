@@ -1,177 +1,203 @@
-.dashboard-editor-form .form-group{
-    margin-left: 1em;
+.dashboard-editor-form .form-group {
+  margin-left: 1em;
 }
 
-.dashboard-back-btn{
-    border-radius:100px;
-    width: 4em;
+.dashboard-back-btn {
+  border-radius: 100px;
+  width: 4em;
 }
 
 
-.dashboard .flippy-back{
-    height: 120vh !important;
-    min-height: 70vh;
-} 
-.dashboard .flippy-front{
+.dashboard .flippy-back {
+  height: 120vh !important;
+  min-height: 70vh;
+}
+
+.dashboard .flippy-front {
   height: auto;
   min-height: 70vh;
   padding: 0px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0);
 }
-.dashboard-filter-btn{
-    position: absolute;
-    right: 2px;
+
+.dashboard-filter-btn {
+  position: absolute;
+  right: 2px;
 }
 
-.dashboard-save-btn{
-    position: absolute;
-    right: 5.3em;
+.dashboard-save-btn {
+  position: absolute;
+  right: 5.3em;
 }
 
-.dashboard .btn-primary{
+.dashboard .btn-primary {
   color: #fff;
   background-color: #265160;
   border-color: #265160;
 }
 
-.dashboard .btn-primary:hover{
-  background-image:none !important;
-  background-color:#265160c4 !important;
+.dashboard .btn-primary:hover {
+  background-image: none !important;
+  background-color: #265160c4 !important;
 }
 
-.dashboard .deactivateDash .react-switch-bg{
-  background: rgb(39, 83, 98)  !important;
+.dashboard .deactivateDash .react-switch-bg {
+  background: rgb(39, 83, 98) !important;
 }
-.dashboard .react-switch-handle{
+
+.dashboard .react-switch-handle {
   background: #fff !important;
 
 }
+
 //dashboard editor filter
-.create-filter-form{
-    padding: 30px;
-  }
-  
-  .create-filter-form .btn{
-    bottom: 0px;
-    right: 0px;
-    position: absolute;
-  }
-  .hide-dash-editor{
-    display: none;
-  }
-  .dates-container{
-    display: flex;
-  }
-  .react-datepicker-wrapper{
+.create-filter-form {
+  padding: 30px;
+}
+
+.create-filter-form .btn {
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
+}
+
+.hide-dash-editor {
+  display: none;
+}
+
+.dates-container {
+  display: flex;
+}
+
+.react-datepicker-wrapper {
   padding-right: 10px !important;
-  }
+}
 
-  .dashboard-filter-field{
-    min-width: 155px;
-    margin-right: 5px;
-  }
-  
-  .dates-container input,.create-filter-form input{
-    display: block;
-      height: calc(1.5em + .75rem + 2px);
-      padding: .375rem .75rem;
-      font-size: 1rem;
-      font-weight: 400;
-      line-height: 1.5;
-      color: #495057;
-      background-color: #fff;
-      background-clip: padding-box;
-      border: 1px solid #ced4da;
-      border-radius: .25rem;
-      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-      width: 12vw;
-  }
-  
-  .create-filter-form input{
-    // width: 20vw;
-  }
-  .dates-container input{
-    width: 14vw;
-  
-  }
-  #filtertype{
-    max-width: 23vw;
-  }
+.dashboard-filter-field {
+  min-width: 155px;
+  margin-right: 5px;
+}
 
-  .disappear{
-      display: none;
-  }
-  #filter-form-container{
-      background:#a9c4c4;
-      border-radius: 10px;
-  }
-  #filter-form-container button.close{
-padding-right: 1em;
-  }
+.dates-container input,
+.create-filter-form input {
+  display: block;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  width: 12vw;
+}
 
-  #filter-form-container label{
-      color:#275362;
-  }
+.create-filter-form input {
+  // width: 20vw;
+}
 
-  .apply-filter-btn{
-    position: initial !important;
-    border-radius: 12px;
-    margin-left: 2em;
-  }
-  .dash-manager-bar{
-    border: 0.5px solid#3d6776;
-    padding: 1em;
-    padding-top: 12px;
-    padding-bottom: 0px;
-    position: absolute;
-    width: 100%;
-    background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
-  }
-  .dashboard-viewer-div{
-    position: absolute;
-    margin-top: 5em;
-    width:100%;
-  }
-  .dash-manager-buttons{
-    position: absolute;
-    right: 1em;
-  }
-  .react-select-container{
-    z-index: 100;
-  }
-  .dash-manager-buttons .btn{
+.dates-container input {
+  width: 14vw;
+
+}
+
+#filtertype {
+  max-width: 23vw;
+}
+
+.disappear {
+  display: none;
+}
+
+#filter-form-container {
+  background: #a9c4c4;
+  border-radius: 10px;
+}
+
+#filter-form-container button.close {
+  padding-right: 1em;
+}
+
+#filter-form-container label {
+  color: #275362;
+}
+
+.apply-filter-btn {
+  position: initial !important;
+  border-radius: 12px;
+  margin-left: 2em;
+}
+
+.dash-manager-bar {
+  border: 0.5px solid#3d6776;
+  padding: 1em;
+  padding-top: 12px;
+  padding-bottom: 0px;
+  position: absolute;
+  width: 100%;
+  background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
+  min-height: 65px;
+}
+
+.dashboard-viewer-div {
+  position: absolute;
+  margin-top: 5em;
+  width: 100%;
+}
+
+.dash-manager-buttons {
+  position: absolute;
+  right: 1em;
+}
+
+.react-select-container {
+  z-index: 100;
+}
+
+.dash-manager-buttons .btn {
   margin-right: 7px;
   border-color: #eaeaea;
- }
-.dasboard-viewer-content{
-  border: 1px solid#1d6165;
-  min-height: 48vh;
+}
+
+.dasboard-viewer-content {
+  // border: 1px solid#1d6165;
+  min-height: 20px;
   border-radius: 4px;
   box-shadow: 2px 5px#c6b5b5;
-  padding:1em;
+  padding: 1em;
+}
+.dashboard-rollup-button{
+color: black;
+cursor: pointer;
+right: 1%;
+position: absolute;
 }
 .dashboard-preview-tab{
   background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65,#1d6365);
   height: 1.3em;
-  color:#f2f2f2;
+  color: #f2f2f2;
   top: 50%;
   width: 15em;
   text-align: center;
 }
-.dashboard-preview-tab span{
+
+.dashboard-preview-tab span {
   position: relative;
   top: 0.1em;
 }
- .create-dash-btn{
+
+.create-dash-btn {
   margin-left: 1em;
   margin-bottom: 10px;
- }
-  .Window_Analytics .dashboard .GridCustomStyle{
-    height: calc(100% - 91px) !important
-  }
+}
 
-  .Window_Analytics .dashboard label{
-    color: #265160 !important;
-  }
-  
-  
+.Window_Analytics .dashboard .GridCustomStyle {
+  height: calc(100% - 91px) !important
+}
+
+.Window_Analytics .dashboard label {
+  color: #265160 !important;
+}

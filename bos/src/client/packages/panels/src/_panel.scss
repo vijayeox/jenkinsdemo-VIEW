@@ -40,8 +40,8 @@
 
   &[data-ontop=true] {
     /* Begin Oxzion customization. */
-    /* z-index: 16777271; */
-    z-index: 10009;
+    /* z-index: 9995; */
+    z-index: 9995 !important;
     /* End Oxzion customization. */
   }
 
@@ -124,7 +124,7 @@
 
 .appmenu-visible {
   width: 300px;
-  z-index: 16777271;
+  z-index: 9995;
 }
 
 /* Position and style the close button (top right corner) */

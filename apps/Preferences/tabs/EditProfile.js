@@ -55,7 +55,7 @@ class EditProfile extends React.Component {
 
     this.state = {
       errors: {},
-      dateformat: this.userprofile.key.preferences["dateformat"],
+      dateformat: "yyyy/mm/dd",
       fields: this.userprofile.key,
       showImageDiv: 1,
       imageData: null,
@@ -183,13 +183,17 @@ class EditProfile extends React.Component {
         this.notif.current.notify(
           "Error",
           "Update failed: " + editresponse.message,
-          "danger"
+          "danger",
+          "bottom-right",
+          5000
         );
       } else {
         this.notif.current.notify(
           "Success",
           "Profile has been successfully updated.",
-          "success"
+          "success",
+          "bottom-right",
+          5000
         );
         this.core.make("oxzion/profile").update();
       }
@@ -197,7 +201,9 @@ class EditProfile extends React.Component {
       this.notif.current.notify(
         "Error",
         "Please fill all the mandatory fields. ",
-        "danger"
+        "danger",
+        "bottom-right",
+        5000
       );
     }
   }
@@ -241,10 +247,6 @@ class EditProfile extends React.Component {
       errors["state"] = "*Please select your state";
     }
 
-    if (!fields["interest"]) {
-      formIsValid = false;
-      errors["interest"] = "*Please enter your interest";
-    }
     if (!fields["country"]) {
       formIsValid = false;
       errors["country"] = "*Please select your country";
@@ -294,7 +296,7 @@ class EditProfile extends React.Component {
     }
   }
 
-    apply = (file) => {
+  apply = (file) => {
     if (file) {
       var reader = new FileReader();
       reader.readAsDataURL(file);
@@ -319,7 +321,7 @@ class EditProfile extends React.Component {
     });
   };
 
-    prepareStateData = () => {
+  prepareStateData = () => {
     if (this.state.fields.country) {
       let obj = countryStateList.find(
         (o) => o.country === this.state.fields.country
@@ -332,7 +334,7 @@ class EditProfile extends React.Component {
     }
     return [];
   };
-    valueChange = (field, event) => {
+  valueChange = (field, event) => {
     if (field == "country") {
       let fields = { ...this.state.fields };
       fields[field] = event.target.value;
@@ -644,41 +646,51 @@ class EditProfile extends React.Component {
                 </div>
               </ReactBootstrap.Row>
               <div className="form-group">
-              <div className="form-row">
-                <div className="col-sm-6">
-                  <label className="required-label">Country</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      rawData={this.state.countryList}
-                      selectedItem={this.state.fields.country ? this.state.fields.country : ""}
-                      preFetch={true}
-                      onDataChange={(e) => this.valueChange("country", e)}
-                      required={true}
-                      validationMessage={
-                        "Please select a country from the list."
-                      }
-                      disableItem={this.props.diableField}
-                    />
+                <div className="form-row">
+                  <div className="col-sm-6">
+                    <label className="required-label">Country</label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        rawData={this.state.countryList}
+                        filterable={true}
+                        selectedItem={
+                          this.state.fields.country
+                            ? this.state.fields.country
+                            : ""
+                        }
+                        preFetch={true}
+                        onDataChange={(e) => this.valueChange("country", e)}
+                        required={true}
+                        validationMessage={
+                          "Please select a country from the list."
+                        }
+                        disableItem={this.props.diableField}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="col-sm-6">
-                  <label className="required-label">State</label>
-                  <div>
-                    <DropDown
-                      args={this.core}
-                      rawData={this.prepareStateData()}
-                      selectedItem={this.state.fields.state ? this.state.fields.state : ""}
-                      preFetch={true}
-                      onDataChange={(e) => this.valueChange("state", e)}
-                      required={true}
-                      validationMessage={"Please select a state from the list."}
-                      disableItem={this.props.diableField}
-                    />
+                  <div className="col-sm-6">
+                    <label className="required-label">State</label>
+                    <div>
+                      <DropDown
+                        args={this.core}
+                        rawData={this.prepareStateData()}
+                        filterable={true}
+                        selectedItem={
+                          this.state.fields.state ? this.state.fields.state : ""
+                        }
+                        preFetch={true}
+                        onDataChange={(e) => this.valueChange("state", e)}
+                        required={true}
+                        validationMessage={
+                          "Please select a state from the list."
+                        }
+                        disableItem={this.props.diableField}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
               <ReactBootstrap.Row>
                 <div className="col-md-6">
                   <ReactBootstrap.Form.Group>
@@ -763,7 +775,7 @@ class EditProfile extends React.Component {
               <ReactBootstrap.Row>
                 <div className="col-md-12">
                   <ReactBootstrap.Form.Group>
-                    <ReactBootstrap.Form.Label className="mandatory">
+                    <ReactBootstrap.Form.Label>
                       Interest
                     </ReactBootstrap.Form.Label>
                     <ReactBootstrap.Form.Control

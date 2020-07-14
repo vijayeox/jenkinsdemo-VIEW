@@ -1,14 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Overlay, Tooltip, Button, Form } from 'react-bootstrap';
-import { dashboardEditor as section } from './metadata.json';
+import { dashboardEditor as section } from '../metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
+import WidgetRenderer from './WidgetRenderer';
+import DashboardFilter from './DashboardFilter';
 
-import { WidgetRenderer, DashboardFilter } from './GUIComponents';
 import Swal from 'sweetalert2';
-import '../../gui/src/public/css/sweetalert.css';
+import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
-import '../../gui/src/public/css/dashboardEditor.scss'
+import './public/css/dashboardEditor.scss'
 import '@progress/kendo-theme-default/dist/all.css';
 
 class DashboardEditor extends React.Component {
@@ -25,13 +25,17 @@ class DashboardEditor extends React.Component {
             errors: {},
             filterConfiguration: [],
             showFilterDiv: false,
-            dashboardVisibility: -1
+            dashboardVisibility: -1,
+
         };
         this.initialState = { ...this.state }
         this.renderedCharts = {};
         this.props.setTitle(section.title.en_EN);
         this.restClient = this.core.make('oxzion/restClient');
         this.editor = null;
+        this.dashboardName = React.createRef();
+        this.dashboardVisibility = React.createRef();
+        this.dashboardDescription = React.createRef();
 
         let thisInstance = this;
         this.editorDialogMessageHandler = function (event) {
@@ -93,16 +97,16 @@ class DashboardEditor extends React.Component {
         let thiz = this;
         let name = e.target.name;
         let value = e.target.value;
-        var error=this.state.errors
-        if(Object.keys(error).length>0){
-        name=="dashboardName"  && (error.dashboardName=null)
-        name=="dashboardDescription" && (error.dashboardDescription=null)
-        name=="dashboardVisibility"  && (error.dashboardVisibility=null)
+        var error = this.state.errors
+        if (Object.keys(error).length > 0) {
+            name == "dashboardName" && (error.dashboardName = null)
+            name == "dashboardDescription" && (error.dashboardDescription = null)
+            name == "dashboardVisibility" && (error.dashboardVisibility = null)
         }
         this.setState({
             [name]: value,
             contentChanged: true,
-            errors:error
+            errors: error
         });
     }
 
@@ -112,7 +116,7 @@ class DashboardEditor extends React.Component {
     getJsLibraryList = () => {
         let self = this;
         return [
-            { 'name': 'ckEditorJs', 'url': '/apps/Analytics/ckeditor/ckeditor.js', 'onload': function () { self.setupCkEditor(); }, 'onerror': function () { } }
+            { 'name': 'ckEditorJs', 'url': './ckeditor/ckeditor.js', 'onload': function () { self.setupCkEditor(); }, 'onerror': function () { } }
         ];
     }
 
@@ -142,9 +146,10 @@ class DashboardEditor extends React.Component {
                         height: 600,
                     }
                 },
-                dialogUrl: '/apps/Analytics/widgetEditorDialog.html'
+                dialogUrl: './widgetEditorDialog.html'
             }
         };
+    
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo('ckEditorInstance', config);
@@ -215,7 +220,7 @@ class DashboardEditor extends React.Component {
 
     saveDashboard = () => {
         //save only if no errors are found
-        if(this.isValidDashboard()){
+        if (this.isValidDashboard()) {
             let params = {
                 'content': this.editor.getData(),
                 'version': this.state.version,
@@ -238,7 +243,7 @@ class DashboardEditor extends React.Component {
             this.doRestRequest(url, params, method,
                 function (response) {
                     thisInstance.props.flipCard("Saved")
-    
+
                     let updateState = {
                         contentChanged: false
                     };
@@ -250,14 +255,14 @@ class DashboardEditor extends React.Component {
                         updateState.dashboardId = response.dashboard.uuid;
                     }
                     thisInstance.setState(updateState);
-    
+
                 },
                 function (response) {
                     let versionChanged = false;
                     if (response.data && response.data.reasonCode) {
                         if (response.data.reasonCode === 'VERSION_CHANGED') {
                             versionChanged = true;
-    
+
                         }
                     }
                     Swal.fire({
@@ -269,7 +274,7 @@ class DashboardEditor extends React.Component {
                     });
                 }
             );
-        } 
+        }
     }
 
     getDashboard = (editor) => {
@@ -392,7 +397,11 @@ class DashboardEditor extends React.Component {
         var thisInstance = this;
         this.doRestRequest(`analytics/widget/${widgetId}?data=true`, {}, 'get',
             function (response) {
-                let chart = WidgetRenderer.render(widgetElement, response.widget);
+                let renderProperties = {}
+                renderProperties["element"] = widgetElement
+                renderProperties["widget"] = response.widget
+                renderProperties["dashboardEditMode"] = true
+                let chart = WidgetRenderer.render(renderProperties);
                 thisInstance.renderedCharts[elementId] = chart;
             },
             function (response) {
@@ -459,19 +468,19 @@ class DashboardEditor extends React.Component {
         })
     }
 
-    setFilter(filter){
+    setFilter(filter) {
         this.setState({ filterConfiguration: filter })
     }
 
-    isValidDashboard(){
+    isValidDashboard() {
         let errors = {}
         // let helper = this.core.make('oxzion/restClient');
         // let response = await helper.request('v1', `analytics/dashboard/byName?name=${this.state.dashboardName}`, {}, 'get');
         this.state.dashboardName == '' && (errors.dashboardName = "*Name shouldnt be blank")
         this.state.dashboardDescription == '' && (errors.dashboardDescription = "*Description should not be blank")
         this.state.dashboardVisibility == -1 && (errors.dashboardVisibility = "*Please choose a dashboard visibility")
-        this.setState({errors:errors})
-        return Object.keys(errors).length==0
+        this.setState({ errors: errors })
+        return Object.keys(errors).length == 0
     }
 
     render() {
@@ -502,10 +511,10 @@ class DashboardEditor extends React.Component {
                         <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
                         <div className="col-2">
                             <>
-                                <input type="text" id="dashboardName" name="dashboardName" ref="dashboardName" className="form-control form-control-sm"
+                                <input type="text" id="dashboardName" name="dashboardName" ref={this.dashboardName} className="form-control form-control-sm"
                                     onChange={this.inputChanged} value={this.state.dashboardName}
                                     disabled={false} />
-                                <Overlay target={this.refs.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
+                                <Overlay target={this.dashboardName} show={this.state.errors.dashboardName != null} placement="bottom">
                                     {props => (
                                         <Tooltip id="dashboardName-tooltip" {...props} className="error-tooltip">
                                             {this.state.errors.dashboardName}
@@ -517,10 +526,10 @@ class DashboardEditor extends React.Component {
                         <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
                         <div className="col-4">
                             <>
-                                <input type="text" id="dashboardDescription" name="dashboardDescription" ref="dashboardDescription" className="form-control form-control-sm"
+                                <input type="text" id="dashboardDescription" name="dashboardDescription" ref={this.dashboardDescription} className="form-control form-control-sm"
                                     onChange={this.inputChanged} value={this.state.dashboardDescription} onBlur={this.isDescriptionValid}
                                     disabled={false} />
-                                <Overlay target={this.refs.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
+                                <Overlay target={this.dashboardDescription} show={this.state.errors.dashboardDescription != null} placement="bottom">
                                     {props => (
                                         <Tooltip id="dashboardDescription-tooltip" {...props} className="error-tooltip">
                                             {this.state.errors.dashboardDescription}
@@ -531,12 +540,12 @@ class DashboardEditor extends React.Component {
                         </div>
                         <div className="col-2">
                             <>
-                                <select id="dashboardVisibility" ref="dashboardVisibility" name="dashboardVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.dashboardVisibility != null ? this.state.dashboardVisibility : -1} onChange={this.inputChanged}>
+                                <select id="dashboardVisibility" ref={this.dashboardVisibility} name="dashboardVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.dashboardVisibility != null ? this.state.dashboardVisibility : -1} onChange={this.inputChanged}>
                                     <option disabled value={-1} key="-1">Select Visibility</option>
                                     <option key="1" value={1}>public</option>
                                     <option key="2" value={0}>private</option>
                                 </select>
-                                <Overlay target={this.refs.dashboardVisibility} show={this.state.errors.dashboardVisibility != null} placement="bottom">
+                                <Overlay target={this.dashboardVisibility} show={this.state.errors.dashboardVisibility != null} placement="bottom">
                                     {props => (
                                         <Tooltip id="dashboardVisibility-tooltip" {...props} className="error-tooltip">
                                             {this.state.errors.dashboardVisibility}

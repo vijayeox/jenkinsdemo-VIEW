@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 
-import DashboardEditor from "../../../../apps/Analytics/dashboardEditor"
+import DashboardEditor from "../../dashboardEditor"
 import '../../public/css/dashboardEditor.scss'
 function DashboardEditorModal(props) {
     const [input, setInput] = useState({})
@@ -10,7 +10,7 @@ function DashboardEditorModal(props) {
         CREATE: "Created",
         EDIT: "Edited",
         DELETE: "Deleted",
-        DEFAULT:"SetDefault"
+        DEFAULT: "SetDefault"
     }
     useEffect(() => {
         if (props.content !== undefined) {
@@ -61,11 +61,11 @@ function DashboardEditorModal(props) {
                 operation === "Activated" ? formData["isdeleted"] = "0" : null
                 method = "put"
             }
-            else if (operation === allowedOperation.DEFAULT){
+            else if (operation === allowedOperation.DEFAULT) {
                 formData["uuid"] = props.content.uuid
                 formData["version"] = props.content.version;
                 requestUrl = "analytics/dashboard/" + props.content.uuid;
-                formData["isdefault"]="1"
+                formData["isdefault"] = "1"
                 method = "put"
             }
             else {
@@ -88,7 +88,7 @@ function DashboardEditorModal(props) {
                 notify(response, operation)
                 props.onHide()
                 props.refreshDashboard()
-                operation === allowedOperation.DELETE?props.deleteDashboard():null
+                operation === allowedOperation.DELETE ? props.deleteDashboard() : null
             })
             .catch(err => {
                 console.log(err)
@@ -100,25 +100,25 @@ function DashboardEditorModal(props) {
         let value = e.target.value;
         setInput({ ...input, [name]: value });
     }
-    function setTitle (title) {
-      
-      }
+    function setTitle(title) {
+
+    }
 
     var Footer = null
     var DisabledFields = true
-    var modalBody=null
+    var modalBody = null
 
-    if (props.modalType === "Edit"){
+    if (props.modalType === "Edit") {
         console.log(props)
         Footer = (<Button variant="primary" onClick={() => dashboardOperation(allowedOperation.EDIT)}>Save</Button>)
-        modalBody=(<DashboardEditor 
-            args={props.osjsCore} 
-            setTitle={setTitle} 
-            dashboardId={props.content.uuid}/>)
+        modalBody = (<DashboardEditor
+            args={props.osjsCore}
+            setTitle={setTitle}
+            dashboardId={props.content.uuid} />)
         DisabledFields = false
 
     }
-   else if (props.modalType === "Delete") {
+    else if (props.modalType === "Delete") {
         Footer = (<Button variant="danger" onClick={() => dashboardOperation(allowedOperation.DELETE)}>Delete</Button>)
         DisabledFields = true
     }
@@ -137,7 +137,7 @@ function DashboardEditorModal(props) {
 
     return (
         <Modal
-            onHide={()=>props.onHide()}
+            onHide={() => props.onHide()}
             show={props.show}
             size="xl"
             aria-labelledby="contained-modal-title-vcenter"
@@ -150,22 +150,22 @@ function DashboardEditorModal(props) {
          </Modal.Title>
             </Modal.Header>
             <Modal.Body className="modal-body">
-                {modalBody!==null?modalBody:
-                <Form>
-                    <Form.Group as={Row}>
-                        <Form.Label column lg="3">Name</Form.Label>
-                        <Col lg="9">
-                            <Form.Control type="text" name="name" value={input["name"]?input["name"]:""} onChange={handleChange} disabled={DisabledFields} />
-                        </Col>
-                    </Form.Group>
-                    <Form.Group as={Row}>
-                        <Form.Label column lg="3">Description</Form.Label>
-                        <Col lg="9">
-                            <Form.Control type="text" name="description" value={input["description"]?input["description"]:""} onChange={handleChange} disabled={DisabledFields} />
-                        </Col>
-                    </Form.Group>
-                    
-                </Form>
+                {modalBody !== null ? modalBody :
+                    <Form>
+                        <Form.Group as={Row}>
+                            <Form.Label column lg="3">Name</Form.Label>
+                            <Col lg="9">
+                                <Form.Control type="text" name="name" value={input["name"] ? input["name"] : ""} onChange={handleChange} disabled={DisabledFields} />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Label column lg="3">Description</Form.Label>
+                            <Col lg="9">
+                                <Form.Control type="text" name="description" value={input["description"] ? input["description"] : ""} onChange={handleChange} disabled={DisabledFields} />
+                            </Col>
+                        </Form.Group>
+
+                    </Form>
                 }
             </Modal.Body>
             <Modal.Footer>

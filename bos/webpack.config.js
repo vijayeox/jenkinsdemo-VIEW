@@ -25,8 +25,14 @@ if (mode === 'production') {
 }
 
 module.exports = {
+
   mode: (mode !== 'development' ? 'production' : mode),
   devtool: 'source-map',
+  resolve: {
+    alias: {
+      OxzionGUI: path.resolve(__dirname, "../gui/src")
+    }
+  },
   entry: {
     osjs: [
       path.resolve(__dirname, 'src/core/core.js'),
@@ -78,7 +84,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       'src/client/assets/images/load.svg',
-      './ViewerJS'
+      './ViewerJS',
+      {from: path.resolve(__dirname, "../gui/src/ckeditor/")}
     ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
