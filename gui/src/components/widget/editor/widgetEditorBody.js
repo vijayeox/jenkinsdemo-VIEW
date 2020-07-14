@@ -40,7 +40,7 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
-        this.props.syncWidgetState("expression", this.state.expression);
+        this.props.syncWidgetState("expression", this.state.expression,this.data);
         if (this.validateExpression()) {
             this.loadData(this.refreshQueryPreview());
         }
@@ -449,7 +449,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                     className="form-control form-control-sm" style={{ fontFamily: 'Monospace' }}
                                                     onChange={this.configurationChanged} value={this.state.configuration}
                                                     onBlur={() => {
-                                                        this.props.syncWidgetState("configuration", this.state.configuration);
+                                                        this.props.syncWidgetState("configuration", this.state.configuration,this.data);
                                                         this.refreshWidgetPreview();
                                                     }
                                                     } disabled={this.state.readOnly} />
