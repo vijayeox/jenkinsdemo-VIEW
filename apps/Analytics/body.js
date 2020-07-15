@@ -97,7 +97,7 @@ class Body extends React.Component {
             <i className="fa fa-search" aria-hidden="true"></i> Query
                 </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_DASHBOARD, null) }}>
-            <i className="fa fa-tasks" aria-hidden="true"></i> Dashboard
+            <i className="fa fa-tasks" aria-hidden="true"></i> Operational Intelligence
                   </a>
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
             <i className="fa fa-cubes" aria-hidden="true"></i> Widget Manager
