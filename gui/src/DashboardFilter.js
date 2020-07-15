@@ -364,7 +364,7 @@ class DashboardFilter extends React.Component {
             this.hideFilterDiv()
             this.props.notif.current.notify(
                 "Filter Applied Successfully",
-                "Please save the dashboard in order to keep the changes",
+                "Please save the OI in order to keep the changes",
                 "success"
             )
         } else if (this.props.filterMode === "APPLY") {

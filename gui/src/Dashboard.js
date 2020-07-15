@@ -65,7 +65,7 @@ class Dashboard extends Component {
     let backButton = ""
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
-      backButton = `<div id='dashboard-rollup-button' title="Previous Dashboard" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+      backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
     }
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + backButton + htmlData + "</div>"
     return container

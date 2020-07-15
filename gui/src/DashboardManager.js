@@ -117,7 +117,7 @@ class DashboardManager extends React.Component {
         })
       }
     } else {
-      this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
+      this.setState({ dashboardBody: "NO OI FOUND" })
     }
   }
 
@@ -255,7 +255,7 @@ class DashboardManager extends React.Component {
             {
               !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
               <div className="row">
-                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i> Create OI</Button>
               </div>
             }
 
@@ -284,7 +284,7 @@ class DashboardManager extends React.Component {
                               <Select
                                 name="dashname"
                                 className="react-select-container"
-                                placeholder="Select Dashboard"
+                                placeholder="Select OI"
                                 id="dashname"
                                 onChange={(e) => this.handleChange(e, "dashname")}
                                 value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
@@ -307,24 +307,24 @@ class DashboardManager extends React.Component {
                           <>
                             <ReactToPrint
                               trigger={() => {
-                                return <Button title="Print Dashboard">
+                                return <Button title="Print OI">
                                   <i className="fa fa-print" aria-hidden="true"></i>
                                 </Button>
                               }}
                               content={() => this.dashboardViewerRef}
                             />
-                            <Button onClick={() => this.showFilter()} title="Filter Dashboard">
+                            <Button onClick={() => this.showFilter()} title="Filter OI">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
                             {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
+                              <Button onClick={() => this.editDashboard()} title="Edit OI">
                                 <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }
                             {
                               (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
                                 this.state.inputs["dashname"]["isdefault"] == "0") &&
-                              <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete Dashboard">
+                              <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete OI">
                                 <i className="fa fa-trash" aria-hidden="true"></i>
                               </Button>
                             }
@@ -333,12 +333,12 @@ class DashboardManager extends React.Component {
                               (this.props.hideEdit == false &&
                                 <Button
                                   onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
-                                  title="Make current dashboard as default dashboard"
+                                  title="Make current OI as default OI"
                                 >MAKE DEFAULT
                                 </Button>
                               )
                               : (this.props.hideEdit == false &&
-                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
+                                <span style={{ color: "white", fontWeight: "bolder" }}>Default OI</span>
                               )
 
                             }
@@ -354,7 +354,7 @@ class DashboardManager extends React.Component {
                   {
                     !this.props.hideEdit &&
                     <div className="dashboard-preview-tab">
-                      <span>Dashboard Previewer</span>
+                      <span>OI Previewer</span>
                     </div>
                   }
                   {
