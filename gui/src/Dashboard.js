@@ -146,11 +146,18 @@ class Dashboard extends Component {
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if(new Date(startDate)){
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
           //date range received
           if (filter["operator"] == "gte&&lte") {
             endDate = filter["endDate"]
             if (typeof endDate !== "string") {
+              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            }else if(new Date(endDate))
+            {
+              endDate =new Date(endDate)
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
             }
             //prepare startDate array
@@ -166,6 +173,14 @@ class Dashboard extends Component {
             filterarray.push("<=")
             filterarray.push(endDate)
             filterParams.push(filterarray)
+          } else {
+            //if date is not a range
+            filterarray = []
+            filterarray.push(filter["field"])
+            filterarray.push(filter["operator"])
+            filterarray.push(startDate)
+            filterParams.push(filterarray)
+
           }
         } else {
           //single date passed
