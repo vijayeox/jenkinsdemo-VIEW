@@ -7,8 +7,8 @@ import Select from 'react-select/creatable'
 const customStyles = {
     control: base => ({
         ...base,
-        height: 35,
-        minHeight: 35
+        height: 38,
+        minHeight: 38
     }),
     valueContainer: base => ({
         ...base,
@@ -155,6 +155,7 @@ const FilterFields = function (props) {
                         :
                         filterMode == "Create" ?
                             <Select
+                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
@@ -164,6 +165,7 @@ const FilterFields = function (props) {
                             />
                             :
                             <Select
+                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
@@ -171,8 +173,6 @@ const FilterFields = function (props) {
                                 value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 options={filters[index]["value"]}
                             />
-
-
 
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
                     }
@@ -373,7 +373,7 @@ class DashboardFilter extends React.Component {
             console.log(filters)
         }
     }
-    
+
     render() {
         return (
             <div id="filter-form-container" className="disappear">
@@ -416,8 +416,8 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     {   // Rendered on dashboard Viewer
-                        this.props.filterMode === "APPLY" &&
-                        <Form.Group>
+                        this.props.filterMode === "APPLY" && this.state.applyFilterOption.length !== 0 &&
+                        < Form.Group >
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select
                                 placeholder="Choose filters"
@@ -426,6 +426,7 @@ class DashboardFilter extends React.Component {
                                 onChange={(e) => this.handleSelect(e)}
                                 value={this.state.input["applyfiltertype"]}
                                 options={this.state.applyFilterOption}
+                                style={{ marginleft: "0px" }}
                             />
                         </Form.Group>
                     }
@@ -435,7 +436,7 @@ class DashboardFilter extends React.Component {
                     </Row>
 
                 </Form>
-            </div>
+            </div >
         )
     }
 }

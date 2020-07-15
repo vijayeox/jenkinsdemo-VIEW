@@ -193,7 +193,7 @@ class Dashboard extends Component {
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
         filterarray.push(filter["value"]["selected"])
-        if (filter["value"] !== "" && filter["value"] !== null) {
+        if (filter["value"].hasOwnProperty("selected")) {
           filterParams.push(filterarray)
         }
       }
