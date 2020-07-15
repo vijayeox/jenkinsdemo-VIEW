@@ -22,7 +22,7 @@ const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
-        "textoperator": [{ "Equals": "==" }, { "Not Equals": "!=" }],
+        "textoperator": [{ "Equals": "LIKE" }, { "Not Equals": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
     };
     const dataTypeOptions = [
@@ -367,8 +367,7 @@ class DashboardFilter extends React.Component {
                 "Please save the dashboard in order to keep the changes",
                 "success"
             )
-        }
-        else if (this.props.filterMode === "APPLY") {
+        } else if (this.props.filterMode === "APPLY") {
             this.props.setDashboardFilter(filters)
             console.log("IMPLEMENTING")
             console.log(filters)
@@ -431,7 +430,7 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     <Row >
-                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filter</Button>
+                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
 
                     </Row>
 

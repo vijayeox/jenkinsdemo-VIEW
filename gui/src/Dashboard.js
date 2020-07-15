@@ -193,7 +193,9 @@ class Dashboard extends Component {
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
         filterarray.push(filter["value"]["selected"])
-        filterParams.push(filterarray)
+        if (filter["value"] !== "" && filter["value"] !== null) {
+          filterParams.push(filterarray)
+        }
       }
     })
     return filterParams
@@ -350,15 +352,17 @@ class Dashboard extends Component {
     let url = `analytics/widget/${widgetId}?data=true`;
     let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
 
+    console.log("Printing Filter: " + this.state.preparedDashboardFilter)
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
       //combining dashboardfilter with widgetfilter
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    }
-    else if (filter && ('' !== filter)) {
+    } else if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
+    } else {
+      url = url;
     }
     //starting spinner 
     if (eventData.elementId) {

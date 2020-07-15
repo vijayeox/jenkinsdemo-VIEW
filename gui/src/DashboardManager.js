@@ -91,7 +91,6 @@ class DashboardManager extends React.Component {
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
   }
 
-
   async fetchDashboards() {
     let that = this
     let helper = this.restClient;
@@ -123,8 +122,6 @@ class DashboardManager extends React.Component {
   }
 
   setTitle(title) { }
-
-
 
   deleteDashboard() {
     let inputs = { ...this.state.inputs }
@@ -229,6 +226,7 @@ class DashboardManager extends React.Component {
     inputs[name] = value
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
+
   rollupToDashboard() {
     let stack = this.state.dashboardStack
     //removing the last dashboard from stack
