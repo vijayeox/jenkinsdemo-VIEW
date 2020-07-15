@@ -50,7 +50,7 @@ class DashboardManager extends React.Component {
     if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
-      this.fetchDashboards()
+      this.fetchDashboards(false)
     }
   }
 
@@ -90,29 +90,34 @@ class DashboardManager extends React.Component {
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
   }
-
-  async fetchDashboards() {
+  async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let dashboardStack = this.state.dashboardStack
+    let dashboardStack=this.state.dashboardStack
+
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
-          dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter }), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack }))
-            : that.setState({ inputs: this.state.inputs })
+          if(dash.name === inputs["dashname"]["name"]){
+            inputs["dashname"] = dash
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
+            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack })
+          } else {
+              that.setState({ inputs: this.state.inputs })
+          }
+
         })
       } else {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration ,dashboardStack:dashboardStack})
           }
         })
       }
@@ -397,7 +402,7 @@ class DashboardManager extends React.Component {
                     flipCard={(status) => {
                       if (status === "Saved") {
                         //refreshing the dashboardData
-                        this.fetchDashboards()
+                        this.fetchDashboards(true)
 
                       }
                       else if (status === "") {
@@ -420,7 +425,7 @@ class DashboardManager extends React.Component {
           onHide={() => { this.setState({ showModal: false }) }}
           content={this.state.modalContent}
           notification={this.notif}
-          refreshDashboard={() => this.fetchDashboards()}
+          refreshDashboard={() => this.fetchDashboards(true)}
           deleteDashboard={this.deleteDashboard}
         />
       </div>
