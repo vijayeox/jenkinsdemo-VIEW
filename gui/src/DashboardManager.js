@@ -224,6 +224,8 @@ class DashboardManager extends React.Component {
       name = inputName
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
+      //resetting dashboard filters on load
+      this.setState({dashboardFilter:[]})
     } else {
       name = event.target.name
       value = event.target.value
