@@ -10,6 +10,10 @@ import {
 } from "@progress/kendo-react-grid";
 import { process } from "@progress/kendo-data-query";
 import { GridPDFExport } from "@progress/kendo-react-pdf";
+import {
+  ExcelExport,
+  ExcelExportColumn
+} from "@progress/kendo-react-excel-export";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import $ from "jquery";
 import JsxParser from "react-jsx-parser";
@@ -42,9 +46,11 @@ export default class OX_Grid extends React.Component {
     this.refreshHandler = this.refreshHandler.bind(this);
     this.inlineEdit = this.inlineEdit.bind(this);
   }
+  _excelExport;
+  _grid;
 
   componentDidMount() {
-    $(document).ready(function() {
+    $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
     if (!document.getElementsByClassName("PageRender")) {
@@ -263,9 +269,24 @@ export default class OX_Grid extends React.Component {
     }
     if (this.props.exportToPDF) {
       gridToolbarContent.push(
-        <button className="k-button" onClick={this.exportPDF}>
+        <Button
+          style={{ right: "10px", float: "right" }}
+          primary={true}
+          onClick={this.exportPDF}
+        >
           Export to PDF
-        </button>
+        </Button>
+      );
+    }
+    if (this.props.exportToExcel) {
+      gridToolbarContent.push(
+        <Button
+          style={{ right: "10px", float: "right" }}
+          primary={true}
+          onClick={() => this.exportExcel(this.props.exportToExcel)}
+        >
+          Export to Excel
+        </Button>
       );
     }
     if (this.props.gridOperations) {
@@ -282,6 +303,54 @@ export default class OX_Grid extends React.Component {
   exportPDF = () => {
     this.loader.show();
     this.gridPDFExport.save(this.state.data, this.loader.destroy());
+  };
+
+  exportExcel = (excelConfig) => {
+    var gridData = this.state.gridData;
+    if (excelConfig.columnConfig) {
+      gridData = typeof gridData == "array" ? gridData : gridData.data;
+      gridData = gridData.map((item) => {
+        var tempItem = { ...item };
+        excelConfig.columnConfig.map((column) => {
+          if (column.cell) {
+            var data = tempItem;
+            var _moment = moment;
+            var formatDate = (dateTime, dateTimeFormat) => {
+              let userTimezone,
+                userDateTimeFomat = null;
+              userTimezone = this.props.userProfile.preferences.timezone
+                ? this.props.userProfile.preferences.timezone
+                : moment.tz.guess();
+              userDateTimeFomat = this.props.userProfile.preferences.dateformat
+                ? this.props.userProfile.preferences.dateformat
+                : "YYYY-MM-DD";
+              dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+              return moment(dateTime)
+                .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
+                .clone()
+                .tz(userTimezone)
+                .format(userDateTimeFomat);
+            };
+            var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
+              let userDateTimeFomat = null;
+              userDateTimeFomat = this.props.userProfile.preferences.dateformat
+                ? this.props.userProfile.preferences.dateformat
+                : "YYYY-MM-DD";
+              dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+              return moment(dateTime).format(userDateTimeFomat);
+            };
+            var evalString = column.cell.replace(/moment/g, "_moment");
+            tempItem[column.field] = eval("(" + evalString + ")");
+          }
+        });
+        return tempItem;
+      });
+    }
+    console.log(gridData);
+    this._excelExport.save(
+      gridData,
+      excelConfig.columnConfig ? undefined : this._grid.columns
+    );
   };
 
   expandChange = (event) => {
@@ -461,6 +530,9 @@ export default class OX_Grid extends React.Component {
 
         <Grid
           data={this.state.gridData.data}
+          ref={(grid) => {
+            this._grid = grid;
+          }}
           total={
             this.state.gridData.total
               ? parseInt(this.state.gridData.total)
@@ -541,6 +613,21 @@ export default class OX_Grid extends React.Component {
             </Grid>
           </GridPDFExport>
         ) : null}
+        {this.props.exportToExcel ? (
+          <ExcelExport ref={(excelExport) => (this._excelExport = excelExport)}>
+            {this.props.exportToExcel.columnConfig
+              ? this.props.exportToExcel.columnConfig.map((item) => (
+                  <ExcelExportColumn
+                    field={item.field}
+                    title={item.title}
+                    cellOptions={item.cellOptions}
+                    locked={item.locked}
+                    width={item.width}
+                  />
+                ))
+              : null}
+          </ExcelExport>
+        ) : null}
       </div>
     );
   }
@@ -548,11 +635,16 @@ export default class OX_Grid extends React.Component {
 
 class CustomCell extends GridCell {
   render() {
-    var formatDate = (dateTime, dateTimeFormat)=>{
-      let userTimezone, userDateTimeFomat = null;
-      userTimezone = this.props.userProfile.preferences.timezone ? this.props.userProfile.preferences.timezone : moment.tz.guess();
-      userDateTimeFomat = this.props.userProfile.preferences.dateformat ? this.props.userProfile.preferences.dateformat : "YYYY-MM-DD";
-      dateTimeFormat ? userDateTimeFomat = dateTimeFormat: null;
+    var formatDate = (dateTime, dateTimeFormat) => {
+      let userTimezone,
+        userDateTimeFomat = null;
+      userTimezone = this.props.userProfile.preferences.timezone
+        ? this.props.userProfile.preferences.timezone
+        : moment.tz.guess();
+      userDateTimeFomat = this.props.userProfile.preferences.dateformat
+        ? this.props.userProfile.preferences.dateformat
+        : "YYYY-MM-DD";
+      dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
       return moment(dateTime)
         .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
         .clone()

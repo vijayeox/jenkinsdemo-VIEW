@@ -146,7 +146,7 @@ class Dashboard extends Component {
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-          } else if(new Date(startDate)){
+          } else if (new Date(startDate)) {
             startDate = new Date(filter["startDate"])
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
@@ -155,9 +155,8 @@ class Dashboard extends Component {
             endDate = filter["endDate"]
             if (typeof endDate !== "string") {
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-            }else if(new Date(endDate))
-            {
-              endDate =new Date(endDate)
+            } else if (new Date(endDate)) {
+              endDate = new Date(endDate)
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
             }
             //prepare startDate array
@@ -193,7 +192,7 @@ class Dashboard extends Component {
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
         filterarray.push(filter["value"]["selected"])
-        if (filter["value"] !== "" && filter["value"] !== null) {
+        if (filter["value"].hasOwnProperty("selected")) {
           filterParams.push(filterarray)
         }
       }
@@ -217,21 +216,21 @@ class Dashboard extends Component {
 
       if (filterParams && filterParams.length != 0) {
         if (filterParams.length > 1) {
-          if(this.props.dashboardStack.length>1){
+          if (this.props.dashboardStack.length > 1) {
             //adding drildowndashboardfilter to the dashboard filter if it exists
-            let drilldownDashboardFilter=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardFilter"]
-            if(drilldownDashboardFilter.length>1)
-            preparedFilter=this.preparefilter(drilldownDashboardFilter,preparedFilter)
+            let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
+            if (drilldownDashboardFilter.length > 1)
+              preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
           }
           this.setState({ preparedDashboardFilter: preparedFilter }, () => {
             this.updateGraph(preparedFilter)
           })
         } else {
-           //adding drildowndashboardfilter to the dashboard filter if it exists
-           preparedFilter=filterParams
-           let drilldownDashboardFilter=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardFilter"]
-           if(drilldownDashboardFilter.length>1)
-           preparedFilter=this.preparefilter(drilldownDashboardFilter,filterParams)
+          //adding drildowndashboardfilter to the dashboard filter if it exists
+          preparedFilter = filterParams
+          let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
+          if (drilldownDashboardFilter.length > 1)
+            preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
           this.setState({ preparedDashboardFilter: preparedFilter }, () => {
             this.updateGraph(preparedFilter)
           })
@@ -319,9 +318,9 @@ class Dashboard extends Component {
     let dashboardData = await this.getDashboardHtmlDataByUuid(event.value);
     event.value = JSON.stringify(dashboardData.data.dashboard)
     let drilldownDashboardFilter = JSON.parse(data.filter)
-    if (this.state.preparedDashboardFilter!==null) {
+    if (this.state.preparedDashboardFilter !== null) {
       //combining dashboardfilter with widgetfilter
-      drilldownDashboardFilter = this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(data.filter)) 
+      drilldownDashboardFilter = this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(data.filter))
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
 
