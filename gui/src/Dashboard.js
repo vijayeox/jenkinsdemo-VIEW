@@ -177,6 +177,13 @@ class Dashboard extends Component {
             filterarray = []
             filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
+            if (typeof startDate !== "string") {
+              startDate = filter["startDate"]
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            } else if (new Date(startDate)) {
+              startDate = new Date(filter["startDate"])
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            }
             filterarray.push(startDate)
             filterParams.push(filterarray)
 
@@ -185,6 +192,13 @@ class Dashboard extends Component {
           //single date passed
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
+          if (typeof startDate !== "string") {
+            startDate = filter["startDate"]
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if (new Date(startDate)) {
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          }
           filterarray.push(startDate)
           filterParams.push(filterarray)
         }
