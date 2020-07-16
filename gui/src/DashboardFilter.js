@@ -83,7 +83,7 @@ const FilterFields = function (props) {
                         filters[index]["operator"] !== "gte&&lte" ?
                             <DatePicker
                                 key={index}
-                                dateFormat="dd/MM/yyyy"
+                                dateFormat="MM/dd/yyyy"
                                 selected={Date.parse(filters[index]["startDate"])}
                                 showMonthDropdown
                                 showYearDropdown
@@ -106,7 +106,7 @@ const FilterFields = function (props) {
                             <div className="dates-container">
                                 <DatePicker
                                     selected={Date.parse(filters[index]["startDate"])}
-                                    dateFormat="dd/MM/yyyy"
+                                    dateFormat="MM/dd/yyyy"
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -129,7 +129,7 @@ const FilterFields = function (props) {
                                 />
                                 <DatePicker
                                     selected={Date.parse(filters[index]["endDate"])}
-                                    dateFormat="dd/MM/yyyy"
+                                    dateFormat="MM/dd/yyyy"
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
                                     startDate={Date.parse(filters[index]["startDate"])}
@@ -241,7 +241,7 @@ class DashboardFilter extends React.Component {
         let newoption = null
         let length = filters !== undefined ? filters.length : 0
         if (fieldType === "date") {
-            filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "date", operator: "", value: new Date(), key: length })
+            filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "date", operator: "", value: new Date("YYYY-mm-dd"), key: length })
         } else if (fieldType === "text") {
             filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "text", operator: "", value: "", key: length })
         } else if (fieldType === "numeric") {

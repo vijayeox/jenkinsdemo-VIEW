@@ -323,10 +323,10 @@ export default class OX_Grid extends React.Component {
                 : moment.tz.guess();
               userDateTimeFomat = this.props.userProfile.preferences.dateformat
                 ? this.props.userProfile.preferences.dateformat
-                : "YYYY-MM-DD";
+                : "MM/dd/yyyy";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime)
-                .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
+                .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
                 .clone()
                 .tz(userTimezone)
                 .format(userDateTimeFomat);
@@ -335,7 +335,7 @@ export default class OX_Grid extends React.Component {
               let userDateTimeFomat = null;
               userDateTimeFomat = this.props.userProfile.preferences.dateformat
                 ? this.props.userProfile.preferences.dateformat
-                : "YYYY-MM-DD";
+                : "MM/dd/yyyy";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime).format(userDateTimeFomat);
             };
@@ -643,10 +643,10 @@ class CustomCell extends GridCell {
         : moment.tz.guess();
       userDateTimeFomat = this.props.userProfile.preferences.dateformat
         ? this.props.userProfile.preferences.dateformat
-        : "YYYY-MM-DD";
+        : "MM/dd/yyyy";
       dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
       return moment(dateTime)
-        .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
+        .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
         .clone()
         .tz(userTimezone)
         .format(userDateTimeFomat);
@@ -655,7 +655,7 @@ class CustomCell extends GridCell {
       let userDateTimeFomat = null;
       userDateTimeFomat = this.props.userProfile.preferences.dateformat
         ? this.props.userProfile.preferences.dateformat
-        : "YYYY-MM-DD";
+        : "MM/dd/yyyy";
       dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
       return moment(dateTime).format(userDateTimeFomat);
     };
