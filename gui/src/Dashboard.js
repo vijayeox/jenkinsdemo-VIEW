@@ -65,7 +65,7 @@ class Dashboard extends Component {
     let backButton = ""
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
-      backButton = `<div id='dashboard-rollup-button' title="Previous Dashboard" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+      backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
     }
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + backButton + htmlData + "</div>"
     return container
@@ -146,11 +146,17 @@ class Dashboard extends Component {
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if (new Date(startDate)) {
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
           //date range received
           if (filter["operator"] == "gte&&lte") {
             endDate = filter["endDate"]
             if (typeof endDate !== "string") {
+              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            } else if (new Date(endDate)) {
+              endDate = new Date(endDate)
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
             }
             //prepare startDate array
@@ -166,11 +172,33 @@ class Dashboard extends Component {
             filterarray.push("<=")
             filterarray.push(endDate)
             filterParams.push(filterarray)
+          } else {
+            //if date is not a range
+            filterarray = []
+            filterarray.push(filter["field"])
+            filterarray.push(filter["operator"])
+            if (typeof startDate !== "string") {
+              startDate = filter["startDate"]
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            } else if (new Date(startDate)) {
+              startDate = new Date(filter["startDate"])
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            }
+            filterarray.push(startDate)
+            filterParams.push(filterarray)
+
           }
         } else {
           //single date passed
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
+          if (typeof startDate !== "string") {
+            startDate = filter["startDate"]
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if (new Date(startDate)) {
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          }
           filterarray.push(startDate)
           filterParams.push(filterarray)
         }
@@ -178,7 +206,9 @@ class Dashboard extends Component {
         filterarray.push(filter["field"])
         filterarray.push(filter["operator"])
         filterarray.push(filter["value"]["selected"])
-        filterParams.push(filterarray)
+        if (filter["value"].hasOwnProperty("selected")) {
+          filterParams.push(filterarray)
+        }
       }
     })
     return filterParams
@@ -189,23 +219,34 @@ class Dashboard extends Component {
     if (prevProps.dashboardFilter != this.props.dashboardFilter) {
       let filterParams = this.extractFilterValues()
 
-      let preapredFilter
+      let preparedFilter
       if (filterParams && filterParams.length > 1) {
-        preapredFilter = filterParams[0]
+        preparedFilter = filterParams[0]
         for (let i = 1; i < filterParams.length; i++) {
-          preapredFilter = this.preparefilter(preapredFilter, filterParams[i])
+          preparedFilter = this.preparefilter(preparedFilter, filterParams[i])
 
         }
       }
 
       if (filterParams && filterParams.length != 0) {
         if (filterParams.length > 1) {
-          this.setState({ preparedDashboardFilter: preapredFilter }, () => {
-            this.updateGraph(preapredFilter)
+          if (this.props.dashboardStack.length > 1) {
+            //adding drildowndashboardfilter to the dashboard filter if it exists
+            let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
+            if (drilldownDashboardFilter.length > 1)
+              preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
+          }
+          this.setState({ preparedDashboardFilter: preparedFilter }, () => {
+            this.updateGraph(preparedFilter)
           })
         } else {
-          this.setState({ preparedDashboardFilter: filterParams }, () => {
-            this.updateGraph(filterParams)
+          //adding drildowndashboardfilter to the dashboard filter if it exists
+          preparedFilter = filterParams
+          let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
+          if (drilldownDashboardFilter.length > 1)
+            preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
+          this.setState({ preparedDashboardFilter: preparedFilter }, () => {
+            this.updateGraph(preparedFilter)
           })
         }
       }
@@ -291,7 +332,12 @@ class Dashboard extends Component {
     let dashboardData = await this.getDashboardHtmlDataByUuid(event.value);
     event.value = JSON.stringify(dashboardData.data.dashboard)
     let drilldownDashboardFilter = JSON.parse(data.filter)
+    if (this.state.preparedDashboardFilter !== null) {
+      //combining dashboardfilter with widgetfilter
+      drilldownDashboardFilter = this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(data.filter))
+    }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
+
     this.props.drilldownToDashboard(event, "dashname")
   }
   rollupToDashboard() {
@@ -335,15 +381,17 @@ class Dashboard extends Component {
     let url = `analytics/widget/${widgetId}?data=true`;
     let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
 
+    console.log("Printing Filter: " + this.state.preparedDashboardFilter)
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
       //combining dashboardfilter with widgetfilter
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    }
-    else if (filter && ('' !== filter)) {
+    } else if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
+    } else {
+      url = url;
     }
     //starting spinner 
     if (eventData.elementId) {

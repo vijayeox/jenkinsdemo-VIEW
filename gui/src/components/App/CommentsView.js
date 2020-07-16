@@ -309,7 +309,7 @@ class CommentsView extends React.Component {
                         <div className="panel panel-default arrow left">
                           <div className="panel-body">
                             <div className="comment-post">
-                              <p>{commentItem.text}</p>
+                              <p dangerouslySetInnerHTML={{__html : commentItem.text}} />
                             </div>
                             <header className="text-right">
                               <time

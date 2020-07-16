@@ -7,8 +7,8 @@ import Select from 'react-select/creatable'
 const customStyles = {
     control: base => ({
         ...base,
-        height: 35,
-        minHeight: 35
+        height: 38,
+        minHeight: 38
     }),
     valueContainer: base => ({
         ...base,
@@ -22,7 +22,7 @@ const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode } = props;
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
-        "textoperator": [{ "Equals": "==" }, { "Not Equals": "!=" }],
+        "textoperator": [{ "Equals": "=="}, { "Not Equals": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
     };
     const dataTypeOptions = [
@@ -155,6 +155,7 @@ const FilterFields = function (props) {
                         :
                         filterMode == "Create" ?
                             <Select
+                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
@@ -164,6 +165,7 @@ const FilterFields = function (props) {
                             />
                             :
                             <Select
+                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
@@ -171,8 +173,6 @@ const FilterFields = function (props) {
                                 value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 options={filters[index]["value"]}
                             />
-
-
 
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
                     }
@@ -364,17 +364,16 @@ class DashboardFilter extends React.Component {
             this.hideFilterDiv()
             this.props.notif.current.notify(
                 "Filter Applied Successfully",
-                "Please save the dashboard in order to keep the changes",
+                "Please save the OI in order to keep the changes",
                 "success"
             )
-        }
-        else if (this.props.filterMode === "APPLY") {
+        } else if (this.props.filterMode === "APPLY") {
             this.props.setDashboardFilter(filters)
             console.log("IMPLEMENTING")
             console.log(filters)
         }
     }
-    
+
     render() {
         return (
             <div id="filter-form-container" className="disappear">
@@ -417,8 +416,8 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     {   // Rendered on dashboard Viewer
-                        this.props.filterMode === "APPLY" &&
-                        <Form.Group>
+                        this.props.filterMode === "APPLY" && this.state.applyFilterOption.length !== 0 &&
+                        < Form.Group >
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select
                                 placeholder="Choose filters"
@@ -427,16 +426,17 @@ class DashboardFilter extends React.Component {
                                 onChange={(e) => this.handleSelect(e)}
                                 value={this.state.input["applyfiltertype"]}
                                 options={this.state.applyFilterOption}
+                                style={{ marginleft: "0px" }}
                             />
                         </Form.Group>
                     }
                     <Row >
-                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filter</Button>
+                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
 
                     </Row>
 
                 </Form>
-            </div>
+            </div >
         )
     }
 }

@@ -259,6 +259,7 @@ class WidgetRenderer {
                 chart.data = data;
             }
             if (isDrillDownChart) {
+                chart.cursorOverStyle = am4core.MouseCursorStyle.pointer;
                 canvasElement.insertAdjacentHTML('beforeend',
                     '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
                     '<i class="fas fa-angle-double-down fa-lg"></i>' +

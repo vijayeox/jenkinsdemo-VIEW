@@ -555,7 +555,7 @@ class WidgetEditorApp extends React.Component {
         });
     }
 
-    syncWidgetState(name,value){
+    syncWidgetState(name,value,data){
         if(this.state.mode=="copy"){
             if(value!=null && value!==""){
                 let widget={...this.state.widget}
@@ -565,6 +565,7 @@ class WidgetEditorApp extends React.Component {
     
                 } else if(name==="queries"){
                     widget[name]=value
+                    widget["data"]=data
                 this.setState({widget:widget})
     
                 }
@@ -664,7 +665,7 @@ class WidgetEditorApp extends React.Component {
                         {!this.state.flipped &&
                             <div className="row">
                                 {((this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
-                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value,data)=>this.syncWidgetState(name,value,data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
                             </div>
                         }
@@ -718,7 +719,7 @@ class WidgetEditorApp extends React.Component {
 
                                 <div className="row">
                                     {(this.state.widget.type === 'chart' || this.state.widget.type === 'table'|| this.state.widget.type === 'inline' || this.state.widget.type === 'html') &&
-                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value)=>this.syncWidgetState(name,value)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value,data)=>this.syncWidgetState(name,value,data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
                                 
                                 </div>

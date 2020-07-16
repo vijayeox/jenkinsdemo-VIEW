@@ -50,7 +50,7 @@ class DashboardManager extends React.Component {
     if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
-      this.fetchDashboards()
+      this.fetchDashboards(false)
     }
   }
 
@@ -90,41 +90,43 @@ class DashboardManager extends React.Component {
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
   }
-
-
-  async fetchDashboards() {
+  async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let dashboardStack = this.state.dashboardStack
+    let dashboardStack=this.state.dashboardStack
+
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
-          dash.name === inputs["dashname"]["name"] ?
-            (inputs["dashname"] = dash, dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter }), that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack }))
-            : that.setState({ inputs: this.state.inputs })
+          if(dash.name === inputs["dashname"]["name"]){
+            inputs["dashname"] = dash
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
+            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack })
+          } else {
+              that.setState({ inputs: this.state.inputs })
+          }
+
         })
       } else {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             inputs["dashname"] = dash
-            dashboardStack.push({ data: dash, drilldownDashboardFilter: this.state.drilldownDashboardFilter })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration ,dashboardStack:dashboardStack})
           }
         })
       }
     } else {
-      this.setState({ dashboardBody: "NO DASHBOARD FOUND" })
+      this.setState({ dashboardBody: "NO OI FOUND" })
     }
   }
 
   setTitle(title) { }
-
-
 
   deleteDashboard() {
     let inputs = { ...this.state.inputs }
@@ -229,6 +231,7 @@ class DashboardManager extends React.Component {
     inputs[name] = value
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
+
   rollupToDashboard() {
     let stack = this.state.dashboardStack
     //removing the last dashboard from stack
@@ -257,7 +260,7 @@ class DashboardManager extends React.Component {
             {
               !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
               <div className="row">
-                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New Dashboard"><i className="fa fa-plus" aria-hidden="true"></i> Create Dashboard</Button>
+                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i> Create OI</Button>
               </div>
             }
 
@@ -286,7 +289,7 @@ class DashboardManager extends React.Component {
                               <Select
                                 name="dashname"
                                 className="react-select-container"
-                                placeholder="Select Dashboard"
+                                placeholder="Select OI"
                                 id="dashname"
                                 onChange={(e) => this.handleChange(e, "dashname")}
                                 value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
@@ -309,24 +312,24 @@ class DashboardManager extends React.Component {
                           <>
                             <ReactToPrint
                               trigger={() => {
-                                return <Button title="Print Dashboard">
+                                return <Button title="Print OI">
                                   <i className="fa fa-print" aria-hidden="true"></i>
                                 </Button>
                               }}
                               content={() => this.dashboardViewerRef}
                             />
-                            <Button onClick={() => this.showFilter()} title="Filter Dashboard">
+                            <Button onClick={() => this.showFilter()} title="Filter OI">
                               <i className="fa fa-filter" aria-hidden="true"></i>
                             </Button>
                             {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              <Button onClick={() => this.editDashboard()} title="Edit Dashboard">
+                              <Button onClick={() => this.editDashboard()} title="Edit OI">
                                 <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }
                             {
                               (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
                                 this.state.inputs["dashname"]["isdefault"] == "0") &&
-                              <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete Dashboard">
+                              <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete OI">
                                 <i className="fa fa-trash" aria-hidden="true"></i>
                               </Button>
                             }
@@ -335,12 +338,12 @@ class DashboardManager extends React.Component {
                               (this.props.hideEdit == false &&
                                 <Button
                                   onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
-                                  title="Make current dashboard as default dashboard"
+                                  title="Make current OI as default OI"
                                 >MAKE DEFAULT
                                 </Button>
                               )
                               : (this.props.hideEdit == false &&
-                                <span style={{ color: "white", fontWeight: "bolder" }}>Default Dashboard</span>
+                                <span style={{ color: "white", fontWeight: "bolder" }}>Default OI</span>
                               )
 
                             }
@@ -356,7 +359,7 @@ class DashboardManager extends React.Component {
                   {
                     !this.props.hideEdit &&
                     <div className="dashboard-preview-tab">
-                      <span>Dashboard Previewer</span>
+                      <span>OI Previewer</span>
                     </div>
                   }
                   {
@@ -399,7 +402,7 @@ class DashboardManager extends React.Component {
                     flipCard={(status) => {
                       if (status === "Saved") {
                         //refreshing the dashboardData
-                        this.fetchDashboards()
+                        this.fetchDashboards(true)
 
                       }
                       else if (status === "") {
@@ -422,7 +425,7 @@ class DashboardManager extends React.Component {
           onHide={() => { this.setState({ showModal: false }) }}
           content={this.state.modalContent}
           notification={this.notif}
-          refreshDashboard={() => this.fetchDashboards()}
+          refreshDashboard={() => this.fetchDashboards(true)}
           deleteDashboard={this.deleteDashboard}
         />
       </div>

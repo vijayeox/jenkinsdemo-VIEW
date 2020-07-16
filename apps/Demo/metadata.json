@@ -6,10 +6,10 @@
   "icon": "icon.png",
   "icon_white": "icon_white.png",
   "title": {
-    "en_EN": "Insurance Distribution Network"
+    "en_EN": "IDN"
   },
   "description": {
-    "en_EN": "Insurance Distribution Network"
+    "en_EN": "IDN"
   },
   "files": [
     "main.js",

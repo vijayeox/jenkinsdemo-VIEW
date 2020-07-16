@@ -15,6 +15,8 @@ import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
 import * as OxzionGUIComponents from "../../../index.js";
 
+
+
 class Page extends React.Component {
   constructor(props) {
     super(props);
@@ -113,6 +115,8 @@ class Page extends React.Component {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
+      var _moment = moment;
+      string = string.replace(/moment/g,'_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
@@ -524,7 +528,6 @@ class Page extends React.Component {
           />
         );
       } else if (item.type == "DashboardManager") {
-        console.log("Page UUID" + item.content.uuid)
         content.push(
           <DashboardManager
             args={this.core}
