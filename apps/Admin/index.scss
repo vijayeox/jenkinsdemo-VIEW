@@ -1116,3 +1116,15 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   margin: 0px;
   height: 35px;
 }
+
+.parentProjectDropdown {
+  display : flex;
+  div {
+    width : 100%;
+  }
+  button {
+    border: none;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+  }
+}
