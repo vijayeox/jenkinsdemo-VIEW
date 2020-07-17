@@ -318,24 +318,24 @@ export default class OX_Grid extends React.Component {
             var formatDate = (dateTime, dateTimeFormat) => {
               let userTimezone,
                 userDateTimeFomat = null;
-              userTimezone = this.props.userProfile.preferences.timezone
-                ? this.props.userProfile.preferences.timezone
+              userTimezone = this.userProfile.preferences.timezone
+                ? this.userProfile.preferences.timezone
                 : moment.tz.guess();
-              userDateTimeFomat = this.props.userProfile.preferences.dateformat
-                ? this.props.userProfile.preferences.dateformat
-                : "MM/dd/yyyy";
+              userDateTimeFomat = this.userProfile.preferences.dateformat
+                ? this.userProfile.preferences.dateformat
+                : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime)
-                .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
+                .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
                 .clone()
                 .tz(userTimezone)
                 .format(userDateTimeFomat);
             };
             var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
               let userDateTimeFomat = null;
-              userDateTimeFomat = this.props.userProfile.preferences.dateformat
-                ? this.props.userProfile.preferences.dateformat
-                : "MM/dd/yyyy";
+              userDateTimeFomat = this.userProfile.preferences.dateformat
+                ? this.userProfile.preferences.dateformat
+                : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime).format(userDateTimeFomat);
             };
@@ -643,10 +643,10 @@ class CustomCell extends GridCell {
         : moment.tz.guess();
       userDateTimeFomat = this.props.userProfile.preferences.dateformat
         ? this.props.userProfile.preferences.dateformat
-        : "MM/dd/yyyy";
+        : "YYYY-MM-DD";
       dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
       return moment(dateTime)
-        .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
+        .utc(dateTime, "YYYY-MM-DD HH:mm:ss")
         .clone()
         .tz(userTimezone)
         .format(userDateTimeFomat);
@@ -655,7 +655,7 @@ class CustomCell extends GridCell {
       let userDateTimeFomat = null;
       userDateTimeFomat = this.props.userProfile.preferences.dateformat
         ? this.props.userProfile.preferences.dateformat
-        : "MM/dd/yyyy";
+        : "YYYY-MM-DD";
       dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
       return moment(dateTime).format(userDateTimeFomat);
     };
