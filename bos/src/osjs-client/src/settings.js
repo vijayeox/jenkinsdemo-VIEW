@@ -30,7 +30,6 @@
 
 import * as merge from 'deepmerge';
 import simplejsonconf from 'simplejsonconf';
-import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 
 const serverSettings = core => ({
   save: settings => core.request(core.url('/settings'), {
@@ -45,25 +44,21 @@ const serverSettings = core => ({
 
 const localStorageSettings = core => ({
   clear: ns => {
-    let olsHelper = new LocalStorageAdapter;
-    // core.make("oxzion/localstorage").purge(ns);
-    olsHelper.purge(ns);
+    localStorage.removeItem(ns);
+
     return Promise.resolve(true);
   },
 
   save: settings => {
     Object.keys(settings).forEach((k) => {
-    let olsHelper = new LocalStorageAdapter;
-      olsHelper.set(k, settings[k]);
+      localStorage.setItem(k, JSON.stringify(settings[k]));
     });
 
     return Promise.resolve(true);
   },
 
   load: () => Promise.resolve(Object.keys(localStorage).reduce((o, v) => {
-    let olsHelper = new LocalStorageAdapter;
-      const value = olsHelper.get(v);
-    // let value = localStorage.getItem(v);
+    let value = localStorage.getItem(v);
     try {
       value = JSON.parse(value);
     } catch (e) {
