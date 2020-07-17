@@ -128,8 +128,8 @@ export default class Packages {
     this.inited = true;
 
     let helper = this.core;
-    var AuthToken = localStorage.getItem("AUTH_token");
-    var jwttoken = JSON.parse(AuthToken);
+    let jwttoken = this.core.make('oxzion/profile').getAuth();
+    
     setInterval(function(){CheckAuthToken(helper, jwttoken.key);}, 300000);
 
     const manifest = this.core.config('packages.manifest');

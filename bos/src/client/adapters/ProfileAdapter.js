@@ -19,7 +19,8 @@ export class ProfileServiceProvider extends ServiceProvider {
 		this.core.instance('oxzion/profile', () => ({
 			get: () => this.get(),
 			set: () => this.set(),
-			update: () => this.update()
+			update: () => this.update(),
+			getAuth:() => this.getAuth()
 		}));
 	}
 	get() {
@@ -61,6 +62,13 @@ export class ProfileServiceProvider extends ServiceProvider {
 			settings.set("UserInfo","key",data.key);
 		    settings.set("UserInfo","timestamp",data.timestamp);
 				
+		}
+	}
+	getAuth(){
+		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
+			if(this.lsHelper.get("AUTH_token")){
+				return this.lsHelper.get("AUTH_token");
+			}
 		}
 	}
 }

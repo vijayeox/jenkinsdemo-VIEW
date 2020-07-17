@@ -318,11 +318,11 @@ export default class OX_Grid extends React.Component {
             var formatDate = (dateTime, dateTimeFormat) => {
               let userTimezone,
                 userDateTimeFomat = null;
-              userTimezone = this.props.userProfile.preferences.timezone
-                ? this.props.userProfile.preferences.timezone
+              userTimezone = this.userProfile.preferences.timezone
+                ? this.userProfile.preferences.timezone
                 : moment.tz.guess();
-              userDateTimeFomat = this.props.userProfile.preferences.dateformat
-                ? this.props.userProfile.preferences.dateformat
+              userDateTimeFomat = this.userProfile.preferences.dateformat
+                ? this.userProfile.preferences.dateformat
                 : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime)
@@ -333,8 +333,8 @@ export default class OX_Grid extends React.Component {
             };
             var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
               let userDateTimeFomat = null;
-              userDateTimeFomat = this.props.userProfile.preferences.dateformat
-                ? this.props.userProfile.preferences.dateformat
+              userDateTimeFomat = this.userProfile.preferences.dateformat
+                ? this.userProfile.preferences.dateformat
                 : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime).format(userDateTimeFomat);

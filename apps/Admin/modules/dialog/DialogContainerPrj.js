@@ -66,7 +66,7 @@ export default class DialogContainer extends React.Component {
       : null;
     item == "parent_id"
       ? this.setState({
-          managerName: event.target.value,
+          parentProject: event.target.value,
         })
       : null;
   };
@@ -167,7 +167,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="col-4">
                   <label>Parent Project</label>
-                  <div>
+                  <div className="parentProjectDropdown">
                     <DropDown
                       args={this.core}
                       mainList={
@@ -181,6 +181,12 @@ export default class DialogContainer extends React.Component {
                       disableItem={this.props.diableField}
                       validationMessage={"Please select the Parent project."}
                     />
+                    <button onClick={(e)=>{
+                      e.preventDefault();
+                      this.setState({parentProject:null});
+                    }} >
+                      <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    </button>
                   </div>
                 </div>
               </div>
