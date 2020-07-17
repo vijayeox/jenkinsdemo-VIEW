@@ -46,7 +46,6 @@ const serverSettings = core => ({
 const localStorageSettings = core => ({
   clear: ns => {
     let olsHelper = new LocalStorageAdapter;
-    // core.make("oxzion/localstorage").purge(ns);
     olsHelper.purge(ns);
     return Promise.resolve(true);
   },
@@ -63,7 +62,6 @@ const localStorageSettings = core => ({
   load: () => Promise.resolve(Object.keys(localStorage).reduce((o, v) => {
     let olsHelper = new LocalStorageAdapter;
       const value = olsHelper.get(v);
-    // let value = localStorage.getItem(v);
     try {
       value = JSON.parse(value);
     } catch (e) {
