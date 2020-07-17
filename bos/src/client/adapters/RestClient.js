@@ -49,8 +49,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 		let core = this.core;
 		let refreshflag = false;
 		var lsHelper = new LocalStorageAdapter;
-		// let lsHelper = this.core.make("oxzion/localstorage")
-		// console.log(user);
 		lsHelper.supported();
 		if (user["jwt"] != null) {
 			// console.log('refresh token to be called now...');
