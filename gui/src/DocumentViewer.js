@@ -15,7 +15,6 @@ export default class DocumentViewer extends Component {
       documentsList: undefined,
       documentTypes: [],
       activeCard: "",
-      uploadWindow: false,
       files: [],
       validFiles:[]
     };
@@ -28,7 +27,6 @@ export default class DocumentViewer extends Component {
   }
     onAdd = (event) => {
         console.log('onAdd: ');
-
         this.setState({
             files: event.newState,
             validFiles: event.newState.filter(item => {
@@ -51,16 +49,13 @@ export default class DocumentViewer extends Component {
         });
     }
 
-    uploadAttachments(){     
+    uploadAttachments(){
       this.state.validFiles.map(item => {
-        console.log(item);
         this.postAttachments(item).then(response => {
-          console.log(response);
           if (response.status == 'success') {
             this.getDocumentsList();
           }
           this.setState({
-            uploadWindow:false,
             files: [],
             validFiles: []
           });
@@ -151,6 +146,7 @@ export default class DocumentViewer extends Component {
   generateDocumentList() {
     var accordionHTML = [];
     if (this.state.documentTypes) {
+      console.log(this.state.documentTypes);
       this.state.documentTypes.map((docType, index) => {
         this.state.documentsList[docType]
           ? accordionHTML.push(
@@ -168,11 +164,6 @@ export default class DocumentViewer extends Component {
                     }) : this.setState({
                       activeCard: item
                     }) ;
-                  }}
-                  showFileWindow={() => {
-                    this.setState({
-                      uploadWindow: true
-                    });
                   }}
                 >
                   {docType}
@@ -210,6 +201,27 @@ export default class DocumentViewer extends Component {
                       </Card>
                     );
                   })}
+        {this.state.folderType[docType] == 'file' ?
+                    <div>
+                      <Upload
+                          batch={false}
+                          multiple={true}
+                          autoUpload={false}
+                          files={this.state.files}
+                          onAdd={this.onAdd}
+                          onRemove={this.onRemove}
+                          restrictions={{
+                            allowedExtensions: [".jpg", ".jpeg", ".png", ".gif",".pdf", ".doc", ".docx", ".xlsx",".xls"],
+                            maxFileSize: 25000000
+                          }}
+                      />
+                      <button className={ this.state.validFiles.length == 0 ? "uploadButton invalidButton" : "uploadButton"}
+                      disabled={this.state.validFiles.length == 0}
+                      onClick={this.uploadAttachments}>
+                        Upload
+                      </button>
+                    </div> : null
+         }
                 </Card.Body>
               </Accordion.Collapse>
             </Card>
@@ -370,27 +382,6 @@ export default class DocumentViewer extends Component {
     if (documentsList) {
       return (
         <div className="docViewerComponent">
-        {this.state.uploadWindow ?
-          <div className="popupWindow"> 
-            <Upload
-                batch={false}
-                multiple={true}
-                autoUpload={false}
-                files={this.state.files}
-                onAdd={this.onAdd}
-                onRemove={this.onRemove}
-                restrictions={{
-                  allowedExtensions: [".jpg", ".jpeg", ".png", ".gif",".pdf", ".doc", ".docx", ".xlsx",".xls"],
-                  maxFileSize: 25000000
-                }}
-            />
-            <button className={ this.state.validFiles.length == 0 ? "uploadButton invalidButton" : "uploadButton"}
-            disabled={this.state.validFiles.length == 0} 
-            onClick={this.uploadAttachments}>
-              Upload
-            </button>
-          </div> : null
-         }
           <div className="col-md-3 docListDiv">
             <Accordion defaultActiveKey={this.state.documentTypes[0]}>
               {this.generateDocumentList()}
@@ -437,11 +428,6 @@ function CustomToggle(props) {
         }
       ></i>
       {props.children}
-      {props.type == 'file' ? (
-      <div class="element">
-      <i class="fa fa-upload uploadFile" onClick={() => props.showFileWindow()}></i>
-      </div>
-      ): ''}
     </Button>
   );
 }
