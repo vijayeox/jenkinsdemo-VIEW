@@ -118,33 +118,47 @@ export default class LocalStorageAdapter {
 					const data = window.localStorage.getItem(key);
 					if(data != null){
 						const getsession = window.localStorage.getItem("osjs/session");
-						window.localStorage.removeItem("osjs/session");
-						let setsession = JSON.parse(getsession);
-						this.set("osjs/session",setsession);
+						if(getsession != null){	
+							window.localStorage.removeItem("osjs/session");
+							let setsession = JSON.parse(getsession);
+							this.set("osjs/session",setsession);
+						}
 						const getuser = window.localStorage.getItem("User");
-						window.localStorage.removeItem("User");
-						let setuser = JSON.parse(getuser);
-						this.set("User",setuser["key"]);
+						if(getuser != null){
+							window.localStorage.removeItem("User");
+							let setuser = JSON.parse(getuser);
+							this.set("User",setuser["key"]);
+						}
 						const getreftoken = window.localStorage.getItem("REFRESH_token");
-						window.localStorage.removeItem("REFRESH_token");
-						let setreftoken = JSON.parse(getreftoken);
-						this.set("REFRESH_token",setreftoken["key"]);
+						if(getreftoken != null){
+							window.localStorage.removeItem("REFRESH_token");
+							let setreftoken = JSON.parse(getreftoken);
+							this.set("REFRESH_token",setreftoken["key"]);
+						}
 						const getuserinfo = window.localStorage.getItem("UserInfo");
-						window.localStorage.removeItem("UserInfo");
-						let setuserinfo = JSON.parse(getuserinfo);
-						this.set("UserInfo",setuserinfo["key"]);
+						if(getuserinfo != null){
+							window.localStorage.removeItem("UserInfo");
+							let setuserinfo = JSON.parse(getuserinfo);
+							this.set("UserInfo",setuserinfo["key"]);
+						}
 						const getlocale = window.localStorage.getItem("osjs/locale");
-						window.localStorage.removeItem("osjs/locale");
-						let setlocale = JSON.parse(getlocale);
-						this.set("osjs/locale",setlocale);
+						if(getlocale != null){
+							window.localStorage.removeItem("osjs/locale");
+							let setlocale = JSON.parse(getlocale);
+							this.set("osjs/locale",setlocale);
+						}
 						const getdesktop = window.localStorage.getItem("osjs/desktop");
-						window.localStorage.removeItem("osjs/desktop");
-						let setdesktop = JSON.parse(getdesktop);
-						this.set("osjs/desktop",setdesktop);
+						if(getdesktop != null){
+							window.localStorage.removeItem("osjs/desktop");
+							let setdesktop = JSON.parse(getdesktop);
+							this.set("osjs/desktop",setdesktop);
+						}
 						const getauthtoken = window.localStorage.getItem("AUTH_token");
-						window.localStorage.removeItem("AUTH_token");
-						let setauthtoken = JSON.parse(getauthtoken);
-						this.set("AUTH_token",setauthtoken["key"]);
+						if(getauthtoken != null){
+							window.localStorage.removeItem("AUTH_token");
+							let setauthtoken = JSON.parse(getauthtoken);
+							this.set("AUTH_token",setauthtoken["key"]);
+						}
 					}
 
 					const redata = this.secureStorage.getItem(key);

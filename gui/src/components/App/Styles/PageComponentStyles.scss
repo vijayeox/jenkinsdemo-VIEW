@@ -1,6 +1,6 @@
 $primary-color: #275362;
 
-.PageRender {
+.Navigation {
   position: relative;
   margin: 0 0px 0 15px;
   height: 100%;
@@ -165,4 +165,10 @@ $primary-color: #275362;
   height: 26px;
   position: relative;
   text-size-adjust: 100%;
+}
+.page-inactive{
+  display:none;
+}
+.page-active{
+  display: block;
 }

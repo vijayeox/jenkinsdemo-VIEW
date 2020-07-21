@@ -26,7 +26,6 @@ export default class DocumentViewer extends Component {
     this.getDocumentsList();
   }
     onAdd = (event) => {
-        console.log('onAdd: ');
         this.setState({
             files: event.newState,
             validFiles: event.newState.filter(item => {
@@ -42,8 +41,6 @@ export default class DocumentViewer extends Component {
     }
 
     onRemove = (event) => {
-        console.log('onRemove: ');
-
         this.setState({
             files: event.newState
         });
@@ -120,7 +117,6 @@ export default class DocumentViewer extends Component {
               .sort((a, b) => a.localeCompare(b))
               .filter((item) => item !== "Documents");
             documentsList.Documents ? validDocTypes.unshift("Documents") : null;
-            console.log(validDocTypes);
             this.setState({
               documentsList: documentsList,
               folderType:folderType,
@@ -129,7 +125,6 @@ export default class DocumentViewer extends Component {
               documentTypes: validDocTypes
             });
           }
-          console.log(folderType);
           this.loader.destroy();
         }
       });
@@ -146,7 +141,6 @@ export default class DocumentViewer extends Component {
   generateDocumentList() {
     var accordionHTML = [];
     if (this.state.documentTypes) {
-      console.log(this.state.documentTypes);
       this.state.documentTypes.map((docType, index) => {
         this.state.documentsList[docType]
           ? accordionHTML.push(
@@ -377,7 +371,6 @@ export default class DocumentViewer extends Component {
   };
 
   render() {
-    console.log(this.state);
     const { documentsList } = this.state;
     if (documentsList) {
       return (

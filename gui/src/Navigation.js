@@ -1,7 +1,6 @@
 import React from "react";
 import Page from "./components/App/Page";
 import FormRender from "./components/App/FormRender";
-import Breadcrumb from "./components/App/Breadcrumb";
 import { createBrowserHistory } from "history";
 
 class Navigation extends React.Component {
@@ -12,67 +11,73 @@ class Navigation extends React.Component {
     this.appId = this.props.appId;
     this.proc = this.props.proc;
     this.params = this.props.params;
+    this.pageClass = this.appId+"_page";
+    this.pageDiv = this.appId+"_pages";
+    this.appNavigationDiv = "navigation_"+this.appId;
     this.state = {
-      selected: this.props.selected
+      selected: this.props.selected,
+      pages: []
     };
     this.homepage = null;
-    this.child = React.createRef();
     this.breadcrumbDiv = this.appId + "_breadcrumbParent";
     this.contentDivID = this.appId + "_Content";
-    this.getMenulist().then(response => {
-        this.props.menuLoad(response["data"]);
-        if(response['data'][0]){
-          this.homepage = response["data"][0];
-        }
-      if (this.params && this.params.page) {
-        this.child.current.clearBreadcrumb();
-        this.setState({ selected: { page_id: this.params.page } });
-        history.push("/");
-      } else if (this.params && this.params.activityId) {
-        this.setState({ selected: { activity_id: this.params.activityId } });
-      } else if (this.proc && this.proc.args) {
-        if (typeof this.proc.args === "string") {
-          try {
-            var appParams = JSON.parse(this.proc.args);
-            if (appParams.type) {
-              this.postSubmitCallback = this.postSubmitCallback.bind(this);
-              this.setState({
-                selected: {
-                  type: appParams.type,
-                  page_id: appParams.pageId,
-                  pipeline: appParams.pipeline,
-                  workflow_id: appParams.workflowId,
-                  parentWorkflowInstanceId: appParams.workflowInstanceId,
-                  workflowInstanceId: appParams.workflowInstanceId,
-                  url: appParams.url,
-                  activityInstanceId: appParams.activityInstanceId
-                }
-              });
-              history.push("/");
-            } else {
-              this.child.current.updateBreadCrumb({detail:appParams});
-              let ev = new CustomEvent("updatePageView", {
-                detail: appParams.detail,
-                bubbles: true
-              });
-              document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
-              history.push("/");
+    if(this.props.menus && this.props.menus.length > 0){
+      this.props.menuLoad(this.props.menus);
+      if(this.props.menus[0]){
+        this.homepage = this.props.menus[0];
+      }
+    } else {
+      this.getMenulist().then(response => {
+          this.props.menuLoad(response["data"]);
+          if(response['data'][0]){
+            this.homepage = response["data"][0];
+          }
+        if (this.params && this.params.page) {
+          this.setState({ pages: [{ pageId: this.params.page }] });
+          history.push("/");
+        } else if (this.params && this.params.activityId) {
+          this.setState({ selected: { activity_id: this.params.activityId } });
+        } else if (this.proc && this.proc.args) {
+          if (typeof this.proc.args === "string") {
+            try {
+              var appParams = JSON.parse(this.proc.args);
+              if (appParams.type) {
+                this.postSubmitCallback = this.postSubmitCallback.bind(this);
+                this.setState({
+                  selected: {
+                    type: appParams.type,
+                    page_id: appParams.pageId,
+                    pipeline: appParams.pipeline,
+                    workflow_id: appParams.workflowId,
+                    parentWorkflowInstanceId: appParams.workflowInstanceId,
+                    workflowInstanceId: appParams.workflowInstanceId,
+                    url: appParams.url,
+                    activityInstanceId: appParams.activityInstanceId
+                  }
+                });
+                history.push("/");
+              } else {
+                // this.updateBreadCrumb({detail:appParams});
+                let ev = new CustomEvent("updatePageView", {
+                  detail: appParams.detail,
+                  bubbles: true
+                });
+                document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
+                history.push("/");
+              }
+            } catch (e) {
+              console.log("No params!");
+              console.log(e);
+              this.props.selectLoad(this.homepage);
             }
-          } catch (e) {
-            console.log("No params!");
-            console.log(e);
-            this.child.current.clearBreadcrumb();
+          } else {
             this.props.selectLoad(this.homepage);
           }
         } else {
-          this.child.current.clearBreadcrumb();
           this.props.selectLoad(this.homepage);
         }
-      } else {
-        this.child.current.clearBreadcrumb();
-        this.props.selectLoad(this.homepage);
-      }
-    });
+      });
+    }
   }
   async getMenulist() {
     let helper = this.core.make("oxzion/restClient");
@@ -84,52 +89,149 @@ class Navigation extends React.Component {
     );
     return menulist;
   }
+  componentDidMount() {
+      if(document.getElementsByClassName(this.appId+"_breadcrumbParent")[0]){
+        // document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].addEventListener("updateBreadcrumb", this.updateBreadCrumb, false);
+        document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].addEventListener("stepDownPage", this.stepDownPage, false);
+      }
+      document.getElementById(this.appNavigationDiv).addEventListener("addPage",this.addPage,false);
+      document.getElementById(this.appNavigationDiv).addEventListener("selectPage",this.selectPage,false);
+    }
+
+  addPage = e => {
+    var pages = this.state.pages;
+    if(e.detail.pageId){
+      pages.push(e.detail);
+    } else {
+      pages.push(e.detail);
+    }
+    console.log(e.detail);
+    if(e.detail.parentPage && document.getElementById(e.detail.parentPage+"_page")){
+      document.getElementById(e.detail.parentPage+"_page").classList.remove("page-active");
+      document.getElementById(e.detail.parentPage+"_page").classList.add("page-inactive");
+    }
+    this.setState({pages:pages});
+  };
+  selectPage = e => {
+    document.getElementById(e.detail.parentPage+"_page").classList.remove("page-inactive");
+    document.getElementById(e.detail.parentPage+"_page").classList.add("page-active");
+  };
 
   componentWillReceiveProps(props) {
     if (props.selected) {
-      this.setState({ selected: props.selected });
-      if (props.selected !== this.state.selected)
-        this.child.current.clearBreadcrumb();
-    }
+      var item = props.selected;
+      if(item.page_id){
+        var page = [{pageId:item.page_id,title:item.name}];
+        this.setState({ pages: page });
+        if(document.getElementById(item.page_id+"_page")){
+          document.getElementById(item.page_id+"_page").classList.remove("page-inactive");
+          document.getElementById(item.page_id+"_page").classList.add("page-active");
+        }
+      }
   }
+}
   postSubmitCallback = () => {
     this.props.selectLoad(this.homepage);
-    try {
-      this.homepage.page_id != this.props.selected.page_id
-        ? this.child.current.clearBreadcrumb()
-        : null;
-    } catch {
-      null;
-    }
     if (history) {
       history.push("/");
     }
   };
 
+    stepDownPage = () => {
+      if (this.state.pages.length == 1) {
+        this.props.homePage();
+      }
+    };
+
+    breadcrumbClick = (currentValue, index) => {
+      let data = this.state.pages.slice();
+      data.splice(index + 1, data.length);
+      this.setState({
+        pages: data
+      });
+      document.getElementById(currentValue.pageId+"_page").classList.remove("page-inactive");
+      document.getElementById(currentValue.pageId+"_page").classList.add("page-active");
+    };
+
+  renderBreadcrumbs = () => {
+    var content = [];
+    console.log(this.state.pages);
+    this.state.pages.map((currentValue, index) => {
+      var clickable = false;
+      if (this.state.pages.length > 1 && index+1 != this.state.pages.length) {
+        clickable = true;
+      }
+      currentValue.title
+        ? content.push(
+            <span className="breadcrumbs-item" key={index}>
+              {index == "0" ? null : (
+                <i
+                  className="fa fa-chevron-right"
+                  style={{
+                    fontSize: "17px",
+                    marginRight: "5px"
+                  }}
+                />
+              )}
+                {currentValue.icon ? (
+                  <i
+                    className={currentValue.icon}
+                    style={{ fontSize: "17px" }}
+                  ></i>
+                ) : null}
+                <a
+                  style={{
+                    cursor: clickable ? "pointer" : null
+                  }}
+                  onClick={() =>
+                    clickable ? this.breadcrumbClick(currentValue, index) : null
+                  }
+                >
+                  {currentValue.title}
+                </a>
+            </span>
+          )
+        : null;
+    });
+    return content;
+  };
+  renderPages(){
+    var pageList = [];
+    var that = this;
+    if(this.state.pages.length > 0){
+      this.state.pages.map((item, i) => {
+        var pageId = item.pageId+"_page";
+        var pageClasses = this.pageClass + ' page-active';
+        pageList.push(
+          <div className={pageClasses} id={pageId}>
+          <Page
+            key={item.pageId}
+            config={this.props.config}
+            proc={this.props.proc}
+            app={this.props.appId}
+            core={this.core}
+            pageId={item.pageId}
+            pageContent={item.pageContent}
+            currentRow={item.currentRow}
+          /></div>);
+      });
+    }
+    return pageList;
+  }
+
   render() {
     const { expanded, selected } = this.state;
     return (
-      <div className="PageRender">
+      <div id={this.appNavigationDiv} className="Navigation">
         <div className={this.breadcrumbDiv}>
-          <Breadcrumb ref={this.child} appId={this.appId}
-          homePage={this.postSubmitCallback} />
+        {this.state.pages.length > 0 ? (
+          <div className="breadcrumbs">{this.renderBreadcrumbs()}</div>
+        ) : null}
         </div>
-        {this.state.selected.page_id ? (
-          <Page
-            pageId={this.state.selected.page_id}
-            config={this.props.config}
-            proc={this.props.proc}
-            app={this.props.appId}
-            core={this.core}
-          />
-        ) : (
-          <Page
-            config={this.props.config}
-            proc={this.props.proc}
-            app={this.props.appId}
-            core={this.core}
-          />
-        )}
+        <div className={this.pageDiv}>
+        {this.state.pages.length > 0?
+        this.renderPages():null}
+        </div>
         {(this.state.selected.activityInstanceId &&
           this.state.selected.activityInstanceId) ||
         this.state.selected.pipeline ? (

@@ -7,6 +7,8 @@ import merge from "deepmerge";
 import $ from "jquery";
 import Swal from "sweetalert2";
 import scrollIntoView from "scroll-into-view-if-needed";
+import * as MomentTZ from "moment-timezone";
+import DateFormats from '../../public/js/DateFormats'
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
 import { countryList } from "./Form/Country.js";
@@ -309,6 +311,11 @@ class FormRender extends React.Component {
         } else {
           route = this.appUrl + "/form/" + this.state.formId + "/file";
           method = "post";
+
+          if(this.props.route){
+            route = this.props.route;
+            method = "post"
+          }
           if (this.state.instanceId) {
             route =this.appUrl + "/form/" +this.state.formId + "/file/" + this.state.instanceId;
             method = "put";
@@ -368,6 +375,8 @@ class FormRender extends React.Component {
       formData.userprofile = undefined;
       formData.countryList = undefined;
       formData.phoneList = undefined;
+      formData.timezones = undefined;
+      formData.dateFormats = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
       var componentList = flattenComponents(this.state.currentForm._form.components, true);
@@ -395,7 +404,9 @@ class FormRender extends React.Component {
         privileges: this.privileges,
         userprofile: this.userprofile,
         countryList: countryList,
-        phoneList: phoneList
+        phoneList: phoneList,
+        timezones : MomentTZ,
+        dateFormats : DateFormats
       });
     }
 
