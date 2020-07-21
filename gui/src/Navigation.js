@@ -34,6 +34,7 @@ class Navigation extends React.Component {
           }
         if (this.params && this.params.page) {
           this.setState({ pages: [{ pageId: this.params.page }] });
+          this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
@@ -42,7 +43,6 @@ class Navigation extends React.Component {
             try {
               var appParams = JSON.parse(this.proc.args);
               if (appParams.type) {
-                this.postSubmitCallback = this.postSubmitCallback.bind(this);
                 this.setState({
                   selected: {
                     type: appParams.type,
@@ -55,14 +55,10 @@ class Navigation extends React.Component {
                     activityInstanceId: appParams.activityInstanceId
                   }
                 });
+                this.pageActive(appParams.pageId);
                 history.push("/");
               } else {
-                // this.updateBreadCrumb({detail:appParams});
-                let ev = new CustomEvent("updatePageView", {
-                  detail: appParams.detail,
-                  bubbles: true
-                });
-                document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
+                console.log(appParams);
                 history.push("/");
               }
             } catch (e) {
@@ -89,12 +85,21 @@ class Navigation extends React.Component {
     );
     return menulist;
   }
+  pageActive(pageId){
+    if(document.getElementById(pageId+"_page")){
+      document.getElementById(pageId+"_page").classList.remove("page-inactive");
+      document.getElementById(pageId+"_page").classList.add("page-active");
+    }
+  }
+  pageInActive(pageId){
+    if(document.getElementById(pageId+"_page")){
+      document.getElementById(pageId+"_page").classList.add("page-inactive");
+      document.getElementById(pageId+"_page").classList.remove("page-active");
+    }
+  }
   componentDidMount() {
-      if(document.getElementsByClassName(this.appId+"_breadcrumbParent")[0]){
-        // document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].addEventListener("updateBreadcrumb", this.updateBreadCrumb, false);
-        document.getElementsByClassName(this.appId+"_breadcrumbParent")[0].addEventListener("stepDownPage", this.stepDownPage, false);
-      }
       document.getElementById(this.appNavigationDiv).addEventListener("addPage",this.addPage,false);
+      document.getElementById(this.appNavigationDiv).addEventListener("stepDownPage",this.stepDownPage,false);
       document.getElementById(this.appNavigationDiv).addEventListener("selectPage",this.selectPage,false);
     }
 
@@ -107,14 +112,12 @@ class Navigation extends React.Component {
     }
     console.log(e.detail);
     if(e.detail.parentPage && document.getElementById(e.detail.parentPage+"_page")){
-      document.getElementById(e.detail.parentPage+"_page").classList.remove("page-active");
-      document.getElementById(e.detail.parentPage+"_page").classList.add("page-inactive");
+      this.pageInActive(e.detail.parentPage);
     }
     this.setState({pages:pages});
   };
   selectPage = e => {
-    document.getElementById(e.detail.parentPage+"_page").classList.remove("page-inactive");
-    document.getElementById(e.detail.parentPage+"_page").classList.add("page-active");
+    this.pageActive(e.detail.parentPage);
   };
 
   componentWillReceiveProps(props) {
@@ -123,23 +126,23 @@ class Navigation extends React.Component {
       if(item.page_id){
         var page = [{pageId:item.page_id,title:item.name}];
         this.setState({ pages: page });
-        if(document.getElementById(item.page_id+"_page")){
-          document.getElementById(item.page_id+"_page").classList.remove("page-inactive");
-          document.getElementById(item.page_id+"_page").classList.add("page-active");
-        }
+        this.pageActive(item.page_id);
       }
   }
 }
-  postSubmitCallback = () => {
-    this.props.selectLoad(this.homepage);
-    if (history) {
-      history.push("/");
-    }
-  };
 
-    stepDownPage = () => {
+    stepDownPage = e => {
       if (this.state.pages.length == 1) {
         this.props.homePage();
+      } else {
+          let data = this.state.pages.slice();
+          if(data.length > 1){
+            data.splice(data.length - 1, data.length);
+            this.setState({
+              pages: data
+            });
+            this.pageActive(data[data.length-1]['pageId']);
+          }
       }
     };
 
@@ -149,13 +152,11 @@ class Navigation extends React.Component {
       this.setState({
         pages: data
       });
-      document.getElementById(currentValue.pageId+"_page").classList.remove("page-inactive");
-      document.getElementById(currentValue.pageId+"_page").classList.add("page-active");
+      this.pageActive(currentValue.pageId);
     };
 
   renderBreadcrumbs = () => {
     var content = [];
-    console.log(this.state.pages);
     this.state.pages.map((currentValue, index) => {
       var clickable = false;
       if (this.state.pages.length > 1 && index+1 != this.state.pages.length) {
@@ -237,7 +238,6 @@ class Navigation extends React.Component {
         this.state.selected.pipeline ? (
           <div id={this.contentDivID} className="AppBuilderPage">
             <FormRender
-              postSubmitCallback={this.postSubmitCallback}
               core={this.core}
               appId={this.props.appId}
               activityInstanceId={this.state.selected.activityInstanceId}

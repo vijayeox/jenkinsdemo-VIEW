@@ -271,7 +271,7 @@ class FormRender extends React.Component {
             await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
-                this.props.postSubmitCallback();
+                this.stepDownPage();
               }
             });
             return response;
@@ -326,7 +326,7 @@ class FormRender extends React.Component {
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
-                this.props.postSubmitCallback();
+                this.stepDownPage();
               }
             });
             return response;
@@ -651,7 +651,7 @@ class FormRender extends React.Component {
               target:".AppBuilderPage"
             }).then(result => {
               if (result.value) {
-                that.props.postSubmitCallback();
+                that.stepDownPage();
               }
             });
           },
@@ -1390,11 +1390,18 @@ class FormRender extends React.Component {
         this.showFormLoader(false, 0);
         if (actionDetails.exit) {
           clearInterval(actionDetails.timerVariable);
-          this.props.postSubmitCallback();
+          this.stepDownPage();
         }
       });
     }
   };
+  stepDownPage(){
+    let ev = new CustomEvent("stepDownPage", {
+      detail: {},
+      bubbles: true
+    });
+    document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+  }
 
   componentWillUnmount(){
     if(this.state.currentForm != undefined || this.state.currentForm != null){

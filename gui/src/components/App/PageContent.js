@@ -123,7 +123,6 @@ class PageContent extends React.Component {
   }
   loadPage(pageId, icon, hideLoader,name,currentRow,pageContent) {
    var parentPage = this.pageId;
-   console.log(this.props)
    if(this.isTab=="true"){
      parentPage = this.parentPage;
    }
@@ -358,7 +357,6 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
-            postSubmitCallback={this.props.stepBackBreadcrumb}
           />
         );
       } else if (item.type == "List") {
@@ -480,7 +478,6 @@ class PageContent extends React.Component {
             appId={this.appId}
             key={i}
             core={this.core}
-            postSubmitCallback={this.props.stepBackBreadcrumb}
             url={url}
           />
         );
@@ -494,7 +491,6 @@ class PageContent extends React.Component {
             tabs={item.content.tabs}
             pageId={this.state.pageId}
             currentRow={this.state.currentRow}
-            postSubmitCallback={this.props.stepBackBreadcrumb}
           />
         );
       } else if (item.type == "Dashboard") {
@@ -549,20 +545,23 @@ class PageContent extends React.Component {
           />
         );
       } else {
-        this.externalComponent = this.extGUICompoents[item.type];
-        let guiComponent =
-          this.extGUICompoents && this.extGUICompoents[item.type] ? (
-            <this.externalComponent
-              {...item}
-              key={i}
-              components={OxzionGUIComponents}
-              appId={this.appId}
-              core={this.core}
-            ></this.externalComponent>
-          ) : (
-              <h3 key={i}>The component used is not available.</h3>
-            );
-        content.push(guiComponent);
+        if(this.extGUICompoents && this.extGUICompoents[item.type]){
+          this.externalComponent = this.extGUICompoents[item.type];
+          let guiComponent = this.extGUICompoents && this.extGUICompoents[item.type] ? (
+              <this.externalComponent
+                {...item}
+                key={i}
+                components={OxzionGUIComponents}
+                appId={this.appId}
+                core={this.core}
+              ></this.externalComponent>
+            ) : (
+                <h3 key={i}>The component used is not available.</h3>
+              );
+          content.push(guiComponent);
+        } else {
+          content.push(<h3 key={i}>The component used is not available.</h3>);
+        }
       }
     });
     if (content.length > 0) {
