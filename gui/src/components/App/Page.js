@@ -17,6 +17,7 @@ class Page extends React.Component {
     this.pageContentRef = React.createRef();
     this.componentKey = this.props.pageId+'_page';
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
+    this.postSubmitCallback = this.props.postSubmitCallback;
     this.state = {
       pageId: this.props.pageId,
       showLoader: false,
@@ -53,23 +54,17 @@ class Page extends React.Component {
       return pageContent;
     }
 
-
-    componentDidMount() {
-      var PageRenderDiv = document.querySelector(".PageRender");
-      this.loader.show(PageRenderDiv);
-    }
     componentDidUpdate(prevProps) {
       if (this.props.pageId !== prevProps.pageId) {
-        var PageRenderDiv = document.querySelector(".PageRender");
-        this.loader.show(PageRenderDiv);
-        this.loadPage(this.props.pageId);
+        if(this.props.pageId){
+          var PageRenderDiv = document.querySelector(".PageRender");
+          this.loader.show(PageRenderDiv);
+          this.loadPage(this.props.pageId);
+        } else {
+          this.loader.destroy();
+        }
       }
     }
-
-  stepBackBreadcrumb = () => {
-    let ev = new CustomEvent("stepDownPage", { detail: {}, bubbles: true });
-    document.getElementsByClassName(this.appId + "_breadcrumbParent")[0].dispatchEvent(ev);
-  };
 
   setTitle = (title) => { this.setState({ title: title }) }
 
@@ -97,7 +92,7 @@ class Page extends React.Component {
           loadPage={this.props.loadPage}
           fileData={this.state.fileData}
           currentRow={this.props.currentRow}
-          postSubmitCallback={this.props.stepBackBreadcrumb}
+          postSubmitCallback={this.props.postSubmitCallback}
         />
       );
     } else {
