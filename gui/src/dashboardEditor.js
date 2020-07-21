@@ -24,7 +24,6 @@ class DashboardEditor extends React.Component {
             editorMode: 'initial',
             errors: {},
             filterConfiguration: [],
-            showFilterDiv: false,
             dashboardVisibility: -1,
 
         };
@@ -149,7 +148,7 @@ class DashboardEditor extends React.Component {
                 dialogUrl: './widgetEditorDialog.html'
             }
         };
-    
+
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo('ckEditorInstance', config);
@@ -459,13 +458,10 @@ class DashboardEditor extends React.Component {
     }
 
     displayFilterDiv() {
-        this.setState({ showFilterDiv: true }, state => {
-
-            var element = document.getElementById("filter-form-container");
-            element.classList.remove("disappear");
-            document.getElementById("dashboard-container").classList.add("disappear")
-            document.getElementById("dashboard-filter-btn").disabled = true
-        })
+        var element = document.getElementById("filtereditor-form-container");
+        element.classList.remove("disappear");
+        document.getElementById("dashboard-container").classList.add("disappear")
+        document.getElementById("dashboard-filter-btn").disabled = true
     }
 
     setFilter(filter) {
@@ -491,8 +487,8 @@ class DashboardEditor extends React.Component {
                     <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
                     <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true"></i>Filter</Button>
                 </div>
-                <div>{
-                    this.state.showFilterDiv &&
+                <div id="filtereditor-form-container" className="disappear">{
+                    this.state.filterConfiguration &&
                     <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
                         setFilter={(filter) => this.setFilter(filter)}

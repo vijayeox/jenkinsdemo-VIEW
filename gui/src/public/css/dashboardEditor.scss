@@ -112,16 +112,16 @@
   display: none;
 }
 
-#filter-form-container {
+#filtereditor-form-container,#filter-form-container {
   background: #a9c4c4;
   border-radius: 10px;
 }
 
-#filter-form-container button.close {
+#filtereditor-form-container button.close,#filter-form-container button.close {
   padding-right: 1em;
 }
 
-#filter-form-container label {
+#filtereditor-form-container label,#filter-form-container label{
   color: #275362;
 }
 

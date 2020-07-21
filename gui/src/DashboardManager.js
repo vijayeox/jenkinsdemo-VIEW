@@ -85,29 +85,33 @@ class DashboardManager extends React.Component {
       "get"
     );
     let dash = response.data.dashboard;
+    let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dashboard.filter_configuration) : []
     dashData.push({ dashData: response.data });
     inputs["dashname"] = dash
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
   }
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let dashboardStack=this.state.dashboardStack
+    let dashboardStack = this.state.dashboardStack
 
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
+
     if (response.data.length > 0) {
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
-          if(dash.name === inputs["dashname"]["name"]){
+
+          if (dash.name === inputs["dashname"]["name"]) {
+            let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
-            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration,dashboardStack:dashboardStack })
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
           } else {
-              that.setState({ inputs: this.state.inputs })
+            that.setState({ inputs: this.state.inputs })
           }
 
         })
@@ -115,9 +119,10 @@ class DashboardManager extends React.Component {
         //setting default dashboard on page load
         response.data.map(dash => {
           if (dash.isdefault === "1") {
+            let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] }) 
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration ,dashboardStack:dashboardStack})
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
           }
         })
       }
@@ -190,9 +195,9 @@ class DashboardManager extends React.Component {
   drilldownToDashboard(e, type) {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
-    
+
     //adding applied filters on dashboard 
-    dashboardStack[dashboardStack.length-1]["drilldownDashboardFilter"]=e.dashboardFilter?e.dashboardFilter:[]
+    dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
     let value = JSON.parse(e.value)
     dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
@@ -208,9 +213,11 @@ class DashboardManager extends React.Component {
     var element = document.getElementById("dashboard-editor-div");
 
     value = JSON.parse(event.value)
+    let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
     element != undefined && element.classList.add("hide-dash-editor")
     inputs["dashname"] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
+
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
   }
 
   handleChange(event, inputName) {
@@ -228,13 +235,15 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      this.setState({dashboardFilter:[]})
+      this.setState({ dashboardFilter: [] })
     } else {
       name = event.target.name
       value = event.target.value
     }
     inputs[name] = value
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: value["filter_configuration"], showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
+    let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
+
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
 
   rollupToDashboard() {
@@ -269,13 +278,13 @@ class DashboardManager extends React.Component {
               </div>
             }
 
-            <div className="filterDiv">
-              {this.state.showFilter &&
+            <div id="filter-form-container" className="disappear">
+              {this.state.filterConfiguration &&
                 <DashboardFilter
                   core={this.core}
                   filterMode="APPLY"
                   hideFilterDiv={() => this.hideFilter()}
-                  filterConfiguration={this.getDashboardFilters()}
+                  filterConfiguration={this.state.filterConfiguration}
                   setDashboardFilter={(filter) => this.applyDashboardFilter(filter)}
                 />
               }
