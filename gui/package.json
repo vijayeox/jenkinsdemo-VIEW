@@ -69,6 +69,7 @@
     "react-phone-number-input": "^3.0.24",
     "react-select": "^3.1.0",
     "react-switch": "^5.0.1",
+    "react-tabs-redux": "^4.0.0",
     "react-to-print": "^2.8.0",
     "react-web-tabs": "^1.0.1",
     "react-webcam": "^5.2.0",
