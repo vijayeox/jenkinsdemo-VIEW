@@ -190,6 +190,9 @@ class DashboardManager extends React.Component {
   drilldownToDashboard(e, type) {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
+    
+    //adding applied filters on dashboard 
+    dashboardStack[dashboardStack.length-1]["drilldownDashboardFilter"]=e.dashboardFilter?e.dashboardFilter:[]
     let value = JSON.parse(e.value)
     dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
