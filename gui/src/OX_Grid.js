@@ -39,8 +39,10 @@ export default class OX_Grid extends React.Component {
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
-      apiActivityCompleted: this.rawDataPresent ? true : false
+      apiActivityCompleted: this.rawDataPresent ? true : false,
+      isTab: this.props.isTab?this.props.isTab:false
     };
+    this.appNavigationDiv = "navigation_"+this.props.appId;
     this.loader = this.props.osjsCore.make("oxzion/splash");
     this.child = React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
@@ -318,11 +320,11 @@ export default class OX_Grid extends React.Component {
             var formatDate = (dateTime, dateTimeFormat) => {
               let userTimezone,
                 userDateTimeFomat = null;
-              userTimezone = this.userProfile.preferences.timezone
-                ? this.userProfile.preferences.timezone
+              userTimezone = this.userprofile.preferences.timezone
+                ? this.userprofile.preferences.timezone
                 : moment.tz.guess();
-              userDateTimeFomat = this.userProfile.preferences.dateformat
-                ? this.userProfile.preferences.dateformat
+              userDateTimeFomat = this.userprofile.preferences.dateformat
+                ? this.userprofile.preferences.dateformat
                 : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime)
@@ -333,8 +335,8 @@ export default class OX_Grid extends React.Component {
             };
             var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
               let userDateTimeFomat = null;
-              userDateTimeFomat = this.userProfile.preferences.dateformat
-                ? this.userProfile.preferences.dateformat
+              userDateTimeFomat = this.userprofile.preferences.dateformat
+                ? this.userprofile.preferences.dateformat
                 : "YYYY-MM-DD";
               dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
               return moment(dateTime).format(userDateTimeFomat);
@@ -413,20 +415,9 @@ export default class OX_Grid extends React.Component {
   };
 
   updatePageContent = (config) => {
-    let eventDiv = document.getElementsByClassName(
-      this.props.appId + "_breadcrumbParent"
-    )[0];
-
-    let ev = new CustomEvent("updateBreadcrumb", {
-      detail: config,
-      bubbles: true
-    });
-    eventDiv.dispatchEvent(ev);
-
-    let ev2 = new CustomEvent("updatePageView", {
-      detail: config.details,
-      bubbles: true
-    });
+    let eventDiv = document.getElementById(this.appNavigationDiv);
+    var pageDetails = {title:config.name,pageContent:config.details,pageId:null,parentPage:this.props.pageId}
+    let ev2 = new CustomEvent("addPage", {detail: pageDetails,bubbles: true});
     eventDiv.dispatchEvent(ev2);
   };
 

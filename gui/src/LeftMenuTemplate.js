@@ -20,8 +20,9 @@ export default class LeftMenuTemplate extends React.Component {
     this.proc = this.props.proc;
     this.config = this.props.config;
     this.keepExpanded = this.props.keepExpanded;
+    this.appNavigationDiv = "navigation_"+this.appId;
     this.state = {
-      menus: [],
+      menus: this.props.menus?this.props.menus:[],
       selected: "",
       expanded: this.keepExpanded ? true : false,
     };
@@ -118,6 +119,7 @@ export default class LeftMenuTemplate extends React.Component {
           core={this.core}
           params={this.params}
           config={this.config}
+          menus={this.state.menus}
           menuLoad={this.menuLoad.bind(this)}
           selectLoad={this.selectLoad.bind(this)}
           onSelect={this.onSelect}
