@@ -1400,7 +1400,9 @@ class FormRender extends React.Component {
       detail: {},
       bubbles: true
     });
-    document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+    if(document.getElementById("navigation_"+this.state.appId)){
+      document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+    }
   }
 
   componentWillUnmount(){

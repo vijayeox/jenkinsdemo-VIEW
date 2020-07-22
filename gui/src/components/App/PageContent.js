@@ -135,7 +135,6 @@ class PageContent extends React.Component {
  }
 
   async buttonAction(action, rowData) {
-    console.log(action);
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
@@ -173,13 +172,19 @@ class PageContent extends React.Component {
               pageId=item.params.page_id;
               copyPageContent = [];
             } else {
+              var url;
+              var type = item.type;
+              var urlPostParams = item.type;
               if (item.url) {
-                item.url = that.replaceParams(item.url, rowData);
+                url = that.replaceParams(item.url, rowData);
+              }
+              if(item.params && item.params.url){
+                url = that.replaceParams(item.params.url, rowData);
               }
               if (item.urlPostParams) {
                 item.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
               }
-              copyPageContent.push(item);
+              copyPageContent.push({type:item.type,url:url,content:item.content,urlPostParams:item.urlPostParams});
             }
           }
         });
