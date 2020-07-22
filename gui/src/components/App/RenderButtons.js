@@ -22,7 +22,64 @@ class RenderButtons extends React.Component {
       } else {
         showButton = true;
       }
-      var pageDetails = {title:currentValue.name,pageContent:currentValue.details,pageId:currentValue.pageId,icon:currentValue.icon,parentPage:this.pageId}
+      var copyPageContent = [];
+      var that = this;
+      var rowData = this.fileData;
+      if(currentValue.details && currentValue.details.length > 0){
+        currentValue.details.every(async (item, index) => {
+            if (item.params && item.params.page_id) {
+              copyPageContent.pageId =item.params.page_id;
+            } else if(item.pageId){
+              copyPageContent.pageId =item.page_id;
+            } else {
+              var url;
+              var workflowInstanceId;
+              var workflowId;
+              var cacheId;
+              var activityInstanceId;
+              var isDraft;
+              var pageContentObj=item;
+              if (item.url) {
+                pageContentObj.url = that.replaceParams(item.url, rowData);
+              }
+              if(item.params && item.params.url){
+                pageContentObj.url = that.replaceParams(item.params.url, rowData);
+              }
+              if(item.workflowInstanceId){
+                workflowInstanceId = that.replaceParams(item.workflowInstanceId, rowData);
+                if(workflowInstanceId != "null"){
+                  pageContentObj.workflowInstanceId = workflowInstanceId;
+                }
+              }
+              if(item.workflowId){
+                workflowId = that.replaceParams(item.workflowId, rowData);
+                if(workflowId == "null" && item.workFlowId){
+                  workflowId = item.workFlowId;
+                }
+                if(workflowId != "null"){
+                  pageContentObj.workflowId = workflowId;
+                }
+              }
+              if(item.cacheId){
+                pageContentObj.cacheId = that.replaceParams(item.cacheId, rowData);
+              }
+              if(item.activityInstanceId){
+                pageContentObj.activityInstanceId = that.replaceParams(item.activityInstanceId, rowData);
+              }
+              if(item.isDraft){
+                pageContentObj.isDraft = item.isDraft;
+              }
+              if (item.urlPostParams) {
+                pageContentObj.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
+              }
+              if(item.content){
+                  pageContentObj.content = item.content;
+              }
+              copyPageContent.push(pageContentObj);
+            }
+        });
+      }
+      var pageDetails = {title:currentValue.name,pageContent:copyPageContent,pageId:currentValue.pageId,icon:currentValue.icon,parentPage:this.pageId}
       if(showButton){
         adminItems.push(
           <div
@@ -107,7 +164,18 @@ class RenderButtons extends React.Component {
       return route;
     }
   }
-
+  updateActionHandler(details, rowData) {
+    var that = this;
+    return new Promise((resolve) => {
+      var queryRoute = that.replaceParams(details.params.url, rowData);
+      that.updateCall(queryRoute, rowData).then((response) => {
+        that.setState({
+          showLoader: false
+        });
+        resolve(response);
+      });
+    });
+  }
   render() {
     return <div className="appButtons">{this.createTiles()}</div>;
   }
