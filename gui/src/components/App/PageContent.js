@@ -31,6 +31,9 @@ class PageContent extends React.Component {
       this.extGUICompoents = response.guiComponent
         ? response.guiComponent
         : undefined;
+        this.setState({
+          showLoader: false
+        });
     });
     this.contentDivID = "content_" + this.appId + "_" + this.props.pageId;
     this.state = {
@@ -60,6 +63,11 @@ class PageContent extends React.Component {
     if (this.props.pageContent !== prevProps.pageContent) {
       var PageRenderDiv = document.querySelector(".PageRender");
       this.loader.show(PageRenderDiv);
+      this.fetchExternalComponents().then((response) => {
+        this.extGUICompoents = response.guiComponent
+          ? response.guiComponent
+          : undefined;
+      });
       this.setState({pageContent:this.props.pageContent});
     }
   }
@@ -175,22 +183,51 @@ class PageContent extends React.Component {
               copyPageContent = [];
             } else {
               var url;
-              var type = item.type;
               var urlPostParams = item.type;
               var workflowInstanceId;
+              var workflowId;
+              var cacheId;
+              var activityInstanceId;
+              var isDraft;
+              var pageContentObj={};
+              pageContentObj.type = item.type;
               if (item.url) {
-                url = that.replaceParams(item.url, rowData);
+                pageContentObj.url = that.replaceParams(item.url, rowData);
               }
               if(item.params && item.params.url){
-                url = that.replaceParams(item.params.url, rowData);
+                pageContentObj.url = that.replaceParams(item.params.url, rowData);
               }
               if(item.workflowInstanceId){
                 workflowInstanceId = that.replaceParams(item.workflowInstanceId, rowData);
+                if(workflowInstanceId != "null"){
+                  pageContentObj.workflowInstanceId = workflowInstanceId;
+                }
+              }
+              if(item.workflowId){
+                workflowId = that.replaceParams(item.workflowId, rowData);
+                if(workflowId == "null" && item.workFlowId){
+                  workflowId = item.workFlowId;
+                }
+                if(workflowId != "null"){
+                  pageContentObj.workflowId = workflowId;
+                }
+              }
+              if(item.cacheId){
+                pageContentObj.cacheId = that.replaceParams(item.cacheId, rowData);
+              }
+              if(item.activityInstanceId){
+                pageContentObj.activityInstanceId = that.replaceParams(item.activityInstanceId, rowData);
+              }
+              if(item.isDraft){
+                pageContentObj.isDraft = item.isDraft;
               }
               if (item.urlPostParams) {
-                item.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
+                pageContentObj.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
               }
-              copyPageContent.push({type:item.type,url:url,content:item.content,urlPostParams:item.urlPostParams,workflowInstanceId:item.workflowInstanceId});
+              if(item.content){
+                  pageContentObj.content = item.content;
+              }
+              copyPageContent.push(pageContentObj);
             }
           }
         });
