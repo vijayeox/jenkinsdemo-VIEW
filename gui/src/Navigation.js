@@ -119,7 +119,7 @@
       this.pageActive(e.detail.parentPage);
     };
 
-    componentWillReceiveProps(props) {
+  componentWillReceiveProps(props) {
       if (props.selected) {
         var item = props.selected;
         if(item.page_id){
@@ -127,6 +127,16 @@
           this.setState({ pages: page });
           this.pageActive(item.page_id);
         }
+    }
+  }
+  componentDidUpdate(prevProps){
+    if(prevProps.selected != this.props.selected){
+      var item = this.props.selected;
+      if(item.page_id){
+        var page = [{pageId:item.page_id,title:item.name}];
+        this.setState({ pages: page });
+        this.pageActive(item.page_id);
+      }
     }
   }
 
