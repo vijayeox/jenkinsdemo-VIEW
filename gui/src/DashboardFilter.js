@@ -202,7 +202,7 @@ class DashboardFilter extends React.Component {
             inputFields: [],
             startDate: new Date(),
             createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }],
-            applyFilterOption: [],
+            applyFilterOption: this.props.applyFilterOption ? this.props.applyFilterOption : [],
             filters: this.props.filterConfiguration ? this.props.filterConfiguration : [],
             applyFilters: []
         }
@@ -210,7 +210,7 @@ class DashboardFilter extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.filterConfiguration != this.props.filterConfiguration) {
-            this.setState({ filters: this.props.filterConfiguration, applyFilterOption: [] })
+            this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
         }
     }
     removeField(index, field) {

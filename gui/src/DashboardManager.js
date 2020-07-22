@@ -20,6 +20,7 @@ class DashboardManager extends React.Component {
     super(props);
     this.core = this.props.args;
     this.userProfile = this.core.make("oxzion/profile").get();
+    this.filterRef = React.createRef();
     this.props.setTitle(section.title.en_EN);
     this.state = {
       showModal: false,
@@ -32,6 +33,7 @@ class DashboardManager extends React.Component {
       dashboardBody: "",
       loadEditor: false,
       filterConfiguration: [],
+      filterOptions: [],
       showFilter: false,
       dashboardFilter: [],
       drilldownDashboardFilter: [],
@@ -193,9 +195,15 @@ class DashboardManager extends React.Component {
   drilldownToDashboard(e, type) {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
+    let filterConfiguration = this.filterRef.current
+    console.log(filterConfiguration.state)
+    //adding applied filters on dashboard
+    if(dashboardStack.length>0){
+      dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
+      dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filterConfiguration.state.filters ? filterConfiguration.state.filters : []
+      dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterConfiguration.state.applyFilterOption ? filterConfiguration.state.applyFilterOption : []
+    } 
 
-    //adding applied filters on dashboard 
-    dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
     let value = JSON.parse(e.value)
     dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
@@ -226,7 +234,6 @@ class DashboardManager extends React.Component {
     // resetting stack on manual change of dashboard
     let dashboardStack = []
     value = JSON.parse(event.value)
-    dashboardStack.push({ data: value, drilldownDashboardFilter: [] })
     if (inputName && inputName == "dashname") {
       var element = document.getElementById("dashboard-editor-div");
       name = inputName
@@ -240,6 +247,7 @@ class DashboardManager extends React.Component {
     }
     inputs[name] = value
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
+    dashboardStack.push({ data: value, drilldownDashboardFilter: [], filterConfiguration: dashboardFilter })
 
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
@@ -257,6 +265,17 @@ class DashboardManager extends React.Component {
 
     }
   }
+
+  getFilterProperty(property) {
+    if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
+      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
+        return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
+      else
+        return this.state[property]
+    }
+    return this.state[property]
+  }
+
 
   render() {
     return (
@@ -279,10 +298,12 @@ class DashboardManager extends React.Component {
             <div id="filter-form-container" className="disappear">
               {this.state.filterConfiguration &&
                 <DashboardFilter
+                  ref={this.filterRef}
                   core={this.core}
                   filterMode="APPLY"
                   hideFilterDiv={() => this.hideFilter()}
-                  filterConfiguration={this.state.filterConfiguration}
+                  filterConfiguration={this.getFilterProperty("filterConfiguration")}
+                  applyFilterOption={this.getFilterProperty("filterOptions")}
                   setDashboardFilter={(filter) => this.applyDashboardFilter(filter)}
                 />
               }
