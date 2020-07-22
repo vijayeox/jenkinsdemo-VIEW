@@ -131,7 +131,6 @@
   }
 
   stepDownPage = e => {
-    console.log(e);
     if (this.state.pages.length == 1) {
       this.props.selectLoad(this.homepage);
     } else {
