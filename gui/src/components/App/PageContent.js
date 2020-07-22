@@ -68,6 +68,8 @@ class PageContent extends React.Component {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
+      var _moment = moment;
+      string = string.replace(/moment/g,'_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
@@ -175,16 +177,20 @@ class PageContent extends React.Component {
               var url;
               var type = item.type;
               var urlPostParams = item.type;
+              var workflowInstanceId;
               if (item.url) {
                 url = that.replaceParams(item.url, rowData);
               }
               if(item.params && item.params.url){
                 url = that.replaceParams(item.params.url, rowData);
               }
+              if(item.workflowInstanceId){
+                workflowInstanceId = that.replaceParams(item.workflowInstanceId, rowData);
+              }
               if (item.urlPostParams) {
                 item.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
               }
-              copyPageContent.push({type:item.type,url:url,content:item.content,urlPostParams:item.urlPostParams});
+              copyPageContent.push({type:item.type,url:url,content:item.content,urlPostParams:item.urlPostParams,workflowInstanceId:item.workflowInstanceId});
             }
           }
         });
