@@ -106,10 +106,12 @@ class DashboardManager extends React.Component {
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
+
           if (dash.name === inputs["dashname"]["name"]) {
+            let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
           } else {
             that.setState({ inputs: this.state.inputs })
           }
@@ -122,7 +124,7 @@ class DashboardManager extends React.Component {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dash.filter_configuration, dashboardStack: dashboardStack })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
           }
         })
       }
@@ -351,17 +353,16 @@ class DashboardManager extends React.Component {
                               }}
                               content={() => this.dashboardViewerRef}
                             />
-                            {(this.state.filterConfiguration != '[]') &&
-                              <Button onClick={() => this.showFilter()} title="Filter OI">
-                                <i className="fa fa-filter" aria-hidden="true"></i>
-                              </Button>
-                            }
+                            <Button onClick={() => this.showFilter()} title="Filter OI">
+                              <i className="fa fa-filter" aria-hidden="true"></i>
+                            </Button>
                             {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                               <Button onClick={() => this.editDashboard()} title="Edit OI">
                                 <i className="fa fa-edit" aria-hidden="true"></i>
                               </Button>
                             }
-                            {(this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
+                            {
+                              (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
                                 this.state.inputs["dashname"]["isdefault"] == "0") &&
                               <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete OI">
                                 <i className="fa fa-trash" aria-hidden="true"></i>
