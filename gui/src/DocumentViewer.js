@@ -46,19 +46,36 @@ export default class DocumentViewer extends Component {
         });
     }
 
-    uploadAttachments(){
-      this.state.validFiles.map(item => {
-        this.postAttachments(item).then(response => {
-          if (response.status == 'success') {
-            this.getDocumentsList();
-          }
-          this.setState({
-            files: [],
-            validFiles: []
-          });
+
+    fileUpload(fileIndex){
+      if(fileIndex < 0){
+        this.getDocumentsList();
+        this.setState({
+          selectedDocument: undefined,
+          documentsList: undefined,
+          documentTypes: [],
+          activeCard: "",
+          files: [],
+          validFiles:[]
         });
-      });
+      }else{
+        this.postAttachments(this.state.validFiles[fileIndex]).then(response => {
+          if (response.status == 'success') {
+              this.fileUpload(fileIndex - 1);
+          }
+        });
+      }
+    }
+
+
+
+    uploadAttachments(){
+      this.loader.show();
+      this.fileUpload(this.state.validFiles.length - 1);
     };
+
+
+
 
     async postAttachments(file){
       var urlRes = (this.props.url).split('/');
@@ -196,7 +213,7 @@ export default class DocumentViewer extends Component {
                     );
                   })}
         {this.state.folderType[docType] == 'file' ?
-                    <div>
+                    <div className = "popupWindow">
                       <Upload
                           batch={false}
                           multiple={true}
