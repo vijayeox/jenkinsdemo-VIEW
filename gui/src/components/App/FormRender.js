@@ -1402,6 +1402,14 @@ class FormRender extends React.Component {
     });
     if(document.getElementById("navigation_"+this.state.appId)){
       document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+    } else {
+      if(this.props){
+        try{
+          this.props.postSubmitCallback();
+        } catch(e){
+          console.log("Unable to Handle Callback");
+        }
+      }
     }
   }
 
