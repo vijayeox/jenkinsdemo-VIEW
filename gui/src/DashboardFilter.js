@@ -355,7 +355,6 @@ class DashboardFilter extends React.Component {
     }
 
     saveFilter() {
-        console.log(this.state)
         let restClient = this.props.core.make('oxzion/restClient');
         let filters
         if (this.state.filters !== undefined) {
