@@ -523,30 +523,19 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
-        var url;
-        var data;
-        var fileData;
-        if(item.useRowData){
-          data = this.state.currentRow
-        }
-        if(item.content){
-          data = this.replaceParams(item.content, this.state.currentRow);
-        }
-        if(item.url){
-          url = this.replaceParams(item.url, this.state.currentRow);
-        }
-        if(this.state.currentRow){
-          fileData = this.state.currentRow
-        }
         content.push(
           <HTMLViewer
             key={i}
             core={this.core}
             key={i}
             appId={this.appId}
-            url={url}
-            content={data}
-            fileData={fileData}
+            url={
+              item.url
+                ? this.replaceParams(item.url, this.state.currentRow)
+                : undefined
+            }
+            content={item.content ? item.content : ""}
+            fileData={this.state.currentRow ? this.state.currentRow : undefined}
           />
         );
       } else {
