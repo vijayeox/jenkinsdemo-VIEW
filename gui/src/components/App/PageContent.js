@@ -182,51 +182,8 @@ class PageContent extends React.Component {
               pageId=item.params.page_id;
               copyPageContent = [];
             } else {
-              var url;
-              var urlPostParams = item.type;
-              var workflowInstanceId;
-              var workflowId;
-              var cacheId;
-              var activityInstanceId;
-              var isDraft;
               var pageContentObj={};
-              pageContentObj.type = item.type;
-              if (item.url) {
-                pageContentObj.url = that.replaceParams(item.url, rowData);
-              }
-              if(item.params && item.params.url){
-                pageContentObj.url = that.replaceParams(item.params.url, rowData);
-              }
-              if(item.workflowInstanceId){
-                workflowInstanceId = that.replaceParams(item.workflowInstanceId, rowData);
-                if(workflowInstanceId != "null"){
-                  pageContentObj.workflowInstanceId = workflowInstanceId;
-                }
-              }
-              if(item.workflowId){
-                workflowId = that.replaceParams(item.workflowId, rowData);
-                if(workflowId == "null" && item.workFlowId){
-                  workflowId = item.workFlowId;
-                }
-                if(workflowId != "null"){
-                  pageContentObj.workflowId = workflowId;
-                }
-              }
-              if(item.cacheId){
-                pageContentObj.cacheId = that.replaceParams(item.cacheId, rowData);
-              }
-              if(item.activityInstanceId){
-                pageContentObj.activityInstanceId = that.replaceParams(item.activityInstanceId, rowData);
-              }
-              if(item.isDraft){
-                pageContentObj.isDraft = item.isDraft;
-              }
-              if (item.urlPostParams) {
-                pageContentObj.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
-              }
-              if(item.content){
-                  pageContentObj.content = item.content;
-              }
+              pageContentObj = this.replaceParams(item,rowData);
               copyPageContent.push(pageContentObj);
             }
           }
