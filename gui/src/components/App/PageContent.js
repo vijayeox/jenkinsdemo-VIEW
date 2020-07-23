@@ -535,7 +535,7 @@ class PageContent extends React.Component {
                 : undefined
             }
             content={item.content ? item.content : ""}
-            fileData={this.state.currentRow ? this.state.currentRow : undefined}
+            fileData={this.state.currentRow}
           />
         );
       } else {
