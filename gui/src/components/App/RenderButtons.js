@@ -83,7 +83,7 @@ class RenderButtons extends React.Component {
             if (item == "appId") {
               final_route[item] = this.appId;
             }else {
-              final_route[item] = null;
+              final_route[item] = route[item];
             }
           }
         } else {

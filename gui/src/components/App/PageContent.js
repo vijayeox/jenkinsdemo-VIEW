@@ -224,7 +224,7 @@ class PageContent extends React.Component {
             } else if (item == "fileId" && this.state.fileId) {
               final_route[item] = this.state.fileId;
             } else {
-              final_route[item] = null;
+              final_route[item] = route[item];
             }
           }
         } else {
