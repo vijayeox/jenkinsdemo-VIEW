@@ -4,6 +4,7 @@ import { useAccordionToggle } from "react-bootstrap/AccordionToggle";
 import { Card, Button } from "react-bootstrap";
 import "./public/css/documentViewer.scss";
 import { Upload } from "@progress/kendo-react-upload";
+import Notification from "./Notification";
 
 export default class DocumentViewer extends Component {
   constructor(props) {
@@ -15,62 +16,64 @@ export default class DocumentViewer extends Component {
       documentsList: undefined,
       documentTypes: [],
       activeCard: "",
-      files: [],
-      validFiles: []
+      uploadFiles: []
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
     this.baseUrl = this.core.config("wrapper.url");
+    this.notif = React.createRef();
     this.getDocumentsList = this.getDocumentsList.bind(this);
-    this.uploadAttachments = this.uploadAttachments.bind(this);
     this.getDocumentsList();
   }
-  onAdd = (event) => {
-    this.setState({
-      files: event.newState,
-      validFiles: event.newState.filter((item) => {
-        if (item.validationErrors) {
-          if (item.validationErrors.length > 0) {
-            return false;
-          }
-        } else {
-          return true;
+
+  onFileChange = (event) => {
+    let fileError = false;
+    let validFiles = event.newState.filter((item) => {
+      if (item.validationErrors) {
+        if (item.validationErrors.length > 0) {
+          fileError = true;
+          return false;
         }
-      })
+      } else {
+        return true;
+      }
     });
-  };
 
-  onRemove = (event) => {
-    this.setState({
-      files: event.newState
-    });
-  };
-
-  fileUpload(fileIndex) {
-    if (fileIndex < 0) {
-      this.getDocumentsList();
+    if (validFiles) {
       this.setState({
-        selectedDocument: undefined,
-        documentsList: undefined,
-        documentTypes: [],
-        activeCard: "",
-        files: [],
-        validFiles: []
+        uploadFiles: validFiles
       });
+    }
+    fileError
+      ? this.notif.current.notify(
+          "Unsupported File",
+          "Please choose a different file.",
+          "danger"
+        )
+      : null;
+  };
+
+  uploadAttachments(fileIndex) {
+    if (fileIndex < 0) {
+      this.setState(
+        {
+          selectedDocument: undefined,
+          documentsList: undefined,
+          documentTypes: [],
+          activeCard: "",
+          uploadFiles: []
+        },
+        this.getDocumentsList()
+      );
     } else {
-      this.postAttachments(this.state.validFiles[fileIndex]).then(
+      this.postAttachments(this.state.uploadFiles[fileIndex]).then(
         (response) => {
           if (response.status == "success") {
-            this.fileUpload(fileIndex - 1);
+            this.uploadAttachments(fileIndex - 1);
           }
         }
       );
     }
-  }
-
-  uploadAttachments() {
-    this.loader.show();
-    this.fileUpload(this.state.validFiles.length - 1);
   }
 
   async postAttachments(file) {
@@ -215,9 +218,9 @@ export default class DocumentViewer extends Component {
                           batch={false}
                           multiple={true}
                           autoUpload={false}
-                          files={this.state.files}
-                          onAdd={this.onAdd}
-                          onRemove={this.onRemove}
+                          files={this.state.uploadFiles}
+                          onAdd={this.onFileChange}
+                          onRemove={this.onFileChange}
                           restrictions={{
                             allowedExtensions: [
                               ".jpg",
@@ -235,12 +238,18 @@ export default class DocumentViewer extends Component {
                         />
                         <button
                           className={
-                            this.state.validFiles.length == 0
+                            this.state.uploadFiles.length == 0
                               ? "uploadButton invalidButton"
                               : "uploadButton"
                           }
-                          disabled={this.state.validFiles.length == 0}
-                          onClick={this.uploadAttachments}
+                          disabled={this.state.uploadFiles.length == 0}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.loader.show();
+                            this.uploadAttachments(
+                              this.state.uploadFiles.length - 1
+                            );
+                          }}
                         >
                           Upload
                         </button>
@@ -405,6 +414,7 @@ export default class DocumentViewer extends Component {
     if (documentsList) {
       return (
         <div className="docViewerComponent">
+          <Notification ref={this.notif} />
           <div className="col-md-3 docListDiv">
             <Accordion defaultActiveKey={this.state.documentTypes[0]}>
               {this.generateDocumentList()}
