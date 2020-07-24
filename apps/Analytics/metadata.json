@@ -38,6 +38,16 @@
       "en_EN":"Edit OI"
     }
   },
+  "dateFormat": {
+    "title": {
+      "en_EN":"MM/dd/YYYY"
+     }
+  },
+  "dateTimeFormat": {
+    "title": {
+      "en_EN":"MM/dd/YYYY H:i:s"
+     }
+  },
   "files": [
     "main.js",
     "main.css"

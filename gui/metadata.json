@@ -23,5 +23,15 @@
         "title": {
           "en_EN":"Widget Manager"
         }
+      },
+      "dateFormat": {
+        "title": {
+          "en_EN":"MM/dd/YYYY"
+         }
+      },
+      "dateTimeFormat": {
+        "title": {
+          "en_EN":"MM/dd/YYYY H:i:s"
+         }
       }
 }
