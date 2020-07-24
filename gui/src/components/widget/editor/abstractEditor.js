@@ -140,7 +140,7 @@ class AbstractEditor extends React.Component {
             return state;
         },
             () => {
-                if (this.state.selectedTab !== '' && this.state.selectedTab=="widget") {
+                if (this.state.selectedTab !== '' && (this.state.selectedTab=="widget"||this.state.selectedTab=="chart")) {
                     thiz.refreshViews();
                 } else if(this.state.selectedTab !== '' && this.state.selectedTab=="query"){
                     thiz.refreshQueryPreview()
