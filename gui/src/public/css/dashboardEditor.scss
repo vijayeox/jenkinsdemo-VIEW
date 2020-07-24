@@ -5,6 +5,8 @@
 .dashboard-back-btn {
   border-radius: 100px;
   width: 4em;
+  position: absolute;
+  left: 50px;
 }
 
 
@@ -40,6 +42,7 @@
   background-image: none !important;
   background-color: #265160c4 !important;
 }
+
 
 .dashboard .deactivateDash .react-switch-bg {
   background: rgb(39, 83, 98) !important;
@@ -115,6 +118,7 @@
 #filtereditor-form-container,#filter-form-container {
   background: #a9c4c4;
   border-radius: 10px;
+  margin-top: 60px;
 }
 
 #filtereditor-form-container button.close,#filter-form-container button.close {
@@ -132,14 +136,16 @@
 }
 
 .dash-manager-bar {
-  border: 0.5px solid#3d6776;
-  padding: 1em;
+  // border: 0.5px solid#3d6776;
+  // padding: 1em;
   padding-top: 12px;
   padding-bottom: 0px;
   position: absolute;
-  width: 100%;
-  background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
-  min-height: 65px;
+  width: auto;
+  float: right;
+  right: 0;
+  // background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
+  // min-height: 65px;
 }
 
 .dashboard-viewer-div {
@@ -148,18 +154,38 @@
   width: 100%;
 }
 
-.dash-manager-buttons {
-  position: absolute;
-  right: 1em;
-}
+
 
 .react-select-container {
   z-index: 100;
+  width: 300px;
+  float: left;
+  right:10px;
+   
 }
 
 .dash-manager-buttons .btn {
   margin-right: 7px;
   border-color: #eaeaea;
+}
+
+.dash-manager-buttons {
+  right: 0px;
+  width: auto;
+  float: right;
+  position: relative;
+}
+.dash-manager-buttons .btn-primary{
+  color: #345561;
+  background-color: #c5d2d6;
+  border-radius: 42px;
+  font-size: 14px;
+
+}
+
+.dash-manager-buttons .btn-primary:hover{
+  color: whitesmoke;
+  background-color: #c5d2d6;  
 }
 
 .dasboard-viewer-content {
@@ -168,6 +194,7 @@
   border-radius: 4px;
   box-shadow: 2px 5px#c6b5b5;
   padding: 1em;
+  border: 0.5px solid grey;
 }
 .dashboard-rollup-button{
 color: black;

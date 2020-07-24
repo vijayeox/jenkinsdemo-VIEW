@@ -103,7 +103,9 @@ class Body extends React.Component {
             <i className="fa fa-cubes" aria-hidden="true"></i> Widget Manager
                   </a>
         </Menu>
-        <div className="page-title full-width">{this.state.title}</div>
+        {
+          this.state.title!="Operational Intelligence" && <div className="page-title full-width">{this.state.title}</div> 
+        }
         <div className="page-content full-width" id="page-content">
           {sectionContent}
         </div>

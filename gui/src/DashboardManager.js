@@ -200,14 +200,20 @@ class DashboardManager extends React.Component {
     let filterConfiguration = this.filterRef.current
     console.log(filterConfiguration.state)
     //adding applied filters on dashboard
-    if(dashboardStack.length>0){
+    if (dashboardStack.length > 0) {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filterConfiguration.state.filters ? filterConfiguration.state.filters : []
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterConfiguration.state.applyFilterOption ? filterConfiguration.state.applyFilterOption : []
-    } 
+    }
 
     let value = JSON.parse(e.value)
-    dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+    if(dashboardStack.length>1){
+      //check for consequent drilldown to same dashboard
+      if(dashboardStack[dashboardStack.length-1]["data"]["uuid"]!=value["uuid"])
+        dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+    } else{
+      dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+    }
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
   }
 
@@ -290,12 +296,7 @@ class DashboardManager extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-            {
-              !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-              <div className="row">
-                <Button className="create-dash-btn" onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i> Create OI</Button>
-              </div>
-            }
+
 
             <div id="filter-form-container" className="disappear">
               {this.state.filterConfiguration &&
@@ -314,13 +315,8 @@ class DashboardManager extends React.Component {
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <div id="dashboard-preview-container">
                 <div className="dash-manager-bar">
-                  <Form className="dashboard-manager-items">
-                    <Row>
-                      <Col lg="4" md="4" sm="4">
                         {
                           !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                          <Form.Group as={Row} >
-                            <Col>
                               <Select
                                 name="dashname"
                                 className="react-select-container"
@@ -338,11 +334,12 @@ class DashboardManager extends React.Component {
                                   })
                                 }
                               />
-                            </Col>
-                          </Form.Group>
                         }
-                      </Col>
                       <div className="dash-manager-buttons">
+                        {
+                          !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                          <Button onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i></Button>
+                        }
                         {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
                           <>
                             <ReactToPrint
@@ -378,25 +375,15 @@ class DashboardManager extends React.Component {
                                 </Button>
                               )
                               : (this.props.hideEdit == false &&
-                                <span style={{ color: "white", fontWeight: "bolder" }}>Default OI</span>
+                                <Button title="Selected OI is default OI" disabled>Default OI</Button>
                               )
-
                             }
                           </>
                         }
                       </div>
-
-                    </Row>
-                  </Form>
                 </div>
 
                 <div className="dashboard-viewer-div">
-                  {
-                    !this.props.hideEdit &&
-                    <div className="dashboard-preview-tab">
-                      <span>OI Previewer</span>
-                    </div>
-                  }
                   {
                     this.state.uuid !== "" &&
                     <DashboardViewer
