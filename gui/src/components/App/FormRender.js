@@ -7,6 +7,8 @@ import merge from "deepmerge";
 import $ from "jquery";
 import Swal from "sweetalert2";
 import scrollIntoView from "scroll-into-view-if-needed";
+import * as MomentTZ from "moment-timezone";
+import DateFormats from '../../public/js/DateFormats'
 import ConvergePayCheckoutComponent from "./Form/Payment/ConvergePayCheckoutComponent";
 import DocumentComponent from "./Form/DocumentComponent";
 import { countryList } from "./Form/Country.js";
@@ -269,7 +271,7 @@ class FormRender extends React.Component {
             await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
-                this.props.postSubmitCallback();
+                this.stepDownPage();
               }
             });
             return response;
@@ -309,6 +311,11 @@ class FormRender extends React.Component {
         } else {
           route = this.appUrl + "/form/" + this.state.formId + "/file";
           method = "post";
+
+          if(this.props.route){
+            route = this.props.route;
+            method = "post"
+          }
           if (this.state.instanceId) {
             route =this.appUrl + "/form/" +this.state.formId + "/file/" + this.state.instanceId;
             method = "put";
@@ -319,7 +326,7 @@ class FormRender extends React.Component {
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
-                this.props.postSubmitCallback();
+                this.stepDownPage();
               }
             });
             return response;
@@ -368,6 +375,8 @@ class FormRender extends React.Component {
       formData.userprofile = undefined;
       formData.countryList = undefined;
       formData.phoneList = undefined;
+      formData.timezones = undefined;
+      formData.dateFormats = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
       var componentList = flattenComponents(this.state.currentForm._form.components, true);
@@ -395,7 +404,9 @@ class FormRender extends React.Component {
         privileges: this.privileges,
         userprofile: this.userprofile,
         countryList: countryList,
-        phoneList: phoneList
+        phoneList: phoneList,
+        timezones : MomentTZ,
+        dateFormats : DateFormats
       });
     }
 
@@ -640,7 +651,7 @@ class FormRender extends React.Component {
               target:".AppBuilderPage"
             }).then(result => {
               if (result.value) {
-                that.props.postSubmitCallback();
+                that.stepDownPage();
               }
             });
           },
@@ -1379,11 +1390,28 @@ class FormRender extends React.Component {
         this.showFormLoader(false, 0);
         if (actionDetails.exit) {
           clearInterval(actionDetails.timerVariable);
-          this.props.postSubmitCallback();
+          this.stepDownPage();
         }
       });
     }
   };
+  stepDownPage(){
+    let ev = new CustomEvent("stepDownPage", {
+      detail: {},
+      bubbles: true
+    });
+    if(document.getElementById("navigation_"+this.state.appId)){
+      document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+    } else {
+      if(this.props){
+        try{
+          this.props.postSubmitCallback();
+        } catch(e){
+          console.log("Unable to Handle Callback");
+        }
+      }
+    }
+  }
 
   componentWillUnmount(){
     if(this.state.currentForm != undefined || this.state.currentForm != null){
