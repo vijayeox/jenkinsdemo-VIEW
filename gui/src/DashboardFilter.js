@@ -76,7 +76,7 @@ const FilterFields = function (props) {
 
                 </Form.Group>
             </div>
-            <div className="dashboard-filter-field">
+            <div className="dashboard-filter-field col-2">
                 <Form.Group controlId="formGridPassword">
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
@@ -179,7 +179,7 @@ const FilterFields = function (props) {
                     }
                 </Form.Group>
             </div>
-            <div className="dash-manager-buttons col" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
+            <div className="dash-manager-buttons dashboard-filter-field" style={{ marginBottom: "1em", position: "relative", left: "0px"}}>
                 <Form.Group>
                     <Form.Label></Form.Label>
                     <Button onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
@@ -393,7 +393,7 @@ class DashboardFilter extends React.Component {
     render() {
         return (
             <div>
-                <Row className="pull-right dash-manager-buttons">
+                <Row className="pull-right dash-manager-buttons" style={{ right: "7px" }}>
                     <button type="button" className="close" aria-label="Close" onClick={() => this.hideFilterDiv()}>
                     <i className="fa fa-close" aria-hidden="true"></i>
                     </button>
@@ -447,10 +447,10 @@ class DashboardFilter extends React.Component {
                             />
                         </Form.Group>
                     }
-                    <Row >
+                    <Form.Row>
                         <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
 
-                    </Row>
+                    </Form.Row>
 
                 </Form>
             </div >
