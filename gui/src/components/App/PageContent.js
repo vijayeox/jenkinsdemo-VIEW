@@ -182,51 +182,8 @@ class PageContent extends React.Component {
               pageId=item.params.page_id;
               copyPageContent = [];
             } else {
-              var url;
-              var urlPostParams = item.type;
-              var workflowInstanceId;
-              var workflowId;
-              var cacheId;
-              var activityInstanceId;
-              var isDraft;
               var pageContentObj={};
-              pageContentObj.type = item.type;
-              if (item.url) {
-                pageContentObj.url = that.replaceParams(item.url, rowData);
-              }
-              if(item.params && item.params.url){
-                pageContentObj.url = that.replaceParams(item.params.url, rowData);
-              }
-              if(item.workflowInstanceId){
-                workflowInstanceId = that.replaceParams(item.workflowInstanceId, rowData);
-                if(workflowInstanceId != "null"){
-                  pageContentObj.workflowInstanceId = workflowInstanceId;
-                }
-              }
-              if(item.workflowId){
-                workflowId = that.replaceParams(item.workflowId, rowData);
-                if(workflowId == "null" && item.workFlowId){
-                  workflowId = item.workFlowId;
-                }
-                if(workflowId != "null"){
-                  pageContentObj.workflowId = workflowId;
-                }
-              }
-              if(item.cacheId){
-                pageContentObj.cacheId = that.replaceParams(item.cacheId, rowData);
-              }
-              if(item.activityInstanceId){
-                pageContentObj.activityInstanceId = that.replaceParams(item.activityInstanceId, rowData);
-              }
-              if(item.isDraft){
-                pageContentObj.isDraft = item.isDraft;
-              }
-              if (item.urlPostParams) {
-                pageContentObj.urlPostParams = that.replaceParams(item.urlPostParams,rowData);
-              }
-              if(item.content){
-                  pageContentObj.content = item.content;
-              }
+              pageContentObj = this.replaceParams(item,rowData);
               copyPageContent.push(pageContentObj);
             }
           }
@@ -267,7 +224,7 @@ class PageContent extends React.Component {
             } else if (item == "fileId" && this.state.fileId) {
               final_route[item] = this.state.fileId;
             } else {
-              final_route[item] = null;
+              final_route[item] = route[item];
             }
           }
         } else {
@@ -566,30 +523,19 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
-        var url;
-        var data;
-        var fileData;
-        if(item.useRowData){
-          data = this.state.currentRow
-        }
-        if(item.content){
-          data = this.replaceParams(item.content, this.state.currentRow);
-        }
-        if(item.url){
-          url = this.replaceParams(item.url, this.state.currentRow);
-        }
-        if(this.state.currentRow){
-          fileData = this.state.currentRow
-        }
         content.push(
           <HTMLViewer
             key={i}
             core={this.core}
             key={i}
             appId={this.appId}
-            url={url}
-            content={data}
-            fileData={fileData}
+            url={
+              item.url
+                ? this.replaceParams(item.url, this.state.currentRow)
+                : undefined
+            }
+            content={item.content ? item.content : ""}
+            fileData={this.state.currentRow}
           />
         );
       } else {

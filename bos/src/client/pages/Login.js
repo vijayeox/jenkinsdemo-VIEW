@@ -14,7 +14,7 @@ export default class LoginContainer extends defaultLogin {
   render() {
   var node = document.createElement("div");
   node.className = "reactLoginPage"
-  document.body.appendChild(node);   
+  document.body.appendChild(node);
     const b = ReactDOM.render(
       <Login
         core={this.core}
@@ -78,7 +78,7 @@ class Login extends React.Component {
   errorMessage(e) {
     this.setState({ error: e.detail });
   }
-  
+
   handleChange(e) {
     let target = e.target;
     this.setState({ [target.name]: target.value });

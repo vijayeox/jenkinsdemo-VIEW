@@ -46,7 +46,7 @@ export class ProfileServiceProvider extends ServiceProvider {
 			if(this.lsHelper.get("UserInfo")){
 				this.lsHelper.purge("UserInfo");
 				const settings = this.core.make('osjs/settings');
-				settings.clear("UserInfo");        	       	
+				settings.clear("UserInfo");
 			}
 		}
 		this.set();
@@ -61,7 +61,7 @@ export class ProfileServiceProvider extends ServiceProvider {
 			const settings = this.core.make('osjs/settings');
 			settings.set("UserInfo","key",data.key);
 		    settings.set("UserInfo","timestamp",data.timestamp);
-				
+
 		}
 	}
 	getAuth(){
