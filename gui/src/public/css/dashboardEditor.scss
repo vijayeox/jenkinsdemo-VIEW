@@ -1,12 +1,10 @@
 .dashboard-editor-form .form-group {
-  margin-left: 1em;
+  margin-left: 3em;
 }
 
 .dashboard-back-btn {
-  border-radius: 100px;
-  width: 4em;
   position: absolute;
-  left: 50px;
+  right: 98px;
 }
 
 
@@ -29,7 +27,7 @@
 
 .dashboard-save-btn {
   position: absolute;
-  right: 5.3em;
+  right: 50px;
 }
 
 .dashboard .btn-primary {
@@ -115,17 +113,20 @@
   display: none;
 }
 
-#filtereditor-form-container,#filter-form-container {
+#filtereditor-form-container,
+#filter-form-container {
   background: #a9c4c4;
   border-radius: 10px;
   margin-top: 60px;
 }
 
-#filtereditor-form-container button.close,#filter-form-container button.close {
+#filtereditor-form-container button.close,
+#filter-form-container button.close {
   padding-right: 1em;
 }
 
-#filtereditor-form-container label,#filter-form-container label{
+#filtereditor-form-container label,
+#filter-form-container label {
   color: #275362;
 }
 
@@ -150,7 +151,7 @@
 
 .dashboard-viewer-div {
   position: absolute;
-  margin-top: 5em;
+  margin-top: 4em;
   width: 100%;
 }
 
@@ -160,8 +161,8 @@
   z-index: 100;
   width: 300px;
   float: left;
-  right:10px;
-   
+  right: 10px;
+
 }
 
 .dash-manager-buttons .btn {
@@ -175,7 +176,8 @@
   float: right;
   position: relative;
 }
-.dash-manager-buttons .btn-primary{
+
+.dash-manager-buttons .btn-primary {
   color: #345561;
   background-color: #c5d2d6;
   border-radius: 42px;
@@ -183,9 +185,9 @@
 
 }
 
-.dash-manager-buttons .btn-primary:hover{
+.dash-manager-buttons .btn-primary:hover {
   color: whitesmoke;
-  background-color: #c5d2d6;  
+  background-color: #c5d2d6;
 }
 
 .dasboard-viewer-content {
@@ -196,14 +198,16 @@
   padding: 1em;
   border: 0.5px solid grey;
 }
-.dashboard-rollup-button{
-color: black;
-cursor: pointer;
-right: 1%;
-position: absolute;
+
+.dashboard-rollup-button {
+  color: black;
+  cursor: pointer;
+  right: 1%;
+  position: absolute;
 }
-.dashboard-preview-tab{
-  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65,#1d6365);
+
+.dashboard-preview-tab {
+  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
   height: 1.3em;
   color: #f2f2f2;
   top: 50%;
@@ -227,4 +231,8 @@ position: absolute;
 
 .Window_Analytics .dashboard label {
   color: #265160 !important;
+}
+
+.dashboard-container{
+  margin-top: 4em;
 }

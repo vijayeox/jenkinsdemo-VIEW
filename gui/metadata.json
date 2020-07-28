@@ -26,12 +26,12 @@
       },
       "dateFormat": {
         "title": {
-          "en_EN":"MM/dd/YYYY"
+          "en_EN":"MM/dd/yyyy"
          }
       },
       "dateTimeFormat": {
         "title": {
-          "en_EN":"MM/dd/YYYY H:i:s"
+          "en_EN":"MM/dd/yyyy H:i:s"
          }
       }
 }

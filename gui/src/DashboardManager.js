@@ -198,7 +198,6 @@ class DashboardManager extends React.Component {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
     let filterConfiguration = this.filterRef.current
-    console.log(filterConfiguration.state)
     //adding applied filters on dashboard
     if (dashboardStack.length > 0) {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
@@ -207,11 +206,11 @@ class DashboardManager extends React.Component {
     }
 
     let value = JSON.parse(e.value)
-    if(dashboardStack.length>1){
+    if (dashboardStack.length > 1) {
       //check for consequent drilldown to same dashboard
-      if(dashboardStack[dashboardStack.length-1]["data"]["uuid"]!=value["uuid"])
+      if (dashboardStack[dashboardStack.length - 1]["data"]["uuid"] != value["uuid"])
         dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
-    } else{
+    } else {
       dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
     }
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
@@ -315,72 +314,75 @@ class DashboardManager extends React.Component {
             {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <div id="dashboard-preview-container">
                 <div className="dash-manager-bar">
+                  {
+                    !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                    <Select
+                      name="dashname"
+                      className="react-select-container"
+                      placeholder="Select OI"
+                      id="dashname"
+                      onChange={(e) => this.handleChange(e, "dashname")}
+                      value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
+                      options={this.state.dashList &&
+                        this.state.dashList.map((option, index) => {
+                          return {
+                            value: JSON.stringify(option),
+                            label: option.name,
+                            key: option.uuid
+                          }
+                        })
+                      }
+                    />
+                  }
+                  <div className="dash-manager-buttons">
+                    {
+                      !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                      <Button onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i></Button>
+                    }
+                    {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
+                      <>
                         {
                           !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              <Select
-                                name="dashname"
-                                className="react-select-container"
-                                placeholder="Select OI"
-                                id="dashname"
-                                onChange={(e) => this.handleChange(e, "dashname")}
-                                value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
-                                options={this.state.dashList &&
-                                  this.state.dashList.map((option, index) => {
-                                    return {
-                                      value: JSON.stringify(option),
-                                      label: option.name,
-                                      key: option.uuid
-                                    }
-                                  })
-                                }
-                              />
+                          <Button onClick={() => this.editDashboard()} title="Edit OI">
+                            <i className="fa fa-edit" aria-hidden="true"></i>
+                          </Button>
                         }
-                      <div className="dash-manager-buttons">
                         {
-                          !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                          <Button onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i></Button>
+                          (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
+                            this.state.inputs["dashname"]["isdefault"] == "0") &&
+                          <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete OI">
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                          </Button>
                         }
-                        {(this.state.uuid !== "" && this.state.inputs["dashname"] != undefined) &&
-                          <>
-                            <ReactToPrint
-                              trigger={() => {
-                                return <Button title="Print OI">
-                                  <i className="fa fa-print" aria-hidden="true"></i>
-                                </Button>
-                              }}
-                              content={() => this.dashboardViewerRef}
-                            />
-                            <Button onClick={() => this.showFilter()} title="Filter OI">
-                              <i className="fa fa-filter" aria-hidden="true"></i>
+                        <Button onClick={() => this.showFilter()} title="Filter OI">
+                          <i className="fa fa-filter" aria-hidden="true"></i>
+                        </Button>
+
+                        <ReactToPrint
+                          trigger={() => {
+                            return <Button title="Print OI">
+                              <i className="fa fa-print" aria-hidden="true"></i>
                             </Button>
-                            {!this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              <Button onClick={() => this.editDashboard()} title="Edit OI">
-                                <i className="fa fa-edit" aria-hidden="true"></i>
-                              </Button>
-                            }
-                            {
-                              (this.userProfile.key.privileges.MANAGE_DASHBOARD_DELETE &&
-                                this.state.inputs["dashname"]["isdefault"] == "0") &&
-                              <Button onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "Delete")} title="Delete OI">
-                                <i className="fa fa-trash" aria-hidden="true"></i>
-                              </Button>
-                            }
-                            {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
-                              (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
-                              (this.props.hideEdit == false &&
-                                <Button
-                                  onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
-                                  title="Make current OI as default OI"
-                                >MAKE DEFAULT
+                          }}
+                          content={() => this.dashboardViewerRef}
+                        />
+
+                        {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
+                          (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
+                          (this.props.hideEdit == false &&
+                            <Button
+                              onClick={() => this.dashboardOperation(this.state.inputs["dashname"], "SetDefault")}
+                              title="Make current OI as default OI"
+                            >MAKE DEFAULT
                                 </Button>
-                              )
-                              : (this.props.hideEdit == false &&
-                                <Button title="Selected OI is default OI" disabled>Default OI</Button>
-                              )
-                            }
-                          </>
+                          )
+                          : (this.props.hideEdit == false &&
+                            <Button title="Selected OI is default OI" disabled>Default OI</Button>
+                          )
                         }
-                      </div>
+                      </>
+                    }
+                  </div>
                 </div>
 
                 <div className="dashboard-viewer-div">

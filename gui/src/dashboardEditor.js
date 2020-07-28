@@ -482,10 +482,10 @@ class DashboardEditor extends React.Component {
     render() {
         return (
             <form className="dashboard-editor-form">
-                <div className="row col-12" style={{ marginBottom: "3em" }}>
-                    <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i className="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
-                    <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
-                    <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true"></i>Filter</Button>
+                <div className="dash-manager-buttons">
+                    <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
+                    <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
+                    <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
                 </div>
                 <div id="filtereditor-form-container" className="disappear">{
                     this.state.filterConfiguration &&
@@ -504,7 +504,7 @@ class DashboardEditor extends React.Component {
                 </div>
                 <div id="dashboard-container">
                     <div className="form-group row">
-                        <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
+                        <label htmlFor="dashboardName" className="col-form-label form-control-sm">Name</label>
                         <div className="col-2">
                             <>
                                 <input type="text" id="dashboardName" name="dashboardName" ref={this.dashboardName} className="form-control form-control-sm"
@@ -519,7 +519,7 @@ class DashboardEditor extends React.Component {
                                 </Overlay>
                             </>
                         </div>
-                        <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
+                        <label htmlFor="dashboardDescription" className="col-form-label form-control-sm">Description</label>
                         <div className="col-4">
                             <>
                                 <input type="text" id="dashboardDescription" name="dashboardDescription" ref={this.dashboardDescription} className="form-control form-control-sm"
@@ -534,12 +534,14 @@ class DashboardEditor extends React.Component {
                                 </Overlay>
                             </>
                         </div>
+
+                        <label htmlFor="dashboardVisibility" className="col-form-label form-control-sm">Visibility</label>
                         <div className="col-2">
                             <>
                                 <select id="dashboardVisibility" ref={this.dashboardVisibility} name="dashboardVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.dashboardVisibility != null ? this.state.dashboardVisibility : -1} onChange={this.inputChanged}>
                                     <option disabled value={-1} key="-1">Select Visibility</option>
-                                    <option key="1" value={1}>public</option>
-                                    <option key="2" value={0}>private</option>
+                                    <option key="1" value={1}>Public</option>
+                                    <option key="2" value={0}>Private</option>
                                 </select>
                                 <Overlay target={this.dashboardVisibility} show={this.state.errors.dashboardVisibility != null} placement="bottom">
                                     {props => (

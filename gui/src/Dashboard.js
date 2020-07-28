@@ -396,7 +396,7 @@ class Dashboard extends Component {
     let url = `analytics/widget/${widgetId}?data=true`;
     let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
 
-    console.log("Printing Filter: " + this.state.preparedDashboardFilter)
+    // console.log("Printing Filter: " + this.state.preparedDashboardFilter)
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
       //combining dashboardfilter with widgetfilter
