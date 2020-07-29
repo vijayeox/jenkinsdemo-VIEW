@@ -247,7 +247,7 @@ export default class WidgetGrid extends React.Component {
                 }
                 {this.exportToExcel &&
                     <>
-                        <div className="oxzion-widget-drilldown-excel-icon" style={hasBackButton ? { right: "5%" } : { right: "10px" }} onClick={this.saveAsExcel}><i className="fa fa-file-excel "></i></div>
+                        <div className="oxzion-widget-drilldown-excel-icon" style={hasBackButton ? { right: "5%" } : { right: "10px" }} onClick={this.saveAsExcel}><i className="fa fa-file-excel fa-lg"></i></div>
                         <ExcelExport
                             data={this.allData}
                             ref={exporter => this.excelExporter = exporter}

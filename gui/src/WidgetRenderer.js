@@ -248,7 +248,7 @@ class WidgetRenderer {
             chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
             if (isDrillDownChart) {
                 canvasElement.insertAdjacentHTML('beforeend',
-                    '<div class="oxzion-widget-drilldown-icon" title="Drilldown Chart">' +
+                    '<div class="oxzion-widget-drilldown-icon right" title="Drilldown Chart">' +
                     '<i class="fas fa-angle-double-down fa-lg"></i>' +
                     '</div>');
             }
