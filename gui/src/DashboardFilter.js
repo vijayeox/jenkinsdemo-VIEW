@@ -76,7 +76,7 @@ const FilterFields = function (props) {
 
                 </Form.Group>
             </div>
-            <div className="dashboard-filter-field col-2">
+            <div className="dashboard-filter-field">
                 <Form.Group controlId="formGridPassword">
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"

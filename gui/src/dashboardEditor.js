@@ -137,11 +137,11 @@ class DashboardEditor extends React.Component {
                         height: 200
                     },
                     min: {
-                        width: 50,
-                        height: 50
+                        width: 100,
+                        height: 100
                     },
                     max: {
-                        width: 800,
+                        width: '100%',
                         height: 600,
                     }
                 },
@@ -559,7 +559,7 @@ class DashboardEditor extends React.Component {
                         </div>
                     </div>
 
-                    <div id="gridArea" style={{ height: '200px', width: '800px' }}>
+                    <div id="gridArea" style={{ height: '200px', width: '98%' }}>
                         <div className="oxzion-widget-content"></div>
                     </div>
                 </div>
