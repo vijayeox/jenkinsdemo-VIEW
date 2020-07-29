@@ -298,7 +298,7 @@ class DashboardManager extends React.Component {
 
 
             <div id="filter-form-container" className="disappear">
-              {this.state.filterConfiguration &&
+              {Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length &&
                 <DashboardFilter
                   ref={this.filterRef}
                   core={this.core}
@@ -354,10 +354,12 @@ class DashboardManager extends React.Component {
                             <i className="fa fa-trash" aria-hidden="true"></i>
                           </Button>
                         }
-                        <Button onClick={() => this.showFilter()} title="Filter OI">
-                          <i className="fa fa-filter" aria-hidden="true"></i>
-                        </Button>
-
+                        {
+                        (Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) &&
+                          <Button onClick={() => this.showFilter()} title="Filter OI">
+                            <i className="fa fa-filter" aria-hidden="true"></i>
+                          </Button>
+                        }
                         <ReactToPrint
                           trigger={() => {
                             return <Button title="Print OI">
