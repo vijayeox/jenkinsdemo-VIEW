@@ -1,11 +1,3 @@
-// import { StorageService } from "./StorageService.js";
-import * as CryptoJS from 'crypto-js';
-const SecureStorage = require('secure-web-storage');
-const SECRET_KEY = 'secret_key';
-const Cryptr = require('cryptr');
-const cryptr = new Cryptr('myTotalySecretKey');
-import { ServiceProvider } from '@osjs/common';
-
 const isStorageSupported = storageName => {
 	if (storageName in window && window[storageName] && window[storageName].setItem)
 	{
@@ -30,49 +22,10 @@ const isStorageSupported = storageName => {
 
 export default class LocalStorageAdapter {
 	
-	constructor(core, options = {}){
-		// super(core, options || {});
+	constructor(){
 		this.localStorageExists = false;
 		this.useCookies = true;
-		this.core = core;
-		// this.storageService = StorageService;
-		this.secureStorage = new SecureStorage(localStorage, {
-			hash: function hash(key) {
-				key = CryptoJS.SHA256(key, SECRET_KEY);
-
-				return key.toString();
-			},
-			encrypt: function encrypt(data) {
-				data = CryptoJS.AES.encrypt(data, SECRET_KEY);
-
-				data = data.toString();
-
-				return data;
-			},
-			decrypt: function decrypt(data) {
-				data = CryptoJS.AES.decrypt(data, SECRET_KEY);
-
-				data = data.toString(CryptoJS.enc.Utf8);
-
-				return data;
-			}
-		});
 	}
-
-	// providers() {
-	// 	return [
-	// 		'oxzion/localstorage'
-	// 	];
-	// }
-
-	// init() {
-	// 	this.core.instance('oxzion/localstorage', () => ({
-	// 		get: (key) => this.get(key),
-	// 		set: (key,data) => this.set(key,data),
-	// 		purge: (key) => this.purge(key),
-	// 		supported: () => this.supported()
-	// 	}));
-	// }
 
 	// check for local storage option in browser
 	supported() {
@@ -104,11 +57,7 @@ export default class LocalStorageAdapter {
 					const value = window.localStorage.getItem(key) || null;
 						try {
 							var obj = { key:data,timestamp: new Date().getTime()}
-							 this.secureStorage.setItem(key,obj);
-						//* const encryptedobj = cryptr.encrypt(JSON.stringify(obj));
-						// const encryptedkey = cryptr.encrypt(JSON.stringify(key));
-
-							//*window.localStorage.setItem(key,encryptedobj);
+							window.localStorage.setItem(key,JSON.stringify(obj));
 							console.log('local storage set');
 							return true;
 						}
@@ -139,46 +88,7 @@ export default class LocalStorageAdapter {
 			try {
 					if(key != null) {
 						const data = window.localStorage.getItem(key);
-						if(data != null){
-							const getsession = window.localStorage.getItem("osjs/session");
-							window.localStorage.removeItem("osjs/session");
-							let setsession = JSON.parse(getsession);
-							this.set("osjs/session",setsession);
-							const getuser = window.localStorage.getItem("User");
-							window.localStorage.removeItem("User");
-							let setuser = JSON.parse(getuser);
-							this.set("User",setuser["key"]);
-							const getreftoken = window.localStorage.getItem("REFRESH_token");
-							window.localStorage.removeItem("REFRESH_token");
-							let setreftoken = JSON.parse(getreftoken);
-							this.set("REFRESH_token",setreftoken["key"]);
-							const getuserinfo = window.localStorage.getItem("UserInfo");
-							window.localStorage.removeItem("UserInfo");
-							let setuserinfo = JSON.parse(getuserinfo);
-							this.set("UserInfo",setuserinfo["key"]);
-							const getlocale = window.localStorage.getItem("osjs/locale");
-							window.localStorage.removeItem("osjs/locale");
-							let setlocale = JSON.parse(getlocale);
-							this.set("osjs/locale",setlocale);
-							const getdesktop = window.localStorage.getItem("osjs/desktop");
-							window.localStorage.removeItem("osjs/desktop");
-							let setdesktop = JSON.parse(getdesktop);
-							this.set("osjs/desktop",setdesktop);
-							const getauthtoken = window.localStorage.getItem("AUTH_token");
-							window.localStorage.removeItem("AUTH_token");
-							let setauthtoken = JSON.parse(getauthtoken);
-							this.set("AUTH_token",setauthtoken["key"]);
-						}
-
-						const redata = this.secureStorage.getItem(key);
-						
-						// *const encryptedkey = cryptr.encrypt(key);
-						// console.log(data);
-						// *console.log(typeof encryptedkey);
-						// *const data = window.localStorage.getItem(key);
-						// *const decrypteddata = cryptr.decrypt(data);
-						return redata;
-						// *return JSON.parse(decrypteddata);
+						return JSON.parse(data);
 					}
 					else
 						return null;
@@ -202,8 +112,7 @@ export default class LocalStorageAdapter {
 		if(this.localStorageExists) {
 			try {
 				if(key != null) {
-					this.secureStorage.clear(key);
-					// window.localStorage.removeItem(key);
+					window.localStorage.removeItem(key);
 					console.log('token removed');
 				}
 				else {
