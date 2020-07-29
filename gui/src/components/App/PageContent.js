@@ -447,6 +447,9 @@ class PageContent extends React.Component {
         if(item.url){
           url = this.replaceParams(item.url, this.state.currentRow);
         }
+        if(item.content){
+          url = this.replaceParams(item.content, this.state.currentRow);
+        }
         content.push(
           <DocumentViewer
             appId={this.appId}
