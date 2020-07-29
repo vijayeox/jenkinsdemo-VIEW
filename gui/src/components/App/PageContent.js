@@ -352,6 +352,7 @@ class PageContent extends React.Component {
             urlPostParams={item.urlPostParams}
             core={this.core}
             appId={this.appId}
+            data={item.data}
             content={item.content}
             fileId={fileId}
             formId={item.form_id}
@@ -447,7 +448,7 @@ class PageContent extends React.Component {
           url = this.replaceParams(item.content, this.state.currentRow);
         }
         if(item.url){
-          url = item.url
+          url = this.replaceParams(item.url, this.state.currentRow);
         }
         content.push(
           <DocumentViewer
