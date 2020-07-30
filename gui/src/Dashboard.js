@@ -337,6 +337,12 @@ class Dashboard extends Component {
 
   async drillDownToDashboard(data) {
     let event = {};
+    let elementId=data.elementId
+     //starting spinner 
+     if (elementId) {
+      var widgetDiv = document.getElementById(elementId);
+      this.loader.show(widgetDiv);
+    }
     let dashboardData = await this.getDashboardHtmlDataByUuid(data.dashboard);
     let dashboardStack = this.props.dashboardStack ? this.props.dashboardStack : []
     let dashboardFilter = (dashboardStack.length > 0 && dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"].length > 0) ? dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] : []
@@ -355,6 +361,10 @@ class Dashboard extends Component {
 
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
+    if (elementId) {
+      var widgetDiv = document.getElementById(elementId);
+      this.loader.destroy(widgetDiv);
+    }
     this.props.drilldownToDashboard(event, "dashname")
   }
 
