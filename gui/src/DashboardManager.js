@@ -87,7 +87,7 @@ class DashboardManager extends React.Component {
       "get"
     );
     let dash = response.data.dashboard;
-    let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dashboard.filter_configuration) : []
+    let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
     dashData.push({ dashData: response.data });
     inputs["dashname"] = dash
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
