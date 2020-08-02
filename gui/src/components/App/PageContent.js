@@ -75,6 +75,7 @@ class PageContent extends React.Component {
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
+      var row = e; 
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
       string = string.replace(/moment/g,'_moment');
@@ -351,6 +352,7 @@ class PageContent extends React.Component {
             url={dataString}
             urlPostParams={item.urlPostParams}
             core={this.core}
+            proc={this.proc}
             appId={this.appId}
             data={item.data}
             content={item.content}
