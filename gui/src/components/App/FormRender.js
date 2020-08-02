@@ -606,6 +606,9 @@ class FormRender extends React.Component {
       Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
       Formio.registerComponent("selectcountry", CountryComponent);
       Formio.registerComponent("file", FileComponent);
+      this.props.proc.metadata.formio_endpoint
+        ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint)
+        : null;
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
