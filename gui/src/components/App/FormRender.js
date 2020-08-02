@@ -1387,10 +1387,25 @@ class FormRender extends React.Component {
         actionDetails["commands"],
         this.cleanData(formData)
       ).then((response) => {
-        this.showFormLoader(false, 0);
-        if (actionDetails.exit) {
-          clearInterval(actionDetails.timerVariable);
-          this.stepDownPage();
+        if (response.status == "success") {
+          this.showFormLoader(false, 0);
+          this.notif.current.notify(
+            "Success",
+            actionDetails.notification
+              ? actionDetails.notification
+              : "Operation completed successfully",
+            "success"
+          );
+          if (actionDetails.exit) {
+            clearInterval(actionDetails.timerVariable);
+            this.stepDownPage();
+          }
+        } else {
+          this.notif.current.notify(
+            "Error",
+            response.errors[0].message ? response.errors[0].message : "Operation failed",
+            "danger"
+          );
         }
       });
     }
