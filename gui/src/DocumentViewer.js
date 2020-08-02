@@ -283,10 +283,10 @@ export default class DocumentViewer extends Component {
       ) {
         return "fa fa-file-word-o";
       } else {
-        return "fa fa-file-o";
+        return "far fa-file";
       }
     } catch (Exception) {
-      return "fa fa-file-o";
+      return "far fa-file";
     }
   }
 
