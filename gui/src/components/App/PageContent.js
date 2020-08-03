@@ -75,6 +75,7 @@ class PageContent extends React.Component {
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
+      var row = e; 
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
       string = string.replace(/moment/g,'_moment');
@@ -351,7 +352,9 @@ class PageContent extends React.Component {
             url={dataString}
             urlPostParams={item.urlPostParams}
             core={this.core}
+            proc={this.proc}
             appId={this.appId}
+            data={item.data}
             content={item.content}
             fileId={fileId}
             formId={item.form_id}
@@ -443,11 +446,11 @@ class PageContent extends React.Component {
         );
       } else if (item.type == "DocumentViewer") {
         var url;
+        if(item.url){
+          url = this.replaceParams(item.url, this.state.currentRow);
+        }
         if(item.content){
           url = this.replaceParams(item.content, this.state.currentRow);
-        }
-        if(item.url){
-          url = item.url
         }
         content.push(
           <DocumentViewer

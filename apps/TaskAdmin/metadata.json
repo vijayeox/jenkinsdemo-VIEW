@@ -4,7 +4,7 @@
   "category": null,
   "server": "server.js",
   "icon": "icon.svg",
-  "hidden": false,
+  "hidden": true,
   "icon_white": "icon_white.svg",
   "title": {
     "en_EN": "Project Management Admin"

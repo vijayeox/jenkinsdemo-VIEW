@@ -165,6 +165,15 @@ class Home extends React.Component {
           </div>
         ) : null}
 
+          {this.userProfile.privileges.MANAGE_TASKADMIN_WRITE ? (
+          <div onClick={()=>this.launchExternalApp("TaskAdmin")}>
+            <div className="block d1">
+              <img src="apps/Admin/008-development-2.svg" />
+            </div>
+            <div className="titles">Project Management Admin</div>
+          </div>
+        ) : null}
+
         {!this.userProfile.blackListedApps.Analytics ? (
           <div onClick={()=>this.launchExternalApp("Analytics")}>
             <div className="block d1">

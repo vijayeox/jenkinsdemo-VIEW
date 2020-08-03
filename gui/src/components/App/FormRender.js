@@ -606,6 +606,9 @@ class FormRender extends React.Component {
       Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
       Formio.registerComponent("selectcountry", CountryComponent);
       Formio.registerComponent("file", FileComponent);
+      this.props.proc.metadata.formio_endpoint
+        ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint)
+        : null;
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -1387,10 +1390,25 @@ class FormRender extends React.Component {
         actionDetails["commands"],
         this.cleanData(formData)
       ).then((response) => {
-        this.showFormLoader(false, 0);
-        if (actionDetails.exit) {
-          clearInterval(actionDetails.timerVariable);
-          this.stepDownPage();
+        if (response.status == "success") {
+          this.showFormLoader(false, 0);
+          this.notif.current.notify(
+            "Success",
+            actionDetails.notification
+              ? actionDetails.notification
+              : "Operation completed successfully",
+            "success"
+          );
+          if (actionDetails.exit) {
+            clearInterval(actionDetails.timerVariable);
+            this.stepDownPage();
+          }
+        } else {
+          this.notif.current.notify(
+            "Error",
+            response.errors[0].message ? response.errors[0].message : "Operation failed",
+            "danger"
+          );
         }
       });
     }
