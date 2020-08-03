@@ -321,8 +321,13 @@ class FormRender extends React.Component {
             method = "put";
           }
         }
+        console.log(data)
         return await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
           if (response.status == "success") {
+            if(this.props.route) {
+              that.showFormLoader(false,0);
+              this.props.postSubmitCallback();
+            }
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
@@ -331,19 +336,27 @@ class FormRender extends React.Component {
             });
             return response;
           } else {
-            var storeCache = await this.storeCache(this.cleanData(data)).then(
-            async cacheResponse => {
-              if (response.data.errors) {
-                var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
-                  that.showFormLoader(false,0);
-                  this.notif.current.notify("Error","Form Submission Failed","danger");
-                  return storeErrorResponse;
-                });
-              } else {
-                that.showFormLoader(false,0);
-                return storeErrorResponse;
-              }
-            });
+            if(this.props.route){
+              console.log(response)
+              that.showFormLoader(false,0);
+              
+            }
+            else {
+              var storeCache = await this.storeCache(this.cleanData(data)).then(
+                async cacheResponse => {
+                  if (response.data.errors) {
+                    var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
+                      that.showFormLoader(false,0);
+                      this.notif.current.notify("Error","Form Submission Failed","danger");
+                      return storeErrorResponse;
+                    });
+                  } else {
+                    that.showFormLoader(false,0);
+                    return storeErrorResponse;
+                  }
+              });
+            }
+            
           }
           return response;
         });
@@ -372,7 +385,7 @@ class FormRender extends React.Component {
       });
       formData = JSON.parse(JSON.stringify(formData));// Cloning the formdata to avoid original data being removed
       formData.privileges = undefined;
-      formData.userprofile = undefined;
+       formData.userprofile = undefined;
       formData.countryList = undefined;
       formData.phoneList = undefined;
       formData.timezones = undefined;
@@ -405,7 +418,7 @@ class FormRender extends React.Component {
         userprofile: this.userprofile,
         countryList: countryList,
         phoneList: phoneList,
-        timezones : MomentTZ,
+        timezones : MomentTZ.tz.names(),
         dateFormats : DateFormats
       });
     }
@@ -681,6 +694,9 @@ class FormRender extends React.Component {
                 if(response.status=='success'){
                   next(null);
                 } else {
+                  if(that.props.route) {
+                    next([response.message]);
+                  }
                   next([response.errors[0].message]);
                 }
               });
@@ -720,6 +736,7 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
+            console.log(changed)
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
