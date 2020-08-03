@@ -3,8 +3,6 @@ import Accordion from "react-bootstrap/Accordion";
 import { useAccordionToggle } from "react-bootstrap/AccordionToggle";
 import { Card, Button } from "react-bootstrap";
 import "./public/css/documentViewer.scss";
-import { Upload } from "@progress/kendo-react-upload";
-import Notification from "./Notification";
 
 export default class DocumentViewer extends Component {
   constructor(props) {
@@ -15,8 +13,7 @@ export default class DocumentViewer extends Component {
       selectedDocument: undefined,
       documentsList: undefined,
       documentTypes: [],
-      activeCard: "",
-      uploadFiles: []
+      activeCard: ""
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
@@ -24,75 +21,6 @@ export default class DocumentViewer extends Component {
     this.notif = React.createRef();
     this.getDocumentsList = this.getDocumentsList.bind(this);
     this.getDocumentsList();
-  }
-
-  onFileChange = (event) => {
-    let fileError = false;
-    let validFiles = event.newState.filter((item) => {
-      if (item.validationErrors) {
-        if (item.validationErrors.length > 0) {
-          fileError = true;
-          return false;
-        }
-      } else {
-        return true;
-      }
-    });
-
-    if (validFiles) {
-      this.setState({
-        uploadFiles: validFiles
-      });
-    }
-    fileError
-      ? this.notif.current.notify(
-          "Unsupported File",
-          "Please choose a different file.",
-          "danger"
-        )
-      : null;
-  };
-
-  uploadAttachments(fileIndex) {
-    if (fileIndex < 0) {
-      this.setState(
-        {
-          selectedDocument: undefined,
-          documentsList: undefined,
-          documentTypes: [],
-          activeCard: "",
-          uploadFiles: []
-        },
-        this.getDocumentsList()
-      );
-    } else {
-      this.postAttachments(this.state.uploadFiles[fileIndex]).then(
-        (response) => {
-          if (response.status == "success") {
-            this.uploadAttachments(fileIndex - 1);
-          }
-        }
-      );
-    }
-  }
-
-  async postAttachments(file) {
-    var urlRes = this.props.url.split("/");
-    var fileId = urlRes[urlRes.length - 2];
-    let response = await this.helper.request(
-      "v1",
-      "/app/" + this.appId + "/file/attachment",
-      {
-        file: file.getRawFile(),
-        name: file.name,
-        type: "file/" + file.extension.split(".")[1],
-        fileId: fileId,
-        fieldLabel: this.state.activeCard
-      },
-      "filepost"
-    );
-
-    return response;
   }
 
   async getDocumentsListService(url) {
@@ -112,19 +40,10 @@ export default class DocumentViewer extends Component {
       this.getDocumentsListService(this.props.url).then((response) => {
         if (response.data) {
           var documentsList = {};
-          var folderType = {};
           var documentTypes = Object.keys(response.data);
           documentTypes.map((docType) => {
-            if (response.data[docType]) {
-              if (response.data[docType].value && response.data[docType].type) {
-                if (response.data[docType].value.length > 0) {
-                  documentsList[docType] = response.data[docType].value;
-                  folderType[docType] = response.data[docType].type;
-                } else if (response.data[docType].type == "file") {
-                  documentsList[docType] = [];
-                  folderType[docType] = response.data[docType].type;
-                }
-              }
+            if (response.data[docType] && response.data[docType].length > 0) {
+              documentsList[docType] = response.data[docType];
             }
           });
           if (Object.keys(documentsList).length > 0) {
@@ -135,7 +54,6 @@ export default class DocumentViewer extends Component {
             documentsList.Documents ? validDocTypes.unshift("Documents") : null;
             this.setState({
               documentsList: documentsList,
-              folderType: folderType,
               selectedDocument: documentsList[validDocTypes[0]][0],
               activeCard: validDocTypes[0],
               documentTypes: validDocTypes
@@ -160,83 +78,35 @@ export default class DocumentViewer extends Component {
       this.state.documentTypes.map((docType, index) => {
         this.state.documentsList[docType]
           ? accordionHTML.push(
-              <Card key={index}>
-                <Card.Header>
-                  <CustomToggle
-                    eventKey={docType}
-                    currentSelected={this.state.activeCard}
-                    type={this.state.folderType[docType]}
-                    update={(item) => {
-                      this.state.documentsList[item].length !== 0
-                        ? this.setState({
-                            activeCard: item,
-                            selectedDocument: this.state.documentsList[item][0]
-                          })
-                        : this.setState({
-                            activeCard: item
-                          });
-                    }}
-                  >
-                    {docType}
-                  </CustomToggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey={docType}>
-                  <Card.Body>
-                    {this.state.documentsList[docType].map((doc, i) => {
-                      return (
-                        <Card
-                          className="docItems"
-                          onClick={(e) => {
-                            doc.file != this.state.selectedDocument.file
-                              ? this.handleDocumentClick(doc)
-                              : null;
-                          }}
-                          key={i}
-                        >
-                          <div
-                            className={
-                              doc.file == this.state.selectedDocument.file
-                                ? "docListBody borderActive"
-                                : "docListBody border"
-                            }
-                          >
-                            <i
-                              className={"docIcon " + this.getDocIcon(doc.type)}
-                            ></i>
-                            <p>
-                              {doc.originalName.length > 30
-                                ? this.chopFileName(doc.originalName)
-                                : doc.originalName}
-                            </p>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                    {this.state.folderType[docType] == "file" ? (
-                      <div className="popupWindow">
-                        <Upload
-                          batch={false}
-                          multiple={true}
-                          autoUpload={false}
-                          files={this.state.uploadFiles}
-                          onAdd={this.onFileChange}
-                          onRemove={this.onFileChange}
-                          restrictions={{
-                            allowedExtensions: [
-                              ".jpg",
-                              ".jpeg",
-                              ".png",
-                              ".gif",
-                              ".pdf",
-                              ".doc",
-                              ".docx",
-                              ".xlsx",
-                              ".xls"
-                            ],
-                            maxFileSize: 25000000
-                          }}
-                        />
-                        <button
+            <Card key={index}>
+              <Card.Header>
+                <CustomToggle
+                  eventKey={docType}
+                  currentSelected={this.state.activeCard}
+                  update={(item) => {
+                    this.setState({
+                      activeCard: item,
+                      selectedDocument: this.state.documentsList[item][0]
+                    });
+                  }}
+                >
+                  {docType}
+                </CustomToggle>
+              </Card.Header>
+              <Accordion.Collapse eventKey={docType}>
+                <Card.Body>
+                  {this.state.documentsList[docType].map((doc, i) => {
+                    return (
+                      <Card
+                        className="docItems"
+                        onClick={(e) => {
+                          doc.file != this.state.selectedDocument.file
+                            ? this.handleDocumentClick(doc)
+                            : null;
+                        }}
+                        key={i}
+                      >
+                        <div
                           className={
                             this.state.uploadFiles.length == 0
                               ? "uploadButton invalidButton"
@@ -414,7 +284,6 @@ export default class DocumentViewer extends Component {
     if (documentsList) {
       return (
         <div className="docViewerComponent">
-          <Notification ref={this.notif} />
           <div className="col-md-3 docListDiv">
             <Accordion defaultActiveKey={this.state.documentTypes[0]}>
               {this.generateDocumentList()}

@@ -7,7 +7,6 @@ import AnnouncementIcon from "../assets/images/icon_white.svg";
 import ForgotPassword from "./ForgotPassword.js";
 import ResetPasswordPage from "./ResetPasswordPage.js";
 import Slider from "./Slider.js";
-import LocalStorageAdapter from '../adapters/localStorageAdapter.js';
 
 
 export default class LoginContainer extends defaultLogin {
@@ -25,8 +24,7 @@ export default class LoginContainer extends defaultLogin {
       document.getElementsByClassName("reactLoginPage")[0]
     );
     this.on("login:stop", () => {
-      let AuthToken = this.core.make('oxzion/profile').getAuth();
-      if (AuthToken) {
+      if (window.localStorage.getItem("AUTH_token")) {
         ReactDOM.unmountComponentAtNode(document.getElementsByClassName("reactLoginPage")[0]);
       }
     });

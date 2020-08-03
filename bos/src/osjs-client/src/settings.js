@@ -30,7 +30,6 @@
 
 import * as merge from 'deepmerge';
 import simplejsonconf from 'simplejsonconf';
-import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 
 const serverSettings = core => ({
   save: settings => core.request(core.url('/settings'), {
@@ -52,8 +51,7 @@ const localStorageSettings = core => ({
 
   save: settings => {
     Object.keys(settings).forEach((k) => {
-    let olsHelper = new LocalStorageAdapter;
-      olsHelper.set(k, settings[k]);
+      localStorage.setItem(k, JSON.stringify(settings[k]));
     });
 
     return Promise.resolve(true);

@@ -19,8 +19,7 @@ export class ProfileServiceProvider extends ServiceProvider {
 		this.core.instance('oxzion/profile', () => ({
 			get: () => this.get(),
 			set: () => this.set(),
-			update: () => this.update(),
-			getAuth:() => this.getAuth()
+			update: () => this.update()
 		}));
 	}
 	get() {
