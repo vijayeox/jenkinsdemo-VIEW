@@ -189,6 +189,31 @@ export default class WidgetGrid extends React.Component {
 
     }
 
+    cellRender(tdElement, cellProps) {
+        if (cellProps.rowType === 'Footer') {
+            if (cellProps.field === 'Account') {
+                console.log(cellProps.dataItem.aggregates.Account.average)
+                return (
+                    <td>
+                        Average: {cellProps.dataItem.aggregates.Account.average}
+                    </td>
+                );
+            }
+        }
+        return tdElement;
+    }
+    Aggregate = (props,configuration) => {
+        const total =  this.state.displayedData.data && this.state.displayedData.data.reduce((acc, current) => acc + current[props.field], 0);
+        if(!Number.isNaN(total)){
+            return (
+                <td colSpan={props.colSpan} style={configuration.style}>
+                    {configuration.value}{total}
+                </td>
+            );
+        } return <td></td>
+    }
+
+
     render() {
         let thiz = this;
         let hasBackButton = this.hasBackButton()
@@ -196,6 +221,10 @@ export default class WidgetGrid extends React.Component {
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
+                if(config['footerAggregate']){
+                    columns.push(<GridColumn key={config['field']} {...config}   footerCell={(props)=>thiz.Aggregate(props,config['footerAggregate'])} />);
+                }
+                else
                 columns.push(<GridColumn key={config['field']} {...config} />);
             }
             return columns;
@@ -212,7 +241,7 @@ export default class WidgetGrid extends React.Component {
             data={this.state.displayedData}
             resizable={this.resizable}
             reorderable={this.reorderable}
-
+            cellRender={this.cellRender}
             filterable={this.filterable}
             filter={this.state.filter}
             onFilterChange={this.gridFilterChanged}
