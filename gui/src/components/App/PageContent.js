@@ -345,12 +345,16 @@ class PageContent extends React.Component {
           item.cacheId,
           this.state.currentRow
         );
+        var urlPostParams = this.replaceParams(
+          item.urlPostParams,
+          this.state.currentRow
+        );
         var fileId = this.replaceParams(item.fileId, this.state.currentRow);
         content.push(
           <FormRender
             key={i}
             url={dataString}
-            urlPostParams={item.urlPostParams}
+            urlPostParams={urlPostParams}
             core={this.core}
             proc={this.proc}
             appId={this.appId}
