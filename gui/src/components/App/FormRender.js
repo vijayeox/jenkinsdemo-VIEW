@@ -205,7 +205,10 @@ class FormRender extends React.Component {
 
   async getFileData() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
+    if(this.props.parentWorkflowInstanceId != "null"){
+      return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
+    }
+    return
   }
 
   async getFileDataById() {
@@ -443,7 +446,7 @@ class FormRender extends React.Component {
     loadWorkflow(form) {
       let that = this;
       console.log(this.state);
-      if (this.state.parentWorkflowInstanceId) {
+      if (this.state.parentWorkflowInstanceId && !this.state.isDraft) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
@@ -464,6 +467,50 @@ class FormRender extends React.Component {
         });
       } else if(this.state.workflowId && (this.state.workflowId != null) && this.state.isDraft) {
         this.getStartFormWorkflow().then(response => {
+          var parsedData = {};
+          var template;
+          if (response.data) {
+            try{
+              parsedData = this.formatFormData(JSON.parse(response.data));
+            } catch(e){
+              parsedData = this.formatFormData(response.data);
+            }
+          }
+          try {
+            template = JSON.parse(parsedData.template);
+          } catch(e){
+            template = parsedData.template;
+          }
+          parsedData.workflow_uuid ? (parsedData.workflow_uuid = parsedData.workflow_uuid) : null;
+          this.setState({
+            content: template,
+            workflowInstanceId: parsedData.workflow_instance_id,
+            activityInstanceId: parsedData.activity_instance_id,
+            workflowId: parsedData.workflow_uuid,
+            formId: parsedData.form_id
+          });
+          that.createForm().then((form) => {
+            this.getCacheData().then((cacheResponse) => {
+              if(Object.keys(cacheResponse.data).length > 1){//to account for only workflow_uuid
+                var that = this;
+                if(cacheResponse.data){
+                  form.setSubmission({data: this.formatFormData(cacheResponse.data)}).then(respone=> {
+                    that.processProperties(form);
+                    if (cacheResponse.data.page && form.wizard) {
+                      if (form.wizard && form.wizard.display == "wizard") {
+                        form.setPage(parseInt(cacheResponse.data.page));
+                        that.hideBreadCrumb(true);
+                      }
+                    }
+                  });
+                }
+              }
+            });
+          });
+
+        });
+      } else if(this.state.activityInstanceId && this.state.workflowInstanceId && this.state.isDraft) {
+        this.getActivityInstance().then(response => {
           var parsedData = {};
           var template;
           if (response.data) {
@@ -736,7 +783,6 @@ class FormRender extends React.Component {
           });
 
           form.on("change", function (changed) {
-            console.log(changed)
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
