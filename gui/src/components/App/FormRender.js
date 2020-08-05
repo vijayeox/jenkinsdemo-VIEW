@@ -529,7 +529,7 @@ class FormRender extends React.Component {
           }
         });
       }
-      else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+      else  if (this.state.activityInstanceId && this.state.workflowInstanceId && !this.state.cacheId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({ workflowInstanceId: response.data.workflow_instance_id });
