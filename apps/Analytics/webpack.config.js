@@ -37,8 +37,7 @@ module.exports = {
   resolve: {
     modules: ['node_modules'],
     alias: {
-      react: path.resolve(__dirname, 'node_modules/react'),
-      OxzionGUI: path.resolve(__dirname, "../../gui/src/")
+      react: path.resolve(__dirname, 'node_modules/react')
     }
   },
   optimization: {

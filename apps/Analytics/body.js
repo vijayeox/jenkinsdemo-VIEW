@@ -1,7 +1,6 @@
-import React from 'react';
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-import { Query, DataSource, DashboardManager, WidgetManager } from './GUIComponents'
+import { React, Query, DataSource, DashboardManager, WidgetManager } from 'oxziongui';
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
