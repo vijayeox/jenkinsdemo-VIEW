@@ -1,0 +1,193 @@
+{
+  "_id": "5f0bef286e611481249dd23a",
+  "type": "form",
+  "tags": [],
+  "owner": "5e12be156225ae24733439a8",
+  "components": [
+    {
+      "label": "Sound Notification:",
+      "labelPosition": "left-left",
+      "optionsLabelPosition": "right",
+      "inline": true,
+      "tableView": true,
+      "values": [
+        { "label": "On", "value": "true", "shortcut": "" },
+        { "label": "Off", "value": "false", "shortcut": "" }
+      ],
+      "protected": true,
+      "redrawOn": "data",
+      "customDefaultValue": "value = data.userprofile.preferences[\"soundnotification\"];",
+      "key": "userprofile.preferences.soundnotification",
+      "conditional": { "show": true },
+      "attributes": { "style": "font-size: 22px" },
+      "type": "radio",
+      "labelWidth": 30,
+      "input": true,
+      "refreshOn": "data.userprofile.preferences[\"soundnotification\"]"
+    },
+    {
+      "label": "HTML",
+      "tag": "br",
+      "attrs": [{ "attr": "", "value": "" }],
+      "refreshOnChange": false,
+      "tableView": false,
+      "key": "html",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "Greeting message:",
+      "labelPosition": "left-left",
+      "optionsLabelPosition": "right",
+      "inline": true,
+      "tableView": false,
+      "defaultValue": true,
+      "values": [
+        { "label": "On", "value": "true", "shortcut": "" },
+        { "label": "Off", "value": "false", "shortcut": "" }
+      ],
+      "protected": true,
+      "redrawOn": "submit",
+      "customDefaultValue": "value = data.userprofile.preferences['Greetingmessage'];",
+      "key": "userprofile.preferences.Greetingmessage",
+      "attributes": { "style": "font-size: 20px" },
+      "type": "radio",
+      "labelWidth": 30,
+      "input": true
+    },
+    {
+      "label": "HTML",
+      "tag": "br",
+      "attrs": [{ "attr": "", "value": "" }],
+      "refreshOnChange": false,
+      "tableView": false,
+      "key": "html1",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "Email Alerts:",
+      "labelPosition": "left-left",
+      "optionsLabelPosition": "right",
+      "inline": true,
+      "tableView": false,
+      "defaultValue": true,
+      "values": [
+        { "label": "On", "value": "true", "shortcut": "" },
+        { "label": "Off", "value": "false", "shortcut": "" }
+      ],
+      "protected": true,
+      "redrawOn": "submit",
+      "customDefaultValue": "value = data.userprofile.preferences['emailalerts'];",
+      "key": "userprofile.preferences.emailalerts",
+      "attributes": { "style": "font-size:\"22px\"" },
+      "type": "radio",
+      "labelWidth": 30,
+      "input": true
+    },
+    {
+      "label": "HTML",
+      "tag": "br",
+      "attrs": [{ "attr": "", "value": "" }],
+      "refreshOnChange": false,
+      "tableView": false,
+      "key": "html2",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "Local Time Zone:",
+      "labelPosition": "left-left",
+      "widget": "choicesjs",
+      "tableView": true,
+      "dataSrc": "custom",
+      "data": {
+        "values": [{ "label": "", "value": "" }],
+        "custom": "values= data[\"timezones\"];"
+      },
+      "valueProperty": "item",
+      "dataType": "auto",
+      "template": "<span>{{ item }}</span>",
+      "selectThreshold": 0.3,
+      "protected": true,
+      "key": "userprofile.preferences.timezone",
+      "type": "select",
+      "indexeddb": { "filter": {} },
+      "input": true
+    },
+    {
+      "label": "HTML",
+      "tag": "br",
+      "attrs": [{ "attr": "", "value": "" }],
+      "refreshOnChange": false,
+      "tableView": false,
+      "key": "html3",
+      "type": "htmlelement",
+      "input": false
+    },
+    {
+      "label": "Date Format:",
+      "labelPosition": "left-left",
+      "widget": "choicesjs",
+      "tableView": true,
+      "dataSrc": "custom",
+      "data": {
+        "values": [{ "label": "", "value": "" }],
+        "custom": "values = data['dateFormats']"
+      },
+      "valueProperty": "value",
+      "dataType": "auto",
+      "selectThreshold": 0.3,
+      "protected": true,
+      "customDefaultValue": "value = data.userprofile.preferences[\"dateformat\"]",
+      "key": "userprofile.preferences.dateformat",
+      "type": "select",
+      "indexeddb": { "filter": {} },
+      "redrawOn": "submit",
+      "input": true
+    },
+    {
+      "label": "preferences",
+      "redrawOn": "submit",
+      "calculateValue": "value = {\n  soundnotification: data.userprofile.preferences.soundnotification,\n  Greetingmessage : data.userprofile.preferences.Greetingmessage,\n  emailalerts : data.userprofile.preferences.emailalerts,\n  timezone : data.userprofile.preferences.timezone,\n  dateformat :data.userprofile.preferences.dateformat\n  \n}",
+      "key": "preferences",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Submit",
+      "showValidations": false,
+      "disableOnInvalid": true,
+      "tableView": false,
+      "key": "submit",
+      "attributes": { "style": "float:right" },
+      "type": "button",
+      "input": true
+    }
+  ],
+  "revisions": "",
+  "_vid": 0,
+  "title": "PreferencesForm",
+  "display": "form",
+  "access": [
+    {
+      "roles": [
+        "5e2fbc0b8c00bb7cdc74e28f",
+        "5e2fbc0b8c00bb167774e290",
+        "5e2fbc0b8c00bb18f374e291"
+      ],
+      "type": "read_all"
+    }
+  ],
+  "submissionAccess": [],
+  "controller": "",
+  "properties": {},
+  "settings": {},
+  "name": "preferencesForm",
+  "path": "preferencesform",
+  "project": "5e2fbc0b8c00bb3c3a74e28e",
+  "created": "2020-07-13T05:20:40.608Z",
+  "modified": "2020-07-23T11:29:42.859Z",
+  "machineName": "zzulhegjdkezayg:preferences"
+}

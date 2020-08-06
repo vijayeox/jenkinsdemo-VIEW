@@ -1,0 +1,494 @@
+{
+  "_id": "5f101bc7729bf2afb9ccb35a",
+  "type": "form",
+  "tags": [],
+  "owner": "5e12be156225ae24733439a8",
+  "components": [
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "First Name",
+              "tableView": true,
+              "redrawOn": "data",
+              "customDefaultValue": "value = data.userprofile[\"firstname\"]",
+              "validate": { "required": true },
+              "key": "userprofile.firstname",
+              "properties": { "target": "firstname" },
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        },
+        {
+          "components": [
+            {
+              "label": "Last Name",
+              "tableView": true,
+              "redrawOn": "data",
+              "customDefaultValue": "value = data.userprofile[\"lastname\"]",
+              "validate": { "required": true },
+              "key": "userprofile.lastname",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "key": "columns",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Email",
+      "tableView": true,
+      "redrawOn": "data",
+      "customDefaultValue": "value = data.userprofile[\"email\"]",
+      "validate": { "required": true },
+      "kickbox": { "enabled": true },
+      "key": "userprofile.email",
+      "type": "email",
+      "input": true
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "Gender",
+              "optionsLabelPosition": "right",
+              "inline": true,
+              "tableView": false,
+              "values": [
+                { "label": "Male", "value": "male", "shortcut": "" },
+                { "label": "Female", "value": "female", "shortcut": "" }
+              ],
+              "redrawOn": "data",
+              "customDefaultValue": "value = data.userprofile[\"gender\"]",
+              "validate": { "required": true },
+              "key": "userprofile.gender",
+              "type": "radio",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        },
+        {
+          "components": [
+            {
+              "label": "Date of Birth",
+              "format": "yyyy-MM-dd",
+              "tableView": false,
+              "enableMinDateInput": true,
+              "datePicker": {
+                "disableWeekends": false,
+                "disableWeekdays": false
+              },
+              "enableMaxDateInput": false,
+              "enableTime": false,
+              "customDefaultValue": "value = data.userprofile[\"date_of_birth\"]",
+              "validate": { "required": true },
+              "key": "userprofile.date_of_birth",
+              "type": "datetime",
+              "input": true,
+              "widget": {
+                "type": "calendar",
+                "displayInTimezone": "viewer",
+                "language": "en",
+                "useLocaleSettings": false,
+                "allowInput": true,
+                "mode": "single",
+                "enableTime": false,
+                "noCalendar": false,
+                "format": "yyyy-MM-dd",
+                "hourIncrement": 1,
+                "minuteIncrement": 1,
+                "time_24hr": false,
+                "minDate": null,
+                "disableWeekends": false,
+                "disableWeekdays": false,
+                "maxDate": null
+              },
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "key": "columns1",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "Address 1",
+              "tableView": true,
+              "customDefaultValue": "value = data.userprofile[\"address1\"]",
+              "validate": { "required": true },
+              "key": "userprofile.address1",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        },
+        {
+          "components": [
+            {
+              "label": "Address 2",
+              "tableView": true,
+              "customDefaultValue": "value = data.userprofile[\"address2\"]",
+              "key": "userprofile.address2",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "key": "columns2",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "Country",
+              "widget": "choicesjs",
+              "tableView": true,
+              "dataSrc": "custom",
+              "data": {
+                "values": [{ "label": "", "value": "" }],
+                "custom": "function arrayColumn(array, columnName) {\n    return array.map(function(value,index) {\n        return value[columnName];\n    })\n}\nvalues = arrayColumn(data.countryList,'country')"
+              },
+              "template": "<span>{{ item }}</span>",
+              "selectThreshold": 0.3,
+              "customDefaultValue": "value = data.userprofile[\"country\"]",
+              "validate": { "required": true },
+              "key": "userprofile.country",
+              "type": "select",
+              "indexeddb": { "filter": {} },
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        },
+        {
+          "components": [
+            {
+              "label": "State",
+              "widget": "choicesjs",
+              "tableView": true,
+              "dataSrc": "custom",
+              "data": {
+                "values": [{ "label": "", "value": "" }],
+                "custom": "let obj = data.countryList.find(o => o.country === data.userprofile['country']);\nif(obj){\nvalues = obj.states\n}\nconsole.log(obj)"
+              },
+              "template": "<span>{{ item }}</span>",
+              "selectThreshold": 0.3,
+              "customDefaultValue": "value = data.userprofile[\"state\"];",
+              "validate": { "required": true },
+              "key": "userprofile.state",
+              "type": "select",
+              "indexeddb": { "filter": {} },
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "key": "columns3",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "City",
+              "tableView": true,
+              "customDefaultValue": "value = data.userprofile[\"city\"]",
+              "validate": { "required": true },
+              "key": "userprofile.city",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        },
+        {
+          "components": [
+            {
+              "label": "Postal Code",
+              "tableView": true,
+              "customDefaultValue": "value = data.userprofile[\"zip\"]",
+              "validate": { "required": true },
+              "key": "userprofile.zip",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "width": 6,
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "key": "columns4",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Columns",
+      "columns": [
+        {
+          "components": [
+            {
+              "label": "HTML",
+              "attrs": [{ "attr": "style", "value": "color: #314e58" }],
+              "content": "Contact Number",
+              "refreshOnChange": false,
+              "tableView": false,
+              "key": "html",
+              "type": "htmlelement",
+              "input": false,
+              "hideOnChildrenHidden": false
+            },
+            {
+              "label": "Columns",
+              "columns": [
+                {
+                  "components": [
+                    {
+                      "label": "Country Code",
+                      "widget": "choicesjs",
+                      "hideLabel": true,
+                      "tableView": true,
+                      "dataSrc": "custom",
+                      "data": {
+                        "values": [{ "label": "", "value": "" }],
+                        "custom": "values = data['phoneList']"
+                      },
+                      "valueProperty": "dial_code",
+                      "dataType": "auto",
+                      "template": "<span>{{ item.dial_code }}</span>",
+                      "refreshOn": "code",
+                      "selectThreshold": 0.3,
+                      "protected": true,
+                      "clearOnHide": false,
+                      "customDefaultValue": "let i = data.userprofile[\"phone\"].indexOf(\"-\");\nvar code = data.userprofile[\"phone\"].slice(0,i).trim();\nlet obj = data.phoneList.find(o => o.dial_code === code);\nvalue = obj.dial_code;",
+                      "key": "country_code",
+                      "type": "select",
+                      "indexeddb": { "filter": {} },
+                      "input": true,
+                      "hideOnChildrenHidden": false
+                    }
+                  ],
+                  "offset": 0,
+                  "push": 0,
+                  "pull": 0,
+                  "size": "md",
+                  "width": 5
+                },
+                {
+                  "components": [
+                    {
+                      "label": "Contact",
+                      "hideLabel": true,
+                      "tableView": true,
+                      "protected": true,
+                      "redrawOn": "userprofile.phone",
+                      "customDefaultValue": "let i = data.userprofile[\"phone\"].indexOf(\"-\");\nvalue = data.userprofile[\"phone\"].slice(i+1, data.userprofile[\"phone\"].length).trim();",
+                      "validate": { "pattern": "^[0-9]*$" },
+                      "key": "contact",
+                      "type": "textfield",
+                      "input": true,
+                      "hideOnChildrenHidden": false
+                    }
+                  ],
+                  "offset": 0,
+                  "push": 0,
+                  "pull": 0,
+                  "size": "md",
+                  "width": 7
+                }
+              ],
+              "tableView": false,
+              "key": "columns6",
+              "type": "columns",
+              "input": false
+            },
+            {
+              "label": "phone",
+              "encrypted": true,
+              "redrawOn": "country_code",
+              "customDefaultValue": "value = data.userprofile[\"phone\"]",
+              "calculateValue": "value =  (data.country_code && data.contact) ? data.country_code+ \"-\"+data.contact : data.userprofile.phone;",
+              "key": "userprofile.phone",
+              "type": "hidden",
+              "input": true,
+              "tableView": false,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "offset": 0,
+          "size": "md",
+          "push": 0,
+          "pull": 0,
+          "width": 6
+        },
+        {
+          "components": [
+            {
+              "label": "Website",
+              "tableView": true,
+              "customDefaultValue": "value = data.userprofile[\"website\"]",
+              "key": "userprofile.website",
+              "type": "textfield",
+              "input": true,
+              "hideOnChildrenHidden": false
+            }
+          ],
+          "offset": 0,
+          "push": 0,
+          "pull": 0,
+          "size": "md",
+          "width": 6
+        }
+      ],
+      "tableView": false,
+      "key": "columns5",
+      "type": "columns",
+      "input": false
+    },
+    {
+      "label": "Interest",
+      "tableView": true,
+      "customDefaultValue": "value = data.userprofile[\"interest\"]",
+      "key": "userprofile.interest",
+      "type": "textfield",
+      "input": true,
+      "hideOnChildrenHidden": false
+    },
+    {
+      "label": "About",
+      "editor": "ckeditor",
+      "autoExpand": false,
+      "tableView": true,
+      "defaultValue": "<p><br></p>",
+      "customDefaultValue": "value = data.userprofile[\"about\"]",
+      "key": "userprofile.about",
+      "type": "textarea",
+      "input": true,
+      "hideOnChildrenHidden": false
+    },
+    {
+      "label": "formData",
+      "protected": true,
+      "calculateValue": "value = data.userprofile;\nconsole.log(value);\nObject.assign(data, data.userprofile)",
+      "key": "formData",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Save",
+      "showValidations": false,
+      "disableOnInvalid": true,
+      "tableView": false,
+      "key": "submit",
+      "attributes": { "style": "float: right" },
+      "type": "button",
+      "input": true
+    }
+  ],
+  "revisions": "",
+  "_vid": 0,
+  "title": "Edit Profile",
+  "display": "form",
+  "access": [
+    {
+      "roles": [
+        "5e2fbc0b8c00bb7cdc74e28f",
+        "5e2fbc0b8c00bb167774e290",
+        "5e2fbc0b8c00bb18f374e291"
+      ],
+      "type": "read_all"
+    }
+  ],
+  "submissionAccess": [],
+  "controller": "",
+  "properties": {},
+  "settings": {},
+  "name": "editProfile",
+  "path": "editprofile",
+  "project": "5e2fbc0b8c00bb3c3a74e28e",
+  "created": "2020-07-16T09:20:07.244Z",
+  "modified": "2020-08-03T08:18:26.750Z",
+  "machineName": "zzulhegjdkezayg:editProfile"
+}

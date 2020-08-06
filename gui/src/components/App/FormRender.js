@@ -205,7 +205,10 @@ class FormRender extends React.Component {
 
   async getFileData() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
+    if(this.props.parentWorkflowInstanceId != "null"){
+      return await this.helper.request("v1",this.appUrl+"/workflowInstance/"+this.props.parentWorkflowInstanceId,{},"get");
+    }
+    return
   }
 
   async getFileDataById() {
@@ -321,8 +324,13 @@ class FormRender extends React.Component {
             method = "put";
           }
         }
+        console.log(data)
         return await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
           if (response.status == "success") {
+            if(this.props.route) {
+              that.showFormLoader(false,0);
+              this.props.postSubmitCallback();
+            }
             var cache = await this.deleteCacheData().then(response2 => {
               that.showFormLoader(false,0);
               if (response2.status == "success") {
@@ -331,19 +339,27 @@ class FormRender extends React.Component {
             });
             return response;
           } else {
-            var storeCache = await this.storeCache(this.cleanData(data)).then(
-            async cacheResponse => {
-              if (response.data.errors) {
-                var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
-                  that.showFormLoader(false,0);
-                  this.notif.current.notify("Error","Form Submission Failed","danger");
-                  return storeErrorResponse;
-                });
-              } else {
-                that.showFormLoader(false,0);
-                return storeErrorResponse;
-              }
-            });
+            if(this.props.route){
+              console.log(response)
+              that.showFormLoader(false,0);
+              
+            }
+            else {
+              var storeCache = await this.storeCache(this.cleanData(data)).then(
+                async cacheResponse => {
+                  if (response.data.errors) {
+                    var storeError = await this.storeError(this.cleanData(data),response.data.errors,route).then(storeErrorResponse => {
+                      that.showFormLoader(false,0);
+                      this.notif.current.notify("Error","Form Submission Failed","danger");
+                      return storeErrorResponse;
+                    });
+                  } else {
+                    that.showFormLoader(false,0);
+                    return storeErrorResponse;
+                  }
+              });
+            }
+            
           }
           return response;
         });
@@ -372,7 +388,7 @@ class FormRender extends React.Component {
       });
       formData = JSON.parse(JSON.stringify(formData));// Cloning the formdata to avoid original data being removed
       formData.privileges = undefined;
-      formData.userprofile = undefined;
+       formData.userprofile = undefined;
       formData.countryList = undefined;
       formData.phoneList = undefined;
       formData.timezones = undefined;
@@ -405,7 +421,7 @@ class FormRender extends React.Component {
         userprofile: this.userprofile,
         countryList: countryList,
         phoneList: phoneList,
-        timezones : MomentTZ,
+        timezones : MomentTZ.tz.names(),
         dateFormats : DateFormats
       });
     }
@@ -430,7 +446,7 @@ class FormRender extends React.Component {
     loadWorkflow(form) {
       let that = this;
       console.log(this.state);
-      if (this.state.parentWorkflowInstanceId) {
+      if (this.state.parentWorkflowInstanceId && !this.state.isDraft) {
         this.getFileData().then(response => {
           if (response.status == "success") {
             let fileData = JSON.parse(response.data.data);
@@ -451,6 +467,50 @@ class FormRender extends React.Component {
         });
       } else if(this.state.workflowId && (this.state.workflowId != null) && this.state.isDraft) {
         this.getStartFormWorkflow().then(response => {
+          var parsedData = {};
+          var template;
+          if (response.data) {
+            try{
+              parsedData = this.formatFormData(JSON.parse(response.data));
+            } catch(e){
+              parsedData = this.formatFormData(response.data);
+            }
+          }
+          try {
+            template = JSON.parse(parsedData.template);
+          } catch(e){
+            template = parsedData.template;
+          }
+          parsedData.workflow_uuid ? (parsedData.workflow_uuid = parsedData.workflow_uuid) : null;
+          this.setState({
+            content: template,
+            workflowInstanceId: parsedData.workflow_instance_id,
+            activityInstanceId: parsedData.activity_instance_id,
+            workflowId: parsedData.workflow_uuid,
+            formId: parsedData.form_id
+          });
+          that.createForm().then((form) => {
+            this.getCacheData().then((cacheResponse) => {
+              if(Object.keys(cacheResponse.data).length > 1){//to account for only workflow_uuid
+                var that = this;
+                if(cacheResponse.data){
+                  form.setSubmission({data: this.formatFormData(cacheResponse.data)}).then(respone=> {
+                    that.processProperties(form);
+                    if (cacheResponse.data.page && form.wizard) {
+                      if (form.wizard && form.wizard.display == "wizard") {
+                        form.setPage(parseInt(cacheResponse.data.page));
+                        that.hideBreadCrumb(true);
+                      }
+                    }
+                  });
+                }
+              }
+            });
+          });
+
+        });
+      } else if(this.state.activityInstanceId && this.state.workflowInstanceId && this.state.isDraft) {
+        this.getActivityInstance().then(response => {
           var parsedData = {};
           var template;
           if (response.data) {
@@ -516,7 +576,7 @@ class FormRender extends React.Component {
           }
         });
       }
-      else  if (this.state.activityInstanceId && this.state.workflowInstanceId) {
+      else  if (this.state.activityInstanceId && this.state.workflowInstanceId && !this.state.cacheId) {
         this.getActivityInstance().then(response => {
           if (response.status == "success") {
             that.setState({ workflowInstanceId: response.data.workflow_instance_id });
@@ -606,9 +666,9 @@ class FormRender extends React.Component {
       Formio.registerComponent("phonenumber" ,PhoneNumberComponent);
       Formio.registerComponent("selectcountry", CountryComponent);
       Formio.registerComponent("file", FileComponent);
-      this.props.proc.metadata.formio_endpoint
-        ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint)
-        : null;
+      if(this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
+        this.props.proc.metadata.formio_endpoint ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint) : null;
+      }
       if (this.state.content && !this.state.form) {
         var options = {};
         if (this.state.content["properties"]) {
@@ -681,6 +741,9 @@ class FormRender extends React.Component {
                 if(response.status=='success'){
                   next(null);
                 } else {
+                  if(that.props.route) {
+                    next([response.message]);
+                  }
                   next([response.errors[0].message]);
                 }
               });
