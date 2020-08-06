@@ -38,7 +38,7 @@ build_project() {
         cd $1
         if [ "$RUN_INSTALL" = true ] ; then
             npm install
-            npm audit fix
+            #npm audit fix
         fi    
         npm run build --prod
         cd ..
