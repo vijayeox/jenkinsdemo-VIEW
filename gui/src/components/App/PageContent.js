@@ -392,6 +392,10 @@ class PageContent extends React.Component {
           itemContent.route,
           this.state.currentRow
         );
+        var urlPostParams = this.replaceParams(
+          item.urlPostParams,
+          this.state.currentRow
+        );
         content.push(
           <OX_Grid
             rowTemplate={
@@ -405,7 +409,7 @@ class PageContent extends React.Component {
             data={dataString}
             pageId={this.state.pageId}
             parentData={this.state.currentRow}
-            urlPostParams={item.urlPostParams}
+            urlPostParams={urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
                 ? typeof itemContent.defaultFilters == "string"
