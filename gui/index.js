@@ -9,6 +9,7 @@ import CommentsView from "./src/components/App/CommentsView";
 import OX_Grid from "./src/OX_Grid";
 import DocumentViewer from "./src/DocumentViewer";
 import DashboardManager from "./src/DashboardManager";
+import Visualization from './src/Visualization'
 import Dashboard from "./src/Dashboard";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
@@ -59,6 +60,7 @@ export {
   Dashboard,
   WidgetGrid,
   WidgetRenderer,
+  Visualization,
   DataSource,
   Query,
   DashboardFilter,
