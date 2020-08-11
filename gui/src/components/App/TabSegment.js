@@ -26,7 +26,7 @@ const styles = {
     borderBottom: "2px solid #333"
   },
   visibleTabStyle: {
-    display: "inline-block"
+    display: "block"
   },
   content: {
     padding: "0 20px"
