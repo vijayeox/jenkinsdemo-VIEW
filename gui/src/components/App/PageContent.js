@@ -592,7 +592,6 @@ class PageContent extends React.Component {
         </div>
       );
     } else {
-      this.loader.show();
       return <div id={this.contentDivID}></div>;
     }
   }
