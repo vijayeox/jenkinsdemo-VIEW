@@ -2,12 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
-// import { Notification, DashboardViewer, DashboardFilter } from ''
 import Notification from './Notification'
 import DashboardViewer from './Dashboard'
 import DashboardFilter from './DashboardFilter'
-
-import { Button, Form, Col, Row } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
@@ -355,7 +353,7 @@ class DashboardManager extends React.Component {
                           </Button>
                         }
                         {
-                        (Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) &&
+                          (Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) &&
                           <Button onClick={() => this.showFilter()} title="Filter OI">
                             <i className="fa fa-filter" aria-hidden="true"></i>
                           </Button>

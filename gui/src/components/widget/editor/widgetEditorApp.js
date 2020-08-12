@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Overlay, Tooltip } from 'react-bootstrap';
+import { Overlay, Tooltip, Button, Form } from 'react-bootstrap';
 import WidgetModal from './Modal/WidgetModal'
 import './globalFunctions';
 import Swal from "sweetalert2";
-import '../../../../../gui/src/public/css/sweetalert.css';
-import './widgetEditorApp.scss';
+import '../../../public/css/sweetalert.css';
+// import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
 import Select from 'react-select'
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import WidgetEditorBody from './widgetEditorBody'
+// import '../../../public/css/dashboardEditor.scss'
+
 
 class WidgetEditorApp extends React.Component {
     constructor(props) {
@@ -713,7 +715,7 @@ class WidgetEditorApp extends React.Component {
                                         </select>
                                     </div>
 
-                                    <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px", height: "30px"}}
+                                    <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px", height: "30px" }}
                                         onClick={() => this.setState({ flipped: false })} >
                                         <span className="fa fa-arrow-left" aria-hidden="true"></span>
                                     </button>

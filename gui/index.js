@@ -13,6 +13,7 @@ import Visualization from './src/Visualization'
 import Dashboard from "./src/Dashboard";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
+import WidgetManager from "./src/WidgetManager";
 import DataSource from './src/DataSource'
 import Query from './src/Query'
 import DashboardFilter from './src/DashboardFilter'
@@ -60,6 +61,7 @@ export {
   Dashboard,
   WidgetGrid,
   WidgetRenderer,
+  WidgetManager,
   Visualization,
   DataSource,
   Query,

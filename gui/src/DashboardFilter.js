@@ -394,9 +394,9 @@ class DashboardFilter extends React.Component {
         return (
             <div>
                 <Row className="pull-right dash-manager-buttons" style={{ right: "7px" }}>
-                    <button type="button" className="close" aria-label="Close" onClick={() => this.hideFilterDiv()}>
+                    <Button type="button" className="close" aria-label="Close" onClick={() => this.hideFilterDiv()}>
                     <i className="fa fa-close" aria-hidden="true"></i>
-                    </button>
+                    </Button>
                 </Row>
                 <Form className="create-filter-form">
                     {this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
