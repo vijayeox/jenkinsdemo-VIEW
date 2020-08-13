@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-import { React, Query, DataSource,  Visualization, WidgetRenderer, WidgetGrid, DashboardViewer } from 'oxziongui';
-import { WidgetManager } from 'oxziongui';
-import DashboardManager from 'OxzionGUI/DashboardManager';
+import { React, Query, DataSource,  Visualization,  WidgetGrid } from 'oxziongui';
+import { WidgetManager,DashboardManager } from 'oxziongui';
+import DashboardViewer from "OxzionGUI/DashboardManager"
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource

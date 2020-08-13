@@ -1,6 +1,6 @@
 import './index.scss';
 import osjs from 'osjs';
-import {React, ReactDOM} from "oxziongui";
+import {React,ReactDOM} from "oxziongui"
 import {name as applicationName} from './metadata.json';
 import { icon_white } from './metadata.json';
 import Body from './body'

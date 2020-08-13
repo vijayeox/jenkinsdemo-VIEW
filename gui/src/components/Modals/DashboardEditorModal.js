@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 
-import DashboardEditor from "../../dashboardEditor"
+// import DashboardEditor from "../../dashboardEditor"
 import '../../public/css/dashboardEditor.scss'
 function DashboardEditorModal(props) {
     const [input, setInput] = useState({})
@@ -109,13 +109,13 @@ function DashboardEditorModal(props) {
     var modalBody = null
 
     if (props.modalType === "Edit") {
-        console.log(props)
-        Footer = (<Button variant="primary" onClick={() => dashboardOperation(allowedOperation.EDIT)}>Save</Button>)
-        modalBody = (<DashboardEditor
-            args={props.osjsCore}
-            setTitle={setTitle}
-            dashboardId={props.content.uuid} />)
-        DisabledFields = false
+        // console.log(props)
+        // Footer = (<Button variant="primary" onClick={() => dashboardOperation(allowedOperation.EDIT)}>Save</Button>)
+        // modalBody = (<DashboardEditor
+        //     args={props.osjsCore}
+        //     setTitle={setTitle}
+        //     dashboardId={props.content.uuid} />)
+        // DisabledFields = false
 
     }
     else if (props.modalType === "Delete") {

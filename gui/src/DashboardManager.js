@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { dashboard as section } from '../metadata.json';
 import Swal from "sweetalert2";
 import Notification from './Notification'
@@ -8,7 +7,7 @@ import DashboardFilter from './DashboardFilter'
 import { Button } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
-import DashboardEditorModal from './components/Modals/DashboardEditorModal'
+// import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "./dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
@@ -309,7 +308,7 @@ class DashboardManager extends React.Component {
               }
             </div>
 
-            {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
+         {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <div id="dashboard-preview-container">
                 <div className="dash-manager-bar">
                   {
@@ -442,7 +441,7 @@ class DashboardManager extends React.Component {
           </BackSide>
         </Flippy>
 
-        <DashboardEditorModal
+        {/* <DashboardEditorModal
           osjsCore={this.core}
           modalType={this.state.modalType}
           show={this.state.showModal}
@@ -451,7 +450,7 @@ class DashboardManager extends React.Component {
           notification={this.notif}
           refreshDashboard={() => this.fetchDashboards(true)}
           deleteDashboard={this.deleteDashboard}
-        />
+        /> */}
       </div>
     );
   }
