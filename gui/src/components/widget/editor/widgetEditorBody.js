@@ -128,6 +128,14 @@ class WidgetEditorBody extends AbstractEditor {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
         }
     }
+    
+    refreshDrillDownPreview = () =>{
+        let configuration = JSON.parse(this.state.configuration)
+        let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
+        if (hasDrillDown) {
+            this.initializeDrillDownValues(configuration)
+        }
+    }
 
     isConfigurationTabValid = (state, setErrorState = true) => {
         let isValid = true;

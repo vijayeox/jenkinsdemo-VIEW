@@ -144,6 +144,8 @@ class AbstractEditor extends React.Component {
                     thiz.refreshViews();
                 } else if(this.state.selectedTab !== '' && this.state.selectedTab=="query"){
                     thiz.refreshQueryPreview()
+                } else if(this.state.selectedTab !== '' && this.state.selectedTab=="table"){
+                    thiz.refreshDrillDownPreview()
                 }
             });
     }
