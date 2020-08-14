@@ -58,10 +58,9 @@
                   this.pageActive(appParams.pageId);
                   history.push("/");
                 } else {
-                  console.log(appParams);
                   history.push("/");
                   let ev = new CustomEvent("addPage", {
-                    detail: appParams.detail,
+                    detail: {pageContent:appParams.detail},
                     bubbles: true
                   });
                   document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
