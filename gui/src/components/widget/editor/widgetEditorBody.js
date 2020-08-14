@@ -128,7 +128,7 @@ class WidgetEditorBody extends AbstractEditor {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
         }
     }
-    
+
     refreshDrillDownPreview = () =>{
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
@@ -553,6 +553,20 @@ class WidgetEditorBody extends AbstractEditor {
                                                 </Col>
 
                                             </Form.Group>
+                                            {this.state.drillDownWidgetType.value == "dashboard" &&
+                                                <Form.Group as={Row}>
+                                                    <Form.Label column lg="3">Dashboard Header</Form.Label>
+                                                    <Col lg="9">
+                                                        <Form.Control
+                                                            type="text"
+                                                            name="drillDownDashboardTitle"
+                                                            onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                            value={this.state.drillDownDashboardTitle || ''}
+                                                            disabled={this.state.readOnly}
+                                                        />
+                                                    </Col>
+                                                </Form.Group>
+                                            }
                                             <Form.Group as={Row}>
                                                 <Form.Label column lg="3">Title</Form.Label>
                                                 <Col lg="9">

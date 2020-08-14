@@ -19,7 +19,7 @@ class Body extends React.Component {
     this.core = this.props.args;
     this.state = {
       isMenuOpen: false,
-      displaySection: SECTION_VISULAIZATION,
+      displaySection: SECTION_DASHBOARD,
       sectionData: null,
       title: ''
     };

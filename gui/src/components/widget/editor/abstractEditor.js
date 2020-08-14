@@ -204,6 +204,8 @@ class AbstractEditor extends React.Component {
             }
             this.state.drillDownWidgetTitle !== "" && (drillDownObject["widgetTitle"] = this.state.drillDownWidgetTitle)
             this.state.drillDownWidgetFooter !== "" && (drillDownObject["widgetFooter"] = this.state.drillDownWidgetFooter)
+            this.state.drillDownDashboardTitle !== "" && (drillDownObject["dashboardTitle"] = this.state.drillDownDashboardTitle)
+
             this.state.hasMaxDepth && this.state.drillDownMaxDepth != -1 && (drillDownObject["maxDepth"] = parseInt(this.state.drillDownMaxDepth))
             if (configuration) {
                 if (configuration["oxzion-meta"]) {

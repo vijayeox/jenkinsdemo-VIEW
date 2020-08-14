@@ -7,7 +7,7 @@ import DashboardFilter from './DashboardFilter'
 import { Button } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
-// import DashboardEditorModal from './components/Modals/DashboardEditorModal'
+import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "./dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
@@ -195,20 +195,21 @@ class DashboardManager extends React.Component {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
     let filterConfiguration = this.filterRef.current
+    let dashboardTitle=e.drilldownDashboardTitle ? e.drilldownDashboardTitle : ""
     //adding applied filters on dashboard
     if (dashboardStack.length > 0) {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
-      dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filterConfiguration.state.filters ? filterConfiguration.state.filters : []
-      dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterConfiguration.state.applyFilterOption ? filterConfiguration.state.applyFilterOption : []
+      dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = (filterConfiguration && filterConfiguration.state.filters) ? filterConfiguration.state.filters : []
+      dashboardStack[dashboardStack.length - 1]["filterOptions"] = (filterConfiguration && filterConfiguration.state.applyFilterOption) ? filterConfiguration.state.applyFilterOption : []
     }
 
     let value = JSON.parse(e.value)
     if (dashboardStack.length > 1) {
       //check for consequent drilldown to same dashboard
       if (dashboardStack[dashboardStack.length - 1]["data"]["uuid"] != value["uuid"])
-        dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+        dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter ,drilldownDashboardTitle:dashboardTitle})
     } else {
-      dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter })
+      dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter,drilldownDashboardTitle:dashboardTitle })
     }
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
   }
@@ -441,7 +442,7 @@ class DashboardManager extends React.Component {
           </BackSide>
         </Flippy>
 
-        {/* <DashboardEditorModal
+        <DashboardEditorModal
           osjsCore={this.core}
           modalType={this.state.modalType}
           show={this.state.showModal}
@@ -450,7 +451,7 @@ class DashboardManager extends React.Component {
           notification={this.notif}
           refreshDashboard={() => this.fetchDashboards(true)}
           deleteDashboard={this.deleteDashboard}
-        /> */}
+        />
       </div>
     );
   }

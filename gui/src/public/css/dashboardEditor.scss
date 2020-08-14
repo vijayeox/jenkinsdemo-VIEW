@@ -209,6 +209,14 @@
   position: absolute;
 }
 
+.dashboard-filter-description{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 15px;
+    width: 100%;
+}
+
 .dashboard-preview-tab {
   background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
   height: 1.3em;
