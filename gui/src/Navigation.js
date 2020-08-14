@@ -60,6 +60,11 @@
                 } else {
                   console.log(appParams);
                   history.push("/");
+                  let ev = new CustomEvent("addPage", {
+                    detail: appParams.detail,
+                    bubbles: true
+                  });
+                  document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
                 }
               } catch (e) {
                 console.log("No params!");
@@ -245,7 +250,7 @@
           this.renderPages():null}
           {(this.state.selected.activityInstanceId &&
             this.state.selected.activityInstanceId) ||
-          this.state.selected.pipeline ? (
+          this.state.selected.pipeline ? ( 
             <div id={this.contentDivID} className="AppBuilderPage">
               <FormRender
                 core={this.core}
