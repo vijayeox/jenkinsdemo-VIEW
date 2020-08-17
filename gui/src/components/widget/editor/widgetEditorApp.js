@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Overlay, Tooltip } from 'react-bootstrap';
+import { Overlay, Tooltip, Button, Form } from 'react-bootstrap';
 import WidgetModal from './Modal/WidgetModal'
 import './globalFunctions';
 import Swal from "sweetalert2";
-import '../../../../../gui/src/public/css/sweetalert.css';
-import './widgetEditorApp.scss';
+import '../../../public/css/sweetalert.css';
+// import './widgetEditorApp.scss';
 import { options } from '../../../../../gui/amcharts/core';
 import Select from 'react-select'
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import WidgetEditorBody from './widgetEditorBody'
+// import '../../../public/css/dashboardEditor.scss'
+
 
 class WidgetEditorApp extends React.Component {
     constructor(props) {
@@ -555,22 +557,22 @@ class WidgetEditorApp extends React.Component {
         });
     }
 
-    syncWidgetState(name,value,data){
-        if(this.state.mode=="copy"){
-            if(value!=null && value!==""){
-                let widget={...this.state.widget}
-                if(name==="configuration" || name==="expression"){
-                    widget[name]=JSON.parse(value)
-                this.setState({widget:widget})
-    
-                } else if(name==="queries"){
-                    widget[name]=value
-                    widget["data"]=data
-                this.setState({widget:widget})
-    
+    syncWidgetState(name, value, data) {
+        if (this.state.mode == "copy") {
+            if (value != null && value !== "") {
+                let widget = { ...this.state.widget }
+                if (name === "configuration" || name === "expression") {
+                    widget[name] = JSON.parse(value)
+                    this.setState({ widget: widget })
+
+                } else if (name === "queries") {
+                    widget[name] = value
+                    widget["data"] = data
+                    this.setState({ widget: widget })
+
                 }
             }
-        } 
+        }
     }
 
     render() {
@@ -584,10 +586,10 @@ class WidgetEditorApp extends React.Component {
                 >
                     <FrontSide>
                         <div className="form-group row no-left-margin no-right-margin">
-                            <div className="col-1 right-align" style={{ maxWidth: '5em', paddingLeft: '0px' }}>
+                            <div className="col-1 right-align" style={{ maxWidth: '3em', paddingLeft: '0px' }}>
                                 <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
                             </div>
-                            <div className="col-3">
+                            <div className="col-2">
                                 <Select
                                     placeholder="Choose Widget"
                                     name="selectWidget"
@@ -599,12 +601,51 @@ class WidgetEditorApp extends React.Component {
                                 />
                             </div>
 
-                            <div className="action-button-box col-2">
+                            {!this.state.readOnly && !this.state.flipped &&
+                                <>
+                                    <div className="left-align">
+                                        <label htmlFor="widgetName" className="left-align col-form-label form-control-sm">Widget Name</label>
+                                    </div>
+                                    <div className="col-3">
+                                        <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
+                                            onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.isWidgetNameValid}
+                                            disabled={this.state.readOnly} />
+                                        <Overlay target={this.refs.widgetName} show={this.state.errors.widgetName != null} placement="bottom">
+                                            {props => (
+                                                <Tooltip id="widgetName-tooltip" {...props} className="error-tooltip">
+                                                    {this.state.errors.widgetName}
+                                                </Tooltip>
+                                            )}
+                                        </Overlay>
+                                    </div>
+                                    <div className="left-align">
+                                        <label htmlFor="visibility" className="left-align col-form-label form-control-sm">Visibility</label>
+                                    </div>
+                                    <div className="col-2">
+                                        <select id="visibility" name="visibility" className="form-control form-control-sm" placeholder="Select visibility"
+                                            value={this.state.visibility} onChange={this.inputChanged} disabled={this.state.readOnly}
+                                        >
+                                            <option key="" value="" disabled>-Select Visibility-</option>
+                                            <option key="1" value="1">Public</option>
+                                            <option key="2" value="0">Private</option>
+                                        </select>
+                                    </div>
+                                </>
+                            }
+                            <div className="dash-manager-buttons">
                                 {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                     <>
                                         <button type="button" className="btn btn-primary widget-action-btn" title="Create widget"
                                             onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
                                             <span className="fa fa-plus" aria-hidden="true"></span>
+                                        </button>
+                                    </>
+                                }
+                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
+                                    <>
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit widget"
+                                            onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
+                                            <span className="fa fa-edit" aria-hidden="true"></span>
                                         </button>
                                     </>
                                 }
@@ -624,60 +665,19 @@ class WidgetEditorApp extends React.Component {
                                         </button>
                                     </>
                                 }
-                                {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
-                                    <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit widget"
-                                            onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
-                                            <span className="fa fa-edit" aria-hidden="true"></span>
-                                        </button>
-                                    </>
-                                }
                             </div>
-                            {!this.state.readOnly && !this.state.flipped &&
-                                <>
-                                    <div className="left-align">
-                                        <label htmlFor="widgetName" className="left-align col-form-label form-control-sm">Widget Name</label>
-                                    </div>
-                                    <div className="col-3">
-                                        <input type="text" id="widgetName" name="widgetName" ref="widgetName" className="form-control form-control-sm"
-                                            onChange={this.inputChanged} value={this.state.widgetName} onBlur={this.isWidgetNameValid}
-                                            disabled={this.state.readOnly} />
-                                        <Overlay target={this.refs.widgetName} show={this.state.errors.widgetName != null} placement="bottom">
-                                            {props => (
-                                                <Tooltip id="widgetName-tooltip" {...props} className="error-tooltip">
-                                                    {this.state.errors.widgetName}
-                                                </Tooltip>
-                                            )}
-                                        </Overlay>
-                                    </div>
-                                    <div>
-                                        <select id="visibility" name="visibility" className="form-control form-control-sm" placeholder="Select visibility"
-                                            value={this.state.visibility} onChange={this.inputChanged} disabled={this.state.readOnly}
-                                        >
-                                            <option key="" value="" disabled>-Select Visibility-</option>
-                                            <option key="1" value="1">public</option>
-                                            <option key="2" value="0">private</option>
-                                        </select>
-                                    </div>
-                                </>
-                            }
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
                                 {((this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
-                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value,data)=>this.syncWidgetState(name,value,data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                    <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                 }
                             </div>
                         }
                     </FrontSide>
-                    <BackSide style={{ padding: "0px" }}>
+                    <BackSide style={{ padding: "0px" }} className="dashboard">
                         {this.state.flipped &&
                             <>
-                                <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px" }}
-                                    onClick={() => this.setState({ flipped: false })} >
-                                    <span className="fa fa-arrow-left" aria-hidden="true"></span>
-                                </button>
-
                                 <div className="row create-widget-div" >
                                     <div className="col-1 right-align">
                                         <label htmlFor="selectWidget" className="right-align col-form-label form-control-sm">Name</label>
@@ -707,21 +707,27 @@ class WidgetEditorApp extends React.Component {
                                     <div className="col-1 right-align">
                                         <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                                     </div>
-                                    <div className="col-3">
+                                    <div className="col-2">
                                         <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
                                             <option disabled value="-1" key="-1"></option>
-                                            <option key="1" value="1">public</option>
-                                            <option key="2" value="0">private</option>
+                                            <option key="1" value="1">Public</option>
+                                            <option key="2" value="0">Private</option>
                                         </select>
                                     </div>
+
+                                    <button type="button" className="btn btn-primary add-series-button" title="Go Back" style={{ borderRadius: "26px", height: "30px" }}
+                                        onClick={() => this.setState({ flipped: false })} >
+                                        <span className="fa fa-arrow-left" aria-hidden="true"></span>
+                                    </button>
+
                                 </div>
 
 
                                 <div className="row">
-                                    {(this.state.widget.type === 'chart' || this.state.widget.type === 'table'|| this.state.widget.type === 'inline' || this.state.widget.type === 'html') &&
-                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name,value,data)=>this.syncWidgetState(name,value,data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                    {(this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline' || this.state.widget.type === 'html') &&
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
                                     }
-                                
+
                                 </div>
                             </>
                         }

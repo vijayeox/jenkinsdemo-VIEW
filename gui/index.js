@@ -1,50 +1,51 @@
 import LeftMenuTemplate from "./src/LeftMenuTemplate";
+import GridTemplate from "./src/GridTemplate";
 import Notification from "./src/Notification";
-import React, { lazy } from 'react'
+import MultiSelect from "./src/MultiSelect";
+import FileUploader from "./src/FileUploader";
+import FormRender from "./src/components/App/FormRender";
+import HTMLViewer from "./src/components/App/HTMLViewer";
+import CommentsView from "./src/components/App/CommentsView";
+import OX_Grid from "./src/OX_Grid";
+import DocumentViewer from "./src/DocumentViewer";
+import DashboardManager from "./src/DashboardManager";
+import Visualization from './src/Visualization'
+import Dashboard from "./src/Dashboard";
+import WidgetGrid from "./src/WidgetGrid";
+import WidgetRenderer from "./src/WidgetRenderer";
+import WidgetManager from "./src/WidgetManager";
+import DataSource from './src/DataSource'
+import Query from './src/Query'
+import DashboardFilter from './src/DashboardFilter'
+import React from 'react'
 import ReactDOM from 'react-dom'
+import CountryCodes from './src/public/js/CountryCodes.js'
+import DateFormats from './src/public/js/DateFormats.js'
+import AvatarImageCropper from "react-avatar-image-cropper";
+import * as ReactStrap from "reactstrap";
+import * as ReactBootstrap from "react-bootstrap";
+import * as ReactWebTabs from "react-web-tabs";
+import * as Webcam from "react-webcam";
+import * as KendoReactEditor from "@progress/kendo-react-editor";
+import * as KendoReactDateInputs from "@progress/kendo-react-dateinputs";
+import * as KendoReactPopup from "@progress/kendo-react-popup";
+import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
+import * as KendoDataQuery from "@progress/kendo-data-query";
+import * as KendoReactButtons from "@progress/kendo-react-buttons";
+import * as KendoReactWindow from "@progress/kendo-react-dialogs";
+import * as KendoReactGrid from "@progress/kendo-react-grid";
+import * as KendoReactInput from "@progress/kendo-react-inputs";
+import * as KendoReactRipple from "@progress/kendo-react-ripple";
+import PhoneInput from "react-phone-number-input";
+import * as PopupDialog from 'sweetalert2';
+import * as Moment from "moment";
+import * as MomentTZ from "moment-timezone";
 import './index.scss';
+import DropDown from "./src/components/Dropdown/DropDownList";
 import DateComponent from "./src/components/DateComponent.js";
 import CurrencySelect from "./src/components/Currency Select/currencySelect";
 import countryStateList from "./src/components/data/country-state-codes";
-import * as ReactWebTabs from "react-web-tabs";
-import * as ReactBootstrap from "react-bootstrap";
-
-const OX_Grid = lazy(() => import("./src/OX_Grid"));
-const GridTemplate = lazy(() => import("./src/GridTemplate"));
-const DashboardManager = lazy(() => import("./src/DashboardManager"));
-const Dashboard = lazy(() => import("./src/Dashboard"));
-const DataSource = lazy(() => import("./src/DataSource"));
-const Query = lazy(() => import("./src/Query"));
-const DashboardFilter = lazy(() => import("./src/DashboardFilter"));
-const WidgetGrid = lazy(() => import("./src/WidgetGrid"));
-const WidgetRenderer = lazy(() => import("./src/WidgetRenderer"));
-const FormRender = lazy(() => import("./src/components/App/FormRender"));
-const FormBuilder = lazy(() => import("./src/components/App/FormBuilder"));
-const MultiSelect = lazy(() => import("./src/MultiSelect"));
-const FileUploader = lazy(() => import("./src/FileUploader"));
-const HTMLViewer = lazy(() => import("./src/components/App/HTMLViewer"));
-const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
-const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
-const DateFormats  = lazy(() => import('./src/public/js/DateFormats.js'));
-const DropDown  = lazy(() => import('./src/components/Dropdown/DropDownList'));
-const PhoneInput  = lazy(() => import('react-phone-number-input'));
-const ReactStrap = lazy(() => import("reactstrap"));
-const Webcam = lazy(() => import("react-webcam"));
-const KendoReactEditor = lazy(() => import("@progress/kendo-react-editor"));
-const KendoReactDateInputs = lazy(() => import("@progress/kendo-react-dateinputs"));
-const KendoReactPopup = lazy(() => import("@progress/kendo-react-popup"));
-const KendoReactDropDowns = lazy(() => import("@progress/kendo-react-dropdowns"));
-const KendoDataQuery = lazy(() => import("@progress/kendo-data-query"));
-const KendoReactButtons = lazy(() => import("@progress/kendo-react-buttons"));
-const KendoReactWindow = lazy(() => import("@progress/kendo-react-dialogs"));
-const KendoReactGrid = lazy(() => import("@progress/kendo-react-grid"));
-const KendoReactInput = lazy(() => import("@progress/kendo-react-inputs"));
-const KendoReactRipple = lazy(() => import("@progress/kendo-react-ripple"));
-const PopupDialog = lazy(() => import('sweetalert2'));
-const Moment = lazy(() => import("moment"));
-const MomentTZ = lazy(() => import("moment-timezone"));
-const AvatarImageCropper  = lazy(() =>  import("react-avatar-image-cropper"));
-
+import FormBuilder from './src/components/App/FormBuilder'
 export {
   LeftMenuTemplate,
   GridTemplate,
@@ -60,11 +61,14 @@ export {
   Dashboard,
   WidgetGrid,
   WidgetRenderer,
+  WidgetManager,
+  Visualization,
   DataSource,
   Query,
   DashboardFilter,
   React,
   ReactDOM,
+  CountryCodes,
   DateFormats,
   AvatarImageCropper,
   ReactStrap,

@@ -1,7 +1,8 @@
-import React from 'react';
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-import { Query, DataSource, DashboardManager, WidgetManager } from './GUIComponents'
+import { React, Query, DataSource,  Visualization,  WidgetGrid } from 'oxziongui';
+import { WidgetManager,DashboardManager } from 'oxziongui';
+import DashboardViewer from "OxzionGUI/DashboardManager"
 import { slide as Menu } from 'react-burger-menu';
 
 const SECTION_DATA_SOURCE = 'DS'; //DataSource
@@ -9,6 +10,7 @@ const SECTION_QUERY = 'QR'; //QueRy
 const SECTION_DASHBOARD = 'DB'; //DashBoard
 const SECTION_EDIT_DASHBOARD = 'EDB'; //Edit DashBoard
 const SECTION_WIDGET = 'WD'; //Edit DashBoard
+const SECTION_VISULAIZATION = 'VS' //Visualization
 
 
 class Body extends React.Component {
@@ -78,10 +80,13 @@ class Body extends React.Component {
         sectionContent = <Query args={this.core} setTitle={this.setTitle} />;
         break;
       case SECTION_DASHBOARD:
-        sectionContent = <DashboardManager args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} hideEdit={false} key={""}/>;
+        sectionContent = <DashboardManager args={this.core} proc={this.props.proc} setTitle={this.setTitle} editDashboard={this.editDashboard} hideEdit={false} key={""} />;
         break;
       case SECTION_WIDGET:
         sectionContent = <WidgetManager args={this.core} setTitle={this.setTitle} editDashboard={this.editDashboard} />;
+        break;
+      case SECTION_VISULAIZATION:
+        sectionContent = <Visualization args={this.core} setTitle={this.setTitle} />;
         break;
     }
 
@@ -102,8 +107,13 @@ class Body extends React.Component {
           <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_WIDGET, null) }}>
             <i className="fa fa-cubes" aria-hidden="true"></i> Widget Manager
                   </a>
+          <a className="menu-item" onClick={(e) => { this.switchSection(SECTION_VISULAIZATION, null) }}>
+            <i className="fa fa-cubes" aria-hidden="true"></i> Visualization
+                  </a>
         </Menu>
-        <div className="page-title full-width">{this.state.title}</div>
+        {
+          this.state.title != "Operational Intelligence" && <div className="page-title full-width">{this.state.title}</div>
+        }
         <div className="page-content full-width" id="page-content">
           {sectionContent}
         </div>

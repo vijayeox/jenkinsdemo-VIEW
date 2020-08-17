@@ -24,7 +24,6 @@ class DashboardEditor extends React.Component {
             editorMode: 'initial',
             errors: {},
             filterConfiguration: [],
-            showFilterDiv: false,
             dashboardVisibility: -1,
 
         };
@@ -138,18 +137,18 @@ class DashboardEditor extends React.Component {
                         height: 200
                     },
                     min: {
-                        width: 50,
-                        height: 50
+                        width: 100,
+                        height: 100
                     },
                     max: {
-                        width: 800,
+                        width: '100%',
                         height: 600,
                     }
                 },
                 dialogUrl: './widgetEditorDialog.html'
             }
         };
-    
+
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         let editor = CKEDITOR.appendTo('ckEditorInstance', config);
@@ -459,13 +458,10 @@ class DashboardEditor extends React.Component {
     }
 
     displayFilterDiv() {
-        this.setState({ showFilterDiv: true }, state => {
-
-            var element = document.getElementById("filter-form-container");
-            element.classList.remove("disappear");
-            document.getElementById("dashboard-container").classList.add("disappear")
-            document.getElementById("dashboard-filter-btn").disabled = true
-        })
+        var element = document.getElementById("filtereditor-form-container");
+        element.classList.remove("disappear");
+        document.getElementById("dashboard-container").classList.add("disappear")
+        document.getElementById("dashboard-filter-btn").disabled = true
     }
 
     setFilter(filter) {
@@ -486,13 +482,13 @@ class DashboardEditor extends React.Component {
     render() {
         return (
             <form className="dashboard-editor-form">
-                <div className="row col-12" style={{ marginBottom: "3em" }}>
-                    <Button className="dashboard-back-btn" onClick={() => this.props.flipCard("")}><i className="fa fa-arrow-left" aria-hidden="true" title="Go back"></i></Button>
-                    <Button className="dashboard-save-btn" onClick={this.saveDashboard} disabled={!this.state.contentChanged}>Save</Button>
-                    <Button className="dashboard-filter-btn" id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true"></i>Filter</Button>
+                <div className="dash-manager-buttons">
+                    <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
+                    <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
+                    <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
                 </div>
-                <div>{
-                    this.state.showFilterDiv &&
+                <div id="filtereditor-form-container" className="disappear">{
+                    this.state.filterConfiguration &&
                     <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}
                         setFilter={(filter) => this.setFilter(filter)}
@@ -508,7 +504,7 @@ class DashboardEditor extends React.Component {
                 </div>
                 <div id="dashboard-container">
                     <div className="form-group row">
-                        <label htmlFor="dashboardName" className="col-2 col-form-label form-control-sm">Name</label>
+                        <label htmlFor="dashboardName" className="col-form-label form-control-sm">Name</label>
                         <div className="col-2">
                             <>
                                 <input type="text" id="dashboardName" name="dashboardName" ref={this.dashboardName} className="form-control form-control-sm"
@@ -523,7 +519,7 @@ class DashboardEditor extends React.Component {
                                 </Overlay>
                             </>
                         </div>
-                        <label htmlFor="dashboardDescription" className="col-2 col-form-label form-control-sm">Description</label>
+                        <label htmlFor="dashboardDescription" className="col-form-label form-control-sm">Description</label>
                         <div className="col-4">
                             <>
                                 <input type="text" id="dashboardDescription" name="dashboardDescription" ref={this.dashboardDescription} className="form-control form-control-sm"
@@ -538,12 +534,14 @@ class DashboardEditor extends React.Component {
                                 </Overlay>
                             </>
                         </div>
+
+                        <label htmlFor="dashboardVisibility" className="col-form-label form-control-sm">Visibility</label>
                         <div className="col-2">
                             <>
                                 <select id="dashboardVisibility" ref={this.dashboardVisibility} name="dashboardVisibility" className="form-control form-control-sm" placeholder="Select Visibility" value={this.state.dashboardVisibility != null ? this.state.dashboardVisibility : -1} onChange={this.inputChanged}>
                                     <option disabled value={-1} key="-1">Select Visibility</option>
-                                    <option key="1" value={1}>public</option>
-                                    <option key="2" value={0}>private</option>
+                                    <option key="1" value={1}>Public</option>
+                                    <option key="2" value={0}>Private</option>
                                 </select>
                                 <Overlay target={this.dashboardVisibility} show={this.state.errors.dashboardVisibility != null} placement="bottom">
                                     {props => (
@@ -561,7 +559,7 @@ class DashboardEditor extends React.Component {
                         </div>
                     </div>
 
-                    <div id="gridArea" style={{ height: '200px', width: '800px' }}>
+                    <div id="gridArea" style={{ height: '200px', width: '98%' }}>
                         <div className="oxzion-widget-content"></div>
                     </div>
                 </div>
