@@ -171,4 +171,28 @@
       padding-right: 5px;
     }
   }
+  .uploadFile {
+    padding: 5px 90px;
+  }
+  .popupWindow {
+    .k-action-buttons {
+      display: none;
+    }
+    .k-upload .k-dropzone .k-dropzone-hint {
+      color: black;
+    }
+    .uploadButton {
+      border: 2px solid gray;
+      color: gray;
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 5px;
+      float: right;
+    }
+    .invalidButton {
+      cursor: not-allowed;
+    }
+  }
 }
