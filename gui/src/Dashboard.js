@@ -58,15 +58,27 @@ class Dashboard extends Component {
       "get"
     );
     return response;
+  } 
+  extractFilter(){
+    let stack=this.props.dashboardStack;
+    let filter=stack[stack.length-1].drilldownDashboardFilter
+    let filterText=""
+    for(let i=0;i<filter.length;i++){
+      filterText!="" && (filterText += " ")
+      filterText += filter[i]
+    }
+    return filterText
   }
-
   appendToDashboardContainer(htmlData) {
     let backButton = ""
+    let dashboardFilterDescription = ""
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
+      let dashboardTitle=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+      dashboardFilterDescription="<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>"+dashboardTitle+"</span>";
     }
-    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + backButton + htmlData + "</div>"
+    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
     return container
   }
   setupDrillDownListeners() {
@@ -77,6 +89,8 @@ class Dashboard extends Component {
       });
     }
   }
+
+
 
   componentDidMount() {
     if (this.uuid) {
@@ -337,11 +351,18 @@ class Dashboard extends Component {
 
   async drillDownToDashboard(data) {
     let event = {};
+    let elementId=data.elementId
+     //starting spinner 
+     if (elementId) {
+      var widgetDiv = document.getElementById(elementId);
+      this.loader.show(widgetDiv);
+    }
     let dashboardData = await this.getDashboardHtmlDataByUuid(data.dashboard);
     let dashboardStack = this.props.dashboardStack ? this.props.dashboardStack : []
     let dashboardFilter = (dashboardStack.length > 0 && dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"].length > 0) ? dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] : []
     let widgetFilter = data.filter
     let drilldownDashboardFilter = JSON.parse(widgetFilter)
+    let drilldownDashboardTitle=data.dashboardTitle
     event.value = JSON.stringify(dashboardData.data.dashboard)
     if (this.state.preparedDashboardFilter !== null) {
       //combining dashboardfilter with widgetfilter
@@ -355,6 +376,11 @@ class Dashboard extends Component {
 
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
+    event.drilldownDashboardTitle = drilldownDashboardTitle;
+    if (elementId) {
+      var widgetDiv = document.getElementById(elementId);
+      this.loader.destroy(widgetDiv);
+    }
     this.props.drilldownToDashboard(event, "dashname")
   }
 
@@ -396,16 +422,23 @@ class Dashboard extends Component {
     let url = `analytics/widget/${widgetId}?data=true`;
     let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
 
-    console.log("Printing Filter: " + this.state.preparedDashboardFilter)
+    // console.log("Printing Filter: " + this.state.preparedDashboardFilter)
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
       //combining dashboardfilter with widgetfilter
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    } else if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
-      let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-      let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
+    } else if(this.props.dashboardFilter.length && this.props.dashboardFilter.length>0){
+      let dashFilter=this.extractFilterValues()
+      let preparedFilter=null
+      preparedFilter = dashFilter[0]
+      if (dashFilter && dashFilter.length > 1) {
+        for (let i = 1; i < dashFilter.length; i++) {
+          preparedFilter = this.preparefilter(preparedFilter, dashFilter[i])
+        }
+        }
+       preparedFilter = filter ? this.preparefilter(preparedFilter, JSON.parse(filter)) : preparedFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
 

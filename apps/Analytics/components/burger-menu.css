@@ -18,15 +18,15 @@
 /* Position and sizing of burger button */
 .bm-burger-button {
   position: fixed;
-  width: 36px;
-  height: 30px;
-  left: 1em;
-  top: 4em;
+  width: 20px;
+  height: 20px;
+  left: 10px;
+  top: 65px;
 }
 
 /* Color/shape of burger icon bars */
 .bm-burger-bars {
-  background: #373a47;
+  background: #275362;
 }
 
 /* Position and sizing of clickable cross button */

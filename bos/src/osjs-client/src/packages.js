@@ -28,87 +28,87 @@
  * @licence Simplified BSD License
  */
 
- import Application from './application';
- import Preloader from './utils/preloader';
+import Application from './application';
+import Preloader from './utils/preloader';
 
 /**
- * A registered package reference
- * @property {Object} metadata Package metadata
- * @property {Function} callback Callback to instanciate
- * @typedef PackageReference
- */
+* A registered package reference
+* @property {Object} metadata Package metadata
+* @property {Function} callback Callback to instanciate
+* @typedef PackageReference
+*/
 
 /**
- * A package metadata
- * @property {String} name The package name
- * @property {String} [category] Package category
- * @property {String} [icon] Package icon
- * @property {Boolean} [singleton] If only one instance allowed
- * @property {Boolean} [autostart] Autostart on boot
- * @property {Boolean} [hidden] Hide from launch menus etc.
- * @property {String} [server] Server script filename
- * @property {String[]} [groups] Only available for users in this group
- * @property {String[]} [files] Files to preload
- * @property {Map<String, String>} title A map of locales and titles
- * @property {Map<String, String>} description A map of locales and titles
- * @typedef PackageMetadata
- */
+* A package metadata
+* @property {String} name The package name
+* @property {String} [category] Package category
+* @property {String} [icon] Package icon
+* @property {Boolean} [singleton] If only one instance allowed
+* @property {Boolean} [autostart] Autostart on boot
+* @property {Boolean} [hidden] Hide from launch menus etc.
+* @property {String} [server] Server script filename
+* @property {String[]} [groups] Only available for users in this group
+* @property {String[]} [files] Files to preload
+* @property {Map<String, String>} title A map of locales and titles
+* @property {Map<String, String>} description A map of locales and titles
+* @typedef PackageMetadata
+*/
 
 /**
- * Package Manager
- *
- * @desc Handles indexing, loading and launching of OS.js packages
- */
- export default class Packages {
+* Package Manager
+*
+* @desc Handles indexing, loading and launching of OS.js packages
+*/
+export default class Packages {
 
   /**
    * Create package manage
    *
    * @param {Core} core Core reference
    */
-   constructor(core) {
+  constructor(core) {
     /**
      * Core instance reference
      * @type {Core}
      */
-     this.core = core;
+    this.core = core;
 
     /**
      * A list of registered packages
      * @type {PackageReference[]}
      */
-     this.packages = [];
+    this.packages = [];
 
     /**
      * The lost of loaded package metadata
      * @type {PackageMetadata[]}
      */
-     this.metadata = [];
+    this.metadata = [];
 
     /**
      * A list of running application names
      * @desc Mainly used for singleton awareness
      * @type {String[]}
      */
-     this.running = [];
+    this.running = [];
 
     /**
      * Preloader
      * @type {Preloader}
      */
-     this.preloader = new Preloader(core.$resourceRoot);
+    this.preloader = new Preloader(core.$resourceRoot);
 
     /**
      * If inited
      * @type {boolean}
      */
-     this.inited = false;
-   }
+    this.inited = false;
+  }
 
   /**
    * Destroy package manager
    */
-   destroy() {
+  destroy() {
     this.packages = [];
     this.metadata = [];
 
@@ -118,7 +118,7 @@
   /**
    * Initializes package manager
    */
-   init() {
+  init() {
     console.debug('Packages::init()');
 
     if (!this.inited) {
@@ -128,16 +128,16 @@
     this.inited = true;
 
     let helper = this.core;
-    let jwttoken = this.core.make('oxzion/profile').getAuth();    
-    setInterval(function(){CheckAuthToken(helper, jwttoken.key);}, 300000);
+    let jwttoken = this.core.make('oxzion/profile').getAuth();
+    setInterval(function () { CheckAuthToken(helper, jwttoken.key); }, 300000);
 
     const manifest = this.core.config('packages.manifest');
 
     return manifest
-    ? this.core.request(manifest, {}, 'json')
-    .then(metadata => this.addPackages(metadata))
-    .catch(error => console.error(error))
-    : Promise.resolve();
+      ? this.core.request(manifest, {}, 'json')
+        .then(metadata => this.addPackages(metadata))
+        .catch(error => console.error(error))
+      : Promise.resolve();
   }
 
   /**
@@ -151,7 +151,7 @@
    * @throws {Error}
    * @return {Promise<Application, Error>}
    */
-   launch(name, args = {}, options = {}) {
+  launch(name, args = {}, options = {}) {
     console.debug('Packages::launch()', name, args, options);
 
     const _ = this.core.make('osjs/locale').translate;
@@ -175,12 +175,12 @@
    * @param {Array} args Launch arguments
    * @param {Object} options Launch options
    */
-   _launchApplication(name, metadata, args, options) {
+  _launchApplication(name, metadata, args, options) {
     let signaled = false;
 
     if (metadata.singleton) {
       const foundApp = Application.getApplications()
-      .find(app => app.metadata.name === metadata.name);
+        .find(app => app.metadata.name === metadata.name);
 
       if (foundApp) {
         foundApp.emit('attention', args, options);
@@ -220,28 +220,28 @@
    * @throws {Error}
    * @return {Promise<Object, Error>}
    */
-   _launchTheme(name, type) {
+  _launchTheme(name, type) {
     const _ = this.core.make('osjs/locale').translate;
 
     const metadata = this
-    .getPackages(iter => ['theme', 'icons', 'sounds'].indexOf(iter.type) !== -1)
-    .find(pkg => pkg.name === name);
+      .getPackages(iter => ['theme', 'icons', 'sounds'].indexOf(iter.type) !== -1)
+      .find(pkg => pkg.name === name);
 
     if (!metadata) {
       throw new Error(_('ERR_PACKAGE_NOT_FOUND', name));
     }
 
     const preloads = (metadata.files || [])
-    .map(f => this.core.url(f, {}, Object.assign({type}, metadata)));
+      .map(f => this.core.url(f, {}, Object.assign({ type }, metadata)));
 
     return this.preloader.load(preloads)
-    .then(result => {
-      return Object.assign(
-        {elements: {}},
-        result,
-        this.packages.find(pkg => pkg.metadata.name === name) || {}
+      .then(result => {
+        return Object.assign(
+          { elements: {} },
+          result,
+          this.packages.find(pkg => pkg.metadata.name === name) || {}
         );
-    });
+      });
   }
 
   /**
@@ -252,7 +252,7 @@
    * @param {Object} options Launch options
    * @return {Application}
    */
-   _launch(name, metadata, args, options) {
+  _launch(name, metadata, args, options) {
     const _ = this.core.make('osjs/locale').translate;
 
     const dialog = e => {
@@ -262,7 +262,7 @@
           title: _('ERR_PACKAGE_EXCEPTION', name),
           message: _('ERR_PACKAGE_EXCEPTION', name),
           error: e
-        }, () => { /* noop */});
+        }, () => { /* noop */ });
       } else {
         alert(`${_('ERR_PACKAGE_EXCEPTION', name)}: ${e.stack || e}`);
       }
@@ -278,7 +278,7 @@
     };
 
     const preloads = metadata.files
-    .map(f => this.core.url(f, {}, Object.assign({type: 'apps'}, metadata)));
+      .map(f => this.core.url(f, {}, Object.assign({ type: 'apps' }, metadata)));
 
     const create = found => {
       let app;
@@ -311,29 +311,29 @@
     };
 
     return this.preloader.load(preloads, options.forcePreload === true)
-    .then(({errors}) => {
-      if (errors.length) {
-        fail(_('ERR_PACKAGE_LOAD', name, errors.join(', ')));
-      }
+      .then(({ errors }) => {
+        if (errors.length) {
+          fail(_('ERR_PACKAGE_LOAD', name, errors.join(', ')));
+        }
 
-      const found = this.packages.find(pkg => pkg.metadata.name === name);
-      if (!found) {
-        fail(_('ERR_PACKAGE_NO_RUNTIME', name));
-      }
+        const found = this.packages.find(pkg => pkg.metadata.name === name);
+        if (!found) {
+          fail(_('ERR_PACKAGE_NO_RUNTIME', name));
+        }
 
-      return create(found);
-    });
+        return create(found);
+      });
   }
 
   /**
    * Autostarts tagged packages
    */
-   _autostart() {
+  _autostart() {
     let userDetails = this.core.make('oxzion/profile').get();
     let appList = userDetails.key.blackListedApps;
     this.metadata
-    .filter(pkg => pkg.autostart === true && !(pkg.name in appList))
-    .forEach((pkg) => {
+      .filter(pkg => pkg.autostart === true && !(pkg.name in appList))
+      .forEach((pkg) => {
         // OXZION START CHANGE
         let params = {};
         let queryString = window.location.search.substr(1);
@@ -344,8 +344,8 @@
             return prev;
           }, {});
           const appName = queryObj.app;
-          if(appName === pkg.name) {
-            if(queryObj.params) {
+          if (appName === pkg.name) {
+            if (queryObj.params) {
               params = queryObj.params;
             }
           }
@@ -362,7 +362,7 @@
    * @param {Function} callback Callback function to construct application instance
    * @throws {Error}
    */
-   register(name, callback) {
+  register(name, callback) {
     console.info('Packages::register()', name);
 
     const _ = this.core.make('osjs/locale').translate;
@@ -386,12 +386,12 @@
    * Adds a set of packages
    * @param {PackageMetadata[]} list Package list
    */
-   addPackages(list) {
+  addPackages(list) {
     if (list instanceof Array) {
       const append = list
-      .map(iter => Object.assign({
-        type: 'application'
-      }, iter));
+        .map(iter => Object.assign({
+          type: 'application'
+        }, iter));
 
       this.metadata = [...this.metadata, ...append];
     }
@@ -402,7 +402,7 @@
    * @param {Function} [filter] A filter function
    * @return {PackageMetadata[]}
    */
-   getPackages(filter) {
+  getPackages(filter) {
     filter = filter || (() => true);
 
     const details = this.core.make("oxzion/profile").get();
@@ -410,18 +410,18 @@
     const metadata = this.metadata.map(m => Object.assign({}, m));
 
     const filterGroups = iter => iter.groups instanceof Array
-    ? iter.groups.every(g => user.groups.indexOf(g) !== -1)
-    : true;
+      ? iter.groups.every(g => user.groups.indexOf(g) !== -1)
+      : true;
 
 
     const filterBlacklist = iter => details.key.blackListedApps instanceof Object
-    ? !details.key.blackListedApps[iter.name] 
-    : true;
+      ? !details.key.blackListedApps[iter.name]
+      : true;
 
     return metadata
-    .filter(filterGroups)
-    .filter(filterBlacklist)
-    .filter(filter);
+      .filter(filterGroups)
+      .filter(filterBlacklist)
+      .filter(filter);
   }
 
   /**
@@ -430,7 +430,7 @@
    * @see PackageManager#getPackages
    * @return {PackageMetadata[]}
    */
-   getCompatiblePackages(mimeType) {
+  getCompatiblePackages(mimeType) {
     return this.getPackages(meta => {
       if (meta.mimes) {
         return !!meta.mimes.find(mime => {
@@ -452,32 +452,30 @@
 
 function CheckAuthToken(helper, jwttoken) {
   let response = ValidateTokenJWT(helper, jwttoken).then((response) => {
-    if(response["status"]!="success")
-    {
+    if (response["status"] != "success") {
       let response = RefreshTokenJWT(helper, jwttoken).then((response) => {
-        if(response["status"]!="success")
-        {
-         logout(helper).then((response) => {
-         });
-       }
-     }); 
+        if (response["status"] != "success") {
+          logout(helper).then((response) => {
+          });
+        }
+      });
     }
   });
   return true;
 }
 const ValidateTokenJWT = async (helper, jwttoken) => {
   let helpers = helper.make("oxzion/restClient");
-  let result = await helpers.request("v1", "/validatetoken", {jwt:jwttoken}, "filepost");
+  let result = await helpers.request("v1", "/validatetoken", { jwt: jwttoken }, "filepost");
   return result;
 };
 const logout = async (helper) => {
- alert("session expired!. Please log in again"); 
- await helper.make('osjs/session').save();
- await helper.make('oxzion/usersession').set();
- helper.make('osjs/auth').logout();
+  alert("session expired!. Please log in again");
+  await helper.make('osjs/session').save();
+  await helper.make('oxzion/usersession').set();
+  helper.make('osjs/auth').logout();
 };
 const RefreshTokenJWT = async (helper, jwttoken) => {
   let helpers = helper.make("oxzion/restClient");
-  let result = await helpers.request("v1", "/refreshtoken", {jwt:jwttoken}, "filepost");
+  let result = await helpers.request("v1", "/refreshtoken", { jwt: jwttoken }, "filepost");
   return result;
 };

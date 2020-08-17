@@ -1,7 +1,6 @@
 import {
   React,
   Notification,
-  CountryCodes,
   AvatarImageCropper,
   ReactBootstrap,
   Webcam,
@@ -42,10 +41,6 @@ class EditProfile extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
-
-    CountryCodes.sort((a, b) =>
-      a.name < b.name ? -1 : a.name > b.name ? 1 : 0
-    );
   }
 
   componentWillMount() {
@@ -253,6 +248,7 @@ class EditProfile extends React.Component {
           <div className="componentDiv">
             <Notification ref={this.notif} />
             <div className="formmargin">
+            <React.Suspense fallback={<div>Loading...</div>}>
             <FormRender 
               content = {editProfile}
               core ={this.core}
@@ -260,6 +256,7 @@ class EditProfile extends React.Component {
               postSubmitCallback = {this.handleSubmit}
               editProfile = {true}
             />
+          </React.Suspense>
             </div>
           </div>
         </ReactBootstrap.Form>

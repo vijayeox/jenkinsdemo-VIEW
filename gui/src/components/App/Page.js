@@ -96,6 +96,7 @@ class Page extends React.Component {
         />
       );
     } else {
+      this.loader.show();
       return <div></div>;
     }
   }

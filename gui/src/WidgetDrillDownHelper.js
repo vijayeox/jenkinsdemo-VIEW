@@ -15,6 +15,7 @@ class WidgetDrillDownHelper {
     static MSG_PROP_FILTER = 'filter';
     static MSG_PROP_WIDGET_TITLE = 'widgetTitle';
     static MSG_PROP_WIDGET_FOOTER = 'widgetFooter';
+    static MSG_PROP_DASHBOARD_TITLE = 'dashboardTitle';
 
     static CTX_PROP_WIDGET_ID = WidgetDrillDownHelper.MSG_PROP_WIDGET_ID;
     static CTX_PROP_NEXT_WIDGET_ID = WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID;
@@ -22,6 +23,7 @@ class WidgetDrillDownHelper {
     static CTX_PROP_FILTER = WidgetDrillDownHelper.MSG_PROP_FILTER;
     static CTX_PROP_WIDGET_TITLE = WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE;
     static CTX_PROP_WIDGET_FOOTER = WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER;
+    static CTX_PROP_DASHBOARD_TITLE = WidgetDrillDownHelper.MSG_PROP_DASHBOARD_TITLE;
     static CTX_PROP_IS_BOUND = 'isBound';
     static CTX_PROP_MAX_DEPTH = 'maxDepth';
 
@@ -95,6 +97,7 @@ class WidgetDrillDownHelper {
 
             case 'dashboard':
                 messageContent["dashboard"] = context.nextWidgetId;
+                messageContent["dashboardTitle"] = context.dashboardTitle;
                 break;
 
             default:
@@ -104,6 +107,8 @@ class WidgetDrillDownHelper {
         bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_FILTER);
         bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE);
         bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER);
+        bindProperty(context, messageContent, WidgetDrillDownHelper.MSG_PROP_DASHBOARD_TITLE);
+
 
         context[WidgetDrillDownHelper.CTX_PROP_IS_BOUND] = true;
         //Update the widget element attribute containing drill down context stack.
@@ -237,7 +242,7 @@ class WidgetDrillDownHelper {
         });
     }
 
-    static setupDrillDownContextStack(element, configuration,applyingDashboardFilter) {
+    static setupDrillDownContextStack(element, configuration, applyingDashboardFilter) {
         let meta = configuration['oxzion-meta'];
         if (!meta) {
             return false;
@@ -316,6 +321,8 @@ class WidgetDrillDownHelper {
             WidgetDrillDownHelper.MSG_PROP_WIDGET_TITLE, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
         WidgetDrillDownHelper._assignIfDefined(messageContent,
             WidgetDrillDownHelper.MSG_PROP_WIDGET_FOOTER, context[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
+        WidgetDrillDownHelper._assignIfDefined(messageContent,
+            WidgetDrillDownHelper.MSG_PROP_DASHBOARD_TITLE, context[WidgetDrillDownHelper.CTX_PROP_DASHBOARD_TITLE]);
 
         let nextWidgetId = context[WidgetDrillDownHelper.CTX_PROP_WIDGET_ID];
         if (nextWidgetId !== widgetId) {
@@ -355,6 +362,7 @@ class WidgetDrillDownHelper {
         delete context[WidgetDrillDownHelper.CTX_PROP_FILTER];
         delete context[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE];
         delete context[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER];
+        delete context[WidgetDrillDownHelper.CTX_PROP_DASHBOARD_TITLE];
 
         //Filter, widget title and widget footer should be picked up from the context at the top of the drill down stack.
         if (drillDownContext.length > 0) {
@@ -365,6 +373,8 @@ class WidgetDrillDownHelper {
                 WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_TITLE]);
             WidgetDrillDownHelper._assignIfDefined(context,
                 WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER, tempContext[WidgetDrillDownHelper.CTX_PROP_WIDGET_FOOTER]);
+            WidgetDrillDownHelper._assignIfDefined(context,
+                WidgetDrillDownHelper.CTX_PROP_DASHBOARD_TITLE, tempContext[WidgetDrillDownHelper.CTX_PROP_DASHBOARD_TITLE]);
         }
 
         return context;

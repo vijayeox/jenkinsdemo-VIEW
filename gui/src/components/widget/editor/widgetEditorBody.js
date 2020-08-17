@@ -40,7 +40,7 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     expressionBlurred = (evt) => {
-        this.props.syncWidgetState("expression", this.state.expression,this.data);
+        this.props.syncWidgetState("expression", this.state.expression, this.data);
         if (this.validateExpression()) {
             this.loadData(this.refreshQueryPreview());
         }
@@ -51,7 +51,7 @@ class WidgetEditorBody extends AbstractEditor {
         let errorMessage = null;
         let config = this.state.configuration;
         if ((this.state.widgetType === 'table' || this.state.widgetType === 'widget') && (!config || (0 === config.length))) {
-            this.state.widgetType === 'widget'? config={} :errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
+            this.state.widgetType === 'widget' ? config = {} : errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
         } else {
             try {
                 //Make sure chart configuratio is valid JSON
@@ -103,7 +103,7 @@ class WidgetEditorBody extends AbstractEditor {
             return state;
         });
     }
-   
+
     refreshQueryPreview = () => {
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let textArea = document.querySelector('textarea#queryPreviewText');
@@ -126,6 +126,14 @@ class WidgetEditorBody extends AbstractEditor {
         }
         else {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
+        }
+    }
+
+    refreshDrillDownPreview = () =>{
+        let configuration = JSON.parse(this.state.configuration)
+        let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
+        if (hasDrillDown) {
+            this.initializeDrillDownValues(configuration)
         }
     }
 
@@ -397,40 +405,47 @@ class WidgetEditorBody extends AbstractEditor {
                                 )}
                             </Overlay>
                         </div>
-                        <div className="col-1" key={'qs-04-' + i}>
-                            <button type="button" className="btn btn-primary query-customization-button filter-query-button" title="Apply filter to query"
+                        <div className="dash-manager-buttons">
+                            {/* <div className="col-1" key={'qs-04-' + i}> */}
+                            <button type="button" className="btn btn-primary widget-action-btn" title="Apply filter to query"
                                 onClick={() => thiz.applyFilterToQuery(i)} key={'qs-05-' + i}
-                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? thiz.state.readOnly : true) : true}>
                                 <span className="fa fa-filter" aria-hidden="true" key={'qs-06-' + i}></span>
                             </button>
-                        </div>
-                        <div className="col-1" key={'qs-07-' + i}>
-                            <button type="button" className="btn btn-primary query-customization-button group-query-button" title="Apply grouping to query"
+                            {/* </div> */}
+                            {/* <div className="col-1" key={'qs-07-' + i}> */}
+                            <button type="button" className="btn btn-primary widget-action-btn" title="Apply grouping to query"
                                 onClick={() => thiz.applyGroupingToQuery(i)} key={'qs-08-' + i}
-                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? thiz.state.readOnly : true) : true}>
                                 <span className="fa fa-users" aria-hidden="true" key={'qs-09-' + i}></span>
                             </button>
-                        </div>
-                        <div className="col-1" key={'qs-10-' + i}>
-                            <button type="button" className="btn btn-primary query-customization-button sort-query-button" title="Sort query result"
+                            {/* </div> */}
+                            {/* <div className="col-1" key={'qs-10-' + i}> */}
+                            <button type="button" className="btn btn-primary widget-action-btn" title="Sort query result"
                                 onClick={() => thiz.applySortingToQuery(i)} key={'qs-11-' + i}
-                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? false : true) : true}>
+                                disabled={thiz.state.queries[i] ? (thiz.state.queries[i].uuid ? thiz.state.readOnly : true) : true}>
                                 <span className="fa fa-sort" aria-hidden="true" key={'qs-12-' + i}></span>
                             </button>
-                        </div>
-                        {(thiz.state.queries.length > 1) &&
-                            <div className="col-1" key={'qs-13-' + i}>
-                                <button type="button" className="btn btn-primary query-customization-button delete-query-button" title="Delete query"
+                            {/* </div> */}
+                            {(thiz.state.queries.length > 1) &&
+                                // <div className="col-1" key={'qs-13-' + i}>
+                                <button type="button" className="btn btn-primary widget-action-btn" title="Delete query"
                                     onClick={() => thiz.deleteQuery(i)} key={'qs-14-' + i} disabled={thiz.state.readOnly}>
                                     <span className="fa fa-minus" aria-hidden="true" key={'qs-15-' + i}></span>
                                 </button>
-                            </div>
-                        }
-                    </div>
+                                // </div>
+                            }
+                        </div>
+                    </div >
                 );
             }
             return querySelections;
         }
+
+        function capitalizeFirstLetter(input) {
+            var string = input;
+            return string[0].toUpperCase() + string.slice(1);
+        };
 
         return (
             <>
@@ -442,14 +457,14 @@ class WidgetEditorBody extends AbstractEditor {
                         <div className="card-body">
                             <div className="form-group row" style={{ marginBottom: '0px' }}>
                                 <Tabs activeKey={this.state.selectedTab} onSelect={this.configurationTabSelected}>
-                                    <Tab eventKey={this.state.widgetType} title={this.state.widgetType}>
+                                    <Tab eventKey={this.state.widgetType} title={capitalizeFirstLetter(this.state.widgetType)}>
                                         <div className="form-group row" style={{ marginLeft: '0px', marginRight: '0px' }}>
                                             <div className="col-12 no-left-padding no-right-padding">
                                                 <textarea id="configuration" name="configuration" ref="configuration"
                                                     className="form-control form-control-sm" style={{ fontFamily: 'Monospace' }}
                                                     onChange={this.configurationChanged} value={this.state.configuration}
                                                     onBlur={() => {
-                                                        this.props.syncWidgetState("configuration", this.state.configuration,this.data);
+                                                        this.props.syncWidgetState("configuration", this.state.configuration, this.data);
                                                         this.refreshWidgetPreview();
                                                     }
                                                     } disabled={this.state.readOnly} />
@@ -467,8 +482,8 @@ class WidgetEditorBody extends AbstractEditor {
                                     <Tab eventKey="query" title="Query">
                                         <br />
                                         {getQuerySelections()}
-                                        <div className="col-1" style={{ paddingLeft: '0px' }}>
-                                            <button type="button" className="btn btn-primary add-query-button" title="Add query"
+                                        <div className="col-1 dash-manager-buttons" style={{ paddingLeft: '0px', float: 'left' }}>
+                                            <button type="button" className="btn btn-primary widget-action-btn add-query-button" title="Add query"
                                                 onClick={() => this.addQuery()} disabled={this.state.readOnly}>
                                                 <span className="fa fa-plus" aria-hidden="true"></span>
                                             </button>
@@ -538,6 +553,20 @@ class WidgetEditorBody extends AbstractEditor {
                                                 </Col>
 
                                             </Form.Group>
+                                            {this.state.drillDownWidgetType.value == "dashboard" &&
+                                                <Form.Group as={Row}>
+                                                    <Form.Label column lg="3">Dashboard Header</Form.Label>
+                                                    <Col lg="9">
+                                                        <Form.Control
+                                                            type="text"
+                                                            name="drillDownDashboardTitle"
+                                                            onChange={(e) => this.handleDrillDownInputChange(e)}
+                                                            value={this.state.drillDownDashboardTitle || ''}
+                                                            disabled={this.state.readOnly}
+                                                        />
+                                                    </Col>
+                                                </Form.Group>
+                                            }
                                             <Form.Group as={Row}>
                                                 <Form.Label column lg="3">Title</Form.Label>
                                                 <Col lg="9">

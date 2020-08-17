@@ -1,10 +1,10 @@
 .dashboard-editor-form .form-group {
-  margin-left: 1em;
+  margin-left: 3em;
 }
 
 .dashboard-back-btn {
-  border-radius: 100px;
-  width: 4em;
+  position: absolute;
+  right: 98px;
 }
 
 
@@ -27,7 +27,7 @@
 
 .dashboard-save-btn {
   position: absolute;
-  right: 5.3em;
+  right: 50px;
 }
 
 .dashboard .btn-primary {
@@ -41,6 +41,7 @@
   background-color: #265160c4 !important;
 }
 
+
 .dashboard .deactivateDash .react-switch-bg {
   background: rgb(39, 83, 98) !important;
 }
@@ -52,7 +53,10 @@
 
 //dashboard editor filter
 .create-filter-form {
-  padding: 30px;
+  padding: 10px;
+  float: left;
+  background: #a9c4c4;
+  width: 99%;
 }
 
 .create-filter-form .btn {
@@ -112,15 +116,19 @@
   display: none;
 }
 
+#filtereditor-form-container,
 #filter-form-container {
   background: #a9c4c4;
   border-radius: 10px;
+  margin-top: 60px;
 }
 
+#filtereditor-form-container button.close,
 #filter-form-container button.close {
   padding-right: 1em;
 }
 
+#filtereditor-form-container label,
 #filter-form-container label {
   color: #275362;
 }
@@ -128,38 +136,61 @@
 .apply-filter-btn {
   position: initial !important;
   border-radius: 12px;
-  margin-left: 2em;
+  margin-left: 0px;
 }
 
 .dash-manager-bar {
-  border: 0.5px solid#3d6776;
-  padding: 1em;
+  // border: 0.5px solid#3d6776;
+  // padding: 1em;
   padding-top: 12px;
   padding-bottom: 0px;
   position: absolute;
-  width: 100%;
-  background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
-  min-height: 65px;
+  width: auto;
+  float: right;
+  right: 0;
+  // background-image: linear-gradient(to right top, #3d6776, #4b6f7c, #587682, #657e88, #72868e);
+  // min-height: 65px;
 }
 
 .dashboard-viewer-div {
   position: absolute;
-  margin-top: 5em;
+  margin-top: 4em;
   width: 100%;
 }
 
-.dash-manager-buttons {
-  position: absolute;
-  right: 1em;
-}
+
 
 .react-select-container {
   z-index: 100;
+  width: 300px;
+  float: left;
+  right: 10px;
+
 }
 
 .dash-manager-buttons .btn {
   margin-right: 7px;
   border-color: #eaeaea;
+}
+
+.dash-manager-buttons {
+  right: 0px;
+  width: auto;
+  float: right;
+  position: relative;
+}
+
+.dash-manager-buttons .btn-primary {
+  color: #345561;
+  background-color: #c5d2d6;
+  border-radius: 42px;
+  font-size: 14px;
+
+}
+
+.dash-manager-buttons .btn-primary:hover {
+  color: whitesmoke;
+  background-color: #c5d2d6;
 }
 
 .dasboard-viewer-content {
@@ -168,15 +199,26 @@
   border-radius: 4px;
   box-shadow: 2px 5px#c6b5b5;
   padding: 1em;
+  border: 0.5px solid grey;
 }
-.dashboard-rollup-button{
-color: black;
-cursor: pointer;
-right: 1%;
-position: absolute;
+
+.dashboard-rollup-button {
+  color: black;
+  cursor: pointer;
+  right: 1%;
+  position: absolute;
 }
-.dashboard-preview-tab{
-  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65,#1d6365);
+
+.dashboard-filter-description{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 15px;
+    width: 100%;
+}
+
+.dashboard-preview-tab {
+  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
   height: 1.3em;
   color: #f2f2f2;
   top: 50%;
@@ -200,4 +242,31 @@ position: absolute;
 
 .Window_Analytics .dashboard label {
   color: #265160 !important;
+}
+
+.dashboard-container {
+  margin-top: 4em;
+}
+
+.k-grid-header .k-i-sort-asc-sm,.k-grid-header .k-i-sort-desc-sm,.k-grid-header .k-sort-order {
+  color: #656565 !important
+}
+
+.k-grid-header .k-grid-filter.k-state-active,.k-grid-header .k-header-column-menu.k-state-active,.k-grid-header .k-hierarchy-cell .k-icon.k-state-active {
+  color: #fff;
+  background-color: #656565 !important
+}
+
+.k-pager-numbers .k-link.k-state-selected {
+  color: #656565 !important;
+  background-color: rgba(78, 73, 73, 0.2) !important
+}
+
+.k-pager-numbers .k-link {
+  color: #656565 !important;
+}
+
+.k-pager-numbers .k-link:hover,.k-pager-numbers .k-link.k-state-hover {
+  color: #656565 !important;
+  background-color: rgba(78, 73, 73, 0.2) !important
 }
