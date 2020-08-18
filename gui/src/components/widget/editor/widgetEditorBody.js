@@ -129,7 +129,7 @@ class WidgetEditorBody extends AbstractEditor {
         }
     }
 
-    refreshDrillDownPreview = () =>{
+    refreshDrillDownPreview = () => {
         let configuration = JSON.parse(this.state.configuration)
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
