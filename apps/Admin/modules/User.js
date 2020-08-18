@@ -73,6 +73,7 @@ class User extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
+            <React.Suspense fallback={<div>Loading...</div>}>
         <TitleBar
           title="Manage Users"
           menu={this.props.menu}
@@ -84,6 +85,8 @@ class User extends React.Component {
               : false
           }
         />
+          </React.Suspense>
+            <React.Suspense fallback={<div>Loading...</div>}>
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -124,6 +127,7 @@ class User extends React.Component {
           }}
           permission={this.state.permission}
         />
+          </React.Suspense>
         {this.state.userInEdit && this.inputTemplate}
       </div>
     );
