@@ -1341,7 +1341,7 @@ class FormRender extends React.Component {
       try {
         parsedData[key] = (typeof data[key] === 'string') ? JSON.parse(data[key]) :
         (data[key] == undefined || data[key] == null) ? "" : data[key];
-        if(parsedData[key] == "" && data[key] && parsedData[key] != data[key]){
+        if(parsedData[key] === "" && data[key] && parsedData[key] != data[key]){
           parsedData[key] = data[key];
         }
       } catch (error) {
