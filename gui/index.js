@@ -8,6 +8,7 @@ import CurrencySelect from "./src/components/Currency Select/currencySelect";
 import countryStateList from "./src/components/data/country-state-codes";
 import * as ReactWebTabs from "react-web-tabs";
 import * as ReactBootstrap from "react-bootstrap";
+import * as KendoReactButtons from "@progress/kendo-react-buttons";
 
 const OX_Grid = lazy(() => import("./src/OX_Grid"));
 const GridTemplate = lazy(() => import("./src/GridTemplate"));
@@ -35,7 +36,6 @@ const KendoReactDateInputs = lazy(() => import("@progress/kendo-react-dateinputs
 const KendoReactPopup = lazy(() => import("@progress/kendo-react-popup"));
 const KendoReactDropDowns = lazy(() => import("@progress/kendo-react-dropdowns"));
 const KendoDataQuery = lazy(() => import("@progress/kendo-data-query"));
-const KendoReactButtons = lazy(() => import("@progress/kendo-react-buttons"));
 const KendoReactWindow = lazy(() => import("@progress/kendo-react-dialogs"));
 const KendoReactGrid = lazy(() => import("@progress/kendo-react-grid"));
 const KendoReactInput = lazy(() => import("@progress/kendo-react-inputs"));
