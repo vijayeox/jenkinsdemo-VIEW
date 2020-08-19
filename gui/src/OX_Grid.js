@@ -255,16 +255,28 @@ export default class OX_Grid extends React.Component {
     let gridToolbarContent = [];
     if (typeof this.props.gridToolbar == "string") {
       gridToolbarContent.push(
-        <JsxParser
-          bindings={{
-            item: this.props.parentData,
-            moment: moment,
-            profile: this.props.userProfile,
-            baseUrl: this.props.baseUrl,
-            gridData: this.state.gridData.data
-          }}
-          jsx={this.props.gridToolbar}
-        />
+        <div style={{display:"flex", flexDirection:"row"}}>
+          <JsxParser
+            bindings={{
+              item: this.props.parentData,
+              moment: moment,
+              profile: this.props.userProfile,
+              baseUrl: this.props.baseUrl,
+              gridData: this.state.gridData.data
+            }}
+            jsx={this.props.gridToolbar}
+          />
+          {this.props.refreshButton ? (
+            <abbr
+              title="Refresh"
+              style={{ right: "10px", float: "right", paddingLeft: "15px" }}
+            >
+              <Button primary={true} onClick={() => this.refreshHandler()}>
+                <i className="far fa-redo manageIcons"></i>
+              </Button>
+            </abbr>
+          ) : null}
+        </div>
       );
     } else if (this.props.gridToolbar) {
       gridToolbarContent.push(this.props.gridToolbar);
