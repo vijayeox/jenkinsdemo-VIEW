@@ -244,7 +244,7 @@
             <div className="breadcrumbs">{this.renderBreadcrumbs()}</div>
           ) : null}
           </div>
-          <div className={this.pageDiv}>
+          <div className={this.pageDiv} style={{height: "calc(100% - 55px)"}}>
           {this.state.pages.length > 0?
           this.renderPages():null}
           {(this.state.selected.activityInstanceId &&

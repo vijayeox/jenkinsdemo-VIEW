@@ -57,6 +57,14 @@ $primary-color: #275362;
     width: 100%;
   }
 
+  abbr{
+    text-decoration: none;
+  }
+
+  .page-active , .contentDiv{
+    height: 100%;
+  }
+
   .searchBar {
     display: flex;
   }
