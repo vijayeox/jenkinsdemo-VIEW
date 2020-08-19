@@ -9,6 +9,22 @@ import countryStateList from "./src/components/data/country-state-codes";
 import * as ReactWebTabs from "react-web-tabs";
 import * as ReactBootstrap from "react-bootstrap";
 import * as KendoReactButtons from "@progress/kendo-react-buttons";
+import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
+import * as KendoReactEditor from "@progress/kendo-react-editor";
+import * as KendoReactDateInputs from "@progress/kendo-react-dateinputs";
+import * as KendoReactPopup from "@progress/kendo-react-popup";
+import * as KendoDataQuery from "@progress/kendo-data-query";
+import * as KendoReactWindow from "@progress/kendo-react-dialogs";
+import * as KendoReactGrid from "@progress/kendo-react-grid";
+import * as KendoReactInput from "@progress/kendo-react-inputs";
+import * as KendoReactRipple from "@progress/kendo-react-ripple";
+import * as Moment from "moment";
+import * as MomentTZ from "moment-timezone";
+import * as PhoneInput from "react-phone-number-input";
+import * as PopupDialog from 'sweetalert2';
+import * as ReactStrap from "reactstrap";
+import * as Webcam from "react-webcam";
+import AvatarImageCropper from "react-avatar-image-cropper";
 
 const OX_Grid = lazy(() => import("./src/OX_Grid"));
 const GridTemplate = lazy(() => import("./src/GridTemplate"));
@@ -28,22 +44,6 @@ const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
 const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
 const DateFormats  = lazy(() => import('./src/public/js/DateFormats.js'));
 const DropDown  = lazy(() => import('./src/components/Dropdown/DropDownList'));
-const PhoneInput  = lazy(() => import('react-phone-number-input'));
-const ReactStrap = lazy(() => import("reactstrap"));
-const Webcam = lazy(() => import("react-webcam"));
-const KendoReactEditor = lazy(() => import("@progress/kendo-react-editor"));
-const KendoReactDateInputs = lazy(() => import("@progress/kendo-react-dateinputs"));
-const KendoReactPopup = lazy(() => import("@progress/kendo-react-popup"));
-const KendoReactDropDowns = lazy(() => import("@progress/kendo-react-dropdowns"));
-const KendoDataQuery = lazy(() => import("@progress/kendo-data-query"));
-const KendoReactWindow = lazy(() => import("@progress/kendo-react-dialogs"));
-const KendoReactGrid = lazy(() => import("@progress/kendo-react-grid"));
-const KendoReactInput = lazy(() => import("@progress/kendo-react-inputs"));
-const KendoReactRipple = lazy(() => import("@progress/kendo-react-ripple"));
-const PopupDialog = lazy(() => import('sweetalert2'));
-const Moment = lazy(() => import("moment"));
-const MomentTZ = lazy(() => import("moment-timezone"));
-const AvatarImageCropper  = lazy(() =>  import("react-avatar-image-cropper"));
 
 export {
   LeftMenuTemplate,
