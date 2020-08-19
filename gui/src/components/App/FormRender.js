@@ -675,9 +675,9 @@ class FormRender extends React.Component {
           if (this.state.content["properties"]["clickable"]) {
             options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
           }
-          if (this.state.content["properties"]["showBreadcrumbs"]) {
+          if (this.state.content["properties"]["hideBreadcrumbs"]) {
             if (eval(this.state.content.properties.showBreadcrumbs)) {
-              document.getElementById(this.formDivID).classList.add("forceBredcrumb") ;
+              document.getElementById(this.formDivID).classList.add("hideBredcrumb") ;
             }
           }
           if (this.state.content["properties"]["showPrevious"]) {

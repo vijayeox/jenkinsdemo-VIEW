@@ -227,15 +227,11 @@
     padding-right:0;
     padding-left:0;
   }
-  .formio-form nav[aria-label=navigation]{
-    display:none;
-  }
-
 }
 
-.form-render.forceBredcrumb{
+.form-render.hideBredcrumb{
   .formio-form nav[aria-label=navigation]{
-    display:block;
+    display:none;
   }
 }
 
