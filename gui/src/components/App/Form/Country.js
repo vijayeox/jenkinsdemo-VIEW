@@ -413,8 +413,8 @@ var countryList = [ {
     "country": "Netherlands",
     "states": ["Drenthe", "Flevoland", "Friesland", "Gelderland", "Groningen", "Limburg", "Noord-Brabant", "Noord-Holland", "Overijssel", "Utrecht", "Zeeland", "Zuid-Holland"]
 }, {
-    "country": "Netherlands Antilles"
-    "states": ["Not Applicable"],
+    "country": "Netherlands Antilles",
+    "states": ["Not Applicable"]
 }, {
     "country": "New Zealand",
     "states": ["Auckland", "Bay of Plenty", "Canterbury", "Cook Islands", "Chatham Islands", "Gisborne", "Hawkes Bay", "Manawatu-Wanganui", "Marlborough", "Nelson", "Northland", "Otago", "Southland", "Tokelau", "Taranaki", "Tasman", "Waikato", "Wellington", "West Coast"]
