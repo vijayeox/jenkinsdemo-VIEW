@@ -38,6 +38,16 @@
     }
   }
 
+  .formio-component-modal-wrapper-panel{
+    .formio-dialog.formio-dialog-theme-default{
+      padding-bottom: 100px;
+      padding-top: 100px;
+      .formio-dialog-content{
+        min-height: 100%;
+      }
+    }
+  }
+
   .formio-component.has-feedback .invalid-feedback {
     display: block;
     color: inherit;
