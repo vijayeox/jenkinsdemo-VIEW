@@ -24,6 +24,7 @@ class PageContent extends React.Component {
     this.proc = this.props.proc;
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
+    this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
     this.parentPage = this.props.parentPage?this.props.parentPage:null;
     this.loader = this.core.make("oxzion/splash");
@@ -78,6 +79,7 @@ class PageContent extends React.Component {
       var row = e; 
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
+      var profile = this.userprofile;
       string = string.replace(/moment/g,'_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
