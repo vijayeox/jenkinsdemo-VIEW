@@ -35,7 +35,6 @@ module.exports = {
   },
   entry: {
     osjs: [
-      path.resolve(__dirname, 'src/core/core.js'),
       path.resolve(__dirname, 'src/client/index.js'),
       path.resolve(__dirname, 'src/client/assets/scss/index.scss')
     ],

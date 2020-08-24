@@ -122,6 +122,7 @@ class Organization extends React.Component {
           menu={this.props.menu}
           args={this.core}
         />
+        <React.Suspense fallback={<div>Loading...</div>}>
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -156,6 +157,7 @@ class Organization extends React.Component {
           }}
           permission={this.state.permission}
         />
+          </React.Suspense>
         {this.state.orgInEdit && this.inputTemplate}
       </div>
     );

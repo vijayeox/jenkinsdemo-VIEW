@@ -58,8 +58,12 @@
                   this.pageActive(appParams.pageId);
                   history.push("/");
                 } else {
-                  console.log(appParams);
                   history.push("/");
+                  let ev = new CustomEvent("addPage", {
+                    detail: {pageContent:appParams.detail},
+                    bubbles: true
+                  });
+                  document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
                 }
               } catch (e) {
                 console.log("No params!");
@@ -240,12 +244,12 @@
             <div className="breadcrumbs">{this.renderBreadcrumbs()}</div>
           ) : null}
           </div>
-          <div className={this.pageDiv}>
+          <div className={this.pageDiv} style={{height: "calc(100% - 55px)"}}>
           {this.state.pages.length > 0?
           this.renderPages():null}
           {(this.state.selected.activityInstanceId &&
             this.state.selected.activityInstanceId) ||
-          this.state.selected.pipeline ? (
+          this.state.selected.pipeline ? ( 
             <div id={this.contentDivID} className="AppBuilderPage">
               <FormRender
                 core={this.core}

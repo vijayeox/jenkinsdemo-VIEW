@@ -317,6 +317,7 @@ class Project extends React.Component {
               : false
           }
         />
+        <React.Suspense fallback={<div>Loading...</div>}>
         <OX_Grid
           osjsCore={this.core}
           ref={this.OX_Grid}
@@ -351,6 +352,7 @@ class Project extends React.Component {
             this.createAddButton(),
           ]}
         />
+          </React.Suspense>
         {this.state.itemInEdit && this.inputTemplate}
         {this.state.visible && this.addUsersTemplate}
       </div>

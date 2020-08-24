@@ -8,6 +8,7 @@ import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
+import Notification from "../../Notification";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
 import Page from "./Page";
@@ -24,6 +25,8 @@ class PageContent extends React.Component {
     this.proc = this.props.proc;
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
+    this.notif = React.createRef();
+    this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
     this.parentPage = this.props.parentPage?this.props.parentPage:null;
     this.loader = this.core.make("oxzion/splash");
@@ -78,6 +81,7 @@ class PageContent extends React.Component {
       var row = e; 
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
+      var profile = this.userprofile;
       string = string.replace(/moment/g,'_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
@@ -163,6 +167,15 @@ class PageContent extends React.Component {
             checkForTypeUpdate = true;
             const response = await that.updateActionHandler(item, rowData);
             if (response.status == "success") {
+              item.params.successNotification
+                ? that.notif.current.notify(
+                    "Success",
+                    item.params.successNotification.length > 0
+                      ? item.params.successNotification
+                      : "Update Completed",
+                    "success"
+                  )
+                : null;
               this.setState({
                 showLoader: false
               });
@@ -189,7 +202,7 @@ class PageContent extends React.Component {
             }
           }
         });
-        this.loadPage(pageId, action.icon, true,action.name,rowData,copyPageContent);
+        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,rowData,copyPageContent);
       }
     }
   }
@@ -588,6 +601,7 @@ class PageContent extends React.Component {
       var pageRender = this.renderContent(this.state.pageContent);
       return (
         <div id={this.contentDivID} className="contentDiv">
+          <Notification ref={this.notif} />
           {pageRender}
         </div>
       );

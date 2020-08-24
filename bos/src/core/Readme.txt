@@ -1,1 +1,0 @@
-The core.js in this folder is for fixing the Safari browser Sweetalert2 issue

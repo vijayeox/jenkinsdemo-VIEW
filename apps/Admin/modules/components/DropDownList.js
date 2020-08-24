@@ -82,6 +82,7 @@ export default class DropDown extends React.Component {
     this.props.disableItem ? (this.inputProps = { opened: false }) : [];
     return (
       <div>
+            <React.Suspense fallback={<div>Loading...</div>}>
         {this.props.rawData ? (
           <KendoReactDropDowns.DropDownList
             data={this.state.mainList}
@@ -113,6 +114,7 @@ export default class DropDown extends React.Component {
             required={this.props.required}
           />
         )}
+        </React.Suspense>
       </div>
     );
   }

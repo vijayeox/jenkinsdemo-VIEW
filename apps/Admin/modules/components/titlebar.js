@@ -11,6 +11,7 @@ export class TitleBar extends React.Component {
         <div
           style={{ marginLeft: "15px", position: "absolute", zIndex: "101" }}
         >
+            <React.Suspense fallback={<div>Loading...</div>}>
           <KendoReactButtons.Button
             onClick={this.props.menu}
             primary={true}
@@ -23,6 +24,7 @@ export class TitleBar extends React.Component {
           >
             <i className="fa fa-bars"></i>
           </KendoReactButtons.Button>
+          </React.Suspense>
         </div>
         <div className="col text-center" id="pageTitle">
           {this.props.title}
