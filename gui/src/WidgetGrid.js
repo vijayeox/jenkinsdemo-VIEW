@@ -203,8 +203,12 @@ export default class WidgetGrid extends React.Component {
         return tdElement;
     }
     Aggregate = (props,configuration) => {
-        const total =  this.state.displayedData.data && this.state.displayedData.data.reduce((acc, current) => acc + current[props.field], 0);
-        if(!Number.isNaN(total)){
+        let total = 0 
+        if(this.state.displayedData.data){
+            total = this.state.displayedData.data.reduce((acc, current) =>  acc + (typeof(current[props.field])=="number"?current[props.field]:0), 0)
+            
+        }
+            if(!Number.isNaN(total)){
             return (
                 <td colSpan={props.colSpan} style={configuration.style}>
                     {configuration.value}{total}
