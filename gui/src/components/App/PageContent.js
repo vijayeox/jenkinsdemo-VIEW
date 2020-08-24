@@ -336,6 +336,16 @@ class PageContent extends React.Component {
     this.switchSection('EDB', data);
   }
 
+  postSubmitCallback(){
+    let ev = new CustomEvent("handleGridRefresh", {
+      detail: {},
+      bubbles: true
+    });
+    if(document.getElementById("navigation_" + this.appId)){
+      document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
+    }
+  }
+
   renderContent(data) {
     var content = [];
     data.map((item, i) => {
@@ -371,6 +381,7 @@ class PageContent extends React.Component {
             core={this.core}
             proc={this.proc}
             appId={this.appId}
+            postSubmitCallback={this.postSubmitCallback}
             data={item.data}
             content={item.content}
             fileId={fileId}
@@ -418,6 +429,7 @@ class PageContent extends React.Component {
             }
             appId={this.appId}
             key={i}
+            parentDiv={this.contentDivID}
             osjsCore={this.core}
             data={dataString}
             pageId={this.state.pageId}
