@@ -32,6 +32,21 @@ export class DataLoader extends React.Component {
           });
         });
     }
+    if (this.props.autoRefresh) {
+      var that = this;
+      var autoRefreshTimer = setInterval(() => {
+        var gridElement = document.getElementById(this.props.parentDiv);
+        if (gridElement) {
+          (gridElement.offsetWidth ||
+            gridElement.offsetHeight ||
+            gridElement.getClientRects().length) > 0
+            ? that.triggerGetCall()
+            : null;
+        } else {
+          autoRefreshTimer ? clearInterval(autoRefreshTimer) : null;
+        }
+      }, this.props.autoRefresh);
+    }
   }
 
   componentDidUpdate(prevProps) {
