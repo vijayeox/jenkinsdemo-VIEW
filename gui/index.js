@@ -1,6 +1,6 @@
 import LeftMenuTemplate from "./src/LeftMenuTemplate";
 import Notification from "./src/Notification";
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss';
 import DateComponent from "./src/components/DateComponent.js";
@@ -42,8 +42,8 @@ const FileUploader = lazy(() => import("./src/FileUploader"));
 const HTMLViewer = lazy(() => import("./src/components/App/HTMLViewer"));
 const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
 const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
-const DateFormats  = lazy(() => import('./src/public/js/DateFormats.js'));
-const DropDown  = lazy(() => import('./src/components/Dropdown/DropDownList'));
+const DateFormats = lazy(() => import('./src/public/js/DateFormats.js'));
+const DropDown = lazy(() => import('./src/components/Dropdown/DropDownList'));
 
 export {
   LeftMenuTemplate,
@@ -89,5 +89,6 @@ export {
   DropDown,
   CurrencySelect,
   countryStateList,
-  FormBuilder
+  FormBuilder,
+  Suspense
 };

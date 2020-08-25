@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { name as applicationName } from './metadata.json';
-import { React, Query, DataSource,  Visualization,  WidgetGrid } from 'oxziongui';
-import { WidgetManager,DashboardManager } from 'oxziongui';
+import { React, Query, DataSource, Visualization, WidgetGrid, Suspense } from 'oxziongui';
+import { WidgetManager, DashboardManager } from 'oxziongui';
 import DashboardViewer from "OxzionGUI/DashboardManager"
 import { slide as Menu } from 'react-burger-menu';
 
@@ -115,7 +115,7 @@ class Body extends React.Component {
           this.state.title != "Operational Intelligence" && <div className="page-title full-width">{this.state.title}</div>
         }
         <div className="page-content full-width" id="page-content">
-          {sectionContent}
+          {<Suspense fallback={<div>Loading..</div>}>{sectionContent}</Suspense>}
         </div>
       </div>
     );
