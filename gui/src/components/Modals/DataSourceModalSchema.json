@@ -1,0 +1,197 @@
+{
+    "FormSchema": {
+        "OxzionElasticDs": {
+            "defaultFields": {
+                "User": {
+                    "label": "User",
+                    "control": {
+                        "name": "user",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Password": {
+                    "label": "Password",
+                    "control": {
+                        "name": "password",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ServerAddress": {
+                    "label": "Server Address",
+                    "control": {
+                        "name": "serveraddress",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Port": {
+                    "label": "Port",
+                    "control": {
+                        "name": "port",
+                        "type": "number"
+                    },
+                    "occurence": "single"
+                },
+                "Core": {
+                    "label": "Core",
+                    "control": {
+                        "name": "core",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Type": {
+                    "label": "Type",
+                    "control": {
+                        "name": "type",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Scheme": {
+                    "label": "Scheme",
+                    "control": {
+                        "name": "scheme",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            },
+            "optionalFields": {
+                "TEST": {
+                    "label": "Test",
+                    "control": {
+                        "name": "test",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            }
+        },
+        "QuickBooks": {
+            "defaultFields": {
+                "Auth_Mode": {
+                    "label": "Auth Mode",
+                    "control": {
+                        "name": "auth_mode",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ClientID": {
+                    "label": "ClientID",
+                    "control": {
+                        "name": "ClientID",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ClientSecret": {
+                    "label": "Client Secret",
+                    "control": {
+                        "name": "ClientSecret",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "refreshTokenKey": {
+                    "label": "Refresh Token",
+                    "control": {
+                        "name": "refreshTokenKey",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "baseUrl": {
+                    "label": "Base Url",
+                    "control": {
+                        "name": "baseUrl",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "QBORealmID": {
+                    "label": "QBORealmID",
+                    "control": {
+                        "name": "QBORealmID",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            },
+            "optionalFields": {}
+        },
+        "Beta": {
+            "defaultFields": {
+                "User": {
+                    "label": "User",
+                    "control": {
+                        "name": "user",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Password": {
+                    "label": "Password",
+                    "control": {
+                        "name": "password",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ServerAddress": {
+                    "label": "Server Address",
+                    "control": {
+                        "name": "serveraddress",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Port": {
+                    "label": "Port",
+                    "control": {
+                        "name": "port",
+                        "type": "number"
+                    },
+                    "occurence": "single"
+                },
+                "Core": {
+                    "label": "Core",
+                    "control": {
+                        "name": "core",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Type": {
+                    "label": "Type",
+                    "control": {
+                        "name": "type",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Scheme": {
+                    "label": "Scheme",
+                    "control": {
+                        "name": "scheme",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            },
+            "optionalFields": {
+                "TEST": {
+                    "label": "Test",
+                    "control": {
+                        "name": "test",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            }
+        }
+    }
+}

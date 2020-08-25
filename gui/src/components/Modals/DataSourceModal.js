@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useRef } from 'react'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
-
+import JSONFormRenderer from "../../JSONFormRenderer"
+import {FormSchema} from "./DataSourceModalSchema.json"
 
 function DataSourceModal(props) {
 
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
+  const [formConfiguration,setFormConfiguration] = useState("")
+  const ref=useRef(null)
   const allowedOperation = {
     ACTIVATE: "Activated",
     CREATE: "Created",
@@ -18,6 +21,7 @@ function DataSourceModal(props) {
       var { name, type } = props.content;
       var configuration = JSON.stringify(props.content.configuration)
       setInput({ ...input, ["name"]: name, ["type"]: type, ["configuration"]: configuration })
+      setFormConfiguration(props.content.configuration.data||{})
     }
     else {
       //clear all inputs
@@ -75,7 +79,7 @@ function DataSourceModal(props) {
       formValid = false
       error["type"] = "* Please enter the datasource type"
     }
-    if (!input["configuration"]) {
+    if (!formConfiguration) {
       formValid = false
       error["configuration"] = "* Please enter the configuration"
     }
@@ -93,8 +97,7 @@ function DataSourceModal(props) {
       if (operation !== undefined && operation !== allowedOperation.DELETE) {
         formData["name"] = input["name"];
         formData["type"] = input["type"];
-        formData["configuration"] = input["configuration"];
-
+        formData["configuration"] = ref.current.getFormConfig();
         if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
           //pass additional form inputs required for edit operation
           formData["uuid"] = props.content.uuid
@@ -188,9 +191,9 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Type</Form.Label>
             <Col lg="9">
-              {/* <Form.Control type="text" name="type" value={input["type"] ? input["type"] : ""} onChange={handleChange} disabled={DisabledFields} /> */}
+              <Form.Control type="text" name="type" value={input["type"] ? input["type"] : ""} onChange={handleChange} disabled={DisabledFields} />
 
-              <Form.Control type="text" name="type" value={props.datasourcename} disabled />
+              {/* <Form.Control type="text" name="type" value={props.datasourcename} disabled /> */}
               <Form.Text className="text-muted errorMsg">
 
                 {errors["type"]}
@@ -199,16 +202,18 @@ function DataSourceModal(props) {
           </Form.Group>
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
-            <Col lg="9">
-              <Form.Control as="textarea" rows="10" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
+            <Col lg="9" >
+              <JSONFormRenderer formSchema={FormSchema[props.content.name]} values={formConfiguration}  subForm={true} ref={ref}/>
+              {/* <Form.Control as="textarea" rows="10" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
               <Form.Text className="text-muted errorMsg">
                 {errors["configuration"]}
-              </Form.Text>
+              </Form.Text> */}
             </Col>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
+        {/* <Button variant="secondary" onClick={()=>ref.current.getFormConfig()}>REF</Button> */}
         <Button variant="secondary" onClick={() => { props.onHide() }}>Cancel</Button>
         {Footer}
       </Modal.Footer>
