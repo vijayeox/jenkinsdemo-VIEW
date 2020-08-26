@@ -366,6 +366,21 @@ class FormRender extends React.Component {
       }
     }
 
+  // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issues
+    removeEmptyFields(data){
+      var cleaned_data = {};
+      if((!!data) && (data.constructor === Object)){
+        Object.keys(data).forEach(function(key) {
+          if(!(data[key] == "" || data[key] == null || data[key] == [])){
+            cleaned_data[key] = data[key];
+          }
+        });
+        return cleaned_data;
+      } else {
+        return data;
+      }
+    }
+
     formatFormData(data){
       var formData = this.parseResponseData(this.addAddlData(data));
       var ordered_data = {};
@@ -759,7 +774,8 @@ class FormRender extends React.Component {
             }
           }
           if(that.state.data !=  undefined){
-            form.setSubmission({ data: that.state.data });
+
+            form.setSubmission({ data: that.removeEmptyFields(that.state.data) });
           }
           form.on("submit", async function (submission) {
             form.emit('submitDone', submission);
