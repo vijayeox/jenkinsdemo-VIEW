@@ -164,9 +164,12 @@ class PageContent extends React.Component {
         action.details.every(async (item, index) => {
           var copyItem = JSON.parse(JSON.stringify(item));
           if (item.type == "Update") {
+            var PageRenderDiv = document.getElementById(this.contentDivID);
+            this.loader.show(PageRenderDiv ? PageRenderDiv : null);
             checkForTypeUpdate = true;
             const response = await that.updateActionHandler(item, rowData);
             if (response.status == "success") {
+              this.loader.destroy();
               item.params.successNotification
                 ? that.notif.current.notify(
                     "Success",
@@ -180,6 +183,7 @@ class PageContent extends React.Component {
                 showLoader: false
               });
             } else {
+              this.loader.destroy();
               Swal.fire({
                 icon: "error",
                 title: response.message,

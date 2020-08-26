@@ -37,9 +37,9 @@ export class DataLoader extends React.Component {
       var autoRefreshTimer = setInterval(() => {
         var gridElement = document.getElementById(this.props.parentDiv);
         if (gridElement) {
-          (gridElement.offsetWidth ||
+          ((!document.hidden) && ( gridElement.offsetWidth ||
             gridElement.offsetHeight ||
-            gridElement.getClientRects().length) > 0
+            gridElement.getClientRects().length > 0 ))
             ? that.triggerGetCall()
             : null;
         } else {
