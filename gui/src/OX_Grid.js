@@ -273,16 +273,6 @@ export default class OX_Grid extends React.Component {
             }}
             jsx={this.props.gridToolbar}
           />
-          {this.props.refreshButton ? (
-            <abbr
-              title="Refresh"
-              style={{ right: "10px", float: "right", paddingLeft: "15px" }}
-            >
-              <Button primary={true} onClick={() => this.refreshHandler()}>
-                <i className="far fa-redo manageIcons"></i>
-              </Button>
-            </abbr>
-          ) : null}
         </div>
       );
     } else if (this.props.gridToolbar) {
