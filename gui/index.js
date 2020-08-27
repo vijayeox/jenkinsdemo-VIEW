@@ -44,6 +44,8 @@ const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
 const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
 const DateFormats = lazy(() => import('./src/public/js/DateFormats.js'));
 const DropDown = lazy(() => import('./src/components/Dropdown/DropDownList'));
+const Visualization = lazy(() => import("./src/Visualization"));
+const WidgetManager = lazy(() => import("./src/WidgetManager"));
 
 export {
   LeftMenuTemplate,
@@ -90,5 +92,7 @@ export {
   CurrencySelect,
   countryStateList,
   FormBuilder,
-  Suspense
+  Suspense,
+  Visualization,
+  WidgetManager
 };
