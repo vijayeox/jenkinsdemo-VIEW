@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useRef } from 'react'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
-
+import JSONFormRenderer from "../../JSONFormRenderer"
+import {FormSchema} from "./QueryModalSchema.json"
 
 function QueryModal(props) {
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
+  const [formConfiguration,setFormConfiguration] = useState("")
+  const ref=useRef(null)
+
   const helper = props.osjsCore.make("oxzion/restClient");
   var string_configuration = ""
 
@@ -14,6 +18,7 @@ function QueryModal(props) {
         var { name, ispublic, configuration, uuid, version } = props.content;
         string_configuration = JSON.stringify(configuration)
         let datasourcename=setDataSourceDefaultValue()
+      setFormConfiguration(props.content.configuration||{})
         setInput({ ...input, ["queryname"]: name, ["visibility"]: ispublic, ["configuration"]: string_configuration, uuid, version,["datasourcename"]:datasourcename })
       }
       else {
@@ -138,7 +143,7 @@ function QueryModal(props) {
 
         formData["name"] = input["queryname"]
         formData["datasource_id"] = input["datasourceuuid"]
-        formData["configuration"] = props.configuration
+        formData["configuration"] = ref.current.getFormConfig();
         formData["ispublic"] = input["visibility"]
         if (operation === "Activated" || operation === "Edited") {
           formData["configuration"] = input["configuration"]
@@ -262,8 +267,9 @@ function QueryModal(props) {
             <Form.Group as={Row}>
               <Form.Label column lg="3">Configuration</Form.Label>
               <Col lg="9">
+              <JSONFormRenderer formSchema={FormSchema[props.content.name]} values={formConfiguration}  subForm={true} ref={ref}/>
 
-                <Form.Control as="textarea" name="configuration" value={input["configuration"] !== undefined ? input["configuration"] : props.configuration} onChange={handleChange} disabled={DisabledFields} />
+                {/* <Form.Control as="textarea" name="configuration" value={input["configuration"] !== undefined ? input["configuration"] : props.configuration} onChange={handleChange} disabled={DisabledFields} /> */}
               </Col>
             </Form.Group>
           </>

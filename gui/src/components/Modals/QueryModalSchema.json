@@ -1,0 +1,77 @@
+{
+    "FormSchema": {
+        "Sales Grouped by Store": {
+            "defaultFields": {
+                "app_name": {
+                    "label": "App Name",
+                    "control": {
+                        "name": "app_name",
+                        "type": "text"
+                    }
+                },
+                "group": {
+                    "label": "Group",
+                    "control": {
+                        "name": "group",
+                        "type": "text"
+                    }
+                },
+                "field": {
+                    "label": "Field",
+                    "control": {
+                        "name": "field",
+                        "type": "text"
+                    }
+                },
+                "operation": {
+                    "label": "Operation",
+                    "control": {
+                        "name": "operation",
+                        "type": "text"
+                    }
+                }
+            },
+            "optionalFields": {}
+        },
+        "Products sale by person": {
+            "defaultFields": {
+                "app_name": {
+                    "label": "App Name",
+                    "control": {
+                        "name": "app_name",
+                        "type": "text"
+                    }
+                },
+                "group": {
+                    "label": "Group",
+                    "control": {
+                        "name": "group",
+                        "type": "text"
+                    }
+                },
+                "field": {
+                    "label": "Field",
+                    "control": {
+                        "name": "field",
+                        "type": "text"
+                    }
+                },
+                "operation": {
+                    "label": "Operation",
+                    "control": {
+                        "name": "operation",
+                        "type": "text"
+                    }
+                },
+                "filter": {
+                    "label": "Filter",
+                    "control": {
+                        "name": "filter",
+                        "type": "text"
+                    }
+                }
+            },
+            "optionalFields": {}
+        }
+    }
+}
