@@ -6,7 +6,7 @@ import "./public/css/JSONFormRenderer.scss";
 const JSONFormRenderer = forwardRef((props, ref) => {
   const [input, setInput] = useState({});
   const [formValues, setFormValues] = useState("");
-  const [formFields, setFormFields] = useState(props.formSchema ? props.formSchema : {})
+  const [formFields, setFormFields] = useState(props.formSchema!=undefined ? props.formSchema : {})
   const [optionalFields, setOptionalFields] = useState(null);
   const el = useRef(null);
   useEffect(() => {
@@ -15,12 +15,8 @@ const JSONFormRenderer = forwardRef((props, ref) => {
   }, [props.values]);
 
   useEffect(() => {
-    //set fetched values from database if any exists
-    // setFormValues(JSON.stringify(input, null, 1))
-    // console.log(formValues)
-    // console.log(input)
-    // console.log(formFields)
-  }, [input]);
+    setFormFields(props.formSchema!=undefined ? props.formSchema : {})
+  }, [props]);
 
   useEffect(() => {
     generateOptionalFieldsDropDown()

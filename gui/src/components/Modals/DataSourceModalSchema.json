@@ -192,6 +192,67 @@
                     "occurence": "single"
                 }
             }
+        },
+        "_DEFAULT_OPTIONAL_FIELDS": {
+            "defaultFields": {},
+            "optionalFields": {
+                "User": {
+                    "label": "User",
+                    "control": {
+                        "name": "user",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Password": {
+                    "label": "Password",
+                    "control": {
+                        "name": "password",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ServerAddress": {
+                    "label": "Server Address",
+                    "control": {
+                        "name": "serveraddress",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Port": {
+                    "label": "Port",
+                    "control": {
+                        "name": "port",
+                        "type": "number"
+                    },
+                    "occurence": "single"
+                },
+                "Core": {
+                    "label": "Core",
+                    "control": {
+                        "name": "core",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Type": {
+                    "label": "Type",
+                    "control": {
+                        "name": "type",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Scheme": {
+                    "label": "Scheme",
+                    "control": {
+                        "name": "scheme",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            }
         }
     }
 }
