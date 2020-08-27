@@ -1,6 +1,6 @@
 {
     "FormSchema": {
-        "OxzionElasticDs": {
+        "ElasticSearch": {
             "defaultFields": {
                 "User": {
                     "label": "User",
@@ -59,16 +59,7 @@
                     "occurence": "single"
                 }
             },
-            "optionalFields": {
-                "TEST": {
-                    "label": "Test",
-                    "control": {
-                        "name": "test",
-                        "type": "text"
-                    },
-                    "occurence": "single"
-                }
-            }
+            "optionalFields": {}
         },
         "QuickBooks": {
             "defaultFields": {
@@ -123,12 +114,28 @@
             },
             "optionalFields": {}
         },
-        "Beta": {
+        "MySQL": {
             "defaultFields": {
-                "User": {
-                    "label": "User",
+                "Host": {
+                    "label": "Host",
                     "control": {
-                        "name": "user",
+                        "name": "host",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Database": {
+                    "label": "Database",
+                    "control": {
+                        "name": "database",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Username": {
+                    "label": "Username",
+                    "control": {
+                        "name": "username",
                         "type": "text"
                     },
                     "occurence": "single"
@@ -140,58 +147,9 @@
                         "type": "text"
                     },
                     "occurence": "single"
-                },
-                "ServerAddress": {
-                    "label": "Server Address",
-                    "control": {
-                        "name": "serveraddress",
-                        "type": "text"
-                    },
-                    "occurence": "single"
-                },
-                "Port": {
-                    "label": "Port",
-                    "control": {
-                        "name": "port",
-                        "type": "number"
-                    },
-                    "occurence": "single"
-                },
-                "Core": {
-                    "label": "Core",
-                    "control": {
-                        "name": "core",
-                        "type": "text"
-                    },
-                    "occurence": "single"
-                },
-                "Type": {
-                    "label": "Type",
-                    "control": {
-                        "name": "type",
-                        "type": "text"
-                    },
-                    "occurence": "single"
-                },
-                "Scheme": {
-                    "label": "Scheme",
-                    "control": {
-                        "name": "scheme",
-                        "type": "text"
-                    },
-                    "occurence": "single"
                 }
             },
-            "optionalFields": {
-                "TEST": {
-                    "label": "Test",
-                    "control": {
-                        "name": "test",
-                        "type": "text"
-                    },
-                    "occurence": "single"
-                }
-            }
+            "optionalFields": {}
         },
         "_DEFAULT_OPTIONAL_FIELDS": {
             "defaultFields": {},
@@ -248,6 +206,30 @@
                     "label": "Scheme",
                     "control": {
                         "name": "scheme",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Host": {
+                    "label": "Host",
+                    "control": {
+                        "name": "host",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Database": {
+                    "label": "Database",
+                    "control": {
+                        "name": "database",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Username": {
+                    "label": "Username",
+                    "control": {
+                        "name": "username",
                         "type": "text"
                     },
                     "occurence": "single"

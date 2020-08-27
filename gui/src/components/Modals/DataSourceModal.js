@@ -1,15 +1,15 @@
-import React, { useState, useEffect,useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 import JSONFormRenderer from "../../JSONFormRenderer"
-import {FormSchema} from "./DataSourceModalSchema.json"
+import { FormSchema } from "./DataSourceModalSchema.json"
 
 function DataSourceModal(props) {
 
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
-  const [formConfiguration,setFormConfiguration] = useState("")
-  const [formSchema,setFormSchema]=useState(FormSchema[props.content.name])
-  const ref=useRef(null)
+  const [formConfiguration, setFormConfiguration] = useState("")
+  const [formSchema, setFormSchema] = useState(FormSchema[props.content.type])
+  const ref = useRef(null)
   const allowedOperation = {
     ACTIVATE: "Activated",
     CREATE: "Created",
@@ -22,10 +22,10 @@ function DataSourceModal(props) {
       var { name, type } = props.content;
       var configuration = JSON.stringify(props.content.configuration)
       setInput({ ...input, ["name"]: name, ["type"]: type, ["configuration"]: configuration })
-      setFormConfiguration(props.content.configuration.data||{})
-      if(formSchema=={}||formSchema==undefined){
-        let schema=FormSchema["_DEFAULT_OPTIONAL_FIELDS"]
-        if(schema){
+      setFormConfiguration(props.content.configuration.data || {})
+      if (formSchema == {} || formSchema == undefined) {
+        let schema = FormSchema["_DEFAULT_OPTIONAL_FIELDS"]
+        if (schema) {
           setFormSchema(schema)
         }
       }
@@ -210,7 +210,7 @@ function DataSourceModal(props) {
           <Form.Group as={Row}>
             <Form.Label column lg="3">Configuration</Form.Label>
             <Col lg="9" >
-              <JSONFormRenderer formSchema={formSchema!=undefined?formSchema:{}} values={formConfiguration}  subForm={true} ref={ref}/>
+              <JSONFormRenderer formSchema={formSchema != undefined ? formSchema : {}} values={formConfiguration} subForm={true} ref={ref} />
               {/* <Form.Control as="textarea" rows="10" name="configuration" value={input["configuration"] ? input["configuration"] : ""} onChange={handleChange} disabled={DisabledFields} />
               <Form.Text className="text-muted errorMsg">
                 {errors["configuration"]}
