@@ -283,13 +283,13 @@ class PageContent extends React.Component {
     }
   }
 
-  prepareDataRoute(route, params) {
+  prepareDataRoute(route, params, disableAppId) {
     if (typeof route == "string") {
       if (!params) {
         params = {};
       }
       var result = this.replaceParams(route, params);
-      result = "app/" + this.appId + "/" + result;
+      result = disableAppId ? result : "app/" + this.appId + "/" + result;
       return result;
     } else {
       return route;
@@ -418,7 +418,8 @@ class PageContent extends React.Component {
         }
         var dataString = this.prepareDataRoute(
           itemContent.route,
-          this.state.currentRow
+          this.state.currentRow,
+          itemContent.disableAppId
         );
         var urlPostParams = this.replaceParams(
           item.urlPostParams,
