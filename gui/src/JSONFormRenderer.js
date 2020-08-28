@@ -26,9 +26,12 @@ const JSONFormRenderer = forwardRef((props, ref) => {
 
 
   useImperativeHandle(ref, () => ({
-    getFormConfig() {
+    getFormConfig(embedData) {
       let parsedConfig = JSON.parse(formValues)
-      let preparedConfig = { "data": parsedConfig }
+      let preparedConfig = parsedConfig
+      if(embedData){
+        preparedConfig = { "data": parsedConfig }
+      }
       return JSON.stringify(preparedConfig)
     }
   }))

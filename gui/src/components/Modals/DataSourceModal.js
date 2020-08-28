@@ -86,7 +86,7 @@ function DataSourceModal(props) {
       formValid = false
       error["type"] = "* Please enter the datasource type"
     }
-    if (!formConfiguration) {
+    if (!ref.current.getFormConfig(true)) {
       formValid = false
       error["configuration"] = "* Please enter the configuration"
     }
@@ -104,7 +104,7 @@ function DataSourceModal(props) {
       if (operation !== undefined && operation !== allowedOperation.DELETE) {
         formData["name"] = input["name"];
         formData["type"] = input["type"];
-        formData["configuration"] = ref.current.getFormConfig();
+        formData["configuration"] = ref.current.getFormConfig(true)
         if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
           //pass additional form inputs required for edit operation
           formData["uuid"] = props.content.uuid
