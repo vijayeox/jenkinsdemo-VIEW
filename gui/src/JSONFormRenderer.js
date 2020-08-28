@@ -5,18 +5,19 @@ import "./public/css/JSONFormRenderer.scss";
 
 const JSONFormRenderer = forwardRef((props, ref) => {
   const [input, setInput] = useState({});
-  const [formValues, setFormValues] = useState("");
+  const [formValues, setFormValues] = useState("{}");
   const [formFields, setFormFields] = useState(props.formSchema!=undefined ? props.formSchema : {})
   const [optionalFields, setOptionalFields] = useState(null);
   const el = useRef(null);
   useEffect(() => {
     //set fetched values from database if any exists
     setDefaultValues();
+    
   }, [props.values]);
 
   useEffect(() => {
     setFormFields(props.formSchema!=undefined ? props.formSchema : {})
-  }, [props]);
+  }, [props.formSchema]);
 
   useEffect(() => {
     generateOptionalFieldsDropDown()
@@ -47,7 +48,9 @@ const JSONFormRenderer = forwardRef((props, ref) => {
   }
   const generateOptionalFieldsDropDown = () => {
     let options = formFields["optionalFields"] && Object.keys(formFields["optionalFields"]).map((element) => {
-      return <option key={element} value={formFields["optionalFields"][element].control.name}>{element}</option>
+      if(formFields["optionalFields"][element]){
+        return <option key={element} value={formFields["optionalFields"][element].control.name}>{element}</option>
+      }
     })
     setOptionalFields(options)
   }
@@ -87,12 +90,14 @@ const JSONFormRenderer = forwardRef((props, ref) => {
     setFormFields(formFieldsCopy)
     setFormValues(JSON.stringify(formValuesCopy, null, 1))
     // setInput(inputCopy)
-    console.log(formFieldsCopy)
   }
 
   const addFormFields = (field) => {
     let formFieldsCopy = { ...formFields }
     let formValuesCopy = JSON.parse(formValues)
+    if(typeof(formValuesCopy)!=="object"){
+      formValuesCopy={}
+    }
     formFieldsCopy["defaultFields"][field] = formFieldsCopy["optionalFields"][field]
     let fieldName = formFieldsCopy["defaultFields"][field]["control"]["name"]
     formValuesCopy[fieldName]=input[fieldName]
@@ -100,7 +105,6 @@ const JSONFormRenderer = forwardRef((props, ref) => {
     setFormFields(formFieldsCopy)
     setFormValues(JSON.stringify(formValuesCopy,null,1))
     
-    console.log(formFieldsCopy)
   }
 
   const renderFormElement = (field, key) => {
@@ -127,7 +131,7 @@ const JSONFormRenderer = forwardRef((props, ref) => {
   return (
     <div>
       <Tabs defaultActiveKey="form" id="uncontrolled-tab-example">
-        <Tab eventKey="form" title={<i class="fa fa-file-text" aria-hidden="true" title="View Form"></i>}>
+        <Tab eventKey="form" title={<i className="fa fa-file-text" aria-hidden="true" title="View Form"></i>}>
           {!subForm ?
             <Form >
               {formFields["defaultFields"] && Object.keys(formFields["defaultFields"]).map((element) => {
@@ -143,6 +147,17 @@ const JSONFormRenderer = forwardRef((props, ref) => {
               {formFields["defaultFields"] && Object.keys(formFields["defaultFields"]).map((element) => {
                 return renderFormElement(formFields["defaultFields"][element], element);
               })}
+              {
+                formFields["optionalFields"] && Object.keys(formFields["optionalFields"]).map((element)=>{
+                  if(formFields["optionalFields"][element]){
+                    let name=formFields["optionalFields"][element].control.name
+                    let formValue=JSON.parse(formValues)
+                    if(formValue.hasOwnProperty(name))
+                    addFormFields(element)
+                  }
+                  }
+                 )
+              }
               <select id="optionalFields" name="optionalFields" className="form-control form-control-sm" value={input["optionalFields"]} placeholder="Select Fields" onChange={handleChange} >
               <option key="" value="-1" >--Select Fields--</option>
                 {optionalFields}
@@ -167,6 +182,6 @@ const JSONFormRenderer = forwardRef((props, ref) => {
 //validation for props
 JSONFormRenderer.propTypes = {
   formSchema: PropTypes.object,
-  values: PropTypes.object,
+  values: PropTypes.string,
 };
 export default JSONFormRenderer;

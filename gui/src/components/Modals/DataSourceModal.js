@@ -8,7 +8,7 @@ function DataSourceModal(props) {
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
   const [formConfiguration, setFormConfiguration] = useState("")
-  const [formSchema, setFormSchema] = useState(FormSchema[props.content.type])
+  const [formSchema, setFormSchema] = useState(FormSchema[props.content]?FormSchema[props.content.type]:FormSchema["_DEFAULT_OPTIONAL_FIELDS"])
   const ref = useRef(null)
   const allowedOperation = {
     ACTIVATE: "Activated",

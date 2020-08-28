@@ -405,7 +405,7 @@ class Query extends React.Component {
                 />
               </div>
             </Tab>
-            <Tab eventKey="results" title="Result" id="result-tab">
+            <Tab eventKey="results" title="Result">
               <div id="result-tab-div">
               </div>
             </Tab>

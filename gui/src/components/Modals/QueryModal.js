@@ -7,6 +7,8 @@ function QueryModal(props) {
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
   const [formValues, setFormValues] = useState("")
+  const [formSchema, setFormSchema] = useState(FormSchema["_DEFAULT_OPTIONAL_FIELDS"])
+
   const ref = useRef(null)
 
   const helper = props.osjsCore.make("oxzion/restClient");
@@ -267,7 +269,7 @@ function QueryModal(props) {
             <Form.Group as={Row}>
               <Form.Label column lg="3">Configuration</Form.Label>
               <Col lg="9">
-                <JSONFormRenderer formSchema={FormSchema["_DEFAULT_OPTIONAL_FIELDS"]} values={formValues} subForm={true} ref={ref} />
+                <JSONFormRenderer  formSchema={formSchema != undefined ? formSchema : {}} values={formValues} subForm={true} ref={ref} />
 
                 {/* <Form.Control as="textarea" name="configuration" value={input["configuration"] !== undefined ? input["configuration"] : props.configuration} onChange={handleChange} disabled={DisabledFields} /> */}
               </Col>
