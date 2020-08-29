@@ -13,7 +13,7 @@ Incase of client's application development, you will have to serve the view from
 To build the docker
 $ docker build -t view docker/
 To start the docker and use it
-$ docker run --network="host" -it -v ${PWD}/..:/app view bash
+$ docker run --network="host" -it -v "${PWD}/..:/app" view bash
 $ npm run serve
 
 ------------------------------------------------------
