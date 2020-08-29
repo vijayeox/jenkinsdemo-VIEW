@@ -28,15 +28,15 @@ import AvatarImageCropper from "react-avatar-image-cropper";
 
 const OX_Grid = lazy(() => import("./src/OX_Grid"));
 const GridTemplate = lazy(() => import("./src/GridTemplate"));
-const DashboardManager = lazy(() => import("./src/DashboardManager"));
-const Dashboard = lazy(() => import("./src/Dashboard"));
-const DataSource = lazy(() => import("./src/DataSource"));
-const Query = lazy(() => import("./src/Query"));
-const DashboardFilter = lazy(() => import("./src/DashboardFilter"));
-const WidgetGrid = lazy(() => import("./src/WidgetGrid"));
-const WidgetRenderer = lazy(() => import("./src/WidgetRenderer"));
+// const DashboardManager = lazy(() => import("./src/DashboardManager"));
+// const Dashboard = lazy(() => import("./src/Dashboard"));
+// const DataSource = lazy(() => import("./src/DataSource"));
+// const Query = lazy(() => import("./src/Query"));
+// const DashboardFilter = lazy(() => import("./src/DashboardFilter"));
+// const WidgetGrid = lazy(() => import("./src/WidgetGrid"));
+// const WidgetRenderer = lazy(() => import("./src/WidgetRenderer"));
 const FormRender = lazy(() => import("./src/components/App/FormRender"));
-const FormBuilder = lazy(() => import("./src/components/App/FormBuilder"));
+// const FormBuilder = lazy(() => import("./src/components/App/FormBuilder"));
 const MultiSelect = lazy(() => import("./src/MultiSelect"));
 const FileUploader = lazy(() => import("./src/FileUploader"));
 const HTMLViewer = lazy(() => import("./src/components/App/HTMLViewer"));
@@ -56,13 +56,13 @@ export {
   FormRender,
   OX_Grid,
   DocumentViewer,
-  DashboardManager,
-  Dashboard,
-  WidgetGrid,
-  WidgetRenderer,
-  DataSource,
-  Query,
-  DashboardFilter,
+  // DashboardManager,
+  // Dashboard,
+  // WidgetGrid,
+  // WidgetRenderer,
+  // DataSource,
+  // Query,
+  // DashboardFilter,
   React,
   ReactDOM,
   DateFormats,
@@ -89,5 +89,5 @@ export {
   DropDown,
   CurrencySelect,
   countryStateList,
-  FormBuilder
+  // FormBuilder
 };
