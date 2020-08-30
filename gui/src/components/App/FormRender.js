@@ -696,34 +696,45 @@ class FormRender extends React.Component {
             });
           },
           beforeSubmit: async (submission,next) => {
-            var submitErrors = [];
-            if(that.state.currentForm.isValid(submission.data, true)==false){
-              that.state.currentForm.checkValidity(submission.data, true,submission.data);
-              that.state.currentForm.errors.forEach((error) => {
-                submitErrors.push(error.message);
-              });
-              if(submitErrors.length > 0){
-                next([]);
-              } else {
-                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
-                  if(response.status=='success'){
+            if (
+              that.state.currentForm.checkValidity() &&
+              that.state.currentForm.checkValidity(
+                submission.data,
+                true,
+                submission.data
+              )
+            ) {
+              var response = await that
+                .saveForm(null, that.cleanData(submission.data))
+                .then(function (response) {
+                  if (response.status == "success") {
                     next(null);
                   } else {
+                    if (that.props.route) {
+                      next([response.message]);
+                    }
                     next([response.errors[0].message]);
                   }
                 });
-              }
             } else {
-              var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
-                if(response.status=='success'){
-                  next(null);
-                } else {
-                  if(that.props.route) {
-                    next([response.message]);
-                  }
-                  next([response.errors[0].message]);
-                }
+              that.state.currentForm.checkValidity(
+                submission.data,
+                true,
+                submission.data
+              );
+              var submitErrors = [];
+              that.state.currentForm.errors.forEach((error) => {
+                submitErrors.push(error.message);
               });
+              if (submitErrors.length > 0) {
+                next([]);
+              } else {
+                that.state.currentForm.triggerChange();
+                next([]);
+                // submitErrors = [
+                //   ...document.querySelectorAll('[ref="errorRef"]')
+                // ].map((i) => i.innerText);
+              }
             }
           }
         };
