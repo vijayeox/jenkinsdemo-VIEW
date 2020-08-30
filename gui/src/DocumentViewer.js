@@ -12,6 +12,7 @@ export default class DocumentViewer extends Component {
     this.core = this.props.core;
     this.appId = this.props.appId;
     this.state = {
+      apiCallStatus: false,
       selectedDocument: undefined,
       documentsList: undefined,
       documentTypes: [],
@@ -134,16 +135,25 @@ export default class DocumentViewer extends Component {
               .filter((item) => item !== "Documents");
             documentsList.Documents ? validDocTypes.unshift("Documents") : null;
             this.setState({
+              apiCallStatus: true,
               documentsList: documentsList,
               folderType: folderType,
               selectedDocument: documentsList[validDocTypes[0]][0],
               activeCard: validDocTypes[0],
               documentTypes: validDocTypes
             });
+          } else {
+            this.setState({
+              apiCallStatus : true
+            })
           }
           this.loader.destroy();
         }
       });
+    } else{
+      this.setState({
+        apiCallStatus : true
+      })
     }
   };
 
@@ -411,26 +421,30 @@ export default class DocumentViewer extends Component {
 
   render() {
     const { documentsList } = this.state;
-    if (documentsList) {
-      return (
-        <div className="docViewerComponent">
-          <Notification ref={this.notif} />
-          <div className="col-md-3 docListDiv">
-            <Accordion defaultActiveKey={this.state.documentTypes[0]}>
-              {this.generateDocumentList()}
-            </Accordion>
+    if (this.state.apiCallStatus) {
+      if (documentsList) {
+        return (
+          <div className="docViewerComponent">
+            <Notification ref={this.notif} />
+            <div className="col-md-3 docListDiv">
+              <Accordion defaultActiveKey={this.state.documentTypes[0]}>
+                {this.generateDocumentList()}
+              </Accordion>
+            </div>
+            <div className="col-md-9 border docViewerWindow">
+              {this.state.selectedDocument ? (
+                this.displayDocumentData(this.state.selectedDocument)
+              ) : (
+                <p>No files to display.</p>
+              )}
+            </div>
           </div>
-          <div className="col-md-9 border docViewerWindow">
-            {this.state.selectedDocument ? (
-              this.displayDocumentData(this.state.selectedDocument)
-            ) : (
-              <p>No files to display.</p>
-            )}
-          </div>
-        </div>
-      );
+        );
+      } else {
+        return <p>No files to display.</p>;
+      }
     } else {
-      return <p>No files to display.</p>;
+      return null;
     }
   }
 
