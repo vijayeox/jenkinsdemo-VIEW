@@ -164,9 +164,12 @@ class PageContent extends React.Component {
         action.details.every(async (item, index) => {
           var copyItem = JSON.parse(JSON.stringify(item));
           if (item.type == "Update") {
+            var PageRenderDiv = document.getElementById(this.contentDivID);
+            this.loader.show(PageRenderDiv ? PageRenderDiv : null);
             checkForTypeUpdate = true;
             const response = await that.updateActionHandler(item, rowData);
             if (response.status == "success") {
+              this.loader.destroy();
               item.params.successNotification
                 ? that.notif.current.notify(
                     "Success",
@@ -180,6 +183,7 @@ class PageContent extends React.Component {
                 showLoader: false
               });
             } else {
+              this.loader.destroy();
               Swal.fire({
                 icon: "error",
                 title: response.message,
@@ -336,6 +340,16 @@ class PageContent extends React.Component {
     this.switchSection('EDB', data);
   }
 
+  postSubmitCallback(){
+    let ev = new CustomEvent("handleGridRefresh", {
+      detail: {},
+      bubbles: true
+    });
+    if(document.getElementById("navigation_" + this.appId)){
+      document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
+    }
+  }
+
   renderContent(data) {
     var content = [];
     data.map((item, i) => {
@@ -371,6 +385,7 @@ class PageContent extends React.Component {
             core={this.core}
             proc={this.proc}
             appId={this.appId}
+            postSubmitCallback={this.postSubmitCallback}
             data={item.data}
             content={item.content}
             fileId={fileId}
@@ -418,6 +433,7 @@ class PageContent extends React.Component {
             }
             appId={this.appId}
             key={i}
+            parentDiv={this.contentDivID}
             osjsCore={this.core}
             data={dataString}
             pageId={this.state.pageId}
