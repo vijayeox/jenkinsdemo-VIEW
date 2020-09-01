@@ -170,7 +170,7 @@ class Home extends React.Component {
             <div className="block d1">
               <img src="apps/Admin/008-development-2.svg" />
             </div>
-            <div className="titles">Project Management Admin</div>
+            <div className="titles">PPM Admin</div>
           </div>
         ) : null}
 

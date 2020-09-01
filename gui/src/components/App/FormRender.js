@@ -366,26 +366,22 @@ class FormRender extends React.Component {
       }
     }
 
-  // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issues
-    removeEmptyFields(data){
-      var cleaned_data = {};
-      if((!!data) && (data.constructor === Object)){
-        Object.keys(data).forEach(function(key) {
-          if(!(data[key] == "" || data[key] == null || data[key] == [])){
-            cleaned_data[key] = data[key];
-          }
-        });
-        return cleaned_data;
-      } else {
-        return data;
-      }
-    }
-
+  // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issue
     formatFormData(data){
       var formData = this.parseResponseData(this.addAddlData(data));
       var ordered_data = {};
-      Object.keys(formData).sort().forEach(function(key) {
+      Object.keys(formData)
+        .sort()
+        .forEach(function (key) {
+          if (
+            !(
+              formData[key] == "" ||
+              formData[key] == null ||
+              formData[key] == []
+            )
+          ) {
         ordered_data[key] = formData[key];
+          }
       });
       return ordered_data;
     }
@@ -775,7 +771,7 @@ class FormRender extends React.Component {
           }
           if(that.state.data !=  undefined){
 
-            form.setSubmission({ data: that.removeEmptyFields(that.state.data) });
+            form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
             form.emit('submitDone', submission);
@@ -843,9 +839,32 @@ class FormRender extends React.Component {
                 }
               }
             },true);
-            var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
-            if (elm.length > 0) {
-              scrollIntoView(elm[0], { scrollMode: "if-needed",block: "center",behavior: "smooth",inline: "nearest" });
+            var nextButton = document.getElementsByClassName(
+              "btn-wizard-nav-next"
+            );
+            var elm = document.getElementsByClassName(
+              that.state.appId + "_breadcrumbParent"
+            );
+            if (nextButton.length > 0) {
+             // check to make sure event is appended only once
+              if (
+                nextButton[0].getAttribute("errorScrollEventAdded") !== "true"
+              ) {
+                nextButton[0].setAttribute("errorScrollEventAdded", "true");
+                nextButton[0].addEventListener("click", () => {
+                  var submitErrors = [
+                    ...document.querySelectorAll('[ref="errorRef"]')
+                  ];
+                  if (elm.length > 0 && submitErrors.length > 0) {
+                    scrollIntoView(elm[0], {
+                      scrollMode: "if-needed",
+                      block: "center",
+                      behavior: "smooth",
+                      inline: "nearest"
+                    });
+                  }
+                });
+              }
             }
             if (that.state.formLevelDelegateCalled == false) {
               that.setState({formLevelDelegateCalled: true});
