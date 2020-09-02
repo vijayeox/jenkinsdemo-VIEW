@@ -174,7 +174,7 @@ export default class WidgetGrid extends React.Component {
         ReactDOM.unmountComponentAtNode(this.props.canvasElement)
 
     }
-    
+
     hasBackButton() {
         if (this.props.canvasElement && this.props.canvasElement.parentElement) {
             let backbutton = this.props.canvasElement.parentElement.getElementsByClassName('oxzion-widget-roll-up-button')
@@ -189,26 +189,34 @@ export default class WidgetGrid extends React.Component {
 
     }
 
-    cellRender(tdElement, cellProps) {
-        if (cellProps.rowType === 'Footer') {
-            if (cellProps.field === 'Account') {
-                console.log(cellProps.dataItem.aggregates.Account.average)
-                return (
-                    <td>
-                        Average: {cellProps.dataItem.aggregates.Account.average}
-                    </td>
-                );
+    cellRender(tdElement, cellProps, thiz) {
+        if (cellProps.rowType === 'groupFooter') {
+            let element = null
+            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]["aggregate"]) {
+                let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
+                let sum = 0
+                aggregateColumns.forEach(column => {
+                    if (cellProps.field == column.field) {
+                        cellProps.dataItem.items.forEach(item => {
+                            sum += item[column.field]
+                        })
+                        element = <td>Average: {sum}</td>
+                    }
+                })
+                if (element != null) {
+                    return <td>Average: {sum}</td>
+                }
             }
         }
         return tdElement;
     }
-    Aggregate = (props,configuration) => {
-        let total = 0 
-        if(this.state.displayedData.data){
-            total = this.state.displayedData.data.reduce((acc, current) =>  acc + (typeof(current[props.field])=="number"?current[props.field]:0), 0)
-            
+    Aggregate = (props, configuration) => {
+        let total = 0
+        if (this.state.displayedData.data) {
+            total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
+
         }
-            if(!Number.isNaN(total)){
+        if (!Number.isNaN(total)) {
             return (
                 <td colSpan={props.colSpan} style={configuration.style}>
                     {configuration.value}{total}
@@ -225,19 +233,21 @@ export default class WidgetGrid extends React.Component {
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
-                if(config['footerAggregate']){
-                    columns.push(<GridColumn key={config['field']} {...config}   footerCell={(props)=>thiz.Aggregate(props,config['footerAggregate'])} />);
+                if (config['footerAggregate']) {
+                    columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
                 }
-                else
-                columns.push(<GridColumn key={config['field']} {...config} />);
+                else{
+                    console.log(config)
+                    columns.push(<GridColumn key={config['field']} {...config} />);
+                }
             }
             return columns;
         }
-        
+
         if (this.isDrillDownTable) {
-            styleParam = { height: this.height, width: this.width, cursor: 'pointer'} 
+            styleParam = { height: this.height, width: this.width, cursor: 'pointer' }
         } else {
-            styleParam = { height: this.height, width: this.width} 
+            styleParam = { height: this.height, width: this.width }
         }
 
         let gridTag = <Grid
@@ -245,7 +255,7 @@ export default class WidgetGrid extends React.Component {
             data={this.state.displayedData}
             resizable={this.resizable}
             reorderable={this.reorderable}
-            cellRender={this.cellRender}
+            cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}
             filterable={this.filterable}
             filter={this.state.filter}
             onFilterChange={this.gridFilterChanged}
@@ -261,7 +271,7 @@ export default class WidgetGrid extends React.Component {
             sort={this.state.sort}
             onSortChange={this.gridSortChanged}
             onRowClick={this.drillDownClick}
-            groupable={this.groupable}
+            groupable={{ "footer": "visible" }}
             group={this.state.group}
             onGroupChange={this.gridGroupChanged}
             onExpandChange={this.gridGroupExpansionChanged}
