@@ -57,7 +57,6 @@ export default class WidgetGrid extends React.Component {
         this.excelExporter.save();
     }
 
-
     parseData = () => {
         let fieldDataTypeMap = new Map();
         for (const config of this.columnConfig) {
@@ -214,7 +213,6 @@ export default class WidgetGrid extends React.Component {
         let total = 0
         if (this.state.displayedData.data) {
             total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
-
         }
         if (!Number.isNaN(total)) {
             return (
@@ -229,29 +227,23 @@ export default class WidgetGrid extends React.Component {
     render() {
         let thiz = this;
         let hasBackButton = this.hasBackButton()
-        let styleParam = " ";
+
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
                     columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
                 }
-                else{
-                    console.log(config)
+                else {
                     columns.push(<GridColumn key={config['field']} {...config} />);
                 }
             }
             return columns;
         }
 
-        if (this.isDrillDownTable) {
-            styleParam = { height: this.height, width: this.width, cursor: 'pointer' }
-        } else {
-            styleParam = { height: this.height, width: this.width }
-        }
-
         let gridTag = <Grid
-            style={styleParam}
+            style={{ height: this.height, width: this.width }}
+            className={this.isDrillDownTable ? "drillDownStyle" : ""}
             data={this.state.displayedData}
             resizable={this.resizable}
             reorderable={this.reorderable}
@@ -259,14 +251,12 @@ export default class WidgetGrid extends React.Component {
             filterable={this.filterable}
             filter={this.state.filter}
             onFilterChange={this.gridFilterChanged}
-
             pageSize={this.pageSize}
             {...this.pagerConfig} //Sets grid "pageable" property
             total={this.getFilteredRowCount()}
             skip={this.state.pagination.skip}
             take={this.state.pagination.take}
             onPageChange={this.gridPageChanged}
-
             sortable={this.sortable}
             sort={this.state.sort}
             onSortChange={this.gridSortChanged}
