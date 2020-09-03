@@ -17,7 +17,7 @@ import * as KendoDataQuery from "@progress/kendo-data-query";
 import * as KendoReactWindow from "@progress/kendo-react-dialogs";
 import * as KendoReactGrid from "@progress/kendo-react-grid";
 import * as KendoReactInput from "@progress/kendo-react-inputs";
-import * as KendoReactRipple from "@progress/kendo-react-ripple"; 
+import * as KendoReactRipple from "@progress/kendo-react-ripple";
 import * as Moment from "moment";
 import * as MomentTZ from "moment-timezone";
 import * as PhoneInput from "react-phone-number-input";
