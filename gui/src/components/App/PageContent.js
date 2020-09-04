@@ -160,13 +160,33 @@ class PageContent extends React.Component {
         action.details.every(async (item, index) => {
           var copyItem = JSON.parse(JSON.stringify(item));
           if (item.type == "Update") {
+            var PageRenderDiv = document.getElementById(this.contentDivID);
+            this.loader.show(PageRenderDiv ? PageRenderDiv : null);
             checkForTypeUpdate = true;
             const response = await that.updateActionHandler(item, rowData);
             if (response.status == "success") {
+              this.loader.destroy();
+               if (item.successMessage) {
+                Swal.fire({
+                icon: "success",
+                title: item.successMessage,
+                showConfirmButton: true
+              });
+            }  
+              item.params.successNotification
+                ? that.notif.current.notify(
+                    "Success",
+                    item.params.successNotification.length > 0
+                      ? item.params.successNotification
+                      : "Update Completed",
+                    "success"
+                  )
+                : null;
               this.setState({
                 showLoader: false
               });
             } else {
+              this.loader.destroy();
               Swal.fire({
                 icon: "error",
                 title: response.message,
@@ -189,7 +209,7 @@ class PageContent extends React.Component {
             }
           }
         });
-        this.loadPage(pageId, action.icon, true,action.name,rowData,copyPageContent);
+        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,rowData,copyPageContent);
       }
     }
   }
@@ -198,7 +218,7 @@ class PageContent extends React.Component {
     var that = this;
     return new Promise((resolve) => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData).then((response) => {
+      that.updateCall(queryRoute, rowData,details.params.disableAppId).then((response) => {
         that.setState({
           showLoader: false
         });
@@ -279,11 +299,12 @@ class PageContent extends React.Component {
     }
   }
 
-  async updateCall(route, body) {
+  async updateCall(route, body,disableAppId) {
     let helper = this.core.make("oxzion/restClient");
+    route = disableAppId ? route : "/app/" + this.appId + "/" + route;
     let formData = await helper.request(
       "v1",
-      "/app/" + this.appId + "/" + route,
+      route,
       body,
       "post"
     );
@@ -369,6 +390,7 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
+            dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
           />
         );
       } else if (item.type == "List") {
