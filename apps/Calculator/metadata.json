@@ -4,6 +4,9 @@
   "icon": "icon.svg",
   "icon_white": "icon_white.svg",
   "defaultAppforOrgs" : true,
+  "autostart":false,
+  "singleton":true,
+  "hidden":true,
   "title": {
     "en_EN": "Calculator",
     "nb_NO": "Kalkulator",
