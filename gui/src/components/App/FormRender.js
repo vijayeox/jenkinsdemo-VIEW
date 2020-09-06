@@ -1724,17 +1724,14 @@ customButtonAction = (e) => {
   render() {
     return (
       <div>
-      <Notification ref={this.notif} />
-      <div id={this.loaderDivID} className="formLoader">
-      <i class="fad fa-spinner-third fa-spin"></i>
-      <div>Loading Form</div>
+        <Notification ref={this.notif} />
+        <div id={this.loaderDivID}></div>
+        <div id={this.formErrorDivId} style={{ display: "none" }}>
+          <h3>{this.state.formErrorMessage}</h3>
+        </div>
+        <div className="form-render" id={this.formDivID}></div>
       </div>
-      <div id={this.formErrorDivId} style={{display:"none"}}>
-      <h3>{this.state.formErrorMessage}</h3>
-      </div>
-      <div className="form-render" id={this.formDivID}></div>
-      </div>
-      );
+    );
     }
   }
   export default FormRender;
