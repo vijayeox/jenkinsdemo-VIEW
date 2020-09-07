@@ -204,7 +204,7 @@ export default class DocumentViewer extends Component {
                               className={"docIcon " + this.getDocIcon(doc.type)}
                             ></i>
                             <p>
-                              {doc.originalName.length > 30
+                              {doc.originalName && doc.originalName.length > 30
                                 ? this.chopFileName(doc.originalName)
                                 : doc.originalName}
                             </p>
