@@ -170,6 +170,13 @@ class PageContent extends React.Component {
             const response = await that.updateActionHandler(item, rowData);
             if (response.status == "success") {
               this.loader.destroy();
+               if (item.successMessage) {
+                Swal.fire({
+                icon: "success",
+                title: item.successMessage,
+                showConfirmButton: true
+              });
+            }  
               item.params.successNotification
                 ? that.notif.current.notify(
                     "Success",
@@ -215,7 +222,7 @@ class PageContent extends React.Component {
     var that = this;
     return new Promise((resolve) => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData).then((response) => {
+      that.updateCall(queryRoute, rowData,details.params.disableAppId).then((response) => {
         that.setState({
           showLoader: false
         });
@@ -283,24 +290,25 @@ class PageContent extends React.Component {
     }
   }
 
-  prepareDataRoute(route, params) {
+  prepareDataRoute(route, params, disableAppId) {
     if (typeof route == "string") {
       if (!params) {
         params = {};
       }
       var result = this.replaceParams(route, params);
-      result = "app/" + this.appId + "/" + result;
+      result = disableAppId ? result : "app/" + this.appId + "/" + result;
       return result;
     } else {
       return route;
     }
   }
 
-  async updateCall(route, body) {
+  async updateCall(route, body,disableAppId) {
     let helper = this.core.make("oxzion/restClient");
+    route = disableAppId ? route : "/app/" + this.appId + "/" + route;
     let formData = await helper.request(
       "v1",
-      "/app/" + this.appId + "/" + route,
+      route,
       body,
       "post"
     );
@@ -397,6 +405,7 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
+            dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
           />
         );
       } else if (item.type == "List") {
@@ -418,7 +427,8 @@ class PageContent extends React.Component {
         }
         var dataString = this.prepareDataRoute(
           itemContent.route,
-          this.state.currentRow
+          this.state.currentRow,
+          itemContent.disableAppId
         );
         var urlPostParams = this.replaceParams(
           item.urlPostParams,
