@@ -32,6 +32,24 @@ export class DataLoader extends React.Component {
           });
         });
     }
+    if (this.props.autoRefresh) {
+      var that = this;
+      var autoRefreshTimer = setInterval(() => {
+        var gridElement = document.getElementById(this.props.parentDiv);
+        if (gridElement) {
+          if (
+            !document.hidden &&
+            (gridElement.offsetWidth ||
+              gridElement.offsetHeight ||
+              gridElement.getClientRects().length > 0)
+          ) {
+            that.triggerGetCall(true);
+          }
+        } else {
+          autoRefreshTimer ? clearInterval(autoRefreshTimer) : null;
+        }
+      }, this.props.autoRefresh);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -43,8 +61,9 @@ export class DataLoader extends React.Component {
     }
   }
 
-  triggerGetCall() {
-    this.loader.showGrid();
+  triggerGetCall(hideLoader) {
+    hideLoader ? null : this.loader.showGrid();
+    this.pending = toODataString(this.props.dataState);
     this.getData(this.props.url).then((response) => {
       this.lastSuccess = this.pending;
       this.pending = undefined;
@@ -68,7 +87,7 @@ export class DataLoader extends React.Component {
       } else {
         this.requestDataIfNeeded();
       }
-      this.loader.destroyGrid();
+      hideLoader ? null : this.loader.destroyGrid();
     });
   }
 

@@ -31,6 +31,23 @@
   border-color: transparent;
     padding: 0;
   }
+
+  .formio-component-select {
+    .form-control.is-invalid.dropdown {
+      background-position: right calc(2.8em + 0.1875rem) center;
+    }
+  }
+
+  .formio-component-modal-wrapper-panel{
+    .formio-dialog.formio-dialog-theme-default{
+      padding-bottom: 100px;
+      padding-top: 100px;
+      .formio-dialog-content{
+        min-height: 100%;
+      }
+    }
+  }
+
   .formio-component.has-feedback .invalid-feedback {
     display: block;
     color: inherit;

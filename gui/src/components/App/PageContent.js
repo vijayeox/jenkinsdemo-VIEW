@@ -8,6 +8,7 @@ import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
+import Notification from "../../Notification";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
 import Page from "./Page";
@@ -24,6 +25,8 @@ class PageContent extends React.Component {
     this.proc = this.props.proc;
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
+    this.notif = React.createRef();
+    this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
     this.parentPage = this.props.parentPage?this.props.parentPage:null;
     this.loader = this.core.make("oxzion/splash");
@@ -78,6 +81,7 @@ class PageContent extends React.Component {
       var row = e; 
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
+      var profile = this.userprofile;
       string = string.replace(/moment/g,'_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
@@ -344,6 +348,16 @@ class PageContent extends React.Component {
     this.switchSection('EDB', data);
   }
 
+  postSubmitCallback(){
+    let ev = new CustomEvent("handleGridRefresh", {
+      detail: {},
+      bubbles: true
+    });
+    if(document.getElementById("navigation_" + this.appId)){
+      document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
+    }
+  }
+
   renderContent(data) {
     var content = [];
     data.map((item, i) => {
@@ -379,6 +393,7 @@ class PageContent extends React.Component {
             core={this.core}
             proc={this.proc}
             appId={this.appId}
+            postSubmitCallback={this.postSubmitCallback}
             data={item.data}
             content={item.content}
             fileId={fileId}
@@ -428,6 +443,7 @@ class PageContent extends React.Component {
             }
             appId={this.appId}
             key={i}
+            parentDiv={this.contentDivID}
             osjsCore={this.core}
             data={dataString}
             pageId={this.state.pageId}
@@ -611,6 +627,7 @@ class PageContent extends React.Component {
       var pageRender = this.renderContent(this.state.pageContent);
       return (
         <div id={this.contentDivID} className="contentDiv">
+          <Notification ref={this.notif} />
           {pageRender}
         </div>
       );
