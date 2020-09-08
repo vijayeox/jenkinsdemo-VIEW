@@ -830,25 +830,8 @@ async getWorkflow() {
             if (submitErrors.length > 0) {
               next([]);
             } else {
-                // Disable based on client req for go live
-                // that.state.currentForm.triggerChange();
-                // next([]);
-                var response = await that
-                .saveForm(null, that.cleanData(submission.data))
-                .then(function (response) {
-                  if (response.status == "success") {
-                    next(null);
-                  } else {
-                    if (that.props.route) {
-                      next([response.message]);
-                    }
-                    next([response.errors[0].message]);
-                  }
-                });
-
-                // submitErrors = [
-                //   ...document.querySelectorAll('[ref="errorRef"]')
-                // ].map((i) => i.innerText);
+                that.state.currentForm.triggerChange();
+                next([]);
               }
             }
           }
