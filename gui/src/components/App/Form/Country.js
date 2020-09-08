@@ -77,6 +77,9 @@ var countryList = [ {
     "country": "Bolivia",
     "states": ["Chuquisaca", "Cochabamba", "Beni", "La Paz", "Oruro", "Pando", "Potosi", "Santa Cruz", "Tarija"]
 }, {
+    "country": "Bonaire",
+    "states": ["Not Applicable"]
+}, {
     "country": "Bosnia and Herzegovina",
     "states": ["Una-Sana [Federation]", "Posavina [Federation]", "Tuzla [Federation]", "Zenica-Doboj [Federation]", "Bosnian Podrinje [Federation]", "Central Bosnia [Federation]", "Herzegovina-Neretva [Federation]", "West Herzegovina [Federation]", "Sarajevo [Federation]", " West Bosnia [Federation]", "Banja Luka [RS]", "Bijeljina [RS]", "Doboj [RS]", "Fo?a [RS]", "Sarajevo-Romanija [RS]", "Trebinje [RS]", "Vlasenica [RS]"]
 }, {
@@ -409,6 +412,9 @@ var countryList = [ {
 }, {
     "country": "Netherlands",
     "states": ["Drenthe", "Flevoland", "Friesland", "Gelderland", "Groningen", "Limburg", "Noord-Brabant", "Noord-Holland", "Overijssel", "Utrecht", "Zeeland", "Zuid-Holland"]
+}, {
+    "country": "Netherlands Antilles",
+    "states": ["Not Applicable"]
 }, {
     "country": "New Zealand",
     "states": ["Auckland", "Bay of Plenty", "Canterbury", "Cook Islands", "Chatham Islands", "Gisborne", "Hawkes Bay", "Manawatu-Wanganui", "Marlborough", "Nelson", "Northland", "Otago", "Southland", "Tokelau", "Taranaki", "Tasman", "Waikato", "Wellington", "West Coast"]
