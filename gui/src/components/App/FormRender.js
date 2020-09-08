@@ -431,11 +431,6 @@ async getWorkflow() {
                   return storeErrorResponse;
                 }
               });
-<<<<<<< HEAD
-=======
-            }
-
->>>>>>> origin/AppBuilder
           }
 
         }
@@ -445,19 +440,19 @@ async getWorkflow() {
   }
 
   // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issue
-    formatFormData(data){
-      var formData = this.parseResponseData(this.addAddlData(data));
-      var ordered_data = {};
-      Object.keys(formData)
-        .sort()
-        .forEach(function (key) {
-          if (
-            !(
-              formData[key] == "" ||
-              formData[key] == null ||
-              formData[key] == []
-            )
-          ) {
+  formatFormData(data){
+    var formData = this.parseResponseData(this.addAddlData(data));
+    var ordered_data = {};
+    Object.keys(formData)
+    .sort()
+    .forEach(function (key) {
+      if (
+        !(
+          formData[key] == "" ||
+          formData[key] == null ||
+          formData[key] == []
+          )
+        ) {
         ordered_data[key] = formData[key];
     }
   });
@@ -1609,36 +1604,36 @@ runProps(component,form,properties,formdata,instance=null){
   .addEventListener("customButtonAction", (e)=>this.customButtonAction(e), false);
 }
 
-  customButtonAction = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    this.showFormLoader(true, 0);
-    let actionDetails = e.detail;
-    let formData = actionDetails.formData;
-    if (this.state.workflowId) {
-      formData["workflowId"] = this.state.workflowId;
-    }
-    if (this.state.workflowInstanceId) {
-      formData["workflowInstanceId"] = this.state.workflowInstanceId;
-      if (this.state.activityInstanceId) {
-        formData["activityInstanceId"] = this.state.activityInstanceId;
-        if (this.state.instanceId) {
-          formData["instanceId"] = $this.state.instanceId;
-        }
+customButtonAction = (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  this.showFormLoader(true, 0);
+  let actionDetails = e.detail;
+  let formData = actionDetails.formData;
+  if (this.state.workflowId) {
+    formData["workflowId"] = this.state.workflowId;
+  }
+  if (this.state.workflowInstanceId) {
+    formData["workflowInstanceId"] = this.state.workflowInstanceId;
+    if (this.state.activityInstanceId) {
+      formData["activityInstanceId"] = this.state.activityInstanceId;
+      if (this.state.instanceId) {
+        formData["instanceId"] = $this.state.instanceId;
       }
     }
-    if(this.props.fileId){
-      formData.fileId = this.props.fileId;
-      formData["workflow_instance_id"] = undefined;
-    }
-    if(this.state.fileId){
-      formData.fileId = this.state.fileId;
-      formData["workflow_instance_id"] = undefined;
-    }
-    if (actionDetails["commands"]) {
-      this.callPipeline(
-        actionDetails["commands"],
-        this.cleanData(formData)
+  }
+  if(this.props.fileId){
+    formData.fileId = this.props.fileId;
+    formData["workflow_instance_id"] = undefined;
+  }
+  if(this.state.fileId){
+    formData.fileId = this.state.fileId;
+    formData["workflow_instance_id"] = undefined;
+  }
+  if (actionDetails["commands"]) {
+    this.callPipeline(
+      actionDetails["commands"],
+      this.cleanData(formData)
       ).then((response) => {
         if (response.status == "success") {
           var formData = { data: this.formatFormData(response.data) };
