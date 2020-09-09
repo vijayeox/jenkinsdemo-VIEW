@@ -1,6 +1,6 @@
 import React from "react";
 import FormRender from "./components/App/FormRender";
-import  LeftMenuTemplate  from "./LeftMenuTemplate";
+import LeftMenuTemplate from "./LeftMenuTemplate";
 
 class EOXApplication extends React.Component {
   constructor(props) {
@@ -21,12 +21,12 @@ class EOXApplication extends React.Component {
   }
 
   componentDidMount() {
-    this.getCacheData().then(cacheResponse => {
+    this.getCacheData().then((cacheResponse) => {
       var cache = cacheResponse.data;
       if (cache) {
         if (cache.workflow_uuid) {
           this.setState({ workflowId: cache.workflow_uuid });
-          this.getFormData(cache.workflow_uuid).then(formResponse => {
+          this.getFormData(cache.workflow_uuid).then((formResponse) => {
             if (formResponse.data) {
               this.setState({
                 formContent: JSON.parse(formResponse.data.template),
@@ -86,15 +86,19 @@ class EOXApplication extends React.Component {
   async getFormData(workflow_id) {
     let formData = await this.helper.request(
       "v1",
-      "/app/" + this.props.application_id + "/workflow/" + workflow_id + "/startform",
+      "/app/" +
+        this.props.application_id +
+        "/workflow/" +
+        workflow_id +
+        "/startform",
       {},
       "get"
     );
     return formData;
   }
 
-  postSubmitCallback = data => {
-    this.deleteCacheData().then(response => {
+  postSubmitCallback = (data) => {
+    this.deleteCacheData().then((response) => {
       if (response.status == "success") {
         this.setState({
           formContent: undefined,
@@ -129,8 +133,23 @@ class EOXApplication extends React.Component {
             appId={this.props.application_id}
           />
         ) : null}
-        <div id="floater">
-          <img src="./public/img/poweredby.png"></img>
+        <div
+          style={{
+            position: "fixed",
+            bottom: "10px",
+            right: "30px",
+            pointerEvents: "none"
+          }}
+        >
+          <img
+            src="./poweredby.png"
+            style={{
+              height: "40px",
+              width: "auto",
+              pointerEvents: "none",
+              opacity: "0.8"
+            }}
+          ></img>
         </div>
       </div>
     );
