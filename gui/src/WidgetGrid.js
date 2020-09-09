@@ -5,6 +5,7 @@ import { Grid, GridColumn } from '@progress/kendo-react-grid';
 import { filterBy } from '@progress/kendo-data-query';
 import { orderBy } from '@progress/kendo-data-query';
 import { process } from '@progress/kendo-data-query';
+import {IntlService} from '@progress/kendo-react-intl'
 import { ExcelExport } from '@progress/kendo-react-excel-export';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 
@@ -199,11 +200,19 @@ export default class WidgetGrid extends React.Component {
                         cellProps.dataItem.items.forEach(item => {
                             sum += item[column.field]
                         })
-                        element = <td>Average: {sum}</td>
+                        element = <td>{sum}</td>
                     }
                 })
                 if (element != null) {
-                    return <td>Average: {sum}</td>
+                    if(column.format){
+                        let kendo_service=new IntlService()
+                        let formattedSum=kendo_service.toString(sum,column.format)
+                    return <td>{formattedSum}</td>
+
+                    } else{
+                    return <td>{sum}</td>
+
+                    }
                 }
             }
         }
@@ -215,9 +224,15 @@ export default class WidgetGrid extends React.Component {
             total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
         }
         if (!Number.isNaN(total)) {
+            let formattedSum=total
+            if(configuration.format){
+                let kendo_service=new IntlService()
+                formattedSum=kendo_service.toString(total,configuration.format)
+            }
             return (
+                
                 <td colSpan={props.colSpan} style={configuration.style}>
-                    {configuration.value}{total}
+                    {configuration.value}{formattedSum}
                 </td>
             );
         } return <td></td>
