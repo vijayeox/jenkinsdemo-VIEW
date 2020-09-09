@@ -142,7 +142,15 @@ class PageContent extends React.Component {
      parentPage = this.parentPage;
    }
    let ev = new CustomEvent("addPage", {
-     detail: {pageId:pageId,title:name,icon:icon,nested:true,currentRow:currentRow,parentPage:parentPage,pageContent:pageContent},
+     detail: {
+       pageId: pageId,
+       title: name,
+       icon: icon,
+       nested: true,
+       rowData: currentRow,
+       parentPage: parentPage,
+       pageContent: pageContent
+     },
      bubbles: true
    });
    document.getElementById("navigation_"+this.appId).dispatchEvent(ev);
@@ -150,24 +158,22 @@ class PageContent extends React.Component {
  }
 
   async buttonAction(action, rowData) {
+    var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
       var pageDetails = this.state.pageContent;
       var that = this;
       var copyPageContent = [];
-      var fileId;
       var checkForTypeUpdate = false;
-      var updateBreadcrumb = true;
       var pageId =null;
       if(action.details.length > 0){
         action.details.every(async (item, index) => {
-          var copyItem = JSON.parse(JSON.stringify(item));
           if (item.type == "Update") {
             var PageRenderDiv = document.getElementById(this.contentDivID);
             this.loader.show(PageRenderDiv ? PageRenderDiv : null);
             checkForTypeUpdate = true;
-            const response = await that.updateActionHandler(item, rowData);
+            const response = await that.updateActionHandler(item, mergeRowData);
             if (response.status == "success") {
               this.loader.destroy();
                if (item.successMessage) {
@@ -208,12 +214,12 @@ class PageContent extends React.Component {
               copyPageContent = [];
             } else {
               var pageContentObj={};
-              pageContentObj = this.replaceParams(item,rowData);
+              pageContentObj = this.replaceParams(item,mergeRowData);
               copyPageContent.push(pageContentObj);
             }
           }
         });
-        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,rowData,copyPageContent);
+        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,mergeRowData,copyPageContent);
       }
     }
   }
@@ -222,7 +228,22 @@ class PageContent extends React.Component {
     var that = this;
     return new Promise((resolve) => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData,details.params.disableAppId).then((response) => {
+      var postData = {};
+      try {
+        if (details.params.postData) {
+          Object.keys(details.params.postData).map((i) => {
+            postData[i] = that.replaceParams(
+              details.params.postData[i],
+              rowData
+            );
+          });
+        } else {
+          postData = rowData;
+        }
+      } catch (error) {
+        postData = rowData;
+      }
+      that.updateCall(queryRoute, postData,details.params.disableAppId).then((response) => {
         that.setState({
           showLoader: false
         });
