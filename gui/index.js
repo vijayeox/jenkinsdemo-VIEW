@@ -1,3 +1,4 @@
+import EOXApplication from "./src/EOXApplication";
 import LeftMenuTemplate from "./src/LeftMenuTemplate";
 import Notification from "./src/Notification";
 import React, { lazy } from 'react'
@@ -46,6 +47,7 @@ const DateFormats  = lazy(() => import('./src/public/js/DateFormats.js'));
 const DropDown  = lazy(() => import('./src/components/Dropdown/DropDownList'));
 
 export {
+  EOXApplication,
   LeftMenuTemplate,
   GridTemplate,
   Notification,
