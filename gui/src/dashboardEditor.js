@@ -4,7 +4,7 @@ import { dashboardEditor as section } from '../metadata.json';
 import JavascriptLoader from './components/javascriptLoader';
 import WidgetRenderer from './WidgetRenderer';
 import DashboardFilter from './DashboardFilter';
-
+import DashboardExportModal from './components/Modals/DashbordExportModal'
 import Swal from 'sweetalert2';
 import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
@@ -25,6 +25,7 @@ class DashboardEditor extends React.Component {
             errors: {},
             filterConfiguration: [],
             dashboardVisibility: -1,
+            dashboardExportModal: false
 
         };
         this.initialState = { ...this.state }
@@ -35,6 +36,7 @@ class DashboardEditor extends React.Component {
         this.dashboardName = React.createRef();
         this.dashboardVisibility = React.createRef();
         this.dashboardDescription = React.createRef();
+        this.exportModalRef = React.createRef();
 
         let thisInstance = this;
         this.editorDialogMessageHandler = function (event) {
@@ -227,7 +229,8 @@ class DashboardEditor extends React.Component {
                 'description': this.state.dashboardDescription,
                 'dashboard_type': "html",
                 'filter_configuration': JSON.stringify(this.state.filterConfiguration),
-                'ispublic': this.state.dashboardVisibility
+                'ispublic': this.state.dashboardVisibility,
+                'export_configuration': JSON.stringify(this.state.selectQuery)
             };
             let url = 'analytics/dashboard';
             let method = '';
@@ -288,7 +291,8 @@ class DashboardEditor extends React.Component {
                         dashboardName: dashboard.name ? dashboard.name : '',
                         dashboardDescription: dashboard.description ? dashboard.description : '',
                         filterConfiguration: (dashboard.filter_configuration != "" ? JSON.parse(dashboard.filter_configuration) : []),
-                        dashboardVisibility: parseInt(dashboard.ispublic)
+                        dashboardVisibility: parseInt(dashboard.ispublic),
+                        selectQuery: dashboard.export_configuration != undefined ? dashboard.export_configuration : ""
                     });
                     editor.setData(response.dashboard.content);
                 },
@@ -478,11 +482,19 @@ class DashboardEditor extends React.Component {
         this.setState({ errors: errors })
         return Object.keys(errors).length == 0
     }
+    showExportModal(showModal) {
+        this.setState({ showExportModal: showModal })
+    }
+
+    setExportQueryUUID() {
+
+    }
 
     render() {
         return (
             <form className="dashboard-editor-form">
                 <div className="dash-manager-buttons">
+                    <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i class="fas fa-file-export"></i></Button>
                     <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
                     <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
                     <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
@@ -500,8 +512,18 @@ class DashboardEditor extends React.Component {
                         core={this.core}
                     />
                 }
-
                 </div>
+                {this.state.showExportModal &&
+                    <DashboardExportModal
+                        show={this.state.showExportModal}
+                        queryOptions={[]}
+                        onHide={() => this.showExportModal(false)}
+                        core={this.core}
+                        notification={this.props.notif}
+                        inputChanged={(e) => this.inputChanged(e)}
+                        selectedExportQuery={this.state.selectQuery || ""}
+                    />
+                }
                 <div id="dashboard-container">
                     <div className="form-group row">
                         <label htmlFor="dashboardName" className="col-form-label form-control-sm">Name</label>

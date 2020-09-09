@@ -11,6 +11,9 @@ import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "./dashboardEditor"
 import Select from 'react-select'
 import ReactToPrint from 'react-to-print'
+import exportFromJSON from 'export-from-json'
+const fileName = 'download'
+const exportType = 'xls'
 
 class DashboardManager extends React.Component {
   constructor(props) {
@@ -35,7 +38,8 @@ class DashboardManager extends React.Component {
       dashboardFilter: [],
       drilldownDashboardFilter: [],
       hideEdit: this.props.hideEdit,
-      dashboardStack: []
+      dashboardStack: [],
+      exportConfiguration: null
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -108,7 +112,7 @@ class DashboardManager extends React.Component {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+            that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, exportConfiguration: dash.export_configuration, dashboardStack: dashboardStack })
           } else {
             that.setState({ inputs: this.state.inputs })
           }
@@ -121,7 +125,7 @@ class DashboardManager extends React.Component {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
           }
         })
       }
@@ -195,7 +199,7 @@ class DashboardManager extends React.Component {
     //pushing next dashboard details into dashboard stack
     let dashboardStack = this.state.dashboardStack
     let filterConfiguration = this.filterRef.current
-    let dashboardTitle=e.drilldownDashboardTitle ? e.drilldownDashboardTitle : ""
+    let dashboardTitle = e.drilldownDashboardTitle ? e.drilldownDashboardTitle : ""
     //adding applied filters on dashboard
     if (dashboardStack.length > 0) {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
@@ -207,9 +211,9 @@ class DashboardManager extends React.Component {
     if (dashboardStack.length > 1) {
       //check for consequent drilldown to same dashboard
       if (dashboardStack[dashboardStack.length - 1]["data"]["uuid"] != value["uuid"])
-        dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter ,drilldownDashboardTitle:dashboardTitle})
+        dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter, drilldownDashboardTitle: dashboardTitle })
     } else {
-      dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter,drilldownDashboardTitle:dashboardTitle })
+      dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter, drilldownDashboardTitle: dashboardTitle })
     }
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
   }
@@ -245,7 +249,7 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      this.setState({ dashboardFilter: [] })
+      this.setState({ dashboardFilter: [],exportConfiguration:value.export_configuration })
     } else {
       name = event.target.name
       value = event.target.value
@@ -279,6 +283,30 @@ class DashboardManager extends React.Component {
         return this.state[property]
     }
     return this.state[property]
+  }
+
+  async exportExcel() {
+
+    let formData = {}
+    if (this.state.exportConfiguration != null) {
+      let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
+      formData["configuration"] = JSON.stringify(parsedConfiguration["configuration"])
+      formData["datasource_id"] = parsedConfiguration["datasource_id"]
+    }
+    let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
+    console.log(response);
+    if (response.status == "success") {
+      console.log(response.data.result)
+      let data = response.data.result
+      let filename=this.state.inputs["dashname"]["name"]
+      exportFromJSON({ data, fileName:filename, exportType })
+    } else {
+      this.notif.current.notify(
+        "Could not fetch data",
+        "Please check the export configuration",
+        "error"
+      )
+    }
   }
 
 
@@ -333,6 +361,7 @@ class DashboardManager extends React.Component {
                     />
                   }
                   <div className="dash-manager-buttons">
+
                     {
                       !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                       <Button onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i></Button>
@@ -366,6 +395,9 @@ class DashboardManager extends React.Component {
                           }}
                           content={() => this.dashboardViewerRef}
                         />
+                        {this.state.exportConfiguration != null &&
+                          <Button onClick={() => this.exportExcel()} title="Export OI"><i class="fas fa-file-export"></i></Button>
+                        }
 
                         {this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                           (this.state.inputs["dashname"] != undefined && this.state.inputs["dashname"]["isdefault"] == "0") ?
