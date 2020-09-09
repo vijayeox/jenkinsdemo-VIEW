@@ -294,7 +294,11 @@ class DashboardManager extends React.Component {
       formData["datasource_id"] = parsedConfiguration["datasource_id"]
     }
     let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
-    console.log(response);
+    this.notif.current.notify(
+      "Generating Report",
+      "Please wait...",
+      "warning"
+    )
     if (response.status == "success") {
       console.log(response.data.result)
       let data = response.data.result
