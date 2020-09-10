@@ -195,24 +195,24 @@ export default class WidgetGrid extends React.Component {
             if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]["aggregate"]) {
                 let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
                 let sum = 0
+                let kendo_service=new IntlService()
+                let formattedSum=sum
                 aggregateColumns.forEach(column => {
                     if (cellProps.field == column.field) {
                         cellProps.dataItem.items.forEach(item => {
                             sum += item[column.field]
                         })
-                        element = <td>{sum}</td>
+                        formattedSum=sum
+                        if(column.format)
+                        {
+                            formattedSum=kendo_service.toString(sum,column.format)
+                        }
+                        element = <td>{formattedSum}</td>
+
                     }
                 })
                 if (element != null) {
-                    if(column.format){
-                        let kendo_service=new IntlService()
-                        let formattedSum=kendo_service.toString(sum,column.format)
                     return <td>{formattedSum}</td>
-
-                    } else{
-                    return <td>{sum}</td>
-
-                    }
                 }
             }
         }
