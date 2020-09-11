@@ -44,8 +44,9 @@ const {
   PackageServiceProvider,
   VFSServiceProvider,
   AuthServiceProvider,
+  AppInstallerServiceProvider,
   SettingsServiceProvider
-} = require('./../osjs-server');
+} = require("./../osjs-server");
 
 const WebSocketProvider = require('./providers/WebSocketProvider');
 const TemplateProvider = require('./providers/TemplateProvider');
@@ -61,6 +62,7 @@ const osjs = new Core(mergedConfig, {});
 osjs.register(CoreServiceProvider, {before: true});
 osjs.register(PackageServiceProvider);
 osjs.register(VFSServiceProvider);
+osjs.register(AppInstallerServiceProvider);
 osjs.register(AuthServiceProvider,{
 	args:{
 		adapter: AuthAdapter
