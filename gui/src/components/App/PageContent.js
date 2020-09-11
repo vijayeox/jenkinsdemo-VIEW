@@ -25,6 +25,7 @@ class PageContent extends React.Component {
     this.proc = this.props.proc;
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
+    this.params = this.props.params;
     this.notif = React.createRef();
     this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
@@ -147,7 +148,7 @@ class PageContent extends React.Component {
        title: name,
        icon: icon,
        nested: true,
-       rowData: currentRow,
+       currentRow: currentRow,
        parentPage: parentPage,
        pageContent: pageContent
      },
@@ -446,14 +447,15 @@ class PageContent extends React.Component {
             });
           }
         }
+        var mergeRowData = this.props.params ? {...this.props.params, ...this.state.currentRow} : this.state.currentRow;
         var dataString = this.prepareDataRoute(
           itemContent.route,
-          this.state.currentRow,
+          mergeRowData,
           itemContent.disableAppId
         );
         var urlPostParams = this.replaceParams(
           item.urlPostParams,
-          this.state.currentRow
+          mergeRowData
         );
         content.push(
           <OX_Grid
@@ -580,6 +582,8 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Page") {
+        var mergeRowData = this.props.params ? {...this.props.params, ...item.params} : item.params;
+        var params = this.replaceParams(mergeRowData, this.state.currentRow);
         content.push(
           <Page
             key={item.page_id}
@@ -591,6 +595,7 @@ class PageContent extends React.Component {
             currentRow={this.state.currentRow}
             pageId={item.page_id}
             core={this.core}
+            {...params}
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
@@ -612,6 +617,7 @@ class PageContent extends React.Component {
       } else {
         if(this.extGUICompoents && this.extGUICompoents[item.type]){
           this.externalComponent = this.extGUICompoents[item.type];
+          item.params = this.replaceParams(item.params, this.state.currentRow);
           let guiComponent = this.extGUICompoents && this.extGUICompoents[item.type] ? (
               <this.externalComponent
                 {...item}

@@ -16,8 +16,7 @@
       this.appNavigationDiv = "navigation_"+this.appId;
       this.state = {
         selected: this.props.selected,
-        pages: [],
-        rowData: {}
+        pages: []
       };
       this.homepage = null;
       this.breadcrumbDiv = this.appId + "_breadcrumbParent";
@@ -110,17 +109,15 @@
 
     addPage = e => {
       var pages = this.state.pages;
-      if (e.detail.rowData) {
-        var rowData = {};
-        Object.keys(e.detail.rowData).map((i) => {
-          rowData["Level"+pages.length+"_" + i] = e.detail.rowData[i];
-        });
+      if(e.detail.pageId){
+        pages.push(e.detail);
+      } else {
+        pages.push(e.detail);
       }
-      pages.push(e.detail);
       if(e.detail.parentPage && document.getElementById(e.detail.parentPage+"_page")){
         this.pageInActive(e.detail.parentPage);
       }
-      this.setState({ pages: pages, rowData: rowData });
+      this.setState({pages:pages});
     };
     selectPage = e => {
       this.pageActive(e.detail.parentPage);
@@ -231,7 +228,7 @@
               core={this.core}
               pageId={item.pageId}
               pageContent={item.pageContent}
-              currentRow={this.state.rowData}
+              currentRow={item.currentRow}
             /></div>);
         });
       }
