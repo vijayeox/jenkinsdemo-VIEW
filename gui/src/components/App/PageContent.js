@@ -564,6 +564,7 @@ class PageContent extends React.Component {
         content.push(
           <DashboardManager
             appId={this.appId}
+            uuid={item.content.uuid}
             args={this.core}
             key={i}
             content={item.content}
