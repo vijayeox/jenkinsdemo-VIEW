@@ -1,5 +1,5 @@
 const { ServiceProvider } = require("@osjs/common");
-const AppInstaller = require("../AppInstallerService.js");
+const AppInstaller = require("../AppInstaller.js");
 
 /**
  * EOX Package Installer

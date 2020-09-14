@@ -81,7 +81,8 @@ class AppInstaller {
       await Promise.all(
         req.body.folders.map((i, index) => {
           var execCommand = "";
-          switch (i.entity) {
+          console.log("Building " + i.path);
+          switch (i.type) {
             case "app":
               execCommand = "npm install && npm run build";
               break;
@@ -92,7 +93,7 @@ class AppInstaller {
               execCommand = "npm install";
               break;
             case "bos":
-              execCommand = "npm run package:discover";
+              execCommand = "npm run build && npm run package:discover";
               break;
             default:
               execCommand = "npm install && npm run build";
@@ -123,15 +124,15 @@ module.exports = AppInstaller;
 //     "folders": [
 //         {
 //             "path": "apps/Admin",
-//             "entity": "app"
+//             "type": "app"
 //         },
 //         {
 //             "path": "gui/src",
-//             "entity": "gui"
+//             "type": "gui"
 //         },
 //         {
 //             "path": "themes/Vision",
-//             "entity": "theme"
+//             "type": "theme"
 //         }
 //     ]
 // }

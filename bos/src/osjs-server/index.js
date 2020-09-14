@@ -33,7 +33,7 @@ const CoreServiceProvider = require('./src/providers/core');
 const PackageServiceProvider = require('./src/providers/packages');
 const VFSServiceProvider = require('./src/providers/vfs');
 const AuthServiceProvider = require('./src/providers/auth');
-const AppInstallerServiceProvider = require("./src/providers/AppInstallerController");
+const AppInstallerServiceProvider = require("./src/providers/AppInstallerService");
 const SettingsServiceProvider = require('./src/providers/settings');
 
 module.exports = {
