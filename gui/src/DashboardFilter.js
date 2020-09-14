@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import { dashboard, dateFormat, dateTimeFormat } from '../metadata.json';
 import { Form, Row, Button } from 'react-bootstrap'
@@ -18,9 +18,9 @@ const customStyles = {
     })
 
 };
-
+ 
 const FilterFields = function (props) {
-    const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
+    const {  filters,index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
@@ -30,6 +30,45 @@ const FilterFields = function (props) {
         "numeric"
     ]
 
+    const removeValue=(e,value)=>{
+        //remove the filter value on click
+        let filterCopy=filters
+        let values=filters[index]["value"]
+        let filteredValues=values.filter((item)=>item.value!==value)
+        filterCopy[index]["value"]=filteredValues
+        props.setFilterValues(filterCopy)
+    }
+  
+    const CustomOption = (props) => {
+        const {
+          children,
+          className,
+          cx,
+          getStyles,
+          isDisabled,
+          isFocused,
+          isSelected,
+          innerRef,
+          innerProps,
+        } = props;
+        const { onClick } = innerProps;
+        innerProps.onClick=(e)=>{
+            if(e.target.tagName!=="I"){
+                onClick(e)
+            }
+            console.log("clicked")
+        }
+        return (
+          <div
+            ref={innerRef}
+            className="custom-react-select-container"
+            {...innerProps}
+          >
+              {/* DONOT CHANGE THE TAGS SPECIFIED BELOW */}
+            <span>{children}</span><i class="far fa-times-circle"  onClick={(e)=>removeValue(e,children)}></i>
+          </div>
+        );
+      };
     const disabledFields = filterMode == "APPLY"
     const visibility = filterMode == "CREATE"
     return (
@@ -157,6 +196,7 @@ const FilterFields = function (props) {
                         filterMode == "Create" ?
                             <Select
                                 selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
+                                components={{Option:CustomOption}}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
@@ -167,12 +207,14 @@ const FilterFields = function (props) {
                             :
                             <Select
                                 selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
+                                components={{Option:CustomOption}}
                                 styles={customStyles}
                                 name="value"
                                 id="value"
                                 onChange={(e) => onUpdate(e, index, "defaultValue")}
                                 value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
                                 options={filters[index]["value"]}
+
                             />
 
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
@@ -209,7 +251,7 @@ class DashboardFilter extends React.Component {
             filters: this.props.filterConfiguration ? this.props.filterConfiguration : [],
             applyFilters: [],
             dateFormat: this.userProfile.key.preferences.dateformat,
-            dateTimeFormat: dateTimeFormat.title.en_EN,
+            dateTimeFormat: dateTimeFormat.title.en_EN
             // userProfile: this.core.make("oxzion/profile").get()
         }
 
@@ -281,45 +323,45 @@ class DashboardFilter extends React.Component {
     }
 
     updateFilterRow(e, index, type) {
-        let name
-        let value
-        let defaultValues = []
-        let filters = [...this.state.filters]
-        if (type === "startDate" || type === "endDate") {
-            name = type
-            value = e
-        }
-        else if (type == "defaultValue") {
-            let selectedoption = { "value": e.value, "label": e.value }
-            name = "value"
-            let filterValue = filters[index] ? filters[index][name] : []
-            try {
-                defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
+            let name
+            let value
+            let defaultValues = []
+            let filters = [...this.state.filters]
+            if (type === "startDate" || type === "endDate") {
+                name = type
+                value = e
             }
-            catch (e) {
-                console.error("Filter value found is a invalid json")
-                defaultValues = []
-            }
-
-            if (defaultValues) {
-                var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
-                //if option already exists in the list
-                if (valueExists.length == 0) {
-                    defaultValues.push(selectedoption)
-                    defaultValues["selected"] = selectedoption.value
+            else if (type == "defaultValue") {
+                let selectedoption = { "value": e.value, "label": e.value }
+                name = "value"
+                let filterValue = filters[index] ? filters[index][name] : []
+                try {
+                    defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
                 }
-                else {
-                    defaultValues["selected"] = selectedoption.value
+                catch (e) {
+                    console.error("Filter value found is a invalid json")
+                    defaultValues = []
                 }
+    
+                if (defaultValues) {
+                    var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
+                    //if option already exists in the list
+                    if (valueExists.length == 0) {
+                        defaultValues.push(selectedoption)
+                        defaultValues["selected"] = selectedoption.value
+                    }
+                    else {
+                        defaultValues["selected"] = selectedoption.value
+                    }
+                }
+                value = defaultValues
             }
-            value = defaultValues
-        }
-        else {
-            name = e.target.name
-            value = e.target.value
-        }
-        filters[index][name] = value
-        this.setState({ filters })
+            else {
+                name = e.target.name
+                value = e.target.value
+            }
+            filters[index][name] = value
+            this.setState({ filters })
     }
 
     handleSelect(e) {
@@ -386,8 +428,11 @@ class DashboardFilter extends React.Component {
         } else if (this.props.filterMode === "APPLY") {
             this.props.setDashboardFilter(filters)
             this.hideFilterDiv()
-            console.log("IMPLEMENTING")
         }
+    }
+
+     setFilterValues(filters){
+        this.setState({filters})
     }
 
     render() {
@@ -404,6 +449,7 @@ class DashboardFilter extends React.Component {
                             index={index}
                             dateFormat={this.state.dateFormat}
                             filters={this.state.filters}
+                            setFilterValues={(filter)=>this.setFilterValues(filter)}
                             input={this.state.input}
                             key={filterRow.key}
                             dataType={filterRow.dataType || ""}
