@@ -244,13 +244,20 @@ class PageContent extends React.Component {
       } catch (error) {
         postData = rowData;
       }
-      that.updateCall(queryRoute, postData,details.params.disableAppId).then((response) => {
-        that.setState({
-          showLoader: false
-        });
-        resolve(response);
-      });
-    });
+      if (details.method != 'Download') {
+        that.updateCall(queryRoute, postData,details.params.disableAppId,details.method).then((response) => {
+         that.setState({
+             showLoader: false
+           });
+           resolve(response);
+         });
+      }else{
+        var anchor = document.createElement('a');
+        anchor.setAttribute("download", true);
+        anchor.setAttribute("href", queryRoute);
+        anchor.click();
+      }
+     });
   }
 
   replaceParams(route, params) {
@@ -325,14 +332,14 @@ class PageContent extends React.Component {
     }
   }
 
-  async updateCall(route, body,disableAppId) {
+async updateCall(route, body,disableAppId,method) {
     let helper = this.core.make("oxzion/restClient");
     route = disableAppId ? route : "/app/" + this.appId + "/" + route;
     let formData = await helper.request(
       "v1",
       route,
-      body,
-      "post"
+      method == "GET" ? {} : body,
+      method ? method.toLowerCase() :"post"
     );
     return formData;
   }
