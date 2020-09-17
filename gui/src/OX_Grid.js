@@ -52,6 +52,15 @@ export default class OX_Grid extends React.Component {
   _grid;
 
   componentDidMount() {
+     document.getElementById(this.appNavigationDiv)
+      ? document
+          .getElementById(this.appNavigationDiv)
+          .addEventListener(
+            "handleGridRefresh",
+            () => this.refreshHandler(),
+            false
+          )
+      : null;
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });

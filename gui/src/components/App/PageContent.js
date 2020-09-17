@@ -279,6 +279,17 @@ class PageContent extends React.Component {
     }
   }
 
+  postSubmitCallback(){
+    let ev = new CustomEvent("handleGridRefresh", {
+      detail: {},
+      bubbles: true
+    });
+    if(document.getElementById("navigation_" + this.appId)){
+      document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
+    }
+  }
+
+
   async updateCall(route, body) {
     let helper = this.core.make("oxzion/restClient");
     let formData = await helper.request(
@@ -369,6 +380,7 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
+            postSubmitCallback={this.postSubmitCallback}
           />
         );
       } else if (item.type == "List") {
