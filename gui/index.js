@@ -9,6 +9,7 @@ import CurrencySelect from "./src/components/Currency Select/currencySelect";
 import countryStateList from "./src/components/data/country-state-codes";
 import * as ReactWebTabs from "react-web-tabs";
 import * as ReactBootstrap from "react-bootstrap";
+import * as KendoFileUploader from "@progress/kendo-react-upload";
 import * as KendoReactButtons from "@progress/kendo-react-buttons";
 import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
 import * as KendoReactEditor from "@progress/kendo-react-editor";
@@ -73,6 +74,7 @@ export {
   ReactBootstrap,
   ReactWebTabs,
   Webcam,
+  KendoFileUploader,
   KendoReactEditor,
   KendoReactDateInputs,
   KendoReactPopup,
