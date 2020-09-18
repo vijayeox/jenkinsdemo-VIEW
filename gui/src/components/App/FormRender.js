@@ -1286,45 +1286,24 @@ runProps(component,form,properties,formdata,instance=null){
           targetComponent.setValue(!formdata[component.key]);
         }
       }
-            }
-          }
-        }
-        if(targetComponent && targetComponent.component && targetComponent.component.properties){
-          that.runProps(targetComponent.component,form,targetComponent.component.properties,form.submission.data);
-          form.setPristine(true);
+    }
+    if (properties["clear_field"]) {
+      var processed = false;
+      if(instance){
+        var instancePath = instance.path.split('.');
+        instancePath.pop();
+        var tempPath = "formdata." + (instancePath.join(".")) + "." + properties["clear_field"] + ' = ""';
+        eval(tempPath);
+        form.submission = {data : formdata};
+        processed = true;
+      }
+      if(!processed){
+        var targetComponent = form.getComponent(properties["clear_field"]);
+        if (targetComponent) {
+          targetComponent.setValue("");
         }
       }
-      if (properties["negate"]) {
-        var targetComponent = form.getComponent(properties["negate"]);
-        if (component.value && targetComponent) {
-          if (component.value.value) {
-            targetComponent.setValue(!component.value.value);
-          } else {
-            targetComponent.setValue(!component.value);
-          }
-        } else {
-          if(formdata[component.key]){
-            targetComponent.setValue(!formdata[component.key]);
-          }
-        }
-      }
-      if (properties["clear_field"]) {
-        var processed = false;
-        if(instance){
-          var instancePath = instance.path.split('.');
-          instancePath.pop();
-          var tempPath = "formdata." + (instancePath.join(".")) + "." + properties["clear_field"] + ' = ""';
-          eval(tempPath);
-          form.submission = {data : formdata};
-          processed = true;
-        }
-        if(!processed){
-          var targetComponent = form.getComponent(properties["clear_field"]);
-          if (targetComponent) {
-            targetComponent.setValue("");
-          }
-        }
-      }
+    }
 
       if (properties["render"]) {
         var targetList = properties["render"].split(',');
