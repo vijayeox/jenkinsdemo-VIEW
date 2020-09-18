@@ -138,7 +138,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					if (raw == true) {
+					if (raw == true || !(resp.headers.get("Content-Type").includes("json"))) {
 						return resp;
 					}
 					return resp.json();
