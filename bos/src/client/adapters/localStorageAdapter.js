@@ -187,7 +187,7 @@ export default class LocalStorageAdapter {
 		if(this.localStorageExists) {
 			try {
 				if(key != null) {
-					this.secureStorage.clear(key);
+					this.secureStorage.removeItem(key);
 
 					console.log('token removed');
 				}

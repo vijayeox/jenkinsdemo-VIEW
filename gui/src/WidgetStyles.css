@@ -56,6 +56,8 @@ div > div.oxzion-widget-drilldown-table-icon{
     z-index: 10;
     width: 16px;
     cursor: pointer;
+    color: #265160;
+    font-size: 20px;
 }
 
 .oxzion-widget-aggregate-drilldown{
