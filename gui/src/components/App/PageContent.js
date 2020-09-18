@@ -11,6 +11,7 @@ import RenderButtons from "./RenderButtons";
 import Notification from "../../Notification";
 import DocumentViewer from "../../DocumentViewer";
 import Dashboard from "../../Dashboard";
+import DashboardManager from '../../DashboardManager';
 import Page from "./Page";
 import TabSegment from "./TabSegment";
 import merge from "deepmerge";
@@ -29,25 +30,25 @@ class PageContent extends React.Component {
     this.notif = React.createRef();
     this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
-    this.parentPage = this.props.parentPage?this.props.parentPage:null;
+    this.parentPage = this.props.parentPage ? this.props.parentPage : null;
     this.loader = this.core.make("oxzion/splash");
     this.fetchExternalComponents().then((response) => {
       this.extGUICompoents = response.guiComponent
         ? response.guiComponent
         : undefined;
-        this.setState({
-          showLoader: false
-        });
+      this.setState({
+        showLoader: false
+      });
     });
     this.contentDivID = "content_" + this.appId + "_" + this.props.pageId;
     this.state = {
-      pageContent: this.props.pageContent?this.props.pageContent:[],
+      pageContent: this.props.pageContent ? this.props.pageContent : [],
       pageId: this.props.pageId,
       submission: this.props.submission,
       showLoader: false,
-      fileId: this.props.fileId?this.props.fileId:null,
+      fileId: this.props.fileId ? this.props.fileId : null,
       isMenuOpen: false,
-      currentRow: this.props.currentRow?this.props.currentRow:{},
+      currentRow: this.props.currentRow ? this.props.currentRow : {},
       title: '',
       displaySection: 'DB',
       sectionData: null,
@@ -56,9 +57,10 @@ class PageContent extends React.Component {
 
   async getPageContent() {
     let helper = this.core.make("oxzion/restClient");
-    let page = await helper.request("v1","/app/" + this.appId + "/page/"+this.pageId,{},"get");
+    let page = await helper.request("v1", "/app/" + this.appId + "/page/" + this.pageId, {}, "get");
     return page;
   }
+
   async fetchExternalComponents() {
     return await import("../../externals/" + this.appId + "/index.js");
   }
@@ -72,18 +74,18 @@ class PageContent extends React.Component {
           ? response.guiComponent
           : undefined;
       });
-      this.setState({pageContent:this.props.pageContent});
+      this.setState({ pageContent: this.props.pageContent });
     }
   }
 
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
-      var row = e; 
+      var row = e;
       var string = this.replaceParams(action[key].rule, e);
       var _moment = moment;
       var profile = this.userprofile;
-      string = string.replace(/moment/g,'_moment');
+      string = string.replace(/moment/g, '_moment');
       var showButton = eval(string);
       var buttonStyles = action[key].icon
         ? {
@@ -96,29 +98,29 @@ class PageContent extends React.Component {
           fontWeight: "600"
         };
       showButton ? actionButtons.push(
-          <abbr title={action[key].name} key={index}>
-            <Button
-              primary={true}
-              className=" btn manage-btn k-grid-edit-command"
-              onClick={() => {
-                action[key].confirmationMessage
-                  ? Swal.fire({
-                    title: action[key].confirmationMessage,
-                    confirmButtonText: "Agree",
-                    confirmButtonColor: "#275362",
-                    showCancelButton: true,
-                    cancelButtonColor: "#7b7878",
-                    target: ".PageRender"
-                  }).then((result) => {
-                    result.value ? this.buttonAction(action[key], e) : null;
-                  }) : action[key].details ? this.buttonAction(action[key], e) : null;
-              }}
-              style={buttonStyles}
-            >
-              {action[key].icon ? (<i className={action[key].icon + " manageIcons"}></i>) : (action[key].name)}
-            </Button>
-          </abbr>
-        ) : null;
+        <abbr title={action[key].name} key={index}>
+          <Button
+            primary={true}
+            className=" btn manage-btn k-grid-edit-command"
+            onClick={() => {
+              action[key].confirmationMessage
+                ? Swal.fire({
+                  title: action[key].confirmationMessage,
+                  confirmButtonText: "Agree",
+                  confirmButtonColor: "#275362",
+                  showCancelButton: true,
+                  cancelButtonColor: "#7b7878",
+                  target: ".PageRender"
+                }).then((result) => {
+                  result.value ? this.buttonAction(action[key], e) : null;
+                }) : action[key].details ? this.buttonAction(action[key], e) : null;
+            }}
+            style={buttonStyles}
+          >
+            {action[key].icon ? (<i className={action[key].icon + " manageIcons"}></i>) : (action[key].name)}
+          </Button>
+        </abbr>
+      ) : null;
     }, this);
     return actionButtons;
   }
@@ -167,8 +169,9 @@ class PageContent extends React.Component {
       var that = this;
       var copyPageContent = [];
       var checkForTypeUpdate = false;
-      var pageId =null;
-      if(action.details.length > 0){
+      var updateBreadcrumb = true;
+      var pageId = null;
+      if (action.details.length > 0) {
         action.details.every(async (item, index) => {
           if (item.type == "Update") {
             var PageRenderDiv = document.getElementById(this.contentDivID);
@@ -186,12 +189,12 @@ class PageContent extends React.Component {
             }  
               item.params.successNotification
                 ? that.notif.current.notify(
-                    "Success",
-                    item.params.successNotification.length > 0
-                      ? item.params.successNotification
-                      : "Update Completed",
-                    "success"
-                  )
+                  "Success",
+                  item.params.successNotification.length > 0
+                    ? item.params.successNotification
+                    : "Update Completed",
+                  "success"
+                )
                 : null;
               this.setState({
                 showLoader: false
@@ -211,7 +214,7 @@ class PageContent extends React.Component {
             }
           } else {
             if (item.params && item.params.page_id) {
-              pageId=item.params.page_id;
+              pageId = item.params.page_id;
               copyPageContent = [];
             } else {
               var pageContentObj={};
@@ -289,21 +292,21 @@ class PageContent extends React.Component {
     } else {
       var regex = /\{\{.*?\}\}/g;
       let m;
-      var matches=[];
+      var matches = [];
       do {
         m = regex.exec(route)
-        if(m){
+        if (m) {
           if (m.index === regex.lastIndex) {
             regex.lastIndex++;
           }
           // The result can be accessed through the `m`-variable.
-        matches.push(m);
+          matches.push(m);
         }
       } while (m);
       matches.forEach((match, groupIndex) => {
         var param = match[0].replace("{{", "");
         param = param.replace("}}", "");
-        if(finalParams[param] !=undefined){
+        if (finalParams[param] != undefined) {
           route = route.replace(
             match[0],
             finalParams[param]
@@ -377,12 +380,12 @@ async updateCall(route, body,disableAppId,method) {
     this.switchSection('EDB', data);
   }
 
-  postSubmitCallback(){
+  postSubmitCallback() {
     let ev = new CustomEvent("handleGridRefresh", {
       detail: {},
       bubbles: true
     });
-    if(document.getElementById("navigation_" + this.appId)){
+    if (document.getElementById("navigation_" + this.appId)) {
       document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
     }
   }
@@ -523,10 +526,10 @@ async updateCall(route, body,disableAppId,method) {
         );
       } else if (item.type == "DocumentViewer") {
         var url;
-        if(item.url){
+        if (item.url) {
           url = this.replaceParams(item.url, this.state.currentRow);
         }
-        if(item.content){
+        if (item.content) {
           url = this.replaceParams(item.content, this.state.currentRow);
         }
         content.push(
@@ -551,10 +554,10 @@ async updateCall(route, body,disableAppId,method) {
         );
       } else if (item.type == "Comment") {
         var url;
-        if(item.content){
+        if (item.content) {
           url = this.replaceParams(item.content, this.state.currentRow);
         } else {
-          if(item.url){
+          if (item.url) {
             url = item.url;
           }
         }
@@ -586,6 +589,20 @@ async updateCall(route, body,disableAppId,method) {
             core={this.core}
             content={item.content}
             proc={this.proc}
+          />
+        );
+      } else if (item.type == "DashboardManager") {
+        content.push(
+          <DashboardManager
+            appId={this.appId}
+            uuid={item.content.uuid}
+            args={this.core}
+            key={i}
+            content={item.content}
+            setTitle={() => {}}
+            proc={this.proc}
+            editDashboard="EDB"
+            hideEdit={true}
           />
         );
       } else if (item.type == "Page") {
@@ -622,20 +639,20 @@ async updateCall(route, body,disableAppId,method) {
           />
         );
       } else {
-        if(this.extGUICompoents && this.extGUICompoents[item.type]){
+        if (this.extGUICompoents && this.extGUICompoents[item.type]) {
           this.externalComponent = this.extGUICompoents[item.type];
           item.params = this.replaceParams(item.params, this.state.currentRow);
           let guiComponent = this.extGUICompoents && this.extGUICompoents[item.type] ? (
-              <this.externalComponent
-                {...item}
-                key={i}
-                components={OxzionGUIComponents}
-                appId={this.appId}
-                core={this.core}
-              ></this.externalComponent>
-            ) : (
-                <h3 key={i}>The component used is not available.</h3>
-              );
+            <this.externalComponent
+              {...item}
+              key={i}
+              components={OxzionGUIComponents}
+              appId={this.appId}
+              core={this.core}
+            ></this.externalComponent>
+          ) : (
+              <h3 key={i}>The component used is not available.</h3>
+            );
           content.push(guiComponent);
         } else {
           content.push(<h3 key={i}>The component used is not available.</h3>);
