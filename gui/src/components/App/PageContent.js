@@ -247,20 +247,64 @@ class PageContent extends React.Component {
       } catch (error) {
         postData = rowData;
       }
-      if (details.method != 'Download') {
-        that.updateCall(queryRoute, postData,details.params.disableAppId,details.method).then((response) => {
-         that.setState({
-             showLoader: false
-           });
-           resolve(response);
-         });
-      }else{
-        var anchor = document.createElement('a');
-        anchor.setAttribute("download", true);
-        anchor.setAttribute("href", queryRoute);
-        anchor.click();
+      that
+        .updateCall(
+          queryRoute,
+          postData,
+          details.params.disableAppId,
+          details.method
+        )
+        .then((response) => {
+          if (details.params.downloadFile && response.status == 200) {
+              this.downloadFile(response).then(
+                (result) => {
+                  that.setState({
+                    showLoader: false,
+                  });
+                  var downloadStatus = result ? "success" : "failed";
+                  resolve({ status: downloadStatus });
+                }
+              );
+          } else {
+            that.setState({
+              showLoader: false,
+            });
+            resolve(response);
+          }
+        });
+    });
+  }
+
+  async downloadFile(response) {
+    try {
+      const file = await response.blob();
+      const fileName = response.headers
+        .get("content-disposition")
+        .split(";")
+        .find((n) => n.includes("filename="))
+        .replace("filename=", "")
+        .trim();
+  
+      if (window.navigator.msSaveOrOpenBlob)
+        // IE10+
+        window.navigator.msSaveOrOpenBlob(file, fileName);
+      else {
+        var a = document.createElement("a"),
+          url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
       }
-     });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  
   }
 
   replaceParams(route, params) {
