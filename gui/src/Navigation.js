@@ -239,6 +239,7 @@ class Navigation extends React.Component {
               app={this.props.appId}
               core={this.core}
               pageId={item.pageId}
+              params={item.params}
               pageContent={item.pageContent}
               currentRow={item.currentRow}
             />

@@ -174,25 +174,11 @@ class PageContent extends React.Component {
             const response = await that.updateActionHandler(item, mergeRowData);
             if (response.status == "success") {
               this.loader.destroy();
-               if (item.successMessage) {
-                Swal.fire({
-                icon: "success",
-                title: item.successMessage,
-                showConfirmButton: true
-              });
-            }  
-              item.params.successNotification
-                ? that.notif.current.notify(
-                  "Success",
-                  item.params.successNotification.length > 0
-                    ? item.params.successNotification
-                    : "Update Completed",
-                  "success"
-                )
-                : null;
-              this.setState({
-                showLoader: false
-              });
+              if (item.successMessage) {
+                Swal.fire({ icon: "success", title: item.successMessage, showConfirmButton: true });
+              }
+              item.params.successNotification ? that.notif.current.notify("Success", item.params.successNotification.length > 0 ? item.params.successNotification : "Update Completed", "success") : null;
+              this.setState({ showLoader: false });
             } else {
               this.loader.destroy();
               Swal.fire({
@@ -208,7 +194,11 @@ class PageContent extends React.Component {
             }
           } else {
             if (item.params && item.params.page_id) {
-              pageId = item.params.page_id;
+              pageId=item.params.page_id;
+              if(item.params.params){
+                var newParams = this.updatePassedParams(item.params.params,mergeRowData)
+                mergeRowData = {...newParams, ...mergeRowData}
+              }
               copyPageContent = [];
             } else {
               var pageContentObj={};
@@ -220,6 +210,9 @@ class PageContent extends React.Component {
         action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,mergeRowData,copyPageContent);
       }
     }
+  }
+  updatePassedParams(params,mergeRowData){
+    return this.replaceParams(params,mergeRowData);
   }
 
   updateActionHandler(details, rowData) {
@@ -236,6 +229,12 @@ class PageContent extends React.Component {
             );
           });
         } else {
+          Object.keys(details.params).map((i) => {
+            postData[i] = that.replaceParams(
+              details.params[i],
+              rowData
+            );
+          });
           postData = rowData;
         }
       } catch (error) {
@@ -321,6 +320,7 @@ class PageContent extends React.Component {
             } else {
               final_route[item] = route[item];
             }
+            final_route[item] = this.searchAndReplaceParams(route[item],finalParams)
           }
         } else {
           final_route[item] = route[item];
@@ -358,6 +358,37 @@ class PageContent extends React.Component {
       });
       return route;
     }
+  }
+
+  searchAndReplaceParams(route,finalParams){
+    var regex = /\{\{.*?\}\}/g;
+    let m;
+    var matches=[];
+    do {
+      m = regex.exec(route)
+      if(m){
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        matches.push(m);
+      }
+    } while (m);
+    matches.forEach((match, groupIndex) => {
+      var param = match[0].replace("{{", "");
+      param = param.replace("}}", "");
+      if(finalParams[param] !=undefined){
+        route = route.replace(
+          match[0],
+          finalParams[param]
+          );
+      } else {
+        route = route.replace(
+          match[0],
+          null
+          );
+      }
+    });
+    return route
   }
 
   prepareDataRoute(route, params, disableAppId) {
@@ -493,6 +524,25 @@ async updateCall(route, body,disableAppId,method) {
           item.urlPostParams,
           mergeRowData
         );
+        var that = this;
+        if(itemContent.operations){
+          if(itemContent.operations.actions){
+            itemContent.operations.actions.map((action, j) => {
+              var act = action;
+              act.details.map((detail, k) => {
+                if(detail.params){
+                  Object.keys(detail.params).map(function (key, index) {
+                    detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
+                  });
+                }
+              });
+            });
+          }
+        }
+        var operations = this.replaceParams(
+          itemContent.operations,
+          mergeRowData
+        );
         content.push(
           <OX_Grid
             rowTemplate={
@@ -515,7 +565,7 @@ async updateCall(route, body,disableAppId,method) {
                   : this.replaceParams(itemContent.defaultFilters)
                 : undefined
             }
-            gridOperations={itemContent.operations}
+            gridOperations={operations}
             gridToolbar={itemContent.toolbarTemplate}
             columnConfig={columnConfig}
             {...itemContent}
