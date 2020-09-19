@@ -55,12 +55,6 @@ class PageContent extends React.Component {
     };
   }
 
-  async getPageContent() {
-    let helper = this.core.make("oxzion/restClient");
-    let page = await helper.request("v1", "/app/" + this.appId + "/page/" + this.pageId, {}, "get");
-    return page;
-  }
-
   async fetchExternalComponents() {
     return await import("../../externals/" + this.appId + "/index.js");
   }
@@ -389,18 +383,6 @@ async updateCall(route, body,disableAppId,method) {
       method ? method.toLowerCase() :"post"
     );
     return formData;
-  }
-
-  async getPageContent(pageId) {
-    // call to api using wrapper
-    let helper = this.core.make("oxzion/restClient");
-    let pageContent = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/page/" + pageId,
-      {},
-      "get"
-    );
-    return pageContent;
   }
 
   setTitle = (title) => {
