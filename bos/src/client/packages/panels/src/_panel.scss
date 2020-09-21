@@ -50,7 +50,7 @@
   }
 
   &[data-position=bottom] {
-    bottom: 0;
+    bottom: 2em !important;
   }
 
   &>.osjs-panel-item {
@@ -70,6 +70,24 @@
       margin-right: $base-margin / 2;
     }
   }
+}
+
+.footer-CR{
+  display: flex;
+  min-height: 2em;
+  align-items: center;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  line-height: normal;
+  bottom: 0 !important;
+  flex-direction: row-reverse !important;
+  background-color: #275362 !important;
+  z-index: 50;
+}
+.footer-CR .coppyRight {
+  color: #fff
 }
 
 .osjs-root[data-dir="rtl"] {

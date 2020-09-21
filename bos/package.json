@@ -99,7 +99,7 @@
     "secure-web-storage": "^1.0.2",
     "signale": "^1.4.0",
     "simplejsonconf": "2.0.5",
-    "sweetalert2": "^8.16.3",
+    "sweetalert2": "^8.19.0",
     "sweetalert2-react-content": "^1.1.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^1.1.2",

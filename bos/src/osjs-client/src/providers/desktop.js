@@ -70,6 +70,7 @@ export default class DesktopServiceProvider extends ServiceProvider {
 
     this.core.on('osjs/core:started', () => {
       this.desktop.applySettings();
+      this.desktop.cookiesCheck();
     });
   }
 

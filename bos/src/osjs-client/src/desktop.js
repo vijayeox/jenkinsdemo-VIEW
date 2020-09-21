@@ -34,6 +34,7 @@ import {handleTabOnTextarea} from './utils/dom';
 import Window from './window';
 import Search from './search';
 import * as merge from 'deepmerge';
+import Swal from 'sweetalert2';
 
 const TEMPLATE = subtract => `
   .osjs-root[data-mobile=true] .osjs-window,
@@ -89,7 +90,7 @@ const applyBackgroundStyles = (core, background) => {
  * Creates a rectangle with the realestate panels takes up
  */
 const createPanelSubtraction = (panel, panels) => {
-  const subtraction = {top: 0, left: 0, right: 0, bottom: 0};
+  const subtraction = {top: 0, left: 0, right: 0, bottom: 30};
   const set = p => (subtraction[p.options.position] = p.$element.offsetHeight);
 
   if (panels.length > 0) {
@@ -679,5 +680,34 @@ export default class Desktop extends EventEmitter {
     const height = root.offsetHeight - top - bottom;
 
     return {width, height, top, bottom, left, right};
+  }
+
+  async cookiesCheck(){
+    let helper = this.core.make('oxzion/restClient');
+    let condition = await helper.request('v1','/user/me/getPolicyTerm', {}, 'get' );
+    console.log(condition['data'][0]);  
+    if(typeof condition['data'][0] == 'undefined' && condition['data'][0] !== "1"){
+      const { value: accept } = await Swal.fire({
+        title: 'Privacy and Policy',
+        allowOutsideClick: false,
+        input: 'checkbox',
+        inputPlaceholder: 'I have read the EOX Vatage <a href="https://www.eoxvantage.com/privacy-policy/" target="_blank">Privacy and Policy</a>. I agree with the terms and conditions.',
+        confirmButtonText:
+        'Continue<i class="fa fa-arrow-right"></i>',
+        inputValidator: (result) => {
+          return !result && 'You need to agree with T&C'
+        }
+      })
+
+      if (accept) {
+        let helper = this.core.make("oxzion/restClient");
+        let updateterm = await helper.request(
+          "v1",
+          "/user/me/updatePolicyTerm",{},
+          "post"
+          );
+        Swal.fire('You agreed with T&C :)')
+      }
+    }
   }
 }

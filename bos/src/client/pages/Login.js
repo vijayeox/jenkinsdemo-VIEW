@@ -182,6 +182,9 @@ class Login extends React.Component {
             </div>
             <footer className="footer-links">
               <a href="https://www.eoxvantage.com">About Us</a>
+              <div class="coppyRight">
+               Copyright © 2004-2020 EOX Vantage. All rights reserved. 
+               </div>
             </footer>
           </div>
         </main>
