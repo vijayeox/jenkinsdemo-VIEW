@@ -477,7 +477,7 @@ async updateCall(route, body,disableAppId,method) {
         content.push(
           <FormRender
             key={i}
-            url={dataString}
+            url={item.url == '' ? undefined: dataString}
             urlPostParams={urlPostParams}
             core={this.core}
             proc={this.proc}
