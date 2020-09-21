@@ -22,6 +22,8 @@ export default class DocumentViewer extends Component {
     this.helper = this.core.make("oxzion/restClient");
     this.baseUrl = this.core.config("wrapper.url");
     this.notif = React.createRef();
+    var urlRes = this.props.url.split("/");
+    this.fileId = urlRes[urlRes.length - 2];
     this.getDocumentsList = this.getDocumentsList.bind(this);
     this.getDocumentsList();
   }
@@ -154,6 +156,34 @@ export default class DocumentViewer extends Component {
     }
   }
 
+  async deleteFile(attachementId) {
+    return await this.helper.request(
+      "v1",
+      "/app/" +
+        this.appId +
+        "/file/" +
+        this.fileId +
+        "/attachment/" +
+        attachementId,
+      {},
+      "delete"
+    );
+  }
+
+  async renameFile(attachementId, name) {
+    return await this.helper.request(
+      "v1",
+      "/app/" +
+        this.appId +
+        "/file/" +
+        this.fileId +
+        "/attachment/" +
+        attachementId,
+      { name: name },
+      "post"
+    );
+  }
+
   generateDocumentList() {
     var accordionHTML = [];
     if (this.state.documentTypes) {
@@ -231,9 +261,12 @@ export default class DocumentViewer extends Component {
                               ".doc",
                               ".docx",
                               ".xlsx",
-                              ".xls"
+                              ".xls",
+                              ".txt",
+                              ".pst",
+                              ".ost",
                             ],
-                            maxFileSize: 25000000
+                            maxFileSize: 25000000,
                           }}
                         />
                         <button
@@ -318,21 +351,58 @@ export default class DocumentViewer extends Component {
         documentData.file;
       return (
         <React.Fragment>
+          <div className="row">
+            <div className="col-md-12">
+              <input
+                type="text"
+                id="filename"
+                className="form-control"
+                value={this.state.selectedDocument.originalName}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  const edited = { ...this.state.selectedDocument };
+                  edited["originalName"] = value;
+                  this.setState({
+                    selectedDocument: edited,
+                  });
+                }}
+              />
+              <button
+                title="rename"
+                className="btn btn-dark"
+                onClick={() =>
+                  this.renameFile(
+                    documentData.uuid,
+                    this.state.selectedDocument.originalName
+                  )
+                }
+              >
+                <i className="fa fa-floppy-o"></i>
+              </button>
+              <button
+                title="delete"
+                className="btn btn-dark"
+                onClick={() => this.deleteFile(documentData.uuid)}
+              >
+                <i className="fa fa-trash"></i>
+              </button>
+              <a
+                href={url}
+                download
+                target="_blank"
+                className="image-download-button"
+              >
+                <i className="fa fa-download" aria-hidden="true"></i>
+                Download
+              </a>
+            </div>
+          </div>
           <img
             onLoad={() => this.loader.destroy()}
             className="img-fluid"
             style={{ height: "100%" }}
             src={url}
           />
-          <a
-            href={url}
-            download
-            target="_blank"
-            className="image-download-button"
-          >
-            <i className="fa fa-download" aria-hidden="true"></i>
-            Download
-          </a>
         </React.Fragment>
       );
     } else if (type == "mp4" || type == "avi") {
@@ -345,17 +415,56 @@ export default class DocumentViewer extends Component {
         "?docPath=" +
         documentData.file;
       return (
-        <video
-          autoplay
-          muted
-          preload
-          controls
-          width="100%"
-          onCanPlay={this.loader.destroy()}
-        >
-          <source src={url} type={"video/" + type} />
-          Sorry, your browser doesn't support embedded videos.
-        </video>
+        <div>
+          <div className="row">
+            <div className="col-md-12">
+              <input
+                type="text"
+                id="filename"
+                className="form-control"
+                value={this.state.selectedDocument.originalName}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  const edited = { ...this.state.selectedDocument };
+                  edited["originalName"] = value;
+                  this.setState({
+                    selectedDocument: edited,
+                  });
+                }}
+              />
+              <button
+                title="rename"
+                className="btn btn-dark"
+                onClick={() =>
+                  this.renameFile(
+                    documentData.uuid,
+                    this.state.selectedDocument.originalName
+                  )
+                }
+              >
+                <i className="fa fa-floppy-o"></i>
+              </button>
+              <button
+                title="delete"
+                className="btn btn-dark"
+                onClick={() => this.deleteFile(documentData.uuid)}
+              >
+                <i className="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <video
+            autoplay
+            muted
+            preload
+            controls
+            width="100%"
+            onCanPlay={this.loader.destroy()}
+          >
+            <source src={url} type={"video/" + type} />
+            Sorry, your browser doesn't support embedded videos.
+          </video>
+        </div>
       );
     } else if (type == "pdf") {
       url =
@@ -369,16 +478,55 @@ export default class DocumentViewer extends Component {
         "?docPath=" +
         documentData.file;
       return (
-        <iframe
-          onLoad={() => {
-            setTimeout(() => {
-              this.loader.destroy();
-            }, 800);
-          }}
-          key={Math.random() * 20}
-          src={url}
-          className="iframeDoc"
-        ></iframe>
+        <div className="pdf-frame">
+          <div className="row">
+            <div className="col-md-12">
+              <input
+                type="text"
+                id="filename"
+                className="form-control"
+                value={this.state.selectedDocument.originalName}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  const edited = { ...this.state.selectedDocument };
+                  edited["originalName"] = value;
+                  this.setState({
+                    selectedDocument: edited,
+                  });
+                }}
+              />
+              <button
+                title="rename"
+                className="btn btn-dark"
+                onClick={() =>
+                  this.renameFile(
+                    documentData.uuid,
+                    this.state.selectedDocument.originalName
+                  )
+                }
+              >
+                <i className="fa fa-floppy-o"></i>
+              </button>
+              <button
+                title="delete"
+                className="btn btn-dark"
+                onClick={() => this.deleteFile(documentData.uuid)}
+              >
+                <i className="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <iframe
+            onLoad={() => {
+              setTimeout(() => {
+                this.loader.destroy();
+              }, 800);
+            }}
+            key={Math.random() * 20}
+            src={url}
+            className="iframeDoc"
+          ></iframe>
+        </div>
       );
     } else {
       url =
@@ -394,16 +542,53 @@ export default class DocumentViewer extends Component {
       this.loader.destroy();
       return (
         <React.Fragment>
+          <div className="row">
+            <div className="col-md-12">
+              <input
+                type="text"
+                id="filename"
+                className="form-control"
+                value={this.state.selectedDocument.originalName}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  const edited = { ...this.state.selectedDocument };
+                  edited["originalName"] = value;
+                  this.setState({
+                    selectedDocument: edited,
+                  });
+                }}
+              />
+              <button
+                title="rename"
+                className="btn btn-dark"
+                onClick={() =>
+                  this.renameFile(
+                    documentData.uuid,
+                    this.state.selectedDocument.originalName
+                  )
+                }
+              >
+                <i className="fa fa-floppy-o"></i>
+              </button>
+              <button
+                title="delete"
+                className="btn btn-dark"
+                onClick={() => this.deleteFile(documentData.uuid)}
+              >
+                <i className="fa fa-trash"></i>
+              </button>
+              <a
+                href={url}
+                download
+                target="_blank"
+                className="image-download-button"
+              >
+                <i className="fa fa-download" aria-hidden="true"></i>
+                Download
+              </a>
+            </div>
+          </div>
           <img className="img-fluid" style={{ height: "100%" }} src={url2} />
-          <a
-            href={url}
-            download
-            target="_blank"
-            className="image-download-button"
-          >
-            <i className="fa fa-download" aria-hidden="true"></i>
-            Download
-          </a>
         </React.Fragment>
       );
     }
