@@ -341,13 +341,6 @@ class FormRender extends React.Component {
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
         if (response.status == "success") {
-          //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
-          // if (response.data) {
-          // form.setSubmission({data:this.formatFormData(response.data)}).then(function (){
-          //   that.processProperties(form);
-          // });
-          // form.triggerChange();
-          // }
           await this.deleteCacheData().then(response2 => {
             that.showFormLoader(false, 0);
             if (response2.status == "success") {
@@ -377,11 +370,8 @@ class FormRender extends React.Component {
       let method = "post";
       if (form._form["properties"] && form._form["properties"]["submission_api"]) {
         var postParams = JSON.parse(form._form["properties"]["submission_api"]);
-        console.log(postParams);
         route = this.replaceParams(postParams.api.url, form.submission.data);
-        console.log(data);
         delete data.orgId;
-        console.log(route);
         method = postParams.api.method;
       } else if (this.state.workflowId) {
         route = "/workflow/" + this.state.workflowId;
@@ -1066,7 +1056,6 @@ class FormRender extends React.Component {
                 }
               }
             }
-          }
           if (event.type == "triggerFormChange") {
             form.triggerChange();
           }
