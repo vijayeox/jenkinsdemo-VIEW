@@ -179,7 +179,7 @@ export default class DocumentViewer extends Component {
         "/file/" +
         this.fileId +
         "/attachment/" +
-        attachementId,
+        attachementId + "/remove",
       {},
       "delete"
     );
