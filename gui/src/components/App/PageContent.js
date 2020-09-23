@@ -26,6 +26,7 @@ class PageContent extends React.Component {
     this.proc = this.props.proc;
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
+    this.params = this.props.params;
     this.notif = React.createRef();
     this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
@@ -52,12 +53,6 @@ class PageContent extends React.Component {
       displaySection: 'DB',
       sectionData: null,
     };
-  }
-
-  async getPageContent() {
-    let helper = this.core.make("oxzion/restClient");
-    let page = await helper.request("v1", "/app/" + this.appId + "/page/" + this.pageId, {}, "get");
-    return page;
   }
 
   async fetchExternalComponents() {
@@ -138,59 +133,52 @@ class PageContent extends React.Component {
       />
     );
   }
-  loadPage(pageId, icon, hideLoader, name, currentRow, pageContent) {
-    var parentPage = this.pageId;
-    if (this.isTab == "true") {
-      parentPage = this.parentPage;
-    }
-    let ev = new CustomEvent("addPage", {
-      detail: { pageId: pageId, title: name, icon: icon, nested: true, currentRow: currentRow, parentPage: parentPage, pageContent: pageContent },
-      bubbles: true
-    });
-    document.getElementById("navigation_" + this.appId).dispatchEvent(ev);
-    this.loader.destroy();
-  }
+  loadPage(pageId, icon, hideLoader,name,currentRow,pageContent) {
+   var parentPage = this.pageId;
+   if(this.isTab=="true"){
+     parentPage = this.parentPage;
+   }
+   let ev = new CustomEvent("addPage", {
+     detail: {
+       pageId: pageId,
+       title: name,
+       icon: icon,
+       nested: true,
+       currentRow: currentRow,
+       parentPage: parentPage,
+       pageContent: pageContent
+     },
+     bubbles: true
+   });
+   document.getElementById("navigation_"+this.appId).dispatchEvent(ev);
+   this.loader.destroy();
+ }
 
   async buttonAction(action, rowData) {
+    var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
     if (action.page_id) {
       this.loadPage(action.page_id);
     } else if (action.details) {
       var pageDetails = this.state.pageContent;
       var that = this;
       var copyPageContent = [];
-      var fileId;
       var checkForTypeUpdate = false;
       var updateBreadcrumb = true;
       var pageId = null;
       if (action.details.length > 0) {
         action.details.every(async (item, index) => {
-          var copyItem = JSON.parse(JSON.stringify(item));
           if (item.type == "Update") {
             var PageRenderDiv = document.getElementById(this.contentDivID);
             this.loader.show(PageRenderDiv ? PageRenderDiv : null);
             checkForTypeUpdate = true;
-            const response = await that.updateActionHandler(item, rowData);
+            const response = await that.updateActionHandler(item, mergeRowData);
             if (response.status == "success") {
               this.loader.destroy();
               if (item.successMessage) {
-                Swal.fire({
-                  icon: "success",
-                  title: item.successMessage,
-                  showConfirmButton: true
-                });
+                Swal.fire({ icon: "success", title: item.successMessage, showConfirmButton: true });
               }
-              item.params.successNotification
-                ? that.notif.current.notify(
-                  "Success",
-                  item.params.successNotification.length > 0
-                    ? item.params.successNotification
-                    : "Update Completed",
-                  "success"
-                )
-                : null;
-              this.setState({
-                showLoader: false
-              });
+              item.params.successNotification ? that.notif.current.notify("Success", item.params.successNotification.length > 0 ? item.params.successNotification : "Update Completed", "success") : null;
+              this.setState({ showLoader: false });
             } else {
               this.loader.destroy();
               Swal.fire({
@@ -206,31 +194,110 @@ class PageContent extends React.Component {
             }
           } else {
             if (item.params && item.params.page_id) {
-              pageId = item.params.page_id;
+              pageId=item.params.page_id;
+              if(item.params.params){
+                var newParams = this.updatePassedParams(item.params.params,mergeRowData)
+                mergeRowData = {...newParams, ...mergeRowData}
+              }
               copyPageContent = [];
             } else {
-              var pageContentObj = {};
-              pageContentObj = this.replaceParams(item, rowData);
+              var pageContentObj={};
+              pageContentObj = this.replaceParams(item,mergeRowData);
               copyPageContent.push(pageContentObj);
             }
           }
         });
-        action.updateOnly ? null : this.loadPage(pageId, action.icon, true, action.name, rowData, copyPageContent);
+        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,mergeRowData,copyPageContent);
       }
     }
+  }
+  updatePassedParams(params,mergeRowData){
+    return this.replaceParams(params,mergeRowData);
   }
 
   updateActionHandler(details, rowData) {
     var that = this;
     return new Promise((resolve) => {
       var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData, details.params.disableAppId).then((response) => {
-        that.setState({
-          showLoader: false
+      var postData = {};
+      try {
+        if (details.params.postData) {
+          Object.keys(details.params.postData).map((i) => {
+            postData[i] = that.replaceParams(
+              details.params.postData[i],
+              rowData
+            );
+          });
+        } else {
+          Object.keys(details.params).map((i) => {
+            postData[i] = that.replaceParams(
+              details.params[i],
+              rowData
+            );
+          });
+          postData = rowData;
+        }
+      } catch (error) {
+        postData = rowData;
+      }
+      that
+        .updateCall(
+          queryRoute,
+          postData,
+          details.params.disableAppId,
+          details.method
+        )
+        .then((response) => {
+          if (details.params.downloadFile && response.status == 200) {
+              this.downloadFile(response).then(
+                (result) => {
+                  that.setState({
+                    showLoader: false,
+                  });
+                  var downloadStatus = result ? "success" : "failed";
+                  resolve({ status: downloadStatus });
+                }
+              );
+          } else {
+            that.setState({
+              showLoader: false,
+            });
+            resolve(response);
+          }
         });
-        resolve(response);
-      });
     });
+  }
+
+  async downloadFile(response) {
+    try {
+      const file = await response.blob();
+      const fileName = response.headers
+        .get("content-disposition")
+        .split(";")
+        .find((n) => n.includes("filename="))
+        .replace("filename=", "")
+        .trim();
+  
+      if (window.navigator.msSaveOrOpenBlob)
+        // IE10+
+        window.navigator.msSaveOrOpenBlob(file, fileName);
+      else {
+        var a = document.createElement("a"),
+          url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  
   }
 
   replaceParams(route, params) {
@@ -253,6 +320,7 @@ class PageContent extends React.Component {
             } else {
               final_route[item] = route[item];
             }
+            final_route[item] = this.searchAndReplaceParams(route[item],finalParams)
           }
         } else {
           final_route[item] = route[item];
@@ -292,40 +360,60 @@ class PageContent extends React.Component {
     }
   }
 
-  prepareDataRoute(route, params) {
+  searchAndReplaceParams(route,finalParams){
+    var regex = /\{\{.*?\}\}/g;
+    let m;
+    var matches=[];
+    do {
+      m = regex.exec(route)
+      if(m){
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        matches.push(m);
+      }
+    } while (m);
+    matches.forEach((match, groupIndex) => {
+      var param = match[0].replace("{{", "");
+      param = param.replace("}}", "");
+      if(finalParams[param] !=undefined){
+        route = route.replace(
+          match[0],
+          finalParams[param]
+          );
+      } else {
+        route = route.replace(
+          match[0],
+          null
+          );
+      }
+    });
+    return route
+  }
+
+  prepareDataRoute(route, params, disableAppId) {
     if (typeof route == "string") {
       if (!params) {
         params = {};
       }
       var result = this.replaceParams(route, params);
-      result = "app/" + this.appId + "/" + result;
+      result = disableAppId ? result : "app/" + this.appId + "/" + result;
       return result;
     } else {
       return route;
     }
   }
 
-  async updateCall(route, body, disableAppId) {
+async updateCall(route, body,disableAppId,method) {
     let helper = this.core.make("oxzion/restClient");
+    route = disableAppId ? route : "/app/" + this.appId + "/" + route;
     let formData = await helper.request(
       "v1",
-      "/app/" + this.appId + "/" + route,
-      body,
-      "post"
+      route,
+      method == "GET" ? {} : body,
+      method ? method.toLowerCase() :"post"
     );
     return formData;
-  }
-
-  async getPageContent(pageId) {
-    // call to api using wrapper
-    let helper = this.core.make("oxzion/restClient");
-    let pageContent = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/page/" + pageId,
-      {},
-      "get"
-    );
-    return pageContent;
   }
 
   setTitle = (title) => {
@@ -389,7 +477,7 @@ class PageContent extends React.Component {
         content.push(
           <FormRender
             key={i}
-            url={dataString}
+            url={item.url == '' ? undefined: dataString}
             urlPostParams={urlPostParams}
             core={this.core}
             proc={this.proc}
@@ -406,7 +494,7 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
-            dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow, true) : undefined}
+            dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
           />
         );
       } else if (item.type == "List") {
@@ -426,13 +514,34 @@ class PageContent extends React.Component {
             });
           }
         }
+        var mergeRowData = this.props.params ? {...this.props.params, ...this.state.currentRow} : this.state.currentRow;
         var dataString = this.prepareDataRoute(
           itemContent.route,
-          this.state.currentRow
+          mergeRowData,
+          itemContent.disableAppId
         );
         var urlPostParams = this.replaceParams(
           item.urlPostParams,
-          this.state.currentRow
+          mergeRowData
+        );
+        var that = this;
+        if(itemContent.operations){
+          if(itemContent.operations.actions){
+            itemContent.operations.actions.map((action, j) => {
+              var act = action;
+              act.details.map((detail, k) => {
+                if(detail.params){
+                  Object.keys(detail.params).map(function (key, index) {
+                    detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
+                  });
+                }
+              });
+            });
+          }
+        }
+        var operations = this.replaceParams(
+          itemContent.operations,
+          mergeRowData
         );
         content.push(
           <OX_Grid
@@ -456,7 +565,7 @@ class PageContent extends React.Component {
                   : this.replaceParams(itemContent.defaultFilters)
                 : undefined
             }
-            gridOperations={itemContent.operations}
+            gridOperations={operations}
             gridToolbar={itemContent.toolbarTemplate}
             columnConfig={columnConfig}
             {...itemContent}
@@ -573,6 +682,8 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Page") {
+        var mergeRowData = this.props.params ? {...this.props.params, ...item.params} : item.params;
+        var params = this.replaceParams(mergeRowData, this.state.currentRow);
         content.push(
           <Page
             key={item.page_id}
@@ -584,6 +695,7 @@ class PageContent extends React.Component {
             currentRow={this.state.currentRow}
             pageId={item.page_id}
             core={this.core}
+            {...params}
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
@@ -605,6 +717,7 @@ class PageContent extends React.Component {
       } else {
         if (this.extGUICompoents && this.extGUICompoents[item.type]) {
           this.externalComponent = this.extGUICompoents[item.type];
+          item.params = this.replaceParams(item.params, this.state.currentRow);
           let guiComponent = this.extGUICompoents && this.extGUICompoents[item.type] ? (
             <this.externalComponent
               {...item}

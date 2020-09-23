@@ -1,0 +1,89 @@
+{
+    "FormSchema": {
+        "_DEFAULT_OPTIONAL_FIELDS": {
+            "defaultFields": {},
+            "optionalFields": {
+                "APP NAME": {
+                    "label": "APP NAME",
+                    "control": {
+                        "name": "app_name",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Group": {
+                    "label": "Group",
+                    "control": {
+                        "name": "group",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Field": {
+                    "label": "Field",
+                    "control": {
+                        "name": "field",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Operation": {
+                    "label": "Operation",
+                    "control": {
+                        "name": "operation",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Filter": {
+                    "label": "Filter",
+                    "control": {
+                        "name": "filter",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Date_Type": {
+                    "label": "Date_Type",
+                    "control": {
+                        "name": "date_type",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Date-Period": {
+                    "label": "Date-Period",
+                    "control": {
+                        "name": "date-period",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "List": {
+                    "label": "List",
+                    "control": {
+                        "name": "list",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Sort": {
+                    "label": "Sort",
+                    "control": {
+                        "name": "sort",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Round": {
+                    "label": "Round",
+                    "control": {
+                        "name": "round",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                }
+            }
+        }
+    }
+}

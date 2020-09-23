@@ -139,6 +139,22 @@
   margin-left: 0px;
 }
 
+.custom-react-select-container{
+  height: auto;
+  padding: 8px 12px;
+  display: flex;
+}
+.custom-react-select-container:hover{
+  background-color: #DEEBFF !important;
+  width: 100%;
+
+}
+.custom-react-select-container i{
+  // float: right;
+  // right: 0px;
+  margin-left: auto;
+}
+
 .dash-manager-bar {
   // border: 0.5px solid#3d6776;
   // padding: 1em;
@@ -270,3 +286,8 @@
   color: #656565 !important;
   background-color: rgba(78, 73, 73, 0.2) !important
 }
+.drillDownStyle .k-master-row:hover{
+  color: blue !important;
+  text-decoration: underline;
+  cursor: pointer !important;
+  }

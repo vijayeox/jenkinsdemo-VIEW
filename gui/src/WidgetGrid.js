@@ -5,6 +5,7 @@ import { Grid, GridColumn } from '@progress/kendo-react-grid';
 import { filterBy } from '@progress/kendo-data-query';
 import { orderBy } from '@progress/kendo-data-query';
 import { process } from '@progress/kendo-data-query';
+import {IntlService} from '@progress/kendo-react-intl'
 import { ExcelExport } from '@progress/kendo-react-excel-export';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 
@@ -56,7 +57,6 @@ export default class WidgetGrid extends React.Component {
     saveAsExcel = () => {
         this.excelExporter.save();
     }
-
 
     parseData = () => {
         let fieldDataTypeMap = new Map();
@@ -195,16 +195,24 @@ export default class WidgetGrid extends React.Component {
             if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]["aggregate"]) {
                 let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
                 let sum = 0
+                let kendo_service=new IntlService()
+                let formattedSum=sum
                 aggregateColumns.forEach(column => {
                     if (cellProps.field == column.field) {
                         cellProps.dataItem.items.forEach(item => {
                             sum += item[column.field]
                         })
-                        element = <td>Average: {sum}</td>
+                        formattedSum=sum
+                        if(column.format)
+                        {
+                            formattedSum=kendo_service.toString(sum,column.format)
+                        }
+                        element = <td>{formattedSum}</td>
+
                     }
                 })
                 if (element != null) {
-                    return <td>Average: {sum}</td>
+                    return <td>{formattedSum}</td>
                 }
             }
         }
@@ -214,12 +222,17 @@ export default class WidgetGrid extends React.Component {
         let total = 0
         if (this.state.displayedData.data) {
             total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
-
         }
         if (!Number.isNaN(total)) {
+            let formattedSum=total
+            if(configuration.format){
+                let kendo_service=new IntlService()
+                formattedSum=kendo_service.toString(total,configuration.format)
+            }
             return (
+                
                 <td colSpan={props.colSpan} style={configuration.style}>
-                    {configuration.value}{total}
+                    {configuration.value}{formattedSum}
                 </td>
             );
         } return <td></td>
@@ -229,29 +242,23 @@ export default class WidgetGrid extends React.Component {
     render() {
         let thiz = this;
         let hasBackButton = this.hasBackButton()
-        let styleParam = " ";
+
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
                     columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
                 }
-                else{
-                    console.log(config)
+                else {
                     columns.push(<GridColumn key={config['field']} {...config} />);
                 }
             }
             return columns;
         }
 
-        if (this.isDrillDownTable) {
-            styleParam = { height: this.height, width: this.width, cursor: 'pointer' }
-        } else {
-            styleParam = { height: this.height, width: this.width }
-        }
-
         let gridTag = <Grid
-            style={styleParam}
+            style={{ height: this.height, width: this.width }}
+            className={this.isDrillDownTable ? "drillDownStyle" : ""}
             data={this.state.displayedData}
             resizable={this.resizable}
             reorderable={this.reorderable}
@@ -259,14 +266,12 @@ export default class WidgetGrid extends React.Component {
             filterable={this.filterable}
             filter={this.state.filter}
             onFilterChange={this.gridFilterChanged}
-
             pageSize={this.pageSize}
             {...this.pagerConfig} //Sets grid "pageable" property
             total={this.getFilteredRowCount()}
             skip={this.state.pagination.skip}
             take={this.state.pagination.take}
             onPageChange={this.gridPageChanged}
-
             sortable={this.sortable}
             sort={this.state.sort}
             onSortChange={this.gridSortChanged}

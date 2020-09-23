@@ -6,6 +6,10 @@ import Notification from "./Notification"
 import Switch from 'react-switch'
 import QueryModal from './components/Modals/QueryModal'
 import QueryResult from './components/Query/QueryResult'
+import { FormSchema } from "./components/Modals/QueryModalSchema.json"
+import JSONFormRenderer from "./JSONFormRenderer"
+
+
 import ReactDOM from 'react-dom'
 import "./public/css/query.scss";
 
@@ -13,6 +17,7 @@ class Query extends React.Component {
   constructor(props) {
     super(props);
     this.core = this.props.args;
+    this.ref = React.createRef();
     this.props.setTitle(section.title.en_EN);
     this.notif = React.createRef();
     this.state = {
@@ -80,7 +85,7 @@ class Query extends React.Component {
       validForm = false
       errors["datasourcename"] = "*Please select the datasource";
     }
-    if (!this.state.inputs["configuration"]) {
+    if (!this.ref.current.getFormConfig(false)) {
       errors["configuration"] = "*Please enter the query";
       validForm = false
     }
@@ -89,8 +94,13 @@ class Query extends React.Component {
   }
 
   onsaveQuery() {
-    this.validateform() ? this.setState({ showQueryModal: true, modalContent: "", modalType: "Save" }) : null
-  }
+    if(this.validateform()){
+      let inputsCopy={...this.state.inputs}
+      inputsCopy["configuration"]=this.ref.current.getFormConfig(false)
+      this.setState({inputs:inputsCopy},()=>{
+        this.setState({ showQueryModal: true, modalContent: "", modalType: "Save" })
+      })  
+  }}
 
   renderEmpty() {
     return [<React.Fragment key={1} />];
@@ -351,14 +361,15 @@ class Query extends React.Component {
             <Form.Group as={Row}>
               <Form.Label column lg="3">Configuration:</Form.Label>
               <Col lg="9">
-                <Form.Control
+                {/* <Form.Control
                   placeholder="Enter your Query here"
                   as="textarea"
                   row="2"
                   name="configuration"
                   value={this.state.inputs["configuration"] || ''}
                   onChange={(e) => this.handleChange(e, this)}
-                />
+                /> */}
+                <JSONFormRenderer formSchema={FormSchema["_DEFAULT_OPTIONAL_FIELDS"]} values={this.ref.current?JSON.parse(this.ref.current.getFormConfig(false)):{}} subForm={true} ref={this.ref} />
                 <Form.Text className="text-muted errorMsg">
                   {this.state.errors["configuration"]}
                 </Form.Text>
@@ -405,7 +416,7 @@ class Query extends React.Component {
                 />
               </div>
             </Tab>
-            <Tab eventKey="results" title="Result" id="result-tab">
+            <Tab eventKey="results" title="Result">
               <div id="result-tab-div">
               </div>
             </Tab>

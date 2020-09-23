@@ -1,6 +1,7 @@
+import EOXApplication from "./src/EOXApplication";
 import LeftMenuTemplate from "./src/LeftMenuTemplate";
 import Notification from "./src/Notification";
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import './index.scss';
 import DateComponent from "./src/components/DateComponent.js";
@@ -8,6 +9,7 @@ import CurrencySelect from "./src/components/Currency Select/currencySelect";
 import countryStateList from "./src/components/data/country-state-codes";
 import * as ReactWebTabs from "react-web-tabs";
 import * as ReactBootstrap from "react-bootstrap";
+import * as KendoFileUploader from "@progress/kendo-react-upload";
 import * as KendoReactButtons from "@progress/kendo-react-buttons";
 import * as KendoReactDropDowns from "@progress/kendo-react-dropdowns";
 import * as KendoReactEditor from "@progress/kendo-react-editor";
@@ -42,10 +44,13 @@ const FileUploader = lazy(() => import("./src/FileUploader"));
 const HTMLViewer = lazy(() => import("./src/components/App/HTMLViewer"));
 const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
 const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
-const DateFormats  = lazy(() => import('./src/public/js/DateFormats.js'));
-const DropDown  = lazy(() => import('./src/components/Dropdown/DropDownList'));
+const DateFormats = lazy(() => import('./src/public/js/DateFormats.js'));
+const DropDown = lazy(() => import('./src/components/Dropdown/DropDownList'));
+const Visualization = lazy(() => import("./src/Visualization"));
+const WidgetManager = lazy(() => import("./src/WidgetManager"));
 
 export {
+  EOXApplication,
   LeftMenuTemplate,
   GridTemplate,
   Notification,
@@ -71,6 +76,7 @@ export {
   ReactBootstrap,
   ReactWebTabs,
   Webcam,
+  KendoFileUploader,
   KendoReactEditor,
   KendoReactDateInputs,
   KendoReactPopup,
@@ -89,5 +95,8 @@ export {
   DropDown,
   CurrencySelect,
   countryStateList,
-  FormBuilder
+  FormBuilder,
+  Suspense,
+  Visualization,
+  WidgetManager
 };

@@ -100,16 +100,16 @@ class Visualization extends React.Component {
           actionButtons.push(
             <abbr title={action[key].name} key={index}>
               <Button
-                key={"manage"+action[key].name}
+                key={"manage" + action[key].name}
                 className=" btn manage-btn k-grid-edit-command"
                 variant={variant}
                 onClick={() => this.buttonAction(action[key], e)}
                 style={buttonStyles}
               >
                 {
-                 action[key].icon ? 
-                (<i className={action[key].icon + " manageIcons"}></i>) 
-                : (action[key].name)}
+                  action[key].icon ?
+                    (<i className={action[key].icon + " manageIcons"}></i>)
+                    : (action[key].name)}
               </Button>
             </abbr>
           )
@@ -199,19 +199,19 @@ class Visualization extends React.Component {
             })
           }
         />
-          {
+        {
           this.state.showModal &&
-        <VisualizationModal
-          osjsCore={this.core}
-          modalType={this.state.modalType}
-          show={this.state.showModal}
-          onHide={() => this.setState({ showModal: false })}
-          content={this.state.modalContent}
-          handleChange={(e) => this.handleChange(e)}
-          notification={this.notif}
-          refreshGrid={this.refresh}
-        />
-          }
+          <VisualizationModal
+            osjsCore={this.core}
+            modalType={this.state.modalType}
+            show={this.state.showModal}
+            onHide={() => this.setState({ showModal: false })}
+            content={this.state.modalContent}
+            handleChange={(e) => this.handleChange(e)}
+            notification={this.notif}
+            refreshGrid={this.refresh}
+          />
+        }
       </div>
     );
   }

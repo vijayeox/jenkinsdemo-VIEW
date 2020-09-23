@@ -186,15 +186,12 @@ class WidgetRenderer {
                 case 'LineSeries':
                     am4ChartType = am4charts.XYChart;
                     break;
-
                 case 'ColumnSeries':
                     am4ChartType = am4charts.XYChart;
                     break;
-
                 case 'PieSeries':
                     am4ChartType = am4charts.PieChart;
                     break;
-
                 case 'FunnelSeries':
                 case 'PyramidSeries':
                     am4ChartType = am4charts.SlicedChart;
@@ -202,7 +199,15 @@ class WidgetRenderer {
                 case 'ForceDirectedSeries':
                     am4ChartType = am4plugins_forceDirected.ForceDirectedSeries;
                     break;
-
+                case 'ForceDirectedLink':
+                    am4ChartType = am4plugins_forceDirected.ForceDirectedLink;
+                    break;
+                case 'ForceDirectedNode':
+                    am4ChartType = am4plugins_forceDirected.ForceDirectedNode;
+                    break;
+                case 'ForceDirectedTree':
+                    am4ChartType = am4plugins_forceDirected.ForceDirectedTree;
+                    break;
                 default:
                     throw (`Unhandled am4charts type: ${type}`);
             }
