@@ -6,11 +6,11 @@ import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import * as am4core from '../amcharts/core';
 import * as am4charts from '../amcharts/charts';
 import * as am4maps from '../amcharts/maps';
-// import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected'; 
 import am4geodata_usaAlbersLow from '@amcharts/amcharts4-geodata/usaAlbersLow';
 import am4themes_animated from '../amcharts/themes/animated';
 // import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
+import * as am4plugins_forceDirected from "../amcharts/plugins/forceDirected";
 am4core.useTheme(am4themes_animated);
 am4core.options.commercialLicense = true;
 
@@ -199,9 +199,9 @@ class WidgetRenderer {
                 case 'PyramidSeries':
                     am4ChartType = am4charts.SlicedChart;
                     break;
-                // case 'ForceDirectedSeries':
-                //     am4ChartType = am4plugins_forceDirected;
-                //     break;
+                case 'ForceDirectedSeries':
+                    am4ChartType = am4plugins_forceDirected.ForceDirectedSeries;
+                    break;
 
                 default:
                     throw (`Unhandled am4charts type: ${type}`);

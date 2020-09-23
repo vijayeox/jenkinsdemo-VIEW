@@ -309,7 +309,7 @@ class DashboardManager extends React.Component {
               }
             </div>
 
-         {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
+            {(this.state.dashList != undefined && this.state.dashList.length > 0) ?
               <div id="dashboard-preview-container">
                 <div className="dash-manager-bar">
                   {
