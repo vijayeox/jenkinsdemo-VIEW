@@ -138,7 +138,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
-					if (raw == true) {
+					if (raw == true || !(resp.headers.get("Content-Type").includes("json"))) {
 						return resp;
 					}
 					return resp.json();
@@ -166,7 +166,11 @@ export class RestClientServiceProvider extends ServiceProvider {
 				let parameters = params;
 				let formData = new FormData();
 				for (var k in parameters) {
-					formData.append(k, parameters[k]);
+					if(parameters[k].name && parameters[k].body){
+						formData.append(k, parameters[k].body,parameters[k].name);
+					} else {
+						formData.append(k, parameters[k]);
+					}
 				}
 				resp = await fetch(urlString,
 					{

@@ -30,4 +30,13 @@
       padding: 5px 14px 5px 25px !important;
     }
   }
+
+  .breadcrumbs{
+    .k-chip-icon{
+      font-family: 'Font Awesome 5 Pro'!important;
+    }
+    .disabledBreadcrumb{
+      opacity: 1 !important;
+    }
+  }
 }
