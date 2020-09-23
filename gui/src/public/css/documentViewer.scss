@@ -96,17 +96,14 @@
   }
 
   .image-download-button {
-    position: absolute;
     display: flex;
     align-items: center;
     flex-direction: column;
-    top: 5px;
-    right: 5px;
     height: 35px;
     justify-content: space-around;
     text-shadow: 0 0 2px #000;
     color: white;
-    border-radius: 30px;
+    border-radius: 0.25rem;
     background-color: black;
     padding: 20px;
     text-decoration: none;
@@ -194,5 +191,28 @@
     .invalidButton {
       cursor: not-allowed;
     }
+  }
+
+  .row {
+    width: inherit;
+    .col-md-12 {
+      display: flex;
+      .btn-dark {
+        background-color: black;
+        opacity: 0.7;
+      }
+      .btn-dark:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .pdf-frame {
+    width: inherit;
+  }
+
+  .show-text {
+    padding-top: 10px;
+    white-space: break-spaces;
   }
 }

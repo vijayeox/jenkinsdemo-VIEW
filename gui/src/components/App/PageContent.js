@@ -404,7 +404,7 @@ class PageContent extends React.Component {
     }
   }
 
-async updateCall(route, body,disableAppId,method) {
+  async updateCall(route, body,disableAppId,method) {
     let helper = this.core.make("oxzion/restClient");
     route = disableAppId ? route : "/app/" + this.appId + "/" + route;
     let formData = await helper.request(
@@ -495,6 +495,7 @@ async updateCall(route, body,disableAppId,method) {
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
             dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
+            postSubmitCallback={this.postSubmitCallback}
           />
         );
       } else if (item.type == "List") {

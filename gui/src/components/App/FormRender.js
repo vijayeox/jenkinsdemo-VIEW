@@ -353,7 +353,9 @@ class FormRender extends React.Component {
             if (response2.status == "success") {
               this.stepDownPage();
             }
-          });
+          }).catch(e => {
+              that.handleError(e);
+           });
           return response;
         } else {
           if (response.errors) {
@@ -367,7 +369,9 @@ class FormRender extends React.Component {
             this.notif.current.notify("Error", "Form Submission Failed", "danger");
           }
         }
-      });
+      }).catch(e => {
+         that.handleError(e);
+       });
     } else {
       let route = "";
       let method = "post";
@@ -409,8 +413,6 @@ class FormRender extends React.Component {
           method = "put";
         }
       }
-      console.log(data);
-      console.log(this.cleanData(data));
       return await this.helper.request("v1", route, this.cleanData(data), method).then(async response => {
         if (response.status == "success") {
           if (this.props.route) {
@@ -511,7 +513,6 @@ class FormRender extends React.Component {
     if (this.state.currentForm._form["properties"] && this.state.currentForm._form["properties"]["clearVariables"]) {
       delete ordered_data[this.state.currentForm._form["properties"]["clearVariables"]];
     }
-    console.log(ordered_data);
     return ordered_data;
   }
 
@@ -811,44 +812,35 @@ class FormRender extends React.Component {
           });
         },
         beforeSubmit: async (submission, next) => {
-          console.log(submission.data);
-          if (
-            that.state.currentForm.checkValidity() &&
-            that.state.currentForm.checkValidity(
-              submission.data,
-              true,
-              submission.data
-            )
-          ) {
-            var response = await that
-              .saveForm(null, that.cleanData(submission.data))
-              .then(function (response) {
-                if (response.status == "success") {
+          var submitErrors = [];
+            if(that.state.currentForm.isValid(submission.data, true)==false){
+              that.state.currentForm.checkValidity(submission.data, true,submission.data);
+              that.state.currentForm.errors.forEach((error) => {
+                submitErrors.push(error.message);
+              });
+              if(submitErrors.length > 0){
+                next([]);
+              } else {
+                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                  if(response.status=='success'){
+                    next(null);
+                  } else {
+                    next([response.errors[0].message]);
+                  }
+                });
+              }
+            } else {
+              var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                if(response.status=='success'){
                   next(null);
                 } else {
-                  if (that.props.route) {
+                  if(that.props.route) {
                     next([response.message]);
                   }
                   next([response.errors[0].message]);
                 }
               });
-          } else {
-            that.state.currentForm.checkValidity(
-              submission.data,
-              true,
-              submission.data
-            );
-            var submitErrors = [];
-            that.state.currentForm.errors.forEach((error) => {
-              submitErrors.push(error.message);
-            });
-            if (submitErrors.length > 0) {
-              next([]);
-            } else {
-              that.state.currentForm.triggerChange();
-              next([]);
             }
-          }
         }
       };
       options.hooks = hooks;
@@ -885,7 +877,6 @@ class FormRender extends React.Component {
         });
 
         form.on("change", function (changed) {
-          console.log(changed);
           if (changed && changed.changed) {
             var component = changed.changed.component;
             var instance = changed.changed.instance;
@@ -1022,7 +1013,9 @@ class FormRender extends React.Component {
                         }
                       }
                       that.showFormLoader(false, 0);
-                    });
+                      }).catch(e => {
+                          that.handleError(e);
+                      });
                   } else if (properties["sourceDataKey"]) {
                     var paramData = {};
                     paramData[properties["valueKey"]] = changed[properties["sourceDataKey"]];
@@ -1051,6 +1044,8 @@ class FormRender extends React.Component {
                         });
                       }
                       that.showFormLoader(false, 0);
+                      }).catch(e => {
+                          that.handleError(e);
                     });
                   } else {
                     that.callDelegate(properties["delegate"], that.cleanData(changed)).then(response => {
@@ -1063,7 +1058,10 @@ class FormRender extends React.Component {
                       } else {
                         that.showFormLoader(false, 0);
                       }
-                    });
+                      }).catch(e => {
+                          that.handleError(e);
+                      });
+                    }
                   }
                 }
               }
@@ -1124,7 +1122,9 @@ class FormRender extends React.Component {
                     } else {
                       that.showFormLoader(false, 0);
                     }
-                  });
+                  }).catch(e => {
+                    that.handleError(e);
+                });
                 }
               }
             }
@@ -1205,6 +1205,8 @@ class FormRender extends React.Component {
           } else {
             that.showFormLoader(false, 0);
           }
+        }).catch(e => {
+            that.handleError(e);
         });
       }
       if (properties["target"]) {
@@ -1343,6 +1345,11 @@ class FormRender extends React.Component {
     }
   }
 
+  handleError(e){
+    this.showFormLoader(false,0);
+    console.log("ERROR" + e);
+    this.notif.current.notify("Error","Unexpected Error! Please try later","danger");
+  }
   runDelegates(form, properties) {
     if (properties) {
       if (properties["delegate"]) {
@@ -1356,6 +1363,8 @@ class FormRender extends React.Component {
           } else {
             this.showFormLoader(false, 0);
           }
+        }).catch(e => {
+            that.handleError(e);
         });
       }
       if (properties["commands"]) {
@@ -1383,6 +1392,8 @@ class FormRender extends React.Component {
           } else {
             that.showFormLoader(false, 0);
           }
+        }).catch(e => {
+            that.handleError(e);
         });
       }
       if (properties["payment_confirmation_page"]) {
@@ -1392,6 +1403,8 @@ class FormRender extends React.Component {
           if (response.data) {
             this.formSendEvent("paymentDetails", { cancelable: true, detail: response.data[0] });
           }
+        }).catch(e => {
+          that.handleError(e);
         });
         var that = this;
         form.element.removeEventListener("requestPaymentToken", function (e) { that.requestPaymentToken(that, form, e) }, false);
@@ -1420,7 +1433,9 @@ class FormRender extends React.Component {
             } else {
               form.nextPage();
             }
-            that.showFormLoader(false, 0);
+            that.showFormLoader(false,0);
+          }).catch(e => {
+                that.handleError(e);
           });
         }, false);
         form.element.addEventListener("tokenFailure", function (e) {
@@ -1438,7 +1453,9 @@ class FormRender extends React.Component {
           var transactionIdComponent = form.getComponent("transaction_id");
           that.storePayment({ transaction_id: transactionIdComponent.getValue(), data: e.detail.data }).then(response => {
             that.notif.current.notify("Error", e.detail.message, "danger");
-            that.showFormLoader(false, 0);
+            that.showFormLoader(false,0);
+          }).catch(e => {
+                that.handleError(e);
           });
         }, false);
         form.element.addEventListener("paymentCancelled", function (e) {
@@ -1455,7 +1472,9 @@ class FormRender extends React.Component {
           var transactionIdComponent = form.getComponent("transaction_id");
           that.storePayment({ transaction_id: transactionIdComponent.getValue(), data: e.detail.data }).then(response => {
             that.notif.current.notify("Error", e.detail.message, "danger");
-            that.showFormLoader(false, 0);
+            that.showFormLoader(false,0);
+          }).catch(e => {
+                that.handleError(e);
           });
         }, false);
         form.element.addEventListener("paymentPending", function (e) {
@@ -1484,7 +1503,9 @@ class FormRender extends React.Component {
           that.notif.current.notify("Error", "Transaction Token Failed!", "danger");
         }
       }
-      that.showFormLoader(false, 0);
+      that.showFormLoader(false,0);
+    }).catch(e => {
+        that.handleError(e);
     });
   }
 
@@ -1662,6 +1683,8 @@ class FormRender extends React.Component {
             "danger"
           );
         }
+      }).catch(e => {
+          this.handleError(e);
       });
     }
   };
@@ -1670,14 +1693,14 @@ class FormRender extends React.Component {
       detail: {},
       bubbles: true
     });
-    if (document.getElementById("navigation_" + this.state.appId)) {
-      document.getElementById("navigation_" + this.state.appId).dispatchEvent(ev);
-      if (this.props) {
-        try {
-          this.props.postSubmitCallback();
-        } catch (e) {
-          console.log("Unable to Handle Callback");
-        }
+    if(document.getElementById("navigation_"+this.state.appId)){
+      document.getElementById("navigation_"+this.state.appId).dispatchEvent(ev);
+    } 
+    if(this.props){
+      try{
+        this.props.postSubmitCallback();
+      } catch(e){
+        console.log("Unable to Handle Callback");
       }
     }
   }
@@ -1707,6 +1730,8 @@ class FormRender extends React.Component {
           });
         }
       }
+    }).catch(e => {
+          this.handleError(e);
     });
   }
 
