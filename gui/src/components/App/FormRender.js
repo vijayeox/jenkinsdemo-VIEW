@@ -1172,7 +1172,7 @@ class FormRender extends React.Component {
         }
       }
       if (properties["triggerChange"]) {
-        that.state.currentForm ? that.state.currentForm.triggerChange();
+        that.state.currentForm ? that.state.currentForm.triggerChange() : null;
       }
         if (properties["clear_field"]) {
         var processed = false;
