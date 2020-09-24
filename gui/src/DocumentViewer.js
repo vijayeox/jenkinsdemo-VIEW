@@ -235,17 +235,21 @@ export default class DocumentViewer extends Component {
                         <Card
                           className="docItems"
                           onClick={(e) => {
-                            doc.file != this.state.selectedDocument.file
-                              ? this.handleDocumentClick(doc)
+                            this.state.selectedDocument
+                              ? doc.file != this.state.selectedDocument.file
+                                ? this.handleDocumentClick(doc)
+                                : null
                               : null;
                           }}
                           key={i}
                         >
                           <div
                             className={
-                              doc.file == this.state.selectedDocument.file
-                                ? "docListBody borderActive"
-                                : "docListBody border"
+                              this.state.selectedDocument
+                                ? doc.file == this.state.selectedDocument.file
+                                  ? "docListBody borderActive"
+                                  : "docListBody border"
+                                : null
                             }
                           >
                             <i
@@ -361,7 +365,7 @@ export default class DocumentViewer extends Component {
     return (
       <div className="row">
         <div className="col-md-12">
-          {rename ? (
+          {rename && this.state.activeCard != "Documents" ? (
             <>
               <input
                 type="text"
@@ -406,7 +410,7 @@ export default class DocumentViewer extends Component {
               </button>
             </>
           ) : null}
-          {del ? (
+          {del && this.state.activeCard != "Documents" ? (
             <button
               title="delete"
               className="btn btn-dark"
