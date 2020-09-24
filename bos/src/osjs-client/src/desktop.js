@@ -685,13 +685,12 @@ export default class Desktop extends EventEmitter {
   async cookiesCheck(){
     let helper = this.core.make('oxzion/restClient');
     let condition = await helper.request('v1','/user/me/getPolicyTerm', {}, 'get' );
-    console.log(condition['data'][0]);  
     if(typeof condition['data'][0] == 'undefined' && condition['data'][0] !== "1"){
       const { value: accept } = await Swal.fire({
         title: 'Privacy and Policy',
         allowOutsideClick: false,
         input: 'checkbox',
-        inputPlaceholder: 'I have read the EOX Vatage <a href="https://www.eoxvantage.com/privacy-policy/" target="_blank">Privacy and Policy</a>. I agree with the terms and conditions.',
+        inputPlaceholder: 'I have read the EOX Vatage <a href="./privacy-policy" target="_blank">Privacy and Policy</a>. I agree with the terms and conditions.',
         confirmButtonText:
         'Continue<i class="fa fa-arrow-right"></i>',
         inputValidator: (result) => {
@@ -706,7 +705,7 @@ export default class Desktop extends EventEmitter {
           "/user/me/updatePolicyTerm",{},
           "post"
           );
-        Swal.fire('You agreed with T&C :)')
+        updateterm.status == "success" ? Swal.fire('Thank you for accepting our terms and conditions') : Swal.fire({title : updateterm.message, allowOutsideClick: false});
       }
     }
   }
