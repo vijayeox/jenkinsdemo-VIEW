@@ -361,17 +361,21 @@ export default class DocumentViewer extends Component {
     return (
       <div className="row">
         <div className="col-md-12">
-          {rename && this.state.activeCard != "Documents" ? (
+          {rename &&
+          this.state.activeCard != "Documents" &&
+          documentData.uuid ? (
             <>
               <input
                 type="text"
                 id="filename"
                 className="form-control"
-                value={this.state.selectedDocument.originalName}
+                value={this.state.selectedDocument.originalName.split(".")[0]}
                 onChange={(e) => {
-                  let value = e.target.value;
                   const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
+                  edited["originalName"] =
+                    e.target.value +
+                    "." +
+                    this.state.selectedDocument.originalName.split(".")[1];
                   this.setState({
                     selectedDocument: edited,
                   });
@@ -406,7 +410,7 @@ export default class DocumentViewer extends Component {
               </button>
             </>
           ) : null}
-          {del && this.state.activeCard != "Documents" ? (
+          {del && this.state.activeCard != "Documents" && documentData.uuid ? (
             <button
               title="delete"
               className="btn btn-dark"
