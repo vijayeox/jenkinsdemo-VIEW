@@ -237,7 +237,7 @@ class Query extends React.Component {
     }
     else {
       //executing queries from form
-      formData["configuration"] = this.state.inputs["configuration"]
+      formData["configuration"] = that.ref.current.getFormConfig(false);
       formData["datasource_id"] = this.state.inputs["datasourcename"][1]
     }
     try {
