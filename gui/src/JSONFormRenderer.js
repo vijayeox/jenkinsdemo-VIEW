@@ -170,7 +170,7 @@ const JSONFormRenderer = forwardRef((props, ref) => {
 
         </Tab>
         <Tab eventKey="json" title={<i aria-hidden="true" title="View JSON">{"{ }"}</i>} >
-          <Form.Control as="textarea" rows="10" name="formValues" value={formValues} onChange={handleChange} />
+          <Form.Control as="textarea" rows="10" name="formValues" value={formValues} onChange={handleChange} disabled />
 
           {/* <Form.Text className="text-muted errorMsg">
                 {errors["configuration"]}
