@@ -82,7 +82,40 @@
                         "type": "text"
                     },
                     "occurence": "single"
+                },
+                "Expression": {
+                    "label": "Expression",
+                    "control": {
+                        "name": "expression",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Frequency": {
+                    "label": "Frequency",
+                    "control": {
+                        "name": "frequency",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Pivot": {
+                    "label": "Pivot",
+                    "control": {
+                        "name": "pivot",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "PageSize": {
+                    "label": "PageSize",
+                    "control": {
+                        "name": "pagesize",
+                        "type": "text"
+                    },
+                    "occurence": "single"
                 }
+                
             }
         }
     }
