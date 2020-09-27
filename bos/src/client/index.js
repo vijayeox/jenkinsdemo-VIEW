@@ -52,6 +52,7 @@ import {
 
 
 import {PanelServiceProvider} from './packages/panels';
+import GlobalLinkHandler from './packages/EOXApplication/GlobalLinkHandler.js';
 import {GUIServiceProvider} from '@osjs/gui';
 import {DialogServiceProvider} from '@osjs/dialogs';
 import {WidgetServiceProvider} from '@osjs/widgets';
@@ -99,6 +100,7 @@ const init = () => {
   osjs.register(UserSessionServiceProvider, {before: true});
   osjs.register(WebSocketAdapter);
   osjs.register(ScriptLoaderServiceProvider,{before: true});
+  osjs.register(GlobalLinkHandler,{before: true});
   osjs.boot();
 };
 
