@@ -31,9 +31,9 @@ class FormBuilder extends React.Component {
     };
     this.appUrl = "/app/" + this.state.appId;
     this.helper = this.core.make("oxzion/restClient");
-    this.handleSaveForm = this.handleSaveForm.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.loader = this.core.make("oxzion/splash");
   }
+
   async getForm() {
     return await this.helper.request(
       "v1",
@@ -44,33 +44,36 @@ class FormBuilder extends React.Component {
   }
 
   componentDidMount() {
-    var that = this;
+    this.loader.show();
     if (this.props.formId) {
       this.getForm().then((response) => {
         if (response.status == "success") {
-          this.setState({ content: JSON.parse(response.data.template) });
-          this.createForm().then(() => {
-            that.setState({ title: that.state.content.title });
-            that.setState({ name: that.state.content.name });
-            that.setState({ display: that.state.content.display });
-          });
+          this.setState(
+            {
+              content: JSON.parse(response.data.template),
+              title: this.state.content.title,
+              name: this.state.content.name,
+              display: this.state.content.display,
+            },
+            () => this.createForm().then(() => this.loader.destroy())
+          );
         }
       });
     } else {
-      if (that.state.content) {
-        that.setState({ title: that.state.content.title });
-        that.setState({ name: that.state.content.name });
-        that.setState({ display: that.state.content.display });
+      if (this.state.content) {
+        this.setState(
+          {
+            title: this.state.content.title,
+            name: this.state.content.name,
+            display: this.state.content.display,
+          },
+          () => this.createForm().then(() => this.loader.destroy())
+        );
       }
-      this.createForm(that.state.display).then(() => {
-        that.setState({ title: that.state.content.title });
-        that.setState({ name: that.state.content.name });
-        that.setState({ display: that.state.content.display });
-      });
     }
   }
 
-  createForm(display) {
+  createForm() {
     let that = this;
     Formio.registerComponent("slidercomponent", SliderComponent);
     Formio.registerComponent("convergepayment", ConvergePayCheckoutComponent);
@@ -83,7 +86,7 @@ class FormBuilder extends React.Component {
       document.getElementById("builder"),
       this.state.content,
       {
-        display: display,
+        display: this.state.display,
         builder: {
           customBasic: {
             title: "Custom",
@@ -112,6 +115,9 @@ class FormBuilder extends React.Component {
       builder.on("editForm", function (schema) {
         console.log(schema);
       });
+      builder.on("onSubmit", function (schema) {
+        console.log(schema);
+      });
       builder.on("ready", function (schema) {
         console.log(schema);
       });
@@ -120,42 +126,33 @@ class FormBuilder extends React.Component {
     return builderCreated;
   }
 
-  handleImport(e) {
-    e.preventDefault();
-    console.log(e.target.files[0]);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const text = e.target.result;
-      setForm(JSON.parse(text));
-    };
-    reader.readAsText(e.target.files[0]);
-  }
-
   onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+    var content = this.state.content;
     if (e.target.name == "display") {
       this.state.builder.destroy();
       document.getElementById("builder").innerHTML = "";
-      this.setState({ display: e.target.value });
-      var content = this.state.content;
       content.display = e.target.value;
-      this.setState({ content: content });
-      this.createForm(e.target.value);
-    } else {
-      if (e.target.name == "title") {
-        this.setState({ title: e.target.value });
-        this.setState({ name: camelCase(e.target.value) });
-        this.setState({ path: camelCase(e.target.value).toLowerCase() });
-        var content = this.state.content;
-        content.name = camelCase(e.target.value);
-        content.path = camelCase(e.target.value).toLowerCase();
-        content.title = e.target.value;
-        this.setState({ content: content });
-      }
+      this.setState(
+        {
+          display: e.target.value,
+          content: content,
+        },
+        () => this.createForm()
+      );
+    } else if (e.target.name == "title") {
+      content.name = camelCase(e.target.value);
+      content.path = camelCase(e.target.value).toLowerCase();
+      content.title = e.target.value;
+      this.setState({
+        title: e.target.value,
+        name: camelCase(e.target.value),
+        path: camelCase(e.target.value).toLowerCase(),
+        content: content,
+      });
     }
   }
 
-  handleSaveForm(event) {
+  handleSaveForm() {
     var submission = this.state.builder.form;
     this.props.saveForm(submission);
   }
@@ -202,7 +199,6 @@ class FormBuilder extends React.Component {
                   name="name"
                   placeholder="Enter the form machine name"
                   value={this.state.name}
-                  onChange={(value) => this.onChange(value)}
                 />
               </div>
             </div>
@@ -225,9 +221,6 @@ class FormBuilder extends React.Component {
                     <option label="Wizard" value="wizard">
                       Wizard
                     </option>
-                    <option label="PDF" value="pdf">
-                      PDF
-                    </option>
                   </select>
                 </div>
               </div>
@@ -242,7 +235,10 @@ class FormBuilder extends React.Component {
                 </span>
               </div>
               <div className="form-group">
-                <span className="btn btn-primary" onClick={this.handleSaveForm}>
+                <span
+                  className="btn btn-primary"
+                  onClick={() => this.handleSaveForm()}
+                >
                   Save Form
                 </span>
               </div>
