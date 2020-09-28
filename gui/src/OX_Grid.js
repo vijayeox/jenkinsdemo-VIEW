@@ -142,7 +142,7 @@ export default class OX_Grid extends React.Component {
       table.push(
         <GridColumn
           cell={
-            dataItem.cell
+            dataItem.cell || dataItem.rygRule
               ? (item) => (
                   <CustomCell
                     cellTemplate={dataItem.cell}
@@ -677,7 +677,7 @@ class CustomCell extends GridCell {
       } else {
         return <td className="gridActions">{cellTemplate}</td>;
       }
-    } else if (checkType == "string") {
+    } else if (checkType == "string"  || this.props.dataItem.rygRule) {
       return (
         <JsxParser
           bindings={{
@@ -688,7 +688,7 @@ class CustomCell extends GridCell {
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl
           }}
-          jsx={this.props.cellTemplate}
+          jsx={this.props.dataItem.rygRule ? this.props.dataItem.rygRule : this.props.cellTemplate}
         />
       );
     }
