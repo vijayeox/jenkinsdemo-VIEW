@@ -555,13 +555,15 @@ class PageContent extends React.Component {
           if(itemContent.operations.actions){
             itemContent.operations.actions.map((action, j) => {
               var act = action;
-              act.details.map((detail, k) => {
-                if(detail.params){
-                  Object.keys(detail.params).map(function (key, index) {
-                    detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
-                  });
-                }
-              });
+              if(act.details){
+                act.details.map((detail, k) => {
+                  if(detail.params){
+                    Object.keys(detail.params).map(function (key, index) {
+                      detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
+                    });
+                  }
+                });
+              }
             });
           }
         }
