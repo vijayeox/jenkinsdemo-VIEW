@@ -13,14 +13,16 @@ export default class SelectComponent extends Select {
         component.uiUrl = null;
         this.form = this.getRoot();
         var that = this;
-        that.form.element.addEventListener("appDetails", function(e) {
-            component.core = e.detail.core;
-            component.appId = e.detail.appId;
-            component.uiUrl = e.detail.uiUrl;
-            component.wrapperUrl = e.detail.wrapperUrl;
-        },true);
-        var evt = new CustomEvent("getAppDetails", { detail: {} });
-        that.form.element.dispatchEvent(evt);
+        if(that.form && that.form.element){
+            that.form.element.addEventListener("appDetails", function(e) {
+              component.core = e.detail.core;
+              component.appId = e.detail.appId;
+              component.uiUrl = e.detail.uiUrl;
+              component.wrapperUrl = e.detail.wrapperUrl;
+          },true);
+          var evt = new CustomEvent("getAppDetails", { detail: {} });
+          that.form.element.dispatchEvent(evt);
+        }
     }
     loadItems(url, search, headers, options, method, body){
     var evt = new CustomEvent("getAppDetails", { detail: {} });
@@ -120,7 +122,9 @@ export default class SelectComponent extends Select {
     }
     render(){
         var evt = new CustomEvent("getAppDetails", { detail: {} });
-        this.form.element.dispatchEvent(evt);
+        if(this.form.element){
+          this.form.element.dispatchEvent(evt);
+        }
         return super.render();
     }
     updateItems(searchInput, forceUpdate){
