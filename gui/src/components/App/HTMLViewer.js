@@ -49,10 +49,11 @@ class HTMLViewer extends React.Component {
   render() {
     return (
       this.state.dataReady && (
-        <JsxParser
+        <JsxParser className ={this.props.className}
           jsx={this.state.content}
           bindings={{
             data: this.state.fileData ? this.state.fileData : {},
+            item: this.state.fileData ? this.state.fileData : {},
             moment: moment,
             profile: this.profile.key
           }}

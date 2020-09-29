@@ -162,6 +162,9 @@ class PageContent extends React.Component {
       var pageDetails = this.state.pageContent;
       var that = this;
       var copyPageContent = [];
+      if(rowData.rygRule){
+        copyPageContent.push({type: "HTMLViewer" , content: rowData.rygRule, className: "rygBadge"});  
+      }
       var checkForTypeUpdate = false;
       var updateBreadcrumb = true;
       var pageId = null;
@@ -740,6 +743,7 @@ class PageContent extends React.Component {
             }
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
+            className={item.className}
           />
         );
       } else {
