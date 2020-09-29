@@ -688,7 +688,7 @@ class CustomCell extends GridCell {
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl
           }}
-          jsx={this.props.dataItem.rygRule ? this.props.dataItem.rygRule : this.props.cellTemplate}
+          jsx={this.props.cellTemplate ? this.props.cellTemplate : this.props.dataItem.rygRule ? this.props.dataItem.rygRule : "<td></td>" }
         />
       );
     }
