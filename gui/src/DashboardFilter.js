@@ -193,21 +193,9 @@ const FilterFields = function (props) {
                                 />
                             </div>
                         :
-                        filterMode == "Create" ?
                             <Select
                                 selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
-                                components={{Option:CustomOption}}
-                                styles={customStyles}
-                                name="value"
-                                id="value"
-                                onChange={(e) => onUpdate(e, index, "defaultValue")}
-                                value=""
-                                options={filters[index]["value"]}
-                            />
-                            :
-                            <Select
-                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
-                                components={{Option:CustomOption}}
+                                components={filterMode=="CREATE" && {Option:CustomOption}}
                                 styles={customStyles}
                                 name="value"
                                 id="value"

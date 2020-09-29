@@ -111,24 +111,26 @@ const JSONFormRenderer = forwardRef((props, ref) => {
   }
 
   const renderFormElement = (field, key) => {
-    return (
-      <Form.Group key={field.control.name + "_group"} as={Row}>
-        <Form.Label key={field.control.name + "_label"} column lg="3">
-          {field.label}
-        </Form.Label>
-        <Col lg="8">
-          <Form.Control
-            key={field.control.name + "_control"}
-            {...field.control}
-            onChange={handleChange}
-            value={input[field.control.name] || ""}
-          />
-        </Col>
-        <Col lg="1" style={{ "padding": "0" }}>
-          <Button onClick={() => removeFormField(field,key)}>-</Button>
-        </Col>
-      </Form.Group>
-    );
+    if(field){
+      return (
+        <Form.Group key={field.control.name + "_group"} as={Row}>
+          <Form.Label key={field.control.name + "_label"} column lg="3">
+            {field.label}
+          </Form.Label>
+          <Col lg="8">
+            <Form.Control
+              key={field.control.name + "_control"}
+              {...field.control}
+              onChange={handleChange}
+              value={input[field.control.name] || ""}
+            />
+          </Col>
+          <Col lg="1" style={{ "padding": "0" }}>
+            <Button onClick={() => removeFormField(field,key)}>-</Button>
+          </Col>
+        </Form.Group>
+      );
+    }
   };
 
   return (
@@ -170,7 +172,7 @@ const JSONFormRenderer = forwardRef((props, ref) => {
 
         </Tab>
         <Tab eventKey="json" title={<i aria-hidden="true" title="View JSON">{"{ }"}</i>} >
-          <Form.Control as="textarea" rows="10" name="formValues" value={formValues} onChange={handleChange} />
+          <Form.Control as="textarea" rows="10" name="formValues" value={formValues} onChange={handleChange} disabled />
 
           {/* <Form.Text className="text-muted errorMsg">
                 {errors["configuration"]}
