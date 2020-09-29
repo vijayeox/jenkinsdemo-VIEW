@@ -52,13 +52,15 @@ export default class OX_Grid extends React.Component {
   _grid;
 
   componentDidMount() {
-    document
-      .getElementById(this.appNavigationDiv)
-      .addEventListener(
-        "handleGridRefresh",
-        () => this.refreshHandler(),
-        false
-      );
+    document.getElementById(this.appNavigationDiv)
+      ? document
+          .getElementById(this.appNavigationDiv)
+          .addEventListener(
+            "handleGridRefresh",
+            () => this.refreshHandler(),
+            false
+          )
+      : null;
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
@@ -617,7 +619,7 @@ export default class OX_Grid extends React.Component {
                   : this.state.gridData.data
               }
             >
-              {this.createColumns(this.props.exportToPDF.columnConfig)}
+              {this.createColumns(this.props.exportToPDF.columnConfig ?this.props.exportToPDF.columnConfig : this.props.columnConfig )}
             </Grid>
           </GridPDFExport>
         ) : null}
