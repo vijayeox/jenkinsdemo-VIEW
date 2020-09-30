@@ -494,7 +494,7 @@ class DashboardEditor extends React.Component {
         return (
             <form className="dashboard-editor-form">
                 <div className="dash-manager-buttons">
-                    <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i class="fas fa-file-export"></i></Button>
+                    <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i class="fas fa-file-export" title="Set Export OI Query"></i></Button>
                     <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
                     <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
                     <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
