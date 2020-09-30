@@ -122,7 +122,7 @@ const JSONFormRenderer = forwardRef((props, ref) => {
               key={field.control.name + "_control"}
               {...field.control}
               onChange={handleChange}
-              value={input[field.control.name] || ""}
+              value={input[field.control.name]?typeof(input[field.control.name])=="object"?JSON.stringify(input[field.control.name]):input[field.control.name]:""}
             />
           </Col>
           <Col lg="1" style={{ "padding": "0" }}>
