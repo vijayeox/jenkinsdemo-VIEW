@@ -8,42 +8,49 @@ function DashboardExportModal(props) {
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
   const helper = props.core.make("oxzion/restClient");
-  const [queryOptions,setQueryOptions]=useState([])
+  const [queryOptions, setQueryOptions] = useState([])
+
 
   useEffect(() => {
     setQueryList()
   }, [])
 
-  async function setQueryList(){
-    let inputCopy = {...input}
+  async function setQueryList() {
+    let inputCopy = { ...input }
     let response = await helper.request(
-        "v1",
-        `analytics/query?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":5000}]`,
-        {},
-        "get"
-      )
-      if(response && response.data){
-          let queryList=[]
-        response.data.data.map(query => {
-            queryList.push({ "label": query.name, "value": query.uuid,"configuration":query.configuration,"datasource_id":query.datasource_uuid })
-        });
-        setQueryOptions(queryList)
-        setInput({...inputCopy,["selectQuery"]: props.selectedExportQuery!="undefined"?props.selectedExportQuery:{}})
+      "v1",
+      `analytics/query?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":5000}]`,
+      {},
+      "get"
+    )
+    if (response && response.data) {
+      let queryList = []
+      response.data.data.map(query => {
+        queryList.push({ "label": query.name, "value": query.uuid, "configuration": query.configuration, "datasource_id": query.datasource_uuid })
+      });
+      let selectedExportQueryValue = {}
+      if (typeof (props.selectedExportQuery) != "object") {
+        selectedExportQueryValue = props.selectedExportQuery !== "" ? JSON.parse(props.selectedExportQuery) : {}
+      } else if (typeof (props.selectedExportQuery) == "object") {
+        selectedExportQueryValue = props.selectedExportQuery
       }
+      setQueryOptions(queryList)
+      setInput({ ...inputCopy, ["selectQuery"]: selectedExportQueryValue })
+    }
   }
   function notify() {
 
-   
-      props.notification.current.notify(
-        "Dashboard Query",
-        "Dashboard query set successfully",
-        "success"
-      )
-   
+
+    props.notification.current.notify(
+      "Dashboard Query",
+      "Dashboard query set successfully",
+      "success"
+    )
+
   }
 
   async function validateForm(operation) {
- 
+
   }
 
 
@@ -55,24 +62,24 @@ function DashboardExportModal(props) {
     setErrors({ ...error })
     setInput({ ...input, [name]: value });
   }
- function selectableWidgetSelectionChanged(e) {
-    setInput({...input, ["selectQuery"]: e})
-}
-function saveDashboardQuery(){
-  let mockEvent={"target":{}}
-  mockEvent["target"]["name"]="selectQuery"
-  mockEvent["target"]["value"]=input["selectQuery"]
-  props.inputChanged(mockEvent)
+  function selectableWidgetSelectionChanged(e) {
+    setInput({ ...input, ["selectQuery"]: e })
+  }
+  function saveDashboardQuery() {
+    let mockEvent = { "target": {} }
+    mockEvent["target"]["name"] = "selectQuery"
+    mockEvent["target"]["value"] = input["selectQuery"]
+    props.inputChanged(mockEvent)
     notify()
     props.onHide()
-}
-function clearQuery(){
-  let mockEvent={"target":{}}
-  mockEvent["target"]["name"]="selectQuery"
-  mockEvent["target"]["value"]=""
-  props.inputChanged(mockEvent)
-  setInput({...input, ["selectQuery"]: ""})
-}
+  }
+  function clearQuery() {
+    let mockEvent = { "target": {} }
+    mockEvent["target"]["name"] = "selectQuery"
+    mockEvent["target"]["value"] = ""
+    props.inputChanged(mockEvent)
+    setInput({ ...input, ["selectQuery"]: "" })
+  }
 
   return (
     <Modal
@@ -93,15 +100,16 @@ function clearQuery(){
           <Form.Group as={Row}>
             <Form.Label column lg="3">Export Query</Form.Label>
             <Col lg="9" >
-       
-                  <Select
-                                    placeholder="Choose Query"
-                                    name="selectQuery"
-                                    id="selectQuery"
-                                    onChange={(e)=>selectableWidgetSelectionChanged(e)}
-                                    value={(queryOptions.length > 0 && input["selectQuery"]!=undefined) && queryOptions.filter(option => option.value == input["selectQuery"]["value"])}
-                                    options={queryOptions}
-                                />
+
+              <Select
+                placeholder="Choose Query"
+                name="selectQuery"
+                id="selectQuery"
+                onChange={(e) => selectableWidgetSelectionChanged(e)}
+                value={(queryOptions.length > 0 && input["selectQuery"] != undefined) && queryOptions.filter(option => option.value == input["selectQuery"]["value"])}
+                options={queryOptions}
+
+              />
             </Col>
           </Form.Group>
         </Form>
