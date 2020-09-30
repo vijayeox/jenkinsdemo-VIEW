@@ -4,11 +4,10 @@ import JSONFormRenderer from "../../JSONFormRenderer"
 import { FormSchema } from "./DataSourceModalSchema.json"
 
 function DataSourceModal(props) {
-
   const [input, setInput] = useState({})
   const [errors, setErrors] = useState({})
   const [formConfiguration, setFormConfiguration] = useState("")
-  const [formSchema, setFormSchema] = useState(FormSchema[props.content]?FormSchema[props.content.type]:FormSchema["_DEFAULT_OPTIONAL_FIELDS"])
+  const [formSchema, setFormSchema] = useState(getFormSchema())
   const ref = useRef(null)
   const allowedOperation = {
     ACTIVATE: "Activated",
@@ -16,7 +15,14 @@ function DataSourceModal(props) {
     EDIT: "Edited",
     DELETE: "Deleted"
   }
+  function getFormSchema() {
+    if (props.content && FormSchema[props.content.type]) {
+      return FormSchema[props.content.type]
+    } else {
+      return FormSchema["_DEFAULT_OPTIONAL_FIELDS"]
+    }
 
+  }
   useEffect(() => {
     if (props.content !== undefined) {
       var { name, type } = props.content;
