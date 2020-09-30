@@ -233,6 +233,54 @@
                         "type": "text"
                     },
                     "occurence": "single"
+                },
+                "Auth_Mode": {
+                    "label": "Auth Mode",
+                    "control": {
+                        "name": "auth_mode",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ClientID": {
+                    "label": "ClientID",
+                    "control": {
+                        "name": "ClientID",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "ClientSecret": {
+                    "label": "Client Secret",
+                    "control": {
+                        "name": "ClientSecret",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "refreshTokenKey": {
+                    "label": "Refresh Token",
+                    "control": {
+                        "name": "refreshTokenKey",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "baseUrl": {
+                    "label": "Base Url",
+                    "control": {
+                        "name": "baseUrl",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "QBORealmID": {
+                    "label": "QBORealmID",
+                    "control": {
+                        "name": "QBORealmID",
+                        "type": "text"
+                    },
+                    "occurence": "single"
                 }
             }
         }
