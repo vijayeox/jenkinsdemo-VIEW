@@ -18,9 +18,9 @@ const customStyles = {
     })
 
 };
- 
+
 const FilterFields = function (props) {
-    const {  filters,index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
+    const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
@@ -30,45 +30,45 @@ const FilterFields = function (props) {
         "numeric"
     ]
 
-    const removeValue=(e,value)=>{
+    const removeValue = (e, value) => {
         //remove the filter value on click
-        let filterCopy=filters
-        let values=filters[index]["value"]
-        let filteredValues=values.filter((item)=>item.value!==value)
-        filterCopy[index]["value"]=filteredValues
+        let filterCopy = filters
+        let values = filters[index]["value"]
+        let filteredValues = values.filter((item) => item.value !== value)
+        filterCopy[index]["value"] = filteredValues
         props.setFilterValues(filterCopy)
     }
-  
+
     const CustomOption = (props) => {
         const {
-          children,
-          className,
-          cx,
-          getStyles,
-          isDisabled,
-          isFocused,
-          isSelected,
-          innerRef,
-          innerProps,
+            children,
+            className,
+            cx,
+            getStyles,
+            isDisabled,
+            isFocused,
+            isSelected,
+            innerRef,
+            innerProps,
         } = props;
         const { onClick } = innerProps;
-        innerProps.onClick=(e)=>{
-            if(e.target.tagName!=="I"){
+        innerProps.onClick = (e) => {
+            if (e.target.tagName !== "I") {
                 onClick(e)
             }
             console.log("clicked")
         }
         return (
-          <div
-            ref={innerRef}
-            className="custom-react-select-container"
-            {...innerProps}
-          >
-              {/* DONOT CHANGE THE TAGS SPECIFIED BELOW */}
-            <span>{children}</span><i class="far fa-times-circle"  onClick={(e)=>removeValue(e,children)}></i>
-          </div>
+            <div
+                ref={innerRef}
+                className="custom-react-select-container"
+                {...innerProps}
+            >
+                {/* DONOT CHANGE THE TAGS SPECIFIED BELOW */}
+                <span>{children}</span><i class="far fa-times-circle" onClick={(e) => removeValue(e, children)}></i>
+            </div>
         );
-      };
+    };
     const disabledFields = filterMode == "APPLY"
     const visibility = filterMode == "CREATE"
     return (
@@ -193,26 +193,32 @@ const FilterFields = function (props) {
                                 />
                             </div>
                         :
-                            <Select
-                                selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
-                                components={filterMode=="CREATE" && {Option:CustomOption}}
-                                styles={customStyles}
-                                name="value"
-                                id="value"
-                                onChange={(e) => onUpdate(e, index, "defaultValue")}
-                                value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
-                                options={filters[index]["value"]}
+                        <Select
+                            selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
+                            components={filterMode == "CREATE" && { Option: CustomOption }}
+                            styles={customStyles}
+                            name="value"
+                            id="value"
+                            onChange={(e) => onUpdate(e, index, "defaultValue")}
+                            value={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
+                            options={filters[index]["value"]}
 
-                            />
+                        />
 
                         // <Form.Control type="text" name="value" onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["value"] : ""} />
                     }
                 </Form.Group>
             </div>
-            <div className="dash-manager-buttons dashboard-filter-field" style={{ marginBottom: "1em", position: "relative", left: "0px"}}>
+            <div className="dash-manager-buttons dashboard-filter-field" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
                 <Form.Group>
                     <Form.Label></Form.Label>
-                    <Button onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                    <Button className="filter_remove_button" style={{
+                        cursor: "pointer",
+                        float: "left",
+                        verticalAlign: "middle",
+                        marginTop: "25px",
+                        position: "relative",
+                    }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
                 </Form.Group>
             </div>
         </Form.Row>)
@@ -311,45 +317,45 @@ class DashboardFilter extends React.Component {
     }
 
     updateFilterRow(e, index, type) {
-            let name
-            let value
-            let defaultValues = []
-            let filters = [...this.state.filters]
-            if (type === "startDate" || type === "endDate") {
-                name = type
-                value = e
+        let name
+        let value
+        let defaultValues = []
+        let filters = [...this.state.filters]
+        if (type === "startDate" || type === "endDate") {
+            name = type
+            value = e
+        }
+        else if (type == "defaultValue") {
+            let selectedoption = { "value": e.value, "label": e.value }
+            name = "value"
+            let filterValue = filters[index] ? filters[index][name] : []
+            try {
+                defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
             }
-            else if (type == "defaultValue") {
-                let selectedoption = { "value": e.value, "label": e.value }
-                name = "value"
-                let filterValue = filters[index] ? filters[index][name] : []
-                try {
-                    defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
-                }
-                catch (e) {
-                    console.error("Filter value found is a invalid json")
-                    defaultValues = []
-                }
-    
-                if (defaultValues) {
-                    var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
-                    //if option already exists in the list
-                    if (valueExists.length == 0) {
-                        defaultValues.push(selectedoption)
-                        defaultValues["selected"] = selectedoption.value
-                    }
-                    else {
-                        defaultValues["selected"] = selectedoption.value
-                    }
-                }
-                value = defaultValues
+            catch (e) {
+                console.error("Filter value found is a invalid json")
+                defaultValues = []
             }
-            else {
-                name = e.target.name
-                value = e.target.value
+
+            if (defaultValues) {
+                var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
+                //if option already exists in the list
+                if (valueExists.length == 0) {
+                    defaultValues.push(selectedoption)
+                    defaultValues["selected"] = selectedoption.value
+                }
+                else {
+                    defaultValues["selected"] = selectedoption.value
+                }
             }
-            filters[index][name] = value
-            this.setState({ filters })
+            value = defaultValues
+        }
+        else {
+            name = e.target.name
+            value = e.target.value
+        }
+        filters[index][name] = value
+        this.setState({ filters })
     }
 
     handleSelect(e) {
@@ -419,25 +425,25 @@ class DashboardFilter extends React.Component {
         }
     }
 
-     setFilterValues(filters){
-        this.setState({filters})
+    setFilterValues(filters) {
+        this.setState({ filters })
     }
 
     render() {
         return (
             <div>
-                <Row className="pull-right dash-manager-buttons" style={{ right: "7px" }}>
-                    <Button type="button" className="close" aria-label="Close" onClick={() => this.hideFilterDiv()}>
-                    <i className="fa fa-close" aria-hidden="true"></i>
+                <div className="row pull-right dash-manager-buttons" style={{ right: "22px", height: "30px", textAlign: "center", padding: "4px" }}>
+                    <Button type="button" className="close btn btn-primary" aria-label="Close" onClick={() => this.hideFilterDiv()} style={{ padding: "5px" }}>
+                        <i className="fa fa-close" aria-hidden="true"></i>
                     </Button>
-                </Row>
+                </div>
                 <Form className="create-filter-form">
                     {this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
                         return <FilterFields
                             index={index}
                             dateFormat={this.state.dateFormat}
                             filters={this.state.filters}
-                            setFilterValues={(filter)=>this.setFilterValues(filter)}
+                            setFilterValues={(filter) => this.setFilterValues(filter)}
                             input={this.state.input}
                             key={filterRow.key}
                             dataType={filterRow.dataType || ""}
