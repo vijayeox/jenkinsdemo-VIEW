@@ -283,6 +283,7 @@ export default class DocumentViewer extends Component {
                               ".txt",
                               ".pst",
                               ".ost",
+                              ".msg",
                             ],
                             maxFileSize: 25000000,
                           }}
