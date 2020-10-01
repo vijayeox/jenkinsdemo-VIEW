@@ -21,6 +21,7 @@ import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
+import TextAreaComponent from "./Form/TextAreaComponent.js";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -751,6 +752,7 @@ class FormRender extends React.Component {
     Formio.registerComponent("selectcountry", CountryComponent);
     Formio.registerComponent("file", FileComponent);
     Formio.registerComponent("select", SelectComponent);
+    Formio.registerComponent("textarea", TextAreaComponent);
     if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
       this.props.proc.metadata.formio_endpoint ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint) : null;
     }
