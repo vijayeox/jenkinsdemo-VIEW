@@ -92,8 +92,9 @@ class DashboardManager extends React.Component {
     dashData.push({ dashData: response.data });
     inputs["dashname"] = dash
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, })
   }
+
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
@@ -107,16 +108,15 @@ class DashboardManager extends React.Component {
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
         response.data.map(dash => {
-
           if (dash.name === inputs["dashname"]["name"]) {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
+
             that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, exportConfiguration: dash.export_configuration, dashboardStack: dashboardStack })
           } else {
             that.setState({ inputs: this.state.inputs })
           }
-
         })
       } else {
         //setting default dashboard on page load
@@ -125,7 +125,12 @@ class DashboardManager extends React.Component {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack },
+              () => {
+                this.applyDashboardFilter(this.getFilterProperty("filterConfiguration"))
+              }
+            )
           }
         })
       }
@@ -249,7 +254,7 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      this.setState({ dashboardFilter: [],exportConfiguration:value.export_configuration })
+      this.setState({ dashboardFilter: [], exportConfiguration: value.export_configuration })
     } else {
       name = event.target.name
       value = event.target.value
@@ -302,8 +307,8 @@ class DashboardManager extends React.Component {
     if (response.status == "success") {
       console.log(response.data.result)
       let data = response.data.result
-      let filename=this.state.inputs["dashname"]["name"]
-      exportFromJSON({ data, fileName:filename, exportType })
+      let filename = this.state.inputs["dashname"]["name"]
+      exportFromJSON({ data, fileName: filename, exportType })
     } else {
       this.notif.current.notify(
         "Could not fetch data",
