@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
 import './public/css/dashboardEditor.scss'
-import '@progress/kendo-theme-default/dist/all.css';
+import '@progress/kendo-theme-bootstrap/dist/all.css';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
