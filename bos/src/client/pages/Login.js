@@ -193,7 +193,7 @@ class Login extends React.Component {
               <a href="./privacy-policy" target="_blank">
                 Privacy Policy
               </a>
-              <div class="coppyRight">
+              <div className="coppyRight">
                 Copyright © 2004-2020 EOX Vantage. All rights reserved.
               </div>
             </footer>
