@@ -200,7 +200,9 @@ export default class WidgetGrid extends React.Component {
                 aggregateColumns.forEach(column => {
                     if (cellProps.field == column.field) {
                         cellProps.dataItem.items.forEach(item => {
-                            sum += item[column.field]
+                            if(typeof(item[column.field])=="number"){
+                                sum += item[column.field]
+                            }
                         })
                         formattedSum=sum
                         if(column.format)
