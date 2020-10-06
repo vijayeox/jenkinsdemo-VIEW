@@ -192,7 +192,7 @@ export default class WidgetGrid extends React.Component {
     cellRender(tdElement, cellProps, thiz) {
         if (cellProps.rowType === 'groupFooter') {
             let element = null
-            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]["aggregate"]) {
+            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]!=false && thiz.props.configuration["groupable"]["aggregate"]) {
                 let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
                 let sum = 0
                 let kendo_service=new IntlService()
@@ -276,7 +276,7 @@ export default class WidgetGrid extends React.Component {
             sort={this.state.sort}
             onSortChange={this.gridSortChanged}
             onRowClick={this.drillDownClick}
-            groupable={{ "footer": "visible" }}
+            groupable={this.groupable}
             group={this.state.group}
             onGroupChange={this.gridGroupChanged}
             onExpandChange={this.gridGroupExpansionChanged}
