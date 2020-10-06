@@ -16,7 +16,7 @@ export default class DocumentViewer extends Component {
       documentsList: undefined,
       documentTypes: [],
       activeCard: "",
-      uploadFiles: []
+      uploadFiles: [],
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
@@ -43,7 +43,7 @@ export default class DocumentViewer extends Component {
 
     if (validFiles) {
       this.setState({
-        uploadFiles: validFiles
+        uploadFiles: validFiles,
       });
     }
     fileError
@@ -78,7 +78,7 @@ export default class DocumentViewer extends Component {
           documentsList: undefined,
           documentTypes: [],
           activeCard: "",
-          uploadFiles: []
+          uploadFiles: [],
         },
         this.getDocumentsList()
       );
@@ -104,7 +104,7 @@ export default class DocumentViewer extends Component {
         name: file.name,
         type: "file/" + file.extension.split(".")[1],
         fileId: fileId,
-        fieldLabel: this.state.activeCard
+        fieldLabel: this.state.activeCard,
       },
       "filepost"
     );
@@ -155,7 +155,7 @@ export default class DocumentViewer extends Component {
               folderType: folderType,
               selectedDocument: documentsList[validDocTypes[0]][0],
               activeCard: validDocTypes[0],
-              documentTypes: validDocTypes
+              documentTypes: validDocTypes,
             });
           }
           this.loader.destroy();
@@ -218,10 +218,10 @@ export default class DocumentViewer extends Component {
                       this.state.documentsList[item].length !== 0
                         ? this.setState({
                             activeCard: item,
-                            selectedDocument: this.state.documentsList[item][0]
+                            selectedDocument: this.state.documentsList[item][0],
                           })
                         : this.setState({
-                            activeCard: item
+                            activeCard: item,
                           });
                     }}
                   >
@@ -235,17 +235,21 @@ export default class DocumentViewer extends Component {
                         <Card
                           className="docItems"
                           onClick={(e) => {
-                            doc.file != this.state.selectedDocument?(this.state.selectedDocument.file
-                              ? this.handleDocumentClick(doc)
-                              : null):null;
+                            doc.file != this.state.selectedDocument
+                              ? this.state.selectedDocument.file
+                                ? this.handleDocumentClick(doc)
+                                : null
+                              : null;
                           }}
                           key={i}
                         >
                           <div
                             className={
-                              doc.file == this.state.selectedDocument?(this.state.selectedDocument.file
-                                ? "docListBody borderActive"
-                                : "docListBody border"):"docListBody border"
+                              doc.file == this.state.selectedDocument
+                                ? this.state.selectedDocument.file
+                                  ? "docListBody borderActive"
+                                  : "docListBody border"
+                                : "docListBody border"
                             }
                           >
                             <i
@@ -396,7 +400,16 @@ export default class DocumentViewer extends Component {
                         response.message,
                         "success"
                       );
-                      this.getDocumentsList();
+                      this.setState(
+                        {
+                          selectedDocument: undefined,
+                          documentsList: undefined,
+                          documentTypes: [],
+                          activeCard: "",
+                          uploadFiles: [],
+                        },
+                        this.getDocumentsList()
+                      );
                     } else {
                       this.notif.current.notify(
                         "Error",
@@ -423,7 +436,16 @@ export default class DocumentViewer extends Component {
                       response.message,
                       "success"
                     );
-                    this.getDocumentsList();
+                    this.setState(
+                      {
+                        selectedDocument: undefined,
+                        documentsList: undefined,
+                        documentTypes: [],
+                        activeCard: "",
+                        uploadFiles: [],
+                      },
+                      this.getDocumentsList()
+                    );
                   } else {
                     this.notif.current.notify(
                       "Error",
