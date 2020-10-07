@@ -252,6 +252,10 @@ class DashboardFilter extends React.Component {
         console.log("Inside the filter Function: " + this.state.dateFormat);
     }
 
+    componentDidMount() {
+        this.saveFilter();
+      }
+
     componentDidUpdate(prevProps) {
         if (prevProps.filterConfiguration != this.props.filterConfiguration) {
             this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })

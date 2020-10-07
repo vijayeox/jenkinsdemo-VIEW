@@ -162,6 +162,9 @@ class PageContent extends React.Component {
       var pageDetails = this.state.pageContent;
       var that = this;
       var copyPageContent = [];
+      if(rowData.rygRule){
+        copyPageContent.push({type: "HTMLViewer" , content: rowData.rygRule, className: "rygBadge"});  
+      }
       var checkForTypeUpdate = false;
       var updateBreadcrumb = true;
       var pageId = null;
@@ -175,39 +178,64 @@ class PageContent extends React.Component {
             if (response.status == "success") {
               this.loader.destroy();
               if (item.successMessage) {
-                Swal.fire({ icon: "success", title: item.successMessage, showConfirmButton: true });
+                Swal.fire({
+                  icon: "success",
+                  title: item.successMessage,
+                  showConfirmButton: true,
+                });
               }
-              item.params.successNotification ? that.notif.current.notify("Success", item.params.successNotification.length > 0 ? item.params.successNotification : "Update Completed", "success") : null;
+              item.params.successNotification
+                ? that.notif.current.notify(
+                    "Success",
+                    item.params.successNotification.length > 0
+                      ? item.params.successNotification
+                      : "Update Completed",
+                    "success"
+                  )
+                : null;
+              this.postSubmitCallback();
               this.setState({ showLoader: false });
             } else {
               this.loader.destroy();
               Swal.fire({
                 icon: "error",
                 title: response.message,
-                showConfirmButton: true
+                showConfirmButton: true,
               });
               that.setState({
                 pageContent: pageDetails,
-                showLoader: false
+                showLoader: false,
               });
               return false;
             }
           } else {
             if (item.params && item.params.page_id) {
-              pageId=item.params.page_id;
-              if(item.params.params){
-                var newParams = this.updatePassedParams(item.params.params,mergeRowData)
-                mergeRowData = {...newParams, ...mergeRowData}
+              pageId = item.params.page_id;
+              if (item.params.params) {
+                var newParams = this.updatePassedParams(
+                  item.params.params,
+                  mergeRowData
+                );
+                mergeRowData = { ...newParams, ...mergeRowData };
               }
               copyPageContent = [];
             } else {
-              var pageContentObj={};
-              pageContentObj = this.replaceParams(item,mergeRowData);
+              var pageContentObj = {};
+              pageContentObj = this.replaceParams(item, mergeRowData);
               copyPageContent.push(pageContentObj);
             }
           }
         });
-        action.updateOnly ? null : this.loadPage(pageId, action.icon, true,action.name,mergeRowData,copyPageContent);
+        action.updateOnly
+          ? null
+          : this.loadPage(
+              pageId,
+              action.icon,
+              true,
+              action.name,
+              mergeRowData,
+              copyPageContent
+            );
       }
     }
   }
@@ -530,13 +558,15 @@ class PageContent extends React.Component {
           if(itemContent.operations.actions){
             itemContent.operations.actions.map((action, j) => {
               var act = action;
-              act.details.map((detail, k) => {
-                if(detail.params){
-                  Object.keys(detail.params).map(function (key, index) {
-                    detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
-                  });
-                }
-              });
+              if(act.details){
+                act.details.map((detail, k) => {
+                  if(detail.params){
+                    Object.keys(detail.params).map(function (key, index) {
+                      detail.params[key] = that.replaceParams(detail.params[key],mergeRowData);
+                    });
+                  }
+                });
+              }
             });
           }
         }
@@ -713,6 +743,7 @@ class PageContent extends React.Component {
             }
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
+            className={item.className}
           />
         );
       } else {
@@ -726,6 +757,7 @@ class PageContent extends React.Component {
               components={OxzionGUIComponents}
               appId={this.appId}
               core={this.core}
+              refresh={this.postSubmitCallback}
             ></this.externalComponent>
           ) : (
               <h3 key={i}>The component used is not available.</h3>

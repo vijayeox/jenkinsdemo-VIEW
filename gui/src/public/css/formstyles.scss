@@ -257,3 +257,16 @@
   height: 100%;
   width: 100%;
 }
+
+.formBuilder {
+  #form-save-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+
+    .form-group{
+      margin-bottom: unset;
+    }
+  }
+}

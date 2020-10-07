@@ -48,7 +48,6 @@ class Dashboard extends Component {
     return response;
   }
 
-
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
@@ -58,13 +57,14 @@ class Dashboard extends Component {
       "get"
     );
     return response;
-  } 
-  extractFilter(){
-    let stack=this.props.dashboardStack;
-    let filter=stack[stack.length-1].drilldownDashboardFilter
-    let filterText=""
-    for(let i=0;i<filter.length;i++){
-      filterText!="" && (filterText += " ")
+  }
+
+  extractFilter() {
+    let stack = this.props.dashboardStack;
+    let filter = stack[stack.length - 1].drilldownDashboardFilter
+    let filterText = ""
+    for (let i = 0; i < filter.length; i++) {
+      filterText != "" && (filterText += " ")
       filterText += filter[i]
     }
     return filterText
@@ -74,9 +74,9 @@ class Dashboard extends Component {
     let dashboardFilterDescription = ""
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
-      let dashboardTitle=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardTitle"]
+      let dashboardTitle = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
-      dashboardFilterDescription="<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>"+dashboardTitle+"</span>";
+      dashboardFilterDescription = "<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>" + dashboardTitle + "</span>";
     }
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
     return container
@@ -90,8 +90,6 @@ class Dashboard extends Component {
     }
   }
 
-
-
   componentDidMount() {
     if (this.uuid) {
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
@@ -100,9 +98,10 @@ class Dashboard extends Component {
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           }, () => {
             this.setupDrillDownListeners()
+            this.updateGraphWithFilterChanges()
           }
           );
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraphWithFilterChanges()
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -236,14 +235,14 @@ class Dashboard extends Component {
       }
     }
     if (filterParams) {
-      if(filterParams.length == 0){
+      if (filterParams.length == 0) {
         //if no dashboard filter exists
         if (this.props.dashboardStack.length > 1) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
           if (drilldownDashboardFilter.length > 1)
             this.updateGraph(drilldownDashboardFilter)
-        }else{
+        } else {
           this.updateGraph()
         }
       }
@@ -351,9 +350,9 @@ class Dashboard extends Component {
 
   async drillDownToDashboard(data) {
     let event = {};
-    let elementId=data.elementId
-     //starting spinner 
-     if (elementId) {
+    let elementId = data.elementId
+    //starting spinner 
+    if (elementId) {
       var widgetDiv = document.getElementById(elementId);
       this.loader.show(widgetDiv);
     }
@@ -362,7 +361,7 @@ class Dashboard extends Component {
     let dashboardFilter = (dashboardStack.length > 0 && dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"].length > 0) ? dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] : []
     let widgetFilter = data.filter
     let drilldownDashboardFilter = JSON.parse(widgetFilter)
-    let drilldownDashboardTitle=data.dashboardTitle
+    let drilldownDashboardTitle = data.dashboardTitle
     event.value = JSON.stringify(dashboardData.data.dashboard)
     if (this.state.preparedDashboardFilter !== null) {
       //combining dashboardfilter with widgetfilter
@@ -429,8 +428,8 @@ class Dashboard extends Component {
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    } else if(this.props.dashboardStack && this.props.dashboardStack.length>1){
-      let dashFilter=this.props.dashboardStack[this.props.dashboardStack.length -1]["drilldownDashboardFilter"]
+    } else if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
+      let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
       let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);

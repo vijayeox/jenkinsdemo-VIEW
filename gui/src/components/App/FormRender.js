@@ -20,6 +20,8 @@ import RadioCardComponent from "./Form/RadioCardComponent";
 import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
+import SelectComponent from "./Form/SelectComponent.js";
+import TextAreaComponent from "./Form/TextAreaComponent.js";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -749,6 +751,8 @@ class FormRender extends React.Component {
     Formio.registerComponent("phonenumber", PhoneNumberComponent);
     Formio.registerComponent("selectcountry", CountryComponent);
     Formio.registerComponent("file", FileComponent);
+    Formio.registerComponent("select", SelectComponent);
+    Formio.registerComponent("textarea", TextAreaComponent);
     if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
       this.props.proc.metadata.formio_endpoint ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint) : null;
     }
@@ -884,33 +888,6 @@ class FormRender extends React.Component {
         });
         form.on("render", function () {
           that.hideBreadCrumb(true);
-          eachComponent(form.root.components, function (component) {
-            if (component) {
-              if (component.component.properties && component.component.properties.custom_list) {
-                var targetComponent = form.getComponent(component.component.key);
-                if (targetComponent) {
-                  switch (component.component.properties.custom_list) {
-                    case "user_list":
-                      var commands = { commands: [{ command: "getuserlist" }] };
-                      that.callPipeline(commands, form.submission).then(response => {
-                        that.showFormLoader(false, 0);
-                        if (response.status == "success") {
-                          if (response.data) {
-                            component.setValue(response.data.userlist);
-                            that.showFormLoader(false, 0);
-                          }
-                        } else {
-                          that.showFormLoader(false, 0);
-                        }
-                      });
-                      break;
-                    default:
-                      break;
-                  }
-                }
-              }
-            }
-          }, true);
           var nextButton = document.getElementsByClassName(
             "btn-wizard-nav-next"
           );
@@ -1133,7 +1110,6 @@ class FormRender extends React.Component {
           form.emit("render");
         });
         that.setState({ currentForm: form });
-        var componentList = flattenComponents(form._form.components, true);
         return form;
       });
     }

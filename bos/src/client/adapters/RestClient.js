@@ -103,6 +103,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 		this.token = userData["jwt"];
 		let resp = 'null';
 		let reqHeaders = {}
+		method = method.toLowerCase();
 
 		// adding custom headers if any along with auth
 		if (headers != null) {
@@ -114,10 +115,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 			let auth = 'Bearer ' + this.token;
 			reqHeaders['Authorization'] = auth;
 			if (method == 'get' || method == 'put') {
-
-
-
-				
 				if (!(reqHeaders['Content-Type'])) {
 					reqHeaders['Content-Type'] = 'application/json';
 				}
@@ -126,15 +123,12 @@ export class RestClientServiceProvider extends ServiceProvider {
 		}
 		try {
 			if (method == 'get') {
-
 				resp = await fetch(urlString, {
 					method: method,
 					credentials: 'include',
 					headers: reqHeaders
 
-				})
-			
-				console.time(action)
+				});
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
