@@ -58,6 +58,33 @@ class HTMLViewer extends React.Component {
   }
 
   render() {
+      
+  var _moment = moment;
+  var formatDate = (dateTime, dateTimeFormat) => {
+    let userTimezone,
+      userDateTimeFomat = null;
+    userTimezone = this.profile.key.preferences.timezone
+      ? this.profile.key.preferences.timezone
+      : moment.tz.guess();
+    userDateTimeFomat = this.profile.key.preferences.dateformat
+      ? this.profile.key.preferences.dateformat
+      : "YYYY-MM-DD";
+    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+    return moment(dateTime)
+      .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
+      .clone()
+      .tz(userTimezone)
+      .format(userDateTimeFomat);
+  };
+  var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
+    let userDateTimeFomat = null;
+    userDateTimeFomat = this.profile.key.preferences.dateformat
+      ? this.profile.key.preferences.dateformat
+      : "YYYY-MM-DD";
+    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+    return moment(dateTime).format(userDateTimeFomat);
+  };
+
     return (
       this.state.dataReady && (
         <JsxParser className ={this.props.className}
@@ -66,6 +93,8 @@ class HTMLViewer extends React.Component {
             data: this.state.fileData ? this.state.fileData : {},
             item: this.state.fileData ? this.state.fileData : {},
             moment: moment,
+            formatDate: formatDate,
+            formatDateWithoutTimezone: formatDateWithoutTimezone,
             profile: this.profile.key
           }}
         />

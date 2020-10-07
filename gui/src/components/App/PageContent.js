@@ -527,7 +527,7 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "List") {
-        var itemContent = item.content;
+        var itemContent = item.gridContent ? item.gridContent : item.content;
         var columnConfig = itemContent.columnConfig;
         if (itemContent.actions) {
           if (columnConfig[columnConfig.length - 1].title == "Actions") {
