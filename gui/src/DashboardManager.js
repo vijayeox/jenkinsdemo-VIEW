@@ -128,7 +128,7 @@ class DashboardManager extends React.Component {
 
             that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack },
               () => {
-                // this.applyDashboardFilter(this.getFilterProperty("filterConfiguration"))
+                this.applyDashboardFilter(this.getFilterProperty("filterConfiguration"))
               }
             )
           }
