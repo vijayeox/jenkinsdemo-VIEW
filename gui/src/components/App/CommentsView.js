@@ -278,7 +278,7 @@ class CommentsView extends React.Component {
                     this.saveComment();
                   }}
                 >
-                  <i className="fa fa-floppy-o"></i>
+                  <i className="fa fa-paper-plane"></i>
                 </Button>
               </abbr>
             </div>
