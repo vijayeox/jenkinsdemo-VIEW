@@ -527,7 +527,7 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "List") {
-        var itemContent = item.content;
+        var itemContent = item.gridContent ? item.gridContent : item.content;
         var columnConfig = itemContent.columnConfig;
         if (itemContent.actions) {
           if (columnConfig[columnConfig.length - 1].title == "Actions") {
@@ -741,6 +741,7 @@ class PageContent extends React.Component {
                 ? this.replaceParams(item.url, this.state.currentRow)
                 : undefined
             }
+            fileId={this.state.fileId}
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
             className={item.className}
