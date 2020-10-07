@@ -741,6 +741,7 @@ class PageContent extends React.Component {
                 ? this.replaceParams(item.url, this.state.currentRow)
                 : undefined
             }
+            fileId={this.state.fileId}
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
             className={item.className}

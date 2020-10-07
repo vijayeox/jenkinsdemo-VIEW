@@ -12,27 +12,38 @@ class HTMLViewer extends React.Component {
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
+      dataReady: this.props.fileId ? false : true,
       dataReady: this.props.url ? false : true
     };
   }
 
-  async getFileDetails(url) {
+  async getFileDetails(fileId) {
     let helper = this.core.make("oxzion/restClient");
-    let fileContent = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/" + url,
-      {},
-      "get"
-    );
+    let fileContent = await helper.request("v1","/app/" + this.appId + "/file/" + fileId + "/data" ,{},"get");
+    return fileContent;
+  }
+  async getURL(url) {
+    let helper = this.core.make("oxzion/restClient");
+    let fileContent = await helper.request("v1",url,{},"get");
     return fileContent;
   }
 
   componentDidMount() {
-    if (this.props.url != undefined) {
-      this.getFileDetails(this.props.url).then(response => {
+    if (this.props.fileId != undefined) {
+      this.getFileDetails(this.props.fileId).then(response => {
         if (response.status == "success") {
           this.setState({
             fileData: response.data.data,
+            dataReady: true
+          });
+        }
+      });
+    }
+    if (this.props.url != undefined) {
+      this.getURL(this.props.url).then(response => {
+        if (response.status == "success") {
+          this.setState({
+            fileData: response.data,
             dataReady: true
           });
         }
