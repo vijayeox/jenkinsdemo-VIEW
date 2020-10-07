@@ -126,10 +126,10 @@ class DashboardManager extends React.Component {
             inputs["dashname"] = dash
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
 
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack }
-              // () => {
-              //    this.applyDashboardFilter(this.getFilterProperty("filterConfiguration"))
-              // }
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack },
+              () => {
+                // this.applyDashboardFilter(this.getFilterProperty("filterConfiguration"))
+              }
             )
           }
         })
