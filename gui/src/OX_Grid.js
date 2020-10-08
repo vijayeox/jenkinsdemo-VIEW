@@ -84,14 +84,31 @@ export default class OX_Grid extends React.Component {
     });
   };
 
-  componentWillReceiveProps(props) {
-    if (props.gridDefaultFilters) {
-      this.setState({ dataState: props.gridDefaultFilters });
+  componentWillReceiveProps(nextProps) {
+    // change to use componentDidUpdate later in future
+    const circularReplacer = (obj) => {
+      var i = 0;
+      return function(key, value) {
+        if(i !== 0 && typeof(obj) === 'object' && typeof(value) == 'object' && obj == value) 
+          return '[Circular]'; 
+        if(i >= 29) // seems to be a harded maximum of 30 serialized objects?
+          return '[Unknown]';
+        ++i; // so we know we aren't using the original object anymore
+        return value;  
+      }
     }
-    if (props.data) {
-      this.setState();
+    if (JSON.stringify(this.props, circularReplacer(this.props)) != JSON.stringify(nextProps, circularReplacer(nextProps))) {
+      if (nextProps.gridDefaultFilters) {
+        let mergedFilters = {...nextProps.gridDefaultFilters, ...this.state.dataState}
+        this.setState({ dataState: mergedFilters });
+      }
+      // Disable untill there is a use case to do this
+      // if (nextProps.data) {
+      //   this.setState();
+      // }
     }
   }
+
 
   parseDefaultFilters() {
     var splitUrl = this.props.data.split("?");
