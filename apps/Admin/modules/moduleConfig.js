@@ -10,7 +10,7 @@ export default {
     dialogWindow: DialogContainerProject,
     listConfig: {
       route: "projects",
-      defaultFilters: '{"sort":[{"field":"date_created","dir":"desc"}]}',
+      defaultFilters: { sort: [{ field: "date_created", dir: "desc" }] },
       toolbarTemplate: (
         <h5 key={Math.random()} style={{ margin: "0px" }}>
           Project's List
