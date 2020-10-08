@@ -17,7 +17,7 @@ export default class DocumentViewer extends Component {
       documentsList: undefined,
       documentTypes: [],
       activeCard: "",
-      uploadFiles: []
+      uploadFiles: [],
     };
     this.loader = this.core.make("oxzion/splash");
     this.helper = this.core.make("oxzion/restClient");
@@ -44,7 +44,7 @@ export default class DocumentViewer extends Component {
 
     if (validFiles) {
       this.setState({
-        uploadFiles: validFiles
+        uploadFiles: validFiles,
       });
     }
     fileError
@@ -79,7 +79,7 @@ export default class DocumentViewer extends Component {
           documentsList: undefined,
           documentTypes: [],
           activeCard: "",
-          uploadFiles: []
+          uploadFiles: [],
         },
         this.getDocumentsList()
       );
@@ -105,7 +105,7 @@ export default class DocumentViewer extends Component {
         name: file.name,
         type: "file/" + file.extension.split(".")[1],
         fileId: fileId,
-        fieldLabel: this.state.activeCard
+        fieldLabel: this.state.activeCard,
       },
       "filepost"
     );
@@ -157,7 +157,7 @@ export default class DocumentViewer extends Component {
               folderType: folderType,
               selectedDocument: documentsList[validDocTypes[0]][0],
               activeCard: validDocTypes[0],
-              documentTypes: validDocTypes
+              documentTypes: validDocTypes,
             });
           } else {
             this.setState({
@@ -182,21 +182,23 @@ export default class DocumentViewer extends Component {
   }
 
   async deleteFile(attachementId) {
-    return await this.helper.request(
+    let response = await this.helper.request(
       "v1",
       "/app/" +
         this.appId +
         "/file/" +
         this.fileId +
         "/attachment/" +
-        attachementId + "/remove",
+        attachementId +
+        "/remove",
       {},
       "delete"
     );
+    return response;
   }
 
   async renameFile(attachementId, name) {
-    return await this.helper.request(
+    let response = await this.helper.request(
       "v1",
       "/app/" +
         this.appId +
@@ -207,6 +209,7 @@ export default class DocumentViewer extends Component {
       { name: name },
       "post"
     );
+    return response;
   }
 
   generateDocumentList() {
@@ -225,10 +228,10 @@ export default class DocumentViewer extends Component {
                       this.state.documentsList[item].length !== 0
                         ? this.setState({
                             activeCard: item,
-                            selectedDocument: this.state.documentsList[item][0]
+                            selectedDocument: this.state.documentsList[item][0],
                           })
                         : this.setState({
-                            activeCard: item
+                            activeCard: item,
                           });
                     }}
                   >
@@ -242,16 +245,20 @@ export default class DocumentViewer extends Component {
                         <Card
                           className="docItems"
                           onClick={(e) => {
-                            doc.file != this.state.selectedDocument.file
-                              ? this.handleDocumentClick(doc)
+                            doc.file != this.state.selectedDocument
+                              ? this.state.selectedDocument.file
+                                ? this.handleDocumentClick(doc)
+                                : null
                               : null;
                           }}
                           key={i}
                         >
                           <div
                             className={
-                              doc.file == this.state.selectedDocument.file
-                                ? "docListBody borderActive"
+                              doc.file == this.state.selectedDocument
+                                ? this.state.selectedDocument.file
+                                  ? "docListBody borderActive"
+                                  : "docListBody border"
                                 : "docListBody border"
                             }
                           >
@@ -290,6 +297,7 @@ export default class DocumentViewer extends Component {
                               ".txt",
                               ".pst",
                               ".ost",
+                              ".msg",
                             ],
                             maxFileSize: 25000000,
                           }}
@@ -360,9 +368,122 @@ export default class DocumentViewer extends Component {
     var documentViewerDiv = document.querySelector(".docViewerWindow");
     this.loader.show(documentViewerDiv);
     this.setState({
-      selectedDocument: doc
+      selectedDocument: doc,
     });
   };
+
+  attachmentOperations(documentData, rename, del, downloadUrl) {
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          {rename &&
+          this.state.activeCard != "Documents" &&
+          documentData.uuid ? (
+            <>
+              <input
+                type="text"
+                id="filename"
+                className="form-control"
+                value={this.state.selectedDocument.originalName.split(".")[0]}
+                onChange={(e) => {
+                  const edited = { ...this.state.selectedDocument };
+                  edited["originalName"] =
+                    e.target.value +
+                    "." +
+                    this.state.selectedDocument.originalName.split(".")[1];
+                  this.setState({
+                    selectedDocument: edited,
+                  });
+                }}
+              />
+              <button
+                title="rename"
+                className="btn btn-dark"
+                onClick={() => {
+                  this.renameFile(
+                    documentData.uuid,
+                    this.state.selectedDocument.originalName
+                  ).then((response) => {
+                    if (response.status == "success") {
+                      this.notif.current.notify(
+                        "Success",
+                        response.message,
+                        "success"
+                      );
+                      this.setState(
+                        {
+                          selectedDocument: undefined,
+                          documentsList: undefined,
+                          documentTypes: [],
+                          activeCard: "",
+                          uploadFiles: [],
+                        },
+                        this.getDocumentsList()
+                      );
+                    } else {
+                      this.notif.current.notify(
+                        "Error",
+                        response.message,
+                        "danger"
+                      );
+                    }
+                  });
+                }}
+              >
+                <i className="fa fa-floppy-o"></i>
+              </button>
+            </>
+          ) : null}
+          {del && this.state.activeCard != "Documents" && documentData.uuid ? (
+            <button
+              title="delete"
+              className="btn btn-dark"
+              onClick={() => {
+                this.deleteFile(documentData.uuid).then((response) => {
+                  if (response.status == "success") {
+                    this.notif.current.notify(
+                      "Success",
+                      response.message,
+                      "success"
+                    );
+                    this.setState(
+                      {
+                        selectedDocument: undefined,
+                        documentsList: undefined,
+                        documentTypes: [],
+                        activeCard: "",
+                        uploadFiles: [],
+                      },
+                      this.getDocumentsList()
+                    );
+                  } else {
+                    this.notif.current.notify(
+                      "Error",
+                      response.message,
+                      "danger"
+                    );
+                  }
+                });
+              }}
+            >
+              <i className="fa fa-trash"></i>
+            </button>
+          ) : null}
+          {downloadUrl ? (
+            <a
+              href={downloadUrl}
+              download
+              target="_blank"
+              className="image-download-button"
+            >
+              <i className="fa fa-download" aria-hidden="true"></i>
+              Download
+            </a>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   displayDocumentData = (documentData) => {
     var url;
@@ -378,52 +499,7 @@ export default class DocumentViewer extends Component {
         documentData.file;
       return (
         <React.Fragment>
-          <div className="row">
-            <div className="col-md-12">
-              <input
-                type="text"
-                id="filename"
-                className="form-control"
-                value={this.state.selectedDocument.originalName}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
-                  this.setState({
-                    selectedDocument: edited,
-                  });
-                }}
-              />
-              <button
-                title="rename"
-                className="btn btn-dark"
-                onClick={() =>
-                  this.renameFile(
-                    documentData.uuid,
-                    this.state.selectedDocument.originalName
-                  )
-                }
-              >
-                <i className="fa fa-floppy-o"></i>
-              </button>
-              <button
-                title="delete"
-                className="btn btn-dark"
-                onClick={() => this.deleteFile(documentData.uuid)}
-              >
-                <i className="fa fa-trash"></i>
-              </button>
-              <a
-                href={url}
-                download
-                target="_blank"
-                className="image-download-button"
-              >
-                <i className="fa fa-download" aria-hidden="true"></i>
-                Download
-              </a>
-            </div>
-          </div>
+          {this.attachmentOperations(documentData, true, true, url)}
           <img
             onLoad={() => this.loader.destroy()}
             className="img-fluid"
@@ -443,43 +519,7 @@ export default class DocumentViewer extends Component {
         documentData.file;
       return (
         <div>
-          <div className="row">
-            <div className="col-md-12">
-              <input
-                type="text"
-                id="filename"
-                className="form-control"
-                value={this.state.selectedDocument.originalName}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
-                  this.setState({
-                    selectedDocument: edited,
-                  });
-                }}
-              />
-              <button
-                title="rename"
-                className="btn btn-dark"
-                onClick={() =>
-                  this.renameFile(
-                    documentData.uuid,
-                    this.state.selectedDocument.originalName
-                  )
-                }
-              >
-                <i className="fa fa-floppy-o"></i>
-              </button>
-              <button
-                title="delete"
-                className="btn btn-dark"
-                onClick={() => this.deleteFile(documentData.uuid)}
-              >
-                <i className="fa fa-trash"></i>
-              </button>
-            </div>
-          </div>
+          {this.attachmentOperations(documentData, true, true, url)}
           <video
             autoplay
             muted
@@ -506,43 +546,7 @@ export default class DocumentViewer extends Component {
         documentData.file;
       return (
         <div className="pdf-frame">
-          <div className="row">
-            <div className="col-md-12">
-              <input
-                type="text"
-                id="filename"
-                className="form-control"
-                value={this.state.selectedDocument.originalName}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
-                  this.setState({
-                    selectedDocument: edited,
-                  });
-                }}
-              />
-              <button
-                title="rename"
-                className="btn btn-dark"
-                onClick={() =>
-                  this.renameFile(
-                    documentData.uuid,
-                    this.state.selectedDocument.originalName
-                  )
-                }
-              >
-                <i className="fa fa-floppy-o"></i>
-              </button>
-              <button
-                title="delete"
-                className="btn btn-dark"
-                onClick={() => this.deleteFile(documentData.uuid)}
-              >
-                <i className="fa fa-trash"></i>
-              </button>
-            </div>
-          </div>
+          {this.attachmentOperations(documentData, true, true)}
           <iframe
             onLoad={() => {
               setTimeout(() => {
@@ -567,52 +571,7 @@ export default class DocumentViewer extends Component {
       this.loader.destroy();
       return (
         <React.Fragment>
-          <div className="row">
-            <div className="col-md-12">
-              <input
-                type="text"
-                id="filename"
-                className="form-control"
-                value={this.state.selectedDocument.originalName}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
-                  this.setState({
-                    selectedDocument: edited,
-                  });
-                }}
-              />
-              <button
-                title="rename"
-                className="btn btn-dark"
-                onClick={() =>
-                  this.renameFile(
-                    documentData.uuid,
-                    this.state.selectedDocument.originalName
-                  )
-                }
-              >
-                <i className="fa fa-floppy-o"></i>
-              </button>
-              <button
-                title="delete"
-                className="btn btn-dark"
-                onClick={() => this.deleteFile(documentData.uuid)}
-              >
-                <i className="fa fa-trash"></i>
-              </button>
-              <a
-                href={url}
-                download
-                target="_blank"
-                className="image-download-button"
-              >
-                <i className="fa fa-download" aria-hidden="true"></i>
-                Download
-              </a>
-            </div>
-          </div>
+          {this.attachmentOperations(documentData, true, true, url)}
           <div className="show-text col-md-12">{this.showFile(url)}</div>
         </React.Fragment>
       );
@@ -630,52 +589,7 @@ export default class DocumentViewer extends Component {
       this.loader.destroy();
       return (
         <React.Fragment>
-          <div className="row">
-            <div className="col-md-12">
-              <input
-                type="text"
-                id="filename"
-                className="form-control"
-                value={this.state.selectedDocument.originalName}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  const edited = { ...this.state.selectedDocument };
-                  edited["originalName"] = value;
-                  this.setState({
-                    selectedDocument: edited,
-                  });
-                }}
-              />
-              <button
-                title="rename"
-                className="btn btn-dark"
-                onClick={() =>
-                  this.renameFile(
-                    documentData.uuid,
-                    this.state.selectedDocument.originalName
-                  )
-                }
-              >
-                <i className="fa fa-floppy-o"></i>
-              </button>
-              <button
-                title="delete"
-                className="btn btn-dark"
-                onClick={() => this.deleteFile(documentData.uuid)}
-              >
-                <i className="fa fa-trash"></i>
-              </button>
-              <a
-                href={url}
-                download
-                target="_blank"
-                className="image-download-button"
-              >
-                <i className="fa fa-download" aria-hidden="true"></i>
-                Download
-              </a>
-            </div>
-          </div>
+          {this.attachmentOperations(documentData, true, true, url)}
           <img className="img-fluid" style={{ height: "100%" }} src={url2} />
         </React.Fragment>
       );
