@@ -15,6 +15,7 @@ class Dashboard extends Component {
       preparedDashboardFilter: null,
       drilldownDashboardFilter: [],
       widgetCounter: 0,
+      initialFilter: []
 
     };
     this.content = this.props.content;
@@ -45,12 +46,14 @@ class Dashboard extends Component {
       {},
       "get"
     );
+    console.log(response);
     return response;
   }
 
 
   async getWidgetByUuid(uuid, filterParams) {
-    let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
+    let initialFilter = JSON.parse(this.state.initialFilter);
+    let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : this.state.initialFilter
     let response = await this.helper.request(
       "v1",
       "analytics/widget/" + uuid + '?data=true' + filterParameter,
@@ -81,6 +84,7 @@ class Dashboard extends Component {
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
     return container
   }
+  
   setupDrillDownListeners() {
     if (document.getElementById("dashboard-rollup-button")) {
       let backbutton = document.getElementById("dashboard-rollup-button")
@@ -90,19 +94,19 @@ class Dashboard extends Component {
     }
   }
 
-
-
   componentDidMount() {
     if (this.uuid) {
       this.getDashboardHtmlDataByUuid(this.uuid).then(response => {
         if (response.status == "success") {
           this.setState({
-            htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
+            htmlData: response.data.dashboard.content ? response.data.dashboard.content : null,
+            initialFilter: response.data.dashboard.filter_configuration
           }, () => {
             this.setupDrillDownListeners()
+            this.updateGraphWithFilterChanges()
           }
           );
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraphWithFilterChanges()
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -281,6 +285,7 @@ class Dashboard extends Component {
   }
 
   updateGraph = async (filterParams) => {
+    console.log(filterParams);
     if (null === this.state.htmlData) {
       return;
     }
@@ -310,7 +315,7 @@ class Dashboard extends Component {
         this.getWidgetByUuid(widgetUUId, filterParams)
           .then(response => {
             if (response.status == "success") {
-              response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
+              // response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
               that.setState({ widgetCounter: that.state.widgetCounter + 1 });
               if ('error' === response.status) {
                 console.error('Could not load widget.');
