@@ -131,6 +131,10 @@ class Navigation extends React.Component {
       document.getElementById(e.detail.parentPage + "_page")
     ) {
       this.pageInActive(e.detail.parentPage);
+    } else {
+      pages.length > 0
+        ? this.pageInActive(pages[pages.length - 2].pageId)
+        : null;
     }
     this.setState({ pages: pages });
   };
