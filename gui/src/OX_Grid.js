@@ -285,6 +285,7 @@ export default class OX_Grid extends React.Component {
           <JsxParser
             bindings={{
               item: this.props.parentData,
+              data: this.props.parentData,
               moment: moment,
               profile: this.props.userProfile,
               baseUrl: this.props.baseUrl,
@@ -448,7 +449,8 @@ export default class OX_Grid extends React.Component {
       title: config.name,
       pageContent: config.details,
       pageId: null,
-      parentPage: this.props.pageId
+      parentPage: this.props.pageId,
+      currentRow: this.props.parentData
     };
     let ev2 = new CustomEvent("addPage", {
       detail: pageDetails,
