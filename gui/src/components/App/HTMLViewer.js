@@ -12,7 +12,7 @@ class HTMLViewer extends React.Component {
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
-      dataReady: this.props.url ? false : true
+      dataReady: this.props.url ? false : true,
     };
   }
 
@@ -28,12 +28,30 @@ class HTMLViewer extends React.Component {
   }
 
   componentDidMount() {
+    document.getElementById("navigation_" + this.appId)
+      ? document.getElementById("navigation_" + this.appId).addEventListener(
+          "handleGridRefresh",
+          () => {
+            this.getFileDetails(this.props.url).then((response) => {
+              if (response.status == "success") {
+                this.setState({
+                  fileData: response.data.data
+                    ? response.data.data
+                    : response.data,
+                  dataReady: true,
+                });
+              }
+            });
+          },
+          false
+        )
+      : null;
     if (this.props.url != undefined) {
-      this.getFileDetails(this.props.url).then(response => {
+      this.getFileDetails(this.props.url).then((response) => {
         if (response.status == "success") {
           this.setState({
-            fileData: response.data.data,
-            dataReady: true
+            fileData: response.data.data ? response.data.data : response.data,
+            dataReady: true,
           });
         }
       });
@@ -47,6 +65,15 @@ class HTMLViewer extends React.Component {
   }
 
   render() {
+    var params = {};
+    if (this.state.dataReady) {
+      this.props.params
+        ? Object.keys(this.props.params).forEach((param) => {
+            var data = this.state.fileData ? this.state.fileData : {};
+            params[param] = eval(this.props.params[param]);
+          })
+        : null;
+    }
     return (
       this.state.dataReady && (
         <JsxParser
@@ -54,7 +81,8 @@ class HTMLViewer extends React.Component {
           bindings={{
             data: this.state.fileData ? this.state.fileData : {},
             moment: moment,
-            profile: this.profile.key
+            profile: this.profile.key,
+            ...params,
           }}
         />
       )
