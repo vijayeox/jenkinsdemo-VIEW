@@ -215,7 +215,15 @@ class FormRender extends React.Component {
 
   async getFileDataById() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl+"/file/"+this.props.fileId+"/data",{},"get");
+    return await this.helper.request(
+      "v1",
+      this.appUrl +
+        "/file/" +
+        (this.props.fileId ? this.props.fileId : this.props.parentFileId) +
+        "/data",
+      {},
+      "get"
+    );
   }
   async getStartFormWorkflow() {
     // call to api using wrapper
@@ -262,6 +270,10 @@ class FormRender extends React.Component {
       }
       if(this.props.fileId){
         form.submission.data.fileId = this.state.fileId;
+        form.submission.data["workflow_instance_id"] = undefined;
+      }
+      if(this.props.parentFileId){
+        form.submission.data.fileId = undefined;
         form.submission.data["workflow_instance_id"] = undefined;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
@@ -566,7 +578,7 @@ class FormRender extends React.Component {
           });
 
         });
-      }else  if (this.state.fileId) {
+      }else  if (this.state.fileId || this.props.parentFileId) {
         this.getFileDataById().then((response) => {
           if (response.status == "success") {
             this.setState(
@@ -1456,7 +1468,7 @@ class FormRender extends React.Component {
         this.loadWorkflow();
       }
     }
-    if(this.props.fileId){
+    if(this.props.fileId || this.props.parentFileId){
       this.loadWorkflow();
     }
     $("#" + this.loaderDivID).off("customButtonAction");

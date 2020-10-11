@@ -405,6 +405,7 @@ class PageContent extends React.Component {
             isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
+            parentFileId={item.parentFileId ? this.replaceParams(item.parentFileId, this.state.currentRow) : undefined}
           />
         );
       } else if (item.type == "List") {
@@ -584,6 +585,7 @@ class PageContent extends React.Component {
             }
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
+            params={item.params}
           />
         );
       } else {
