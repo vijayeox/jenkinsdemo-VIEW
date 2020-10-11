@@ -98,6 +98,23 @@
     height: 25px;
   }
 
+  .k-filtercell > .k-filtercell-wrapper > .k-numerictextbox > .k-numeric-wrap > input {
+    font-size: small;
+    margin-bottom: 0px;
+    height: 25px;
+    background-color: #ffffff;
+  }
+
+  .k-numeric-wrap{
+    border-color: #f8f9fa !important;
+    align-items: center;
+    background-color: #f8f9fa !important;
+
+    .k-select{
+      display: none;
+    }
+  }
+
   .k-filtercell {
     .k-datepicker {
       height: 35px;
