@@ -142,8 +142,16 @@ class PageContent extends React.Component {
      parentPage = this.parentPage;
    }
    let ev = new CustomEvent("addPage", {
-     detail: {pageId:pageId,title:name,icon:icon,nested:true,currentRow:currentRow,parentPage:parentPage,pageContent:pageContent},
-     bubbles: true
+     detail: {
+       pageId: pageId,
+       title: name,
+       icon: icon,
+       nested: true,
+       currentRow: currentRow,
+       parentPage: parentPage,
+       pageContent: pageContent,
+     },
+     bubbles: true,
    });
    document.getElementById("navigation_"+this.appId).dispatchEvent(ev);
    this.loader.destroy();
