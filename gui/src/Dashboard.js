@@ -102,7 +102,7 @@ class Dashboard extends Component {
             this.setupDrillDownListeners()
           }
           );
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(this.extractFilterValues())
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
