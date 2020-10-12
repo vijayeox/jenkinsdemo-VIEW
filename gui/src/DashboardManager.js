@@ -337,13 +337,17 @@ class DashboardManager extends React.Component {
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
       this.setState({ dashboardFilter: [],exportConfiguration:value.export_configuration })
+      let dashboardFilterConf = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
+
+      this.setState({ dashboardFilter: dashboardFilterConf, exportConfiguration: value.export_configuration })
+
     } else {
       name = event.target.name
       value = event.target.value
     }
     inputs[name] = value
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
-    dashboardStack.push({ data: value, drilldownDashboardFilter: [], filterConfiguration: dashboardFilter })
+    dashboardStack.push({ data: value, drilldownDashboardFilter: this.extractFilterValues(), filterConfiguration: dashboardFilter })
 
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
