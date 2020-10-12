@@ -96,6 +96,13 @@ class DashboardManager extends React.Component {
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
   }
+  preparefilter(filter1, filter2) {
+    var filter = []
+    filter.push(filter1)
+    filter.push("AND")
+    filter.push(filter2)
+    return filter
+  }
 
   extractFilterValues(dashboardFilter) {
     let filterParams = []
@@ -211,8 +218,17 @@ class DashboardManager extends React.Component {
             //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
             // }
             inputs["dashname"] = dash
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: this.extractFilterValues(dashboardFilter) })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack,drilldownDashboardFilter:this.extractFilterValues(dashboardFilter) })
+            let extractedFilterValues= this.extractFilterValues(dashboardFilter);
+            let preapredExtractedFilterValue=null
+            if (extractedFilterValues && extractedFilterValues.length > 1) {
+              preapredExtractedFilterValue = extractedFilterValues[0]
+              for (let i = 1; i < extractedFilterValues.length; i++) {
+                preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+          
+              }
+            }
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack,drilldownDashboardFilter:preapredExtractedFilterValue })
           }
         })
       }
@@ -347,7 +363,17 @@ class DashboardManager extends React.Component {
     }
     inputs[name] = value
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
-    dashboardStack.push({ data: value, drilldownDashboardFilter: this.extractFilterValues(), filterConfiguration: dashboardFilter })
+    let extractedFilterValues= this.extractFilterValues(dashboardFilter);
+    let preapredExtractedFilterValue=null
+    if (extractedFilterValues && extractedFilterValues.length > 1) {
+      preapredExtractedFilterValue = extractedFilterValues[0]
+      for (let i = 1; i < extractedFilterValues.length; i++) {
+        preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+  
+      }
+    }
+   
+    dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
 
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
