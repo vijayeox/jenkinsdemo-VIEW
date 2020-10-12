@@ -318,41 +318,41 @@ class Project extends React.Component {
           }
         />
         <React.Suspense fallback={<div>Loading...</div>}>
-        <OX_Grid
-          osjsCore={this.core}
-          ref={this.OX_Grid}
-          rowTemplate={
-            this.listConfig.expandable
-              ? (e) => this.renderRow(e, this.listConfig.expandable)
-              : undefined
-          }
-          expandable={this.listConfig.expandable ? true : undefined}
-          data={
-            "organization/" +
-            this.state.selectedOrg +
-            "/" +
-            this.listConfig.route
-          }
-          wrapStyle={{
-            height: "calc(100% - 72px)",
-            margin: "15px",
-            position: "relative",
-            top: "5px",
-          }}
-          onRowClick={(e) => this.edit(e.dataItem, false)}
-          filterable={true}
-          gridDefaultFilters={JSON.parse(this.listConfig.defaultFilters)}
-          reorderable={true}
-          resizable={true}
-          sortable={true}
-          pageable={{ buttonCount: 3, pageSizes: [10, 20, 30], info: true }}
-          columnConfig={this.prepareColumnData(this.listConfig)}
-          gridToolbar={[
-            this.listConfig.toolbarTemplate,
-            this.createAddButton(),
-          ]}
-        />
-          </React.Suspense>
+          <OX_Grid
+            osjsCore={this.core}
+            ref={this.OX_Grid}
+            rowTemplate={
+              this.listConfig.expandable
+                ? (e) => this.renderRow(e, this.listConfig.expandable)
+                : undefined
+            }
+            expandable={this.listConfig.expandable ? true : undefined}
+            data={
+              "organization/" +
+              this.state.selectedOrg +
+              "/" +
+              this.listConfig.route
+            }
+            wrapStyle={{
+              height: "calc(100% - 72px)",
+              margin: "15px",
+              position: "relative",
+              top: "5px",
+            }}
+            onRowClick={(e) => this.edit(e.dataItem, false)}
+            filterable={true}
+            gridDefaultFilters={this.listConfig.defaultFilters}
+            reorderable={true}
+            resizable={true}
+            sortable={true}
+            pageable={{ buttonCount: 3, pageSizes: [10, 20, 30], info: true }}
+            columnConfig={this.prepareColumnData(this.listConfig)}
+            gridToolbar={[
+              this.listConfig.toolbarTemplate,
+              this.createAddButton(),
+            ]}
+          />
+        </React.Suspense>
         {this.state.itemInEdit && this.inputTemplate}
         {this.state.visible && this.addUsersTemplate}
       </div>
