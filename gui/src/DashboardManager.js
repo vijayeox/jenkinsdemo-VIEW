@@ -50,6 +50,8 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
+
+
     if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
@@ -94,6 +96,87 @@ class DashboardManager extends React.Component {
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
   }
+
+  extractFilterValues(dashboardFilter) {
+    let filterParams = []
+    dashboardFilter.map((filter, index) => {
+      let filterarray = []
+      if (filter["dataType"] == "date") {
+        var startDate = filter["startDate"]
+        var endDate = null
+        if (filter["startDate"] && filter["endDate"]) {
+          //convert startDate object to string
+          if (typeof startDate !== "string") {
+            startDate = filter["startDate"]
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if (new Date(startDate)) {
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          }
+          //date range received
+          if (filter["operator"] == "gte&&lte") {
+            endDate = filter["endDate"]
+            if (typeof endDate !== "string") {
+              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            } else if (new Date(endDate)) {
+              endDate = new Date(endDate)
+              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+            }
+            //prepare startDate array
+            filterarray.push(filter["field"])
+            filterarray.push(">=")
+            filterarray.push(startDate)
+            filterParams.push(filterarray)
+
+
+            //prepare endDate array
+            filterarray = []
+            filterarray.push(filter["field"])
+            filterarray.push("<=")
+            filterarray.push(endDate)
+            filterParams.push(filterarray)
+          } else {
+            //if date is not a range
+            filterarray = []
+            filterarray.push(filter["field"])
+            filterarray.push(filter["operator"])
+            if (typeof startDate !== "string") {
+              startDate = filter["startDate"]
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            } else if (new Date(startDate)) {
+              startDate = new Date(filter["startDate"])
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            }
+            filterarray.push(startDate)
+            filterParams.push(filterarray)
+
+          }
+        } else {
+          //single date passed
+          filterarray.push(filter["field"])
+          filterarray.push(filter["operator"])
+          if (typeof startDate !== "string") {
+            startDate = filter["startDate"]
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          } else if (new Date(startDate)) {
+            startDate = new Date(filter["startDate"])
+            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          }
+          filterarray.push(startDate)
+          filterParams.push(filterarray)
+        }
+      } else {
+        filterarray.push(filter["field"])
+        filterarray.push(filter["operator"])
+        filterarray.push(filter["value"]["selected"])
+        if (filter["value"].hasOwnProperty("selected")) {
+          filterParams.push(filterarray)
+        }
+      }
+    })
+    return filterParams
+  }
+  
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
@@ -103,6 +186,7 @@ class DashboardManager extends React.Component {
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
 
     if (response.data.length > 0) {
+      
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
@@ -123,9 +207,12 @@ class DashboardManager extends React.Component {
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
+            // if(dashboardStack.length==0){
+            //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
+            // }
             inputs["dashname"] = dash
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: this.extractFilterValues(dashboardFilter) })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack,drilldownDashboardFilter:this.extractFilterValues(dashboardFilter) })
           }
         })
       }
@@ -249,9 +336,7 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      let dashboardFilterConf = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
-
-      this.setState({ dashboardFilter: dashboardFilterConf, exportConfiguration: value.export_configuration })
+      this.setState({ dashboardFilter: [],exportConfiguration:value.export_configuration })
     } else {
       name = event.target.name
       value = event.target.value
