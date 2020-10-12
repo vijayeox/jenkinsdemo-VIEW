@@ -121,6 +121,8 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
     }
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
+
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
