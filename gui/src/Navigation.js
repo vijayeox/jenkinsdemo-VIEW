@@ -34,7 +34,15 @@ class Navigation extends React.Component {
           this.homepage = response["data"][0];
         }
         if (this.params && this.params.page) {
-          this.setState({ pages: [{ pageId: this.params.page }] });
+          this.setState({
+            pages: [
+              {
+                pageId: this.params.page,
+                title: this.params.pageTitle,
+                icon: this.params.pageIcon,
+              },
+            ],
+          });
           this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.activityId) {
@@ -121,11 +129,7 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
-    if (e.detail.pageId) {
-      pages.push(e.detail);
-    } else {
-      pages.push(e.detail);
-    }
+    pages.push(e.detail);
     if (
       e.detail.parentPage &&
       document.getElementById(e.detail.parentPage + "_page")
