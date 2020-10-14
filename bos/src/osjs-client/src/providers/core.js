@@ -331,6 +331,7 @@ export default class CoreServiceProvider extends ServiceProvider {
 
       this.core.on('osjs/packages:package:changed', name => {
         // TODO: Reload themes as well
+        this.core.make("oxzion/profile").update();
         Application.getApplications()
           .filter(proc => proc.metadata.name === name)
           .forEach(proc => proc.relaunch());
@@ -338,6 +339,7 @@ export default class CoreServiceProvider extends ServiceProvider {
     }
 
     this.core.on('osjs/packages:metadata:changed', () => {
+      this.core.make("oxzion/profile").update();
       this.pm.init();
     });
   }
