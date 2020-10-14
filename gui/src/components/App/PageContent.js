@@ -731,6 +731,17 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
+        let pageContent = "";
+        switch (typeof item.content) {
+          case "string":
+            pageContent = item.content;
+            break;
+            case "object":
+              pageContent = item.content.jsx;
+              break;
+          default:
+            break;
+        }
         content.push(
           <HTMLViewer
             key={i}
@@ -738,15 +749,15 @@ class PageContent extends React.Component {
             key={i}
             appId={this.appId}
             url={
-              item.url
-                ? this.replaceParams(item.url, this.state.currentRow)
+              item.url || item.content.url
+                ? this.replaceParams(item.content.url ? item.content.url : item.url, this.state.currentRow)
                 : undefined
             }
             fileId={this.state.fileId}
-            content={item.content ? item.content : ""}
+            content={pageContent}
             fileData={this.state.currentRow}
             className={item.className}
-            params={item.params}
+            params={item.content.params ? item.content.params : item.params }
           />
         );
       } else {
