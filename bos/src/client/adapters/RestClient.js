@@ -134,7 +134,6 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 				})
 			
-				console.time(action)
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
 				} else {
