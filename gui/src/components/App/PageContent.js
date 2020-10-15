@@ -624,9 +624,9 @@ class PageContent extends React.Component {
             key={i}
             core={this.core}
             content={item.content}
-            filterColumns={item.content.filterColumns}
+            filterColumns={item.content.filterColumns ? item.content.filterColumns : []}
             appId={this.appId}
-            entityId={item.content.entityId}
+            entity={item.content.entity}
             columnConfig={columnConfig}
             placeholder={placeholder}
             {...item.content}
