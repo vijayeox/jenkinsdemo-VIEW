@@ -123,18 +123,7 @@ class RenderButtons extends React.Component {
       return route;
     }
   }
-  updateActionHandler(details, rowData) {
-    var that = this;
-    return new Promise((resolve) => {
-      var queryRoute = that.replaceParams(details.params.url, rowData);
-      that.updateCall(queryRoute, rowData).then((response) => {
-        that.setState({
-          showLoader: false
-        });
-        resolve(response);
-      });
-    });
-  }
+
   render() {
     return <div className="appButtons">{this.createTiles()}</div>;
   }
