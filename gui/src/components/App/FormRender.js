@@ -468,6 +468,24 @@ class FormRender extends React.Component {
       }
     }
 
+    cancelFormSubmission=()=>{
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to cancel the submission? This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+        target:".AppBuilderPage"
+      }).then(result => {
+        if (result.value) {
+          this.stepDownPage();
+        }
+      });      
+    }
+
     loadWorkflow(form) {
       let that = this;
       console.log(this.state);
@@ -690,23 +708,7 @@ class FormRender extends React.Component {
             that.storeCache(this.cleanData(form_data));
             next(null);
           },
-          beforeCancel: () => {
-            Swal.fire({
-              title: "Are you sure?",
-              text: "Do you really want to cancel the submission? This action cannot be undone!",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#d33",
-              cancelButtonColor: "#3085d6",
-              cancelButtonText: "No",
-              confirmButtonText: "Yes",
-              target:".AppBuilderPage"
-            }).then(result => {
-              if (result.value) {
-                that.stepDownPage();
-              }
-            });
-          },
+          beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
             if (
               that.state.currentForm.checkValidity() &&
@@ -984,6 +986,17 @@ class FormRender extends React.Component {
             }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
+            }
+            if (event.type == "cancelSubmission") {
+              that.cancelFormSubmission();
+            }
+            if (event.type == "customButtonAction") {
+              let buttonCustomEvent = new Event("customButtonAction");
+              buttonCustomEvent.detail = {
+                formData: changed,
+                ...event.component.properties
+              };
+              that.customButtonAction(buttonCustomEvent);
             }
             if (event.type == "callPipeline") {
               var component = event.component;
@@ -1530,7 +1543,7 @@ class FormRender extends React.Component {
               : "Operation completed successfully",
             "success"
           );
-          if (actionDetails.exit) {
+          if (actionDetails.exit == true || actionDetails.exit == "true") {
             clearInterval(actionDetails.timerVariable);
             this.stepDownPage();
           }
