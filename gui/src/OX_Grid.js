@@ -536,7 +536,9 @@ export default class OX_Grid extends React.Component {
     return (
       <div
         style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }}
-        className="GridCustomStyle"
+        className={
+          "GridCustomStyle " + (this.props.className ? this.props.className : "")
+        }
       >
         {this.rawDataPresent ? (
           <DataOperation
@@ -605,7 +607,7 @@ export default class OX_Grid extends React.Component {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 {this.generateGridToolbar()}
@@ -638,7 +640,11 @@ export default class OX_Grid extends React.Component {
                   : this.state.gridData.data
               }
             >
-              {this.createColumns(this.props.exportToPDF.columnConfig ?this.props.exportToPDF.columnConfig : this.props.columnConfig )}
+              {this.createColumns(
+                this.props.exportToPDF.columnConfig
+                  ? this.props.exportToPDF.columnConfig
+                  : this.props.columnConfig
+              )}
             </Grid>
           </GridPDFExport>
         ) : null}
