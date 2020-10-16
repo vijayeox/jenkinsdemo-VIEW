@@ -1087,6 +1087,7 @@ class FormRender extends React.Component {
                       }
                     } else {
                       that.showFormLoader(false, 0);
+                      that.notif.current.notify("Error", response.message, "danger");
                     }
                   }).catch(e => {
                     that.handleError(e);
