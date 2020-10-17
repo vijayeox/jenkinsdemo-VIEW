@@ -22,6 +22,7 @@ import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
+import JavascriptLoader from '../javascriptLoader';
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -1580,9 +1581,13 @@ class FormRender extends React.Component {
       this.loadWorkflow();
     }
     $("#" + this.loaderDivID).off("customButtonAction");
-    document
-      .getElementById(this.loaderDivID)
-      .addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
+    document.getElementById(this.loaderDivID).addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
+    JavascriptLoader.loadScript([{
+        'name': 'ckEditorJs',
+        'url': './ckeditor/ckeditor.js',
+        'onload': function() {},
+        'onerror': function() {}
+    }]);
   }
 
   customButtonAction = (e) => {
