@@ -727,6 +727,7 @@ class PageContent extends React.Component {
             currentRow={this.state.currentRow}
             pageId={item.page_id}
             core={this.core}
+            pageContent={item.content}
             {...params}
           />
         );
