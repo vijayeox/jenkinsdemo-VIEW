@@ -1516,13 +1516,15 @@ class FormRender extends React.Component {
         }
       }
     }
-    if(this.props.fileId){
-      formData.fileId = this.props.fileId;
+    if(this.props.fileId || this.state.fileId){
+      formData.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
       formData["workflow_instance_id"] = undefined;
     }
-    if(this.state.fileId){
-      formData.fileId = this.state.fileId;
+    if(this.props.parentFileId){
+      formData.fileId = undefined;
       formData["workflow_instance_id"] = undefined;
+      formData.bos ? null : (formData.bos = {});
+      formData.bos.assoc_id = this.props.parentFileId;
     }
     if (actionDetails["commands"]) {
       this.callPipeline(
