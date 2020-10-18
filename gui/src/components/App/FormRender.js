@@ -275,7 +275,8 @@ class FormRender extends React.Component {
       if(this.props.parentFileId){
         form.submission.data.fileId = undefined;
         form.submission.data["workflow_instance_id"] = undefined;
-        form.submission.data["bos"]["assoc_id"] = this.props.parentFileId;
+        form.submission.data.bos ? null : (form.submission.data.bos = {});
+        form.submission.data.bos.assoc_id = this.props.parentFileId;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           if (response.status == "success") {
@@ -419,6 +420,7 @@ class FormRender extends React.Component {
       formData.phoneList = undefined;
       formData.timezones = undefined;
       formData.dateFormats = undefined;
+      formData.parentData = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
       var componentList = flattenComponents(this.state.currentForm._form.components, true);
@@ -602,10 +604,15 @@ class FormRender extends React.Component {
           if (response.status == "success") {
             this.setState(
               {
-                data: this.formatFormData(response.data.data)
+                data: this.state.fileId
+                  ? this.formatFormData(response.data.data)
+                  : {
+                      ...this.state.data,
+                      parentData: this.formatFormData(response.data.data),
+                    },
               },
               () => {
-                (form || this.state.currentForm)
+                form || this.state.currentForm
                   ? form
                     ? form
                         .setSubmission({ data: this.state.data })
