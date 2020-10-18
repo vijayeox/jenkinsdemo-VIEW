@@ -13,7 +13,7 @@ class RenderButtons extends React.Component {
   }
 
   createTiles = () => {
-    let adminItems = [];
+    let tilesArray = [];
     this.props.content.buttonList.map((currentValue, index) => {
       var showButton;
       if(currentValue.rule){
@@ -38,9 +38,15 @@ class RenderButtons extends React.Component {
             }
         });
       }
-      var pageDetails = {title:currentValue.name,pageContent:copyPageContent,pageId:currentValue.pageId,icon:currentValue.icon,parentPage:this.pageId}
+      var pageDetails = {
+        title: currentValue.title ? currentValue.title : currentValue.name,
+        pageContent: copyPageContent,
+        pageId: currentValue.pageId,
+        icon: currentValue.icon,
+        parentPage: this.pageId,
+      };
       if(showButton){
-        adminItems.push(
+        tilesArray.push(
           <div
             key={index}
             className="moduleBtn"
@@ -66,7 +72,7 @@ class RenderButtons extends React.Component {
         );
       }
     });
-    return adminItems;
+    return tilesArray;
   };
   replaceParams(route) {
     var finalParams = merge(this.fileData ? this.fileData : {}, {
