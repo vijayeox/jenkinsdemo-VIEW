@@ -196,6 +196,7 @@ class Dashboard extends Component {
             filterParams.push(filterarray)
           } else {
             //if date is not a range
+          
             filterarray = []
             filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
@@ -212,6 +213,9 @@ class Dashboard extends Component {
           }
         } else {
           //single date passed
+          if(filter["operator"] === "today"){
+            filter["operator"]="=="
+          }
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {

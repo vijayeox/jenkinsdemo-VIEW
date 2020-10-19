@@ -22,7 +22,7 @@ const customStyles = {
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
     const filtersOptions = {
-        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
+        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" },{"today":"today"}],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
     };
@@ -349,6 +349,12 @@ class DashboardFilter extends React.Component {
                 }
             }
             value = defaultValues
+        }else if(e.target.value === "today"){
+            name = e.target.name
+            value = e.target.value
+            const today = new Date()
+            filters[index]["startDate"]=today
+            filters[index][name] = value
         }
         else {
             name = e.target.name

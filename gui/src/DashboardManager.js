@@ -160,6 +160,9 @@ class DashboardManager extends React.Component {
           }
         } else {
           //single date passed
+          if(filter["operator"] === "today"){
+            filter["operator"]="=="
+          }
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
