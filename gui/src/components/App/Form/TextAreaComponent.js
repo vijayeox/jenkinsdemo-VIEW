@@ -3,7 +3,6 @@ import * as _utils from 'formiojs/utils/utils'
 import * as _Formio from 'formiojs/Formio'
 import * as _lodash from "lodash";
 import * as _nativePromiseOnly from "native-promise-only";
-import JavascriptLoader from '../../javascriptLoader';
 
 export default class TextAreaComponent extends Select {
 
@@ -117,14 +116,7 @@ export default class TextAreaComponent extends Select {
                     break;
 
                 case 'ckeditor':
-                    JavascriptLoader.loadScript([{
-                        'name': 'ckEditorJs',
-                        'url': './ckeditor/ckeditor.js',
-                        'onload': function() {
-                            _this2.setupCkEditor(_this2, element, index,editorReady);
-                        },
-                        'onerror': function() {}
-                    }]);
+                    _this2.setupCkEditor(_this2, element, index,editorReady);
                     //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
 
                     // editorReady(editor);
@@ -141,6 +133,7 @@ export default class TextAreaComponent extends Select {
         return element;
     }
     setupCkEditor = (_this2, element, index,editorReady) => {
+        try {
         CKEDITOR.dtd.$removeEmpty['span'] = false;
         const settings = {
             rows: _this2.component.rows,
@@ -182,27 +175,19 @@ export default class TextAreaComponent extends Select {
         var value = _this2.setConvertedValue(dataValue, index);
 
         var isReadOnly = _this2.options.readOnly || _this2.component.disabled;
+        var numRows = parseInt(_this2.component.rows, 10);
 
-        if ((0, _utils.getIEBrowserVersion)()) {
-            editor.on('instanceReady', function() {
-                editor.setReadOnly(isReadOnly);
-                editor.setData(value);
-            });
+        if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
+            // Default height is 21px with 10px margin + a 14px top margin.
+            var editorHeight = numRows * 31 + 14;
+            editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
+        }
+
+        editor.isReadOnly = isReadOnly;
+        if (editor.data) {
+            editor.data.set(value);
         } else {
-            var numRows = parseInt(_this2.component.rows, 10);
-
-            if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
-                // Default height is 21px with 10px margin + a 14px top margin.
-                var editorHeight = numRows * 31 + 14;
-                editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
-            }
-
-            editor.isReadOnly = isReadOnly;
-            if (editor.data) {
-                editor.data.set(value);
-            } else {
-              editor.setData(value);
-            }
+            editor.setData(value);
         }
         editor.on('change', function (event) {
           console.log(event);
@@ -210,5 +195,9 @@ export default class TextAreaComponent extends Select {
         });
         editorReady(editor);
         return editor;
+    } catch (Exception){
+        console.log(Exception);
+        console.log('Failed to create CK Editor');
+    }
     }
 }
