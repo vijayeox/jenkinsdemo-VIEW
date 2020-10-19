@@ -93,7 +93,7 @@ class AppInstaller {
               execCommand = "npm install";
               break;
             case "bos":
-              execCommand = "npm run build && npm run package:discover";
+              execCommand = "npm run package:discover";
               break;
             default:
               execCommand = "npm install && npm run build";
