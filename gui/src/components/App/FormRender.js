@@ -777,6 +777,9 @@ class FormRender extends React.Component {
         if (this.state.content["properties"]["showCancel"]) {
           options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
         }
+        if(this.state.content["properties"]["theme"]){
+          await import(this.state.content["properties"]["theme"]);
+        }
       }
       var hooks = {
         beforeNext: (currentPage, submission, next) => {
