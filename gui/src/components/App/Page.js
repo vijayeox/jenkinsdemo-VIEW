@@ -40,26 +40,15 @@ class Page extends React.Component {
 
 
     loadPage(pageId, icon, hideLoader) {
-      if (this.props.pageContent && this.props.pageContent.length >0) {
-        this.setState({
-          pageContent: this.props.pageContent,
-          showLoader: false,
-        });
-        this.loader.destroy();
-      } else {
         this.getPageContent(pageId).then((response) => {
           if (response.status == "success") {
-            this.setState(
-              { pageContent: response.data.content },
-              hideLoader ? this.setState({ showLoader: false }) : null
-            );
+            this.setState({ pageContent: response.data.content }, hideLoader ? this.setState({ showLoader: false }) : null );
             this.setState({ showLoader: false });
             let responseContent = response.data;
             icon ? (responseContent.icon = icon) : null;
           }
           this.loader.destroy();
         });
-      }
     }
     async getPageContent(pageId) {
       let helper = this.core.make("oxzion/restClient");
