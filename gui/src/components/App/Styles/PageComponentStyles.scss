@@ -54,19 +54,34 @@ $primary-color: #275362;
     padding: 0px 0px 5px 10px;
     font-size: 1.75rem;
     font-weight: 300;
-    width: 100%;
+    width: 74%;
   }
 
-  abbr{
+  abbr {
     text-decoration: none;
   }
 
-  .page-active , .contentDiv{
+  .page-active,
+  .contentDiv {
     height: 100%;
   }
 
-  .searchBar {
-    display: flex;
+  .searchResults {
+    width: 99%;
+    
+    .searchBar {
+      display: flex;
+      padding-top: 10px;
+      padding-left: 15px;
+
+      .fa-search {
+        font-size: 25px;
+      }
+      .fa-backspace {
+        font-size: 30px;
+        cursor: pointer;
+      }
+    }
   }
 
   .appButtons {
@@ -174,10 +189,10 @@ $primary-color: #275362;
   position: relative;
   text-size-adjust: 100%;
 }
-.page-inactive{
-  display:none;
+.page-inactive {
+  display: none;
 }
-.page-active{
+.page-active {
   display: block;
 }
 .rygBadge{
