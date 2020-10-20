@@ -18,6 +18,7 @@ class Page extends React.Component {
     this.componentKey = this.props.pageId+'_page';
     this.contentDivID = "root_" + this.appId + "_" + this.props.pageId;
     this.postSubmitCallback = this.props.postSubmitCallback;
+    this.params =this.props.params;
     this.state = {
       pageId: this.props.pageId,
       showLoader: false,
@@ -27,9 +28,10 @@ class Page extends React.Component {
       isMenuOpen: false,
       title: '',
       displaySection: 'DB',
+      params: this.props.params?this.props.params:null,
       sectionData: null,
     };
-    if(this.props.pageId){
+    if(this.props.pageId && !this.props.pageId.includes("_subpage")){
       this.loadPage(this.props.pageId);
     } else {
       this.loader.destroy();
@@ -38,15 +40,26 @@ class Page extends React.Component {
 
 
     loadPage(pageId, icon, hideLoader) {
+      if (this.props.pageContent && this.props.pageContent.length >0) {
+        this.setState({
+          pageContent: this.props.pageContent,
+          showLoader: false,
+        });
+        this.loader.destroy();
+      } else {
         this.getPageContent(pageId).then((response) => {
           if (response.status == "success") {
-            this.setState({ pageContent: response.data.content }, hideLoader ? this.setState({ showLoader: false }) : null );
+            this.setState(
+              { pageContent: response.data.content },
+              hideLoader ? this.setState({ showLoader: false }) : null
+            );
             this.setState({ showLoader: false });
             let responseContent = response.data;
             icon ? (responseContent.icon = icon) : null;
           }
           this.loader.destroy();
         });
+      }
     }
     async getPageContent(pageId) {
       let helper = this.core.make("oxzion/restClient");
@@ -86,6 +99,7 @@ class Page extends React.Component {
           pageId={this.props.pageId}
           appId={this.appId}
           isTab={this.props.isTab}
+          params={this.props.params}
           parentPage={this.props.parentPage}
           proc={this.props.proc}
           pageContent={this.state.pageContent}

@@ -34,13 +34,20 @@ class Navigation extends React.Component {
           this.homepage = response["data"][0];
         }
         if (this.params && this.params.page) {
-          this.setState({ pages: [{ pageId: this.params.page }] });
+          this.setState({
+            pages: [
+              {
+                pageId: this.params.page,
+                title: this.params.pageTitle,
+                icon: this.params.pageIcon,
+              },
+            ],
+          });
           this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
         } else if (this.proc && this.proc.args) {
-          ``;
           if (typeof this.proc.args === "string") {
             try {
               var appParams = JSON.parse(this.proc.args);
@@ -93,6 +100,13 @@ class Navigation extends React.Component {
     );
     return menulist;
   }
+
+  async getPageContent(pageId) {
+    let helper = this.core.make("oxzion/restClient");
+    let pageContent = await helper.request( "v1", "/app/" + this.appId + "/page/" + pageId, {}, "get");
+    return pageContent;
+  }
+
   pageActive(pageId) {
     if (document.getElementById(pageId + "_page")) {
       document
@@ -121,16 +135,16 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
-    if (e.detail.pageId) {
-      pages.push(e.detail);
-    } else {
-      pages.push(e.detail);
-    }
+    pages.push(e.detail);
     if (
       e.detail.parentPage &&
       document.getElementById(e.detail.parentPage + "_page")
     ) {
       this.pageInActive(e.detail.parentPage);
+    } else {
+      pages.length > 0
+        ? this.pageInActive(pages[pages.length - 2].pageId)
+        : null;
     }
     this.setState({ pages: pages });
   };
@@ -142,9 +156,18 @@ class Navigation extends React.Component {
     if (props.selected) {
       var item = props.selected;
       if (item.page_id) {
-        var page = [{ pageId: item.page_id, title: item.name }];
-        this.setState({ pages: page });
-        this.pageActive(item.page_id);
+        this.getPageContent(item.page_id).then((response) => {
+          this.setState({
+            pages: [
+              {
+                pageId: item.page_id,
+                title: response.data.name,
+                pageContent: response.data.content,
+              },
+            ],
+          });
+          this.pageActive(item.page_id);
+        });
       }
     }
   }

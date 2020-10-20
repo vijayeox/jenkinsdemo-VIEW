@@ -215,7 +215,15 @@ class FormRender extends React.Component {
 
   async getFileDataById() {
     // call to api using wrapper
-    return await this.helper.request("v1",this.appUrl+"/file/"+this.props.fileId+"/data",{},"get");
+    return await this.helper.request(
+      "v1",
+      this.appUrl +
+        "/file/" +
+        (this.props.fileId ? this.props.fileId : this.props.parentFileId) +
+        "/data",
+      {},
+      "get"
+    );
   }
   async getStartFormWorkflow() {
     // call to api using wrapper
@@ -263,6 +271,12 @@ class FormRender extends React.Component {
       if(this.props.fileId){
         form.submission.data.fileId = this.state.fileId;
         form.submission.data["workflow_instance_id"] = undefined;
+      }
+      if(this.props.parentFileId){
+        form.submission.data.fileId = undefined;
+        form.submission.data["workflow_instance_id"] = undefined;
+        form.submission.data.bos ? null : (form.submission.data.bos = {});
+        form.submission.data.bos.assoc_id = this.props.parentFileId;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
           if (response.status == "success") {
@@ -406,6 +420,7 @@ class FormRender extends React.Component {
       formData.phoneList = undefined;
       formData.timezones = undefined;
       formData.dateFormats = undefined;
+      formData.parentData = undefined;
       formData.orgId = this.userprofile.orgid;
       var ordered_data = {};
       var componentList = flattenComponents(this.state.currentForm._form.components, true);
@@ -454,6 +469,24 @@ class FormRender extends React.Component {
           this.runProps(form.originalComponent,form,form.originalComponent["properties"],this.formatFormData(form.submission.data));
         }
       }
+    }
+
+    cancelFormSubmission=()=>{
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to cancel the submission? This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+        target:".AppBuilderPage"
+      }).then(result => {
+        if (result.value) {
+          this.stepDownPage();
+        }
+      });      
     }
 
     loadWorkflow(form) {
@@ -566,15 +599,20 @@ class FormRender extends React.Component {
           });
 
         });
-      }else  if (this.state.fileId) {
+      }else  if (this.state.fileId || this.props.parentFileId) {
         this.getFileDataById().then((response) => {
           if (response.status == "success") {
             this.setState(
               {
-                data: this.formatFormData(response.data.data)
+                data: this.state.fileId
+                  ? this.formatFormData(response.data.data)
+                  : {
+                      ...this.state.data,
+                      parentData: this.formatFormData(response.data.data),
+                    },
               },
               () => {
-                (form || this.state.currentForm)
+                form || this.state.currentForm
                   ? form
                     ? form
                         .setSubmission({ data: this.state.data })
@@ -678,23 +716,7 @@ class FormRender extends React.Component {
             that.storeCache(this.cleanData(form_data));
             next(null);
           },
-          beforeCancel: () => {
-            Swal.fire({
-              title: "Are you sure?",
-              text: "Do you really want to cancel the submission? This action cannot be undone!",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#d33",
-              cancelButtonColor: "#3085d6",
-              cancelButtonText: "No",
-              confirmButtonText: "Yes",
-              target:".AppBuilderPage"
-            }).then(result => {
-              if (result.value) {
-                that.stepDownPage();
-              }
-            });
-          },
+          beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
             if (
               that.state.currentForm.checkValidity() &&
@@ -972,6 +994,17 @@ class FormRender extends React.Component {
             }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
+            }
+            if (event.type == "cancelSubmission") {
+              that.cancelFormSubmission();
+            }
+            if (event.type == "customButtonAction") {
+              let buttonCustomEvent = new Event("customButtonAction");
+              buttonCustomEvent.detail = {
+                formData: changed,
+                ...event.component.properties
+              };
+              that.customButtonAction(buttonCustomEvent);
             }
             if (event.type == "callPipeline") {
               var component = event.component;
@@ -1456,7 +1489,7 @@ class FormRender extends React.Component {
         this.loadWorkflow();
       }
     }
-    if(this.props.fileId){
+    if(this.props.fileId || this.props.parentFileId){
       this.loadWorkflow();
     }
     $("#" + this.loaderDivID).off("customButtonAction");
@@ -1483,13 +1516,15 @@ class FormRender extends React.Component {
         }
       }
     }
-    if(this.props.fileId){
-      formData.fileId = this.props.fileId;
+    if(this.props.fileId || this.state.fileId){
+      formData.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
       formData["workflow_instance_id"] = undefined;
     }
-    if(this.state.fileId){
-      formData.fileId = this.state.fileId;
+    if(this.props.parentFileId){
+      formData.fileId = undefined;
       formData["workflow_instance_id"] = undefined;
+      formData.bos ? null : (formData.bos = {});
+      formData.bos.assoc_id = this.props.parentFileId;
     }
     if (actionDetails["commands"]) {
       this.callPipeline(
@@ -1518,9 +1553,11 @@ class FormRender extends React.Component {
               : "Operation completed successfully",
             "success"
           );
-          if (actionDetails.exit) {
+          if (actionDetails.exit == true || actionDetails.exit == "true") {
             clearInterval(actionDetails.timerVariable);
             this.stepDownPage();
+          } else if(actionDetails.postSubmitCallback == true || actionDetails.postSubmitCallback == "true") {
+            this.props.postSubmitCallback();
           }
         } else {
           this.notif.current.notify(
