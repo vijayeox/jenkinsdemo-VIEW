@@ -740,6 +740,13 @@ class FormRender extends React.Component {
       }
     }
   }
+  async importCSS(theme){
+    try{
+      await import(theme);
+    } catch(Exception){
+      console.log("Unable to import "+theme);
+    }
+  }
 
   createForm() {
     let that = this;
@@ -776,6 +783,9 @@ class FormRender extends React.Component {
         }
         if (this.state.content["properties"]["showCancel"]) {
           options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
+        }
+        if(this.state.content["properties"]["theme"]){
+          importCSS(this.state.content["properties"]["theme"]);
         }
       }
       var hooks = {

@@ -161,9 +161,7 @@ export default class MenuPanelItem extends PanelItem {
   hideMenu() {
     const _ = this.core.make("osjs/locale").translate;
     const __ = this.core.make("osjs/locale").translatable(languages);
-    const packages = this.core
-      .make("osjs/packages")
-      .getPackages(m => !m.type || m.type === "application");
+    const packages = this.core.make("osjs/packages").getPackages(m => !m.type || m.type === "application");
     let appArray = makeTree(this.core, __, [].concat(packages));
     return appArray.length == 0;
   }
@@ -197,8 +195,8 @@ export default class MenuPanelItem extends PanelItem {
     // };
 
     const onclick = ev => {
-      const packages = this.core
-        .make("osjs/packages")
+      let packages = this.core
+        .make('osjs/packages')
         .getPackages(m => !m.type || m.type === "application");
       let appArray = makeTree(this.core, __, [].concat(packages));
 
@@ -227,7 +225,6 @@ export default class MenuPanelItem extends PanelItem {
       // appmenuElement.appendChild(searchDiv);
 
       // appmenuElement.classList.toggle('appmenu-visible');
-      console.log(packages);
       for (let category = 0; category < appArray.length; category++) {
         appBarDiv.appendChild(makeCategory(appArray[category], this.core));
       }
