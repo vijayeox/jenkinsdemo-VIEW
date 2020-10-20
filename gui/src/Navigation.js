@@ -48,7 +48,6 @@ class Navigation extends React.Component {
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
         } else if (this.proc && this.proc.args) {
-          ``;
           if (typeof this.proc.args === "string") {
             try {
               var appParams = JSON.parse(this.proc.args);
@@ -101,6 +100,13 @@ class Navigation extends React.Component {
     );
     return menulist;
   }
+
+  async getPageContent(pageId) {
+    let helper = this.core.make("oxzion/restClient");
+    let pageContent = await helper.request( "v1", "/app/" + this.appId + "/page/" + pageId, {}, "get");
+    return pageContent;
+  }
+
   pageActive(pageId) {
     if (document.getElementById(pageId + "_page")) {
       document
@@ -150,9 +156,18 @@ class Navigation extends React.Component {
     if (props.selected) {
       var item = props.selected;
       if (item.page_id) {
-        var page = [{ pageId: item.page_id, title: item.name }];
-        this.setState({ pages: page });
-        this.pageActive(item.page_id);
+        this.getPageContent(item.page_id).then((response) => {
+          this.setState({
+            pages: [
+              {
+                pageId: item.page_id,
+                title: response.data.name,
+                pageContent: response.data.content,
+              },
+            ],
+          });
+          this.pageActive(item.page_id);
+        });
       }
     }
   }

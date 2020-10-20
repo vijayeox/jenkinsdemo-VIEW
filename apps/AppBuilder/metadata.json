@@ -1,0 +1,20 @@
+{
+  "type": "application",
+  "name": "AppBuilder",
+  "category": "utilities",
+  "autostart": false,
+  "icon": "icon.svg",
+  "icon_white": "icon_white.svg",
+  "defaultAppforOrgs" : true,
+  "singleton": true,
+  "title": {
+    "en_EN": "AppBuilder"
+  },
+  "description": {
+    "en_EN": "AppBuilder"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

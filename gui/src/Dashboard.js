@@ -72,7 +72,7 @@ class Dashboard extends Component {
   appendToDashboardContainer(htmlData) {
     let backButton = ""
     let dashboardFilterDescription = ""
-    if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
+    if (this.props.dashboardStack && this.props.dashboardStack.length > 1 ) {
       //rendering back button for drilled down dashboard
       let dashboardTitle=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
@@ -102,7 +102,16 @@ class Dashboard extends Component {
             this.setupDrillDownListeners()
           }
           );
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+          let extractedFilterValues= this.extractFilterValues();
+          let preapredExtractedFilterValue=null
+          if (extractedFilterValues && extractedFilterValues.length > 1) {
+            preapredExtractedFilterValue = extractedFilterValues[0]
+            for (let i = 1; i < extractedFilterValues.length; i++) {
+              preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+        
+            }
+          }
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(preapredExtractedFilterValue)
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -121,6 +130,8 @@ class Dashboard extends Component {
     } else if (this.state.htmlData != null) {
       (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
     }
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
+
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
@@ -429,7 +440,7 @@ class Dashboard extends Component {
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    } else if(this.props.dashboardStack && this.props.dashboardStack.length>1){
+    } else if(this.props.dashboardStack && this.props.dashboardStack.length>0){
       let dashFilter=this.props.dashboardStack[this.props.dashboardStack.length -1]["drilldownDashboardFilter"]
       let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
       filter = preparedFilter
