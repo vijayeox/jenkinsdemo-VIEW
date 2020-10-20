@@ -91,7 +91,7 @@ const applyBackgroundStyles = (core, background) => {
  */
 const createPanelSubtraction = (panel, panels) => {
   const subtraction = {top: 0, left: 0, right: 0, bottom: 30};
-  const set = p => (subtraction[p.options.position] = p.$element.offsetHeight);
+  const set = p => (subtraction[p.options.position] = p.$element ? p.$element.offsetHeight : 0);
 
   if (panels.length > 0) {
     panels.forEach(set);

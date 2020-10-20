@@ -124,20 +124,21 @@ export default class Packages {
     if (!this.inited) {
       this.core.on('osjs/core:started', () => this._autostart());
     }
-
+    this.metadata = this.core.config('packages.metadata', [])
+    .map(iter => ({type: 'application', ...iter}));
     this.inited = true;
 
     let helper = this.core;
     let jwttoken = this.core.make('oxzion/profile').getAuth();
     setInterval(function () { CheckAuthToken(helper, jwttoken.key); }, 300000);
-
     const manifest = this.core.config('packages.manifest');
 
     return manifest
-      ? this.core.request(manifest, {}, 'json')
+      ? this.core.request(manifest, {}, 'json', true)
         .then(metadata => this.addPackages(metadata))
-        .catch(error => console.error(error))
-      : Promise.resolve();
+        .then(() => true)
+        .catch(error => logger.error(error))
+      : Promise.resolve(true);
   }
 
   /**
@@ -389,12 +390,16 @@ export default class Packages {
   addPackages(list) {
     if (list instanceof Array) {
       const append = list
-        .map(iter => Object.assign({
-          type: 'application'
-        }, iter));
+        .map(iter => ({
+          type: 'application',
+          files: [],
+          ...iter
+        }));
 
       this.metadata = [...this.metadata, ...append];
     }
+
+    return this.getPackages();
   }
 
   /**
@@ -405,21 +410,15 @@ export default class Packages {
   getPackages(filter) {
     filter = filter || (() => true);
 
-    const details = this.core.make("oxzion/profile").get();
     const user = this.core.getUser();
-    const metadata = this.metadata.map(m => Object.assign({}, m));
-
-    const filterGroups = iter => iter.groups instanceof Array
-      ? iter.groups.every(g => user.groups.indexOf(g) !== -1)
-      : true;
-
+    const metadata = this.metadata.map(m => ({...m}));
+    const details = this.core.make("oxzion/profile").get();
 
     const filterBlacklist = iter => details.key.blackListedApps instanceof Object
       ? !details.key.blackListedApps[iter.name]
       : true;
 
     return metadata
-      .filter(filterGroups)
       .filter(filterBlacklist)
       .filter(filter);
   }
