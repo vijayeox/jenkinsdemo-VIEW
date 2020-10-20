@@ -18,7 +18,7 @@
   .k-grid-content {
     overflow-y: scroll;
     cursor: pointer;
-    // min-height: 200px;
+    min-height: 200px;
     table {
       user-select: text;
       min-width: 800px;
@@ -96,23 +96,6 @@
     font-size: small;
     margin-bottom: 0px;
     height: 25px;
-  }
-
-  .k-filtercell > .k-filtercell-wrapper > .k-numerictextbox > .k-numeric-wrap > input {
-    font-size: small;
-    margin-bottom: 0px;
-    height: 25px;
-    background-color: #ffffff;
-  }
-
-  .k-numeric-wrap{
-    border-color: #f8f9fa !important;
-    align-items: center;
-    background-color: #f8f9fa !important;
-
-    .k-select{
-      display: none;
-    }
   }
 
   .k-filtercell {

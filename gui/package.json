@@ -66,7 +66,7 @@
     "react-datepicker": "^2.14.1",
     "react-flippy": "^0.1.5",
     "react-formio": "^3.1.12",
-    "react-jsx-parser": "1.25.1",
+    "react-jsx-parser": "^1.21.0",
     "react-loader-spinner": "^3.1.14",
     "react-mentions": "^4.0.2",
     "react-notifications-component": "1.1.1",

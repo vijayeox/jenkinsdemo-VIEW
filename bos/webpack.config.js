@@ -83,6 +83,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin([
       'src/client/assets/images/load.svg',
+      'src/client/assets/images/poweredby.png',
       './ViewerJS',
       {from: path.resolve(__dirname, "../gui/src/ckeditor/")}
     ]),
