@@ -105,7 +105,11 @@ class SearchPage extends React.Component {
                 gridDefaultFilters={
                   this.state.filter.length != 0 ? this.state.filter : undefined
                 }
-                filterable={true}
+                filterable={
+                  typeof this.props.filterable != "undefined"
+                    ? this.props.filterable
+                    : true
+                }
                 data={this.api}
                 reorderable={true}
                 resizable={true}

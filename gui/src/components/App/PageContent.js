@@ -523,7 +523,6 @@ class PageContent extends React.Component {
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
             dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
-            postSubmitCallback={this.postSubmitCallback}
             parentFileId={item.parentFileId ? this.replaceParams(item.parentFileId, this.state.currentRow) : undefined}
           />
         );

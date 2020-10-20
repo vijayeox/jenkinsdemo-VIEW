@@ -1556,6 +1556,8 @@ class FormRender extends React.Component {
           if (actionDetails.exit == true || actionDetails.exit == "true") {
             clearInterval(actionDetails.timerVariable);
             this.stepDownPage();
+          } else if(actionDetails.postSubmitCallback == true || actionDetails.postSubmitCallback == "true") {
+            this.props.postSubmitCallback();
           }
         } else {
           this.notif.current.notify(
