@@ -112,6 +112,7 @@ class Dashboard extends Component {
             }
           }
           (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(preapredExtractedFilterValue)
+
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -131,7 +132,6 @@ class Dashboard extends Component {
       (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
-
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
@@ -163,6 +163,9 @@ class Dashboard extends Component {
       if (filter["dataType"] == "date") {
         var startDate = filter["startDate"]
         var endDate = null
+        if(filter["operator"] === "today"){
+          filter["operator"]="=="
+        }
         if (filter["startDate"] && filter["endDate"]) {
           //convert startDate object to string
           if (typeof startDate !== "string") {
@@ -196,7 +199,6 @@ class Dashboard extends Component {
             filterParams.push(filterarray)
           } else {
             //if date is not a range
-          
             filterarray = []
             filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
@@ -213,9 +215,6 @@ class Dashboard extends Component {
           }
         } else {
           //single date passed
-          if(filter["operator"] === "today"){
-            filter["operator"]="=="
-          }
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
@@ -276,8 +275,13 @@ class Dashboard extends Component {
         //adding drildowndashboardfilter to the dashboard filter if it exists
         preparedFilter = filterParams
         let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-        if (drilldownDashboardFilter.length > 1)
-          preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
+   if (this.props.dashboardStack.length!=1 && drilldownDashboardFilter.length > 1)
+         {
+           preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
+         } else {
+           preparedFilter = filterParams
+         }
+     
         this.setState({ preparedDashboardFilter: preparedFilter }, () => {
           this.updateGraph(preparedFilter)
         })
