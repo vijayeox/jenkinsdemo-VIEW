@@ -22,7 +22,7 @@ const customStyles = {
 const FilterFields = function (props) {
     const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
     const filtersOptions = {
-        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
+        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
     };
@@ -120,7 +120,7 @@ const FilterFields = function (props) {
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
                         ?
-                        filters[index]["operator"] !== "gte&&lte" ?
+                        (filters[index]["operator"] !== "gte&&lte" && filters[index]["dateRange"] === false) ?
                             <DatePicker
                                 key={index}
                                 dateFormat={dateFormat}
@@ -245,7 +245,8 @@ class DashboardFilter extends React.Component {
             filters: this.props.filterConfiguration ? this.props.filterConfiguration : [],
             applyFilters: [],
             dateFormat: this.userProfile.key.preferences.dateformat,
-            dateTimeFormat: dateTimeFormat.title.en_EN
+            dateTimeFormat: dateTimeFormat.title.en_EN,
+            showDefaultValue: true,
             // userProfile: this.core.make("oxzion/profile").get()
         }
 
@@ -317,10 +318,12 @@ class DashboardFilter extends React.Component {
     }
 
     updateFilterRow(e, index, type) {
+        this.setState({ showing: true })
         let name
         let value
         let defaultValues = []
         let filters = [...this.state.filters]
+        filters[index]["dateRange"] = false
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
@@ -350,9 +353,68 @@ class DashboardFilter extends React.Component {
             }
             value = defaultValues
         }
+        else if (e.target.value === "today") {
+            name = e.target.name
+            value = e.target.value
+            const today = new Date()
+            filters[index]["startDate"] = today
+            filters[index][name] = value
+            filters[index]["dateRange"] = false
+            this.setState({ showing: false })
+        }
+        else if (e.target.value === "monthly") {
+            name = e.target.name
+            value = e.target.value
+            let date = new Date()
+            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+            let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+            filters[index]["startDate"] = firstDay
+            filters[index]["endDate"] = lastDay
+            filters[index][name] = value
+            filters[index]["dateRange"] = true
+            this.setState({ showing: false })
+        }
+        else if (e.target.value === "yearly") {
+            name = e.target.name
+            value = e.target.value
+            let date = new Date()
+            let firstDay = new Date(date.getFullYear(), 0, 1)
+            let lastDay = new Date(date.getFullYear(), 11, 31)
+            filters[index]["startDate"] = firstDay
+            filters[index]["endDate"] = lastDay
+            filters[index][name] = value
+            filters[index]["dateRange"] = true
+            this.setState({ showing: false })
+        }
+        else if (e.target.value === "mtd") {
+            name = e.target.name
+            value = e.target.value
+            let date = new Date()
+            let firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+            let lastDay = date
+            filters[index]["startDate"] = firstDay
+            filters[index]["endDate"] = lastDay
+            filters[index][name] = value
+            filters[index]["dateRange"] = true
+            this.setState({ showing: false })
+        }
+        else if (e.target.value === "ytd") {
+            name = e.target.name
+            value = e.target.value
+            let date = new Date()
+            let firstDay = new Date(date.getFullYear(), 0, 1)
+            let lastDay = date
+            filters[index]["startDate"] = firstDay
+            filters[index]["endDate"] = lastDay
+            filters[index][name] = value
+            filters[index]["dateRange"] = true
+            this.setState({ showing: false })
+        }
         else {
             name = e.target.name
             value = e.target.value
+            filters[index]["dateRange"] = false
+            this.setState({ showing: true })
         }
         filters[index][name] = value
         this.setState({ filters })
