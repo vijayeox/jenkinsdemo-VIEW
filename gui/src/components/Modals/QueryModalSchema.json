@@ -114,7 +114,40 @@
                         "type": "text"
                     },
                     "occurence": "single"
+                },
+                "ReportType": {
+                    "label": "ReportType",
+                    "control": {
+                        "name": "reporttype",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Type": {
+                    "label": "Type",
+                    "control": {
+                        "name": "type",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "Template": {
+                    "label": "Template",
+                    "control": {
+                        "name": "template",
+                        "type": "text"
+                    },
+                    "occurence": "single"
+                },
+                "View": {
+                    "label": "View",
+                    "control": {
+                        "name": "view",
+                        "type": "text"
+                    },
+                    "occurence": "single"
                 }
+                
                 
             }
         }
