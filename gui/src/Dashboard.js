@@ -36,6 +36,7 @@ class Dashboard extends Component {
     this.props.proc.on("destroy", () => {
       this.removeScriptsFromDom();
     });
+    this.myRef = React.createRef();
   }
 
   async getDashboardHtmlDataByUuid(uuid) {
@@ -58,13 +59,13 @@ class Dashboard extends Component {
       "get"
     );
     return response;
-  } 
-  extractFilter(){
-    let stack=this.props.dashboardStack;
-    let filter=stack[stack.length-1].drilldownDashboardFilter
-    let filterText=""
-    for(let i=0;i<filter.length;i++){
-      filterText!="" && (filterText += " ")
+  }
+  extractFilter() {
+    let stack = this.props.dashboardStack;
+    let filter = stack[stack.length - 1].drilldownDashboardFilter
+    let filterText = ""
+    for (let i = 0; i < filter.length; i++) {
+      filterText != "" && (filterText += " ")
       filterText += filter[i]
     }
     return filterText
@@ -74,9 +75,9 @@ class Dashboard extends Component {
     let dashboardFilterDescription = ""
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1 ) {
       //rendering back button for drilled down dashboard
-      let dashboardTitle=this.props.dashboardStack[this.props.dashboardStack.length-1]["drilldownDashboardTitle"]
+      let dashboardTitle = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
-      dashboardFilterDescription="<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>"+dashboardTitle+"</span>";
+      dashboardFilterDescription = "<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>" + dashboardTitle + "</span>";
     }
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
     return container
@@ -99,19 +100,21 @@ class Dashboard extends Component {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           }, () => {
+            // this.updateGraphWithFilterChanges()
             this.setupDrillDownListeners()
           }
           );
-          let extractedFilterValues= this.extractFilterValues();
-          let preapredExtractedFilterValue=null
+          let extractedFilterValues = this.extractFilterValues();
+          let preapredExtractedFilterValue = null
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
               preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-        
+
             }
           }
           (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(preapredExtractedFilterValue)
+
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
@@ -129,11 +132,17 @@ class Dashboard extends Component {
         });
     } else if (this.state.htmlData != null) {
       (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
+      // this.updateGraphWithFilterChanges()
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
-
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
+    // this.myRef.current.scrollTo(1000, 100);
+    // window.scrollTo(100, 100);
+    // useEffect(() => {
+    //   window.scrollTo(100, 100)
+    // }, []);
   }
+
 
   componentWillUnmount() {
     for (let elementId in this.renderedWidgets) {
@@ -163,6 +172,12 @@ class Dashboard extends Component {
       if (filter["dataType"] == "date") {
         var startDate = filter["startDate"]
         var endDate = null
+        if (filter["operator"] === "today") {
+          filter["operator"] = "=="
+        }
+        if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
+          filter["operator"] = "gte&&lte"
+        }
         if (filter["startDate"] && filter["endDate"]) {
           //convert startDate object to string
           if (typeof startDate !== "string") {
@@ -247,14 +262,14 @@ class Dashboard extends Component {
       }
     }
     if (filterParams) {
-      if(filterParams.length == 0){
+      if (filterParams.length == 0) {
         //if no dashboard filter exists
         if (this.props.dashboardStack.length > 1) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
           if (drilldownDashboardFilter.length > 1)
             this.updateGraph(drilldownDashboardFilter)
-        }else{
+        } else {
           this.updateGraph()
         }
       }
@@ -272,8 +287,12 @@ class Dashboard extends Component {
         //adding drildowndashboardfilter to the dashboard filter if it exists
         preparedFilter = filterParams
         let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-        if (drilldownDashboardFilter.length > 1)
+        if (this.props.dashboardStack.length != 1 && drilldownDashboardFilter.length > 1) {
           preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
+        } else {
+          preparedFilter = filterParams
+        }
+
         this.setState({ preparedDashboardFilter: preparedFilter }, () => {
           this.updateGraph(preparedFilter)
         })
@@ -362,9 +381,9 @@ class Dashboard extends Component {
 
   async drillDownToDashboard(data) {
     let event = {};
-    let elementId=data.elementId
-     //starting spinner 
-     if (elementId) {
+    let elementId = data.elementId
+    //starting spinner 
+    if (elementId) {
       var widgetDiv = document.getElementById(elementId);
       this.loader.show(widgetDiv);
     }
@@ -373,7 +392,7 @@ class Dashboard extends Component {
     let dashboardFilter = (dashboardStack.length > 0 && dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"].length > 0) ? dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] : []
     let widgetFilter = data.filter
     let drilldownDashboardFilter = JSON.parse(widgetFilter)
-    let drilldownDashboardTitle=data.dashboardTitle
+    let drilldownDashboardTitle = data.dashboardTitle
     event.value = JSON.stringify(dashboardData.data.dashboard)
     if (this.state.preparedDashboardFilter !== null) {
       //combining dashboardfilter with widgetfilter
@@ -440,8 +459,8 @@ class Dashboard extends Component {
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    } else if(this.props.dashboardStack && this.props.dashboardStack.length>0){
-      let dashFilter=this.props.dashboardStack[this.props.dashboardStack.length -1]["drilldownDashboardFilter"]
+    } else if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
+      let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
       let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
@@ -484,7 +503,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    return <div id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData ? this.state.htmlData : '') }} />
+    return <div ref={this.myRef} id={this.dashboardDivId} dangerouslySetInnerHTML={{ __html: this.appendToDashboardContainer(this.state.htmlData ? this.state.htmlData : '') }} />
   }
 }
 

@@ -46,7 +46,8 @@ class DashboardManager extends React.Component {
     this.refresh = React.createRef();
     this.notif = React.createRef();
     this.restClient = this.core.make('oxzion/restClient');
-    this.deleteDashboard = this.deleteDashboard.bind(this)
+    this.deleteDashboard = this.deleteDashboard.bind(this);
+    this.myRef = React.createRef();
   }
 
   componentDidMount() {
@@ -57,6 +58,8 @@ class DashboardManager extends React.Component {
     } else {
       this.fetchDashboards(false)
     }
+
+    this.myRef.current.scrollTo(100, 100);
   }
 
   async getUserDetails(uuid) {
@@ -96,6 +99,7 @@ class DashboardManager extends React.Component {
     dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
   }
+
   preparefilter(filter1, filter2) {
     var filter = []
     filter.push(filter1)
@@ -183,7 +187,7 @@ class DashboardManager extends React.Component {
     })
     return filterParams
   }
-  
+
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
@@ -218,7 +222,7 @@ class DashboardManager extends React.Component {
             //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
             // }
             inputs["dashname"] = dash
-            let extractedFilterValues= this.extractFilterValues(dashboardFilter);
+               let extractedFilterValues= this.extractFilterValues(dashboardFilter);
             let preapredExtractedFilterValue=null
             if (extractedFilterValues && extractedFilterValues.length > 1) {
               preapredExtractedFilterValue = extractedFilterValues[0]
@@ -229,6 +233,8 @@ class DashboardManager extends React.Component {
             }
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue })
             that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack,drilldownDashboardFilter:preapredExtractedFilterValue })
+
+
           }
         })
       }
@@ -352,11 +358,7 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      this.setState({ dashboardFilter: [],exportConfiguration:value.export_configuration })
-      let dashboardFilterConf = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
-
-      this.setState({ dashboardFilter: dashboardFilterConf, exportConfiguration: value.export_configuration })
-
+      this.setState({ dashboardFilter: [], exportConfiguration: value.export_configuration })
     } else {
       name = event.target.name
       value = event.target.value
@@ -419,8 +421,8 @@ class DashboardManager extends React.Component {
     if (response.status == "success") {
       console.log(response.data.result)
       let data = response.data.result
-      let filename=this.state.inputs["dashname"]["name"]
-      exportFromJSON({ data, fileName:filename, exportType })
+      let filename = this.state.inputs["dashname"]["name"]
+      exportFromJSON({ data, fileName: filename, exportType })
     } else {
       this.notif.current.notify(
         "Could not fetch data",
@@ -433,7 +435,7 @@ class DashboardManager extends React.Component {
 
   render() {
     return (
-      <div className="dashboard">
+      <div ref={this.myRef}  className="dashboard">
         <Notification ref={this.notif} />
         <Flippy
           flipDirection="horizontal" // horizontal or vertical
@@ -442,8 +444,6 @@ class DashboardManager extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide>
-
-
             <div id="filter-form-container" className="disappear">
               {Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length &&
                 <DashboardFilter
