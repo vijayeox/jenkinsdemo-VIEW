@@ -22,6 +22,7 @@ import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
+import JavascriptLoader from '../javascriptLoader';
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -340,6 +341,11 @@ class FormRender extends React.Component {
       if (this.props.fileId) {
         form.submission.data.fileId = this.state.fileId;
         form.submission.data["workflow_instance_id"] = undefined;
+      }
+      if(this.props.parentFileId){
+        form.submission.data.fileId = undefined;
+        form.submission.data["workflow_instance_id"] = undefined;
+        form.submission.data["bos"]["assoc_id"] = this.props.parentFileId;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
         if (response.status == "success") {
@@ -739,6 +745,13 @@ class FormRender extends React.Component {
       }
     }
   }
+  async importCSS(theme){
+    try{
+      await import(theme);
+    } catch(Exception){
+      console.log("Unable to import "+theme);
+    }
+  }
 
   createForm() {
     let that = this;
@@ -775,6 +788,9 @@ class FormRender extends React.Component {
         }
         if (this.state.content["properties"]["showCancel"]) {
           options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
+        }
+        if(this.state.content["properties"]["theme"]){
+          importCSS(this.state.content["properties"]["theme"]);
         }
       }
       var hooks = {
@@ -1087,6 +1103,7 @@ class FormRender extends React.Component {
                       }
                     } else {
                       that.showFormLoader(false, 0);
+                      that.notif.current.notify("Error", response.message, "danger");
                     }
                   }).catch(e => {
                     that.handleError(e);
@@ -1579,9 +1596,13 @@ class FormRender extends React.Component {
       this.loadWorkflow();
     }
     $("#" + this.loaderDivID).off("customButtonAction");
-    document
-      .getElementById(this.loaderDivID)
-      .addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
+    document.getElementById(this.loaderDivID).addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
+    JavascriptLoader.loadScript([{
+        'name': 'ckEditorJs',
+        'url': './ckeditor/ckeditor.js',
+        'onload': function() {},
+        'onerror': function() {}
+    }]);
   }
 
   customButtonAction = (e) => {

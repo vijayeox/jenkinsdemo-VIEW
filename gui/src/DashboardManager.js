@@ -51,6 +51,8 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
+
+
     if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
@@ -195,6 +197,7 @@ class DashboardManager extends React.Component {
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
 
     if (response.data.length > 0) {
+      
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
@@ -215,6 +218,9 @@ class DashboardManager extends React.Component {
         response.data.map(dash => {
           if (dash.isdefault === "1") {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
+            // if(dashboardStack.length==0){
+            //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
+            // }
             inputs["dashname"] = dash
                let extractedFilterValues= this.extractFilterValues(dashboardFilter);
             let preapredExtractedFilterValue=null

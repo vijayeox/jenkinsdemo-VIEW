@@ -73,7 +73,7 @@ class Dashboard extends Component {
   appendToDashboardContainer(htmlData) {
     let backButton = ""
     let dashboardFilterDescription = ""
-    if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
+    if (this.props.dashboardStack && this.props.dashboardStack.length > 1 ) {
       //rendering back button for drilled down dashboard
       let dashboardTitle = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
