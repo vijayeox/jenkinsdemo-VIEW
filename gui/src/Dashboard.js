@@ -459,7 +459,7 @@ class Dashboard extends Component {
       let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-    } else if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
+    } else if (this.props.dashboardStack && this.props.dashboardStack.length > 0) {
       let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
       let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
       filter = preparedFilter
