@@ -125,8 +125,7 @@ export default class TextAreaComponent extends Select {
                     break;
 
                 default:
-                    _get(_getPrototypeOf(TextAreaComponent.prototype), "attachElement", _this2).call(_this2, element, index);
-
+                    _this2.setupCkEditor(_this2, element, index,editorReady);
                     break;
             }
         });
@@ -198,6 +197,7 @@ export default class TextAreaComponent extends Select {
     } catch (Exception){
         console.log(Exception);
         console.log('Failed to create CK Editor');
+        setTimeout(function(){ _this2.setupCkEditor(_this2, element, index,editorReady); }, 1000);
     }
     }
 }
