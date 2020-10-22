@@ -124,6 +124,15 @@ class DashboardManager extends React.Component {
             startDate = new Date(filter["startDate"])
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
+
+          //single date passed
+          if (filter["operator"] === "today") {
+            filter["operator"] = "=="
+          }
+          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
+            filter["operator"] = "gte&&lte"
+          }
+          
           //date range received
           if (filter["operator"] == "gte&&lte") {
             endDate = filter["endDate"]
@@ -163,7 +172,6 @@ class DashboardManager extends React.Component {
 
           }
         } else {
-          //single date passed
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
