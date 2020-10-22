@@ -164,7 +164,7 @@ export default class GridTemplate extends React.Component {
           resizable={true}
           reorderable={true}
           scrollable={"scrollable"}
-          total={this.state.gridData.total}
+          total={this.state.gridData.total?this.state.gridData.total:0}
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
           onRowClick={(e) => {
