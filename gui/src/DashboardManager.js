@@ -93,9 +93,19 @@ class DashboardManager extends React.Component {
     let dash = response.data.dashboard;
     let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
     dashData.push({ dashData: response.data });
+
+    let extractedFilterValues = this.extractFilterValues(dashboardFilter);
+    let preapredExtractedFilterValue = null
+    if (extractedFilterValues && extractedFilterValues.length > 0) {
+      preapredExtractedFilterValue = extractedFilterValues[0]
+      for (let i = 1; i < extractedFilterValues.length; i++) {
+        preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+
+      }
+    }
     inputs["dashname"] = dash
-    dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
-    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack })
+    dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue })
+    this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue })
   }
 
   preparefilter(filter1, filter2) {
