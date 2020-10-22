@@ -140,7 +140,6 @@ class Group extends React.Component {
               : false
           }
         />
-        <React.Suspense fallback={<div>Loading...</div>}>
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -169,7 +168,6 @@ class Group extends React.Component {
           }}
           permission={this.state.permission}
         />
-          </React.Suspense>
         {this.state.groupInEdit && this.inputTemplate}
       </div>
     );

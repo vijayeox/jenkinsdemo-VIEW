@@ -83,7 +83,6 @@ class Role extends React.Component {
               : false
           }
         />
-            <React.Suspense fallback={<div>Loading...</div>}>
         <GridTemplate
           args={this.core}
           ref={this.child}
@@ -112,7 +111,6 @@ class Role extends React.Component {
           }}
           permission={this.state.permission}
         />
-          </React.Suspense>
         {this.state.roleInEdit && this.inputTemplate}
       </div>
     );

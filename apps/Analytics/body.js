@@ -115,7 +115,7 @@ class Body extends React.Component {
           this.state.title != "Operational Intelligence" && <div className="page-title full-width">{this.state.title}</div>
         }
         <div className="page-content full-width" id="page-content">
-          {<Suspense fallback={<div>Loading..</div>}>{sectionContent}</Suspense>}
+          {sectionContent}
         </div>
       </div>
     );
