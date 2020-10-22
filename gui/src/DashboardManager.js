@@ -124,6 +124,15 @@ class DashboardManager extends React.Component {
             startDate = new Date(filter["startDate"])
             startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
           }
+
+          //single date passed
+          if (filter["operator"] === "today") {
+            filter["operator"] = "=="
+          }
+          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
+            filter["operator"] = "gte&&lte"
+          }
+          
           //date range received
           if (filter["operator"] == "gte&&lte") {
             endDate = filter["endDate"]
@@ -163,7 +172,6 @@ class DashboardManager extends React.Component {
 
           }
         } else {
-          //single date passed
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
@@ -224,7 +232,7 @@ class DashboardManager extends React.Component {
             inputs["dashname"] = dash
                let extractedFilterValues= this.extractFilterValues(dashboardFilter);
             let preapredExtractedFilterValue=null
-            if (extractedFilterValues && extractedFilterValues.length > 1) {
+            if (extractedFilterValues && extractedFilterValues.length > 0) {
               preapredExtractedFilterValue = extractedFilterValues[0]
               for (let i = 1; i < extractedFilterValues.length; i++) {
                 preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
