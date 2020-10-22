@@ -300,15 +300,13 @@ class CommentsView extends React.Component {
                             }
                             alt={commentItem.name}
                           />
-                          <figcaption className="text-center">
-                            {commentItem.name}
-                          </figcaption>
                         </figure>
                       </div>
                       <div className="col-md-11 col-sm-11">
                         <div className="panel panel-default arrow left">
                           <div className="panel-body">
                             <div className="comment-post">
+                              <h6><b>{commentItem.name}</b></h6>
                               <p dangerouslySetInnerHTML={{__html : commentItem.text}} />
                             </div>
                             <header className="text-right">
