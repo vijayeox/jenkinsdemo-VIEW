@@ -51,10 +51,10 @@
                     },
                     "occurence": "single"
                 },
-                "Date-Period": {
-                    "label": "Date-Period",
+                "Date_Period": {
+                    "label": "Date_Period",
                     "control": {
-                        "name": "date-period",
+                        "name": "date_period",
                         "type": "text"
                     },
                     "occurence": "single"
