@@ -51,8 +51,6 @@ class DashboardManager extends React.Component {
   }
 
   componentDidMount() {
-
-
     if (this.props.uuid && this.props.uuid != "" && this.props.uuid != 0) {
       this.getDashboardHtmlDataByUuid(this.props.uuid)
     } else {
@@ -132,7 +130,7 @@ class DashboardManager extends React.Component {
           if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
             filter["operator"] = "gte&&lte"
           }
-          
+
           //date range received
           if (filter["operator"] == "gte&&lte") {
             endDate = filter["endDate"]
@@ -205,7 +203,7 @@ class DashboardManager extends React.Component {
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
 
     if (response.data.length > 0) {
-      
+
       that.setState({ dashList: response.data, uuid: '' })
       if (inputs["dashname"] != undefined) {
         //setting value of the dropdown after fetch
@@ -230,17 +228,17 @@ class DashboardManager extends React.Component {
             //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
             // }
             inputs["dashname"] = dash
-               let extractedFilterValues= this.extractFilterValues(dashboardFilter);
-            let preapredExtractedFilterValue=null
+            let extractedFilterValues = this.extractFilterValues(dashboardFilter);
+            let preapredExtractedFilterValue = null
             if (extractedFilterValues && extractedFilterValues.length > 0) {
               preapredExtractedFilterValue = extractedFilterValues[0]
               for (let i = 1; i < extractedFilterValues.length; i++) {
                 preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-          
+
               }
             }
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack,drilldownDashboardFilter:preapredExtractedFilterValue })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue })
 
 
           }
@@ -366,23 +364,24 @@ class DashboardManager extends React.Component {
       value = JSON.parse(event.value)
       element != undefined && element.classList.add("hide-dash-editor")
       //resetting dashboard filters on load
-      this.setState({ dashboardFilter: [], exportConfiguration: value.export_configuration })
+      let dashboardFilterConf = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
+      this.setState({ dashboardFilter: dashboardFilterConf, exportConfiguration: value.export_configuration })
     } else {
       name = event.target.name
       value = event.target.value
     }
     inputs[name] = value
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
-    let extractedFilterValues= this.extractFilterValues(dashboardFilter);
-    let preapredExtractedFilterValue=null
+    let extractedFilterValues = this.extractFilterValues(dashboardFilter);
+    let preapredExtractedFilterValue = null
     if (extractedFilterValues && extractedFilterValues.length > 1) {
       preapredExtractedFilterValue = extractedFilterValues[0]
       for (let i = 1; i < extractedFilterValues.length; i++) {
         preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-  
+
       }
     }
-   
+
     dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
 
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
@@ -443,7 +442,7 @@ class DashboardManager extends React.Component {
 
   render() {
     return (
-      <div ref={this.myRef}  className="dashboard">
+      <div ref={this.myRef} className="dashboard">
         <Notification ref={this.notif} />
         <Flippy
           flipDirection="horizontal" // horizontal or vertical
