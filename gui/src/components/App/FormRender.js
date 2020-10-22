@@ -831,13 +831,8 @@ class FormRender extends React.Component {
               if(submitErrors.length > 0){
                 next([]);
               } else {
-                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
-                  if(response.status=='success'){
-                    next(null);
-                  } else {
-                    next([response.errors[0].message]);
-                  }
-                });
+                that.state.currentForm.triggerChange();
+                next(null);
               }
             } else {
               var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
