@@ -28,6 +28,8 @@ import * as ReactStrap from "reactstrap";
 import * as Webcam from "react-webcam";
 import AvatarImageCropper from "react-avatar-image-cropper";
 import GridTemplate from "./src/GridTemplate";
+import OX_Grid from "./src/OX_Grid";
+import DashboardManager from "./src/DashboardManager";
 
 const LazyLoad = ({ component: Component,...rest}) => (
   <>
@@ -37,7 +39,7 @@ const LazyLoad = ({ component: Component,...rest}) => (
   </>
 );
 // const GridTemplate = (props) => <LazyLoad component={lazy(() => import("./src/GridTemplate"))} {...props} />;
-const DashboardManager = (props) => <LazyLoad component={lazy(() => import("./src/DashboardManager"))} {...props} />;
+// const DashboardManager = (props) => <LazyLoad component={lazy(() => import("./src/DashboardManager"))} {...props} />;
 const Dashboard = (props) => <LazyLoad component={lazy(() => import("./src/Dashboard"))} {...props} />;
 const DataSource = (props) => <LazyLoad component={lazy(() => import("./src/DataSource"))} {...props} />;
 const Query = (props) => <LazyLoad component={lazy(() => import("./src/Query"))} {...props} />;
@@ -56,7 +58,7 @@ const DropDown = (props) => <LazyLoad component={lazy(() => import('./src/compon
 const Visualization = (props) => <LazyLoad component={lazy(() => import("./src/Visualization"))} {...props} />;
 const WidgetManager = (props) => <LazyLoad component={lazy(() => import("./src/WidgetManager"))} {...props} />;
 
-const OX_Grid = lazy(() => import("./src/OX_Grid"));
+// const OX_Grid = lazy(() => import("./src/OX_Grid"));
 // const GridTemplate = lazy(() => import("./src/GridTemplate"));
 
 export {
