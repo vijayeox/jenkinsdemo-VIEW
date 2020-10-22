@@ -43,7 +43,6 @@ class TabSegment extends React.Component {
     this.appId = this.props.appId;
     this.pageId = this.props.pageId;
     this.tabs = this.props.tabs;
-    console.log(this.props.pageId);
     this.currentRow = this.props.currentRow;
     this.state = {
       content: this.props.content,
