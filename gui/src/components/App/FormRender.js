@@ -65,6 +65,12 @@ class FormRender extends React.Component {
     this.formDivID = "formio_" + formID;
     this.loaderDivID = "formio_loader_" + formID;
     this.formErrorDivId = "formio_error_" + formID;
+    JavascriptLoader.loadScript([{
+        'name': 'ckEditorJs',
+        'url': './ckeditor/ckeditor.js',
+        'onload': function() {},
+        'onerror': function() {}
+    }]);
   }
 
   showFormLoader(state = true, init = 0) {
@@ -77,14 +83,18 @@ class FormRender extends React.Component {
       }
     }
     if (state) {
-      loaderDiv.style.display = "flex";
+      if(loaderDiv){
+        loaderDiv.style.display = "flex";
+      }
       this.loader.show(loaderDiv);
       if (init == 1) {
         document.getElementById(this.formDivID).style.display = "none";
       }
     } else {
       this.loader.destroy();
-      loaderDiv.style.display = "none";
+      if(loaderDiv){
+        loaderDiv.style.display = "none";
+      }
       if (init == 1) {
         document.getElementById(this.formDivID).style.display = "block";
       }
@@ -835,6 +845,10 @@ class FormRender extends React.Component {
                 next(null);
               }
             } else {
+              if(this.props.customSaveForm){
+                this.props.customSaveForm(that.cleanData(submission.data));
+                next(null);
+              }
               var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
                 if(response.status=='success'){
                   next(null);
@@ -1592,12 +1606,6 @@ class FormRender extends React.Component {
     }
     $("#" + this.loaderDivID).off("customButtonAction");
     document.getElementById(this.loaderDivID).addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
-    JavascriptLoader.loadScript([{
-        'name': 'ckEditorJs',
-        'url': './ckeditor/ckeditor.js',
-        'onload': function() {},
-        'onerror': function() {}
-    }]);
   }
 
   customButtonAction = (e) => {
