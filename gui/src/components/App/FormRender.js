@@ -65,6 +65,12 @@ class FormRender extends React.Component {
     this.formDivID = "formio_" + formID;
     this.loaderDivID = "formio_loader_" + formID;
     this.formErrorDivId = "formio_error_" + formID;
+    JavascriptLoader.loadScript([{
+        'name': 'ckEditorJs',
+        'url': './ckeditor/ckeditor.js',
+        'onload': function() {},
+        'onerror': function() {}
+    }]);
   }
 
   showFormLoader(state = true, init = 0) {
@@ -1592,12 +1598,6 @@ class FormRender extends React.Component {
     }
     $("#" + this.loaderDivID).off("customButtonAction");
     document.getElementById(this.loaderDivID).addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
-    JavascriptLoader.loadScript([{
-        'name': 'ckEditorJs',
-        'url': './ckeditor/ckeditor.js',
-        'onload': function() {},
-        'onerror': function() {}
-    }]);
   }
 
   customButtonAction = (e) => {
