@@ -30,6 +30,12 @@ import AvatarImageCropper from "react-avatar-image-cropper";
 import GridTemplate from "./src/GridTemplate";
 import OX_Grid from "./src/OX_Grid";
 import DashboardManager from "./src/DashboardManager";
+import Dashboard from "./src/Dashboard";
+import DataSource from "./src/DataSource";
+import Query from "./src/Query";
+import DashboardFilter from "./src/DashboardFilter";
+import WidgetGrid from "./src/WidgetGrid";
+import WidgetRenderer from "./src/WidgetRenderer";
 
 const LazyLoad = ({ component: Component,...rest}) => (
   <>
@@ -40,12 +46,12 @@ const LazyLoad = ({ component: Component,...rest}) => (
 );
 // const GridTemplate = (props) => <LazyLoad component={lazy(() => import("./src/GridTemplate"))} {...props} />;
 // const DashboardManager = (props) => <LazyLoad component={lazy(() => import("./src/DashboardManager"))} {...props} />;
-const Dashboard = (props) => <LazyLoad component={lazy(() => import("./src/Dashboard"))} {...props} />;
-const DataSource = (props) => <LazyLoad component={lazy(() => import("./src/DataSource"))} {...props} />;
-const Query = (props) => <LazyLoad component={lazy(() => import("./src/Query"))} {...props} />;
-const DashboardFilter = (props) => <LazyLoad component={lazy(() => import("./src/DashboardFilter"))} {...props} />;
-const WidgetGrid = (props) => <LazyLoad component={lazy(() => import("./src/WidgetGrid"))} {...props} />;
-const WidgetRenderer = (props) => <LazyLoad component={lazy(() => import("./src/WidgetRenderer"))} {...props} />;
+// const Dashboard = (props) => <LazyLoad component={lazy(() => import("./src/Dashboard"))} {...props} />;
+// const DataSource = (props) => <LazyLoad component={lazy(() => import("./src/DataSource"))} {...props} />;
+// const Query = (props) => <LazyLoad component={lazy(() => import("./src/Query"))} {...props} />;
+// const DashboardFilter = (props) => <LazyLoad component={lazy(() => import("./src/DashboardFilter"))} {...props} />;
+// const WidgetGrid = (props) => <LazyLoad component={lazy(() => import("./src/WidgetGrid"))} {...props} />;
+// const WidgetRenderer = (props) => <LazyLoad component={lazy(() => import("./src/WidgetRenderer"))} {...props} />;
 const FormRender = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormRender"))} {...props} />;
 const FormBuilder = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormBuilder"))} {...props} />;
 const MultiSelect = (props) => <LazyLoad component={lazy(() => import("./src/MultiSelect"))} {...props} />;
