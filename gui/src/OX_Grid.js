@@ -396,7 +396,7 @@ export default class OX_Grid extends React.Component {
   };
 
   refreshHandler = () => {
-    this.child.current.triggerGetCall();
+    this.child.current ? this.child.current.triggerGetCall() : this.child.triggerGetCall();
   };
 
   noRecordsJSX() {
@@ -544,7 +544,7 @@ export default class OX_Grid extends React.Component {
           />
         ) : (
           <DataLoader
-            ref={this.child}
+            ref={(r)=>{this.child = r; console.log(r);}}
             args={this.props.osjsCore}
             url={this.props.data}
             dataState={this.state.dataState}
