@@ -72,6 +72,18 @@ class PageContent extends React.Component {
     }
   }
 
+  componentDidMount() {
+    document.getElementById(this.contentDivID)
+    ? document
+        .getElementById(this.contentDivID)
+        .addEventListener(
+          "clickAction",
+          (e) => this.buttonAction(e.detail, {}),
+          false
+        )
+    : null;
+  }
+
   renderButtons(e, action) {
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {

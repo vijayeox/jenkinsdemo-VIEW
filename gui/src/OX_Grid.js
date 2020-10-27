@@ -444,16 +444,9 @@ export default class OX_Grid extends React.Component {
   };
 
   updatePageContent = (config) => {
-    let eventDiv = document.getElementById(this.appNavigationDiv);
-    var pageDetails = {
-      title: config.name,
-      pageContent: config.details,
-      pageId: null,
-      parentPage: this.props.pageId,
-      currentRow: this.props.parentData
-    };
-    let ev2 = new CustomEvent("addPage", {
-      detail: pageDetails,
+    let eventDiv = document.getElementById(this.props.parentDiv);
+    let ev2 = new CustomEvent("clickAction", {
+      detail: config,
       bubbles: true
     });
     eventDiv.dispatchEvent(ev2);
