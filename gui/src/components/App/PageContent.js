@@ -154,7 +154,11 @@ class PageContent extends React.Component {
    this.loader.destroy();
  }
 
-  async buttonAction(action, rowData) {
+  async buttonAction(actionCopy, rowData) {
+    var action = actionCopy;
+    if (action.content){
+      action.details = action.content;
+    }
     var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
     if (action.page_id) {
       this.loadPage(action.page_id);
@@ -660,20 +664,15 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Comment") {
-        var url;
-        if (item.content) {
-          url = this.replaceParams(item.content, this.state.currentRow);
-        } else {
-          if (item.url) {
-            url = item.url;
-          }
-        }
         content.push(
           <CommentsView
             appId={this.appId}
             key={i}
             core={this.core}
-            url={url}
+            url={this.replaceParams(
+              item.content ? item.content : item.url,
+              this.state.currentRow
+            )}
           />
         );
       } else if (item.type == "TabSegment") {
@@ -742,7 +741,7 @@ class PageContent extends React.Component {
                 : undefined
             }
             fileId={this.state.fileId}
-            content={item.content ? item.content : ""}
+            content={item.htmlContent ? item.htmlContent : item.content}
             fileData={this.state.currentRow}
             className={item.className}
           />
