@@ -23,6 +23,7 @@ import DataOperation from "./components/Grid/DataOperation";
 import CustomFilter from "./components/Grid/CustomFilter";
 import "./components/Grid/customStyles.scss";
 import InlineComponent from "./components/Grid/InlineComponent";
+const util = require('util');
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
@@ -86,20 +87,20 @@ export default class OX_Grid extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // change to use componentDidUpdate later in future
-    const circularReplacer = (obj) => {
-      var i = 0;
-      return function(key, value) {
-        if(i !== 0 && typeof(obj) === 'object' && typeof(value) == 'object' && obj == value) 
-          return '[Circular]'; 
-        if(i >= 29) // seems to be a harded maximum of 30 serialized objects?
-          return '[Unknown]';
-        ++i; // so we know we aren't using the original object anymore
-        return value;  
-      }
-    }
-    if (JSON.stringify(this.props, circularReplacer(this.props)) != JSON.stringify(nextProps, circularReplacer(nextProps))) {
+  // Write different props which when changed we need to trigger a setState
+    if (
+      util.inspect(this.props.data, { depth: 2 }) !=
+        util.inspect(nextProps.data) ||
+      util.inspect(this.props.gridDefaultFilters, {depth: 4}) !=
+        util.inspect(nextProps.gridDefaultFilters, {depth: 4}) ||
+      util.inspect(this.props.columnConfig) !=
+        util.inspect(nextProps.columnConfig)
+    ) {
       if (nextProps.gridDefaultFilters) {
-        let mergedFilters = {...nextProps.gridDefaultFilters, ...this.state.dataState}
+        let mergedFilters = {
+          ...this.state.dataState,
+          ...nextProps.gridDefaultFilters,
+        };
         this.setState({ dataState: mergedFilters });
       }
       // Disable untill there is a use case to do this
@@ -285,6 +286,7 @@ export default class OX_Grid extends React.Component {
           <JsxParser
             bindings={{
               item: this.props.parentData,
+              data: this.props.parentData,
               moment: moment,
               profile: this.props.userProfile,
               baseUrl: this.props.baseUrl,
@@ -300,7 +302,6 @@ export default class OX_Grid extends React.Component {
     if (this.props.exportToPDF) {
       gridToolbarContent.push(
         <Button
-          style={{ right: "10px", float: "right" }}
           primary={true}
           onClick={this.exportPDF}
         >
@@ -443,15 +444,9 @@ export default class OX_Grid extends React.Component {
   };
 
   updatePageContent = (config) => {
-    let eventDiv = document.getElementById(this.appNavigationDiv);
-    var pageDetails = {
-      title: config.name,
-      pageContent: config.details,
-      pageId: null,
-      parentPage: this.props.pageId
-    };
-    let ev2 = new CustomEvent("addPage", {
-      detail: pageDetails,
+    let eventDiv = document.getElementById(this.props.parentDiv);
+    let ev2 = new CustomEvent("clickAction", {
+      detail: config,
       bubbles: true
     });
     eventDiv.dispatchEvent(ev2);
@@ -534,7 +529,10 @@ export default class OX_Grid extends React.Component {
     return (
       <div
         style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }}
-        className="GridCustomStyle"
+        className={
+          "GridCustomStyle " +
+          (this.props.className ? this.props.className : "")
+        }
       >
         {this.rawDataPresent ? (
           <DataOperation
@@ -636,12 +634,23 @@ export default class OX_Grid extends React.Component {
                   : this.state.gridData.data
               }
             >
-              {this.createColumns(this.props.exportToPDF.columnConfig ?this.props.exportToPDF.columnConfig : this.props.columnConfig )}
+              {this.createColumns(
+                this.props.exportToPDF.columnConfig
+                  ? this.props.exportToPDF.columnConfig
+                  : this.props.columnConfig
+              )}
             </Grid>
           </GridPDFExport>
         ) : null}
         {this.props.exportToExcel ? (
-          <ExcelExport ref={(excelExport) => (this._excelExport = excelExport)}>
+          <ExcelExport
+            ref={(excelExport) => (this._excelExport = excelExport)}
+            fileName={
+              this.props.exportToExcel.fileNameTemplate
+                ? eval(this.props.exportToExcel.fileNameTemplate)
+                : undefined
+            }
+          >
             {this.props.exportToExcel.columnConfig
               ? this.props.exportToExcel.columnConfig.map((item) => (
                   <ExcelExportColumn
