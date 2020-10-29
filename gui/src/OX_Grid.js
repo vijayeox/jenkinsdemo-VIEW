@@ -396,7 +396,7 @@ export default class OX_Grid extends React.Component {
   };
 
   refreshHandler = () => {
-    this.child.current.triggerGetCall();
+    this.child.current ? this.child.current.triggerGetCall() : this.child.triggerGetCall();
   };
 
   noRecordsJSX() {
@@ -444,16 +444,9 @@ export default class OX_Grid extends React.Component {
   };
 
   updatePageContent = (config) => {
-    let eventDiv = document.getElementById(this.appNavigationDiv);
-    var pageDetails = {
-      title: config.name,
-      pageContent: config.details,
-      pageId: null,
-      parentPage: this.props.pageId,
-      currentRow: this.props.parentData
-    };
-    let ev2 = new CustomEvent("addPage", {
-      detail: pageDetails,
+    let eventDiv = document.getElementById(this.props.parentDiv);
+    let ev2 = new CustomEvent("clickAction", {
+      detail: config,
       bubbles: true
     });
     eventDiv.dispatchEvent(ev2);
@@ -551,7 +544,7 @@ export default class OX_Grid extends React.Component {
           />
         ) : (
           <DataLoader
-            ref={this.child}
+            ref={(r)=>{this.child = r; console.log(r);}}
             args={this.props.osjsCore}
             url={this.props.data}
             dataState={this.state.dataState}
