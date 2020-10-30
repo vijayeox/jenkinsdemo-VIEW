@@ -200,7 +200,11 @@ class FormRender extends React.Component {
   }
 
   async callDelegate(delegate, params) {
-    return await this.helper.request("v1", this.appUrl + "/delegate/" + delegate, params, "post");
+    return await this.helper.request(
+      "v1",
+      this.appUrl + "/command/delegate/" + delegate,
+      { ...params, bos: this.getBOSData() },
+      "post"
   }
 
   async callPipeline(commands, submission) {
@@ -355,7 +359,8 @@ class FormRender extends React.Component {
       if(this.props.parentFileId){
         form.submission.data.fileId = undefined;
         form.submission.data["workflow_instance_id"] = undefined;
-        form.submission.data["bos"]["assoc_id"] = this.props.parentFileId;
+        form.submission.data.bos ? null : (form.submission.data.bos = {});
+        form.submission.data.bos.assoc_id = this.props.parentFileId;
       }
       return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
         if (response.status == "success") {
@@ -461,6 +466,17 @@ class FormRender extends React.Component {
       });
     }
   }
+  
+    getBOSData(){
+      return {
+        ...this.props,
+        core: undefined,
+        proc: undefined,
+        postSubmitCallback: undefined,
+      };
+      // We can add few other fields along with props as needed.
+      // JS Objects must be unset here
+    }
 
   // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issue
   formatFormData(data) {
@@ -500,6 +516,7 @@ class FormRender extends React.Component {
     formData.phoneList = undefined;
     formData.timezones = undefined;
     formData.dateFormats = undefined;
+    formData.parentData = undefined;
     formData.orgId = this.userprofile.orgid;
     var ordered_data = {};
     var componentList = flattenComponents(this.state.currentForm._form.components, true);
@@ -542,17 +559,17 @@ class FormRender extends React.Component {
       : await this.helper.request("v1", url, {}, "get");
   }
 
-  processProperties(form) {
-    if (form._form["properties"]) {
-      this.runDelegates(form, form._form["properties"]);
-      this.runProps(form._form, form, form._form["properties"], this.formatFormData(form.submission.data));
-    } else {
-      if (form.originalComponent["properties"]) {
-        this.runDelegates(form, form.originalComponent["properties"]);
-        this.runProps(form.originalComponent, form, form.originalComponent["properties"], this.formatFormData(form.submission.data));
+   processProperties(form){
+      if (form._form.properties || form.originalComponent.properties) {
+        this.runDelegates(
+          form,
+          form._form.properties
+            ? form._form.properties
+            : form.originalComponent.properties
+        );
+        // Should'nt run both runDelegates and runProps func on form initializaton as it creates duplicate delegate calls
       }
     }
-  }
 
   loadWorkflow(form) {
     let that = this;
