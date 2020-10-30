@@ -125,7 +125,12 @@ class FormRender extends React.Component {
     }
   }
   async callDelegate(delegate, params) {
-    return await this.helper.request("v1",this.appUrl + "/delegate/" + delegate,params,"post");
+    return await this.helper.request(
+      "v1",
+      this.appUrl + "/command/delegate/" + delegate,
+      { ...params, bos: this.getBOSData() },
+      "post"
+    );
   }
   async callPipeline(commands, submission) {
     var params = [];
@@ -382,9 +387,22 @@ class FormRender extends React.Component {
       }
     }
 
+    getBOSData(){
+      return {
+        ...this.props,
+        core: undefined,
+        proc: undefined,
+        postSubmitCallback: undefined,
+      };
+      // We can add few other fields along with props as needed.
+      // JS Objects must be unset here
+    }
+
   // Setting empty and null fields to form setsubmission are making unfilled fields dirty and triggeres validation issue
-    formatFormData(data){
-      var formData = this.parseResponseData(this.addAddlData(data));
+    formatFormData(data, disableAddAddlData = false ){
+      var formData = this.parseResponseData(
+        disableAddAddlData ? data : this.addAddlData(data)
+      );
       var ordered_data = {};
       Object.keys(formData)
         .sort()
@@ -459,15 +477,16 @@ class FormRender extends React.Component {
         ? await this.helper.request("v1", url, this.props.urlPostParams, "post")
         : await this.helper.request("v1", url, {}, "get");
     }
+
     processProperties(form){
-      if (form._form["properties"]) {
-        this.runDelegates(form, form._form["properties"]);
-        this.runProps(form._form,form,form._form["properties"],this.formatFormData(form.submission.data));
-      } else {
-        if (form.originalComponent["properties"]) {
-          this.runDelegates(form, form.originalComponent["properties"]);
-          this.runProps(form.originalComponent,form,form.originalComponent["properties"],this.formatFormData(form.submission.data));
-        }
+      if (form._form.properties || form.originalComponent.properties) {
+        this.runDelegates(
+          form,
+          form._form.properties
+            ? form._form.properties
+            : form.originalComponent.properties
+        );
+        // Should'nt run both runDelegates and runProps func on form initializaton as it creates duplicate delegate calls
       }
     }
 
@@ -608,7 +627,7 @@ class FormRender extends React.Component {
                   ? this.formatFormData(response.data.data)
                   : {
                       ...this.state.data,
-                      parentData: this.formatFormData(response.data.data),
+                      parentData: this.formatFormData(response.data.data, true),
                     },
               },
               () => {
