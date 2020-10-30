@@ -65,7 +65,7 @@ class HTMLViewer extends React.Component {
     return false;
   }
   searchAndReplaceParams(content,params){
-    var regex = /\{.*?\}/g;
+    var regex = /\{data\.(.*)?\}/g;
     let m;
     var matches=[];
     do {
@@ -78,12 +78,10 @@ class HTMLViewer extends React.Component {
       }
     } while (m);
     matches.forEach((match, groupIndex) => {
-      var param = match[0].replace("{data.", "");
-      param = param.replace("}", "");
-      if(params[param] !=undefined && this.isHTML(params[param])){
+      if(params[match[1]] !=undefined && this.isHTML(params[match[1]])){
         content = content.replace(
           match[0],
-          params[param]
+          params[match[1]]
           );
       }
     });
