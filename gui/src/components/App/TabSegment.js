@@ -122,7 +122,7 @@ class TabSegment extends React.Component {
           proc={this.props.proc}
           appId={this.props.appId}
           fileId={this.uuid}
-          currentRow={this.fileData}
+          currentRow={this.state.currentRow}
           core={this.core}
         />);
   } else if(this.state.tabs &&
