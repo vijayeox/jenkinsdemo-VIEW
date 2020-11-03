@@ -676,6 +676,14 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Comment") {
+        var url;
+        if (item.content) {
+          url = this.replaceParams(item.content, this.state.currentRow);
+        } else {
+          if (item.url) {
+            url = this.replaceParams(item.url, this.state.currentRow);
+          }
+        }
         content.push(
           <CommentsView
             appId={this.appId}
