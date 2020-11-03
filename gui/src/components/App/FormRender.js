@@ -204,7 +204,7 @@ class FormRender extends React.Component {
       "v1",
       this.appUrl + "/command/delegate/" + delegate,
       { ...params, bos: this.getBOSData() },
-      "post"
+      "post");
   }
 
   async callPipeline(commands, submission) {
