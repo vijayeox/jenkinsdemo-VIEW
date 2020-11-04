@@ -54,7 +54,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let privilegedata = await helper2.request(
       "v1",
-      "organization/" +
+      "account/" +
         this.props.selectedOrg +
         "/masterprivilege/" +
         this.props.dataItem.uuid,
@@ -68,7 +68,7 @@ export default class DialogContainer extends React.Component {
     let helper2 = this.core.make("oxzion/restClient");
     let masterData = await helper2.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/masterprivilege",
+      "account/" + this.props.selectedOrg + "/masterprivilege",
       {},
       "get"
     );
@@ -87,7 +87,7 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "post") {
       let roleAddData = await helper.request(
         "v1",
-        "organization/" + this.props.selectedOrg + "/role",
+        "account/" + this.props.selectedOrg + "/role",
         {
           name: this.state.roleInEdit.name,
           description: this.state.roleInEdit.description,
@@ -99,7 +99,7 @@ export default class DialogContainer extends React.Component {
     } else if (this.props.formAction == "put") {
       let roleAddData = await helper.request(
         "v1",
-        "organization/" +
+        "account/" +
           this.props.selectedOrg +
           "/role/" +
           this.props.dataItem.uuid,
