@@ -26,7 +26,7 @@ export default class DialogContainer extends React.Component {
     if (this.props.formAction == "put") {
       this.loader.show(this.adminWindow);
       this.getData(
-        "organization/" +
+        "account/" +
           this.props.selectedOrg +
           "/user/" +
           this.props.dataItem.uuid +
@@ -34,7 +34,7 @@ export default class DialogContainer extends React.Component {
       ).then((response) => {
         var apiResponse = response.data;
         this.getData(
-          "organization/" +
+          "account/" +
             this.props.selectedOrg +
             "/user/" +
             this.props.dataItem.uuid +
@@ -61,7 +61,7 @@ export default class DialogContainer extends React.Component {
     }
     this.loader.show(this.adminWindow);
 
-    this.getData("organization/" + this.props.selectedOrg + "/roles").then(
+    this.getData("account/" + this.props.selectedOrg + "/roles").then(
       (response) => {
         var tempUsers = [];
         for (var i = 0; i <= response.data.length - 1; i++) {
@@ -75,7 +75,7 @@ export default class DialogContainer extends React.Component {
       }
     );
 
-    this.getData("organization/" + this.props.selectedOrg + "/projects").then(
+    this.getData("account/" + this.props.selectedOrg + "/projects").then(
       (response) => {
         var tempProjects = [];
         for (var i = 0; i <= response.data.length - 1; i++) {
@@ -191,7 +191,7 @@ export default class DialogContainer extends React.Component {
     }
     if (this.props.formAction == "post") {
       PushData(
-        "organization/" + this.props.selectedOrg + "/user",
+        "account/" + this.props.selectedOrg + "/user",
         this.props.formAction,
         this.props.dataItem.uuid,
         {
@@ -374,7 +374,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       mainList={
-                        "organization/" + this.props.selectedOrg + "/users"
+                        "account/" + this.props.selectedOrg + "/users"
                       }
                       preFetch={true}
                       selectedItem={this.state.userInEdit.manager_name}
