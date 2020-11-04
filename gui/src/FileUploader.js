@@ -71,6 +71,7 @@ class FileUploader extends React.Component {
   };
 
   render() {
+    this.props.tempref(this);
     return (
       <div className="form-group border-box fileUploaderComponent">
         <Notification ref={this.notif} />
