@@ -11,7 +11,7 @@ export default class DialogContainerAnnouncement extends React.Component {
       ancInEdit: this.props.dataItem || null,
       disableSave: false
     };
-    this.fUpload = React.createRef();
+    this.fUpload = {};
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
   }
@@ -23,7 +23,7 @@ export default class DialogContainerAnnouncement extends React.Component {
   };
 
   async pushFile(event) {
-    var files = this.fUpload.current.state.selectedFile[0].getRawFile();
+    var files = this.fUpload.state.selectedFile[0].getRawFile();
     let helper = this.core.make("oxzion/restClient");
 
     let ancFile = await helper.request(
@@ -42,7 +42,7 @@ export default class DialogContainerAnnouncement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
-      "organization/" + this.props.selectedOrg + "/announcement",
+      "account/" + this.props.selectedOrg + "/announcement",
       {
         name: this.state.ancInEdit.name,
         media: fileCode,
@@ -143,7 +143,7 @@ export default class DialogContainerAnnouncement extends React.Component {
         disableSave: true
       });
       this.loader.show();
-      if (this.fUpload.current.state.selectedFile.length == 0) {
+      if (this.fUpload.state.selectedFile.length == 0) {
         this.editTriggerFunction(this.props.dataItem.media);
       } else {
         this.pushFile().then((response) => {
@@ -152,7 +152,7 @@ export default class DialogContainerAnnouncement extends React.Component {
         });
       }
     } else {
-      if (this.fUpload.current.state.selectedFile.length == 0) {
+      if (this.fUpload.state.selectedFile.length == 0) {
         var elm = document.getElementsByClassName("ancBannerUploader")[0];
         scrollIntoView(elm, {
           scrollMode: "if-needed",
@@ -344,7 +344,7 @@ export default class DialogContainerAnnouncement extends React.Component {
             ) : (
               <div className="ancBannerUploader">
                 <FileUploader
-                  ref={this.fUpload}
+                  tempref={e => this.fUpload = e}
                   media_URL={
                     this.props.dataItem.media
                       ? this.url + "resource/" + this.props.dataItem.media
