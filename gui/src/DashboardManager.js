@@ -300,7 +300,27 @@ class DashboardManager extends React.Component {
   }
 
   applyDashboardFilter(filter) {
-    this.setState({ dashboardFilter: filter })
+
+    let dashboardStack=null
+    if(this.state.dashboardStack.length==1){
+      dashboardStack=this.state.dashboardStack
+      let dashboardFilter = filter
+      let extractedFilterValues = this.extractFilterValues(dashboardFilter);
+      let preapredExtractedFilterValue = []
+      if (extractedFilterValues && extractedFilterValues.length > 1) {
+        preapredExtractedFilterValue = extractedFilterValues[0]
+        for (let i = 1; i < extractedFilterValues.length; i++) {
+          preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+        }
+      }
+      dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = preapredExtractedFilterValue
+
+    }
+    if(dashboardStack!=null){
+      this.setState({ dashboardFilter: filter,dashboardStack:dashboardStack })
+    } else{
+      this.setState({ dashboardFilter: filter })
+    }
     this.hideFilter()
   }
 
@@ -428,6 +448,7 @@ class DashboardManager extends React.Component {
       let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
       formData["configuration"] = JSON.stringify(parsedConfiguration["configuration"])
       formData["datasource_id"] = parsedConfiguration["datasource_id"]
+      formData["filter"]=JSON.stringify(this.state.drilldownDashboardFilter)
     }
     let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
     this.notif.current.notify(
