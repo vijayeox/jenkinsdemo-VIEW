@@ -455,13 +455,33 @@ class Dashboard extends Component {
     // console.log("Printing Filter: " + this.state.preparedDashboardFilter)
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
-      //combining dashboardfilter with widgetfilter
-      let preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
+      let preparedFilter
+      if(this.state.preparedDashboardFilter.length>0){
+        //combining dashboardfilter with widgetfilter
+        preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
+      } else{
+        preparedFilter = filter ? JSON.parse(filter) : ''
+      }
       filter = preparedFilter
-      url = url + '&filter=' + JSON.stringify(filter);
+      filter = preparedFilter
+      if (filter && ('' !== filter)) {
+        url = url + '&filter=' + JSON.stringify(filter);
+      } else {
+        url = url;
+      }
     } else if (this.props.dashboardStack && this.props.dashboardStack.length > 0) {
       let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-      let preparedFilter = filter ? this.preparefilter(dashFilter, JSON.parse(filter)) : dashFilter
+      let preparedFilter=null
+      if(filter){
+        if(dashFilter && dashFilter.length>0){
+           preparedFilter =  this.preparefilter(dashFilter, JSON.parse(filter)) 
+        } else {
+          preparedFilter = JSON.parse(filter)
+        }
+      } else{
+        preparedFilter = dashFilter
+      }
+
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
 
