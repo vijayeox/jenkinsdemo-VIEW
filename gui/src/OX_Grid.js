@@ -18,16 +18,22 @@ import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import $ from "jquery";
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
+import Swal from "sweetalert2";
 import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
 import CustomFilter from "./components/Grid/CustomFilter";
 import "./components/Grid/customStyles.scss";
 import InlineComponent from "./components/Grid/InlineComponent";
 const util = require('util');
+import { Popup } from '@progress/kendo-react-popup';
+import { Menu, MenuItem } from '@progress/kendo-react-layout';
+import ParameterHandler from "./components/App/ParameterHandler";
+import PageNavigation from "./components/PageNavigation";
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
     super(props);
+    this.core = this.props.osjsCore;
     this.baseUrl = this.props.osjsCore
       ? this.props.osjsCore.config("wrapper.url")
       : undefined;
@@ -35,14 +41,24 @@ export default class OX_Grid extends React.Component {
       ? this.props.osjsCore.make("oxzion/profile").get().key
       : undefined;
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
+    this.pageId = this.props.pageId;
+    this.appId = this.props.appId;
+    this.notif = this.props.notif;
     this.state = {
+      showLoader: false,
       gridData: this.rawDataPresent ? this.props.data : { data: [], total: 0 },
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
+      contextMenuOpen: false,
+      notif: this.notif,
       apiActivityCompleted: this.rawDataPresent ? true : false,
-      isTab: this.props.isTab ? this.props.isTab : false
+      isTab: this.props.isTab ? this.props.isTab : false,
+      actions: this.props.actions?this.props.actions:null,
+      menu: null
     };
+    this.blurTimeoutRef;
+    this.menuWrapperRef;
     this.appNavigationDiv = "navigation_" + this.props.appId;
     this.loader = this.props.osjsCore.make("oxzion/splash");
     this.child = React.createRef();
@@ -53,54 +69,29 @@ export default class OX_Grid extends React.Component {
   _grid;
 
   componentDidMount() {
-    document.getElementById(this.appNavigationDiv)
-      ? document
-          .getElementById(this.appNavigationDiv)
-          .addEventListener(
-            "handleGridRefresh",
-            () => this.refreshHandler(),
-            false
-          )
-      : null;
+    document.getElementById(this.appNavigationDiv) ? document.getElementById(this.appNavigationDiv).addEventListener("handleGridRefresh",() => this.refreshHandler(),false) : null;
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
     if (!document.getElementsByClassName("PageRender")) {
-      this.gridHeight =
-        document.getElementsByClassName("PageRender")[0].clientHeight - 50;
+      this.gridHeight = document.getElementsByClassName("PageRender")[0].clientHeight - 50;
     }
   }
 
   dataStateChange = (e) => {
-    this.setState({
-      ...this.state,
-      dataState: e.data
-    });
+    this.setState({ ...this.state, dataState: e.data });
   };
 
   dataRecieved = (data) => {
-    this.setState({
-      gridData: data,
-      apiActivityCompleted: true
-    });
+    this.setState({ gridData: data, apiActivityCompleted: true });
   };
 
   componentWillReceiveProps(nextProps) {
     // change to use componentDidUpdate later in future
   // Write different props which when changed we need to trigger a setState
-    if (
-      util.inspect(this.props.data, { depth: 2 }) !=
-        util.inspect(nextProps.data) ||
-      util.inspect(this.props.gridDefaultFilters, {depth: 4}) !=
-        util.inspect(nextProps.gridDefaultFilters, {depth: 4}) ||
-      util.inspect(this.props.columnConfig) !=
-        util.inspect(nextProps.columnConfig)
-    ) {
+    if (util.inspect(this.props.data, { depth: 2 }) != util.inspect(nextProps.data) || util.inspect(this.props.gridDefaultFilters, {depth: 4}) != util.inspect(nextProps.gridDefaultFilters, {depth: 4}) || util.inspect(this.props.columnConfig) != util.inspect(nextProps.columnConfig)) {
       if (nextProps.gridDefaultFilters) {
-        let mergedFilters = {
-          ...this.state.dataState,
-          ...nextProps.gridDefaultFilters,
-        };
+        let mergedFilters = {...this.state.dataState,...nextProps.gridDefaultFilters,};
         this.setState({ dataState: mergedFilters });
       }
       // Disable untill there is a use case to do this
@@ -115,11 +106,7 @@ export default class OX_Grid extends React.Component {
     var splitUrl = this.props.data.split("?");
     if (splitUrl[1]) {
       apiUrl = splitUrl[0];
-      var getUrlParams = decodeURI(splitUrl[1])
-        .replace("?", "")
-        .split("&")
-        .map((param) => param.split("="))
-        .reduce((values, [key, value]) => {
+      var getUrlParams = decodeURI(splitUrl[1]).replace("?", "").split("&").map((param) => param.split("=")).reduce((values, [key, value]) => {
           values[key] = value;
           return values;
         }, {});
@@ -159,9 +146,7 @@ export default class OX_Grid extends React.Component {
     columnConfig.map((dataItem, i) => {
       table.push(
         <GridColumn
-          cell={
-            dataItem.cell || dataItem.rygRule
-              ? (item) => (
+          cell={dataItem.cell || dataItem.rygRule? (item) => (
                   <CustomCell
                     cellTemplate={dataItem.cell}
                     dataItem={item.dataItem}
@@ -277,6 +262,57 @@ export default class OX_Grid extends React.Component {
       gridData: { data: data, total: this.state.gridData.total }
     });
   };
+  
+  rowRender = (trElement, dataItem) => {
+    const trProps = {
+        ...trElement.props,
+        onContextMenu: (e) => {
+            e.preventDefault();
+            this.handleContextMenuOpen(e, dataItem.dataItem);
+        }
+    };
+    return React.cloneElement(trElement, { ...trProps }, trElement.props.children);
+}
+handleContextMenuOpen = (e, dataItem) => {
+  if(this.state.actions){
+      this.dataItem = dataItem;
+      this.offset = { left: e.clientX, top: e.clientY };
+      var actionButtons = [];
+      this.setState({
+        menu: null
+      });
+      Object.keys(this.state.actions).map(function (key, index) {
+        var action = this.state.actions;
+        var string = ParameterHandler.replaceParams(this.appId,action[key].rule, dataItem);
+        var _moment = moment;
+        var profile = this.userprofile;
+        string = string.replace(/moment/g, '_moment');
+        var showButton = eval(string);
+        var buttonStyles = action[key].icon
+          ? {
+            width: "auto"
+          }
+          : {
+            width: "auto",
+            // paddingTop: "5px",
+            color: "white",
+            fontWeight: "600"
+          };
+          const itemRender = (props) => {
+            return (
+                <div style={{ padding: '5px' }} text={action[key].name}><i style={{marginRight: '5px'}} className={action[key].icon + " manageIcons"}></i>{action[key].name}</div>
+            );
+        };
+        showButton ? actionButtons.push(
+            <MenuItem text={action[key].name}  render={itemRender} />
+        ): null;
+      }, this);
+      this.setState({
+        menu: actionButtons,
+        contextMenuOpen: true
+      });
+  }
+}
 
   generateGridToolbar() {
     let gridToolbarContent = [];
@@ -304,19 +340,20 @@ export default class OX_Grid extends React.Component {
         <Button
           primary={true}
           onClick={this.exportPDF}
+          className={"GridToolBarButton"}
         >
-          Export to PDF
+          <i className='fa fa-file-pdf-o'></i>
         </Button>
       );
     }
     if (this.props.exportToExcel) {
       gridToolbarContent.push(
         <Button
-          style={{ right: "10px", float: "right" }}
           primary={true}
+          className={"GridToolBarButton"}
           onClick={() => this.exportExcel(this.props.exportToExcel)}
         >
-          Export to Excel
+        <i className='fa fa-file-excel-o'></i>
         </Button>
       );
     }
@@ -473,17 +510,18 @@ export default class OX_Grid extends React.Component {
           popupSettings={{ popupClass: "dropDownButton" }}
           items={operationsList}
           primary={true}
-          style={{ right: "10px", float: "right" }}
+          className={"GridToolBarButton"}
         />
       );
     } else if (operationsList.length == 1) {
       return (
         <Button
-          style={{ right: "10px", float: "right" }}
+          title={operationsList[0].name}
+          className={"GridToolBarButton"}
           primary={true}
           onClick={(e) => this.updatePageContent(operationsList[0])}
         >
-          {operationsList[0].name}
+          <i className={operationsList[0].icon}></i>
         </Button>
       );
     }
@@ -524,6 +562,182 @@ export default class OX_Grid extends React.Component {
       <div />
     );
   }
+  onPopupOpen = (e,props) => {
+    console.log('test');
+    console.log(e);
+    console.log(props);
+    this.menuWrapperRef.querySelector('[tabindex]').focus();
+};
+onFocusHandler = () => {
+  clearTimeout(this.blurTimeoutRef);
+  this.blurTimeoutRef = undefined;
+};
+
+onBlurTimeout = () => {
+  this.setState({
+      contextMenuOpen: false
+  });
+
+  this.blurTimeoutRef = undefined;
+};
+
+onBlurHandler = event => {
+  clearTimeout(this.blurTimeoutRef);
+  this.blurTimeoutRef = setTimeout(this.onBlurTimeout);
+};
+async buttonAction(actionCopy, rowData) {
+  var action = actionCopy;
+  if (action.content){
+    action.details = action.content;
+  }
+  var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
+  console.log(actionCopy);
+  if (action.page_id) {
+    PageNavigation.loadPage(this.appId,this.pageId,action.page_id);
+  } else if (action.details) {
+    var pageDetails = this.state.pageContent;
+    var that = this;
+    var copyPageContent = [];
+    if(rowData.rygRule){
+      copyPageContent.push({type: "HTMLViewer" , content: rowData.rygRule, className: "rygBadge"});  
+    }
+    var checkForTypeUpdate = false;
+    var updateBreadcrumb = true;
+    var pageId = null;
+    if (action.details.length > 0) {
+      action.details.every(async (item, index) => {
+        if (item.type == "Update") {
+          var PageRenderDiv = document.getElementById(this.props.parentDiv);
+          this.loader.show(PageRenderDiv ? PageRenderDiv : null);
+          checkForTypeUpdate = true;
+          const response = await that.updateActionHandler(item, mergeRowData);
+          if (response.status == "success") {
+            this.loader.destroy();
+            if (item.successMessage) {
+              Swal.fire({
+                icon: "success",
+                title: item.successMessage,
+                showConfirmButton: true,
+              });
+            }
+            item.params.successNotification ? that.state.notif.current.notify("Success",item.params.successNotification.length > 0 ? item.params.successNotification: "Update Completed","success") : null;
+            this.props.postSubmitCallback();
+            this.setState({ showLoader: false });
+          } else {
+            this.loader.destroy();
+            Swal.fire({
+              icon: "error",
+              title: response.message,
+              showConfirmButton: true,
+            });
+            that.setState({
+              pageContent: pageDetails,
+              showLoader: false,
+            });
+            return false;
+          }
+        } else {
+          if (item.params && item.params.page_id) {
+            pageId = item.params.page_id;
+            if (item.params.params) {
+              var newParams = ParameterHandler.replaceParams(this.appId,item.params.params,mergeRowData);
+              mergeRowData = { ...newParams, ...mergeRowData };
+            }
+            copyPageContent = [];
+          } else {
+            var pageContentObj = {};
+            pageContentObj = ParameterHandler.replaceParams(this.appId,item, mergeRowData);
+            copyPageContent.push(pageContentObj);
+          }
+        }
+      });
+      action.updateOnly
+        ? null
+        : PageNavigation.loadPage(
+            this.appId,this.pageId,
+            pageId,
+            action.icon,
+            true,
+            action.name,
+            mergeRowData,
+            copyPageContent
+          );
+    }
+  }
+}
+updateActionHandler(details, rowData) {
+  var that = this;
+  return new Promise((resolve) => {
+    var queryRoute = ParameterHandler.replaceParams(this.appId,details.params.url, rowData);
+    var postData = {};
+    try {
+      if (details.params.postData) {
+        Object.keys(details.params.postData).map((i) => {
+          postData[i] = ParameterHandler.replaceParams(this.appId,
+            details.params.postData[i],
+            rowData
+          );
+        });
+      } else {
+        Object.keys(details.params).map((i) => {
+          postData[i] = ParameterHandler.replaceParams(this.appId,
+            details.params[i],
+            rowData
+          );
+        });
+        postData = rowData;
+      }
+    } catch (error) {
+      postData = rowData;
+    }
+    ParameterHandler.updateCall(
+        that.core,that.appId,
+        queryRoute,
+        postData,
+        details.params.disableAppId,
+        details.method
+      )
+      .then((response) => {
+        if (details.params.downloadFile && response.status == 200) {
+          ParameterHandler.downloadFile(response).then(
+              (result) => {
+                that.setState({
+                  showLoader: false,
+                });
+                var downloadStatus = result ? "success" : "failed";
+                resolve({ status: downloadStatus });
+              }
+            );
+        } else {
+          that.setState({
+            showLoader: false,
+          });
+          resolve(response);
+        }
+      });
+  });
+}
+handleOnSelect = (e) => {
+  console.log(e)
+  Object.keys(this.state.actions).map(function (key, index) {
+    if(this.state.actions[key].name==e.item.text){
+      this.state.actions[key].confirmationMessage
+      ? Swal.fire({
+        title: this.state.actions[key].confirmationMessage,
+        confirmButtonText: "Agree",
+        confirmButtonColor: "#275362",
+        showCancelButton: true,
+        cancelButtonColor: "#7b7878",
+        target: ".PageRender"
+      }).then((result) => {
+        result.value ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
+      }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
+    }
+  }, this);
+  this.setState({
+    contextMenuOpen: false
+  })
+}
 
   render() {
     return (
@@ -534,6 +748,20 @@ export default class OX_Grid extends React.Component {
           (this.props.className ? this.props.className : "")
         }
       >
+      <Popup
+        offset={this.offset}
+        show={this.state.contextMenuOpen}
+        open={this.onPopupOpen}
+        popupClass={'popup-content'} >
+          <div onFocus={this.onFocusHandler}
+              onBlur={this.onBlurHandler}
+              tabIndex={-1}
+              ref={el => (this.menuWrapperRef = el)} >
+            <Menu vertical={true} style={{ display: 'inline-block' }} onSelect={this.handleOnSelect}>
+              {this.state.menu}
+            </Menu>
+          </div>
+      </Popup>
         {this.rawDataPresent ? (
           <DataOperation
             args={this.props.osjsCore}
@@ -544,7 +772,7 @@ export default class OX_Grid extends React.Component {
           />
         ) : (
           <DataLoader
-            ref={(r)=>{this.child = r; console.log(r);}}
+            ref={(r)=>{this.child = r;}}
             args={this.props.osjsCore}
             url={this.props.data}
             dataState={this.state.dataState}
@@ -552,8 +780,8 @@ export default class OX_Grid extends React.Component {
             {...this.props}
           />
         )}
-
         <Grid
+          rowRender={this.rowRender}
           data={this.state.gridData.data}
           ref={(grid) => {
             this._grid = grid;
@@ -598,11 +826,7 @@ export default class OX_Grid extends React.Component {
           {this.generateGridToolbar() && this.state.apiActivityCompleted ? (
             <GridToolbar>
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
+              className={"GridToolBar"}
               >
                 {this.generateGridToolbar()}
               </div>

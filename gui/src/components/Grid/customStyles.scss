@@ -7,7 +7,44 @@
 .GridCustomStyle {
   .k-grid {
     height: 100%;
+    border: 0;
   }
+  
+.GridToolBar {
+  display: flex;
+  flex-direction: row-reverse;
+}
+ .k-header {
+  font-size: small;
+  border-left-width: 1px;
+  background-color: transparent;
+  border: 0;
+  border-color: transparent;
+  box-shadow: 0 0 transparent;
+  border-width: 0 0 0;
+}
+.GridToolBarButton {
+  margin: 0 10px;
+  display: inline-block;
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 50%;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.k-grid .k-grid-container,div.k-grid-header, div.k-grid-footer{
+  border: 1px solid rgba(33, 37, 41, 0.125);
+}
 
   .k-grid-header-wrap {
     table {
