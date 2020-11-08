@@ -197,8 +197,17 @@ class Navigation extends React.Component {
     var breadcrumbsList = [];
     this.state.pages.map((currentValue, index) => {
       var clickable = false;
+      var childNode = " ";
       if (this.state.pages.length > 1 && index + 1 != this.state.pages.length) {
         clickable = true;
+      }
+      if(index != 0){
+        childNode = <div
+        style={{
+          marginRight: "5px",
+          marginLeft: "5px"
+        }}
+      > {'>'} </div>;
       }
       currentValue.title
         ? breadcrumbsList.push(
@@ -210,21 +219,17 @@ class Navigation extends React.Component {
                   }}
                 />
               )}
-              <Chip
-                text={currentValue.title}
+              {childNode}
+              <div
                 value={""}
                 disabled={!clickable}
                 className={
                   clickable ? "activeBreadcrumb" : "disabledBreadcrumb"
                 }
-                icon={currentValue.icon}
                 type={clickable || index == 0 ? "none" : "info"}
                 selected={false}
-                onClick={() => {
-                  clickable ? this.breadcrumbClick(currentValue, index) : null;
-                }}
                 removable={false}
-              />
+              ><a onClick={() => { clickable ? this.breadcrumbClick(currentValue, index) : null;}}><i className={currentValue.icon} style={{ marginRight: "5px"}}></i>{currentValue.title}</a></div>
             </>
           )
         : null;
