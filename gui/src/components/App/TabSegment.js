@@ -7,29 +7,26 @@ import { Tabs, TabLink, TabContent } from "react-tabs-redux";
 const styles = {
   tabs: {
     width: "100%",
+    position: "relative",
+    display: "-ms-flexbox",
+    display: "flex",
+    flexDirection: "column",
+    minWidth: "0",
+    wordWrap: "break-word",
+    backgroundColor: "#fff",
+    backgroundClip: "border-box",
+    border: "1px solid rgba(0,0,0,.125)",
+    borderRadius: ".25rem"
   },
   links: {
-    margin: "10px",
-    padding: 0
-  },
-  tabLink: {
-    height: "35px",
-    lineHeight: "35px",
-    padding: "0 35px",
-    cursor: "pointer",
-    backgroundColor: "transparent",
-    border: 0,
-    borderBottom: "2px solid transparent",
-    display: "inline-block"
-  },
-  activeLinkStyle: {
-    borderBottom: "2px solid #333"
+    padding: ".75rem 1.25rem",
+    paddingBottom: "0",
+    marginBottom: "0",
+    backgroundColor: "rgba(0,0,0,.03)",
+    borderBottom: "1px solid rgba(0,0,0,.125)"
   },
   visibleTabStyle: {
     display: "block"
-  },
-  content: {
-    padding: "0 20px"
   }
 };
 
@@ -57,7 +54,7 @@ class TabSegment extends React.Component {
       var tabNames = [];
       var tabContent = []
       this.props.tabs.map((item, i) => {
-        tabNames.push(<TabLink to={item.uuid} style={styles.tabLink}> {item.name}</TabLink>);
+        tabNames.push(<TabLink to={item.uuid}> {item.name}</TabLink>);
         var tabContentKey = item.uuid+'_tab';
         tabContent.push(<TabContent for={item.uuid}>
         <PageContent
@@ -130,14 +127,13 @@ class TabSegment extends React.Component {
     return (<Tabs
               name="tabs2"
               selectedTab={this.state.tabs[0].uuid}
-              activeLinkStyle={styles.activeLinkStyle}
               visibleTabStyle={styles.visibleTabStyle}
               style={styles.tabs}
             >
           <div style={styles.links}>
 {this.state.tabNames}
                     </div>
-          <div style={styles.content}>
+          <div className="tabContentDiv">
 {this.state.tabContent}
           </div>
             </Tabs>);

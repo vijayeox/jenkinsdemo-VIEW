@@ -14,7 +14,7 @@ $primary-color: #275362;
   }
 
   .breadcrumbs {
-    padding-top: 0.8rem;
+    padding-top: 5px;
     padding-bottom: 0.8rem;
     display: flex;
     flex-direction: row;
@@ -63,6 +63,44 @@ $primary-color: #275362;
 
   .page-active , .contentDiv{
     height: 100%;
+  }
+  .activeBreadcrumb a {
+    color: #007bff !important;
+  }
+  .activeBreadcrumb a:hover {
+    color: #0056b3 !important;
+    text-decoration: underline !important;
+  }
+  .tab-link{
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    height: 35px;
+    line-height: 35px;
+    padding: 0px 35px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+    display: inline-block;
+    margin-bottom: -1px;
+  }
+ .tab-link:hover,.tab-link:focus{
+    border-color: #e9ecef #e9ecef #dee2e6;
+  }
+  .tab-link-active{
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+  .tab-content .contentDiv{
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
   }
 
   .searchBar {
