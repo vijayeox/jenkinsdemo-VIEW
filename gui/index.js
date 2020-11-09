@@ -22,7 +22,6 @@ import * as KendoReactInput from "@progress/kendo-react-inputs";
 import * as KendoReactRipple from "@progress/kendo-react-ripple";
 import * as Moment from "moment";
 import * as MomentTZ from "moment-timezone";
-import * as PhoneInput from "react-phone-number-input";
 import * as PopupDialog from 'sweetalert2';
 import * as ReactStrap from "reactstrap";
 import * as Webcam from "react-webcam";
@@ -55,7 +54,6 @@ const LazyLoad = ({ component: Component,...rest}) => (
 const FormRender = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormRender"))} {...props} />;
 const FormBuilder = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormBuilder"))} {...props} />;
 const MultiSelect = (props) => <LazyLoad component={lazy(() => import("./src/MultiSelect"))} {...props} />;
-const FileUploader = (props) => <LazyLoad component={lazy(() => import("./src/FileUploader"))} {...props} />;
 const HTMLViewer = (props) => <LazyLoad component={lazy(() => import("./src/components/App/HTMLViewer"))} {...props} />;
 const CommentsView = (props) => <LazyLoad component={lazy(() => import("./src/components/App/CommentsView"))} {...props} />;
 const DocumentViewer = (props) => <LazyLoad component={lazy(() => import("./src/DocumentViewer"))} {...props} />;
@@ -73,7 +71,6 @@ export {
   GridTemplate,
   Notification,
   MultiSelect,
-  FileUploader,
   HTMLViewer,
   CommentsView,
   FormRender,
@@ -108,7 +105,6 @@ export {
   PopupDialog,
   Moment,
   MomentTZ,
-  PhoneInput,
   DateComponent,
   DropDown,
   CurrencySelect,
