@@ -9,6 +9,9 @@
     "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
   "dependencies": {
+    "@progress/kendo-licensing": "^1.0.2",
+    "@progress/kendo-react-intl": "^4.0.0",
+    "@progress/kendo-react-upload": "^4.0.0",
     "bootstrap": "^4.4.1",
     "file-loader": "^5.0.2",
     "jquery": "^3.5.0",
@@ -16,7 +19,7 @@
     "popper.js": "^1.16.1",
     "react-autosuggest": "^9.4.3",
     "react-burger-menu": "^2.7.0",
-    "react-phone-number-input": "3.0.24",
+    "react-phone-number-input": "^2.5.3",
     "react-textarea-autosize": "^7.1.0",
     "react-tooltip": "^3.11.6",
     "scroll-into-view-if-needed": "^2.2.25",

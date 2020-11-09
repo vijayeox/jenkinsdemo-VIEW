@@ -1,6 +1,5 @@
-import React from "react";
 import { Upload } from "@progress/kendo-react-upload";
-import Notification  from "./Notification";
+import {React,Notification} from "oxziongui";
 
 class FileUploader extends React.Component {
   constructor(props) {
