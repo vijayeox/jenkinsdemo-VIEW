@@ -23,6 +23,7 @@ import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
 import JavascriptLoader from '../javascriptLoader';
+import ParameterHandler from "./ParameterHandler";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -135,63 +136,6 @@ class FormRender extends React.Component {
     }
   }
 
-  replaceParams(route, params) {
-    var finalParams = merge(params ? params : {}, {});
-    if (typeof route == "object") {
-      var final_route = JSON.parse(JSON.stringify(route));
-      Object.keys(route).map((item) => {
-        if (/\{\{.*?\}\}/g.test(route[item])) {
-          if (finalParams[item]) {
-            final_route[item] = finalParams[item];
-          } else {
-            if (item == "appId") {
-              final_route[item] = this.appId;
-            } else if (item == "fileId" && this.state.fileId) {
-              final_route[item] = this.state.fileId;
-            } else {
-              final_route[item] = route[item];
-            }
-          }
-        } else {
-          final_route[item] = route[item];
-        }
-      });
-      return final_route;
-    } else {
-      var regex = /\{\{.*?\}\}/g;
-      let m;
-      var matches = [];
-      do {
-        m = regex.exec(route)
-        if (m) {
-          if (m.index === regex.lastIndex) {
-            regex.lastIndex++;
-          }
-          // The result can be accessed through the `m`-variable.
-          matches.push(m);
-        }
-      } while (m);
-      matches.forEach((match, groupIndex) => {
-        var param = match[0].replace("{{", "");
-        param = param.replace("}}", "");
-        if (param.includes(".")) {
-          route = route.replace(match[0], finalParams[param.split(".")[0]][param.split(".")[1]]);
-        } else if (finalParams[param] != undefined) {
-          route = route.replace(
-            match[0],
-            finalParams[param]
-          );
-        } else {
-          route = route.replace(
-            match[0],
-            null
-          );
-        }
-      });
-      return route;
-    }
-  }
-
   formSendEvent(eventName, params) {
     var evt = new CustomEvent(eventName, params);
     if (this.state.currentForm) {
@@ -200,11 +144,7 @@ class FormRender extends React.Component {
   }
 
   async callDelegate(delegate, params) {
-    return await this.helper.request(
-      "v1",
-      this.appUrl + "/command/delegate/" + delegate,
-      { ...params, bos: this.getBOSData() },
-      "post");
+    return await this.helper.request("v1", this.appUrl + "/command/delegate/" + delegate,{ ...params, bos: this.getBOSData() }, "post");
   }
 
   async callPipeline(commands, submission) {
@@ -393,7 +333,7 @@ class FormRender extends React.Component {
       let method = "post";
       if (form._form["properties"] && form._form["properties"]["submission_api"]) {
         var postParams = JSON.parse(form._form["properties"]["submission_api"]);
-        route = this.replaceParams(postParams.api.url, form.submission.data);
+        route = ParameterHandler.replaceParams(this.state.appId,postParams.api.url, form.submission.data);
         delete data.orgId;
         method = postParams.api.method;
       } else if (this.state.workflowId) {
@@ -578,8 +518,7 @@ class FormRender extends React.Component {
       this.getFileData().then(response => {
         if (response.status == "success") {
           let fileData = JSON.parse(response.data.data);
-          fileData.parentWorkflowInstanceId =
-            that.props.parentWorkflowInstanceId;
+          fileData.parentWorkflowInstanceId = that.props.parentWorkflowInstanceId;
           fileData.workflowInstanceId = undefined;
           fileData.activityId = undefined;
           that.setState({ data: this.formatFormData(fileData) });
@@ -684,26 +623,11 @@ class FormRender extends React.Component {
     } else if (this.state.fileId) {
       this.getFileDataById().then((response) => {
         if (response.status == "success") {
-          this.setState(
-            {
+          this.setState({
               data: this.formatFormData(response.data.data)
-            },
-            () => {
-              (form || this.state.currentForm)
-                ? form
-                  ? form
-                    .setSubmission({ data: this.state.data })
-                    .then(function () {
-                      that.processProperties(form);
-                    })
-                  : this.state.currentForm
-                    .setSubmission({ data: this.state.data })
-                    .then(function () {
-                      that.processProperties(that.state.currentForm);
-                    })
-                : null;
-            }
-          );
+            },() => {
+              (form || this.state.currentForm) ? form ? form.setSubmission({ data: this.state.data }).then(function () { that.processProperties(form); }) : this.state.currentForm.setSubmission({ data: this.state.data }).then(function () { that.processProperties(that.state.currentForm); }) : null;
+            });
         }
       });
     } else if (this.props.dataUrl) {
@@ -712,23 +636,8 @@ class FormRender extends React.Component {
           this.setState(
             {
               data: this.formatFormData(response.data)
-            },
-            () => {
-              (form || this.state.currentForm)
-                ? form
-                  ? form
-                    .setSubmission({ data: this.state.data })
-                    .then(function () {
-                      that.processProperties(form);
-                    })
-                  : this.state.currentForm
-                    .setSubmission({ data: this.state.data })
-                    .then(function () {
-                      that.processProperties(that.state.currentForm);
-                    })
-                : null;
-            }
-          );
+            },() => { (form || this.state.currentForm) ? form ? form.setSubmission({ data: this.state.data }).then(function () { that.processProperties(form); }) : this.state.currentForm.setSubmission({ data: this.state.data }).then(function () { that.processProperties(that.state.currentForm); }) : null;
+            });
         }
       });
     }
@@ -858,11 +767,20 @@ class FormRender extends React.Component {
               if(submitErrors.length > 0){
                 next([]);
               } else {
-                that.state.currentForm.triggerChange();
-                next(null);
+                if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
+                  this.props.customSaveForm(that.cleanData(submission.data));
+                  next(null);
+                }
+                var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
+                  if(response.status=='success'){
+                    next(null);
+                  } else {
+                    next([response.errors[0].message]);
+                  }
+                });
               }
             } else {
-              if(this.props.customSaveForm){
+              if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
                 this.props.customSaveForm(that.cleanData(submission.data));
                 next(null);
               }
@@ -930,21 +848,13 @@ class FormRender extends React.Component {
         });
         form.on("render", function () {
           that.hideBreadCrumb(true);
-          var nextButton = document.getElementsByClassName(
-            "btn-wizard-nav-next"
-          );
-          var elm = document.getElementsByClassName(
-            that.state.appId + "_breadcrumbParent"
-          );
+          var nextButton = document.getElementsByClassName("btn-wizard-nav-next");
+          var elm = document.getElementsByClassName(that.state.appId + "_breadcrumbParent");
           if (nextButton.length > 0) {
-            if (
-              nextButton[0].getAttribute("errorScrollEventAdded") !== "true"
-            ) {
+            if (nextButton[0].getAttribute("errorScrollEventAdded") !== "true") {
               nextButton[0].setAttribute("errorScrollEventAdded", "true");
               nextButton[0].addEventListener("click", () => {
-                var submitErrors = [
-                  ...document.querySelectorAll('[ref="errorRef"]')
-                ];
+                var submitErrors = [ ...document.querySelectorAll('[ref="errorRef"]') ];
                 if (elm.length > 0 && submitErrors.length > 0) {
                   scrollIntoView(elm[0], {
                     scrollMode: "if-needed",
