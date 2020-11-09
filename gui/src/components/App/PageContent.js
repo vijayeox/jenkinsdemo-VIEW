@@ -10,8 +10,6 @@ import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import Notification from "../../Notification";
 import DocumentViewer from "../../DocumentViewer";
-import Dashboard from "../../Dashboard";
-import DashboardManager from '../../DashboardManager';
 import Page from "./Page";
 import TabSegment from "./TabSegment";
 import merge from "deepmerge";
@@ -700,31 +698,7 @@ class PageContent extends React.Component {
             currentRow={this.state.currentRow}
           />
         );
-      } else if (item.type == "Dashboard") {
-        content.push(
-          <Dashboard
-            appId={this.appId}
-            key={i}
-            core={this.core}
-            content={item.content}
-            proc={this.proc}
-          />
-        );
-      } else if (item.type == "DashboardManager") {
-        content.push(
-          <DashboardManager
-            appId={this.appId}
-            uuid={item.content.uuid}
-            args={this.core}
-            key={i}
-            content={item.content}
-            setTitle={() => {}}
-            proc={this.proc}
-            editDashboard="EDB"
-            hideEdit={true}
-          />
-        );
-      } else if (item.type == "Page") {
+      }  else if (item.type == "Page") {
         var mergeRowData = this.props.params ? {...this.props.params, ...item.params} : item.params;
         var params = this.replaceParams(mergeRowData, this.state.currentRow);
         content.push(
