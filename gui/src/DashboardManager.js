@@ -137,18 +137,33 @@ class DashboardManager extends React.Component {
           if (filter["operator"] === "today") {
             filter["operator"] = "=="
           }
-          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
+          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" ) {
             filter["operator"] = "gte&&lte"
           }
-
+        
           //date range received
-          if (filter["operator"] == "gte&&lte") {
+          if (filter["operator"] == "gte&&lte" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
             endDate = filter["endDate"]
-            if (typeof endDate !== "string") {
+            
+            if(filter["operator"] == "gte&&lte"){
+              if (typeof endDate !== "string") {
+                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              } else if (new Date(endDate)) {
+                endDate = new Date(endDate)
+                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              }
+            } else {
+              //get current date values
+              startDate = new Date()
+              endDate = new Date()
+              if(filter["operator"] === "mtd"){
+                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01") 
+              }
+              else if(filter["operator"] === "ytd"){
+                startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01") 
+              }
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-            } else if (new Date(endDate)) {
-              endDate = new Date(endDate)
-              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              // filter["operator"] = "gte&&lte"
             }
             //prepare startDate array
             filterarray.push(filter["field"])

@@ -264,13 +264,21 @@ class Dashboard extends Component {
     if (filterParams) {
       if (filterParams.length == 0) {
         //if no dashboard filter exists
-        if (this.props.dashboardStack.length > 1) {
+         if (this.props.dashboardStack.length > 0) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          if (drilldownDashboardFilter.length > 1)
+          if (drilldownDashboardFilter.length > 0){
             this.updateGraph(drilldownDashboardFilter)
+          } else {
+            this.setState({ preparedDashboardFilter: [] }, () => {
+              this.updateGraph()
+              })
+          }
         } else {
+          this.setState({ preparedDashboardFilter: [] }, () => {
           this.updateGraph()
+            
+          })
         }
       }
       else if (filterParams.length > 1) {
