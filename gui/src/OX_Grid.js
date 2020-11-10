@@ -5,6 +5,8 @@ import {
   GridCell,
   GridColumn,
   GridDetailRow,
+  GridColumnMenuFilter,
+  GridColumnMenuCheckboxFilter,
   GridNoRecords,
   GridToolbar
 } from "@progress/kendo-react-grid";
@@ -76,8 +78,12 @@ export default class OX_Grid extends React.Component {
     if (!document.getElementsByClassName("PageRender")) {
       this.gridHeight = document.getElementsByClassName("PageRender")[0].clientHeight - 50;
     }
+    this.generateGridToolbar();
+    document.getElementById('customActionsToolbar').addEventListener("getCustomActions", this.getCustomActions, false);
   }
-
+  getCustomActions = (e) =>{
+    this.generateGridToolbar();
+  }
   dataStateChange = (e) => {
     this.setState({ ...this.state, dataState: e.data });
   };
@@ -135,6 +141,7 @@ export default class OX_Grid extends React.Component {
             //     dataItem => dataItem.selected === false
             //   ) === -1
             // }
+            columnMenu={GridColumnMenuCheckboxFilter }
             key={Math.random() * 20}
             locked={true}
             reorderable={false}
@@ -161,7 +168,8 @@ export default class OX_Grid extends React.Component {
           className={dataItem.className ? dataItem.className : undefined}
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
-          filterable={dataItem.filterable}
+          // filterable={dataItem.filterable}
+          columnMenu={GridColumnMenuFilter}
           filterCell={
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }
@@ -340,7 +348,7 @@ handleContextMenuOpen = (e, dataItem) => {
         <Button
           primary={true}
           onClick={this.exportPDF}
-          className={"GridToolBarButton"}
+          className={"toolBarButton"}
         >
           <i className='fa fa-file-pdf-o'></i>
         </Button>
@@ -350,7 +358,7 @@ handleContextMenuOpen = (e, dataItem) => {
       gridToolbarContent.push(
         <Button
           primary={true}
-          className={"GridToolBarButton"}
+          className={"toolBarButton"}
           onClick={() => this.exportExcel(this.props.exportToExcel)}
         >
         <i className='fa fa-file-excel-o'></i>
@@ -358,12 +366,13 @@ handleContextMenuOpen = (e, dataItem) => {
       );
     }
     if (this.props.gridOperations) {
-      gridToolbarContent.length == 0
-        ? gridToolbarContent.push(<div></div>)
-        : null;
-      gridToolbarContent.push(
-        this.renderListOperations(this.props.gridOperations)
-      );
+      gridToolbarContent.length == 0 ? gridToolbarContent.push(<div></div>) : null;
+      gridToolbarContent.push( this.renderListOperations(this.props.gridOperations) );
+      let ev = new CustomEvent("addcustomActions", {
+        detail: { customActions: gridToolbarContent },
+        bubbles: true,
+      });
+      document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
     }
     return gridToolbarContent.length > 0 ? gridToolbarContent : false;
   }
@@ -510,14 +519,14 @@ handleContextMenuOpen = (e, dataItem) => {
           popupSettings={{ popupClass: "dropDownButton" }}
           items={operationsList}
           primary={true}
-          className={"GridToolBarButton"}
+          className={"toolBarButton"}
         />
       );
     } else if (operationsList.length == 1) {
       return (
         <Button
           title={operationsList[0].name}
-          className={"GridToolBarButton"}
+          className={"toolBarButton"}
           primary={true}
           onClick={(e) => this.updatePageContent(operationsList[0])}
         >
@@ -528,25 +537,12 @@ handleContextMenuOpen = (e, dataItem) => {
     return null;
   };
 
-  generatePDFTemplate(pageData) {
-    let PDFProps = this.props.exportToPDF;
-    return PDFProps.titleTemplate || PDFProps.JSXtemplate ? (
-      <div>
-        {pageData.pageNum == 1 && PDFProps.titleTemplate ? (
-          <div>
-            <JsxParser
-              bindings={{
-                pageData: pageData,
-                data: this.props.parentData,
-                moment: moment,
-                gridData: this.state.gridData.data
-              }}
-              jsx={PDFProps.titleTemplate}
-            />
-          </div>
-        ) : null}
-
-        {PDFProps.JSXtemplate ? (
+generatePDFTemplate(pageData) {
+  let PDFProps = this.props.exportToPDF;
+  return PDFProps.titleTemplate || PDFProps.JSXtemplate ? (
+    <div>
+      {pageData.pageNum == 1 && PDFProps.titleTemplate ? (
+        <div>
           <JsxParser
             bindings={{
               pageData: pageData,
@@ -554,19 +550,29 @@ handleContextMenuOpen = (e, dataItem) => {
               moment: moment,
               gridData: this.state.gridData.data
             }}
-            jsx={PDFProps.JSXtemplate}
+            jsx={PDFProps.titleTemplate}
           />
-        ) : null}
-      </div>
-    ) : (
-      <div />
-    );
-  }
-  onPopupOpen = (e,props) => {
-    console.log('test');
-    console.log(e);
-    console.log(props);
-    this.menuWrapperRef.querySelector('[tabindex]').focus();
+        </div>
+      ) : null}
+
+      {PDFProps.JSXtemplate ? (
+        <JsxParser
+          bindings={{
+            pageData: pageData,
+            data: this.props.parentData,
+            moment: moment,
+            gridData: this.state.gridData.data
+          }}
+          jsx={PDFProps.JSXtemplate}
+        />
+      ) : null}
+    </div>
+  ) : (
+    <div />
+  );
+}
+onPopupOpen = (e,props) => {
+  this.menuWrapperRef.querySelector('[tabindex]').focus();
 };
 onFocusHandler = () => {
   clearTimeout(this.blurTimeoutRef);
@@ -651,9 +657,7 @@ async buttonAction(actionCopy, rowData) {
           }
         }
       });
-      action.updateOnly
-        ? null
-        : PageNavigation.loadPage(
+      action.updateOnly ? null : PageNavigation.loadPage(
             this.appId,this.pageId,
             pageId,
             action.icon,
@@ -780,6 +784,7 @@ handleOnSelect = (e) => {
             {...this.props}
           />
         )}
+        <div id="customActionsToolbar" />
         <Grid
           rowRender={this.rowRender}
           data={this.state.gridData.data}
@@ -801,7 +806,6 @@ handleOnSelect = (e) => {
                 )
               : undefined
           }
-          filterable={this.props.filterable}
           filterOperators={this.props.filterOperators}
           groupable={this.props.groupable}
           style={this.props.gridStyles}
@@ -823,15 +827,6 @@ handleOnSelect = (e) => {
           editField={this.props.inlineEdit ? "inEdit" : undefined}
           onItemChange={this.itemChange}
         >
-          {this.generateGridToolbar() && this.state.apiActivityCompleted ? (
-            <GridToolbar>
-              <div
-              className={"GridToolBar"}
-              >
-                {this.generateGridToolbar()}
-              </div>
-            </GridToolbar>
-          ) : null}
           {this.createColumns(this.props.columnConfig)}
           {/* {this.noRecordsJSX()} */}
         </Grid>
