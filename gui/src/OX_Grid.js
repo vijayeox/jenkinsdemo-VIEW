@@ -141,7 +141,7 @@ export default class OX_Grid extends React.Component {
             //     dataItem => dataItem.selected === false
             //   ) === -1
             // }
-            columnMenu={GridColumnMenuCheckboxFilter }
+            columnMenu={this.props.columnMenuFilter!=false?GridColumnMenuCheckboxFilter:undefined}
             key={Math.random() * 20}
             locked={true}
             reorderable={false}
@@ -168,8 +168,8 @@ export default class OX_Grid extends React.Component {
           className={dataItem.className ? dataItem.className : undefined}
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
-          // filterable={dataItem.filterable}
-          columnMenu={GridColumnMenuFilter}
+          filterable={this.props.columnMenuFilter==false?dataItem.filterable:undefined}
+          columnMenu={this.props.columnMenuFilter!=false?GridColumnMenuFilter:undefined}
           filterCell={
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }
@@ -810,6 +810,7 @@ handleOnSelect = (e) => {
                 )
               : undefined
           }
+          filterable={this.props.filterable}
           filterOperators={this.props.filterOperators}
           groupable={this.props.groupable}
           style={this.props.gridStyles}
@@ -831,7 +832,7 @@ handleOnSelect = (e) => {
           editField={this.props.inlineEdit ? "inEdit" : undefined}
           onItemChange={this.itemChange}
         >
-          {this.generateGridToolbar() && this.state.apiActivityCompleted && this.props.defaultToolBar ? (
+          {this.props.defaultToolBar && this.generateGridToolbar() && this.state.apiActivityCompleted  ? (
             <GridToolbar>
               <div
               className={"GridToolBar"}
