@@ -9,7 +9,7 @@ import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "./dashboardEditor"
-import Select from 'react-select'
+import Select,{createFilter} from 'react-select'
 import ReactToPrint from 'react-to-print'
 import exportFromJSON from 'export-from-json'
 const fileName = 'download'
@@ -506,6 +506,7 @@ class DashboardManager extends React.Component {
                       className="react-select-container"
                       placeholder="Select OI"
                       id="dashname"
+                      filterOption={createFilter({ ignoreAccents: false })}
                       onChange={(e) => this.handleChange(e, "dashname")}
                       value={JSON.stringify(this.state.inputs["dashname"]) != undefined ? { value: this.state.inputs["dashname"], label: this.state.inputs["dashname"]["name"] } : ""}
                       options={this.state.dashList &&
