@@ -344,6 +344,7 @@ class Project extends React.Component {
             reorderable={true}
             resizable={true}
             sortable={true}
+            defaultToolBar={true}
             pageable={{ buttonCount: 3, pageSizes: [10, 20, 30], info: true }}
             columnConfig={this.prepareColumnData(this.listConfig)}
             gridToolbar={[

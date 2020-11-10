@@ -368,11 +368,15 @@ handleContextMenuOpen = (e, dataItem) => {
     if (this.props.gridOperations) {
       gridToolbarContent.length == 0 ? gridToolbarContent.push(<div></div>) : null;
       gridToolbarContent.push( this.renderListOperations(this.props.gridOperations) );
-      let ev = new CustomEvent("addcustomActions", {
-        detail: { customActions: gridToolbarContent },
-        bubbles: true,
-      });
-      document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
+      console.log(this.props.defaultToolBar);
+      if(this.props.defaultToolBar != true){
+        console.log(this.props.defaultToolBar);
+        let ev = new CustomEvent("addcustomActions", {
+          detail: { customActions: gridToolbarContent },
+          bubbles: true,
+        });
+        document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
+      }
     }
     return gridToolbarContent.length > 0 ? gridToolbarContent : false;
   }
@@ -827,6 +831,15 @@ handleOnSelect = (e) => {
           editField={this.props.inlineEdit ? "inEdit" : undefined}
           onItemChange={this.itemChange}
         >
+          {this.generateGridToolbar() && this.state.apiActivityCompleted && this.props.defaultToolBar ? (
+            <GridToolbar>
+              <div
+              className={"GridToolBar"}
+              >
+                {this.generateGridToolbar()}
+              </div>
+            </GridToolbar>
+          ) : null}
           {this.createColumns(this.props.columnConfig)}
           {/* {this.noRecordsJSX()} */}
         </Grid>
