@@ -73,7 +73,7 @@ class Dashboard extends Component {
   appendToDashboardContainer(htmlData) {
     let backButton = ""
     let dashboardFilterDescription = ""
-    if (this.props.dashboardStack && this.props.dashboardStack.length > 1 ) {
+    if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
       let dashboardTitle = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardTitle"]
       backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
@@ -105,7 +105,7 @@ class Dashboard extends Component {
           }
           );
           let extractedFilterValues = this.extractFilterValues();
-          let preapredExtractedFilterValue = null
+          let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
@@ -169,49 +169,66 @@ class Dashboard extends Component {
     let filterParams = []
     this.props.dashboardFilter.map((filter, index) => {
       let filterarray = []
-      if (filter["dataType"] == "date") {
-        var startDate = filter["startDate"]
-        var endDate = null
-        if (filter["operator"] === "today") {
-          filter["operator"] = "=="
-        }
-        if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
-          filter["operator"] = "gte&&lte"
-        }
-        if (filter["startDate"] && filter["endDate"]) {
-          //convert startDate object to string
-          if (typeof startDate !== "string") {
-            startDate = filter["startDate"]
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-          } else if (new Date(startDate)) {
-            startDate = new Date(filter["startDate"])
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+      //extract only default filter values if it is the first dashboard. else extract all filters
+      if ((this.props.dashboardStack.length == 1 && filter.isDefault == true) || (this.props.dashboardStack.length > 1)) {
+        if (filter["dataType"] == "date") {
+          var startDate = filter["startDate"]
+          var endDate = null
+          if (filter["operator"] === "today") {
+            filter["operator"] = "=="
           }
-          //date range received
-          if (filter["operator"] == "gte&&lte") {
-            endDate = filter["endDate"]
-            if (typeof endDate !== "string") {
-              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-            } else if (new Date(endDate)) {
-              endDate = new Date(endDate)
-              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
+            filter["operator"] = "gte&&lte"
+          }
+          if (filter["startDate"] && filter["endDate"]) {
+            //convert startDate object to string
+            if (typeof startDate !== "string") {
+              startDate = filter["startDate"]
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            } else if (new Date(startDate)) {
+              startDate = new Date(filter["startDate"])
+              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
             }
-            //prepare startDate array
-            filterarray.push(filter["field"])
-            filterarray.push(">=")
-            filterarray.push(startDate)
-            filterParams.push(filterarray)
+            //date range received
+            if (filter["operator"] == "gte&&lte") {
+              endDate = filter["endDate"]
+              if (typeof endDate !== "string") {
+                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              } else if (new Date(endDate)) {
+                endDate = new Date(endDate)
+                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+              }
+              //prepare startDate array
+              filterarray.push(filter["field"])
+              filterarray.push(">=")
+              filterarray.push(startDate)
+              filterParams.push(filterarray)
 
 
-            //prepare endDate array
-            filterarray = []
-            filterarray.push(filter["field"])
-            filterarray.push("<=")
-            filterarray.push(endDate)
-            filterParams.push(filterarray)
+              //prepare endDate array
+              filterarray = []
+              filterarray.push(filter["field"])
+              filterarray.push("<=")
+              filterarray.push(endDate)
+              filterParams.push(filterarray)
+            } else {
+              //if date is not a range
+              filterarray = []
+              filterarray.push(filter["field"])
+              filterarray.push(filter["operator"])
+              if (typeof startDate !== "string") {
+                startDate = filter["startDate"]
+                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+              } else if (new Date(startDate)) {
+                startDate = new Date(filter["startDate"])
+                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+              }
+              filterarray.push(startDate)
+              filterParams.push(filterarray)
+
+            }
           } else {
-            //if date is not a range
-            filterarray = []
+            //single date passed
             filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
             if (typeof startDate !== "string") {
@@ -223,28 +240,14 @@ class Dashboard extends Component {
             }
             filterarray.push(startDate)
             filterParams.push(filterarray)
-
           }
         } else {
-          //single date passed
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
-          if (typeof startDate !== "string") {
-            startDate = filter["startDate"]
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-          } else if (new Date(startDate)) {
-            startDate = new Date(filter["startDate"])
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+          filterarray.push(filter["value"]["selected"])
+          if (filter["value"].hasOwnProperty("selected")) {
+            filterParams.push(filterarray)
           }
-          filterarray.push(startDate)
-          filterParams.push(filterarray)
-        }
-      } else {
-        filterarray.push(filter["field"])
-        filterarray.push(filter["operator"])
-        filterarray.push(filter["value"]["selected"])
-        if (filter["value"].hasOwnProperty("selected")) {
-          filterParams.push(filterarray)
         }
       }
     })
@@ -264,20 +267,20 @@ class Dashboard extends Component {
     if (filterParams) {
       if (filterParams.length == 0) {
         //if no dashboard filter exists
-         if (this.props.dashboardStack.length > 0) {
+        if (this.props.dashboardStack.length > 0) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          if (drilldownDashboardFilter.length > 0){
+          if (drilldownDashboardFilter.length > 0) {
             this.updateGraph(drilldownDashboardFilter)
           } else {
             this.setState({ preparedDashboardFilter: [] }, () => {
               this.updateGraph()
-              })
+            })
           }
         } else {
           this.setState({ preparedDashboardFilter: [] }, () => {
-          this.updateGraph()
-            
+            this.updateGraph()
+
           })
         }
       }
@@ -464,10 +467,10 @@ class Dashboard extends Component {
     //apply dashboard filter if exists
     if (this.state.preparedDashboardFilter) {
       let preparedFilter
-      if(this.state.preparedDashboardFilter.length>0){
+      if (this.state.preparedDashboardFilter.length > 0) {
         //combining dashboardfilter with widgetfilter
         preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
-      } else{
+      } else {
         preparedFilter = filter ? JSON.parse(filter) : ''
       }
       filter = preparedFilter
@@ -479,14 +482,14 @@ class Dashboard extends Component {
       }
     } else if (this.props.dashboardStack && this.props.dashboardStack.length > 0) {
       let dashFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-      let preparedFilter=null
-      if(filter){
-        if(dashFilter && dashFilter.length>0){
-           preparedFilter =  this.preparefilter(dashFilter, JSON.parse(filter)) 
+      let preparedFilter = null
+      if (filter) {
+        if (dashFilter && dashFilter.length > 0) {
+          preparedFilter = this.preparefilter(dashFilter, JSON.parse(filter))
         } else {
           preparedFilter = JSON.parse(filter)
         }
-      } else{
+      } else {
         preparedFilter = dashFilter
       }
 

@@ -20,7 +20,7 @@ const customStyles = {
 };
 
 const FilterFields = function (props) {
-    const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat } = props;
+    const { filters, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat, isDefault } = props;
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
@@ -95,6 +95,7 @@ const FilterFields = function (props) {
                     </Form.Group>
                 </div>
             }
+
             <div className="dashboard-filter-field">
                 <Form.Group >
                     <Form.Label>Operator</Form.Label>
@@ -209,6 +210,14 @@ const FilterFields = function (props) {
                     }
                 </Form.Group>
             </div>
+            {visibility &&
+                <div className="dashboard-filter-field">
+                    <Form.Group  >
+                        <Form.Label>Set Default</Form.Label>
+                        <Form.Control type="checkbox" name="isDefault" className="form-checkbox" value={isDefault} defaultChecked={isDefault} onChange={(e) => onUpdate(e, index)} />
+                    </Form.Group>
+                </div>
+            }
             <div className="dash-manager-buttons dashboard-filter-field" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
                 <Form.Group>
                     <Form.Label></Form.Label>
@@ -243,6 +252,7 @@ class DashboardFilter extends React.Component {
             createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }],
             applyFilterOption: this.props.applyFilterOption ? this.props.applyFilterOption : [],
             filters: this.props.filterConfiguration ? this.props.filterConfiguration : [],
+            defaultFilters: [],
             applyFilters: [],
             dateFormat: this.userProfile.key.preferences.dateformat,
             dateTimeFormat: dateTimeFormat.title.en_EN,
@@ -257,6 +267,24 @@ class DashboardFilter extends React.Component {
         if (prevProps.filterConfiguration != this.props.filterConfiguration) {
             this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
         }
+    }
+
+    componentDidMount(props) {
+        this.displayDefaultFilters()
+    }
+
+    //showing only default filters on load
+    displayDefaultFilters(){
+        let applyFilterOption = [...this.state.applyFilterOption]
+        let filters = []
+        this.props.filterConfiguration && this.props.filterConfiguration.map((filter, index) => {
+            if (filter.isDefault) {
+                filters.push(filter)
+            } else {
+                applyFilterOption.push({ label: this.state.filters[index]["filterName"], value: this.state.filters[index] })
+            }
+        })
+        this.setState({ filters: filters, applyFilterOption: applyFilterOption })
     }
 
     removeField(index, field) {
@@ -410,6 +438,10 @@ class DashboardFilter extends React.Component {
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
         }
+        else if (e.target.name === "isDefault") {
+            name = e.target.name
+            value = e.target.checked
+        }
         else {
             name = e.target.name
             value = e.target.value
@@ -512,6 +544,7 @@ class DashboardFilter extends React.Component {
                             value={filterRow.value || this.state.input[filterRow.fieldType + "value"]}
                             removeField={this.removeField}
                             fieldType={filterRow.fieldType}
+                            isDefault={filterRow.isDefault}
                             field={filterRow.field}
                             filterName={filterRow.filterName}
                             onUpdate={(e, index, type) => this.updateFilterRow(e, index, type)}

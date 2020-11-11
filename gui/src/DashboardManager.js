@@ -9,7 +9,7 @@ import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 import DashboardEditorModal from './components/Modals/DashboardEditorModal'
 import DashboardEditor from "./dashboardEditor"
-import Select,{createFilter} from 'react-select'
+import Select, { createFilter } from 'react-select'
 import ReactToPrint from 'react-to-print'
 import exportFromJSON from 'export-from-json'
 const fileName = 'download'
@@ -137,15 +137,15 @@ class DashboardManager extends React.Component {
           if (filter["operator"] === "today") {
             filter["operator"] = "=="
           }
-          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" ) {
+          if (filter["operator"] === "monthly" || filter["operator"] === "yearly") {
             filter["operator"] = "gte&&lte"
           }
-        
+
           //date range received
           if (filter["operator"] == "gte&&lte" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
             endDate = filter["endDate"]
-            
-            if(filter["operator"] == "gte&&lte"){
+
+            if (filter["operator"] == "gte&&lte") {
               if (typeof endDate !== "string") {
                 endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               } else if (new Date(endDate)) {
@@ -156,11 +156,11 @@ class DashboardManager extends React.Component {
               //get current date values
               startDate = new Date()
               endDate = new Date()
-              if(filter["operator"] === "mtd"){
-                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01") 
+              if (filter["operator"] === "mtd") {
+                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01")
               }
-              else if(filter["operator"] === "ytd"){
-                startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01") 
+              else if (filter["operator"] === "ytd") {
+                startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01")
               }
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               // filter["operator"] = "gte&&lte"
@@ -316,9 +316,9 @@ class DashboardManager extends React.Component {
 
   applyDashboardFilter(filter) {
 
-    let dashboardStack=null
-    if(this.state.dashboardStack.length==1){
-      dashboardStack=this.state.dashboardStack
+    let dashboardStack = null
+    if (this.state.dashboardStack.length == 1) {
+      dashboardStack = this.state.dashboardStack
       let dashboardFilter = filter
       let extractedFilterValues = this.extractFilterValues(dashboardFilter);
       let preapredExtractedFilterValue = []
@@ -331,9 +331,9 @@ class DashboardManager extends React.Component {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = preapredExtractedFilterValue
 
     }
-    if(dashboardStack!=null){
-      this.setState({ dashboardFilter: filter,dashboardStack:dashboardStack })
-    } else{
+    if (dashboardStack != null) {
+      this.setState({ dashboardFilter: filter, dashboardStack: dashboardStack })
+    } else {
       this.setState({ dashboardFilter: filter })
     }
     this.hideFilter()
@@ -463,7 +463,7 @@ class DashboardManager extends React.Component {
       let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
       formData["configuration"] = JSON.stringify(parsedConfiguration["configuration"])
       formData["datasource_id"] = parsedConfiguration["datasource_id"]
-      formData["filter"]=JSON.stringify(this.state.drilldownDashboardFilter)
+      formData["filter"] = JSON.stringify(this.state.drilldownDashboardFilter)
     }
     let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
     this.notif.current.notify(
