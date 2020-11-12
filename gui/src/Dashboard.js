@@ -51,7 +51,7 @@ class Dashboard extends Component {
 
 
   async getWidgetByUuid(uuid, filterParams) {
-    let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
+    let filterParameter = (filterParams && filterParams != [] && filterParams.length!=0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
     let response = await this.helper.request(
       "v1",
       "analytics/widget/" + uuid + '?data=true' + filterParameter,
@@ -400,7 +400,8 @@ class Dashboard extends Component {
     }
     let dashboardData = await this.getDashboardHtmlDataByUuid(data.dashboard);
     let dashboardStack = this.props.dashboardStack ? this.props.dashboardStack : []
-    let dashboardFilter = (dashboardStack.length > 0 && dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"].length > 0) ? dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] : []
+    let dashboardStackDrilldownFilter = dashboardStack.length > 0?dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"]:null
+    let dashboardFilter = (dashboardStackDrilldownFilter!=null && dashboardStackDrilldownFilter.length > 0) ? dashboardStackDrilldownFilter : []
     let widgetFilter = data.filter
     let drilldownDashboardFilter = JSON.parse(widgetFilter)
     let drilldownDashboardTitle = data.dashboardTitle
