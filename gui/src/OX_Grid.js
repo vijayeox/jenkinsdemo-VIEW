@@ -656,6 +656,7 @@ async buttonAction(actionCopy, rowData) {
             copyPageContent = [];
           } else {
             var pageContentObj = {};
+            mergeRowData = {...this.props.parentData,...mergeRowData}
             pageContentObj = ParameterHandler.replaceParams(this.appId,item, mergeRowData);
             copyPageContent.push(pageContentObj);
           }
