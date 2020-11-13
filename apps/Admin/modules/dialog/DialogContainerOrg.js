@@ -8,7 +8,6 @@ import {
 } from "oxziongui";
 import PhoneInput from "react-phone-number-input";
 import TextareaAutosize from "react-textarea-autosize";
-import PhoneInput from "react-phone-number-input";
 import 'react-phone-number-input/style.css';
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { SaveCancel, DropDown, CurrencySelect, FileUploader } from "../components/index";
