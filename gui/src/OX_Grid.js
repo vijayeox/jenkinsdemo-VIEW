@@ -675,6 +675,7 @@ async buttonAction(actionCopy, rowData) {
 }
 updateActionHandler(details, rowData) {
   var that = this;
+  rowData = {...this.props.parentData,...rowData}
   return new Promise((resolve) => {
     var queryRoute = ParameterHandler.replaceParams(this.appId,details.params.url, rowData);
     var postData = {};
