@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import WidgetRenderer from './WidgetRenderer';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
+import {scrollDashboardToTop} from './DashboardUtils'
 import Swal from 'sweetalert2';
 import './WidgetStyles.css'
 
@@ -136,11 +137,7 @@ class Dashboard extends Component {
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
-    // this.myRef.current.scrollTo(1000, 100);
-    // window.scrollTo(100, 100);
-    // useEffect(() => {
-    //   window.scrollTo(100, 100)
-    // }, []);
+    scrollDashboardToTop()
   }
 
 
