@@ -49,7 +49,7 @@ export default class TextAreaComponent extends Select {
 
         var settings = _lodash.default.isEmpty(this.component.wysiwyg) ? this.wysiwygDefault[this.component.editor] || this.wysiwygDefault.default : this.component.wysiwyg; // Keep track of when this editor is ready.
 
-        this.editorsReady[index] = new _nativePromiseOnly.default(function(editorReady) {
+        this.editorsReady[index] = new _nativePromiseOnly.default(async function(editorReady) {
             // Attempt to add a wysiwyg editor. In order to add one, it must be included on the global scope.
             switch (_this2.component.editor) {
                 case 'ace':
@@ -116,88 +116,137 @@ export default class TextAreaComponent extends Select {
                     break;
 
                 case 'ckeditor':
-                    _this2.setupCkEditor(_this2, element, index,editorReady);
-                    //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
-
-                    // editorReady(editor);
-                    // return editor;
-
+                    var editor = await _this2.setupCkEditor(_this2, element, index,editorReady).then(function(promise){
+                        editorReady(promise);
+                    });
+                    return editor;
                     break;
 
                 default:
-                    _this2.setupCkEditor(_this2, element, index,editorReady);
+                    var editor = await _this2.setupCkEditor(_this2, element, index,editorReady).then(function(promise){
+                        editorReady(promise);
+                    });
+                    return editor;
                     break;
             }
         });
         return element;
     }
-    setupCkEditor = (_this2, element, index,editorReady) => {
-        try {
-        CKEDITOR.dtd.$removeEmpty['span'] = false;
-        const settings = {
-            rows: _this2.component.rows,
-            extraPlugins: 'oxzion,autogrow',
-            autoGrow_minHeight: 250,
-            autoGrow_maxHeight: 400,
-            height: 400,
-            width: '100%',
-            //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
-            //CKEDITOR removes tags like span and flattens HTML structure.
-            allowedContent: true,
-            //extraAllowedContent:'span(*)',
-            oxzion: {
-                dimensions: {
-                    begin: {
-                        width: 300,
-                        height: 200
-                    },
-                    min: {
-                        width: 100,
-                        height: 100
-                    },
-                    max: {
-                        width: '100%',
-                        height: 600,
+    setValueAt(index, value) {
+        var _this4 = this;
+  
+        var flags = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        if (this.editorsReady[index]) {
+          var setEditorsValue = function setEditorsValue(flags) {
+            return function (editor) {
+              _this4.autoModified = true;
+              if (!flags.skipWysiwyg) {
+                switch (_this4.component.editor) {
+                  case 'ace':
+                    editor.setValue(_this4.setConvertedValue(value, index));
+                    break;
+                  case 'quill':
+                    if (_this4.component.isUploadEnabled) {
+                      _this4.setAsyncConvertedValue(value).then(function (result) {
+                        var content = editor.clipboard.convert({
+                          html: result
+                        });
+                        editor.setContents(content);
+                      });
+                    } else {
+                      var convertedValue = _this4.setConvertedValue(value, index);
+                      var content = editor.clipboard.convert({
+                        html: convertedValue
+                      });
+                      editor.setContents(content);
                     }
-                },
-                dialogUrl: './widgetEditorDialog.html'
+  
+                    break;
+                  case 'ckeditor':
+                        if(editor.data){
+                            editor.data.set(_this4.setConvertedValue(value, index));
+                        } else {
+                            editor.setData(value);
+                        }
+                    break;
+                }
+              }
+            };
+          };
+  
+          this.editorsReady[index].then(setEditorsValue(_lodash.default.clone(flags)));
+        }
+      }
+    
+    setupCkEditor = async(_this2, element, index,editorReady) => {
+        var promise = new Promise(function(resolve, reject) {
+            try {
+                CKEDITOR.dtd.$removeEmpty['span'] = false;
+                const settings = {
+                    rows: _this2.component.rows,
+                    extraPlugins: 'oxzion,autogrow',
+                    autoGrow_minHeight: 250,
+                    autoGrow_maxHeight: 400,
+                    height: 400,
+                    width: '100%',
+                    //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
+                    //CKEDITOR removes tags like span and flattens HTML structure.
+                    allowedContent: true,
+                    //extraAllowedContent:'span(*)',
+                    oxzion: {
+                        dimensions: {
+                            begin: {
+                                width: 300,
+                                height: 200
+                            },
+                            min: {
+                                width: 100,
+                                height: 100
+                            },
+                            max: {
+                                width: '100%',
+                                height: 600,
+                            }
+                        },
+                        dialogUrl: './widgetEditorDialog.html'
+                    }
+                };
+                let editor = CKEDITOR.appendTo(element, settings, function(newValue) {
+                    return _this2.updateEditorValue(index, newValue);
+                });
+                _this2.editors[index] = editor;
+                var dataValue = _this2.dataValue;
+                dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
+
+                var value = _this2.setConvertedValue(dataValue, index);
+
+                var isReadOnly = _this2.options.readOnly || _this2.component.disabled;
+                var numRows = parseInt(_this2.component.rows, 10);
+
+                if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
+                    // Default height is 21px with 10px margin + a 14px top margin.
+                    var editorHeight = numRows * 31 + 14;
+                    editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
+                }
+
+                editor.isReadOnly = isReadOnly;
+                if (editor.data) {
+                    editor.data.set(value);
+                } else {
+                    editor.setData(value);
+                }
+                editor.on('change', function (event) {
+                    return _this2.updateEditorValue(index, event.editor.getData());
+                });
+                resolve( editor);
+            } catch (Exception){
+                console.log(Exception);
+                console.log('Failed to create CK Editor');
+                setTimeout(function(){ 
+                    resolve(_this2.setupCkEditor(_this2, element, index,editorReady));
+                    }, 1000);
             }
-        };
-        let editor = CKEDITOR.appendTo(element, settings, function(newValue) {
-            console.log(newValue);
-            return _this2.updateEditorValue(index, newValue);
-        });
-        _this2.editors[index] = editor;
-        var dataValue = _this2.dataValue;
-        dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
-
-        var value = _this2.setConvertedValue(dataValue, index);
-
-        var isReadOnly = _this2.options.readOnly || _this2.component.disabled;
-        var numRows = parseInt(_this2.component.rows, 10);
-
-        if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
-            // Default height is 21px with 10px margin + a 14px top margin.
-            var editorHeight = numRows * 31 + 14;
-            editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
-        }
-
-        editor.isReadOnly = isReadOnly;
-        if (editor.data) {
-            editor.data.set(value);
-        } else {
-            editor.setData(value);
-        }
-        editor.on('change', function (event) {
-          console.log(event);
-          return _this2.updateEditorValue(index, event.editor.getData());
-        });
-        editorReady(editor);
-        return editor;
-    } catch (Exception){
-        console.log(Exception);
-        console.log('Failed to create CK Editor');
-        setTimeout(function(){ _this2.setupCkEditor(_this2, element, index,editorReady); }, 1000);
-    }
+         });
+        return promise;
     }
 }
