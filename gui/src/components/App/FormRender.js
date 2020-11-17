@@ -67,7 +67,7 @@ class FormRender extends React.Component {
     var loaderDiv = document.getElementById(this.loaderDivID);
     if(loaderDiv){
       if(document.getElementById(this.formDivID).clientHeight>0){
-        loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight+" px";
+        loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight+"px";
       } else {
         loaderDiv.style.height = "100%";
       }
