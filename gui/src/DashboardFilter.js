@@ -265,7 +265,7 @@ class DashboardFilter extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.filterConfiguration != this.props.filterConfiguration) {
-            this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
+        this.props.filterMode!="CREATE" ? this.displayDefaultFilters() : this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
         }
     }
 
@@ -275,13 +275,14 @@ class DashboardFilter extends React.Component {
 
     //showing only default filters on load
     displayDefaultFilters(){
-        let applyFilterOption = [...this.state.applyFilterOption]
+        let applyFilterOption = []
         let filters = []
         this.props.filterConfiguration && this.props.filterConfiguration.map((filter, index) => {
             if (filter.isDefault) {
                 filters.push(filter)
             } else {
-                applyFilterOption.push({ label: this.state.filters[index]["filterName"], value: this.state.filters[index] })
+                // this.state.filters[index]["filterName"] && applyFilterOption.push({ label: this.state.filters[index]["filterName"], value: this.state.filters[index] })
+                applyFilterOption.push({ label: filter["filterName"], value: filter })
             }
         })
         this.setState({ filters: filters, applyFilterOption: applyFilterOption })
