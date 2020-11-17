@@ -58,7 +58,7 @@ export default class OX_Grid extends React.Component {
           .getElementById(this.appNavigationDiv)
           .addEventListener(
             "handleGridRefresh",
-            () => this.refreshHandler(),
+            (e) => this.refreshHandler(e.detail.hideLoader),
             false
           )
       : null;
@@ -395,8 +395,12 @@ export default class OX_Grid extends React.Component {
     this.forceUpdate();
   };
 
-  refreshHandler = () => {
-    this.child.current ? this.child.current.triggerGetCall() : this.child.triggerGetCall();
+  refreshHandler = (hideLoader = false) => {
+    this.child
+      ? this.child.current
+        ? this.child.current.triggerGetCall(hideLoader)
+        : this.child.triggerGetCall(hideLoader)
+      : null;
   };
 
   noRecordsJSX() {
@@ -544,7 +548,7 @@ export default class OX_Grid extends React.Component {
           />
         ) : (
           <DataLoader
-            ref={(r)=>{this.child = r; console.log(r);}}
+            ref={(r)=>this.child = r}
             args={this.props.osjsCore}
             url={this.props.data}
             dataState={this.state.dataState}
