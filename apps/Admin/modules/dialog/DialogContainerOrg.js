@@ -6,8 +6,8 @@ import {
   KendoReactWindow,
   KendoReactInput
 } from "oxziongui";
-import TextareaAutosize from "react-textarea-autosize";
 import PhoneInput from "react-phone-number-input";
+import TextareaAutosize from "react-textarea-autosize";
 import 'react-phone-number-input/style.css';
 import { GetSingleEntityData, PushDataPOST } from "../components/apiCalls";
 import { SaveCancel, DropDown, CurrencySelect, FileUploader } from "../components/index";
@@ -28,7 +28,7 @@ export default class DialogContainer extends React.Component {
       countryList: countryList
     };
     this.countryByIP = undefined;
-    this.fUpload = React.createRef();
+    this.fUpload = {};
     this.notif = React.createRef();
     this.onContactPhoneChange = this.onContactPhoneChange.bind(this);
     this.imageExists = this.props.dataItem.logo ? true : false;
@@ -41,7 +41,7 @@ export default class DialogContainer extends React.Component {
       });
 
       GetSingleEntityData(
-        "organization/" +
+        "account/" +
           this.props.dataItem.uuid +
           "/user/" +
           this.props.dataItem.contactid +
@@ -151,7 +151,7 @@ export default class DialogContainer extends React.Component {
       if (result.value) {
         tempData.reactivate = "1";
         PushDataPOST(
-          "organization",
+          "account",
           this.props.formAction,
           this.state.orgInEdit.uuid,
           tempData
@@ -208,13 +208,17 @@ export default class DialogContainer extends React.Component {
         email: this.state.orgInEdit.contact.email,
         phone: this.state.orgInEdit.contact.phone
       });
-      var logoFile = this.fUpload.current.state.selectedFile[0].getRawFile();
+      var logoFile = this.fUpload.state.selectedFile[0].getRawFile();
     } else {
       var contactData = [];
       var contact_id = this.state.orgInEdit.contactid;
-      var logoFile = this.fUpload.current.state.selectedFile[0]
-        ? this.fUpload.current.state.selectedFile[0].getRawFile()
+      if (this.current){
+      var logoFile = this.fUpload.state.selectedFile[0]
+        ? this.fUpload.state.selectedFile[0].getRawFile()
         : undefined;
+      }else{
+        var logoFile = undefined;
+      }
     }
 
     let tempData = {
@@ -244,7 +248,7 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushDataPOST(
-      "organization",
+      "account",
       this.props.formAction,
       this.state.orgInEdit.uuid,
       tempData
@@ -272,7 +276,7 @@ export default class DialogContainer extends React.Component {
     if (this.imageExists) {
       this.pushData();
     } else {
-      if (this.fUpload.current.state.selectedFile.length == 0) {
+      if (this.fUpload.state.selectedFile.length == 0) {
         var elm = document.getElementsByClassName("orgFileUploader")[0];
         scrollIntoView(elm, {
           scrollMode: "if-needed",
@@ -424,7 +428,7 @@ export default class DialogContainer extends React.Component {
                       <DropDown
                         args={this.core}
                         mainList={
-                          "organization/" +
+                          "account/" +
                           this.props.dataItem.uuid +
                           "/adminusers"
                         }
@@ -516,16 +520,7 @@ export default class DialogContainer extends React.Component {
                 </div>
                 <div className="form-row" style={{ marginTop: "10px" }}>
                   <div className="col">
-                    <PhoneInput
-                      placeholder="Enter phone number"
-                      value={contactValue}
-                      onChange={(phone) => this.onContactPhoneChange(phone)}
-                      international={false}
-                      maxLength="15"
-                      required={true}
-                      country={this.countryByIP ? this.countryByIP : "US"}
-                      countryOptionsOrder={["US", "IN", "CA", "|", "..."]}
-                    />
+                                    
                   </div>
                   <div className="col">
                     <KendoReactInput.Input
@@ -633,7 +628,7 @@ export default class DialogContainer extends React.Component {
             ) : (
               <div className="orgFileUploader">
                 <FileUploader
-                  ref={this.fUpload}
+                  tempref={e => this.fUpload = e}
                   required={true}
                   media_type={"image"}
                   enableVideo={false}

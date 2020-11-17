@@ -46,7 +46,7 @@ class User extends React.Component {
 
   remove = dataItem => {
     DeleteEntry(
-      "organization/" + this.state.selectedOrg + "/user",
+      "account/" + this.state.selectedOrg + "/user",
       dataItem.uuid
     ).then(response => {
       this.child.current.refreshHandler(response);
@@ -79,7 +79,7 @@ class User extends React.Component {
           args={this.core}
           orgChange={this.orgChange}
           orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+            this.props.userProfile.privileges.MANAGE_ACCOUNT_WRITE
               ? true
               : false
           }
@@ -91,7 +91,7 @@ class User extends React.Component {
           config={{
             showToolBar: true,
             title: "User",
-            api: "organization/" + this.state.selectedOrg + "/users",
+            api: "account/" + this.state.selectedOrg + "/users",
             column: [
               {
                 title: "Image",

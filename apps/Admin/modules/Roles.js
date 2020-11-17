@@ -46,7 +46,7 @@ class Role extends React.Component {
 
   remove = dataItem => {
     DeleteEntry(
-      "organization/" + this.state.selectedOrg + "/role",
+      "account/" + this.state.selectedOrg + "/role",
       dataItem.uuid
     ).then(response => {
       this.child.current.refreshHandler(response);
@@ -78,7 +78,7 @@ class Role extends React.Component {
           args={this.core}
           orgChange={this.orgChange}
           orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+            this.props.userProfile.privileges.MANAGE_ACCOUNT_WRITE
               ? true
               : false
           }
@@ -90,7 +90,7 @@ class Role extends React.Component {
             showToolBar: true,
             title: "Role",
             api: "role",
-            api: "organization/" + this.state.selectedOrg + "/roles",
+            api: "account/" + this.state.selectedOrg + "/roles",
             column: [
               {
                 title: "Name",
