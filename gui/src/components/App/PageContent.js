@@ -477,7 +477,7 @@ class PageContent extends React.Component {
 
   postSubmitCallback() {
     let ev = new CustomEvent("handleGridRefresh", {
-      detail: {},
+      detail: {hideLoader: true},
       bubbles: true
     });
     if (document.getElementById("navigation_" + this.appId)) {
