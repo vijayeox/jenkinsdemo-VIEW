@@ -1011,6 +1011,9 @@ class FormRender extends React.Component {
                 }
               }
             }
+            if (event.type == "formLoader") {
+              that.showFormLoader(event.state);
+            }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
             }
@@ -1560,10 +1563,10 @@ class FormRender extends React.Component {
           if(this.state.currentForm){
             this.state.currentForm.setSubmission(formData).then(response2 =>{
               this.state.currentForm.setPristine(true);
-              this.showFormLoader(false, 0);
+              actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
             });
           } else {
-            this.showFormLoader(false, 0);
+            actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
           }
           this.notif.current.notify(
             "Success",
