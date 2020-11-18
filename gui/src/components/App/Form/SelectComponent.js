@@ -94,7 +94,6 @@ export default class SelectComponent extends Select {
     var helper = _this3.component.core.make("oxzion/restClient");
     helper.request("v1",(_this3.component.properties['absoluteUrl'] ? url : "/app/"+_this3.component.appId +url),body,method).then(function (response) {
       _this3.loading = false;
-      console.log(response.status);
       if(response.status=='success'){
       _this3.setItems(response, !!search);
       } else {
