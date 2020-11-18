@@ -1,6 +1,7 @@
 import React from "react";
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
+import ParameterHandler from "./ParameterHandler";
 
 class HTMLViewer extends React.Component {
   constructor(props) {
@@ -85,7 +86,38 @@ class HTMLViewer extends React.Component {
           );
       }
     });
+    content = this.getXrefFields(content);
     return content
+  }
+  getXrefFields(content){
+    var regex = /\{file\.(.*)?\}/g;
+    let m;
+    var editContent=content;
+    var matches=[];
+    do {
+      m = regex.exec(content)
+      if(m){
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        matches.push(m);
+      }
+    } while (m);
+    matches.forEach((match, groupIndex) => {
+      var field = match[1].split(':');
+      console.log(field)
+      this.getFileDetails(field[0]).then(response => {
+        if (response.status == "success") {
+            var fileData = response.data;
+            if(field[1] && fileData.data && fileData.data[field[1]]){
+              console.log(fileData.data[field[1]]);
+              console.log(match[0]);
+              content = content.replace(match[0],fileData.data[field[1]]);
+            }
+        }
+      });
+    });
+    return editContent
   }
 
   render() {
@@ -121,6 +153,7 @@ class HTMLViewer extends React.Component {
     fileData[key] = value;
   }
   var content = this.searchAndReplaceParams(this.state.content,fileData);
+  console.log(content);
     return (
       this.state.dataReady && (
         <JsxParser className ={this.props.className}
