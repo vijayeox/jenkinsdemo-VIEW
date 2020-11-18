@@ -53,7 +53,7 @@ import {
 
 import {PanelServiceProvider} from './packages/panels';
 import GlobalLinkHandler from './packages/EOXApplication/GlobalLinkHandler.js';
-import {GUIServiceProvider} from '@osjs/gui';
+import {GUIServiceProvider} from '../osjs-gui';
 import {DialogServiceProvider} from '@osjs/dialogs';
 import {WidgetServiceProvider} from '@osjs/widgets';
 import * as config from './config.js';

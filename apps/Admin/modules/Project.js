@@ -45,7 +45,7 @@ class Project extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addProjectUsers = await helper.request(
       "v1",
-      "organization/" +
+      "account/" +
         this.state.selectedOrg +
         "/project/" +
         dataItem +
@@ -150,7 +150,7 @@ class Project extends React.Component {
     }).then((result) => {
       if (result.value) {
         DeleteEntry(
-          "organization/" + this.state.selectedOrg + config.route,
+          "account/" + this.state.selectedOrg + config.route,
           dataItem.uuid
         ).then((response) => {
           if (response.message == "Project has subprojects") {
@@ -169,7 +169,7 @@ class Project extends React.Component {
             }).then((result) => {
               if (result.value) {
                 DeleteEntry(
-                  "organization/" + this.state.selectedOrg + config.route,
+                  "account/" + this.state.selectedOrg + config.route,
                   dataItem.uuid + "/true"
                 ).then((response) => {
                   response.status == "success"
@@ -205,8 +205,8 @@ class Project extends React.Component {
       config: {
         dataItem: dataItem,
         title: config.title,
-        mainList: "organization/" + this.state.selectedOrg + config.mainList,
-        subList: "organization/" + this.state.selectedOrg + config.subList,
+        mainList: "account/" + this.state.selectedOrg + config.mainList,
+        subList: "account/" + this.state.selectedOrg + config.subList,
         members: config.members,
       },
       manage: {
@@ -312,12 +312,11 @@ class Project extends React.Component {
           args={this.core}
           orgChange={this.orgChange}
           orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+            this.props.userProfile.privileges.MANAGE_ACCOUNT_WRITE
               ? true
               : false
           }
         />
-        <React.Suspense fallback={<div>Loading...</div>}>
           <OX_Grid
             osjsCore={this.core}
             ref={this.OX_Grid}
@@ -328,7 +327,7 @@ class Project extends React.Component {
             }
             expandable={this.listConfig.expandable ? true : undefined}
             data={
-              "organization/" +
+              "account/" +
               this.state.selectedOrg +
               "/" +
               this.listConfig.route
@@ -345,6 +344,8 @@ class Project extends React.Component {
             reorderable={true}
             resizable={true}
             sortable={true}
+            columnMenuFilter={false}
+            defaultToolBar={true}
             pageable={{ buttonCount: 3, pageSizes: [10, 20, 30], info: true }}
             columnConfig={this.prepareColumnData(this.listConfig)}
             gridToolbar={[
@@ -352,7 +353,6 @@ class Project extends React.Component {
               this.createAddButton(),
             ]}
           />
-        </React.Suspense>
         {this.state.itemInEdit && this.inputTemplate}
         {this.state.visible && this.addUsersTemplate}
       </div>

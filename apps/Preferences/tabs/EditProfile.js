@@ -248,7 +248,6 @@ class EditProfile extends React.Component {
           <div className="componentDiv">
             <Notification ref={this.notif} />
             <div className="formmargin">
-            <React.Suspense fallback={<div>Loading...</div>}>
             <FormRender 
               content = {editProfile}
               core ={this.core}
@@ -256,7 +255,6 @@ class EditProfile extends React.Component {
               postSubmitCallback = {this.handleSubmit}
               editProfile = {true}
             />
-          </React.Suspense>
             </div>
           </div>
         </ReactBootstrap.Form>

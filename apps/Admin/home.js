@@ -73,7 +73,7 @@ class Home extends React.Component {
     var appsList = [
       {
         name: "Organization",
-        api: "ORGANIZATION",
+        api: "ACCOUNT",
         icon: "apps/Admin/org.svg",
         component: Organization
       },

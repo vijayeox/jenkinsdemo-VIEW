@@ -7,7 +7,25 @@
 .GridCustomStyle {
   .k-grid {
     height: 100%;
+    border: 0;
   }
+  
+.GridToolBar {
+  display: flex;
+  flex-direction: row-reverse;
+}
+ .k-header {
+  font-size: small;
+  border-left-width: 1px;
+  background-color: transparent;
+  border: 0;
+  border-color: transparent;
+  box-shadow: 0 0 transparent;
+  border-width: 0 0 0;
+}
+.k-grid .k-grid-container,div.k-grid-header, div.k-grid-footer{
+  border: 1px solid rgba(33, 37, 41, 0.125);
+}
 
   .k-grid-header-wrap {
     table {

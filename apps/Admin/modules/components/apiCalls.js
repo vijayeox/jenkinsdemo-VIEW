@@ -58,7 +58,7 @@ export async function PushData(api, method, item, body, selectedORG) {
     return response;
   } else if (method == "post") {
     var route = selectedORG
-      ? "organization/" + selectedORG + "/" + api
+      ? "account/" + selectedORG + "/" + api
       : "/" + api;
     let response = await helper.request("v1", route, body, method);
     return response;

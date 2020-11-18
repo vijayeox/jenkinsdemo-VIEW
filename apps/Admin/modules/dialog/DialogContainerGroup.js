@@ -18,7 +18,7 @@ export default class DialogContainer extends React.Component {
   UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       GetSingleEntityData(
-        "organization/" +
+        "account/" +
           this.props.selectedOrg +
           "/user/" +
           this.props.dataItem.manager_id +
@@ -33,7 +33,7 @@ export default class DialogContainer extends React.Component {
       });
       this.props.dataItem.parent_id
         ? GetSingleEntityData(
-            "organization/" +
+            "account/" +
               this.props.selectedOrg +
               "/group/" +
               this.props.dataItem.parent_id
@@ -100,7 +100,7 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushData(
-      "organization/" + this.props.selectedOrg + "/group",
+      "account/" + this.props.selectedOrg + "/group",
       this.props.formAction,
       this.state.groupInEdit.uuid,
       tempData
@@ -167,7 +167,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       mainList={
-                        "organization/" + this.props.selectedOrg + "/users"
+                        "account/" + this.props.selectedOrg + "/users"
                       }
                       selectedItem={this.state.managerName}
                       selectedEntityType={"text"}
@@ -186,7 +186,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       mainList={
-                        "organization/" + this.props.selectedOrg + "/groups"
+                        "account/" + this.props.selectedOrg + "/groups"
                       }
                       selectedItem={this.state.parentGroupName}
                       selectedEntityType={"text"}
