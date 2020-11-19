@@ -209,18 +209,18 @@ class DashboardManager extends React.Component {
     })
     return filterParams
   }
-  getPreparedExtractedFilterValues(dashboardFilter){
-  let extractedFilterValues = this.extractFilterValues(dashboardFilter);
-  let preapredExtractedFilterValue = null
-  if (extractedFilterValues && extractedFilterValues.length > 0) {
-    preapredExtractedFilterValue = extractedFilterValues[0]
-    for (let i = 1; i < extractedFilterValues.length; i++) {
-      preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+  getPreparedExtractedFilterValues(dashboardFilter) {
+    let extractedFilterValues = this.extractFilterValues(dashboardFilter);
+    let preapredExtractedFilterValue = null
+    if (extractedFilterValues && extractedFilterValues.length > 0) {
+      preapredExtractedFilterValue = extractedFilterValues[0]
+      for (let i = 1; i < extractedFilterValues.length; i++) {
+        preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
 
+      }
     }
+    return preapredExtractedFilterValue
   }
-  return preapredExtractedFilterValue
- }
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
@@ -242,7 +242,7 @@ class DashboardManager extends React.Component {
             let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter)
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
             that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, exportConfiguration: dash.export_configuration, dashboardStack: dashboardStack })
-            isRefreshed && that.setState({drilldownDashboardFilter: preapredExtractedFilterValue})
+            isRefreshed && that.setState({ drilldownDashboardFilter: preapredExtractedFilterValue })
           } else {
             that.setState({ inputs: this.state.inputs })
           }
@@ -441,11 +441,72 @@ class DashboardManager extends React.Component {
 
     }
   }
+  replaceCommonFilters(parentFilters, childFilters,property) {
+    if (parentFilters && parentFilters.length > 0) {
+      if (childFilters.length > 0) {
+        let appliedFilters = []
+        let optionalfilters = []
+        let childFilterCopy
+        parentFilters.map(parentFilterValue => {
+          let hasCommonFilter = 0
+          childFilters.map((childFilterValue, index) => {
+            if(childFilterValue.isDefault && childFilterValue.isDefault==true){
+              if (parentFilterValue.field == childFilterValue.field) {
+                //if same filters exist in parent and child, consider the parent filter hwne no filter is applied on the child OI
+                appliedFilters.push(parentFilterValue)
+                childFilters.splice(index, 1)
+                hasCommonFilter += 1
+              } 
+            } else{
+              //remove optional filters which are not set as default
+              parentFilterValue.field != childFilterValue.field && optionalfilters.push({label:childFilterValue.filterName,value:childFilterValue})
+              childFilters.splice(index,1)
+            }
+          })
+          if (hasCommonFilter==0) {
+            appliedFilters.push(parentFilterValue)
+          }
+        })
+        if (childFilters.length > 0) {
+          // appliedFilters = [...appliedFilters, ...childFilters]
+          childFilters.map((childFilterValue, index) => {
+            optionalfilters.push({label:childFilterValue.filterName,value:childFilterValue})
+          })
+        }
+        // optionalfilters.length>0 && this.setState({filterOptions:optionalfilters})
+        return property=="filterConfiguration"?appliedFilters:optionalfilters
 
+      } else {
+        return property=="filterConfiguration"?parentFilters:[]
+      }
+    } else {
+      return childFilters
+    }
+  }
   getFilterProperty(property) {
+    let appliedFilters = []
     if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
       if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
         return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
+      else if (this.state.dashboardStack.length > 1) {
+        appliedFilters = this.replaceCommonFilters(this.state.dashboardStack[this.state.dashboardStack.length - 2][property], this.state[property],property)
+        // appliedFilters.push(...this.state.dashboardStack[this.state.dashboardStack.length - 2][property])
+        // appliedFilters.push(...this.state[property])
+        return appliedFilters
+      }
+      else
+        return this.state[property]
+    }
+    return this.state[property]
+  }
+  getOptionalFilters(property) {
+    if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
+      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
+        return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
+      else if(this.state.dashboardStack.length>1){
+        let optionalFilter=this.replaceCommonFilters(this.state.dashboardStack[this.state.dashboardStack.length - 2]["filterConfiguration"], this.state["filterConfiguration"],property)
+        return optionalFilter
+      }
       else
         return this.state[property]
     }
@@ -483,6 +544,8 @@ class DashboardManager extends React.Component {
 
 
   render() {
+    let containsFilter=(Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) || (this.getFilterProperty("filterConfiguration").length>0)
+
     return (
       <div ref={this.myRef} className="dashboard">
         <Notification ref={this.notif} />
@@ -494,15 +557,16 @@ class DashboardManager extends React.Component {
         >
           <FrontSide>
             <div id="filter-form-container" className="disappear">
-              {Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length &&
+              {containsFilter &&
                 <DashboardFilter
                   ref={this.filterRef}
                   core={this.core}
                   filterMode="APPLY"
                   hideFilterDiv={() => this.hideFilter()}
                   filterConfiguration={this.getFilterProperty("filterConfiguration")}
-                  applyFilterOption={this.getFilterProperty("filterOptions")}
+                  applyFilterOption={this.getOptionalFilters("filterOptions")}
                   setDashboardFilter={(filter) => this.applyDashboardFilter(filter)}
+                  dashboardStack={this.state.dashboardStack}
                 />
               }
             </div>
@@ -553,7 +617,7 @@ class DashboardManager extends React.Component {
                           </Button>
                         }
                         {
-                          (Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) &&
+                          containsFilter &&
                           <Button onClick={() => this.showFilter()} title="Filter OI">
                             <i className="fa fa-filter" aria-hidden="true"></i>
                           </Button>

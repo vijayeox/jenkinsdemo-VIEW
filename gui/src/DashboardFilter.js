@@ -262,10 +262,11 @@ class DashboardFilter extends React.Component {
 
         console.log("Inside the filter Function: " + this.state.dateFormat);
     }
+    
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.filterConfiguration != this.props.filterConfiguration) {
-        this.props.filterMode!="CREATE" ? this.displayDefaultFilters() : this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
+    componentDidUpdate(prevProps,prevState) {
+        if ((prevProps.filterConfiguration != this.props.filterConfiguration) || (prevProps.applyFilterOption!=this.props.applyFilterOption)) {
+        (this.props.filterMode!="CREATE" && this.props.dashboardStack.length==1) ? this.displayDefaultFilters() : this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
         }
     }
 
@@ -569,7 +570,7 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     {   // Rendered on dashboard Viewer
-                        this.props.filterMode === "APPLY" && this.state.applyFilterOption.length !== 0 &&
+                        this.props.filterMode === "APPLY" && (this.state.applyFilterOption.length!==0 || this.props.applyFilterOption.length !== 0) &&
                         < Form.Group >
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select
@@ -578,7 +579,7 @@ class DashboardFilter extends React.Component {
                                 id="applyfiltertype"
                                 onChange={(e) => this.handleSelect(e)}
                                 value={this.state.input["applyfiltertype"]}
-                                options={this.state.applyFilterOption}
+                                options={this.state.applyFilterOption.length!==0?this.state.applyFilterOption:this.props.applyFilterOption}
                                 style={{ marginleft: "0px" }}
                             />
                         </Form.Group>
