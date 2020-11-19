@@ -1013,6 +1013,11 @@ class FormRender extends React.Component {
             }
             if (event.type == "formLoader") {
               that.showFormLoader(event.state);
+              if(event.timer){
+                setTimeout((e) => {
+                  that.showFormLoader(false);
+                }, event.timer);
+              }
             }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
