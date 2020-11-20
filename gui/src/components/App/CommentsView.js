@@ -101,8 +101,9 @@ class CommentsView extends React.Component {
     query &&
       this.getData("users/list", query).then((response) => {
         var tempUsers = response.data.map((user) => ({
-          display: user.name,
-          id: user.uuid
+          display: user.username,
+          id: user.uuid,
+          name: user.name
         }));
         this.setState(
           {
@@ -252,7 +253,13 @@ class CommentsView extends React.Component {
               >
                 <Mention
                   trigger="@"
-                  displayTransform={(id, name) => `@${name}`}
+                  markup="@[__display__](user:__name__)"
+                  displayTransform={(id, username) => `@${username}`}
+                  renderSuggestion={(suggestion,search, highlightedDisplay, index, focused) => (
+                    <div className={`user ${focused ? 'focused' : ''}`}>
+                      @{suggestion.display} - ({suggestion.name})
+                    </div>
+                  )}
                   data={this.getUserData}
                   className="mentions__mention"
                   style={{ backgroundColor: "#cee4e5" }}
