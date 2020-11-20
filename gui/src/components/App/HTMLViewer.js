@@ -56,6 +56,37 @@ class HTMLViewer extends React.Component {
       this.setState({ content: this.props.content });
     }
   }
+  isHTML(str) {
+    var a = document.createElement('div');
+    a.innerHTML = str;
+    for (var c = a.childNodes, i = c.length; i--; ) {
+      if (c[i].nodeType == 1) return true; 
+    }
+    return false;
+  }
+  searchAndReplaceParams(content,params){
+    var regex = /\{data\.(.*)?\}/g;
+    let m;
+    var matches=[];
+    do {
+      m = regex.exec(content)
+      if(m){
+        if (m.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+        matches.push(m);
+      }
+    } while (m);
+    matches.forEach((match, groupIndex) => {
+      if(params[match[1]] !=undefined && this.isHTML(params[match[1]])){
+        content = content.replace(
+          match[0],
+          params[match[1]]
+          );
+      }
+    });
+    return content
+  }
 
   render() {
       
@@ -85,13 +116,18 @@ class HTMLViewer extends React.Component {
     return moment(dateTime).format(userDateTimeFomat);
   };
 
+  var fileData = {};
+  for (const [key, value] of Object.entries(this.state.fileData)) {
+    fileData[key] = value;
+  }
+  var content = this.searchAndReplaceParams(this.state.content,fileData);
     return (
       this.state.dataReady && (
         <JsxParser className ={this.props.className}
-          jsx={this.state.content}
+          jsx={content}
           bindings={{
-            data: this.state.fileData ? this.state.fileData : {},
-            item: this.state.fileData ? this.state.fileData : {},
+            data: fileData ? fileData : {},
+            item: fileData ? fileData : {},
             moment: moment,
             formatDate: formatDate,
             formatDateWithoutTimezone: formatDateWithoutTimezone,

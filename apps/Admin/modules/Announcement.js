@@ -52,7 +52,7 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let addGroups = await helper.request(
       "v1",
-      "organization/" +
+      "account/" +
         this.state.selectedOrg +
         "/announcement/" +
         dataItem +
@@ -84,7 +84,7 @@ class Announcement extends React.Component {
         config: {
           dataItem: dataItem,
           title: "Announcement",
-          mainList: "organization/" + this.state.selectedOrg + "/groups/list",
+          mainList: "account/" + this.state.selectedOrg + "/groups/list",
           subList: response.data,
           members: "Groups"
         },
@@ -161,7 +161,7 @@ class Announcement extends React.Component {
     }).then((result) => {
       if (result.value) {
         DeleteEntry(
-          "organization/" + this.state.selectedOrg + "/announcement",
+          "account/" + this.state.selectedOrg + "/announcement",
           dataItem.uuid
         ).then((response) => {
           this.OX_Grid.current.refreshHandler(response);
@@ -252,17 +252,16 @@ class Announcement extends React.Component {
           args={this.core}
           orgChange={this.orgChange}
           orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+            this.props.userProfile.privileges.MANAGE_ACCOUNT_WRITE
               ? true
               : false
           }
         />
-        <React.Suspense fallback={<div>Loading...</div>}>
         <OX_Grid
           osjsCore={this.core}
           ref={this.OX_Grid}
           data={
-            "organization/" +
+            "account/" +
             this.state.selectedOrg +
             "/" +
             this.listConfig.route
@@ -277,6 +276,8 @@ class Announcement extends React.Component {
           filterable={true}
           reorderable={true}
           resizable={true}
+          defaultToolBar={true}
+          columnMenuFilter={false}
           sortable={true}
           pageable={{ buttonCount: 3, pageSizes: [10, 20, 30], info: true }}
           columnConfig={this.prepareColumnData()}
@@ -285,7 +286,6 @@ class Announcement extends React.Component {
             this.createAddButton()
           ]}
         />
-          </React.Suspense>
         {this.state.visible && this.addUsersTemplate}
         {this.state.itemInEdit && this.inputTemplate}
       </div>

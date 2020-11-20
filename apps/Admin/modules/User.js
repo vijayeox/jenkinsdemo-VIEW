@@ -46,7 +46,7 @@ class User extends React.Component {
 
   remove = dataItem => {
     DeleteEntry(
-      "organization/" + this.state.selectedOrg + "/user",
+      "account/" + this.state.selectedOrg + "/user",
       dataItem.uuid
     ).then(response => {
       this.child.current.refreshHandler(response);
@@ -73,27 +73,25 @@ class User extends React.Component {
   render() {
     return (
       <div style={{ height: "inherit" }}>
-            <React.Suspense fallback={<div>Loading...</div>}>
         <TitleBar
           title="Manage Users"
           menu={this.props.menu}
           args={this.core}
           orgChange={this.orgChange}
           orgSwitch={
-            this.props.userProfile.privileges.MANAGE_ORGANIZATION_WRITE
+            this.props.userProfile.privileges.MANAGE_ACCOUNT_WRITE
               ? true
               : false
           }
         />
-          </React.Suspense>
-            <React.Suspense fallback={<div>Loading...</div>}>
+        <React.Suspense fallback={<div>Loading...</div>}>
         <GridTemplate
           args={this.core}
           ref={this.child}
           config={{
             showToolBar: true,
             title: "User",
-            api: "organization/" + this.state.selectedOrg + "/users",
+            api: "account/" + this.state.selectedOrg + "/users",
             column: [
               {
                 title: "Image",

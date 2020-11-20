@@ -12,6 +12,9 @@ import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import "../../public/css/formstyles.scss";
+import "../../public/css/formbuilder.scss";
+import formSettings from '../../public/forms/settingsForm.json'
+import FormRender from "./FormRender";
 
 class FormBuilder extends React.Component {
   constructor(props) {
@@ -27,8 +30,10 @@ class FormBuilder extends React.Component {
       name: "",
       display: "form",
       path: "",
+      properties: "",
       showFormSettings: false,
     };
+    this.updateFormSettings = this.updateFormSettings.bind(this);
     this.appUrl = "/app/" + this.state.appId;
     this.helper = this.core.make("oxzion/restClient");
     this.loader = this.core.make("oxzion/splash");
@@ -54,6 +59,7 @@ class FormBuilder extends React.Component {
               title: this.state.content.title,
               name: this.state.content.name,
               display: this.state.content.display,
+              properties: this.state.content.properties
             },
             () => this.createForm().then(() => this.loader.destroy())
           );
@@ -66,6 +72,7 @@ class FormBuilder extends React.Component {
             title: this.state.content.title,
             name: this.state.content.name,
             display: this.state.content.display,
+            properties: this.state.content.properties
           },
           () => this.createForm().then(() => this.loader.destroy())
         );
@@ -158,17 +165,21 @@ class FormBuilder extends React.Component {
   }
 
   updateFormSettings(settings) {
-    console.log(settings);
+    var content = this.state.content;
+    content.properties = settings.properties;
+    content.controller = settings.controller;
+    this.setState({ content: content,showFormSettings: false });
   }
+  cancel = () => {
+    this.setState({ showFormSettings: false });
+  };
 
   render() {
     return (
       <div className="formBuilder">
         <Notification ref={this.notif} />
         {/* Show form settings */}
-        {/* {this.state.showFormSettings ? (
-          <Window><FormRender saveForm={this.updateFormSettings}></Window>
-        ) : null} */}
+        {this.state.showFormSettings ? (<Window stage="FULLSCREEN" onClose={this.cancel}><FormRender core={this.props.core} content={formSettings} appId={this.state.appId} customSaveForm={this.updateFormSettings} data={this.state.content}></FormRender></Window>) : null}
         <div>
           <div className="row">
             <div className="col-lg-3 col-md-3 col-sm-3">

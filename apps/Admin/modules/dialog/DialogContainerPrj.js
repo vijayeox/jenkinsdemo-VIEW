@@ -24,7 +24,7 @@ export default class DialogContainer extends React.Component {
   UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       GetSingleEntityData(
-        "organization/" +
+        "account/" +
           this.props.selectedOrg +
           "/user/" +
           this.props.dataItem.manager_id +
@@ -152,7 +152,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       mainList={
-                        "organization/" + this.props.selectedOrg + "/users"
+                        "account/" + this.props.selectedOrg + "/users"
                       }
                       selectedItem={this.state.managerName}
                       preFetch={true}
@@ -171,7 +171,7 @@ export default class DialogContainer extends React.Component {
                     <DropDown
                       args={this.core}
                       mainList={
-                        "organization/" + this.props.selectedOrg + "/projects"
+                        "account/" + this.props.selectedOrg + "/projects"
                       }
                       selectedItem={this.state.parentProject}
                       preFetch={true}

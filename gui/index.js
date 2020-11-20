@@ -22,32 +22,48 @@ import * as KendoReactInput from "@progress/kendo-react-inputs";
 import * as KendoReactRipple from "@progress/kendo-react-ripple";
 import * as Moment from "moment";
 import * as MomentTZ from "moment-timezone";
-import * as PhoneInput from "react-phone-number-input";
 import * as PopupDialog from 'sweetalert2';
 import * as ReactStrap from "reactstrap";
 import * as Webcam from "react-webcam";
 import AvatarImageCropper from "react-avatar-image-cropper";
+import GridTemplate from "./src/GridTemplate";
+import OX_Grid from "./src/OX_Grid";
+import DashboardManager from "./src/DashboardManager";
+import Dashboard from "./src/Dashboard";
+import DataSource from "./src/DataSource";
+import Query from "./src/Query";
+import DashboardFilter from "./src/DashboardFilter";
+import WidgetGrid from "./src/WidgetGrid";
+import WidgetRenderer from "./src/WidgetRenderer";
 
-const OX_Grid = lazy(() => import("./src/OX_Grid"));
-const GridTemplate = lazy(() => import("./src/GridTemplate"));
-const DashboardManager = lazy(() => import("./src/DashboardManager"));
-const Dashboard = lazy(() => import("./src/Dashboard"));
-const DataSource = lazy(() => import("./src/DataSource"));
-const Query = lazy(() => import("./src/Query"));
-const DashboardFilter = lazy(() => import("./src/DashboardFilter"));
-const WidgetGrid = lazy(() => import("./src/WidgetGrid"));
-const WidgetRenderer = lazy(() => import("./src/WidgetRenderer"));
-const FormRender = lazy(() => import("./src/components/App/FormRender"));
-const FormBuilder = lazy(() => import("./src/components/App/FormBuilder"));
-const MultiSelect = lazy(() => import("./src/MultiSelect"));
-const FileUploader = lazy(() => import("./src/FileUploader"));
-const HTMLViewer = lazy(() => import("./src/components/App/HTMLViewer"));
-const CommentsView = lazy(() => import("./src/components/App/CommentsView"));
-const DocumentViewer = lazy(() => import("./src/DocumentViewer"));
-const DateFormats = lazy(() => import('./src/public/js/DateFormats.js'));
-const DropDown = lazy(() => import('./src/components/Dropdown/DropDownList'));
-const Visualization = lazy(() => import("./src/Visualization"));
-const WidgetManager = lazy(() => import("./src/WidgetManager"));
+const LazyLoad = ({ component: Component,...rest}) => (
+  <>
+  <React.Suspense fallback={<div className="spinner"><div className="bounce1"></div><div className="bounce2"></div><div className="bounce3"></div></div>}>
+    <Component {...rest} />
+    </React.Suspense>
+  </>
+);
+// const GridTemplate = (props) => <LazyLoad component={lazy(() => import("./src/GridTemplate"))} {...props} />;
+// const DashboardManager = (props) => <LazyLoad component={lazy(() => import("./src/DashboardManager"))} {...props} />;
+// const Dashboard = (props) => <LazyLoad component={lazy(() => import("./src/Dashboard"))} {...props} />;
+// const DataSource = (props) => <LazyLoad component={lazy(() => import("./src/DataSource"))} {...props} />;
+// const Query = (props) => <LazyLoad component={lazy(() => import("./src/Query"))} {...props} />;
+// const DashboardFilter = (props) => <LazyLoad component={lazy(() => import("./src/DashboardFilter"))} {...props} />;
+// const WidgetGrid = (props) => <LazyLoad component={lazy(() => import("./src/WidgetGrid"))} {...props} />;
+// const WidgetRenderer = (props) => <LazyLoad component={lazy(() => import("./src/WidgetRenderer"))} {...props} />;
+const FormRender = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormRender"))} {...props} />;
+const FormBuilder = (props) => <LazyLoad component={lazy(() => import("./src/components/App/FormBuilder"))} {...props} />;
+const MultiSelect = (props) => <LazyLoad component={lazy(() => import("./src/MultiSelect"))} {...props} />;
+const HTMLViewer = (props) => <LazyLoad component={lazy(() => import("./src/components/App/HTMLViewer"))} {...props} />;
+const CommentsView = (props) => <LazyLoad component={lazy(() => import("./src/components/App/CommentsView"))} {...props} />;
+const DocumentViewer = (props) => <LazyLoad component={lazy(() => import("./src/DocumentViewer"))} {...props} />;
+const DateFormats = (props) => <LazyLoad component={lazy(() => import('./src/public/js/DateFormats.js'))} {...props} />;
+const DropDown = (props) => <LazyLoad component={lazy(() => import('./src/components/Dropdown/DropDownList'))} {...props} />;
+const Visualization = (props) => <LazyLoad component={lazy(() => import("./src/Visualization"))} {...props} />;
+const WidgetManager = (props) => <LazyLoad component={lazy(() => import("./src/WidgetManager"))} {...props} />;
+
+// const OX_Grid = lazy(() => import("./src/OX_Grid"));
+// const GridTemplate = lazy(() => import("./src/GridTemplate"));
 
 export {
   EOXApplication,
@@ -55,7 +71,6 @@ export {
   GridTemplate,
   Notification,
   MultiSelect,
-  FileUploader,
   HTMLViewer,
   CommentsView,
   FormRender,
@@ -90,7 +105,6 @@ export {
   PopupDialog,
   Moment,
   MomentTZ,
-  PhoneInput,
   DateComponent,
   DropDown,
   CurrencySelect,

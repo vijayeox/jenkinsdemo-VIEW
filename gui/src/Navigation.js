@@ -17,6 +17,7 @@ class Navigation extends React.Component {
     this.appNavigationDiv = "navigation_" + this.appId;
     this.state = {
       selected: this.props.selected,
+      customActions: [],
       pages: [],
     };
     this.homepage = null;
@@ -48,7 +49,6 @@ class Navigation extends React.Component {
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
         } else if (this.proc && this.proc.args) {
-          ``;
           if (typeof this.proc.args === "string") {
             try {
               var appParams = JSON.parse(this.proc.args);
@@ -73,9 +73,7 @@ class Navigation extends React.Component {
                   detail: { pageContent: appParams.detail },
                   bubbles: true,
                 });
-                document
-                  .getElementsByClassName(this.breadcrumbDiv)[0]
-                  .dispatchEvent(ev);
+                document.getElementsByClassName(this.breadcrumbDiv)[0].dispatchEvent(ev);
               }
             } catch (e) {
               console.log("No params!");
@@ -93,19 +91,12 @@ class Navigation extends React.Component {
   }
   async getMenulist() {
     let helper = this.core.make("oxzion/restClient");
-    let menulist = await helper.request(
-      "v1",
-      "/app/" + this.appId + "/menu",
-      {},
-      "get"
-    );
+    let menulist = await helper.request("v1","/app/" + this.appId + "/menu",{},"get");
     return menulist;
   }
   pageActive(pageId) {
     if (document.getElementById(pageId + "_page")) {
-      document
-        .getElementById(pageId + "_page")
-        .classList.remove("page-inactive");
+      document.getElementById(pageId + "_page").classList.remove("page-inactive");
       document.getElementById(pageId + "_page").classList.add("page-active");
     }
   }
@@ -116,34 +107,28 @@ class Navigation extends React.Component {
     }
   }
   componentDidMount() {
-    document
-      .getElementById(this.appNavigationDiv)
-      .addEventListener("addPage", this.addPage, false);
-    document
-      .getElementById(this.appNavigationDiv)
-      .addEventListener("stepDownPage", this.stepDownPage, false);
-    document
-      .getElementById(this.appNavigationDiv)
-      .addEventListener("selectPage", this.selectPage, false);
+    document.getElementById(this.appNavigationDiv).addEventListener("addPage", this.addPage, false);
+    document.getElementById(this.appNavigationDiv).addEventListener("stepDownPage", this.stepDownPage, false);
+    document.getElementById(this.appNavigationDiv).addEventListener("selectPage", this.selectPage, false);
+    document.getElementById(this.breadcrumbDiv).addEventListener("addcustomActions", this.addcustomActions, false);
   }
 
   addPage = (e) => {
     var pages = this.state.pages;
     pages.push(e.detail);
-    if (
-      e.detail.parentPage &&
-      document.getElementById(e.detail.parentPage + "_page")
-    ) {
+    if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
-      pages.length > 0
-        ? this.pageInActive(pages[pages.length - 2].pageId)
-        : null;
+      pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
     }
     this.setState({ pages: pages });
+    this.resetCustomActions();
   };
   selectPage = (e) => {
     this.pageActive(e.detail.parentPage);
+  };
+  addcustomActions = (e) => {
+    this.setState({customActions:e.detail.customActions});
   };
 
   componentWillReceiveProps(props) {
@@ -182,8 +167,35 @@ class Navigation extends React.Component {
         this.props.selectLoad(this.homepage);
       }
     }
+    this.resetCustomActions();
   };
-
+  resetCustomActions(){
+    this.setState({customActions:null});
+    let ev = new CustomEvent("getCustomActions", {
+      detail: { },
+      bubbles: true,
+    });
+    if(document.getElementsByClassName('page-active') && document.getElementsByClassName('page-active')[0] ){
+      var foundElement = this.getElementInsideElement(document.getElementsByClassName('page-active')[0],'customActionsToolbar');
+      if(foundElement){
+        foundElement.dispatchEvent(ev);
+      }
+    }
+  }
+getElementInsideElement(baseElement, wantedElementID) {
+  var elementToReturn;
+  for (var i = 0; i < baseElement.childNodes.length; i++) {
+      elementToReturn = baseElement.childNodes[i];
+      if (elementToReturn.id == wantedElementID) {
+          return elementToReturn;
+      } else {
+          elementToReturn = this.getElementInsideElement(elementToReturn, wantedElementID);
+          if(elementToReturn){
+            return elementToReturn;
+          }
+      }
+  }
+}
   breadcrumbClick = (currentValue, index) => {
     let data = this.state.pages.slice();
     data.splice(index + 1, data.length);
@@ -191,40 +203,36 @@ class Navigation extends React.Component {
       pages: data,
     });
     this.pageActive(currentValue.pageId);
+    this.resetCustomActions();
   };
 
   renderBreadcrumbs = () => {
     var breadcrumbsList = [];
     this.state.pages.map((currentValue, index) => {
       var clickable = false;
+      var childNode = " ";
       if (this.state.pages.length > 1 && index + 1 != this.state.pages.length) {
         clickable = true;
+      }
+      if(index != 0){
+        childNode = <div
+        style={{
+          marginRight: "5px",
+          marginLeft: "5px"
+        }}
+      > {'>'} </div>;
       }
       currentValue.title
         ? breadcrumbsList.push(
             <>
-              {index == "0" ? null : (
-                <div
-                  style={{
-                    marginRight: "5px",
-                  }}
-                />
-              )}
-              <Chip
-                text={currentValue.title}
-                value={""}
-                disabled={!clickable}
-                className={
-                  clickable ? "activeBreadcrumb" : "disabledBreadcrumb"
-                }
-                icon={currentValue.icon}
-                type={clickable || index == 0 ? "none" : "info"}
-                selected={false}
-                onClick={() => {
-                  clickable ? this.breadcrumbClick(currentValue, index) : null;
-                }}
-                removable={false}
-              />
+              {index == "0" ? null : ( <div style={{ marginRight: "5px" }} /> )}
+              {childNode}
+              <div value={""} disabled={!clickable} className={ clickable ? "activeBreadcrumb" : "disabledBreadcrumb" } type={clickable || index == 0 ? "none" : "info"} selected={false} removable={false} >
+                  <a onClick={() => { clickable ? this.breadcrumbClick(currentValue, index) : null;}}>
+                    <i className={currentValue.icon} style={{ marginRight: "5px"}}></i>
+                    {currentValue.title}
+                  </a>
+              </div>
             </>
           )
         : null;
@@ -262,9 +270,11 @@ class Navigation extends React.Component {
     const { expanded, selected } = this.state;
     return (
       <div id={this.appNavigationDiv} className="Navigation">
-        <div className={this.breadcrumbDiv}>
+        <div className={this.breadcrumbDiv} id={this.breadcrumbDiv}>
           {this.state.pages.length > 0 ? (
-            <div className="breadcrumbs">{this.renderBreadcrumbs()}</div>
+            <div className="row">
+            <div className="breadcrumbs col-md-9">{this.renderBreadcrumbs()}</div><div className="col-md-3 customActions" id="customActions">{this.state.customActions}</div>
+            </div>
           ) : null}
         </div>
         <div className={this.pageDiv} style={{ height: "calc(100% - 55px)" }}>

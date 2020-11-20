@@ -1,6 +1,5 @@
-import React from "react";
 import { Upload } from "@progress/kendo-react-upload";
-import Notification  from "./Notification";
+import {React,Notification} from "oxziongui";
 
 class FileUploader extends React.Component {
   constructor(props) {
@@ -71,6 +70,7 @@ class FileUploader extends React.Component {
   };
 
   render() {
+    this.props.tempref(this);
     return (
       <div className="form-group border-box fileUploaderComponent">
         <Notification ref={this.notif} />

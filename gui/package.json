@@ -14,6 +14,7 @@
   "dependencies": {
     "@amcharts/amcharts4": "4.9.13",
     "@amcharts/amcharts4-geodata": "4.1.14",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@fortawesome/fontawesome-pro": "^5.13.0",
     "@progress/kendo-data-query": "^1.5.3",
     "@progress/kendo-drawing": "^1.9.0",
@@ -70,7 +71,6 @@
     "react-loader-spinner": "^3.1.14",
     "react-mentions": "^4.0.2",
     "react-notifications-component": "1.1.1",
-    "react-phone-number-input": "^3.0.24",
     "react-select": "^3.1.0",
     "react-switch": "^5.0.1",
     "react-tabs-redux": "^4.0.0",
