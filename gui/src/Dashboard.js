@@ -162,9 +162,10 @@ class Dashboard extends Component {
     return filter
   }
 
-  extractFilterValues() {
+  extractFilterValues(filter) {
     let filterParams = []
-    this.props.dashboardFilter.map((filter, index) => {
+    let dashboardFilter=filter?filter:this.props.dashboardFilter
+    dashboardFilter.map((filter, index) => {
       let filterarray = []
       //extract only default filter values if it is the first dashboard. else extract all filters
       if ((this.props.dashboardStack.length == 1 && filter.isDefault == true) || (this.props.dashboardStack.length > 1)) {
@@ -250,7 +251,65 @@ class Dashboard extends Component {
     })
     return filterParams
   }
-
+ overrideCommonFilters(parentFilter,childFilter,widgetFilter){
+ let filter=[]
+ let parentFilterCopy=[...parentFilter]
+ let childFilterCopy=[...childFilter]
+ for(let parentindex=0;parentindex<parentFilterCopy.length;parentindex++){
+  let hasCommonFilter=0
+  for(let childIndex=0;childIndex<childFilterCopy.length;childIndex++){
+    if(parentFilterCopy[parentindex].field==childFilterCopy[childIndex].field){
+      hasCommonFilter+=1
+      filter.push(childFilterCopy[childIndex])
+      childFilterCopy.splice(childIndex,1)
+      parentFilterCopy.splice(parentindex,1)
+    }
+  }
+  if(hasCommonFilter==0){
+    filter.push(parentFilterCopy[parentindex])
+    parentFilterCopy.splice(parentindex,1)
+  }
+ }
+ let remainingFilter=[]
+ if((parentFilterCopy && parentFilterCopy.length!=0) && (childFilterCopy && childFilterCopy.length!=0)){
+   remainingFilter=[...parentFilter,...childFilterCopy]
+ } else if(parentFilterCopy && parentFilterCopy.length!=0){
+  remainingFilter=[...parentFilterCopy]
+ }else if(childFilterCopy && childFilterCopy.length!=0){
+  remainingFilter=[...childFilterCopy]
+ }
+ if(remainingFilter.length!=0){
+   filter=[...filter,...remainingFilter]
+ }
+//  parentFilter.map((parentFilterValue,parentIndex)=>{
+//    let hasCommonFilter=0
+//    childFilter.map((childFilterValue,childIndex)=>{
+//     if(parentFilterValue.field==childFilterValue.field){
+//       hasCommonFilter+=1
+//       filter.push(childFilterValue)
+//       childFilter.splice(childIndex,1)
+//       parentFilter.splice(parentIndex,1)
+//     }
+//    })
+//    if(hasCommonFilter==0){
+//      filter.push(parentFilterValue)
+//    }
+ 
+//  })
+//  let remainingFilter=[]
+//  if((parentFilter && parentFilter.length!=0) && (childFilter && childFilter.length!=0)){
+//    remainingFilter=[...parentFilter,...childFilter]
+//  } else if(parentFilter && parentFilter.length!=0){
+//   remainingFilter=[...parentFilter]
+//  }else if(childFilter && childFilter.length!=0){
+//   remainingFilter=[...childFilter]
+//  }
+//  if(remainingFilter.length!=0){
+//    filter=[...filter,...remainingFilter]
+//  }
+ console.log(filter)
+ return filter
+ }
   updateGraphWithFilterChanges() {
     let filterParams = this.extractFilterValues()
     let preparedFilter
@@ -284,9 +343,23 @@ class Dashboard extends Component {
       else if (filterParams.length > 1) {
         if (this.props.dashboardStack.length > 1) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
-          let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          if (drilldownDashboardFilter.length > 1)
-            preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
+          let parentFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["filterConfiguration"]
+          let currentFilter = this.props.dashboardFilter
+          let widgetFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["widgetFilter"]
+          let combinedFilter = this .overrideCommonFilters(parentFilter,currentFilter,widgetFilter)
+          let extractedFilterValues = this.extractFilterValues(combinedFilter);
+          let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
+          if (extractedFilterValues && extractedFilterValues.length > 1) {
+            preapredExtractedFilterValue = extractedFilterValues[0]
+            for (let i = 1; i < extractedFilterValues.length; i++) {
+              preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+
+            }
+          }
+          preparedFilter=this.preparefilter(preapredExtractedFilterValue,widgetFilter)
+          // let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
+        //   if (drilldownDashboardFilter.length > 1)
+        //     preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
         }
         this.setState({ preparedDashboardFilter: preparedFilter }, () => {
           this.updateGraph(preparedFilter)
@@ -294,6 +367,7 @@ class Dashboard extends Component {
       } else {
         //adding drildowndashboardfilter to the dashboard filter if it exists
         preparedFilter = filterParams
+       
         let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
         if (this.props.dashboardStack.length != 1 && drilldownDashboardFilter.length > 1) {
           preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
@@ -416,6 +490,7 @@ class Dashboard extends Component {
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     event.drilldownDashboardTitle = drilldownDashboardTitle;
+    event.widgetFilter=JSON.parse(widgetFilter)
     if (elementId) {
       var widgetDiv = document.getElementById(elementId);
       this.loader.destroy(widgetDiv);

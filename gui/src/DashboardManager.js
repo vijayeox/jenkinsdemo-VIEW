@@ -361,6 +361,7 @@ class DashboardManager extends React.Component {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = e.dashboardFilter ? e.dashboardFilter : []
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = (filterConfiguration && filterConfiguration.state.filters) ? filterConfiguration.state.filters : []
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = (filterConfiguration && filterConfiguration.state.applyFilterOption) ? filterConfiguration.state.applyFilterOption : []
+      dashboardStack[dashboardStack.length - 1]["widgetFilter"]=e.widgetFilter?e.widgetFilter:[]
     }
 
     let value = JSON.parse(e.value)
@@ -387,8 +388,11 @@ class DashboardManager extends React.Component {
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
     element != undefined && element.classList.add("hide-dash-editor")
     inputs["dashname"] = value
-
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter })
+    let optionalFilter=[]
+    if(this.state.dashboardStack.length>1){
+      optionalFilter=this.replaceCommonFilters(this.state.dashboardStack[this.state.dashboardStack.length - 2]["filterConfiguration"], dashboardFilter,"filterOptions")
+    }
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter ,filterOptions:optionalFilter})
   }
 
   handleChange(event, inputName) {
@@ -415,14 +419,15 @@ class DashboardManager extends React.Component {
     let dashboardFilter = value["filter_configuration"] != "" ? JSON.parse(value["filter_configuration"]) : []
     let extractedFilterValues = this.extractFilterValues(dashboardFilter);
     let preapredExtractedFilterValue = null
-    if (extractedFilterValues && extractedFilterValues.length > 1) {
-      preapredExtractedFilterValue = extractedFilterValues[0]
-      for (let i = 1; i < extractedFilterValues.length; i++) {
-        preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-
+    if(dashboardStack.length!=0){
+      if (extractedFilterValues && extractedFilterValues.length > 1) {
+        preapredExtractedFilterValue = extractedFilterValues[0]
+        for (let i = 1; i < extractedFilterValues.length; i++) {
+          preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+  
+        }
       }
     }
-
     dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
 
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
@@ -450,18 +455,18 @@ class DashboardManager extends React.Component {
         parentFilters.map(parentFilterValue => {
           let hasCommonFilter = 0
           childFilters.map((childFilterValue, index) => {
-            if(childFilterValue.isDefault && childFilterValue.isDefault==true){
+            // if(childFilterValue.isDefault && childFilterValue.isDefault==true){
               if (parentFilterValue.field == childFilterValue.field) {
                 //if same filters exist in parent and child, consider the parent filter hwne no filter is applied on the child OI
                 appliedFilters.push(parentFilterValue)
                 childFilters.splice(index, 1)
                 hasCommonFilter += 1
               } 
-            } else{
-              //remove optional filters which are not set as default
-              parentFilterValue.field != childFilterValue.field && optionalfilters.push({label:childFilterValue.filterName,value:childFilterValue})
-              childFilters.splice(index,1)
-            }
+            // } else{
+            //   //remove optional filters which are not set as default
+            //   parentFilterValue.field != childFilterValue.field && optionalfilters.push({label:childFilterValue.filterName,value:childFilterValue})
+            //   childFilters.splice(index,1)
+            // }
           })
           if (hasCommonFilter==0) {
             appliedFilters.push(parentFilterValue)
@@ -504,7 +509,15 @@ class DashboardManager extends React.Component {
       if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
         return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
       else if(this.state.dashboardStack.length>1){
-        let optionalFilter=this.replaceCommonFilters(this.state.dashboardStack[this.state.dashboardStack.length - 2]["filterConfiguration"], this.state["filterConfiguration"],property)
+        let childfilter=[]
+        if(this.state.filterConfiguration && this.state.filterConfiguration.length>0){
+          childfilter=[...this.state.filterConfiguration]
+        }else if(this.state.filterConfiguration && this.state.filterConfiguration.length>0){
+          childfilter=[...this.state.filterConfiguration]
+        }else if(this.state.filterOptions && this.state.filterConfiguration.length>0){
+          childfilter=[...this.state.filterOptions]
+        }
+        let optionalFilter=this.replaceCommonFilters(this.state.dashboardStack[this.state.dashboardStack.length - 2]["filterConfiguration"], childfilter,property)
         return optionalFilter
       }
       else
