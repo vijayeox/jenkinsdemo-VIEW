@@ -227,7 +227,7 @@ getElementInsideElement(baseElement, wantedElementID) {
             <>
               {index == "0" ? null : ( <div style={{ marginRight: "5px" }} /> )}
               {childNode}
-              <div value={""} disabled={!clickable} className={ clickable ? "activeBreadcrumb" : "disabledBreadcrumb" } type={clickable || index == 0 ? "none" : "info"} selected={false} removable={false} >
+              <div value={""} disabled={!clickable} className={ clickable ? "activeBreadcrumb" : "disabledBreadcrumb" } type={clickable || index == 0 ? "none" : "info"} selected={false} >
                   <a onClick={() => { clickable ? this.breadcrumbClick(currentValue, index) : null;}}>
                     <i className={currentValue.icon} style={{ marginRight: "5px"}}></i>
                     {currentValue.title}
