@@ -64,6 +64,17 @@ export const en_EN = {
   LBL_APP_CAT_OTHER: 'Other',
   LBL_APP_CAT_ORGANIZATION: 'Organization',
   LBL_APP_CAT_COLLABORATION: 'Collaboration',
+  LBL_APP_CAT_BUSINESS: 'Business',
+  LBL_APP_CAT_FINANCE: 'Finance',
+  LBL_APP_CAT_NEWS: 'News',
+  LBL_APP_CAT_MEDICAL: 'Medical',
+  LBL_APP_CAT_ENTERTAINMENT: 'Entertainment',
+  LBL_APP_CAT_PRODUCTIVITY: 'Productivity',
+  LBL_APP_CAT_EDUCATION: 'Education',
+  LBL_APP_CAT_PHOTOANDVEDIO: 'Photo & Video',
+  LBL_APP_CAT_SHOPPING: 'Shopping',
+  LBL_APP_CAT_TRAVEL: 'Travel',
+  LBL_APP_CAT_DASHBOARD: 'Dashboard',
 
   // UI
   LBL_LAUNCH_SELECT: 'Select application',
