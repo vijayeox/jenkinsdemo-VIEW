@@ -102,6 +102,50 @@ export const defaultConfiguration = {
         label: 'LBL_APP_CAT_UTILITIES',
         icon: 'applications-utilities'
       },
+      business: {
+        label: 'LBL_APP_CAT_BUSINESS',
+        icon: 'applications-business'
+      },
+      finance: {
+        label: 'LBL_APP_CAT_FINANCE',
+        icon: 'applications-finance'
+      },
+      news: {
+        label: 'LBL_APP_CAT_NEWS',
+        icon: 'applications-news'
+      },
+      medical: {
+        label: 'LBL_APP_CAT_MEDICAL',
+        icon: 'applications-medical'
+      },
+      entertainment: {
+        label: 'LBL_APP_CAT_ENTERTAINMENT',
+        icon: 'applications-entertainment'
+      },
+      productivity: {
+        label: 'LBL_APP_CAT_PRODUCTIVITY',
+        icon: 'applications-productivity'
+      },
+      education: {
+        label: 'LBL_APP_CAT_EDUCATION',
+        icon: 'applications-education'
+      },
+      photoVideo: {
+        label: 'LBL_APP_CAT_PHOTOANDVEDIO',
+        icon: 'applications-photoVideo'
+      },
+      shopping: {
+        label: 'LBL_APP_CAT_SHOPPING',
+        icon: 'applications-shopping'
+      },
+      travel: {
+        label: 'LBL_APP_CAT_TRAVEL',
+        icon: 'applications-travel'
+      },
+      dashboard: {
+        label: 'LBL_APP_CAT_DASHBOARD',
+        icon: 'applications-dashboard'
+      },
       other: {
         label: 'LBL_APP_CAT_OTHER',
         icon: 'applications-other'
