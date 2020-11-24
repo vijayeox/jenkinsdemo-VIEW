@@ -265,6 +265,7 @@ const TEMPLATE = `<div class="osjs-window-inner">
       <div></div>
     </div>
     <div class="osjs-window-title"></div>
+    <div class="osjs-window-breadcrumb"></div>
     <div class="osjs-window-button" data-action="minimize">
       <div></div>
     </div>
@@ -507,6 +508,7 @@ export default class Window extends EventEmitter {
     this.$header = this.$element.querySelector('.osjs-window-header');
     this.$icon = this.$element.querySelector('.osjs-window-icon > div');
     this.$title = this.$element.querySelector('.osjs-window-title');
+    this.$breadCrumb = this.$element.querySelector('.osjs-window-breadcrumb');
 
     // Transform percentages in dimension to pixels etc
     if (this.core.has('osjs/desktop')) {

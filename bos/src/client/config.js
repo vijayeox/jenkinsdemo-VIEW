@@ -51,7 +51,7 @@ module.exports = {
     enabled: false
   },
   desktop: {
-    contextmenu: false,
+    contextmenu: true,
     settings: {
       theme: "Vision",
       icons: "oxzioniconpack",

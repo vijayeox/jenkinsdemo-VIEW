@@ -62,7 +62,7 @@ export default class LeftMenuTemplate extends React.Component {
         >
           {this.keepExpanded ? null : <SideNav.Toggle />}
           <SideNav.Nav selected={selected}>
-            {this.state.menus.map((menuitem, index) => {
+            {this.state.menus && this.state.menus.length > 0? this.state.menus.map((menuitem, index) => {
               return (
                 <NavItem eventKey={menuitem} key={index}>
                   <NavIcon>
@@ -112,7 +112,7 @@ export default class LeftMenuTemplate extends React.Component {
                     : null}
                 </NavItem>
               );
-            })}
+            }):<div>No menu found</div>}
           </SideNav.Nav>
         </SideNav>
         <Navigation

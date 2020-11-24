@@ -86,7 +86,7 @@ class TabSegment extends React.Component {
         this.props.tabs.map((item, i) => {
           tabNames.push(<TabLink to={item.uuid} style={styles.tabLink}> {item.name}</TabLink>);
           var tabContentKey = item.uuid+'_tab';
-          tabContent.push(<TabContent for="uuid">
+          tabContent.push(<TabContent for="uuid" key={uuid}>
           <PageContent
             key={tabContentKey}
             config={this.props.config}

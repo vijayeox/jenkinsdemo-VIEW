@@ -611,6 +611,24 @@ class PageContent extends React.Component {
             className={item.className}
           />
         );
+      }else if (item.type == "EntityViewer") {
+        content.push(
+          <EntityViewer
+            key={i}
+            core={this.core}
+            key={i}
+            appId={this.appId}
+            url={
+              item.url
+                ? ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow)
+                : undefined
+            }
+            fileId={this.state.fileId}
+            content={item.content ? item.content : ""}
+            fileData={this.state.currentRow}
+            className={item.className}
+          />
+        );
       } else {
         if (this.extGUICompoents && this.extGUICompoents[item.type]) {
           this.externalComponent = this.extGUICompoents[item.type];
