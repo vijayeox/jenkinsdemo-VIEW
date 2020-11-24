@@ -30,16 +30,16 @@ const FilterFields = function (props) {
         "numeric"
     ]
 
-    const removeValue = (e, value) => {
+    const removeValue = (e, value,name) => {
         //remove the filter value on click
         let filterCopy = filters
-        let values = filters[index]["value"]
+        let values = filters[index][name]
         let filteredValues = values.filter((item) => item.value !== value)
-        filterCopy[index]["value"] = filteredValues
+        filterCopy[index][name] = filteredValues
         props.setFilterValues(filterCopy)
     }
 
-    const CustomOption = (props) => {
+    const CustomOption = (props,name) => {
         const {
             children,
             className,
@@ -56,7 +56,6 @@ const FilterFields = function (props) {
             if (e.target.tagName !== "I") {
                 onClick(e)
             }
-            console.log("clicked")
         }
         return (
             <div
@@ -65,7 +64,7 @@ const FilterFields = function (props) {
                 {...innerProps}
             >
                 {/* DONOT CHANGE THE TAGS SPECIFIED BELOW */}
-                <span>{children}</span><i class="far fa-times-circle" onClick={(e) => removeValue(e, children)}></i>
+                <span>{children}</span><i class="far fa-times-circle" onClick={(e) => removeValue(e, children,name)}></i>
             </div>
         );
     };
@@ -79,14 +78,29 @@ const FilterFields = function (props) {
                     <Form.Control type="text" name="filterName" title={disabledFields ? "*The entered description will be displayed in dashboard viewer as filter name" : null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
                 </Form.Group>
             </div>
-            {visibility &&
+           
                 <div className="dashboard-filter-field">
                     <Form.Group  >
-                        <Form.Label>Field Name</Form.Label>
+                    <Form.Label>Field Name</Form.Label>
+                    {
+                        dataType !== "date" 
+                            ?
                         <Form.Control type="text" name="field" value={field} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
+                        :
+                    <Select
+                        selected={filters[index]["field"]["selected"] ? filters[index]["field"].filter(option => option.value == filters[index]["field"]["selected"]) : ""}
+                        components={filterMode == "CREATE" && { Option: (e)=>CustomOption(e,"field") }}
+                        styles={customStyles}
+                        name="field"
+                        id="field"
+                        onChange={(e) => onUpdate(e, index, "fieldName")}
+                        value={filters[index]["field"]["selected"] ? filters[index]["field"].filter(option => option.value == filters[index]["field"]["selected"]) : ""}
+                        options={filters[index]["field"]}
+                        />
+                    }
                     </Form.Group>
                 </div>
-            }
+            
             {visibility &&
                 <div className="dashboard-filter-field">
                     <Form.Group  >
@@ -196,7 +210,7 @@ const FilterFields = function (props) {
                         :
                         <Select
                             selected={filters[index]["value"]["selected"] ? filters[index]["value"].filter(option => option.value == filters[index]["value"]["selected"]) : ""}
-                            components={filterMode == "CREATE" && { Option: CustomOption }}
+                            components={filterMode == "CREATE" && { Option: (e)=>CustomOption(e,"value") }}
                             styles={customStyles}
                             name="value"
                             id="value"
@@ -358,9 +372,9 @@ class DashboardFilter extends React.Component {
             name = type
             value = e
         }
-        else if (type == "defaultValue") {
+        else if (type == "defaultValue" || type == "fieldName") {
             let selectedoption = { "value": e.value, "label": e.value }
-            name = "value"
+            name = type!=="fieldName"?"value":"field"
             let filterValue = filters[index] ? filters[index][name] : []
             try {
                 defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
@@ -382,7 +396,7 @@ class DashboardFilter extends React.Component {
                 }
             }
             value = defaultValues
-        }
+        } 
         else if (e.target.value === "today") {
             name = e.target.name
             value = e.target.value
