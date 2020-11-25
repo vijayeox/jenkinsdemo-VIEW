@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import Notification from './Notification'
 import DashboardViewer from './Dashboard'
 import DashboardFilter from './DashboardFilter'
+import {preparefilter} from './DashboardUtils'
+
 import { Button } from 'react-bootstrap'
 import '../../gui/src/public/css/sweetalert.css';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
@@ -99,14 +101,6 @@ class DashboardManager extends React.Component {
     this.setState({ dashboardBody: "", inputs, uuid: uuid, dashList: dashData, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue })
   }
 
-  preparefilter(filter1, filter2) {
-    var filter = []
-    filter.push(filter1)
-    filter.push("AND")
-    filter.push(filter2)
-    return filter
-  }
-
   extractFilterValues(dashboardFilter) {
     let filterParams = []
     dashboardFilter.map((filter, index) => {
@@ -114,6 +108,13 @@ class DashboardManager extends React.Component {
       if (filter["dataType"] == "date") {
         var startDate = filter["startDate"]
         var endDate = null
+        //extract the first option from date fields
+        if(Array.isArray(filter["field"])){
+          //set default value as first option value
+          if(!filter["field"].hasOwnProperty("selected"))
+            filter["field"]["selected"]=filter["field"][0]["value"]
+         }
+
         if (filter["startDate"] && filter["endDate"]) {
           //convert startDate object to string
           if (typeof startDate !== "string") {
@@ -156,8 +157,11 @@ class DashboardManager extends React.Component {
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               // filter["operator"] = "gte&&lte"
             }
+
+        
+
             //prepare startDate array
-            filterarray.push(filter["field"])
+            filterarray.push(filter["field"][0]["value"])
             filterarray.push(">=")
             filterarray.push(startDate)
             filterParams.push(filterarray)
@@ -165,14 +169,14 @@ class DashboardManager extends React.Component {
 
             //prepare endDate array
             filterarray = []
-            filterarray.push(filter["field"])
+            filterarray.push(filter["field"][0]["value"])
             filterarray.push("<=")
             filterarray.push(endDate)
             filterParams.push(filterarray)
           } else {
             //if date is not a range
             filterarray = []
-            filterarray.push(filter["field"])
+            filterarray.push(filter["field"][0]["value"])
             filterarray.push(filter["operator"])
             if (typeof startDate !== "string") {
               startDate = filter["startDate"]
@@ -186,7 +190,7 @@ class DashboardManager extends React.Component {
 
           }
         } else {
-          filterarray.push(filter["field"])
+          filterarray.push(filter["field"][0]["value"])
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
@@ -215,7 +219,7 @@ class DashboardManager extends React.Component {
     if (extractedFilterValues && extractedFilterValues.length > 0) {
       preapredExtractedFilterValue = extractedFilterValues[0]
       for (let i = 1; i < extractedFilterValues.length; i++) {
-        preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+        preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
 
       }
     }
@@ -321,7 +325,7 @@ class DashboardManager extends React.Component {
       if (extractedFilterValues && extractedFilterValues.length > 1) {
         preapredExtractedFilterValue = extractedFilterValues[0]
         for (let i = 1; i < extractedFilterValues.length; i++) {
-          preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+          preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
         }
       }
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = preapredExtractedFilterValue
@@ -423,7 +427,7 @@ class DashboardManager extends React.Component {
       if (extractedFilterValues && extractedFilterValues.length > 1) {
         preapredExtractedFilterValue = extractedFilterValues[0]
         for (let i = 1; i < extractedFilterValues.length; i++) {
-          preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+          preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
   
         }
       }

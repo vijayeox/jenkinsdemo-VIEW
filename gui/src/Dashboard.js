@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import WidgetRenderer from './WidgetRenderer';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
-import {scrollDashboardToTop} from './DashboardUtils'
+import {scrollDashboardToTop,preparefilter} from './DashboardUtils'
 import Swal from 'sweetalert2';
 import './WidgetStyles.css'
 
@@ -110,7 +110,7 @@ class Dashboard extends Component {
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
-              preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+              preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
 
             }
           }
@@ -154,13 +154,7 @@ class Dashboard extends Component {
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
 
-  preparefilter(filter1, filter2) {
-    var filter = []
-    filter.push(filter1)
-    filter.push("AND")
-    filter.push(filter2)
-    return filter
-  }
+ 
 
   extractFilterValues(filter) {
     let filterParams = []
@@ -172,6 +166,12 @@ class Dashboard extends Component {
         if (filter["dataType"] == "date") {
           var startDate = filter["startDate"]
           var endDate = null
+           //extract the first option from date fields
+          if(Array.isArray(filter["field"])){
+            //set default value as first option value
+            if(!filter["field"].hasOwnProperty("selected"))
+              filter["field"]["selected"]=filter["field"][0]["value"]
+          }
           if (filter["operator"] === "today") {
             filter["operator"] = "=="
           }
@@ -196,8 +196,9 @@ class Dashboard extends Component {
                 endDate = new Date(endDate)
                 endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               }
+            
               //prepare startDate array
-              filterarray.push(filter["field"])
+              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
               filterarray.push(">=")
               filterarray.push(startDate)
               filterParams.push(filterarray)
@@ -205,14 +206,14 @@ class Dashboard extends Component {
 
               //prepare endDate array
               filterarray = []
-              filterarray.push(filter["field"])
+              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
               filterarray.push("<=")
               filterarray.push(endDate)
               filterParams.push(filterarray)
             } else {
               //if date is not a range
               filterarray = []
-              filterarray.push(filter["field"])
+              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
               filterarray.push(filter["operator"])
               if (typeof startDate !== "string") {
                 startDate = filter["startDate"]
@@ -227,7 +228,7 @@ class Dashboard extends Component {
             }
           } else {
             //single date passed
-            filterarray.push(filter["field"])
+            filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
             filterarray.push(filter["operator"])
             if (typeof startDate !== "string") {
               startDate = filter["startDate"]
@@ -281,32 +282,7 @@ class Dashboard extends Component {
  if(remainingFilter.length!=0){
    filter=[...filter,...remainingFilter]
  }
-//  parentFilter.map((parentFilterValue,parentIndex)=>{
-//    let hasCommonFilter=0
-//    childFilter.map((childFilterValue,childIndex)=>{
-//     if(parentFilterValue.field==childFilterValue.field){
-//       hasCommonFilter+=1
-//       filter.push(childFilterValue)
-//       childFilter.splice(childIndex,1)
-//       parentFilter.splice(parentIndex,1)
-//     }
-//    })
-//    if(hasCommonFilter==0){
-//      filter.push(parentFilterValue)
-//    }
- 
-//  })
-//  let remainingFilter=[]
-//  if((parentFilter && parentFilter.length!=0) && (childFilter && childFilter.length!=0)){
-//    remainingFilter=[...parentFilter,...childFilter]
-//  } else if(parentFilter && parentFilter.length!=0){
-//   remainingFilter=[...parentFilter]
-//  }else if(childFilter && childFilter.length!=0){
-//   remainingFilter=[...childFilter]
-//  }
-//  if(remainingFilter.length!=0){
-//    filter=[...filter,...remainingFilter]
-//  }
+
  console.log(filter)
  return filter
  }
@@ -316,7 +292,7 @@ class Dashboard extends Component {
     if (filterParams && filterParams.length > 1) {
       preparedFilter = filterParams[0]
       for (let i = 1; i < filterParams.length; i++) {
-        preparedFilter = this.preparefilter(preparedFilter, filterParams[i])
+        preparedFilter = preparefilter(preparedFilter, filterParams[i])
 
       }
     }
@@ -352,11 +328,11 @@ class Dashboard extends Component {
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
-              preapredExtractedFilterValue = this.preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
+              preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
 
             }
           }
-          preparedFilter=this.preparefilter(preapredExtractedFilterValue,widgetFilter)
+          preparedFilter=preparefilter(preapredExtractedFilterValue,widgetFilter)
           // let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
         //   if (drilldownDashboardFilter.length > 1)
         //     preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
@@ -370,7 +346,7 @@ class Dashboard extends Component {
        
         let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
         if (this.props.dashboardStack.length != 1 && drilldownDashboardFilter.length > 1) {
-          preparedFilter = this.preparefilter(drilldownDashboardFilter, filterParams)
+          preparedFilter = preparefilter(drilldownDashboardFilter, filterParams)
         } else {
           preparedFilter = filterParams
         }
@@ -479,12 +455,12 @@ class Dashboard extends Component {
     event.value = JSON.stringify(dashboardData.data.dashboard)
     if (this.state.preparedDashboardFilter !== null) {
       //combining dashboardfilter with widgetfilter
-      drilldownDashboardFilter = this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(widgetFilter))
+      drilldownDashboardFilter = preparefilter(this.state.preparedDashboardFilter, JSON.parse(widgetFilter))
       event.dashboardFilter = this.state.preparedDashboardFilter
 
     } else if (dashboardFilter.length > 0) {
       //combining dashboardfilter with widgetfilter
-      drilldownDashboardFilter = this.preparefilter(dashboardFilter, JSON.parse(widgetFilter))
+      drilldownDashboardFilter = preparefilter(dashboardFilter, JSON.parse(widgetFilter))
       event.dashboardFilter = dashboardFilter
 
     }
@@ -542,7 +518,7 @@ class Dashboard extends Component {
       let preparedFilter
       if (this.state.preparedDashboardFilter.length > 0) {
         //combining dashboardfilter with widgetfilter
-        preparedFilter = filter ? this.preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
+        preparedFilter = filter ? preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
       } else {
         preparedFilter = filter ? JSON.parse(filter) : ''
       }
@@ -558,7 +534,7 @@ class Dashboard extends Component {
       let preparedFilter = null
       if (filter) {
         if (dashFilter && dashFilter.length > 0) {
-          preparedFilter = this.preparefilter(dashFilter, JSON.parse(filter))
+          preparedFilter = preparefilter(dashFilter, JSON.parse(filter))
         } else {
           preparedFilter = JSON.parse(filter)
         }
