@@ -66,6 +66,7 @@ class FormRender extends React.Component {
         this.formDivID = "formio_" + formID;
         this.loaderDivID = "formio_loader_" + formID;
         this.formErrorDivId = "formio_error_" + formID;
+        this.functions = {};
     }
     showFormLoader(state = true, init = 0) {
         if (document.getElementById(this.loaderDivID)) {
@@ -542,6 +543,7 @@ class FormRender extends React.Component {
         formData.timezones = undefined;
         formData.dateFormats = undefined;
         formData.orgId = this.userprofile.orgid;
+        formData.functions = undefined;
         var ordered_data = {};
         var componentList = flattenComponents(
             this.state.currentForm._form.components,
@@ -580,6 +582,7 @@ class FormRender extends React.Component {
             phoneList: phoneList,
             timezones: MomentTZ.tz.names(),
             dateFormats: DateFormats,
+            functions: this.functions,
         });
     }
 
@@ -1076,6 +1079,13 @@ class FormRender extends React.Component {
                         var component = changed.changed.component;
                         var instance = changed.changed.instance;
                         var properties = component.properties;
+                        if(changed.data.functions){
+                            this.functions = changed.data.functions;
+                            var componentKey = component.key + 'Changed';
+                            if(changed.data.functions.hasOwnProperty(componentKey)){
+                                this.functions[componentKey]();
+                            }
+                        }
                         if (properties && Object.keys(properties).length > 0) {
                             if (component != undefined) {
                                 that.runProps(
