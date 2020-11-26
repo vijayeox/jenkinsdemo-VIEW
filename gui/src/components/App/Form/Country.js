@@ -479,6 +479,9 @@ var countryList = [ {
     "country": "Rwanda",
     "states": ["Butare", "Byumba", "Cyangugu", "Gikongoro", "Gisenyi", "Gitarama", "Kibungo", "Kibuye", "Kigali Rurale", "Kigali-ville", "Umutara", "Ruhengeri"]
 }, {
+    "country": "Saint Vincent and the Grenadines",
+    "states": ["Not Applicable"]
+}, {
     "country": "Samoa",
     "states": ["Aana", "Aiga-i-le-Tai", "Atua", "Faasaleleaga", "Gagaemauga", "Gagaifomauga", "Palauli", "Satupaitea", "Tuamasaga", "Vaa-o-Fonoti", "Vaisigano"]
 }, {
@@ -534,9 +537,6 @@ var countryList = [ {
     "states": ["Saint Peter Basseterre","Saint Mary Cayon","Christ Church Nichola Town","Saint John Capesterre","Saint Paul Capesterre","Saint Anne Sandy Point","Saint Thomas Middle Island","Trinity Palmetto Point","Saint George Basseterre","Saint James Windward","Saint Paul Charlestown","Saint George Gingerland","Saint John Figtree","Saint Thomas Lowland"]
 }, {
     "country": "St Lucia",
-    "states": ["Not Applicable"]
-}, {
-    "country": "St Vincent and the Grenadines",
     "states": ["Not Applicable"]
 }, {
     "country": "Sudan",
