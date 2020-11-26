@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import WidgetRenderer from './WidgetRenderer';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
-import {scrollDashboardToTop,preparefilter} from './DashboardUtils'
+import {scrollDashboardToTop,preparefilter,overrideCommonFilters,extractFilterValues} from './DashboardUtils'
 import Swal from 'sweetalert2';
 import './WidgetStyles.css'
 
@@ -105,7 +105,7 @@ class Dashboard extends Component {
             this.setupDrillDownListeners()
           }
           );
-          let extractedFilterValues = this.extractFilterValues();
+          let extractedFilterValues = extractFilterValues(this.props.dashboardFilter,this.props.dashboardStack);
           let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
@@ -156,138 +156,10 @@ class Dashboard extends Component {
 
  
 
-  extractFilterValues(filter) {
-    let filterParams = []
-    let dashboardFilter=filter?filter:this.props.dashboardFilter
-    dashboardFilter.map((filter, index) => {
-      let filterarray = []
-      //extract only default filter values if it is the first dashboard. else extract all filters
-      if ((this.props.dashboardStack.length == 1 && filter.isDefault == true) || (this.props.dashboardStack.length > 1)) {
-        if (filter["dataType"] == "date") {
-          var startDate = filter["startDate"]
-          var endDate = null
-           //extract the first option from date fields
-          if(Array.isArray(filter["field"])){
-            //set default value as first option value
-            if(!filter["field"].hasOwnProperty("selected"))
-              filter["field"]["selected"]=filter["field"][0]["value"]
-          }
-          if (filter["operator"] === "today") {
-            filter["operator"] = "=="
-          }
-          if (filter["operator"] === "monthly" || filter["operator"] === "yearly" || filter["operator"] === "mtd" || filter["operator"] === "ytd") {
-            filter["operator"] = "gte&&lte"
-          }
-          if (filter["startDate"] && filter["endDate"]) {
-            //convert startDate object to string
-            if (typeof startDate !== "string") {
-              startDate = filter["startDate"]
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-            } else if (new Date(startDate)) {
-              startDate = new Date(filter["startDate"])
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-            }
-            //date range received
-            if (filter["operator"] == "gte&&lte") {
-              endDate = filter["endDate"]
-              if (typeof endDate !== "string") {
-                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-              } else if (new Date(endDate)) {
-                endDate = new Date(endDate)
-                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-              }
-            
-              //prepare startDate array
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
-              filterarray.push(">=")
-              filterarray.push(startDate)
-              filterParams.push(filterarray)
+ 
 
-
-              //prepare endDate array
-              filterarray = []
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
-              filterarray.push("<=")
-              filterarray.push(endDate)
-              filterParams.push(filterarray)
-            } else {
-              //if date is not a range
-              filterarray = []
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
-              filterarray.push(filter["operator"])
-              if (typeof startDate !== "string") {
-                startDate = filter["startDate"]
-                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-              } else if (new Date(startDate)) {
-                startDate = new Date(filter["startDate"])
-                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-              }
-              filterarray.push(startDate)
-              filterParams.push(filterarray)
-
-            }
-          } else {
-            //single date passed
-            filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
-            filterarray.push(filter["operator"])
-            if (typeof startDate !== "string") {
-              startDate = filter["startDate"]
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-            } else if (new Date(startDate)) {
-              startDate = new Date(filter["startDate"])
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
-            }
-            filterarray.push(startDate)
-            filterParams.push(filterarray)
-          }
-        } else {
-          filterarray.push(filter["field"])
-          filterarray.push(filter["operator"])
-          filterarray.push(filter["value"]["selected"])
-          if (filter["value"].hasOwnProperty("selected")) {
-            filterParams.push(filterarray)
-          }
-        }
-      }
-    })
-    return filterParams
-  }
- overrideCommonFilters(parentFilter,childFilter,widgetFilter){
- let filter=[]
- let parentFilterCopy=[...parentFilter]
- let childFilterCopy=[...childFilter]
- for(let parentindex=0;parentindex<parentFilterCopy.length;parentindex++){
-  let hasCommonFilter=0
-  for(let childIndex=0;childIndex<childFilterCopy.length;childIndex++){
-    if(parentFilterCopy[parentindex].field==childFilterCopy[childIndex].field){
-      hasCommonFilter+=1
-      filter.push(childFilterCopy[childIndex])
-      childFilterCopy.splice(childIndex,1)
-      parentFilterCopy.splice(parentindex,1)
-    }
-  }
-  if(hasCommonFilter==0){
-    filter.push(parentFilterCopy[parentindex])
-    parentFilterCopy.splice(parentindex,1)
-  }
- }
- let remainingFilter=[]
- if((parentFilterCopy && parentFilterCopy.length!=0) && (childFilterCopy && childFilterCopy.length!=0)){
-   remainingFilter=[...parentFilter,...childFilterCopy]
- } else if(parentFilterCopy && parentFilterCopy.length!=0){
-  remainingFilter=[...parentFilterCopy]
- }else if(childFilterCopy && childFilterCopy.length!=0){
-  remainingFilter=[...childFilterCopy]
- }
- if(remainingFilter.length!=0){
-   filter=[...filter,...remainingFilter]
- }
-
- console.log(filter)
- return filter
- }
   updateGraphWithFilterChanges() {
-    let filterParams = this.extractFilterValues()
+    let filterParams = extractFilterValues(this.props.dashboardFilter,this.props.dashboardStack)
     let preparedFilter
     if (filterParams && filterParams.length > 1) {
       preparedFilter = filterParams[0]
@@ -316,14 +188,14 @@ class Dashboard extends Component {
           })
         }
       }
-      else if (filterParams.length > 1) {
+      else if (filterParams.length >= 1) {
         if (this.props.dashboardStack.length > 1) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let parentFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["filterConfiguration"]
           let currentFilter = this.props.dashboardFilter
           let widgetFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["widgetFilter"]
-          let combinedFilter = this .overrideCommonFilters(parentFilter,currentFilter,widgetFilter)
-          let extractedFilterValues = this.extractFilterValues(combinedFilter);
+          let combinedFilter = overrideCommonFilters(parentFilter,currentFilter)
+          let extractedFilterValues = extractFilterValues(combinedFilter,this.props.dashboardStack);
           let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
