@@ -479,6 +479,9 @@ var countryList = [ {
     "country": "Rwanda",
     "states": ["Butare", "Byumba", "Cyangugu", "Gikongoro", "Gisenyi", "Gitarama", "Kibungo", "Kibuye", "Kigali Rurale", "Kigali-ville", "Umutara", "Ruhengeri"]
 }, {
+    "country": "Saint Vincent and the Grenadines",
+    "states": ["Not Applicable"]
+}, {
     "country": "Samoa",
     "states": ["Aana", "Aiga-i-le-Tai", "Atua", "Faasaleleaga", "Gagaemauga", "Gagaifomauga", "Palauli", "Satupaitea", "Tuamasaga", "Vaa-o-Fonoti", "Vaisigano"]
 }, {
