@@ -28,6 +28,11 @@ export default class GlobalLinkHandler {
               }
             }
           }
+          
+          if (event.target.getAttribute("fileId") !== null) {
+            var fileId = event.target.getAttribute("fileId");
+            
+          }
         }
       }
     });
@@ -36,6 +41,11 @@ export default class GlobalLinkHandler {
   getCore() {
     return this.core;
   }
+  async getFileDetails(fileId) {
+    let helper = this.core.make("oxzion/restClient");
+    let fileContent = await helper.request("v1","/file/" + fileId + "/data" ,{},"get");
+    return fileContent;
+  }
 
   triggerPageLoad(event, appNavElement) {
     let ev = new CustomEvent("addPage", {
@@ -43,6 +53,7 @@ export default class GlobalLinkHandler {
         pageId: event.target.getAttribute("page-id"),
         title: event.target.getAttribute("title"),
         icon: event.target.getAttribute("icon"),
+        fileId: event.target.getAttribute("fileId"),
       },bubbles: true,});
     document.getElementById(appNavElement).dispatchEvent(ev);
   }
@@ -52,6 +63,7 @@ export default class GlobalLinkHandler {
       page: event.target.getAttribute("page-id"),
       pageTitle: event.target.getAttribute("title"),
       pageIcon: event.target.getAttribute("icon"),
+      fileId: event.target.getAttribute("fileId"),
     });
   }
 }
