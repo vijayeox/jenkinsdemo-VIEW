@@ -45,7 +45,7 @@ class TabSegment extends React.Component {
       content: this.props.content,
       pageContent: [],
       dataReady: false,
-      currentRow: this.props.currentRow,
+      currentRow: this.props.currentRow?this.props.currentRow:{},
       tabNames: [],
       tabContent: [],
       tabs: this.props.tabs?this.props.tabs:[]
@@ -86,7 +86,7 @@ class TabSegment extends React.Component {
         this.props.tabs.map((item, i) => {
           tabNames.push(<TabLink to={item.uuid} style={styles.tabLink}> {item.name}</TabLink>);
           var tabContentKey = item.uuid+'_tab';
-          tabContent.push(<TabContent for="uuid">
+          tabContent.push(<TabContent for="uuid" key={uuid}>
           <PageContent
             key={tabContentKey}
             config={this.props.config}
@@ -119,6 +119,7 @@ class TabSegment extends React.Component {
           proc={this.props.proc}
           appId={this.props.appId}
           fileId={this.uuid}
+          pageContent={this.state.tabs[0].content?this.state.tabs[0].content:null}
           currentRow={this.state.currentRow}
           core={this.core}
         />);

@@ -15,7 +15,7 @@ class Role extends React.Component {
         canEdit: this.props.userProfile.privileges.MANAGE_ROLE_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_ROLE_WRITE
       },
-      selectedOrg: this.props.userProfile.orgid
+      selectedOrg: this.props.userProfile.accountId
     };
     this.child = React.createRef();
   }

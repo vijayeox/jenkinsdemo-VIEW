@@ -293,10 +293,10 @@ class CommentsView extends React.Component {
 
           <div>
             <div id="chat-container">
-              <div id="chat-message-list">
+              <div id="chat-message-list" key={this.state.fileId}>
                 {this.state.commentsList.map((commentItem) => {
                   return (
-                    <article className="row">
+                    <article className="row" key={commentItem.commentId}>
                       <div className="col-md-1 col-sm-1 hidden-xs">
                         <figure className="thumbnail">
                           <img
@@ -319,7 +319,7 @@ class CommentsView extends React.Component {
                             <header className="text-right">
                               <time
                                 className="comment-date"
-                                datetime={moment
+                                dateTime={moment
                                   .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
                                   .clone()
                                   .tz(this.userTimezone)
@@ -341,6 +341,49 @@ class CommentsView extends React.Component {
                 })}
               </div>
             </div>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div className="flexCol col-11 commentBox">
+              <MentionsInput
+                value={this.state.value}
+                onChange={this.handleChange}
+                markup="@{{__type__||__id__||__display__}}"
+                placeholder="Type a comment here..."
+                className="mentions"
+                style={defaultStyle}
+              >
+                <Mention
+                  trigger="@"
+                  displayTransform={(id, name) => `@${name}`}
+                  data={this.getUserData}
+                  className="mentions__mention"
+                  style={{ backgroundColor: "#cee4e5" }}
+                />
+              </MentionsInput>
+              <div style={{ padding: "5px" }}>
+                {this.state.value.length + "/1000"}
+              </div>
+            </div>
+            <div className="col-1 flexCol" style={{ justifyContent: "center" }}>
+              <abbr
+                title={
+                  this.state.value.length == 0
+                    ? "Please enter a comment to save."
+                    : null
+                }
+              >
+                <Button
+                  primary={true}
+                  className="commentsSaveButton"
+                  disabled={this.state.value.length == 0 ? true : false}
+                  onClick={() => {
+                    this.saveComment();
+                  }}
+                >
+                  <i className="fa fa-paper-plane"></i>
+                </Button>
+              </abbr>
+            </div>
+          </div>
           </div>
         </div>
       );

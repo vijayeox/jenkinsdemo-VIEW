@@ -46,6 +46,16 @@ class Navigation extends React.Component {
           });
           this.pageActive(this.params.page);
           history.push("/");
+        } else if (this.params && this.params.fileId) {
+          this.setState({
+            pages: [
+              {
+                pageContent: {type:"EntityViewer",}
+              },
+            ],
+          });
+          this.pageActive(this.params.page);
+          history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
         } else if (this.proc && this.proc.args) {
@@ -115,7 +125,13 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
-    pages.push(e.detail);
+    if(e.detail.fileId){
+      var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
+      var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:e.detail.fileId};
+      pages.push(pageContent)
+    } else {
+      pages.push(e.detail);
+    }
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
@@ -254,6 +270,7 @@ getElementInsideElement(baseElement, wantedElementID) {
               proc={this.props.proc}
               app={this.props.appId}
               core={this.core}
+              fileId={item.fileId}
               pageId={item.pageId}
               params={item.params}
               pageContent={item.pageContent}
