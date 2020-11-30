@@ -19,6 +19,7 @@ import "./Styles/PageComponentStyles.scss";
 import * as OxzionGUIComponents from "../../../index.js";
 import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
+import EntityViewer from "./EntityViewer";
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -605,26 +606,22 @@ class PageContent extends React.Component {
                 ? ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow)
                 : undefined
             }
-            fileId={this.state.fileId}
+            fileId={item.uuid}
             content={item.content ? item.content : ""}
             fileData={this.state.currentRow}
             className={item.className}
           />
         );
       }else if (item.type == "EntityViewer") {
+        var fileId = this.props.fileId?this.props.fileId:this.state.currentRow.uuid;
         content.push(
           <EntityViewer
             key={i}
             core={this.core}
             key={i}
             appId={this.appId}
-            url={
-              item.url
-                ? ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow)
-                : undefined
-            }
-            fileId={this.state.fileId}
-            content={item.content ? item.content : ""}
+            proc={this.props.proc}
+            fileId={fileId}
             fileData={this.state.currentRow}
             className={item.className}
           />

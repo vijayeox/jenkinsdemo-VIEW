@@ -119,6 +119,7 @@ class TabSegment extends React.Component {
           proc={this.props.proc}
           appId={this.props.appId}
           fileId={this.uuid}
+          pageContent={this.state.tabs[0].content?this.state.tabs[0].content:null}
           currentRow={this.state.currentRow}
           core={this.core}
         />);

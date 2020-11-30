@@ -46,6 +46,16 @@ class Navigation extends React.Component {
           });
           this.pageActive(this.params.page);
           history.push("/");
+        } else if (this.params && this.params.fileId) {
+          this.setState({
+            pages: [
+              {
+                pageContent: {type:"EntityViewer",}
+              },
+            ],
+          });
+          this.pageActive(this.params.page);
+          history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
         } else if (this.proc && this.proc.args) {
@@ -115,7 +125,12 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
-    pages.push(e.detail);
+    if(e.detail.fileId){
+      var filePage = {type:"EntityViewer",fileId:e.detail.fileId}
+      pages.push(filePage)
+    } else {
+      pages.push(e.detail);
+    }
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
