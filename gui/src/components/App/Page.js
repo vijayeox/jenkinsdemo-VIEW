@@ -21,6 +21,7 @@ class Page extends React.Component {
     this.params =this.props.params;
     this.state = {
       pageId: this.props.pageId,
+      fileId: this.props.fileId,
       showLoader: false,
       pageContent:this.props.pageContent?this.props.pageContent:null,
       icon: this.props.icon?this.props.icon:null,
@@ -89,6 +90,7 @@ class Page extends React.Component {
           appId={this.appId}
           isTab={this.props.isTab}
           params={this.props.params}
+          fileId={this.props.fileId}
           parentPage={this.props.parentPage}
           proc={this.props.proc}
           pageContent={this.state.pageContent}
