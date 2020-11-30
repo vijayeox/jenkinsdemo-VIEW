@@ -259,6 +259,11 @@ class FormRender extends React.Component {
   }
 
   async saveForm(form, data) {
+    if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
+      this.props.customSaveForm(that.cleanData(submission.data));
+      next(null);
+      return that.cleanData(submission.data);
+    }
     this.showFormLoader(true, 0);
     var that = this;
     if (!form) {
@@ -767,10 +772,6 @@ class FormRender extends React.Component {
               if(submitErrors.length > 0){
                 next([]);
               } else {
-                if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
-                  this.props.customSaveForm(that.cleanData(submission.data));
-                  next(null);
-                }
                 var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
                   if(response.status=='success'){
                     next(null);
@@ -780,10 +781,6 @@ class FormRender extends React.Component {
                 });
               }
             } else {
-              if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
-                this.props.customSaveForm(that.cleanData(submission.data));
-                next(null);
-              }
               var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
                 if(response.status=='success'){
                   next(null);
