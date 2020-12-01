@@ -1019,6 +1019,12 @@ class FormRender extends React.Component {
                 }, event.timer);
               }
             }
+            if (event.type == "resetState") {
+              that.setState({
+                ...this.state,
+                ...event.state
+              })
+            }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
             }
@@ -1543,8 +1549,8 @@ class FormRender extends React.Component {
         }
       }
     }
-    if(this.props.fileId || this.state.fileId){
-      formData.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
+    if(this.state.fileId){
+      formData.fileId = this.state.fileId;
       formData["workflow_instance_id"] = undefined;
     }
     if(this.props.parentFileId){
