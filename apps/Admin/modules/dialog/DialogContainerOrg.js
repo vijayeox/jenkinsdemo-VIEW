@@ -113,6 +113,10 @@ export default class DialogContainer extends React.Component {
         : {};
       orgInEdit["preferences"][field] = event;
       this.setState({ orgInEdit: orgInEdit });
+    } else if (field == "type") {
+      let orgInEdit = { ...this.state.orgInEdit };
+      orgInEdit[field] = event;
+      this.setState({ orgInEdit: orgInEdit });
     } else {
       let orgInEdit = { ...this.state.orgInEdit };
       orgInEdit["preferences"] = orgInEdit["preferences"]
@@ -232,6 +236,7 @@ export default class DialogContainer extends React.Component {
       logo: logoFile,
       contact: contactData,
       contactid: contact_id || null,
+      type: this.state.orgInEdit.type,
       preferences: JSON.stringify({
         dateformat: this.state.orgInEdit.preferences.dateformat,
         currency: this.state.orgInEdit.preferences.currency,
@@ -459,6 +464,37 @@ export default class DialogContainer extends React.Component {
                 readOnly={this.props.diableField ? true : false}
               />
             </div>
+
+            {this.props.formAction == "post" ? (
+            <div className="form-group text-area-custom">
+                  <label className="required-label" >
+                    Organization Type
+                  </label>
+                    <DropDown
+                      args={this.core}
+                      disableItem={this.props.diableField}
+                      maxLength="250"
+                      style={{ marginTop: "5px" }}
+                      filterable={false}
+                      rawData={[
+                        "BUSINESS",
+                        "INDIVIDUAL"
+                      ]}
+                      selectedItem={
+                        this.state.orgInEdit.type
+                          ? this.state.orgInEdit.type
+                          : ""
+                      }
+                      onDataChange={(e) => {
+                        this.valueChange(
+                          "type",
+                          e.target.value
+                        );
+                      }}
+                      required={true}
+                    />
+              </div>
+              ) : null}
 
             {this.props.formAction == "post" ? (
               <div className="form-group border-box">

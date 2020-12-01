@@ -27,7 +27,7 @@ export default class DialogContainer extends React.Component {
         "account/" +
           this.props.selectedOrg +
           "/user/" +
-          this.props.dataItem.manager_id +
+          this.props.dataItem.managerId +
           "/profile"
       ).then((response) => {
         this.setState({
@@ -59,7 +59,7 @@ export default class DialogContainer extends React.Component {
     this.setState({
       prjInEdit: edited,
     });
-    item == "manager_id"
+    item == "managerId"
       ? this.setState({
           managerName: event.target.value,
         })
@@ -85,7 +85,7 @@ export default class DialogContainer extends React.Component {
       {
         name: this.state.prjInEdit.name,
         description: this.state.prjInEdit.description,
-        manager_id: this.state.prjInEdit.manager_id,
+        managerId: this.state.prjInEdit.managerId,
         parent_id: this.state.prjInEdit.parent_id,
       },
       this.props.selectedOrg
@@ -157,7 +157,7 @@ export default class DialogContainer extends React.Component {
                       selectedItem={this.state.managerName}
                       preFetch={true}
                       onDataChange={(event) =>
-                        this.listOnChange(event, "manager_id")
+                        this.listOnChange(event, "managerId")
                       }
                       required={true}
                       disableItem={this.props.diableField}

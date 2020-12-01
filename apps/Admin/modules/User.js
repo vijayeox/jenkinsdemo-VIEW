@@ -10,7 +10,7 @@ class User extends React.Component {
     this.state = {
       userInEdit: undefined,
       permission: {
-        canAdd: this.props.userProfile.privileges.MANAGE_USER_CREATE,
+        canAdd: this.props.userProfile.privileges.MANAGE_USER_CREATE && this.props.userProfile.type == "BUSINESS",
         canEdit: this.props.userProfile.privileges.MANAGE_USER_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_USER_DELETE
       },

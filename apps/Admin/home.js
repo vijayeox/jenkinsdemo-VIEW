@@ -139,7 +139,7 @@ class Home extends React.Component {
     });
     table.push(
       <React.Fragment key={15}>
-        {this.userProfile.privileges.MANAGE_ERROR_WRITE ? (
+        {thpropsis.userProfile.privileges.MANAGE_ERROR_WRITE ? (
           <div onClick={this.errorLogAdminClick} className="moduleBtn">
             <div className="block d1">
               <img src="apps/Admin/org.svg" />

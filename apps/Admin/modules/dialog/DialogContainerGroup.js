@@ -21,7 +21,7 @@ export default class DialogContainer extends React.Component {
         "account/" +
           this.props.selectedOrg +
           "/user/" +
-          this.props.dataItem.manager_id +
+          this.props.dataItem.managerId +
           "/profile"
       ).then(response => {
         this.setState({
@@ -57,7 +57,7 @@ export default class DialogContainer extends React.Component {
     this.setState({
       groupInEdit: edited
     });
-    item == "manager_id"
+    item == "managerId"
       ? this.setState({
           managerName: event.target.value
         })
@@ -89,7 +89,7 @@ export default class DialogContainer extends React.Component {
     let tempData = {
       name: this.state.groupInEdit.name,
       parent_id: this.state.groupInEdit.parent_id,
-      manager_id: this.state.groupInEdit.manager_id,
+      managerId: this.state.groupInEdit.managerId,
       description: this.state.groupInEdit.description
     };
 
@@ -173,7 +173,7 @@ export default class DialogContainer extends React.Component {
                       selectedEntityType={"text"}
                       preFetch={true}
                       onDataChange={event =>
-                        this.listOnChange(event, "manager_id")
+                        this.listOnChange(event, "managerId")
                       }
                       disableItem={this.props.diableField}
                       required={true}

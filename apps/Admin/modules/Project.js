@@ -51,7 +51,7 @@ class Project extends React.Component {
         dataItem +
         "/save",
       {
-        userid: dataObject,
+        userIdList: dataObject,
       },
       "post"
     );

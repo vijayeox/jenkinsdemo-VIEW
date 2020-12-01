@@ -26,7 +26,7 @@ class Announcement extends React.Component {
           this.moduleConfig.permission.canDelete
         ]
       },
-      selectedOrg: this.props.userProfile.selectedOrg
+      selectedOrg: this.props.userProfile.accountId
     };
 
     this.notif = React.createRef();
