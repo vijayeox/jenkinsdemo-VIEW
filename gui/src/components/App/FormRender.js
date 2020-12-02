@@ -67,7 +67,7 @@ class FormRender extends React.Component {
     var loaderDiv = document.getElementById(this.loaderDivID);
     if(loaderDiv){
       if(document.getElementById(this.formDivID).clientHeight>0){
-        loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight+" px";
+        loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight+"px";
       } else {
         loaderDiv.style.height = "100%";
       }
@@ -1011,6 +1011,20 @@ class FormRender extends React.Component {
                 }
               }
             }
+            if (event.type == "formLoader") {
+              that.showFormLoader(event.state);
+              if(event.timer){
+                setTimeout((e) => {
+                  that.showFormLoader(false);
+                }, event.timer);
+              }
+            }
+            if (event.type == "resetState") {
+              that.setState({
+                ...this.state,
+                ...event.state
+              })
+            }
             if (event.type == "triggerFormChange") {
               form.triggerChange();
             }
@@ -1535,8 +1549,8 @@ class FormRender extends React.Component {
         }
       }
     }
-    if(this.props.fileId || this.state.fileId){
-      formData.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
+    if(this.state.fileId){
+      formData.fileId = this.state.fileId;
       formData["workflow_instance_id"] = undefined;
     }
     if(this.props.parentFileId){
@@ -1560,10 +1574,10 @@ class FormRender extends React.Component {
           if(this.state.currentForm){
             this.state.currentForm.setSubmission(formData).then(response2 =>{
               this.state.currentForm.setPristine(true);
-              this.showFormLoader(false, 0);
+              actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
             });
           } else {
-            this.showFormLoader(false, 0);
+            actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
           }
           this.notif.current.notify(
             "Success",
