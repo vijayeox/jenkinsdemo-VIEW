@@ -88,6 +88,15 @@ export default class DocumentViewer extends Component {
           if (response.status == "success") {
             this.uploadAttachments(fileIndex - 1);
           }
+          this.loader.destroy();
+          if(response.status == "error"){
+            this.notif.current.notify(
+              response.message,
+              "Please choose a different file.",
+              "danger"
+            )
+            
+          }
         }
       );
     }
