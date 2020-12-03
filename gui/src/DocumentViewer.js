@@ -254,8 +254,8 @@ export default class DocumentViewer extends Component {
                         >
                           <div
                             className={
-                              doc.file == this.state.selectedDocument
-                                ? this.state.selectedDocument.file
+                              this.state.selectedDocument && this.state.selectedDocument.file
+                                ? doc.file == this.state.selectedDocument.file
                                   ? "docListBody borderActive"
                                   : "docListBody border"
                                 : "docListBody border"
