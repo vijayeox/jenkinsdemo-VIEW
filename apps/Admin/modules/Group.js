@@ -17,7 +17,7 @@ class Group extends React.Component {
         canEdit: this.props.userProfile.privileges.MANAGE_GROUP_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_GROUP_WRITE
       },
-      selectedOrg: this.props.userProfile.orgid
+      selectedOrg: this.props.userProfile.selectedOrg
     };
     this.toggleDialog = this.toggleDialog.bind(this);
     this.child = React.createRef();

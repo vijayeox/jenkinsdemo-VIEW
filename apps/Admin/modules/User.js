@@ -14,7 +14,7 @@ class User extends React.Component {
         canEdit: this.props.userProfile.privileges.MANAGE_USER_WRITE,
         canDelete: this.props.userProfile.privileges.MANAGE_USER_DELETE
       },
-      selectedOrg: this.props.userProfile.orgid
+      selectedOrg: this.props.userProfile.accountId
     };
     this.child = React.createRef();
   }
