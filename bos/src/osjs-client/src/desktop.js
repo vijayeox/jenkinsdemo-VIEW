@@ -312,7 +312,7 @@ export default class Desktop extends EventEmitter {
             }
           } else {
             const isDiv = ['DIV'].indexOf(tagName) !== -1;
-            if(isDiv && e.target.classList.contains('form-control') && e.target.classList.contains('dropdown')){
+            if(isDiv && e.target.classList.contains('form-control') && e.target.classList.contains('dropdown')) {
               return;
             } else {
               e.preventDefault();
@@ -324,6 +324,41 @@ export default class Desktop extends EventEmitter {
       }
     });
   }
+
+  /**
+   * Initializes global keyboard events
+   */
+  initGlobalKeyboardEvents() {
+    let keybindings = [];
+    const defaults = this.core.config('desktop.settings.keybindings', {});
+    const reload = () => {
+      keybindings = this.core.make('osjs/settings')
+        .get('osjs/desktop', 'keybindings', defaults);
+    };
+    window.addEventListener('keydown', ev => {
+      Object.keys(keybindings).some(eventName => {
+        const combo = keybindings[eventName];
+        const result = matchKeyCombo(combo, ev);
+        if (result) {
+          this.core.emit('osjs/desktop:keybinding:' + eventName, ev);
+        }
+      });
+    });
+    this.core.on('osjs/settings:load', reload);
+    this.core.on('osjs/settings:save', reload);
+    this.core.on('osjs/core:started', reload);
+    const closeBindingName = 'osjs/desktop:keybinding:close-window';
+    const closeBindingCallback = () => {
+      const w = Window.lastWindow();
+      if (isVisible(w)) {
+        w.close();
+      }
+    };
+    this.core.on(closeBindingName, closeBindingCallback);
+  }
+  /**	
+   * Initializes mouse events	
+   */
 
   initMouseEvents() {
     // Custom context menu
@@ -416,6 +451,16 @@ export default class Desktop extends EventEmitter {
 
     this.$styles.innerHTML = TEMPLATE(this.subtract);
   }
+  _clampWindows(resize) {	
+    if (resize && !this.core.config('windows.clampToViewport')) {	
+      return;	
+    }	
+    Window.getWindows().forEach(w => w.clampToViewport());	
+  }	
+  /**	
+   * Adds something to the default contextmenu entries	
+   * @param {DesktopContextMenuEntry[]} entries	
+   */
 
   addContextMenu(entries) {
     this.contextmenuEntries = this.contextmenuEntries.concat(entries);
@@ -559,7 +604,34 @@ export default class Desktop extends EventEmitter {
       .save()
       .then(() => this.applySettings());
   }
-
+	
+  /**	
+   * Create drop context menu entries	
+   * @param {Object} data Drop data	
+   * @return {Object[]}	
+   */	
+  createDropContextMenu(data) {	
+    const _ = this.core.make('osjs/locale').translate;	
+    const settings = this.core.make('osjs/settings');	
+    const desktop = this.core.make('osjs/desktop');	
+    const droppedImage = isDroppingImage(data);	
+    const menu = [];	
+    const setWallpaper = () => settings	
+      .set('osjs/desktop', 'background.src', data)	
+      .save()	
+      .then(() => desktop.applySettings());	
+    if (droppedImage) {	
+      menu.push({	
+        label: _('LBL_DESKTOP_SET_AS_WALLPAPER'),	
+        onclick: setWallpaper	
+      });	
+    }	
+    return menu;	
+  }	
+  /**	
+   * When developer menu is shown	
+   * @param {Event} ev	
+   */
   onDeveloperMenu(ev) {
     const _ = this.core.make('osjs/locale').translate;
     const s = this.core.make('osjs/settings').get();
@@ -604,7 +676,22 @@ export default class Desktop extends EventEmitter {
       ]
     });
   }
-
+	/**	
+   * When drop menu is shown	
+   * @param {Event} ev	
+   * @param {Object} data	
+   */	
+  onDropContextMenu(ev, data) {	
+    const menu = this.createDropContextMenu(data);	
+    this.core.make('osjs/contextmenu', {	
+      position: ev,	
+      menu	
+    });	
+  }	
+  /**	
+   * When context menu is shown	
+   * @param {Event} ev	
+   */
   onContextMenu(ev) {
     const lockSettings = this.core.config('desktop.lock');
     const extras = [].concat(...this.contextmenuEntries.map(e => typeof e === 'function' ? e() : e));
@@ -664,7 +751,16 @@ export default class Desktop extends EventEmitter {
       });
     }
   }
-
+	/**	
+   * Sets the keyboard context.	
+   *	
+   * Used for tabbing and other special events	
+   *	
+   * @param {Element} [ctx]	
+   */	
+  setKeyboardContext(ctx) {	
+    this.keyboardContext = ctx;	
+  }
   /**
    * Gets the rectangle of available space
    *
