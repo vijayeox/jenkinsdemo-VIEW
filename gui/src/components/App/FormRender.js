@@ -21,6 +21,7 @@ import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
+import Nested from "./Form/Nested.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
 import JavascriptLoader from '../javascriptLoader';
 import ParameterHandler from "./ParameterHandler";
@@ -707,6 +708,7 @@ class FormRender extends React.Component {
     Formio.registerComponent("file", FileComponent);
     Formio.registerComponent("select", SelectComponent);
     Formio.registerComponent("textarea", TextAreaComponent);
+    Formio.registerComponent("form", Nested);
     if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
       this.props.proc.metadata.formio_endpoint ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint) : null;
     }
