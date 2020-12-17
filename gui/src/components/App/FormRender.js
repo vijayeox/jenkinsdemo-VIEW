@@ -37,6 +37,7 @@ class FormRender extends React.Component {
     this.state = {
       form: null,
       showLoader: false,
+      stylePath: null,
       appId: this.props.appId,
       workflowId: this.props.workflowId ? this.props.workflowId : null,
       cacheId: this.props.cacheId ? this.props.cacheId : null,
@@ -689,7 +690,7 @@ class FormRender extends React.Component {
   }
   async importCSS(theme){
     try{
-      await import(theme);
+      this.setState({stylePath: theme});
     } catch(Exception){
       console.log("Unable to import "+theme);
     }
@@ -733,7 +734,7 @@ class FormRender extends React.Component {
           options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
         }
         if(this.state.content["properties"]["theme"]){
-          importCSS(this.state.content["properties"]["theme"]);
+          this.importCSS(this.state.content["properties"]["theme"]);
         }
       }
       var hooks = {
@@ -1661,6 +1662,7 @@ class FormRender extends React.Component {
   render() {
     return (
       <div>
+        {this.state.stylePath?<link rel="stylesheet" type="text/css" href={this.state.stylePath} />:null}
         <Notification ref={this.notif} />
         <div id={this.loaderDivID}></div>
         <div id={this.formErrorDivId} style={{ display: "none" }}>
