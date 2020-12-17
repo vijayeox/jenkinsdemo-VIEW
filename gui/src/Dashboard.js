@@ -161,11 +161,12 @@ class Dashboard extends Component {
   updateGraphWithFilterChanges() {
     let filterParams = extractFilterValues(this.props.dashboardFilter,this.props.dashboardStack)
     let preparedFilter
-    if (filterParams && filterParams.length > 1) {
+    if (filterParams && filterParams.length > 0) {
       preparedFilter = filterParams[0]
-      for (let i = 1; i < filterParams.length; i++) {
-        preparedFilter = preparefilter(preparedFilter, filterParams[i])
-
+      if(filterParams.length > 1){
+        for (let i = 1; i < filterParams.length; i++) {
+          preparedFilter = preparefilter(preparedFilter, filterParams[i])
+        }
       }
     }
     if (filterParams) {

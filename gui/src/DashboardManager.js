@@ -207,7 +207,7 @@ class DashboardManager extends React.Component {
       dashboardStack = this.state.dashboardStack
       let dashboardFilter = filter
       let extractedFilterValues = extractFilterValues(dashboardFilter,dashboardStack);
-      let preapredExtractedFilterValue = []
+      let preapredExtractedFilterValue =  (extractedFilterValues && extractedFilterValues.length == 1)?extractedFilterValues[0]:[]
       if (extractedFilterValues && extractedFilterValues.length > 1) {
         preapredExtractedFilterValue = extractedFilterValues[0]
         for (let i = 1; i < extractedFilterValues.length; i++) {

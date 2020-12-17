@@ -96,11 +96,11 @@ export function overrideCommonFilters(parentFilter,childFilter){
           var startDate = filter["startDate"]
           var endDate = null
           //extract the first option from date fields
-          if(Array.isArray(filter["field"])){
-            //set default value as first option value
-            if(!filter["field"].hasOwnProperty("selected"))
-              filter["field"]["selected"]=filter["field"][0]["value"]
-           }
+          // if(Array.isArray(filter["field"])){
+          //   //set default value as first option value
+          //   if(!filter["field"].hasOwnProperty("selected"))
+          //     filter["field"]["selected"]=filter["field"][0]["value"]
+          //  }
            if (filter["operator"] === "today") {
             filter["operator"] = "=="
           }
@@ -145,7 +145,7 @@ export function overrideCommonFilters(parentFilter,childFilter){
           
   
               //prepare startDate array
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
+              filterarray.push(filter["field"])
               filterarray.push(">=")
               filterarray.push(startDate)
               filterParams.push(filterarray)
@@ -153,14 +153,14 @@ export function overrideCommonFilters(parentFilter,childFilter){
   
               //prepare endDate array
               filterarray = []
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
+              filterarray.push(filter["field"])
               filterarray.push("<=")
               filterarray.push(endDate)
               filterParams.push(filterarray)
             } else {
               //if date is not a range
               filterarray = []
-              filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
+              filterarray.push(filter["field"])
               filterarray.push(filter["operator"])
               if (typeof startDate !== "string") {
                 startDate = filter["startDate"]
@@ -175,7 +175,7 @@ export function overrideCommonFilters(parentFilter,childFilter){
             }
           } else {
               //single date passed
-            filterarray.push(filter["field"]["selected"]?filter["field"]["selected"]:filter["field"][0]["value"])
+            filterarray.push(filter["field"])
             filterarray.push(filter["operator"])
             if (typeof startDate !== "string") {
               startDate = filter["startDate"]
@@ -190,10 +190,11 @@ export function overrideCommonFilters(parentFilter,childFilter){
         } else {
           filterarray.push(filter["field"])
           filterarray.push(filter["operator"])
-          filterarray.push(filter["value"]["selected"])
-          if (filter["value"].hasOwnProperty("selected")) {
-            filterParams.push(filterarray)
-          }
+          filterarray.push(filter["value"])
+          filterParams.push(filterarray)
+          // if (filter["value"].hasOwnProperty("selected")) {
+          //   filterParams.push(filterarray)
+          // }
         }
       }
       })
