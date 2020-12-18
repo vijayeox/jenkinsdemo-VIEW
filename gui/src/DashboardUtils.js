@@ -88,12 +88,14 @@ export function overrideCommonFilters(parentFilter,childFilter){
     return filter
     }
 
-    export function  extractFilterValues(dashboardFilter,dashboardStack) {
+    export function  extractFilterValues(dashboardFilter,dashboardStack,filtermode) {
+      //filtermode is set to edfault if filters are applied by default
+      filtermode = filtermode || "applied"
       let filterParams = []
       dashboardFilter.map((filter, index) => {
         let filterarray = []
         //extract only default filter values if it is the first dashboard. else extract all filters
-        if ((dashboardStack.length <= 1 && filter.isDefault == true) || (dashboardStack.length > 1)) {
+        if ((dashboardStack.length <= 1 && filter.isDefault == true) || (dashboardStack.length > 1 ||filtermode=="applied")) {
         if (filter["dataType"] == "date") {
           var startDate = filter["startDate"]
           var endDate = null
