@@ -33,6 +33,7 @@ class FormRender extends React.Component {
         this.privileges = userprofile.key.privileges;
         this.userprofile = userprofile.key;
         this.loader = this.core.make("oxzion/splash");
+        this.messageBox = this.core.make("oxzion/messageDialog");
         this.state = {
             form: null,
             showLoader: false,
@@ -55,6 +56,8 @@ class FormRender extends React.Component {
             currentForm: null,
             formLevelDelegateCalled: false,
             formErrorMessage: "Form seems to have an error while loading ,Please Try Again.",
+            previousData : {},
+            currentData : {}
         };
         this.helper = this.core.make("oxzion/restClient");
         this.notif = React.createRef();
@@ -67,6 +70,8 @@ class FormRender extends React.Component {
         this.loaderDivID = "formio_loader_" + formID;
         this.formErrorDivId = "formio_error_" + formID;
         this.functions = {};
+        // this.previousData = {};
+        // this.currentData = {};
     }
     showFormLoader(state = true, init = 0) {
         if (document.getElementById(this.loaderDivID)) {
@@ -79,7 +84,7 @@ class FormRender extends React.Component {
             }
         }
         if (state) {
-            this.loader.show(document.getElementById(this.loaderDivID));
+            this.loader.show();
             if (init == 1) {
                 document.getElementById(this.formDivID).style.display = "none";
             }
@@ -354,10 +359,10 @@ class FormRender extends React.Component {
                 form.submission.data["workflow_instance_id"] = undefined;
             }
             return await this.callPipeline(
-                    form._form["properties"]["submission_commands"],
-                    this.cleanData(form.submission.data)
-                )
-                .then(async(response) => {
+                form._form["properties"]["submission_commands"],
+                this.cleanData(form.submission.data)
+            )
+                .then(async (response) => {
                     if (response.status == "success") {
                         //POST SUBMISSION FORM WILL GET KILLED UNNECESSARY RUNNING OF PROPERTIES
                         // if (response.data) {
@@ -456,7 +461,7 @@ class FormRender extends React.Component {
             console.log(data);
             return await this.helper
                 .request("v1", route, this.cleanData(data), method)
-                .then(async(response) => {
+                .then(async (response) => {
                     if (response.status == "success") {
                         if (this.props.route) {
                             that.showFormLoader(false, 0);
@@ -479,13 +484,13 @@ class FormRender extends React.Component {
                             that.showFormLoader(false, 0);
                         } else {
                             var storeCache = await this.storeCache(this.cleanData(data))
-                                .then(async(cacheResponse) => {
+                                .then(async (cacheResponse) => {
                                     if (response.data.errors) {
                                         var storeError = await this.storeError(
-                                                this.cleanData(data),
-                                                response.data.errors,
-                                                route
-                                            )
+                                            this.cleanData(data),
+                                            response.data.errors,
+                                            route
+                                        )
                                             .then((storeErrorResponse) => {
                                                 that.showFormLoader(false, 0);
                                                 this.notif.current.notify(
@@ -518,7 +523,7 @@ class FormRender extends React.Component {
         var ordered_data = {};
         Object.keys(formData)
             .sort()
-            .forEach(function(key) {
+            .forEach(function (key) {
                 ordered_data[key] = formData[key];
             });
         return ordered_data;
@@ -526,7 +531,7 @@ class FormRender extends React.Component {
 
     cleanData(formData) {
         // Remove Protected fields from being sent to server
-        this.state.currentForm.everyComponent(function(comp) {
+        this.state.currentForm.everyComponent(function (comp) {
             var protectedFields = comp.component.protected;
             if (protectedFields) {
                 delete formData[comp.component.key];
@@ -563,11 +568,11 @@ class FormRender extends React.Component {
                 if (formData[componentKey]) {
                     delete formData[componentKey];
                 }
-            } else {}
+            } else { }
         }
         Object.keys(formData)
             .sort()
-            .forEach(function(key) {
+            .forEach(function (key) {
                 ordered_data[key] = formData[key];
             });
         return ordered_data;
@@ -591,9 +596,9 @@ class FormRender extends React.Component {
             await this.helper.request("v1", url, this.props.urlPostParams, "post") :
             await this.helper.request("v1", url, {}, "get");
     }
-    processProperties(form) {
+    processProperties(form, action = null) {
         if (form._form["properties"]) {
-            this.runDelegates(form, form._form["properties"]);
+            this.runDelegates(form, form._form["properties"], action);
             this.runProps(
                 form._form,
                 form,
@@ -602,7 +607,7 @@ class FormRender extends React.Component {
             );
         } else {
             if (form.originalComponent["properties"]) {
-                this.runDelegates(form, form.originalComponent["properties"]);
+                this.runDelegates(form, form.originalComponent["properties"], action);
                 this.runProps(
                     form.originalComponent,
                     form,
@@ -628,16 +633,18 @@ class FormRender extends React.Component {
                         that.setState({ data: this.formatFormData(fileData) });
                         that.setState({ formDivID: "formio_" + that.state.formId });
                         if (form) {
-                            form.setSubmission({ data: that.state.data }).then(function() {
-                                that.processProperties(form);
+                            form.setSubmission({ data: that.state.data }).then(function () {
+                                that.processProperties(form, 'loadWorkflow');
                             });
                         } else {
                             this.createForm();
                         }
+                    }else{
+                        that.stepDownPage();
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (
             this.state.workflowId &&
@@ -694,12 +701,12 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError(e, 'loadWorkflow');
                             });
                     });
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (
             this.state.activityInstanceId &&
@@ -756,12 +763,12 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError(e, 'loadWorkflow');
                             });
                     });
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (this.state.fileId) {
             this.getFileDataById()
@@ -783,15 +790,17 @@ class FormRender extends React.Component {
                                             that.processProperties(form);
                                         });
                                     }
+                                }else{
+                                    that.stepDownPage();
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError(e, 'loadWorkflow');
                             });
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (
             this.state.activityInstanceId &&
@@ -811,7 +820,7 @@ class FormRender extends React.Component {
                         });
                         that.setState({ content: JSON.parse(response.data.template) });
                         if (form) {
-                            form.setSubmission({ data: that.state.data }).then(function() {
+                            form.setSubmission({ data: that.state.data }).then(function () {
                                 that.processProperties(form);
                             });
                         } else {
@@ -820,7 +829,7 @@ class FormRender extends React.Component {
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (this.state.formId) {
             this.getWorkflow()
@@ -854,7 +863,7 @@ class FormRender extends React.Component {
                                     if (form) {
                                         that.processProperties(form);
                                     } else {
-                                        setTimeout(function() {
+                                        setTimeout(function () {
                                             that.createForm().then((form) => {
                                                 that.processProperties(form);
                                             });
@@ -863,13 +872,13 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError(e, 'loadWorkflow');
                             });
                     }
                     that.setState({ formDivID: "formio_" + that.state.formId });
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError(e, 'loadWorkflow');
                 });
         } else if (this.state.instanceId) {
             this.getInstanceData().then((response) => {
@@ -884,17 +893,19 @@ class FormRender extends React.Component {
                     });
                     that.setState({ content: response.data.template });
                     if (form) {
-                        form.setSubmission({ data: that.state.data }).then(function() {
+                        form.setSubmission({ data: that.state.data }).then(function () {
                             that.processProperties(form);
                         });
                     } else {
                         this.createForm();
                     }
+                }else{
+                    that.stepDownPage();
                 }
             });
         } else {
             if (form) {
-                that.processProperties(form);
+                that.processProperties(form,'loadWorkflow');
             }
         }
     }
@@ -981,7 +992,7 @@ class FormRender extends React.Component {
                         }
                     });
                 },
-                beforeSubmit: async(submission, next) => {
+                beforeSubmit: async (submission, next) => {
                     var submitErrors = [];
                     if (that.state.currentForm.isValid(submission.data, true) == false) {
                         that.state.currentForm.checkValidity(
@@ -997,7 +1008,7 @@ class FormRender extends React.Component {
                         } else {
                             var response = await that
                                 .saveForm(null, that.cleanData(submission.data))
-                                .then(function(response) {
+                                .then(function (response) {
                                     if (response.status == "success") {
                                         next(null);
                                     } else {
@@ -1008,7 +1019,7 @@ class FormRender extends React.Component {
                     } else {
                         var response = await that
                             .saveForm(null, that.cleanData(submission.data))
-                            .then(function(response) {
+                            .then(function (response) {
                                 if (response.status == "success") {
                                     next(null);
                                 } else {
@@ -1026,7 +1037,7 @@ class FormRender extends React.Component {
                 document.getElementById(this.formDivID),
                 this.state.content,
                 options
-            ).then(function(form) {
+            ).then(function (form) {
                 if (that.state.page && form.wizard) {
                     if (form.wizard && form.wizard.display == "wizard") {
                         form.setPage(parseInt(that.state.page));
@@ -1036,7 +1047,7 @@ class FormRender extends React.Component {
                 if (that.state.data != undefined) {
                     form.setSubmission({ data: that.state.data });
                 }
-                form.on("submit", async function(submission) {
+                form.on("submit", async function (submission) {
                     form.emit("submitDone", submission);
                 });
                 form.on("prevPage", (changed) => {
@@ -1057,32 +1068,43 @@ class FormRender extends React.Component {
                 form.on("nextPage", (changed) => {
                     form.emit("render");
                     that.runDelegates(
-                        form,
-                        form.pages[changed.page].originalComponent["properties"]
+                      form,
+                      form.pages[changed.page].originalComponent["properties"],'nextPage'
                     );
                     that.setState({ page: changed.page });
                     var elm = document.getElementsByClassName(
-                        that.state.appId + "_breadcrumbParent"
+                      that.state.appId + "_breadcrumbParent"
                     );
                     if (elm.length > 0) {
-                        scrollIntoView(elm[0], {
-                            scrollMode: "if-needed",
-                            block: "center",
-                            behavior: "smooth",
-                            inline: "nearest",
-                        });
+                      scrollIntoView(elm[0], {
+                        scrollMode: "if-needed",
+                        block: "center",
+                        behavior: "smooth",
+                        inline: "nearest",
+                      });
                     }
                 });
 
-                form.on("change", function(changed) {
+                form.on("change", function (changed) {
                     if (changed && changed.changed) {
+                        try{
+                            if (changed.changed.component.key == changed.changed.flags.changed.component.key
+                                && changed.changed.component.type != 'hidden' && changed.changed.component.disabled != true) {
+                                that.setState({
+                                    previousData : {...that.state.currentData}
+                                })
+                            }
+                        }catch {}
+                        that.setState({
+                            currentData : {...changed.data}
+                        })
                         var component = changed.changed.component;
                         var instance = changed.changed.instance;
                         var properties = component.properties;
-                        if(changed.data.functions){
+                        if (changed.data.functions) {
                             this.functions = changed.data.functions;
                             var componentKey = component.key + 'Changed';
-                            if(changed.data.functions.hasOwnProperty(componentKey)){
+                            if (changed.data.functions.hasOwnProperty(componentKey)) {
                                 this.functions[componentKey]();
                             }
                         }
@@ -1108,11 +1130,11 @@ class FormRender extends React.Component {
                         }
                     }
                 });
-                form.on("render", function() {
+                form.on("render", function () {
                     that.hideBreadCrumb(true);
                     eachComponent(
                         form.root.components,
-                        function(component) {
+                        function (component) {
                             if (component) {
                                 if (
                                     component.component.properties &&
@@ -1168,7 +1190,7 @@ class FormRender extends React.Component {
                         that.setState({ formLevelDelegateCalled: true });
                     }
                 });
-                form.on("customEvent", function(event) {
+                form.on("customEvent", function (event) {
                     var changed = event.data;
                     if (event.type == "callDelegate") {
                         var component = event.component;
@@ -1222,7 +1244,7 @@ class FormRender extends React.Component {
                                                                 valueArray = Object.assign({}, valueArray);
                                                                 if (
                                                                     changed[properties["destinationDataKey"]]
-                                                                    .length > 1
+                                                                        .length > 1
                                                                 ) {
                                                                     changed[
                                                                         properties["destinationDataKey"]
@@ -1230,13 +1252,13 @@ class FormRender extends React.Component {
                                                                 } else {
                                                                     if (
                                                                         changed[properties["destinationDataKey"]]
-                                                                        .length == 1
+                                                                            .length == 1
                                                                     ) {
                                                                         //Please dont remove the below commented line
                                                                         // if(changed[properties["destinationDataKey"]] && Object.getOwnPropertyNames(changed[properties["destinationDataKey"]][0]).length === 0){
                                                                         if (
                                                                             changed[
-                                                                                properties["destinationDataKey"]
+                                                                            properties["destinationDataKey"]
                                                                             ] &&
                                                                             changed[
                                                                                 properties["destinationDataKey"]
@@ -1399,7 +1421,7 @@ class FormRender extends React.Component {
                 form.submissionReady.then(() => {
                     form.element.addEventListener(
                         "getAppDetails",
-                        function(e) {
+                        function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             e.stopImmediatePropagation();
@@ -1427,7 +1449,7 @@ class FormRender extends React.Component {
         var targetList = targetProperties.split(",");
         targetList.map((item) => {
             var targetComponent = form.getComponent(item);
-            setTimeout(function() {
+            setTimeout(function () {
                 if (targetComponent.type == "datagrid") {
                     targetComponent.triggerRedraw();
                 }
@@ -1499,7 +1521,7 @@ class FormRender extends React.Component {
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e);
+                        that.handleError(e,null);
                     });
             }
             if (properties["target"]) {
@@ -1690,22 +1712,30 @@ class FormRender extends React.Component {
         }
     }
 
-    handleError(e) {
+    handleError(e, action) {
         this.showFormLoader(false, 0);
-        console.log("ERROR" + e);
-        this.notif.current.notify(
-            "Error",
-            "Unexpected Error! Please try later",
-            "danger"
-        );
+        this.messageBox.show("Unexpected Error! Please contact support team", '', 'OK', false)
+            .then((response) => {
+                if (action) {
+                    if (action == 'loadWorkflow') {
+                        this.stepDownPage();
+                    } else if(action == 'nextPage'){
+                        this.state.currentForm.setPage(this.state.page - 1);
+                    }
+                } else {
+                    if(this.state.previousData.length != 0){
+                        this.state.currentForm.setSubmission({ data: this.state.previousData });
+                    }
+                }
+            });
     }
-    runDelegates(form, properties) {
+    runDelegates(form, properties, action = null) {
         if (properties) {
             if (properties["delegate"]) {
                 this.callDelegate(
-                        properties["delegate"],
-                        this.cleanData(form.submission.data)
-                    )
+                    properties["delegate"],
+                    this.cleanData(form.submission.data)
+                )
                     .then((response) => {
                         if (response.status == "success") {
                             if (response.data) {
@@ -1717,10 +1747,15 @@ class FormRender extends React.Component {
                             }
                         } else {
                             this.showFormLoader(false, 0);
+                            if(action == 'nextPage'){
+                                this.state.currentForm.setPage(this.state.page - 1);
+                            }else if (action == 'loadWorkflow') {
+                                this.stepDownPage();
+                            } 
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e);
+                        that.handleError(e, action);
                     });
             }
             if (properties["commands"]) {
@@ -1755,10 +1790,15 @@ class FormRender extends React.Component {
                             }
                         } else {
                             that.showFormLoader(false, 0);
+                            if(action == 'nextPage'){
+                                this.state.currentForm.setPage(this.state.page - 1);
+                            }else if (action == 'loadWorkflow') {
+                                this.stepDownPage();
+                            } 
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e);
+                        that.handleError(e, action);
                     });
             }
             if (properties["payment_confirmation_page"]) {
@@ -1779,21 +1819,21 @@ class FormRender extends React.Component {
                 var that = this;
                 form.element.removeEventListener(
                     "requestPaymentToken",
-                    function(e) {
+                    function (e) {
                         that.requestPaymentToken(that, form, e);
                     },
                     false
                 );
                 form.element.addEventListener(
                     "requestPaymentToken",
-                    function(e) {
+                    function (e) {
                         that.requestPaymentToken(that, form, e);
                     },
                     false
                 );
                 form.element.addEventListener(
                     "paymentSuccess",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1854,7 +1894,7 @@ class FormRender extends React.Component {
                 );
                 form.element.addEventListener(
                     "tokenFailure",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1866,7 +1906,7 @@ class FormRender extends React.Component {
                 );
                 form.element.addEventListener(
                     "paymentDeclined",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1888,7 +1928,7 @@ class FormRender extends React.Component {
                 );
                 form.element.addEventListener(
                     "paymentCancelled",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1899,7 +1939,7 @@ class FormRender extends React.Component {
                 );
                 form.element.addEventListener(
                     "paymentError",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1921,7 +1961,7 @@ class FormRender extends React.Component {
                 );
                 form.element.addEventListener(
                     "paymentPending",
-                    function(e) {
+                    function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
@@ -1970,10 +2010,10 @@ class FormRender extends React.Component {
             try {
                 parsedData[key] =
                     typeof data[key] === "string" ?
-                    JSON.parse(data[key]) :
-                    data[key] == undefined || data[key] == null ?
-                    "" :
-                    data[key];
+                        JSON.parse(data[key]) :
+                        data[key] == undefined || data[key] == null ?
+                            "" :
+                            data[key];
                 if (
                     parsedData[key] === "" &&
                     data[key] &&
@@ -2106,8 +2146,8 @@ class FormRender extends React.Component {
                         this.notif.current.notify(
                             "Success",
                             actionDetails.notification ?
-                            actionDetails.notification :
-                            "Operation completed successfully",
+                                actionDetails.notification :
+                                "Operation completed successfully",
                             "success"
                         );
                         if (actionDetails.exit) {
@@ -2118,8 +2158,8 @@ class FormRender extends React.Component {
                         this.notif.current.notify(
                             "Error",
                             response.errors[0].message ?
-                            response.errors[0].message :
-                            "Operation failed",
+                                response.errors[0].message :
+                                "Operation failed",
                             "danger"
                         );
                     }
@@ -2190,25 +2230,17 @@ class FormRender extends React.Component {
             return await helper.request("v1", "/" + api, body, "filepost");
         }
     }
+   
     render() {
-        return ( <
-            div >
-            <
-            Notification ref = { this.notif }
-            />{" "} <
-            div id = { this.loaderDivID }
-            className = "formLoader" > { " " } <
-            /div>{" "} <
-            div id = { this.formErrorDivId }
-            style = {
-                { display: "none" } } >
-            <
-            h3 > { this.state.formErrorMessage } < /h3>{" "} <
-            /div>{" "} <
-            div className = "form-render"
-            id = { this.formDivID } > { " " } <
-            /div>{" "} <
-            /div>
+        return (
+            <div>
+                <Notification ref={this.notif} />
+                <div id={this.loaderDivID} className="formLoader"></div>
+                <div id={this.formErrorDivId} style={{ display: "none" }}>
+                    <h3>{this.state.formErrorMessage}</h3>
+                </div>
+                <div className="form-render" id={this.formDivID}></div>
+            </div>
         );
     }
 }

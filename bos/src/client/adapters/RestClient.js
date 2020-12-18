@@ -96,6 +96,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// params - *
 	// method - string
 	async makeRequest(version, action, params, method, headers = null, raw = false) {
+		this.messageBox = this.core.make("oxzion/messageDialog");
 		let userData = this.core.getUser();
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
@@ -155,11 +156,12 @@ export class RestClientServiceProvider extends ServiceProvider {
 					headers: reqHeaders,
 					body: JSON.stringify(parameters)
 				})
-
-				if (resp.status == 400 && resp.statusText == 'Bad Request') {
-					// fall through to refresh handling
-				} else {
+				
+				if (resp.status >= 200 && resp.status < 300) {
 					return resp.json();
+				} else {
+					this.errorMessage(resp.statusText);
+					// fall through to refresh handling
 				}
 			}
 			else if (method == 'filepost') {
@@ -194,11 +196,11 @@ export class RestClientServiceProvider extends ServiceProvider {
 						credentials: 'include',
 						headers: { "Authorization": "Bearer " + this.token }
 					})
-					if (resp.status == 400 && resp.statusText == 'Bad Request') {
-						// fall through to refresh handling
-					} else {
-						return resp.json();
-					}
+				if (resp.status == 400 && resp.statusText == 'Bad Request') {
+					// fall through to refresh handling
+				} else {
+					return resp.json();
+				}
 			}
 			else if (method == 'delete') {
 				resp = await fetch(urlString, {
@@ -262,6 +264,13 @@ export class RestClientServiceProvider extends ServiceProvider {
 		catch (e) {
 			return Promise.reject(e);
 		}
+	}
+
+	errorMessage(message){
+		this.messageBox.show(message, '', 'OK', false)
+		.then((response) => {
+			return response;
+		});
 	}
 
 }
