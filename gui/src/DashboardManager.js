@@ -151,7 +151,7 @@ class DashboardManager extends React.Component {
             // }
             inputs["dashname"] = dash
             let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter)
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue })
+            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue,filterConfiguration:dashboardFilter })
             that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue })
 
 

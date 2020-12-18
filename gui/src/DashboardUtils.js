@@ -9,7 +9,7 @@ export function preparefilter(filter1, filter2) {
     filter.push(filter2)
     return filter
   }
-
+//preparing filter for frontend :setting filter options and applied options
 export function replaceCommonFilters(parentFilters, childFilters,property) {
     if (parentFilters && parentFilters.length > 0) {
       if (childFilters.length > 0) {
@@ -53,18 +53,20 @@ export function showDashboard(isVisible){
     }
 }
 
+//preparing filter for backend
 export function overrideCommonFilters(parentFilter,childFilter){
     let filter=[]
     let parentFilterCopy=[...parentFilter]
     let childFilterCopy=[...childFilter]
-    for(let parentindex=0;parentindex<parentFilterCopy.length;parentindex++){
+    for(let parentindex=parentFilterCopy.length-1;parentindex>=0;parentindex--){
      let hasCommonFilter=0
-     for(let childIndex=0;childIndex<childFilterCopy.length;childIndex++){
+     for(let childIndex=childFilterCopy.length-1;childIndex>=0;childIndex--){
        if(parentFilterCopy[parentindex].field==childFilterCopy[childIndex].field){
          hasCommonFilter+=1
          filter.push(childFilterCopy[childIndex])
          childFilterCopy.splice(childIndex,1)
          parentFilterCopy.splice(parentindex,1)
+         parentindex--
        }
      }
      if(hasCommonFilter==0){
