@@ -133,7 +133,7 @@ class DashboardManager extends React.Component {
           if (dash.name === inputs["dashname"]["name"]) {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
-            let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter)
+            let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter,"default")
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: [] })
             that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, exportConfiguration: dash.export_configuration, dashboardStack: dashboardStack })
             isRefreshed && that.setState({ drilldownDashboardFilter: preapredExtractedFilterValue })
@@ -151,7 +151,7 @@ class DashboardManager extends React.Component {
             //   dashboardStack.push({ data: dash, drilldownDashboardFilter: dashboardFilter, filterConfiguration: dashboardFilter })
             // }
             inputs["dashname"] = dash
-            let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter)
+            let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter,"default")
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue,filterConfiguration:dashboardFilter })
             that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue })
 
