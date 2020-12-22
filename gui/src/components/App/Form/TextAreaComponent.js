@@ -242,9 +242,7 @@ export default class TextAreaComponent extends Select {
             } catch (Exception){
                 console.log(Exception);
                 console.log('Failed to create CK Editor');
-                setTimeout(function(){ 
-                    resolve(_this2.setupCkEditor(_this2, element, index,editorReady));
-                    }, 1000);
+                setTimeout(function(){ resolve(_this2.setupCkEditor(_this2, element, index,editorReady)); }, 1000);
             }
          });
         return promise;

@@ -25,6 +25,7 @@ import Nested from "./Form/Nested.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
 import JavascriptLoader from '../javascriptLoader';
 import ParameterHandler from "./ParameterHandler";
+import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -687,6 +688,18 @@ class FormRender extends React.Component {
         that.processProperties(form);
       }
     }
+  }
+  
+  generateViewButton(){
+    let gridToolbarContent = [];
+    let filePage = [{type: "EntityViewer",fileId:this.state.fileId}];
+    let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId}
+    gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"far fa-list-alt"}></i></Button>);
+    let ev = new CustomEvent("addcustomActions", {
+      detail: { customActions: gridToolbarContent },
+      bubbles: true,
+    });
+    document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
   }
   async importCSS(theme){
     try{
@@ -1444,8 +1457,21 @@ class FormRender extends React.Component {
     });
     return parsedData;
   };
+  updatePageContent = (config) => {
+    if(this.state.appId){
+      let eventDiv = document.getElementById("navigation_" + this.state.appId);
+      let ev2 = new CustomEvent("addPage", {
+        detail: config,
+        bubbles: true
+      });
+      eventDiv.dispatchEvent(ev2);
+    }
+  };
 
   componentDidMount() {
+    if(this.state.fileId){
+      this.generateViewButton();
+    }
     this.showFormLoader(true, 1);
     if (this.props.url) {
       this.getFormContents(this.props.url).then(response => {
