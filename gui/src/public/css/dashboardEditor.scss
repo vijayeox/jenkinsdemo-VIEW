@@ -1,5 +1,6 @@
 .dashboard-editor-form .form-group {
-  margin-left: 3em;
+  margin-left: 5px;
+  min-width: 140px;
 }
 
 .dashboard-back-btn {
@@ -78,12 +79,13 @@
 }
 
 .dashboard-filter-field {
-  min-width: 155px;
-  margin-right: 5px;
+  min-width: 15px;
+  margin-right: 0px;
 }
-.dashboard-filter-field .form-checkbox{
-width: 20px;
-height:20px;
+
+.dashboard-filter-field .form-checkbox {
+  width: 20px;
+  height: 20px;
 }
 
 
@@ -109,7 +111,7 @@ height:20px;
 }
 
 .dates-container input {
-  width: 14vw;
+  width: 140px;
 
 }
 
@@ -148,6 +150,7 @@ height:20px;
   height: auto;
   padding: 8px 12px;
   display: flex;
+  box-shadow: 0px 0px 5px 0px grey;
 }
 
 .custom-react-select-container:hover {
@@ -208,7 +211,7 @@ height:20px;
   background-color: #c5d2d6;
   border-radius: 42px;
   font-size: 14px;
-
+  box-shadow: 0px 0px 5px 0px grey;
 }
 
 .dash-manager-buttons .btn-primary:hover {
