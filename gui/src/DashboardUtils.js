@@ -156,17 +156,10 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
               endDate = new Date()
               if (filter["operator"] === "mtd") {
                 startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01")
-<<<<<<< HEAD
               }
               else if (filter["operator"] === "ytd") {
                 startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01")
               }
-=======
-              }
-              else if (filter["operator"] === "ytd") {
-                startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01")
-              }
->>>>>>> [REQ] 13157
               endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
               // filter["operator"] = "gte&&lte"
             }
