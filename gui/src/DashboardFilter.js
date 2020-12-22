@@ -291,7 +291,7 @@ const FilterFields = function (props) {
                     <Form.Label>Default Value</Form.Label><br />
                     {dataType === "date"
                         ?
-                        (filters[index]["operator"] !== "gte&&lte" && filters[index]["dateRange"] === false) ?
+                        ((filters[index]["operator"] !== "gte&&lte" && filters[index]["operator"] !== "mtd" && filters[index]["operator"] !== "ytd") && filters[index]["dateRange"] === false) ?
                             <DatePicker
                                 key={index}
                                 dateFormat={dateFormat}
@@ -542,8 +542,7 @@ class DashboardFilter extends React.Component {
         let defaultValues = []
         //deep cloning react state to avoid mutation
         let filters = JSON.parse(JSON.stringify(this.state.filters));
-        let filterCopy = [...filters]
-        filterCopy[index]["dateRange"] = false
+   
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
