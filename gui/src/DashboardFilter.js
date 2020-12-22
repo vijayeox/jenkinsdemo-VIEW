@@ -31,7 +31,7 @@ const FilterFields = function (props) {
     const [filterValueOption, setFilterValueOption] = useState([])
 
     const filtersOptions = {
-        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }],
+        "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" },{"Today":"today"}],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
     };
@@ -463,6 +463,12 @@ class DashboardFilter extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if ((prevProps.filterConfiguration != this.props.filterConfiguration) || (prevProps.applyFilterOption != this.props.applyFilterOption)) {
             (this.props.filterMode != "CREATE" && this.props.dashboardStack.length == 1) ? this.displayDefaultFilters() : this.setState({ filters: this.props.filterConfiguration, applyFilterOption: this.props.applyFilterOption })
+        }
+        if(this.props.filterMode == "APPLY" && (prevProps.applyFilterOption != this.props.applyFilterOption)){
+            this.setState({applyFilterOption:this.props.applyFilterOption})
+        }
+        if(this.props.filterMode == "APPLY" && (prevProps.filterConfiguration != this.props.filterConfiguration)){
+            this.setState({filters:this.props.filterConfiguration})
         }
     }
 
