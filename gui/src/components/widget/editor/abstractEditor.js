@@ -8,13 +8,13 @@ class AbstractEditor extends React.Component {
         super(props);
         this.state = {
             selectedTab: null,
-            widgetType:null,
+            widgetType: null,
             readOnly: true,
             queries: [],
             configuration: '',
             drillDownFilter: '',
             drillDownWidget: '',
-            drillDownTarget:'',
+            drillDownTarget: '',
             expression: '',
             drillDownWidgetTitle: '',
             drillDownWidgetType: "",
@@ -29,7 +29,7 @@ class AbstractEditor extends React.Component {
                 queries: []
             }
         };
-        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" },{ "label": "Dashboard", "value": "dashboard" }]
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }, { "label": "Dashboard", "value": "dashboard" }]
         this.queryList = [];
         this.data = null;
     }
@@ -50,7 +50,6 @@ class AbstractEditor extends React.Component {
                         'grouping': configuration ? (configuration.grouping ? JSON.parse(configuration.grouping) : null) : null,
                         'sort': configuration ? (configuration.sort ? JSON.parse(configuration.sort) : null) : null
                     }
-
                 });
             });
         }
@@ -74,7 +73,7 @@ class AbstractEditor extends React.Component {
             drillDownWidget: configuration["oxzion-meta"]["drillDown"]["nextWidgetId"] || '',
             drillDownWidgetTitle: configuration["oxzion-meta"]["drillDown"]["widgetTitle"] || '',
             drillDownWidgetFooter: configuration["oxzion-meta"]["drillDown"]["widgetFooter"] || '',
-            drillDownTarget:configuration["oxzion-meta"]["drillDown"]["target"] || '',
+            drillDownTarget: configuration["oxzion-meta"]["drillDown"]["target"] || '',
             hasMaxDepth: hasMaxDepth,
             drillDownMaxDepth: maxDepth
         }, state => this.setDrillDownTargetType(this.state.drillDownTarget))
@@ -97,25 +96,23 @@ class AbstractEditor extends React.Component {
             }
         }
         else if (name == "drillDownWidgetType") {
-            let filteredWidgetList =null
+            let filteredWidgetList = null
             if (value == 'dashboard') {
-                 filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
+                filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
             } else {
-                 filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
+                filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
             }
             this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
-
         }
         else {
             this.setState({ [name]: value, errors: errors })
-
         }
     }
 
     setWidgetData = (widgetData) => {
         this.data = widgetData.data;
         let queries = [];
-        let type=(this.props.type === 'inline' || this.props.type === 'html')?'widget':this.props.type;
+        let type = (this.props.type === 'inline' || this.props.type === 'html') ? 'widget' : this.props.type;
         if (widgetData.queries) {
             widgetData.queries.forEach(function (query, index) {
                 let configuration = query.configuration;
@@ -127,7 +124,6 @@ class AbstractEditor extends React.Component {
                         'sort': configuration ? (configuration.sort ? JSON.stringify(configuration.sort, null, '') : '') : ''
                     },
                     'value': query.uuid,
-
                 });
             });
         }
@@ -138,16 +134,15 @@ class AbstractEditor extends React.Component {
             state.queries = queries;
             state.widgetType = type;
             return state;
-        },
-            () => {
-                if (this.state.selectedTab !== '' && (this.state.selectedTab=="widget"||this.state.selectedTab=="chart")) {
-                    thiz.refreshViews();
-                } else if(this.state.selectedTab !== '' && this.state.selectedTab=="query"){
-                    thiz.refreshQueryPreview()
-                } else if(this.state.selectedTab !== '' && this.state.selectedTab=="table"){
-                    thiz.refreshDrillDownPreview()
-                }
-            });
+        }, () => {
+            if (this.state.selectedTab !== '' && (this.state.selectedTab == "widget" || this.state.selectedTab == "chart")) {
+                thiz.refreshViews();
+            } else if (this.state.selectedTab !== '' && this.state.selectedTab == "query") {
+                thiz.refreshQueryPreview()
+            } else if (this.state.selectedTab !== '' && this.state.selectedTab == "table") {
+                thiz.refreshDrillDownPreview()
+            }
+        });
     }
 
     makeReadOnly = (flag) => {
@@ -175,15 +170,12 @@ class AbstractEditor extends React.Component {
         if (!expression || (expression === '')) {
             return;
         }
-
         let errorMessage = null;
         try {
             JSON.parse(expression);
-        }
-        catch (jsonParseError) {
+        } catch (jsonParseError) {
             errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
         }
-
         this.setState((state) => {
             state.errors.expression = errorMessage;
             return state;
@@ -210,37 +202,33 @@ class AbstractEditor extends React.Component {
             if (configuration) {
                 if (configuration["oxzion-meta"]) {
                     configuration["oxzion-meta"]["drillDown"] = drillDownObject
-                }
-                else {
+                } else {
                     configuration["oxzion-meta"] = {
                         "drillDown": drillDownObject
                     }
                 }
-            }
-            else {
+            } else {
                 configuration = {
                     "oxzion-meta": {
                         "drillDown": drillDownObject
                     }
                 }
             }
-            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType },()=>{
-                this.props.syncWidgetState("configuration",this.state.configuration);
+            this.setState({ configuration: JSON.stringify(configuration, null, 2), selectedTab: widgetType }, () => {
+                this.props.syncWidgetState("configuration", this.state.configuration);
             })
         }
     }
 
     setDrillDownTargetType(target) {
         if (this.state.selectableWidgetOptions.length > 0) {
-            let selectedWidgetOption =null
-            if(target=="dashboard")
-            {
+            let selectedWidgetOption = null
+            if (target == "dashboard") {
                 selectedWidgetOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
-            } else
-            {
+            } else {
                 selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
             }
-            let widget= selectedWidgetOption[0] ? selectedWidgetOption[0]["type"]:''
+            let widget = selectedWidgetOption[0] ? selectedWidgetOption[0]["type"] : ''
             let selectedWidget = widget
             let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
             this.setState({ drillDownWidgetType: widgetType[0] })
@@ -272,7 +260,6 @@ class AbstractEditor extends React.Component {
         let hasMaxDepth = false
         let errors = { ...this.state.errors }
         errors["drillDown"][e.target.name] = ""
-
         if (e.target.name == "drillDownMaxDepth") {
             hasMaxDepth = true
             this.setState({ [e.target.name]: e.target.value, hasMaxDepth: hasMaxDepth, errors: errors })
@@ -286,13 +273,13 @@ class AbstractEditor extends React.Component {
         }
     }
 
-    getSelectedDrillDownWidget(){
-        if(this.state.drillDownWidgetType!==""){
-           return this.state.drillDownWidgetType.value == "dashboard" ? 
-                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) 
-            : 
-                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
-
+    getSelectedDrillDownWidget() {
+        if (this.state.drillDownWidgetType !== "") {
+            return this.state.drillDownWidgetType.value == "dashboard" ?
+                this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+                :
+                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+        }
     }
 
     querySelectionChanged = (evt, index) => {
@@ -306,10 +293,9 @@ class AbstractEditor extends React.Component {
             queryObject.configuration.sort = '';
             state.errors.queries[index] = (value === '') ? thiz.ERRORS.QUERY_NEEDED : null;
             return state;
-        },
-            () => {
-                thiz.loadData(thiz.refreshQueryPreview);
-            });
+        }, () => {
+            thiz.loadData(thiz.refreshQueryPreview);
+        });
     }
 
     clearAllErrors = () => {
@@ -323,10 +309,9 @@ class AbstractEditor extends React.Component {
                     queryErrors[i] = null;
                 }
                 return state;
-            },
-                () => {
-                    resolve();
-                });
+            }, () => {
+                resolve();
+            });
         });
     }
 
@@ -369,10 +354,9 @@ class AbstractEditor extends React.Component {
                 thiz.setState((state) => {
                     state.queries[index].configuration.filter = (result.value === '') ? null : result.value;
                     return state;
-                },
-                    () => {
-                        thiz.loadData(thiz.refreshQueryPreview());
-                    });
+                }, () => {
+                    thiz.loadData(thiz.refreshQueryPreview());
+                });
             }
         });
     }
@@ -416,10 +400,9 @@ class AbstractEditor extends React.Component {
                 thiz.setState((state) => {
                     state.queries[index].configuration.grouping = (result.value === '') ? null : result.value;
                     return state;
-                },
-                    () => {
-                        thiz.loadData(thiz.refreshQueryPreview());
-                    });
+                }, () => {
+                    thiz.loadData(thiz.refreshQueryPreview());
+                });
             }
         });
     }
@@ -463,10 +446,9 @@ class AbstractEditor extends React.Component {
                 thiz.setState((state) => {
                     state.queries[index].configuration.sort = (result.value === '') ? null : result.value;
                     return state;
-                },
-                    () => {
-                        thiz.loadData(thiz.refreshQueryPreview());
-                    });
+                }, () => {
+                    thiz.loadData(thiz.refreshQueryPreview());
+                });
             }
         });
     }
@@ -497,10 +479,9 @@ class AbstractEditor extends React.Component {
             state.queries.splice(index, 1);
             state.errors.queries.splice(index, 1);
             return state;
-        },
-            () => {
-                thiz.loadData(thiz.refreshQueryPreview());
-            });
+        }, () => {
+            thiz.loadData(thiz.refreshQueryPreview());
+        });
     }
 
     loadData = (postLoadCallback) => {
@@ -520,7 +501,7 @@ class AbstractEditor extends React.Component {
         window.postDataRequest(postUrl, params, method).
             then(function (responseData) {
                 thiz.data = responseData.query.data;
-                thiz.props.syncWidgetState("queries",thiz.state.queries,thiz.data)
+                thiz.props.syncWidgetState("queries", thiz.state.queries, thiz.data)
                 if (postLoadCallback) {
                     postLoadCallback();
                 }

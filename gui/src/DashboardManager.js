@@ -221,7 +221,6 @@ class DashboardManager extends React.Component {
   }
 
   applyDashboardFilter(filter) {
-
     let dashboardStack = null
     let dashboardFilterRef=this.filterRef.current
 
@@ -292,7 +291,6 @@ class DashboardManager extends React.Component {
     this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
   }
 
-
   changeDashboard(event) {
     //defining change dashboard explicitly to support reset dashboard on handle change
     let inputs = {}
@@ -345,7 +343,6 @@ class DashboardManager extends React.Component {
       }
     }
     dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
-
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
   }
 
@@ -359,9 +356,9 @@ class DashboardManager extends React.Component {
       event.value = JSON.stringify(dashboard.data)
       event.drilldownDashboardFilter = dashboard.drilldownDashboardFilter
       this.setState({ dashboardStack: stack }, () => { this.changeDashboard(event) })
-
     }
   }
+
   getFilterProperty(property) {
     let appliedFilters = []
     if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
@@ -378,6 +375,7 @@ class DashboardManager extends React.Component {
     }
     return this.state[property]
   }
+
   getOptionalFilters(property) {
     if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
       if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
@@ -397,7 +395,6 @@ class DashboardManager extends React.Component {
   }
 
   async exportExcel() {
-
     let formData = {}
     if (this.state.exportConfiguration != null) {
       let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
@@ -425,7 +422,6 @@ class DashboardManager extends React.Component {
     }
   }
 
-
   render() {
     let containsFilter = (Array.isArray(this.state.filterConfiguration) && this.state.filterConfiguration.length > 0) || (this.getFilterProperty("filterConfiguration").length > 0) || (this.getOptionalFilters("filterOptions").length > 0)
 
@@ -438,7 +434,7 @@ class DashboardManager extends React.Component {
           flipOnClick={false}
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
-          <FrontSide>
+          <FrontSide /*style={{ marginTop: '-50px' }}*/>
             <div id="filter-form-container" className="disappear">
               {containsFilter &&
                 <DashboardFilter
@@ -479,7 +475,6 @@ class DashboardManager extends React.Component {
                     />
                   }
                   <div className="dash-manager-buttons">
-
                     {
                       !this.props.hideEdit && this.userProfile.key.privileges.MANAGE_DASHBOARD_WRITE &&
                       <Button onClick={() => this.createDashboard()} title="Add New OI"><i className="fa fa-plus" aria-hidden="true"></i></Button>
@@ -561,7 +556,7 @@ class DashboardManager extends React.Component {
                 {this.state.dashboardBody}
               </div>
             }
-          </FrontSide>
+          </FrontSide >
           <BackSide>
             {this.state.flipped &&
               <div id="dashboard-editor-div">

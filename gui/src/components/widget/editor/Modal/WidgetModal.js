@@ -5,8 +5,8 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 function WidgetModal(props) {
 
   const [input, setInput] = useState({})
-  const {deletewidget,...modalprops}=props
-  
+  const { deletewidget, ...modalprops } = props
+
   return (
     <Modal
       {...modalprops}
@@ -21,11 +21,11 @@ function WidgetModal(props) {
          </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modal-body">
-      Are you sure you want to delete this widget?
+        Are you sure you want to delete this widget?
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={()=>props.onHide()} >Cancel</Button>
-        <Button variant="danger" onClick={()=>deletewidget()}>Delete</Button>
+        <Button variant="secondary" onClick={() => props.onHide()} >Cancel</Button>
+        <Button variant="danger" onClick={() => deletewidget()}>Delete</Button>
       </Modal.Footer>
     </Modal>
   );

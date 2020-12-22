@@ -217,7 +217,7 @@ const FilterFields = function (props) {
 
             <div className="dashboard-filter-field">
                 <Form.Group  >
-                    <Form.Label>Filter Description</Form.Label>
+                    <Form.Label>Field Description</Form.Label>
                     <Form.Control type="text" name="filterName" title={disabledFields ? "*The entered description will be displayed in dashboard viewer as filter name" : null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
                 </Form.Group>
             </div>
@@ -283,7 +283,6 @@ const FilterFields = function (props) {
                                 <option disabled key="-1" value=""></option>
                             </Form.Control>
                     }
-
                 </Form.Group>
             </div>
             <div className="dashboard-filter-field">
