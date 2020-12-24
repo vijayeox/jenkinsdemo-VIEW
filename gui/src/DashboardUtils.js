@@ -1,5 +1,7 @@
 export function scrollDashboardToTop() {
-  document.getElementById("page-content").scrollTo(0, 0)
+  if(document.getElementById("page-content")){
+    document.getElementById("page-content").scrollTo(0, 0)
+  }
 }
 
 export function preparefilter(filter1, filter2) {
