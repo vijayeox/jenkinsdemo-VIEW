@@ -70,8 +70,6 @@ class FormRender extends React.Component {
         this.loaderDivID = "formio_loader_" + formID;
         this.formErrorDivId = "formio_error_" + formID;
         this.functions = {};
-        // this.previousData = {};
-        // this.currentData = {};
     }
     showFormLoader(state = true, init = 0) {
         if (document.getElementById(this.loaderDivID)) {
@@ -1089,7 +1087,10 @@ class FormRender extends React.Component {
                     if (changed && changed.changed) {
                         try{
                             if (changed.changed.component.key == changed.changed.flags.changed.component.key
-                                && changed.changed.component.type != 'hidden' && changed.changed.component.disabled != true) {
+                                && changed.changed.component.type != 'hidden' 
+                                && changed.changed.component.type != 'selectboxes'
+                                && !(changed.changed.instance.path.includes("["))
+                                && changed.changed.component.disabled != true) {
                                 that.setState({
                                     previousData : {...that.state.currentData}
                                 })
@@ -1098,6 +1099,8 @@ class FormRender extends React.Component {
                         that.setState({
                             currentData : {...changed.data}
                         })
+                        console.log(that.state.previousData);
+                        console.log(that.state.currentData);
                         var component = changed.changed.component;
                         var instance = changed.changed.instance;
                         var properties = component.properties;
