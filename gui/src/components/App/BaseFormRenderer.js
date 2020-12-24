@@ -17,6 +17,9 @@ import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent.js";
 import TextAreaComponent from "./Form/TextAreaComponent.js";
+import ParameterHandler from "./ParameterHandler";
+import Nested from "./Form/Nested.js";
+import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 
 import DateFormats from '../../public/js/DateFormats'
 import React from 'react'
@@ -70,9 +73,22 @@ class BaseFormRenderer extends React.Component {
             'onerror': function () { }
         }]);
     }
+    updatePageContent = (config) => {
+        if(this.state.appId){
+        let eventDiv = document.getElementById("navigation_" + this.state.appId);
+        let ev2 = new CustomEvent("addPage", {
+            detail: config,
+            bubbles: true
+        });
+        eventDiv.dispatchEvent(ev2);
+        }
+    };
 
     componentDidMount() {
         this.createForm()
+        if(this.state.fileId){
+            this.generateViewButton();
+        }
     }
 
     stepDownPage() {
@@ -959,6 +975,17 @@ class BaseFormRenderer extends React.Component {
 
         }
       
+    }
+    generateViewButton(){
+        let gridToolbarContent = [];
+        let filePage = [{type: "EntityViewer",fileId:this.state.fileId}];
+        let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId}
+        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"far fa-list-alt"}></i></Button>);
+        let ev = new CustomEvent("addcustomActions", {
+        detail: { customActions: gridToolbarContent },
+        bubbles: true,
+        });
+        document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
     }
 
     async importCSS(theme){
