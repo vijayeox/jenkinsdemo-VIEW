@@ -35,6 +35,7 @@ class BaseFormRenderer extends React.Component {
         this.state = {
             form: null,
             showLoader: false,
+            stylePath: null,
             formId: this.props.formId,
             fileId: this.props.fileId,
             appId: this.props.appId,
@@ -961,11 +962,11 @@ class BaseFormRenderer extends React.Component {
     }
 
     async importCSS(theme){
-    try{
-        await import(theme);
-    } catch(Exception){
-        console.log("Unable to import "+theme);
-    }
+        try{
+            this.setState({stylePath: theme});
+        } catch(Exception){
+            console.log("Unable to import "+theme);
+        }
     }
     createForm() {
         let that = this;
@@ -1008,7 +1009,7 @@ class BaseFormRenderer extends React.Component {
                     options.buttonSettings = { showCancel: eval(this.state.content["properties"]["showCancel"]) };
                 }
                 if (this.state.content["properties"]["theme"]) {
-                    importCSS(this.state.content["properties"]["theme"]);
+                    this.importCSS(this.state.content["properties"]["theme"]);
                 }
             }
             var hooks = this.createHook()
@@ -1286,6 +1287,7 @@ class BaseFormRenderer extends React.Component {
     render() {
         return (
             <div>
+                {this.state.stylePath?<link rel="stylesheet" type="text/css" href={this.state.stylePath} />:null}
                 <Notification ref={this.notif} />
                 <div id={this.loaderDivID}></div>
                 <div id={this.formErrorDivId} style={{ display: "none" }}>
