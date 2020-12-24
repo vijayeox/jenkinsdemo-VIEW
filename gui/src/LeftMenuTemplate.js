@@ -54,7 +54,7 @@ export default class LeftMenuTemplate extends React.Component {
   render() {
     const { expanded, selected } = this.state;
     return (
-      <div className="LeftMenuTemplate">
+      <div className={"LeftMenuTemplate"+(this.props.proc.metadata.hideMenu ? " hideMenu" : "")}>
         <SideNav
           onSelect={this.onSelect}
           onToggle={this.onToggle}

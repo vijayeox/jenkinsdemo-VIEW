@@ -113,7 +113,7 @@ export default class DialogContainer extends React.Component {
         : {};
       orgInEdit["preferences"][field] = event;
       this.setState({ orgInEdit: orgInEdit });
-    } else {
+      } else {
       let orgInEdit = { ...this.state.orgInEdit };
       orgInEdit["preferences"] = orgInEdit["preferences"]
         ? orgInEdit["preferences"]

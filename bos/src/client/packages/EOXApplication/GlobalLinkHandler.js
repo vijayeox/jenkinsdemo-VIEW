@@ -9,7 +9,9 @@ export default class GlobalLinkHandler {
     document.addEventListener("click", (event) => {
       const EOXCore = this.getCore();
       if (event.target.tagName == "A") {
-        if (event.target.href == undefined || event.target.href == "") {
+        if (event.target.href == undefined || event.target.href == "" || event.target.href == "#") {
+          event.preventDefault();
+          event.stopPropagation();
           if (event.target.getAttribute("eoxapplication") !== null) {
             var selectedApplication = event.target.getAttribute("eoxapplication");
             const packages = EOXCore.make("osjs/packages").getPackages((m) => m.type === "application");
@@ -28,11 +30,6 @@ export default class GlobalLinkHandler {
               }
             }
           }
-          
-          if (event.target.getAttribute("fileId") !== null) {
-            var fileId = event.target.getAttribute("fileId");
-            
-          }
         }
       }
     });
@@ -48,22 +45,24 @@ export default class GlobalLinkHandler {
   }
 
   triggerPageLoad(event, appNavElement) {
+    console.log(event);
     let ev = new CustomEvent("addPage", {
       detail: {
         pageId: event.target.getAttribute("page-id"),
         title: event.target.getAttribute("title"),
         icon: event.target.getAttribute("icon"),
-        fileId: event.target.getAttribute("fileId"),
+        fileId: event.target.getAttribute("file-id"),
       },bubbles: true,});
     document.getElementById(appNavElement).dispatchEvent(ev);
   }
 
   launchApplication(event, selectedApplication) {
+    console.log(event);
     this.core.run(selectedApplication, {
       page: event.target.getAttribute("page-id"),
       pageTitle: event.target.getAttribute("title"),
       pageIcon: event.target.getAttribute("icon"),
-      fileId: event.target.getAttribute("fileId"),
+      fileId: event.target.getAttribute("file-id"),
     });
   }
 }

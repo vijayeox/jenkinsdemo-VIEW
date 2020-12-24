@@ -45,7 +45,7 @@ class TabSegment extends React.Component {
       content: this.props.content,
       pageContent: [],
       dataReady: false,
-      currentRow: this.props.currentRow,
+      currentRow: this.props.currentRow?this.props.currentRow:{},
       tabNames: [],
       tabContent: [],
       tabs: this.props.tabs?this.props.tabs:[]

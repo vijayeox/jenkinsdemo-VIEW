@@ -252,6 +252,7 @@ export default class DialogContainer extends React.Component {
         zip: "",
         country: this.state.userInEdit.country
       }).then((response) => {
+        this.loader.destroy();
         if (response.status == "success") {
           this.props.action(response);
           this.props.cancel();

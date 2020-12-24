@@ -32,10 +32,10 @@ class EntityViewer extends React.Component {
 
   componentDidMount() {
     this.getFileDetails(this.props.fileId).then(fileData => {
-      if(fileData.status == "success" &&fileData.data && fileData.data.entity_id){
-        this.setState({entityId:fileData.data.entity_id,fileData: fileData.data});
+      if(fileData.status == "success" && fileData.data && fileData.data.entity_id){
+        var file = fileData.data.data ? fileData.data.data : fileData.data;
+        this.setState({ entityId:fileData.data.entity_id,fileData: file });
         this.getEntityPage().then(entityPage => {
-          console.log(entityPage);
           var content = this.constructTabs(entityPage.data,entityPage.data.enable_comments,entityPage.data.enable_documents);
           this.setState({content: content});
           this.setState({dataReady: true});
@@ -63,7 +63,6 @@ class EntityViewer extends React.Component {
     if(enableDocuments != "0"){
       tabs.push({name: "Documents",uuid:this.uuidv4(),content: [{type:"DocumentViewer",url:"file/"+this.fileId+"/document"}]});
     }
-    console.log(tabs);
     return (<TabSegment appId={this.appId}
       core={this.core}
       appId={this.appId}
