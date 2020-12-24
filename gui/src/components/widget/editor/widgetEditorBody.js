@@ -366,7 +366,7 @@ class WidgetEditorBody extends AbstractEditor {
         });
         let widgetUuid = this.props.widget.uuid;
         this.getTargetData(widgetUuid);
-        this.getTargetFieldList();
+        this.props.widget.configuration && this.getTargetFieldList();
     }
 
     async getTargetData(widgetUuid) {
@@ -818,7 +818,7 @@ class WidgetEditorBody extends AbstractEditor {
                                         </div>
                                     </Tab>
                                     {
-                                        (this.props.widget && this.props.widget.configuration.series) &&
+                                        (this.props.widget && this.props.widget.configuration && this.props.widget.configuration?.series) &&
                                         <Tab eventKey="target_sla" title="Target">
                                             <div className="form-group row" style={{ marginTop: '10px', marginRight: '0px' }}>
                                                 <div className="col-12">
