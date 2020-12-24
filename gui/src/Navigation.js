@@ -3,6 +3,7 @@ import Page from "./components/App/Page";
 import FormRender from "./components/App/FormRender";
 import { createBrowserHistory } from "history";
 import { Chip } from "@progress/kendo-react-buttons";
+import Requests from "./Requests";
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class Navigation extends React.Component {
         this.homepage = this.props.menus[0];
       }
     } else {
-      this.getMenulist().then((response) => {
+      Requests.getMenulist(this.core,this.appId).then((response) => {
         this.props.menuLoad(response["data"]);
         if (response["data"][0]) {
           this.homepage = response["data"][0];
@@ -99,11 +100,7 @@ class Navigation extends React.Component {
       });
     }
   }
-  async getMenulist() {
-    let helper = this.core.make("oxzion/restClient");
-    let menulist = await helper.request("v1","/app/" + this.appId + "/menu",{},"get");
-    return menulist;
-  }
+  
   pageActive(pageId) {
     if (document.getElementById(pageId + "_page")) {
       document.getElementById(pageId + "_page").classList.remove("page-inactive");
@@ -128,9 +125,13 @@ class Navigation extends React.Component {
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
       var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:e.detail.fileId};
-      pages.push(pageContent)
+      if(!this.checkIfPageExists(pageContent)){
+        pages.push(pageContent)
+      }
     } else {
-      pages.push(e.detail);
+      if(!this.checkIfPageExists(e.detail)){
+        pages.push(e.detail)
+      }
     }
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
@@ -146,6 +147,15 @@ class Navigation extends React.Component {
   addcustomActions = (e) => {
     this.setState({customActions:e.detail.customActions});
   };
+  checkIfPageExists(page){
+    this.state.pages.forEach(key => {
+      if(this.state.pages[key] && this.state.pages[key].pageContent[0].type && page.pageContent[0].type && this.state.pages[key].pageContent[0].type == page.pageContent[0].type &&  this.state.pages[key].pageContent[0].fileId == page.pageContent[0].fileId){
+        this.pageActive(this.state.pages[key].pageId);
+        return true;
+      }
+    });
+    return false;
+  }
 
   componentWillReceiveProps(props) {
     if (props.selected) {
@@ -188,7 +198,7 @@ class Navigation extends React.Component {
   resetCustomActions(){
     this.setState({customActions:null});
     let ev = new CustomEvent("getCustomActions", {
-      detail: { },
+      detail: {},
       bubbles: true,
     });
     if(document.getElementsByClassName('page-active') && document.getElementsByClassName('page-active')[0] ){
