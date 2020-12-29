@@ -423,12 +423,12 @@ class WidgetEditorBody extends AbstractEditor {
 
     applyTarget = () => {
         let errors = this.validateTargetInput()
-        if (Object.keys(errors.target).length > 0) {
-            //rdonot proceed if error exists
-            return
-        }
+        // if (Object.keys(errors.target).length > 0) {
+        // donot proceed if error exists
+        // return
+        // }
         let target = "";
-        let targetFieldName = this.state.targetFields[0].label
+        let targetFieldName = (this.state.targetFields[0]) ? this.state.targetFields[0].label : "aggregate"
         let targetVal;
         if (!(this.state.singleTarget)) {
             let multiLimit = this.state.multiLimit;
@@ -833,7 +833,7 @@ class WidgetEditorBody extends AbstractEditor {
                                         </div>
                                     </Tab>
                                     {
-                                        (this.props.widget && this.props.widget.configuration && this.props.widget.configuration?.series) &&
+                                        (this.props.widget && this.props.widget.configuration && (this.props.widget.configuration.series || this.props.widget.type == "inline")) &&
                                         <Tab eventKey="target_sla" title="Target">
                                             <div className="form-group row" style={{ marginTop: '10px', marginRight: '0px' }}>
                                                 <div className="col-12">
@@ -939,7 +939,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                             </Form.Group>
                                                         </>
                                                     }
-                                                    {!this.state.readOnly && !(this.state.singleTarget) &&
+                                                    {!this.state.readOnly && !(this.state.singleTarget) && !(this.props.widget.type == "inline") &&
                                                         // this.props.widget.data
                                                         <div className="col-12">
                                                             {
