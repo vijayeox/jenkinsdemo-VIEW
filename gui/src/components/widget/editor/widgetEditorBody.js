@@ -5,7 +5,8 @@ import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button } from 'react-bootstrap';
-
+var SINGLELEVEL = "singleLevel"
+var MULTILEVEL = "multiLevel"
 class WidgetEditorBody extends AbstractEditor {
     constructor(props) {
         super(props);
@@ -19,6 +20,7 @@ class WidgetEditorBody extends AbstractEditor {
         this.state.singleTarget = true;
         this.state.disabledTargetForm = false;
         this.state.targetTypeValue = "1";
+
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             TABLE_CONFIGURATION_NEEDED: 'Table configuration is needed',
@@ -35,6 +37,7 @@ class WidgetEditorBody extends AbstractEditor {
             { "label": "Single", "value": "single" },
             { "label": "Multiple", "value": "multiple" }
         ];
+
 
     }
 
@@ -366,7 +369,7 @@ class WidgetEditorBody extends AbstractEditor {
         });
         let widgetUuid = this.props.widget.uuid;
         this.getTargetData(widgetUuid);
-        this.getTargetFieldList();
+        this.props.widget.configuration && this.getTargetFieldList();
     }
 
     async getTargetData(widgetUuid) {
@@ -420,12 +423,12 @@ class WidgetEditorBody extends AbstractEditor {
 
     applyTarget = () => {
         let errors = this.validateTargetInput()
-        if (Object.keys(errors.target).length > 0) {
-            //rdonot proceed if error exists
-            return
-        }
+        // if (Object.keys(errors.target).length > 0) {
+        // donot proceed if error exists
+        // return
+        // }
         let target = "";
-        let targetFieldName = this.state.targetFields[0].label
+        let targetFieldName = (this.state.targetFields[0]) ? this.state.targetFields[0].label : "aggregate"
         let targetVal;
         if (!(this.state.singleTarget)) {
             let multiLimit = this.state.multiLimit;
@@ -540,13 +543,25 @@ class WidgetEditorBody extends AbstractEditor {
 
     validateTargetInput = (e) => {
         let errors = JSON.parse(JSON.stringify(this.state.errors))
+
         if (e) {
-            const { name, value } = e.target
+            const { name, value, id } = e.target
+            let limit = id == "" ? SINGLELEVEL : MULTILEVEL
+
             if (value != "") {
                 var regex_condition = /^[0-9]+$/;
-                !regex_condition.test(value) ? errors["target"][name] = "Please enter decimal values" : delete errors["target"][name]
+                if (limit == SINGLELEVEL) {
+                    !regex_condition.test(value) ? errors["target"][SINGLELEVEL][name] = "Please enter decimal values" : delete errors["target"][SINGLELEVEL][name]
+                } else {
+                    !regex_condition.test(value) ? errors["target"][MULTILEVEL][`${name}_${id}`] = "Please enter decimal values" : delete errors["target"][MULTILEVEL][`${name}_${id}`]
+
+                }
             } else {
-                delete errors["target"][name]
+                if (limit == SINGLELEVEL) {
+                    delete errors["target"][limit][name]
+                } else {
+                    delete errors["target"][limit][`${name}_${id}`]
+                }
             }
             return errors
         } else {
@@ -818,7 +833,7 @@ class WidgetEditorBody extends AbstractEditor {
                                         </div>
                                     </Tab>
                                     {
-                                        (this.props.widget && this.props.widget.configuration.series) &&
+                                        (this.props.widget && this.props.widget.configuration && (this.props.widget.configuration.series || this.props.widget.type == "inline")) &&
                                         <Tab eventKey="target_sla" title="Target">
                                             <div className="form-group row" style={{ marginTop: '10px', marginRight: '0px' }}>
                                                 <div className="col-12">
@@ -924,7 +939,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                             </Form.Group>
                                                         </>
                                                     }
-                                                    {!this.state.readOnly && !(this.state.singleTarget) &&
+                                                    {!this.state.readOnly && !(this.state.singleTarget) && !(this.props.widget.type == "inline") &&
                                                         // this.props.widget.data
                                                         <div className="col-12">
                                                             {
@@ -933,7 +948,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                                     return (<>
                                                                         <div>{item[this.state.targetFields[0].label]}</div>
                                                                         <Form.Group as={Row} style={{ marginLeft: "5px", fontSize: "14px" }}>
-                                                                            <Form.Label column lg="3">Green Limit</Form.Label>
+                                                                            <Form.Label column lg="3">Red Limit</Form.Label>
                                                                             <Col lg="4">
                                                                                 <Form.Control
                                                                                     placeholder={"Red Limit"}
@@ -945,7 +960,9 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
-
+                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                    {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`]}
+                                                                                </Form.Text>
                                                                             </Col>
                                                                             <Col lg="4">
                                                                                 <Form.Control
@@ -972,6 +989,9 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
+                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                    {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_yellow_limit`]}
+                                                                                </Form.Text>
                                                                             </Col>
                                                                             <Col lg="4">
                                                                                 <Form.Control
@@ -998,6 +1018,9 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
+                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                    {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_green_limit`]}
+                                                                                </Form.Text>
                                                                             </Col>
                                                                             <Col lg="4">
                                                                                 <Form.Control
@@ -1019,7 +1042,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                     }
                                                     <Button variant="primary"
                                                         type="button"
-                                                        disabled={(this.state.readOnly || Object.keys(this.state.errors["target"]).length != 0)}
+                                                        disabled={(this.state.readOnly || Object.keys(this.state.errors["target"][SINGLELEVEL]).length != 0 || Object.keys(this.state.errors["target"][MULTILEVEL]).length != 0)}
                                                         onClick={(e) => { this.applyTarget() }}>
                                                         Apply Target
                                                 </Button>
