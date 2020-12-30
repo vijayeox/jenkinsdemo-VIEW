@@ -69,7 +69,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderAggregateValue(element, configuration, props, data, hasDashboardFilters, dashboardEditMode) {
+    static renderAggregateValue(element, configuration, props, data, hasDashboardFilters, dashboardEditMode, widget) {
         let displayValue = null;
         let isDrillDownChart = false
         if (configuration) {
