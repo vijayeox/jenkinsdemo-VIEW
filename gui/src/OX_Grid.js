@@ -280,8 +280,9 @@ export default class OX_Grid extends React.Component {
         },
         onClick: (e) => {
           e.preventDefault();
+          var that = this;
           Object.keys(this.state.actions).map(function (key, index) {
-            var action = this.state.actions;
+            var action = that.state.actions;
             if(action[key].defaultAction == true){
               this.handleAction(key);
             }
