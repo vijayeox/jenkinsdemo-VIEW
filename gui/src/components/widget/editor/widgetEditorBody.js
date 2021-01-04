@@ -423,10 +423,10 @@ class WidgetEditorBody extends AbstractEditor {
 
     applyTarget = () => {
         let errors = this.validateTargetInput()
-        // if (Object.keys(errors.target).length > 0) {
-        // donot proceed if error exists
-        // return
-        // }
+        if (Object.keys(errors.target[SINGLELEVEL]).length > 0 || Object.keys(errors.target[SINGLELEVEL]).length > 0) {
+            //rdonot proceed if error exists
+            return
+        }
         let target = "";
         let targetFieldName = (this.state.targetFields[0]) ? this.state.targetFields[0].label : "aggregate"
         let targetVal;
@@ -551,9 +551,9 @@ class WidgetEditorBody extends AbstractEditor {
             if (value != "") {
                 var regex_condition = /^[0-9]+$/;
                 if (limit == SINGLELEVEL) {
-                    !regex_condition.test(value) ? errors["target"][SINGLELEVEL][name] = "Please enter decimal values" : delete errors["target"][SINGLELEVEL][name]
+                    !regex_condition.test(value) ? errors["target"][SINGLELEVEL][name] = "*Please enter decimal values" : delete errors["target"][SINGLELEVEL][name]
                 } else {
-                    !regex_condition.test(value) ? errors["target"][MULTILEVEL][`${name}_${id}`] = "Please enter decimal values" : delete errors["target"][MULTILEVEL][`${name}_${id}`]
+                    !regex_condition.test(value) ? errors["target"][MULTILEVEL][`${name}_${id}`] = "*Please enter decimal values" : delete errors["target"][MULTILEVEL][`${name}_${id}`]
 
                 }
             } else {
@@ -566,9 +566,9 @@ class WidgetEditorBody extends AbstractEditor {
             return errors
         } else {
             //checking if all fields are entered
-            this.state.singleLimit.red_limit == '' && (errors["target"]["red_limit"] = "Field cannot be empty")
-            this.state.singleLimit.yellow_limit == '' && (errors["target"]["yellow_limit"] = "Field cannot be empty")
-            this.state.singleLimit.green_limit == '' && (errors["target"]["green_limit"] = "Field cannot be empty")
+            this.state.singleLimit.red_limit == '' && (errors["target"][SINGLELEVEL]["red_limit"] = "*Field cannot be empty")
+            this.state.singleLimit.yellow_limit == '' && (errors["target"][SINGLELEVEL]["yellow_limit"] = "*Field cannot be empty")
+            this.state.singleLimit.green_limit == '' && (errors["target"][SINGLELEVEL]["green_limit"] = "*Field cannot be empty")
             this.setState({ errors: errors })
             return errors
         }
@@ -731,7 +731,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                         value={this.state.drillDownFilter}
                                                         disabled={this.state.readOnly}
                                                     />
-                                                    <Form.Text className="text-muted errorMsg">
+                                                    <Form.Text className=" errorMsg">
                                                         {this.state.errors.drillDown["drillDownFilter"]}
                                                     </Form.Text>
                                                 </Col>
@@ -759,7 +759,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                         value={this.state.drillDownWidgetType.value == "dashboard" ? this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) : this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
                                                         options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
                                                     />
-                                                    <Form.Text className="text-muted errorMsg">
+                                                    <Form.Text className="errorMsg">
                                                         {this.state.errors.drillDown["drillDownWidget"]}
                                                     </Form.Text>
                                                 </Col>
@@ -818,7 +818,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                             <option key="3" value={3}>3</option>
                                                             <option key="4" value={4}>4</option>
                                                         </Form.Control>
-                                                        <Form.Text className="text-muted errorMsg">
+                                                        <Form.Text className="errorMsg">
                                                             {this.state.errors.drillDown["drillDownMaxDepth"]}
                                                         </Form.Text>
                                                     </Col>
@@ -870,8 +870,8 @@ class WidgetEditorBody extends AbstractEditor {
                                                                         value={this.state.singleLimit.red_limit || ''}
                                                                         onChange={(e) => this.handleTargetInputChange(e)}
                                                                     />
-                                                                    <Form.Text className="text-muted errorMsg">
-                                                                        {this.state.errors.target["red_limit"]}
+                                                                    <Form.Text className="errorMsg">
+                                                                        {this.state.errors.target[SINGLELEVEL]["red_limit"]}
                                                                     </Form.Text>
                                                                 </Col>
                                                                 <Col lg="4">
@@ -896,8 +896,8 @@ class WidgetEditorBody extends AbstractEditor {
                                                                         value={this.state.singleLimit.yellow_limit || ''}
                                                                         onChange={(e) => this.handleTargetInputChange(e)}
                                                                     />
-                                                                    <Form.Text className="text-muted errorMsg">
-                                                                        {this.state.errors.target["yellow_limit"]}
+                                                                    <Form.Text className="errorMsg">
+                                                                        {this.state.errors.target[SINGLELEVEL]["yellow_limit"]}
                                                                     </Form.Text>
                                                                 </Col>
                                                                 <Col lg="4">
@@ -922,8 +922,8 @@ class WidgetEditorBody extends AbstractEditor {
                                                                         value={this.state.singleLimit.green_limit || ''}
                                                                         onChange={(e) => this.handleTargetInputChange(e)}
                                                                     />
-                                                                    <Form.Text className="text-muted errorMsg">
-                                                                        {this.state.errors.target["green_limit"]}
+                                                                    <Form.Text className="errorMsg">
+                                                                        {this.state.errors.target[SINGLELEVEL]["green_limit"]}
                                                                     </Form.Text>
                                                                 </Col>
                                                                 <Col lg="4">
@@ -960,7 +960,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
-                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                <Form.Text className="errorMsg">
                                                                                     {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`]}
                                                                                 </Form.Text>
                                                                             </Col>
@@ -989,7 +989,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
-                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                <Form.Text className="errorMsg">
                                                                                     {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_yellow_limit`]}
                                                                                 </Form.Text>
                                                                             </Col>
@@ -1018,7 +1018,7 @@ class WidgetEditorBody extends AbstractEditor {
                                                                                     onChange={(e) => this.handleTargetInputChange(e)}
                                                                                     style={{ height: "25px", fontSize: "14px", margin: "0px" }}
                                                                                 />
-                                                                                <Form.Text className="text-muted errorMsg">
+                                                                                <Form.Text className="errorMsg">
                                                                                     {this.state.errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_green_limit`]}
                                                                                 </Form.Text>
                                                                             </Col>
