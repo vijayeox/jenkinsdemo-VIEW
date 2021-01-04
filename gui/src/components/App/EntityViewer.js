@@ -42,7 +42,14 @@ class EntityViewer extends React.Component {
   generateEditButton(){
     if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
       let gridToolbarContent = [];
-      let filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.props.fileId}];
+      var filePage;
+      if (this.props.fileId){
+        filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.props.fileId}];
+      } else {
+        if(this.state.fileId){
+          filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}];
+        }
+      }
       let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
       gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
       let ev = new CustomEvent("addcustomActions", {

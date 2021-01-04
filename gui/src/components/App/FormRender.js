@@ -365,6 +365,9 @@ class FormRender extends BaseFormRenderer {
     }
     $("#" + this.loaderDivID).off("customButtonAction");
     document.getElementById(this.loaderDivID).addEventListener("customButtonAction", (e) => this.customButtonAction(e), false);
+    if(this.state.fileId){
+        this.generateViewButton();
+    }
   }
 
   customButtonAction = (e) => {
@@ -436,12 +439,6 @@ class FormRender extends BaseFormRenderer {
       });
     }
   };
-
-  componentWillUnmount() {
-    if (this.state.currentForm != undefined || this.state.currentForm != null) {
-      this.state.currentForm.destroy();
-    }
-  }
 
   async loadFormWithCommands(commands) {
     await this.callPipeline(commands, commands).then(response => {

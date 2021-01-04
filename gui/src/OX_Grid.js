@@ -437,7 +437,6 @@ handleContextMenuOpen = (e, dataItem) => {
         return tempItem;
       });
     }
-    console.log(gridData);
     this._excelExport.save(
       gridData,
       excelConfig.columnConfig ? undefined : this._grid.columns
