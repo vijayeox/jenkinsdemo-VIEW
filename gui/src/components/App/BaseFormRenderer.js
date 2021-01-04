@@ -75,12 +75,13 @@ class BaseFormRenderer extends React.Component {
     }
     updatePageContent = (config) => {
         if(this.state.appId){
-        let eventDiv = document.getElementById("navigation_" + this.state.appId);
-        let ev2 = new CustomEvent("addPage", {
-            detail: config,
-            bubbles: true
-        });
-        eventDiv.dispatchEvent(ev2);
+            let eventDiv = document.getElementById("navigation_" + this.state.appId);
+            let ev2 = new CustomEvent("addPage", {
+                detail: config,
+                bubbles: true
+            });
+            console.log(ev2);   
+            eventDiv.dispatchEvent(ev2);
         }
     };
 
@@ -90,6 +91,11 @@ class BaseFormRenderer extends React.Component {
             this.generateViewButton();
         }
     }
+    componentWillUnmount() {
+    if (this.state.currentForm != undefined || this.state.currentForm != null) {
+      this.state.currentForm.destroy();
+    }
+  }
 
     stepDownPage() {
         let ev = new CustomEvent("stepDownPage", {
@@ -454,6 +460,11 @@ class BaseFormRenderer extends React.Component {
     }
 
     async saveForm(form, data) {
+        if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
+            this.props.customSaveForm(that.cleanData(submission.data));
+            next(null);
+            return that.cleanData(submission.data);
+        }
         this.showFormLoader(true, 0);
         var that = this;
         if (!form) {
@@ -563,6 +574,7 @@ class BaseFormRenderer extends React.Component {
             }
             return await this.hasCore?this.helper.request("v1", route, this.cleanData(data), method):axios({method:method,url:route,data:this.cleanData(data)}).then(async response => {
                 if (response.status == "success") {
+                    console.log(response)
                     if (this.props.route) {
                         that.showFormLoader(false, 0);
                         this.props.postSubmitCallback();
@@ -578,7 +590,6 @@ class BaseFormRenderer extends React.Component {
                     if (this.props.route) {
                         console.log(response)
                         that.showFormLoader(false, 0);
-
                     }
                     else {
                         var storeCache = await this.storeCache(this.cleanData(data)).then(
@@ -978,13 +989,13 @@ class BaseFormRenderer extends React.Component {
     }
     generateViewButton(){
         let gridToolbarContent = [];
-        let filePage = [{type: "EntityViewer",fileId:this.state.fileId}];
-        let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId}
+        let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
+        let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId};
+        let commentPage = [{type:"Comment",url:this.state.fileId}];
+        let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
         gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"far fa-list-alt"}></i></Button>);
-        let ev = new CustomEvent("addcustomActions", {
-        detail: { customActions: gridToolbarContent },
-        bubbles: true,
-        });
+        gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
+        let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
         document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
     }
 
@@ -1010,6 +1021,7 @@ class BaseFormRenderer extends React.Component {
         Formio.registerComponent("file", FileComponent);
         Formio.registerComponent("select", SelectComponent);
         Formio.registerComponent("textarea", TextAreaComponent);
+        Formio.registerComponent("form", Nested);
 
 
         if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
@@ -1294,6 +1306,9 @@ class BaseFormRenderer extends React.Component {
 
                 });
                 form.formReady.then(() => {
+                    if(that.state.fileId){
+                        that.generateViewButton();
+                    }
                     that.showFormLoader(false, 1);
                 });
                 form.submissionReady.then(() => {
