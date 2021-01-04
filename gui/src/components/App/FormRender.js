@@ -466,16 +466,7 @@ class FormRender extends BaseFormRenderer {
 
 
   render() {
-    return (
-      <div>
-        <Notification ref={this.notif} />
-        <div id={this.loaderDivID}></div>
-        <div id={this.formErrorDivId} style={{ display: "none" }}>
-          <h3>{this.state.formErrorMessage}</h3>
-        </div>
-        <div className="form-render" id={this.formDivID}></div>
-      </div>
-    );
+    return super.render();
   }
 }
 export default FormRender;

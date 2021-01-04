@@ -130,7 +130,6 @@ class Navigation extends React.Component {
         pages.push(pageContent)
       } else {
         pages.splice(pages.length - 1, 1);
-        this.pageActive(pages[pages.length - 1]["pageId"]);
         this.setState({
           pages: pages,
         });
@@ -143,7 +142,6 @@ class Navigation extends React.Component {
         pages.push(e.detail)
       } else {
         pages.splice(pages.length - 1, 1);
-        this.pageActive(pages[pages.length - 1]["pageId"]);
         this.setState({
           pages: pages,
         });
@@ -173,12 +171,13 @@ class Navigation extends React.Component {
   checkIfEntityViewerPageExists(page){
     var last_page_key = this.state.pages.length - 1;
     var pages = this.state.pages;
-    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent[0].type=="Form"){
-      // pages.splice(last_page_key,1);
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent && (page.pageContent[0].type=="Form" || page.pageContent[0].type=="Comment")){
       return true;
     }
-    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent[0].type=="EntityViewer"){
-      // pages.splice(last_page_key,1);
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Comment")){
+      return true;
+    }
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Comment" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Form")){
       return true;
     }
     return false;
