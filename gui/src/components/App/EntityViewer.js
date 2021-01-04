@@ -39,19 +39,25 @@ class EntityViewer extends React.Component {
     });
     eventDiv.dispatchEvent(ev2);
   };
-  generateEditButton(){
+  generateEditButton(enableComments){
     if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
+      var fileId;
       let gridToolbarContent = [];
       var filePage;
       if (this.props.fileId){
-        filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.props.fileId}];
+          fileId = this.props.fileId;
       } else {
         if(this.state.fileId){
-          filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}];
+          fileId = this.state.fileId;
         }
       }
+      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:fileId}];
       let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
       gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+      if(enableComments != "0"){
+        var commentPage = {title: "Comments",icon: "far fa-comment",pageContent: [{type:"Comment",fileId: fileId}]};
+        gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentPage)} ><i className={"fa fa-comment"}></i></Button>);
+      }
       let ev = new CustomEvent("addcustomActions", {
         detail: { customActions: gridToolbarContent },
         bubbles: true,
@@ -67,8 +73,8 @@ class EntityViewer extends React.Component {
           this.setState({ entityId:fileData.data.entity_id,fileData: file });
           this.getEntityPage().then(entityPage => {
             this.setState({entityConfig: entityPage.data});
-            this.generateEditButton();
-            var content = this.constructTabs(entityPage.data,entityPage.data.enable_comments,entityPage.data.enable_documents);
+            this.generateEditButton(entityPage.data.enable_documents);
+            var content = this.constructTabs(entityPage.data,entityPage.data.enable_documents);
             this.setState({content: content});
             this.setState({dataReady: true});
           });
@@ -82,13 +88,10 @@ class EntityViewer extends React.Component {
       return v.toString(16);
     });
   }
-  constructTabs(page,enableComments,enableDocuments){
+  constructTabs(page,enableDocuments){
     var tabs = [];
     if(page && page.content){
       tabs.push({name:"View",uuid:this.uuidv4(),content: page.content});
-    }
-    if(enableComments != "0"){
-      tabs.push({name:"Comments",uuid: this.uuidv4(),content: [{type:"Comment",url:this.fileId}]})
     }
     if(enableDocuments != "0"){
       tabs.push({name: "Attachments",uuid:this.uuidv4(),content: [{type:"DocumentViewer",url:"file/"+this.fileId+"/document"}]});
