@@ -122,21 +122,44 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
+    var that = this;
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
-      var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:e.detail.fileId};
-      if(!this.checkIfPageExists(pageContent)){
+      var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId: e.detail.fileId};
+      if(!this.checkIfEntityViewerPageExists(pageContent)){
         pages.push(pageContent)
+      } else {
+        pages.splice(pages.length - 1, 1);
+        this.pageActive(pages[pages.length - 1]["pageId"]);
+        this.setState({
+          pages: pages,
+        });
+        setTimeout(function(){ 
+          that.addPage({detail: pageContent});
+        }, 1000);
       }
     } else {
-      if(!this.checkIfPageExists(e.detail)){
+      if(!this.checkIfEntityViewerPageExists(e.detail)){
         pages.push(e.detail)
+      } else {
+        pages.splice(pages.length - 1, 1);
+        this.pageActive(pages[pages.length - 1]["pageId"]);
+        this.setState({
+          pages: pages,
+        });
+        setTimeout(function(){ 
+          that.addPage({detail: e.detail});
+        }, 1000);
+        // this.addPage({detail: pageContent});
+        // pages.push(e.detail);
       }
     }
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
-      pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
+      if(pages[pages.length - 2].pageId){
+        pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
+      }
     }
     this.setState({ pages: pages });
     this.resetCustomActions();
@@ -147,13 +170,17 @@ class Navigation extends React.Component {
   addcustomActions = (e) => {
     this.setState({customActions:e.detail.customActions});
   };
-  checkIfPageExists(page){
-    this.state.pages.forEach(key => {
-      if(this.state.pages[key] && this.state.pages[key].pageContent[0].type && page.pageContent[0].type && this.state.pages[key].pageContent[0].type == page.pageContent[0].type &&  this.state.pages[key].pageContent[0].fileId == page.pageContent[0].fileId){
-        this.pageActive(this.state.pages[key].pageId);
-        return true;
-      }
-    });
+  checkIfEntityViewerPageExists(page){
+    var last_page_key = this.state.pages.length - 1;
+    var pages = this.state.pages;
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent[0].type=="Form"){
+      // pages.splice(last_page_key,1);
+      return true;
+    }
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent[0].type=="EntityViewer"){
+      // pages.splice(last_page_key,1);
+      return true;
+    }
     return false;
   }
 
