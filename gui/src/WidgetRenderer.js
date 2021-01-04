@@ -260,7 +260,26 @@ class WidgetRenderer {
                     '</div>');
             }
         } else {
+            configuration["series"][0]["columns"]["adapter"] = {
+                "fill": function (fill, target) {
+                    if (target.dataItem && (target.dataItem.valueY < 0)) {
+                        return am4core.color('red');
+                    } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
+                        return am4core.color('red');
+                    } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
+                        return am4core.color('yellow');
+                    } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
+                        return am4core.color('green');
+                    } else if (target.dataItem && (target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
+                        return am4core.color('red');
+                    } else {
+                        return fill;
+                    }
+                }
+            };
+
             chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
+            chart.responsive.enabled = true;
             if (chart && data) {
                 chart.data = data;
             }
