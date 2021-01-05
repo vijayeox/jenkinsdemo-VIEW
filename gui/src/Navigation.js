@@ -125,7 +125,7 @@ class Navigation extends React.Component {
     var that = this;
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
-      var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId: e.detail.fileId};
+      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId: e.detail.fileId};
       if(!this.checkIfEntityViewerPageExists(pageContent)){
         pages.push(pageContent)
       } else {
@@ -171,13 +171,13 @@ class Navigation extends React.Component {
   checkIfEntityViewerPageExists(page){
     var last_page_key = this.state.pages.length - 1;
     var pages = this.state.pages;
-    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent && (page.pageContent[0].type=="Form" || page.pageContent[0].type=="Comment")){
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent && (page.pageContent[0].type=="Form" || page.pageContent[0].type=="Comment")){
       return true;
     }
-    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Comment")){
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Comment")){
       return true;
     }
-    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0].type=="Comment" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Form")){
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent  && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="Comment" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Form")){
       return true;
     }
     return false;
