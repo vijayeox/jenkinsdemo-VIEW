@@ -86,6 +86,10 @@ class WidgetRenderer {
             }
         }
         element.innerHTML = displayValue ? displayValue : ('' + data);
+        element.innerHTML = displayValue ? displayValue : ('' + data);
+        element.classList.remove("red");
+        element.classList.remove("yellow");
+        element.classList.remove("green");
         if (widget.targets) {
             element.classList.add(widget.targets.color);
         }
