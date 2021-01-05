@@ -208,13 +208,13 @@ class CommentsView extends React.Component {
         <div className="commentsPage">
             <div id="chat-container">
               <div id="chat-message-list" key={this.state.fileId}>
-                {this.state.commentsList.map((commentItem) => {
+                {this.state.commentsList.slice(0).reverse().map((commentItem) => {
                   var image = this.core.config("wrapper.url") + "user/profile/" + commentItem.user_id
                   if(commentItem.user_id == that.currentUserId){
                   return (
-                    <div className="msg">
+                    <div className="msg right-msg">
       <div className="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
-                    <div className="msg-bubble right-msg">
+                    <div className="msg-bubble">
                       <div className="msg-info">
                         <div className="msg-info-name">{commentItem.name}</div>
                         <div className="msg-info-time">{moment
