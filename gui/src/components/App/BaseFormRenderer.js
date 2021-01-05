@@ -460,15 +460,16 @@ class BaseFormRenderer extends React.Component {
     }
 
     async saveForm(form, data) {
-        if(this.props.customSaveForm && typeof this.props.customSaveForm=='function'){
-            this.props.customSaveForm(that.cleanData(submission.data));
+        var that = this;
+        if(that.props.customSaveForm && typeof that.props.customSaveForm=='function'){
+            that.props.customSaveForm(that.cleanData(submission.data));
             next(null);
             return that.cleanData(submission.data);
         }
-        this.showFormLoader(true, 0);
-        var that = this;
+        that.showFormLoader(true, 0);
+        var that = that;
         if (!form) {
-            form = this.state.currentForm;
+            form = that.state.currentForm;
         }
         var componentList = flattenComponents(form._form.components, true);
         for (var componentKey in componentList) {
@@ -486,34 +487,35 @@ class BaseFormRenderer extends React.Component {
             }
         }
         if (form._form["properties"] && form._form["properties"]["submission_commands"]) {
-            if (this.state.workflowId) {
-                form.data["workflowId"] = this.state.workflowId;
+            if (that.state.workflowId) {
+                form.data["workflowId"] = that.state.workflowId;
             }
-            if (this.state.workflowInstanceId) {
-                form.submission.data["workflowInstanceId"] = this.state.workflowInstanceId;
-                if (this.state.activityInstanceId) {
-                    form.submission.data["activityInstanceId"] = this.state.activityInstanceId;
-                    if (this.state.instanceId) {
-                        form.submission.data["instanceId"] = $this.state.instanceId;
+            if (that.state.workflowInstanceId) {
+                form.submission.data["workflowInstanceId"] = that.state.workflowInstanceId;
+                if (that.state.activityInstanceId) {
+                    form.submission.data["activityInstanceId"] = that.state.activityInstanceId;
+                    if (that.state.instanceId) {
+                        form.submission.data["instanceId"] = $that.state.instanceId;
                     }
                 }
             }
-            if (this.props.fileId) {
-                form.submission.data.fileId = this.state.fileId;
+            if (that.props.fileId) {
+                form.submission.data.fileId = that.state.fileId;
                 form.submission.data["workflow_instance_id"] = undefined;
             }
-            if (this.props.parentFileId) {
+            if (that.props.parentFileId) {
                 form.submission.data.fileId = undefined;
                 form.submission.data["workflow_instance_id"] = undefined;
                 form.submission.data.bos ? null : (form.submission.data.bos = {});
-                form.submission.data.bos.assoc_id = this.props.parentFileId;
+                form.submission.data.bos.assoc_id = that.props.parentFileId;
             }
-            return await this.callPipeline(form._form["properties"]["submission_commands"], this.cleanData(form.submission.data)).then(async response => {
+            console.log(that);
+            return await that.callPipeline(form._form["properties"]["submission_commands"], that.cleanData(form.submission.data)).then(async response => {
                 if (response.status == "success") {
-                    await this.deleteCacheData().then(response2 => {
+                    await that.deleteCacheData().then(response2 => {
                         that.showFormLoader(false, 0);
                         if (response2.status == "success") {
-                            this.stepDownPage();
+                            that.stepDownPage();
                         }
                     }).catch(e => {
                         that.handleError(e);
@@ -521,14 +523,14 @@ class BaseFormRenderer extends React.Component {
                     return response;
                 } else {
                     if (response.errors) {
-                        await this.storeError(data, response.errors, "pipeline");
+                        await that.storeError(data, response.errors, "pipeline");
                         that.showFormLoader(false, 0);
-                        this.notif.current.notify("Error", response.errors[0].message, "danger");
+                        that.notif.current.notify("Error", response.errors[0].message, "danger");
                         return response;
                     } else {
-                        await this.storeCache(data);
+                        await that.storeCache(data);
                         that.showFormLoader(false, 0);
-                        this.notif.current.notify("Error", "Form Submission Failed", "danger");
+                        that.notif.current.notify("Error", "Form Submission Failed", "danger");
                     }
                 }
             }).catch(e => {
@@ -539,65 +541,65 @@ class BaseFormRenderer extends React.Component {
             let method = "post";
             if (form._form["properties"] && form._form["properties"]["submission_api"]) {
                 var postParams = JSON.parse(form._form["properties"]["submission_api"]);
-                route = ParameterHandler.replaceParams(this.state.appId, postParams.api.url, form.submission.data);
+                route = ParameterHandler.replaceParams(that.state.appId, postParams.api.url, form.submission.data);
                 delete data.orgId;
                 method = postParams.api.method;
-            } else if (this.state.workflowId) {
-                route = "/workflow/" + this.state.workflowId;
-                if (this.state.activityInstanceId) {
-                    route = "/workflow/" + this.state.workflowId + "/activity/" + this.state.activityInstanceId;
+            } else if (that.state.workflowId) {
+                route = "/workflow/" + that.state.workflowId;
+                if (that.state.activityInstanceId) {
+                    route = "/workflow/" + that.state.workflowId + "/activity/" + that.state.activityInstanceId;
                     method = "post";
-                    if (this.state.instanceId) {
-                        route = "/workflow/" + this.state.workflowId + "/activity/" + this.state.activityId + "/instance/" + this.state.instanceId;
+                    if (that.state.instanceId) {
+                        route = "/workflow/" + that.state.workflowId + "/activity/" + that.state.activityId + "/instance/" + that.state.instanceId;
                         method = "put";
                     }
                 }
-            } else if (this.state.workflowInstanceId) {
-                route = "/workflowinstance/" + this.state.workflowInstanceId;
-                if (this.state.activityInstanceId) {
-                    route = "/workflowinstance/" + this.state.workflowInstanceId + "/activity/" + this.state.activityInstanceId;
+            } else if (that.state.workflowInstanceId) {
+                route = "/workflowinstance/" + that.state.workflowInstanceId;
+                if (that.state.activityInstanceId) {
+                    route = "/workflowinstance/" + that.state.workflowInstanceId + "/activity/" + that.state.activityInstanceId;
                     method = "post";
                 }
                 route = route + "/submit";
             } else {
-                route = this.appUrl + "/form/" + this.state.formId + "/file";
+                route = that.appUrl + "/form/" + that.state.formId + "/file";
                 method = "post";
 
-                if (this.props.route) {
-                    route = this.props.route;
+                if (that.props.route) {
+                    route = that.props.route;
                     method = "post"
                 }
-                if (this.state.instanceId) {
-                    route = this.appUrl + "/form/" + this.state.formId + "/file/" + this.state.instanceId;
+                if (that.state.instanceId) {
+                    route = that.appUrl + "/form/" + that.state.formId + "/file/" + that.state.instanceId;
                     method = "put";
                 }
             }
-            return await this.hasCore?this.helper.request("v1", route, this.cleanData(data), method):axios({method:method,url:route,data:this.cleanData(data)}).then(async response => {
+            if(that.hasCore){
+            return await that.helper.request("v1", route, that.cleanData(data), method).then(async response => {
                 if (response.status == "success") {
-                    console.log(response)
-                    if (this.props.route) {
+                    if (that.props.route && typeof that.props.postSubmitCallback() == 'function') {
                         that.showFormLoader(false, 0);
-                        this.props.postSubmitCallback();
+                        that.props.postSubmitCallback();
                     }
-                    var cache = await this.deleteCacheData().then(response2 => {
+                    var cache = await that.deleteCacheData().then(response2 => {
                         that.showFormLoader(false, 0);
                         if (response2.status == "success") {
-                            this.stepDownPage();
+                            that.stepDownPage();
                         }
                     });
                     return response;
                 } else {
-                    if (this.props.route) {
+                    if (that.props.route) {
                         console.log(response)
                         that.showFormLoader(false, 0);
                     }
                     else {
-                        var storeCache = await this.storeCache(this.cleanData(data)).then(
+                        var storeCache = await that.storeCache(that.cleanData(data)).then(
                             async cacheResponse => {
                                 if (response.data.errors) {
-                                    var storeError = await this.storeError(this.cleanData(data), response.data.errors, route).then(storeErrorResponse => {
+                                    var storeError = await that.storeError(that.cleanData(data), response.data.errors, route).then(storeErrorResponse => {
                                         that.showFormLoader(false, 0);
-                                        this.notif.current.notify("Error", "Form Submission Failed", "danger");
+                                        that.notif.current.notify("Error", "Form Submission Failed", "danger");
                                         return storeErrorResponse;
                                     });
                                 } else {
@@ -609,6 +611,42 @@ class BaseFormRenderer extends React.Component {
                 }
                 return response;
             });
+            } else {
+                return await axios({method:method,url:route,data:that.cleanData(data)}).then(async response => {
+                if (response.status == "success") {
+                    if (that.props.route && typeof that.props.postSubmitCallback() == 'function') {
+                        that.showFormLoader(false, 0);
+                        that.props.postSubmitCallback();
+                    }
+                    var cache = await that.deleteCacheData().then(response2 => {
+                        that.showFormLoader(false, 0);
+                        if (response2.status == "success") {
+                            that.stepDownPage();
+                        }
+                    });
+                    return response;
+                } else {
+                    if (that.props.route) {
+                        that.showFormLoader(false, 0);
+                    } else {
+                        var storeCache = await that.storeCache(that.cleanData(data)).then(
+                            async cacheResponse => {
+                                if (response.data.errors) {
+                                    var storeError = await that.storeError(that.cleanData(data), response.data.errors, route).then(storeErrorResponse => {
+                                        that.showFormLoader(false, 0);
+                                        that.notif.current.notify("Error", "Form Submission Failed", "danger");
+                                        return storeErrorResponse;
+                                    });
+                                } else {
+                                    that.showFormLoader(false, 0);
+                                    return storeErrorResponse;
+                                }
+                            });
+                    }
+                }
+                return response;
+            });
+            }
         }
     }
 
