@@ -165,6 +165,9 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
                 endDate=filter["endDate"]
                 if (typeof endDate !== "string") {
                   endDate = getformattedDate(endDate)
+                }else{
+                  endDate = new Date(filter["endDate"])
+                  endDate = getformattedDate(endDate)
                 }
               }else{
                 //on default current mtd and ytd is set
