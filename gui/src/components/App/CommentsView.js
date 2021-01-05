@@ -14,12 +14,9 @@ class CommentsView extends React.Component {
     this.profile = this.profileAdapter.get().key;
     this.appId = this.props.appId;
     this.loader = this.core.make("oxzion/splash");
-    this.userTimezone = this.profile.timezone
-      ? this.profile.timezone
-      : moment.tz.guess();
-    this.userDateFormat = this.profile.preferences.dateformat
-      ? this.profile.preferences.dateformat
-      : "YYYY/MM/DD";
+    this.userTimezone = this.profile.timezone ? this.profile.timezone : moment.tz.guess();
+    this.userDateFormat = this.profile.preferences.dateformat ? this.profile.preferences.dateformat : "YYYY/MM/DD";
+    this.currentUserId = this.profile.uuid;
     var fileId = this.props.url ? this.props.url : null;
     fileId = this.props.fileId ? this.props.fileId : fileId;
     console.log(fileId);
@@ -204,6 +201,7 @@ class CommentsView extends React.Component {
   };
 
   render() {
+    var that = this;
     if (this.state.dataReady) {
       // console.log(dataReady);
       return (
@@ -212,24 +210,45 @@ class CommentsView extends React.Component {
               <div id="chat-message-list" key={this.state.fileId}>
                 {this.state.commentsList.map((commentItem) => {
                   var image = this.core.config("wrapper.url") + "user/profile/" + commentItem.user_id
+                  if(commentItem.user_id == that.currentUserId){
                   return (
-                    <div class="msg">
-      <div class="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
-                    <div class="msg-bubble">
-                      <div class="msg-info">
-                        <div class="msg-info-name">{commentItem.name}</div>
-                        <div class="msg-info-time">{moment
+                    <div className="msg">
+      <div className="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
+                    <div className="msg-bubble right-msg">
+                      <div className="msg-info">
+                        <div className="msg-info-name">{commentItem.name}</div>
+                        <div className="msg-info-time">{moment
                                                 .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
                                                 .clone()
                                                 .tz(this.userTimezone)
                                                 .format(this.userDateFormat + " - HH:mm:ss")}</div>
                       </div>
 
-                      <div class="msg-text" dangerouslySetInnerHTML={{__html : commentItem.text}}>
+                      <div className="msg-text" dangerouslySetInnerHTML={{__html : commentItem.text}}>
                       </div>
                     </div>
                   </div>
                   );
+                  } else {
+                    return (
+                    <div className="msg left-msg">
+      <div className="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
+                    <div className="msg-bubble">
+                      <div className="msg-info">
+                        <div className="msg-info-name">{commentItem.name}</div>
+                        <div className="msg-info-time">{moment
+                                                .utc(commentItem.time, "YYYY-MM-DD HH:mm:ss")
+                                                .clone()
+                                                .tz(this.userTimezone)
+                                                .format(this.userDateFormat + " - HH:mm:ss")}</div>
+                      </div>
+
+                      <div className="msg-text" dangerouslySetInnerHTML={{__html : commentItem.text}}>
+                      </div>
+                    </div>
+                  </div>
+                  );
+                  }
                 })}
               </div>
             </div>

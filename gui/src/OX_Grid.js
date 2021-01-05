@@ -272,6 +272,7 @@ export default class OX_Grid extends React.Component {
   };
   
   rowRender = (trElement, dataItem) => {
+    var that = this;
     const trProps = {
         ...trElement.props,
         onContextMenu: (e) => {
@@ -280,11 +281,10 @@ export default class OX_Grid extends React.Component {
         },
         onClick: (e) => {
           e.preventDefault();
-          var that = this;
           Object.keys(this.state.actions).map(function (key, index) {
             var action = that.state.actions;
             if(action[key].defaultAction == true){
-              this.handleAction(key);
+              that.handleAction(key, dataItem.dataItem);
             }
           });
         }
@@ -735,7 +735,8 @@ updateActionHandler(details, rowData) {
       });
   });
 }
-handleAction(key){
+handleAction(key,dataItem){
+  this.dataItem = dataItem;
   this.state.actions[key].confirmationMessage
       ? Swal.fire({
         title: this.state.actions[key].confirmationMessage,
@@ -749,9 +750,10 @@ handleAction(key){
       }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
 }
 handleOnSelect = (e) => {
+  var dataItem = this.dataItem;
   Object.keys(this.state.actions).map(function (key, index) {
     if(this.state.actions[key].name==e.item.text){
-      this.handleAction(key);
+      this.handleAction(key,dataItem);
     }
   }, this);
   this.setState({

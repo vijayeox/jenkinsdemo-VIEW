@@ -134,6 +134,18 @@
     align-items: flex-end;
     margin-bottom: 10px;
 }
+
+.right-msg {
+  flex-direction: row-reverse;
+}
+.right-msg .msg-bubble {
+  background: var(--right-msg-bg);
+  color: #fff;
+  border-bottom-right-radius: 0;
+}
+.right-msg .msg-img {
+  margin: 0 0 0 10px;
+}
 .msg-bubble {
     max-width: 450px;
     padding: 15px;
