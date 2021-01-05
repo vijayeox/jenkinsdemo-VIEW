@@ -85,9 +85,9 @@ class CommentsView extends React.Component {
   generateViewButton(){
     let gridToolbarContent = [];
     let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
-    let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId};
+    let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId:this.state.fileId};
     let editPageContent = {pageContent: [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}],title: "Edit",icon: "far fa-pencil"}
-    gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"far fa-list-alt"}></i></Button>);
+    gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-info"}></i></Button>);
     gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(editPageContent)} ><i className={"fa fa-pencil"}></i></Button>);
     let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
     document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);

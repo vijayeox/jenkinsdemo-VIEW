@@ -1028,10 +1028,10 @@ class BaseFormRenderer extends React.Component {
     generateViewButton(){
         let gridToolbarContent = [];
         let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
-        let pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:this.state.fileId};
+        let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId:this.state.fileId};
         let commentPage = [{type:"Comment",fileId:this.state.fileId}];
         let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
-        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"far fa-list-alt"}></i></Button>);
+        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-info"}></i></Button>);
         gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
         let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
         document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
