@@ -106,6 +106,10 @@ export function overrideCommonFilters(parentFilter, childFilter) {
   return filter
 }
 
+function getformattedDate(date){
+  return "date:" + date.getFullYear() + "-" + (("0" + (date.getMonth() + 1)).slice(-2)) + "-" + (("0" + date.getDate()).slice(-2))
+}
+
 export function extractFilterValues(dashboardFilter, dashboardStack, filtermode) {
   //filtermode is set to edfault if filters are applied by default
   filtermode = filtermode || "applied"
@@ -133,10 +137,10 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
           //convert startDate object to string
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            startDate = getformattedDate(startDate)
           } else if (new Date(startDate)) {
             startDate = new Date(filter["startDate"])
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            startDate = getformattedDate(startDate)
           }
 
           //date range received
@@ -145,23 +149,33 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
 
             if (filter["operator"] == "gte&&lte") {
               if (typeof endDate !== "string") {
-                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+                endDate = getformattedDate(endDate)
               } else if (new Date(endDate)) {
                 endDate = new Date(endDate)
-                endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
+                endDate = getformattedDate(endDate)
               }
             } else {
               //get current date values
               startDate = new Date()
               endDate = new Date()
-              if (filter["operator"] === "mtd") {
-                startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01")
+              if(filtermode=="applied"){
+                startDate = new Date(filter["startDate"])
+                startDate = getformattedDate(startDate)
+
+                endDate=filter["endDate"]
+                if (typeof endDate !== "string") {
+                  endDate = getformattedDate(endDate)
+                }
+              }else{
+                //on default current mtd and ytd is set
+                if (filter["operator"] === "mtd") {
+                  startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01")
+                }
+                else if (filter["operator"] === "ytd") {
+                  startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01")
+                }
+                endDate = getformattedDate(endDate)
               }
-              else if (filter["operator"] === "ytd") {
-                startDate = "date:" + startDate.getFullYear() + "-" + ("01") + "-" + ("01")
-              }
-              endDate = "date:" + endDate.getFullYear() + "-" + (("0" + (endDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + endDate.getDate()).slice(-2))
-              // filter["operator"] = "gte&&lte"
             }
 
 
@@ -186,10 +200,10 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
             filterarray.push(filter["operator"])
             if (typeof startDate !== "string") {
               startDate = filter["startDate"]
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+              startDate = getformattedDate(startDate)
             } else if (new Date(startDate)) {
               startDate = new Date(filter["startDate"])
-              startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+              startDate = getformattedDate(startDate)
             }
             filterarray.push(startDate)
             filterParams.push(filterarray)
@@ -201,10 +215,10 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
           filterarray.push(filter["operator"])
           if (typeof startDate !== "string") {
             startDate = filter["startDate"]
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            startDate = getformattedDate(startDate)
           } else if (new Date(startDate)) {
             startDate = new Date(filter["startDate"])
-            startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + (("0" + startDate.getDate()).slice(-2))
+            startDate = getformattedDate(startDate)
           }
           filterarray.push(startDate)
           filterParams.push(filterarray)
