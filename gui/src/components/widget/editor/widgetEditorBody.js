@@ -565,10 +565,24 @@ class WidgetEditorBody extends AbstractEditor {
             }
             return errors
         } else {
-            //checking if all fields are entered
+            //checking if all fields are entered in single target
             this.state.singleLimit.red_limit == '' && (errors["target"][SINGLELEVEL]["red_limit"] = "*Field cannot be empty")
             this.state.singleLimit.yellow_limit == '' && (errors["target"][SINGLELEVEL]["yellow_limit"] = "*Field cannot be empty")
             this.state.singleLimit.green_limit == '' && (errors["target"][SINGLELEVEL]["green_limit"] = "*Field cannot be empty")
+
+            //checking if all fields are entered in multiple target
+            this.props.widget.data.map((item, index) => {
+                let value=this.state.multiLimit[this.state.targetFields[0].label + "_" + index]
+                if (value==undefined ||(value!=undefined && value.red_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`]= "*Field cannot be empty"
+                }
+                if (value==undefined ||(value!=undefined && value.green_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_green_limit`]= "*Field cannot be empty"
+                }
+                if (value==undefined ||(value!=undefined &&value.yellow_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_yellow_limit`]= "*Field cannot be empty"
+                }
+            })
             this.setState({ errors: errors })
             return errors
         }
