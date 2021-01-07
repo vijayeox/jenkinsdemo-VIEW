@@ -107,6 +107,9 @@ $primary-color: #275362;
     -webkit-transition: all 0.2s;
     transition: all 0.2s;
   }
+  .Navigation .tab-link:focus{
+    outline: transparent;
+  }
  .tab-link:hover,.tab-link:focus{
     border-color: #e9ecef #e9ecef #dee2e6;
   }
