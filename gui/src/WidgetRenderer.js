@@ -233,11 +233,6 @@ class WidgetRenderer {
             }
         }
 
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
-            WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
-            isDrillDownChart = true;
-        }
-
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         switch (elementTagName) {
@@ -276,14 +271,19 @@ class WidgetRenderer {
                                 return am4core.color('yellow');
                             } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
                                 return am4core.color('green');
-                            } else if (target.dataItem && (target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
-                                return am4core.color('red');
+                            } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
+                                return am4core.color('green');
                             } else {
                                 return fill;
                             }
                         }
                     }
                 };
+            }
+
+            if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
+                WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
+                isDrillDownChart = true;
             }
 
             chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
@@ -311,7 +311,7 @@ class WidgetRenderer {
                     '</div>');
                 rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
                 buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
-                buttonElement.addEventListener('click', event => {
+                buttonElement.addEventListener('clickGraphItem', event => {
                     let target = event.target;
                     WidgetDrillDownHelper.rollUpClicked(
                         WidgetDrillDownHelper.findWidgetElement(target));
