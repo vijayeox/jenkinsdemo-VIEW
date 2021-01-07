@@ -300,7 +300,7 @@ function cellWithEditing(remove, title) {
                 Remove
               </button>
             </center>
-          ) : title == "Organization" ? (
+          ) : title == "Account" ? (
             <center>
               <b>Admin</b>
             </center>
