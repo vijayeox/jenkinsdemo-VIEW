@@ -94,7 +94,6 @@ class FormRender extends BaseFormRenderer {
 
   loadWorkflow(form) {
     let that = this;
-    console.log(this.state);
     if (this.state.parentWorkflowInstanceId && !this.state.isDraft) {
       this.getFileData().then(response => {
         if (response.status == "success") {
