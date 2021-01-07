@@ -42,7 +42,7 @@ class Organization extends React.Component {
       args: this.core,
       config: {
         dataItem: dataItem,
-        title: "Organization",
+        title: "Account",
         mainList: "users/list",
         subList: "organization",
         members: "Users"
@@ -118,7 +118,7 @@ class Organization extends React.Component {
       <div style={{ height: "inherit" }}>
         {this.state.visible && this.addUsersTemplate}
         <TitleBar
-          title="Manage Organizations"
+          title="Manage Account"
           menu={this.props.menu}
           args={this.core}
         />
@@ -128,7 +128,7 @@ class Organization extends React.Component {
           ref={this.child}
           config={{
             showToolBar: true,
-            title: "Organization",
+            title: "Account",
             api: "account",
             column: [
               {
