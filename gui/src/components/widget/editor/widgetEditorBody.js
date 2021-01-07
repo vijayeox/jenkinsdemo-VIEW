@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button } from 'react-bootstrap';
+import { array } from 'prop-types';
 var SINGLELEVEL = "singleLevel"
 var MULTILEVEL = "multiLevel"
 class WidgetEditorBody extends AbstractEditor {
@@ -487,7 +488,7 @@ class WidgetEditorBody extends AbstractEditor {
             }
             if (this.state.singleLimit.target_id) {
                 window.postDataRequest('analytics/target/' + this.state.singleLimit.target_uuid, params, 'put').
-                    then(function (response) {
+                    then((response) => {
                         targetParams['target_uuid'] = this.state.singleLimit.target_id
                         console.log(response)
                         window.postDataRequest('analytics/target/createwidgettarget', targetParams, 'put');
@@ -571,7 +572,8 @@ class WidgetEditorBody extends AbstractEditor {
             this.state.singleLimit.green_limit == '' && (errors["target"][SINGLELEVEL]["green_limit"] = "*Field cannot be empty")
 
             //checking if all fields are entered in multiple target
-            this.props.widget.data.map((item, index) => {
+            
+            Array.isArray(this.props.widget.data) && this.props.widget.data.map((item, index) => {
                 let value=this.state.multiLimit[this.state.targetFields[0].label + "_" + index]
                 if (value==undefined ||(value!=undefined && value.red_limit == "")) {
                     errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`]= "*Field cannot be empty"
