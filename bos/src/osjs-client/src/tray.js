@@ -60,10 +60,12 @@ export default class Tray {
      * @type {TrayEntry[]}
      */
     this.entries = [];
+    this.trayEntries = [];
   }
 
   destroy() {
     this.entries = [];
+    this.trayEntries = [];
   }
 
   /**
@@ -103,19 +105,23 @@ export default class Tray {
       }else
       app_array[pos] = entry;
     }
-    else
-    app_array.push(entry);
-    
-
+    else{
+      app_array.push(entry);
+    }
+    this.trayEntries[0] = app_array[0];
+    for (let index = app_array.length - 1; index > 0; index--) {
+      this.trayEntries[ app_array.length - index] = app_array[index];      
+    }
+  
     this.core.emit('osjs/tray:create', entry);
-    this.core.emit('osjs/tray:update', app_array);
+    this.core.emit('osjs/tray:update', this.trayEntries);
 
     const obj = {
       entry,
       update: u => {
         Object.keys(u).forEach(k => (entry[k] = u[k]));
 
-        this.core.emit('osjs/tray:update', app_array);
+        this.core.emit('osjs/tray:update', this.trayEntries);
       },
       destroy: () => this.remove(entry)
     };

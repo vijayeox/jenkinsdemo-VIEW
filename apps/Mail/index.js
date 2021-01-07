@@ -234,7 +234,7 @@
                 trayInitialized = true;
                 trayOptions.title = "Mail";
                 trayOptions.icon = proc.resource(metadata.icon_white);
-                trayOptions.pos = 1;
+                trayOptions.pos = 3;
                 trayOptions.onclick = () => {
                   
                   win.raise();
