@@ -25,6 +25,7 @@ export function replaceCommonFilters(parentFilters, childFilters, property) {
           if (parentFilterCopy.length > 0 && childFilterCopy.length > 0) {
             if (parentFilterCopy[parentindex].field == childFilterCopy[childIndex].field) {
               hasCommonFilter += 1
+              childFilterCopy[childIndex]["isParentFilter"]=true
               appliedFilters.push(childFilterCopy[childIndex])
               childFilterCopy.splice(childIndex, 1)
               parentFilterCopy.splice(parentindex, 1)
@@ -33,11 +34,12 @@ export function replaceCommonFilters(parentFilters, childFilters, property) {
           }
         }
         if (hasCommonFilter == 0) {
+          parentFilterCopy[parentindex]["isParentFilter"]=true
           appliedFilters.push(parentFilterCopy[parentindex])
         }
       }
-      if (childFilters.length > 0) {
-        childFilters.map((childFilterValue, index) => {
+      if (childFilterCopy.length > 0) {
+        childFilterCopy.map((childFilterValue, index) => {
 
           optionalfilters.push(childFilterValue.label ? childFilterValue : { label: childFilterValue.filterName, value: childFilterValue })
         })

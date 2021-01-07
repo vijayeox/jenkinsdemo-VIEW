@@ -362,12 +362,15 @@ class DashboardManager extends React.Component {
   getFilterProperty(property) {
     let appliedFilters = []
     if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
-      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
+      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property]){
+        //executes after the filter is applied in the drilldown dashboard [filterconfiguration in dashboardstack must be set]
         return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
+      }
       else if (this.state.dashboardStack.length > 1) {
-        appliedFilters = replaceCommonFilters([...this.state.dashboardStack[this.state.dashboardStack.length - 2][property]], [...this.state[property]], property)
+       appliedFilters= replaceCommonFilters([...this.state.dashboardStack[this.state.dashboardStack.length - 2][property]], [...this.state[property]], property)
         // appliedFilters.push(...this.state.dashboardStack[this.state.dashboardStack.length - 2][property])
         // appliedFilters.push(...this.state[property])
+        
         return appliedFilters
       }
       else
