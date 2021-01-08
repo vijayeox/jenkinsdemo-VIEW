@@ -402,6 +402,7 @@ const FilterFields = function (props) {
             <div className="dash-manager-buttons dashboard-filter-field" style={{ marginBottom: "1em", position: "relative", left: "0px" }}>
                 <Form.Group>
                     <Form.Label></Form.Label>
+                    {!filters[index]["isParentFilter"] &&
                     <Button className="filter_remove_button" style={{
                         cursor: "pointer",
                         float: "left",
@@ -409,6 +410,7 @@ const FilterFields = function (props) {
                         marginTop: "25px",
                         position: "relative",
                     }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                }
                 </Form.Group>
             </div>
         </Form.Row>)

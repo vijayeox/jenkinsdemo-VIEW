@@ -42,7 +42,8 @@ class DashboardManager extends React.Component {
       drilldownDashboardFilter: [],
       hideEdit: this.props.hideEdit,
       dashboardStack: [],
-      exportConfiguration: null
+      exportConfiguration: null,
+      loadDefaultFilters:false
     };
     this.appId = this.props.app;
     this.proc = this.props.proc;
@@ -172,7 +173,7 @@ class DashboardManager extends React.Component {
             })
             let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter, "default")
             !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter, filterOptions: applyFilterOption })
-            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue, filterOptions: applyFilterOption })
+            that.setState({ dashboardBody: "", inputs, dashList: response.data, uuid: dash.uuid, exportConfiguration: dash.export_configuration, filterConfiguration: dashboardFilter, dashboardStack: dashboardStack, drilldownDashboardFilter: preapredExtractedFilterValue, filterOptions: applyFilterOption,loadDefaultFilters:true })
 
 
           }
@@ -276,6 +277,7 @@ class DashboardManager extends React.Component {
       //filter which are applied on the dashboard
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = (filterConfiguration && filterConfiguration.state.filters) ? filterConfiguration.state.filters : []
       //filters which appear in drop down
+      console.log(this.getFilterProperty("filterConfiguration"))
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = this.getOptionalFilters("filterOptions")
       dashboardStack[dashboardStack.length - 1]["widgetFilter"] = e.widgetFilter ? e.widgetFilter : []
     }
@@ -288,7 +290,7 @@ class DashboardManager extends React.Component {
     } else {
       dashboardStack.push({ data: value, drilldownDashboardFilter: e.drilldownDashboardFilter, drilldownDashboardTitle: dashboardTitle })
     }
-    this.setState({ dashboardStack: dashboardStack }, () => { this.changeDashboard(e) })
+    this.setState({ dashboardStack: dashboardStack,loadDefaultFilters:false }, () => { this.changeDashboard(e) })
   }
 
   changeDashboard(event) {
@@ -343,7 +345,7 @@ class DashboardManager extends React.Component {
       }
     }
     dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
-    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack })
+    this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack,loadDefaultFilters:true })
   }
 
   rollupToDashboard() {
@@ -355,19 +357,22 @@ class DashboardManager extends React.Component {
       let event = {}
       event.value = JSON.stringify(dashboard.data)
       event.drilldownDashboardFilter = dashboard.drilldownDashboardFilter
-      this.setState({ dashboardStack: stack }, () => { this.changeDashboard(event) })
+      this.setState({ dashboardStack: stack,loadDefaultFilters:false }, () => { this.changeDashboard(event) })
     }
   }
 
   getFilterProperty(property) {
     let appliedFilters = []
     if (this.state.dashboardStack && this.state.dashboardStack.length > 0) {
-      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property])
+      if (this.state.dashboardStack[this.state.dashboardStack.length - 1][property]){
+        //executes after the filter is applied in the drilldown dashboard [filterconfiguration in dashboardstack must be set]
         return this.state.dashboardStack[this.state.dashboardStack.length - 1][property]
+      }
       else if (this.state.dashboardStack.length > 1) {
-        appliedFilters = replaceCommonFilters([...this.state.dashboardStack[this.state.dashboardStack.length - 2][property]], [...this.state[property]], property)
+       appliedFilters= replaceCommonFilters([...this.state.dashboardStack[this.state.dashboardStack.length - 2][property]], [...this.state[property]], property)
         // appliedFilters.push(...this.state.dashboardStack[this.state.dashboardStack.length - 2][property])
         // appliedFilters.push(...this.state[property])
+        
         return appliedFilters
       }
       else
@@ -546,6 +551,7 @@ class DashboardManager extends React.Component {
                       drilldownDashboardFilter={this.state.drilldownDashboardFilter}
                       dashboardStack={this.state.dashboardStack}
                       rollupToDashboard={() => this.rollupToDashboard()}
+                      loadDefaultFilters={this.state.loadDefaultFilters}
                     />
                   }
 
