@@ -105,7 +105,7 @@ class Dashboard extends Component {
             this.setupDrillDownListeners()
           }
           );
-          let extractedFilterValues = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack);
+          let extractedFilterValues = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack,this.props.loadDefaultFilters?"default":undefined);
           let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
