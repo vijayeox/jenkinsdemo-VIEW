@@ -277,6 +277,7 @@ class DashboardManager extends React.Component {
       //filter which are applied on the dashboard
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = (filterConfiguration && filterConfiguration.state.filters) ? filterConfiguration.state.filters : []
       //filters which appear in drop down
+      console.log(this.getFilterProperty("filterConfiguration"))
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = this.getOptionalFilters("filterOptions")
       dashboardStack[dashboardStack.length - 1]["widgetFilter"] = e.widgetFilter ? e.widgetFilter : []
     }

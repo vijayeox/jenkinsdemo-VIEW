@@ -25,8 +25,8 @@ export function replaceCommonFilters(parentFilters, childFilters, property) {
           if (parentFilterCopy.length > 0 && childFilterCopy.length > 0) {
             if (parentFilterCopy[parentindex].field == childFilterCopy[childIndex].field) {
               hasCommonFilter += 1
-              childFilterCopy[childIndex]["isParentFilter"]=true
-              appliedFilters.push(childFilterCopy[childIndex])
+              parentFilterCopy[parentindex]["isParentFilter"]=true
+              appliedFilters.push(parentFilterCopy[parentindex])
               childFilterCopy.splice(childIndex, 1)
               parentFilterCopy.splice(parentindex, 1)
               parentindex--
