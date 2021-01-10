@@ -40,7 +40,8 @@ build_project() {
             npm install
             #npm audit fix
         fi    
-        npm run build --prod
+        #npm run build --prod
+        npm run build
         cd ..
     fi 
 }

@@ -125,7 +125,7 @@ class Navigation extends React.Component {
     var that = this;
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
-      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId: e.detail.fileId};
+      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId: e.detail.fileId};
       if(!this.checkIfEntityViewerPageExists(pageContent)){
         pages.push(pageContent)
       } else {
