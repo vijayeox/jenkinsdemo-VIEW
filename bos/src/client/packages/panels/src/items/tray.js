@@ -53,21 +53,24 @@ export default class TrayPanelItem extends PanelItem {
   }
 
   render(state, actions) {
-    const child = entry => h('div', {
-      onclick: ev => entry.onclick(ev, entry),
-      oncontextmenu: ev => entry.oncontextmenu(ev, entry),
-      className: 'osjs-panel-item--clickable osjs-panel-item--icon'
-    }, [
-      h('div', {className : 'badge'}, [
-        h('div', {
-          className : entry.badge,
-          innerHTML : entry.count})
-      ]),
-      h('img', {
-        src: entry.icon,
-        title: entry.title
-      })]);
-
+    const child = entry => { 
+      if(entry){
+        return h('div', {
+        onclick: ev => entry.onclick(ev, entry),
+        oncontextmenu: ev => entry.oncontextmenu(ev, entry),
+        className: 'osjs-panel-item--clickable osjs-panel-item--icon'
+      }, [
+        h('div', {className : 'badge'}, [
+          h('div', {
+            className : entry.badge,
+            innerHTML : entry.count})
+        ]),
+        h('img', {
+          src: entry.icon,
+          title: entry.title
+        })]);
+      }
+    }
     return super.render('tray', state.tray.map(child));
   }
 

@@ -1,16 +1,21 @@
-import Select from 'formiojs/components/textarea/TextArea'
+import TextArea from 'formiojs/components/textarea/TextArea'
 import * as _utils from 'formiojs/utils/utils'
 import * as _Formio from 'formiojs/Formio'
 import * as _lodash from "lodash";
 import * as _nativePromiseOnly from "native-promise-only";
+import Swal from 'sweetalert2';
+import Requests from "../../../Requests";
 
-export default class TextAreaComponent extends Select {
+export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
         super(component, options, data);
         component.core = null;
         component.appId = null;
         component.uiUrl = null;
+        component.loader = null;
+        component.ckeditorInstance = null;
+        component.renderedCharts = {};
         this.form = this.getRoot();
         var that = this;
         if (that.form && that.form.element) {
@@ -25,228 +30,218 @@ export default class TextAreaComponent extends Select {
             });
             that.form.element.dispatchEvent(evt);
         }
+        this.editorDialogMessageHandler = function (event) {
+            let editorDialog = event.source;
+            let eventData = event.data;
+            switch (eventData.action) {
+                case 'data':
+                    Requests.doRestRequest(component.core,eventData.url, eventData.params, eventData.method ? eventData.method : 'get',
+                        function (response) { //Successful response
+                            editorDialog.postMessage(response, '*');
+                        },
+                        function (response) { //Failure response
+                            editorDialog.postMessage(response, '*');
+                        },component.loader
+                    );
+                    break;
+                case 'permissions':
+                    component.userProfile = component.core.make("oxzion/profile").get();
+                    let permissions = component.userProfile.key.privileges;
+                    let preparedData = {
+                        "permissions": permissions,
+                        "corrid": eventData.params["OX_CORR_ID"]
+                    }
+                    editorDialog.postMessage({ "data": preparedData }, '*')
+                default:
+                    return event;
+            }
+        };
     }
     attachElement(element, index) {
-        var evt = new CustomEvent("getAppDetails", {
-            detail: {}
-        });
-        this.form.element.dispatchEvent(evt);
         var _this2 = this;
-
-        if (this.autoExpand && (this.isPlain || this.options.readOnly || this.options.htmlView)) {
-            if (element.nodeName === 'TEXTAREA') {
-                this.addAutoExpanding(element, index);
-            }
+        if(_this2.component.editor == 'ace' || _this2.component.editor == 'quill'){
+            return super.attachElement(element,index);
         }
-
-        if (this.options.readOnly) {
-            return element;
-        }
-
-        if (this.component.wysiwyg && !this.component.editor) {
-            this.component.editor = 'ckeditor';
-        }
-
-        var settings = _lodash.default.isEmpty(this.component.wysiwyg) ? this.wysiwygDefault[this.component.editor] || this.wysiwygDefault.default : this.component.wysiwyg; // Keep track of when this editor is ready.
-
-        this.editorsReady[index] = new _nativePromiseOnly.default(async function(editorReady) {
-            // Attempt to add a wysiwyg editor. In order to add one, it must be included on the global scope.
-            switch (_this2.component.editor) {
-                case 'ace':
-                    if (!settings) {
-                        settings = {};
-                    }
-
-                    settings.mode = _this2.component.as;
-
-                    _this2.addAce(element, settings, function(newValue) {
-                        return _this2.updateEditorValue(index, newValue);
-                    }).then(function(ace) {
-                        _this2.editors[index] = ace;
-                        var dataValue = _this2.dataValue;
-                        dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
-                        ace.setValue(_this2.setConvertedValue(dataValue, index));
-                        editorReady(ace);
-                        return ace;
-                    }).catch(function(err) {
-                        return console.warn(err);
-                    });
-
-                    break;
-
-                case 'quill':
-                    // Normalize the configurations for quill.
-                    if (settings.hasOwnProperty('toolbarGroups') || settings.hasOwnProperty('toolbar')) {
-                        console.warn('The WYSIWYG settings are configured for CKEditor. For this renderer, you will need to use configurations for the Quill Editor. See https://quilljs.com/docs/configuration for more information.');
-                        settings = _this2.wysiwygDefault.quill;
-                    } // Add the quill editor.
-
-
-                    _this2.addQuill(element, settings, function() {
-                        return _this2.updateEditorValue(index, _this2.editors[index].root.innerHTML);
-                    }).then(function(quill) {
-                        _this2.editors[index] = quill;
-
-                        if (_this2.component.isUploadEnabled) {
-                            var _this = _this2;
-                            quill.getModule('toolbar').addHandler('image', function() {
-                                //we need initial 'this' because quill calls this method with its own context and we need some inner quill methods exposed in it
-                                //we also need current component instance as we use some fields and methods from it as well
-                                _this.imageHandler.call(_this, this);
-                            });
-                        }
-
-                        quill.root.spellcheck = _this2.component.spellcheck;
-
-                        if (_this2.options.readOnly || _this2.component.disabled) {
-                            quill.disable();
-                        }
-
-                        var dataValue = _this2.dataValue;
-                        dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
-                        quill.setContents(quill.clipboard.convert({
-                            html: _this2.setConvertedValue(dataValue, index)
-                        }));
-                        editorReady(quill);
-                        return quill;
-                    }).catch(function(err) {
-                        return console.warn(err);
-                    });
-
-                    break;
-
-                case 'ckeditor':
-                    var editor = await _this2.setupCkEditor(_this2, element, index,editorReady).then(function(promise){
-                        editorReady(promise);
-                    });
-                    return editor;
-                    break;
-
-                default:
-                    var editor = await _this2.setupCkEditor(_this2, element, index,editorReady).then(function(promise){
-                        editorReady(promise);
-                    });
-                    return editor;
-                    break;
-            }
-        });
+        window.addEventListener('message', this.editorDialogMessageHandler, false);
+        window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
+        var evt = new CustomEvent("getAppDetails", { detail: {} });
+        this.form.element.dispatchEvent(evt);
+        var editor = _this2.setupCkEditor(_this2, element, index);
+        this.editorsReady[index] = editor;
         return element;
     }
     setValueAt(index, value) {
-        var _this4 = this;
-  
-        var flags = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-        if (this.editorsReady[index]) {
-          var setEditorsValue = function setEditorsValue(flags) {
-            return function (editor) {
-              _this4.autoModified = true;
-              if (!flags.skipWysiwyg) {
-                switch (_this4.component.editor) {
-                  case 'ace':
-                    editor.setValue(_this4.setConvertedValue(value, index));
-                    break;
-                  case 'quill':
-                    if (_this4.component.isUploadEnabled) {
-                      _this4.setAsyncConvertedValue(value).then(function (result) {
-                        var content = editor.clipboard.convert({
-                          html: result
-                        });
-                        editor.setContents(content);
-                      });
-                    } else {
-                      var convertedValue = _this4.setConvertedValue(value, index);
-                      var content = editor.clipboard.convert({
-                        html: convertedValue
-                      });
-                      editor.setContents(content);
-                    }
-  
-                    break;
-                  case 'ckeditor':
-                        if(editor.data){
-                            editor.data.set(_this4.setConvertedValue(value, index));
-                        } else {
-                            editor.setData(value);
-                        }
-                    break;
+        if(this.component.editor == 'ckeditor'){
+            var _this4 = this;
+            if(value == "" || value == null){
+                if(_this4._data[_this4.path]){
+                    value = _this4._data[_this4.path];
                 }
-              }
-            };
-          };
-  
-          this.editorsReady[index].then(setEditorsValue(_lodash.default.clone(flags)));
+            }
+            if (_this4.editorsReady[index]) {
+                _this4.editorsReady[index].setData(_this4.setConvertedValue(value, index));
+            }
+            CKEDITOR.instances[this.ckeditorInstance].setData(value,{
+                callback: function() {
+                    _this4.updateEditorValue(index, value);
+                }
+            });
+        } else {
+            super.setValueAt(index,value);
         }
-      }
+    }
+    detach() {
+        window.removeEventListener('message', this.editorDialogMessageHandler, false);
+        window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
+        if (this.editor) {
+            this.editor.destroy();
+        }
+        var instance = CKEDITOR.instances[this.ckeditorInstance];
+        if(instance)
+        {
+            CKEDITOR.remove(instance);
+        }
+        super.detach();
+    }
     
-    setupCkEditor = async(_this2, element, index,editorReady) => {
-        var promise = new Promise(function(resolve, reject) {
-            try {
-                CKEDITOR.dtd.$removeEmpty['span'] = false;
-                const settings = {
-                    rows: _this2.component.rows,
-                    extraPlugins: 'oxzion,autogrow',
-                    autoGrow_minHeight: 250,
-                    autoGrow_maxHeight: 400,
-                    height: 400,
-                    width: '100%',
-                    //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
-                    //CKEDITOR removes tags like span and flattens HTML structure.
-                    allowedContent: true,
-                    //extraAllowedContent:'span(*)',
-                    oxzion: {
-                        dimensions: {
-                            begin: {
-                                width: 300,
-                                height: 200
-                            },
-                            min: {
-                                width: 100,
-                                height: 100
-                            },
-                            max: {
-                                width: '100%',
-                                height: 600,
-                            }
-                        },
-                        dialogUrl: './widgetEditorDialog.html'
-                    }
-                };
-                let editor = CKEDITOR.appendTo(element, settings, function(newValue) {
-                    return _this2.updateEditorValue(index, newValue);
-                });
-                _this2.editors[index] = editor;
+    setupCkEditor = (_this2, element, index) => {
+        var editor = null;
+        try {
+            CKEDITOR.dtd.$removeEmpty['span'] = false;
+            const settings = {
+                rows: _this2.component.rows, extraPlugins: 'oxzion,autogrow', autoGrow_minHeight: 250, autoGrow_maxHeight: 400, height: 400, width: '100%', allowedContent: true,
+                oxzion: { dimensions: { begin: { width: 300, height: 200 }, min: { width: 300, height: 200 }, max: { width: '100%', height: 600 } }, dialogUrl: './widgetEditorDialog.html' }
+            };
+            editor = CKEDITOR.replace(element, settings);
+            this.ckeditorInstance = editor.name;
+            var isReadOnly = _this2.options.readOnly || _this2.disabled;
+            var numRows = parseInt(_this2.component.rows, 10);
+            if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
+                // Default height is 21px with 10px margin + a 14px top margin.
+                var editorHeight = numRows * 31 + 14;
+                editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
+            }
+            editor.isReadOnly = isReadOnly;
+            editor.on('instanceReady', function () {
                 var dataValue = _this2.dataValue;
                 dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
-
                 var value = _this2.setConvertedValue(dataValue, index);
-
-                var isReadOnly = _this2.options.readOnly || _this2.component.disabled;
-                var numRows = parseInt(_this2.component.rows, 10);
-
-                if (_lodash.default.isFinite(numRows) && _lodash.default.has(editor, 'ui.view.editable.editableElement')) {
-                    // Default height is 21px with 10px margin + a 14px top margin.
-                    var editorHeight = numRows * 31 + 14;
-                    editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
+                if(value == "" || value == null){
+                    if(_this2._data[_this2.path]){
+                        value = _this2._data[_this2.path];
+                    }
                 }
-
-                editor.isReadOnly = isReadOnly;
-                if (editor.data) {
-                    editor.data.set(value);
-                } else {
-                    editor.setData(value);
+                editor.setReadOnly(isReadOnly);
+                editor.setData(value);
+            });
+            editor.on('oxzionWidgetInitialization', function (event) {
+                try {
+                    let elementId = event.data.elementId;
+                    let widgetId = event.data.widgetId;
+                    _this2.updateWidget(elementId, widgetId);
                 }
-                editor.on('change', function (event) {
-                    return _this2.updateEditorValue(index, event.editor.getData());
-                });
-                resolve( editor);
-            } catch (Exception){
-                console.log(Exception);
-                console.log('Failed to create CK Editor');
-                setTimeout(function(){ 
-                    resolve(_this2.setupCkEditor(_this2, element, index,editorReady));
-                    }, 1000);
+                catch (error) {
+                    console.error(error);
+                }
+            });
+            editor.on('oxzionWidgetPrepareToDowncast', function (event) {
+                try {
+                    let elementId = event.data.elementId;
+                    let chart = _this2.renderedCharts[elementId];
+                    if (chart) {
+                        if (chart.dispose) {
+                            chart.dispose();
+                        }
+                        _this2.renderedCharts[elementId] = null;
+                        console.info(`Disposed the chart of element id ${elementId} for downcasting it.`);
+                    }
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            });
+            editor.on('oxzionWidgetResized', function (event) {
+                try {
+                    let elementId = event.data.elementId;
+                    let widgetId = event.data.widgetId;
+                    _this2.updateWidget(elementId, widgetId);
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            });
+            editor.on('change', function (event) {
+                return _this2.updateEditorValue(index, event.editor.getData());
+            });
+            return editor
+        } catch (Exception){
+            console.log(Exception);
+            console.log('Failed to create CK Editor');
+        }
+    }
+    widgetDrillDownMessageHandler = (event) => {
+        let data = event['data'];
+        if (data['action'] !== 'oxzion-widget-drillDown') {
+            return;
+        }
+
+        let elementId = data['elementId'];
+        let widgetId = data['widgetId'];
+        let chart = this.renderedCharts[elementId];
+        if (chart) {
+            if (chart.dispose) {
+                chart.dispose();
             }
-         });
-        return promise;
+            this.renderedCharts[elementId] = null;
+        }
+        let replaceWidgetId = data['replaceWith'];
+        if (replaceWidgetId) {
+            widgetId = replaceWidgetId;
+            let iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
+            let iframeWindow = iframeElement.contentWindow;
+            let iframeDocument = iframeWindow.document;
+            let widgetElement = iframeDocument.querySelector('#' + elementId);
+            widgetElement.setAttribute('data-oxzion-widget-id', replaceWidgetId);
+        }
+        this.updateWidget(elementId, widgetId);
+    }
+
+    updateWidget = (elementId, widgetId) => {
+        var thisInstance = this;
+        //Dispose and cleanup if this chart had been painted previously.
+        let existingChart = thisInstance.renderedCharts[elementId];
+        if (existingChart) {
+            if (existingChart.dispose) {
+                existingChart.dispose();
+                thisInstance.renderedCharts[elementId] = null;
+            }
+        }
+
+        let iframeElement = document.querySelector('iframe.cke_wysiwyg_frame');
+        let iframeWindow = iframeElement.contentWindow;
+        let iframeDocument = iframeWindow.document;
+        let widgetElement = iframeDocument.querySelector('#' + elementId);
+        if (!widgetId) {
+            let widgetIdAttribute = widgetElement.attributes.getNamedItem('data-oxzion-widget-id');
+            if (widgetIdAttribute) {
+                widgetId = widgetIdAttribute.nodeValue;
+            }
+        }
+        Requests.doRestRequest(component.core,`analytics/widget/${widgetId}?data=true`, {}, 'get',
+            function (response) {
+                let renderProperties = {}
+                renderProperties["element"] = widgetElement
+                renderProperties["widget"] = response.widget
+                renderProperties["dashboardEditMode"] = true
+                let chart = WidgetRenderer.render(renderProperties);
+                thisInstance.renderedCharts[elementId] = chart;
+            },
+            function (response) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Could not fetch contents of a widget. Please try after some time.'
+                });
+            },thisInstance.loader);
     }
 }

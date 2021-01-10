@@ -135,10 +135,10 @@ export default class DialogContainer extends React.Component {
     }
   }
 
-  activateOrganization(tempData) {
+  activateAccount(tempData) {
     Swal.fire({
-      title: "Organization already exists",
-      text: "Do you want to reactivate the Organization?",
+      title: "Account already exists",
+      text: "Do you want to reactivate the Account?",
       imageUrl: "apps/Admin/091-email-1.svg",
       imageWidth: 75,
       imageHeight: 75,
@@ -258,9 +258,9 @@ export default class DialogContainer extends React.Component {
         this.props.cancel();
       } else if (
         response.message ==
-        "Organization already exists would you like to reactivate?"
+        "Account already exists would you like to reactivate?"
       ) {
-        this.activateOrganization(tempData);
+        this.activateAccount(tempData);
       } else {
         this.notif.current.notify(
           "Error",
@@ -286,7 +286,7 @@ export default class DialogContainer extends React.Component {
         });
         this.notif.current.notify(
           "No image selected",
-          "Please choose a logo for the Organization.",
+          "Please choose a logo for the Account.",
           "warning"
         );
       } else {
@@ -315,17 +315,17 @@ export default class DialogContainer extends React.Component {
               </div>
             ) : null}
             <div className="form-group">
-              <label className="required-label">Organization Name</label>
+              <label className="required-label">Account Name</label>
               <KendoReactInput.Input
                 type="text"
                 className="form-control"
                 value={this.state.orgInEdit.name || ""}
                 name="name"
                 onChange={this.onDialogInputChange}
-                placeholder="Enter Organization Name"
+                placeholder="Enter Account Name"
                 maxLength="100"
                 required={true}
-                validationMessage={"Please enter a valid Organization Name"}
+                validationMessage={"Please enter a valid Account Name"}
                 readOnly={this.props.diableField ? true : false}
               />
             </div>
@@ -337,7 +337,7 @@ export default class DialogContainer extends React.Component {
                 value={this.state.orgInEdit.address1 || ""}
                 name="address1"
                 onChange={this.onDialogInputChange}
-                placeholder="Enter Organization Address"
+                placeholder="Enter Account Address"
                 maxLength="250"
                 style={{ marginTop: "5px" }}
                 required={true}
@@ -422,7 +422,7 @@ export default class DialogContainer extends React.Component {
                 <div className="form-row">
                   <div className="col">
                     <label className="required-label">
-                      Organization Contact Person (Admin)
+                      Account Contact Person (Admin)
                     </label>
                     <div>
                       <DropDown
@@ -453,7 +453,7 @@ export default class DialogContainer extends React.Component {
                 value={this.state.orgInEdit.subdomain || ""}
                 name="subdomain"
                 onChange={this.onDialogInputChange}
-                placeholder="Enter Organization Subdomain"
+                placeholder="Enter Account Subdomain"
                 maxLength="250"
                 style={{ marginTop: "5px" }}
                 readOnly={this.props.diableField ? true : false}
@@ -544,7 +544,7 @@ export default class DialogContainer extends React.Component {
             ) : null}
 
             <div className="form-group border-box">
-              <label className="required-label">Organization Preferences</label>
+              <label className="required-label">Account Preferences</label>
               <div className="form-row pt-3 pb-3">
                 <div className="col">
                   <label className="required-label">Currency</label>
@@ -634,7 +634,7 @@ export default class DialogContainer extends React.Component {
                   enableVideo={false}
                   acceptFileTypes={"image/*"}
                   media_URL={this.props.dataItem.logo}
-                  title={"Upload Organization Logo"}
+                  title={"Upload Account Logo"}
                   uploadID={"organizationLogo"}
                 />
               </div>

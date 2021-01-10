@@ -22,7 +22,6 @@ const styles = {
     padding: ".75rem 1.25rem",
     paddingBottom: "0",
     marginBottom: "0",
-    backgroundColor: "rgba(0,0,0,.03)",
     borderBottom: "1px solid rgba(0,0,0,.125)"
   },
   visibleTabStyle: {

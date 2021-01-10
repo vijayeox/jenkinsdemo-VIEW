@@ -3,6 +3,7 @@ import Page from "./components/App/Page";
 import FormRender from "./components/App/FormRender";
 import { createBrowserHistory } from "history";
 import { Chip } from "@progress/kendo-react-buttons";
+import Requests from "./Requests";
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class Navigation extends React.Component {
         this.homepage = this.props.menus[0];
       }
     } else {
-      this.getMenulist().then((response) => {
+      Requests.getMenulist(this.core,this.appId).then((response) => {
         this.props.menuLoad(response["data"]);
         if (response["data"][0]) {
           this.homepage = response["data"][0];
@@ -99,11 +100,7 @@ class Navigation extends React.Component {
       });
     }
   }
-  async getMenulist() {
-    let helper = this.core.make("oxzion/restClient");
-    let menulist = await helper.request("v1","/app/" + this.appId + "/menu",{},"get");
-    return menulist;
-  }
+  
   pageActive(pageId) {
     if (document.getElementById(pageId + "_page")) {
       document.getElementById(pageId + "_page").classList.remove("page-inactive");
@@ -125,17 +122,42 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
+    var that = this;
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
-      var pageContent = {pageContent: filePage,title: "View",icon: "far fa-list-alt",fileId:e.detail.fileId};
-      pages.push(pageContent)
+      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId: e.detail.fileId};
+      if(!this.checkIfEntityViewerPageExists(pageContent)){
+        pages.push(pageContent)
+      } else {
+        pages.splice(pages.length - 1, 1);
+        this.setState({
+          pages: pages,
+        });
+        setTimeout(function(){ 
+          that.addPage({detail: pageContent});
+        }, 1000);
+      }
     } else {
-      pages.push(e.detail);
+      if(!this.checkIfEntityViewerPageExists(e.detail)){
+        pages.push(e.detail)
+      } else {
+        pages.splice(pages.length - 1, 1);
+        this.setState({
+          pages: pages,
+        });
+        setTimeout(function(){ 
+          that.addPage({detail: e.detail});
+        }, 1000);
+        // this.addPage({detail: pageContent});
+        // pages.push(e.detail);
+      }
     }
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
-      pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
+      if(pages[pages.length - 2].pageId){
+        pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
+      }
     }
     this.setState({ pages: pages });
     this.resetCustomActions();
@@ -146,6 +168,20 @@ class Navigation extends React.Component {
   addcustomActions = (e) => {
     this.setState({customActions:e.detail.customActions});
   };
+  checkIfEntityViewerPageExists(page){
+    var last_page_key = this.state.pages.length - 1;
+    var pages = this.state.pages;
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent && (page.pageContent[0].type=="Form" || page.pageContent[0].type=="Comment")){
+      return true;
+    }
+    if(this.state.pages[last_page_key] && this.state.pages[last_page_key].pageContent && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="Form" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Comment")){
+      return true;
+    }
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent  && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="Comment" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Form")){
+      return true;
+    }
+    return false;
+  }
 
   componentWillReceiveProps(props) {
     if (props.selected) {
@@ -188,7 +224,7 @@ class Navigation extends React.Component {
   resetCustomActions(){
     this.setState({customActions:null});
     let ev = new CustomEvent("getCustomActions", {
-      detail: { },
+      detail: {},
       bubbles: true,
     });
     if(document.getElementsByClassName('page-active') && document.getElementsByClassName('page-active')[0] ){

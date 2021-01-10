@@ -635,7 +635,7 @@ class WidgetEditorApp extends React.Component {
                             <div className="dash-manager-buttons">
                                 {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Create widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Create MLET"
                                             onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
                                             <span className="fa fa-plus" aria-hidden="true"></span>
                                         </button>
@@ -643,7 +643,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit MLET"
                                             onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
                                             <span className="fa fa-edit" aria-hidden="true"></span>
                                         </button>
@@ -651,7 +651,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Delete widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Delete MLET"
                                             onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
                                             <span className="fa fa-trash" aria-hidden="true"></span>
                                         </button>
@@ -659,7 +659,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Copy widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Copy MLET"
                                             onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
                                             <span className="fa fa-copy" aria-hidden="true"></span>
                                         </button>
@@ -708,7 +708,7 @@ class WidgetEditorApp extends React.Component {
                                         <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                                     </div>
                                     <div className="col-2">
-                                        <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
+                                        <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select MLET" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
                                             <option disabled value="-1" key="-1"></option>
                                             <option key="1" value="1">Public</option>
                                             <option key="2" value="0">Private</option>

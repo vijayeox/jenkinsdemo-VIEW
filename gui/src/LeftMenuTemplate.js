@@ -74,8 +74,8 @@ export default class LeftMenuTemplate extends React.Component {
                       />
                     </abbr>
                   </NavIcon>
-                  <NavText style={{ paddingRight: 32 }} name={menuitem.name}>
-                    {menuitem.name}
+                  <NavText style={{ paddingRight: 32 }} name={menuitem.name} title={menuitem.name}>
+                    {menuitem.name.length > 18  ? menuitem.name.substring(0,18) + '...': menuitem.name}
                   </NavText>
                   {menuitem.submenu
                     ? menuitem.submenu.map((subMenu, index2) => {
@@ -103,8 +103,9 @@ export default class LeftMenuTemplate extends React.Component {
                             <NavText
                               style={{ paddingRight: 32 }}
                               name={subMenu.name}
+                              title={subMenu.name}
                             >
-                              {subMenu.name}
+                              {subMenu.name.length > 18  ? subMenu.name.substring(0,18) + '...': subMenu.name}
                             </NavText>
                           </NavItem>
                         );

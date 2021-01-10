@@ -272,11 +272,21 @@ export default class OX_Grid extends React.Component {
   };
   
   rowRender = (trElement, dataItem) => {
+    var that = this;
     const trProps = {
         ...trElement.props,
         onContextMenu: (e) => {
             e.preventDefault();
             this.handleContextMenuOpen(e, dataItem.dataItem);
+        },
+        onClick: (e) => {
+          e.preventDefault();
+          Object.keys(this.state.actions).map(function (key, index) {
+            var action = that.state.actions;
+            if(action[key].defaultAction == true){
+              that.handleAction(key, dataItem.dataItem);
+            }
+          });
         }
     };
     return React.cloneElement(trElement, { ...trProps }, trElement.props.children);
@@ -427,7 +437,6 @@ handleContextMenuOpen = (e, dataItem) => {
         return tempItem;
       });
     }
-    console.log(gridData);
     this._excelExport.save(
       gridData,
       excelConfig.columnConfig ? undefined : this._grid.columns
@@ -601,7 +610,6 @@ async buttonAction(actionCopy, rowData) {
     action.details = action.content;
   }
   var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
-  console.log(actionCopy);
   if (action.page_id) {
     PageNavigation.loadPage(this.appId,this.pageId,action.page_id);
   } else if (action.details) {
@@ -727,11 +735,9 @@ updateActionHandler(details, rowData) {
       });
   });
 }
-handleOnSelect = (e) => {
-  console.log(e)
-  Object.keys(this.state.actions).map(function (key, index) {
-    if(this.state.actions[key].name==e.item.text){
-      this.state.actions[key].confirmationMessage
+handleAction(key,dataItem){
+  this.dataItem = dataItem;
+  this.state.actions[key].confirmationMessage
       ? Swal.fire({
         title: this.state.actions[key].confirmationMessage,
         confirmButtonText: "Agree",
@@ -742,6 +748,12 @@ handleOnSelect = (e) => {
       }).then((result) => {
         result.value ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
       }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
+}
+handleOnSelect = (e) => {
+  var dataItem = this.dataItem;
+  Object.keys(this.state.actions).map(function (key, index) {
+    if(this.state.actions[key].name==e.item.text){
+      this.handleAction(key,dataItem);
     }
   }, this);
   this.setState({

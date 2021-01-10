@@ -533,12 +533,18 @@ class PageContent extends React.Component {
             url = ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow);
           }
         }
+        var fileId;
+        if(item.fileId){
+          fileId = item.fileId;
+        }
+        console.log(item);
         content.push(
           <CommentsView
             appId={this.appId}
             key={i}
             core={this.core}
             url={url}
+            fileId={fileId}
           />
         );
       } else if (item.type == "TabSegment") {

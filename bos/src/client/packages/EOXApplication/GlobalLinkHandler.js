@@ -45,7 +45,6 @@ export default class GlobalLinkHandler {
   }
 
   triggerPageLoad(event, appNavElement) {
-    console.log(event);
     let ev = new CustomEvent("addPage", {
       detail: {
         pageId: event.target.getAttribute("page-id"),
@@ -57,7 +56,6 @@ export default class GlobalLinkHandler {
   }
 
   launchApplication(event, selectedApplication) {
-    console.log(event);
     this.core.run(selectedApplication, {
       page: event.target.getAttribute("page-id"),
       pageTitle: event.target.getAttribute("title"),

@@ -131,7 +131,7 @@ export default class Panel extends EventEmitter {
     footerElement.classList.add('footer-CR');
     footerElement.id = 'footer-CR';
     footerElement.innerHTML = '<div class="coppyRight">'
-         + 'Copyright © 2004-2020 EOX Vantage. All rights reserved.'
+         + 'Copyright © 2004-2021 EOX Vantage. All rights reserved.'
          + '</div>  ';
 
     this.core.$root.appendChild(footerElement);
@@ -177,6 +177,7 @@ export default class Panel extends EventEmitter {
       appmenuElement.style['margin-top'] = '3.5em';
     } else {
       appmenuElement.style['margin-top'] = '0';
+      appmenuElement.style['height'] = "calc(100% - 5.5em)";
     }
 
 

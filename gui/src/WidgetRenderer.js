@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM, { render } from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
+import Parser from 'html-react-parser';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import * as am4core from '../amcharts/core';
 import * as am4charts from '../amcharts/charts';
@@ -11,6 +12,7 @@ import am4themes_animated from '../amcharts/themes/animated';
 // import am4themes_kelly from '../amcharts/themes/kelly';
 import WidgetTransformer from './WidgetTransformer';
 import * as am4plugins_forceDirected from "../amcharts/plugins/forceDirected";
+import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 am4core.useTheme(am4themes_animated);
 am4core.options.commercialLicense = true;
 
@@ -26,7 +28,7 @@ class WidgetRenderer {
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data, hasDashboardFilters, dashboardEditMode);
+                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data, hasDashboardFilters, dashboardEditMode, widget);
                 break;
 
             case 'amCharts':
@@ -67,7 +69,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderAggregateValue(element, configuration, props, data, hasDashboardFilters, dashboardEditMode) {
+    static renderAggregateValue(element, configuration, props, data, hasDashboardFilters, dashboardEditMode, widget) {
         let displayValue = null;
         let isDrillDownChart = false
         if (configuration) {
@@ -84,33 +86,33 @@ class WidgetRenderer {
             }
         }
         element.innerHTML = displayValue ? displayValue : ('' + data);
-
+        element.innerHTML = displayValue ? displayValue : ('' + data);
+        element.classList.remove("red");
+        element.classList.remove("yellow");
+        element.classList.remove("green");
+        if (widget.targets) {
+            element.classList.add(widget.targets.color);
+        }
         if (!dashboardEditMode && WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
-
             //adding relevant css for drilldown aggregate value
             element.classList.add("oxzion-widget-aggregate-drilldown")
             //    attaching event to the aggregate value
-            element.addEventListener("click",
-                (evt) => {
-                    let aggregateValue = evt.target.innerHTML
-                    let parsedAggregateValue = 0
-                    if (typeof (aggregateValue) == "string") {
-                        //assuming the value is going to be a formatted numeric value
-                        aggregateValue = aggregateValue.replace(/\,/g, "")
-                        aggregateValue = aggregateValue.replace("$", "")
-                        if (parsedAggregateValue = parseFloat(aggregateValue)) {
-                            WidgetDrillDownHelper.drillDownClicked(element, { aggregatevalue: parsedAggregateValue })
-                        } else {
-                            throw ("Unxepected value passed as dilldownvalue")
-                        }
-
-
-
+            element.addEventListener("click", (evt) => {
+                let aggregateValue = evt.target.innerHTML
+                let parsedAggregateValue = 0
+                if (typeof (aggregateValue) == "string") {
+                    //assuming the value is going to be a formatted numeric value
+                    aggregateValue = aggregateValue.replace(/\,/g, "")
+                    aggregateValue = aggregateValue.replace("$", "")
+                    if (parsedAggregateValue = parseFloat(aggregateValue)) {
+                        WidgetDrillDownHelper.drillDownClicked(element, { aggregatevalue: parsedAggregateValue })
+                    } else {
+                        throw ("Unxepected value passed as dilldownvalue")
                     }
-                });
+                }
+            });
             isDrillDownChart = true;
         }
-
         return null;
     }
 
@@ -211,8 +213,7 @@ class WidgetRenderer {
                 default:
                     throw (`Unhandled am4charts type: ${type}`);
             }
-        }
-        else {
+        } else {
             let meta = configuration['oxzion-meta'];
             let chartType = meta ? meta['type'] : null;
             if (chartType) {
@@ -220,20 +221,16 @@ class WidgetRenderer {
                     case 'map':
                         am4ChartType = 'amCharts-map';
                         break;
-
+                    case 'worldmaplow':
+                        am4ChartType = am4geodata_worldLow;
+                        break;
                     default:
                         throw (`Unhandled oxzion-meta chart type : ${chartType}`);
                 }
-            }
-            else {
+            } else {
                 console.error('Failed to detect chart type (specify chart type in oxzion-meta property of chart configuration JSON).', configuration);
                 throw ('Specify chart type in oxzion-meta property.');
             }
-        }
-
-        if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
-            WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
-            isDrillDownChart = true;
         }
 
         let elementTagName = element.tagName.toUpperCase();
@@ -253,7 +250,7 @@ class WidgetRenderer {
         }
 
         let chart = null;
-        if ('amCharts-map' === am4ChartType) {
+        if ('amCharts-map' === am4ChartType || am4geodata_worldLow === am4ChartType) {
             chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
             if (isDrillDownChart) {
                 canvasElement.insertAdjacentHTML('beforeend',
@@ -261,9 +258,36 @@ class WidgetRenderer {
                     '<i class="fas fa-angle-double-down fa-lg"></i>' +
                     '</div>');
             }
-        }
-        else {
+        } else {
+            if ((data[0].green_limit) || (data[0].yellow_limit) || (data[0].red_limit)) {
+                configuration["series"][0]["columns"] = {
+                    "adapter": {
+                        "fill": function (fill, target) {
+                            if (target.dataItem && (target.dataItem.valueY < 0)) {
+                                return am4core.color('red');
+                            } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
+                                return am4core.color('red');
+                            } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
+                                return am4core.color('yellow');
+                            } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
+                                return am4core.color('green');
+                            } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
+                                return am4core.color('green');
+                            } else {
+                                return fill;
+                            }
+                        }
+                    }
+                };
+            }
+
+            if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
+                WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
+                isDrillDownChart = true;
+            }
+
             chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
+            chart.responsive.enabled = true;
             if (chart && data) {
                 chart.data = data;
             }
@@ -287,20 +311,18 @@ class WidgetRenderer {
                     '</div>');
                 rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
                 buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
-                buttonElement.addEventListener('click', event => {
+                buttonElement.addEventListener('clickGraphItem', event => {
                     let target = event.target;
                     WidgetDrillDownHelper.rollUpClicked(
                         WidgetDrillDownHelper.findWidgetElement(target));
                 });
             }
-        }
-        else {
+        } else {
             let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
             let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
             if (buttonElement) {
                 buttonElement.remove();
             }
-
         }
         return chart;
     }
@@ -551,19 +573,16 @@ class WidgetRenderer {
             default:
                 throw `Unexpected table element "${elementTagName}"`;
         }
-
         if (!canvasElement) {
             throw 'Canvas element not found for drawing the table/grid.';
         } else {
             //repainting the table if dashboard filter is applied
             hasDashboardFilters && ReactDOM.unmountComponentAtNode(canvasElement)
         }
-
         if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
             // WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
             isDrillDownTable = true;
         }
-
         if (WidgetDrillDownHelper.isDrilledDown(element)) {
             let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
             let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
@@ -582,17 +601,13 @@ class WidgetRenderer {
                         WidgetDrillDownHelper.findWidgetElement(target));
                 });
             }
-        }
-        else {
+        } else {
             let rollUpElements = element.getElementsByClassName('oxzion-widget-roll-up-button');
             let buttonElement = (rollUpElements && (rollUpElements.length > 0)) ? rollUpElements[0] : null;
             if (buttonElement) {
                 buttonElement.remove();
             }
         }
-
-
-
         ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
     }
 }

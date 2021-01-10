@@ -82,6 +82,11 @@
         
         tray.update(trayOptions);
        };
+
+       const handleUrlClick = (params) => {
+               console.log("URL CLICKED");
+               console.log(params);
+       };
       
       // This will proxy the window focus events to iframe
       win.on('focus', () => {
@@ -99,7 +104,7 @@
            ref.postMessage(msg, baseUrl);
     });
 
-      win.on('iframe:get', msg => {
+      win.on('iframe:get', (msg , params) => {
         console.warn('Message from Iframe', msg);
         switch(msg){
           case 'Ping':
@@ -110,6 +115,10 @@
           break;
           case 'help':
           core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'chat'}});
+          break;
+          case 'Urlclick':
+          console.log(params);
+          handleUrlClick(params);  
           break;
         }
         

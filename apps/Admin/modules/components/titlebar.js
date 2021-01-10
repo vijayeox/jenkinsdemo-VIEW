@@ -42,7 +42,7 @@ export class TitleBar extends React.Component {
               mainList={"account"}
               selectedItem={{
                 id: "111",
-                name: "Switch Organization"
+                name: "Switch Account"
               }}
               preFetch={true}
               onDataChange={this.props.orgChange}
