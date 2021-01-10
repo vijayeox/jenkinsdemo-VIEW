@@ -33,7 +33,6 @@ class Project extends React.Component {
     this.OX_Grid = React.createRef();
     this.toggleDialog = this.toggleDialog.bind(this);
     this.renderButtons = this.renderButtons.bind(this);
-    this.child = React.createRef();
   }
 
   async fetchCurrentEntries(route) {
@@ -67,7 +66,7 @@ class Project extends React.Component {
       temp2.push(uid);
     }
     this.pushProjectUsers(item, temp2).then((response) => {
-      this.child.current.refreshHandler(response);
+      this.OX_Grid.current.refreshHandler(response);
     });
     this.toggleDialog();
   };
@@ -284,7 +283,6 @@ class Project extends React.Component {
       <OX_Grid
         osjsCore={this.core}
         data={subRoute}
-        ref={this.child}
         parentData={e}
         gridToolbar={rowConfig.toolbarTemplate}
         columnConfig={this.prepareColumnData(rowConfig)}

@@ -63,7 +63,7 @@ export default class OX_Grid extends React.Component {
     this.menuWrapperRef;
     this.appNavigationDiv = "navigation_" + this.props.appId;
     this.loader = this.props.osjsCore.make("oxzion/splash");
-    this.child = this.props.ref? this.props.ref : React.createRef();
+    this.child = this.props.reference? this.props.reference : React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
     this.inlineEdit = this.inlineEdit.bind(this);
   }
@@ -280,12 +280,14 @@ export default class OX_Grid extends React.Component {
         },
         onClick: (e) => {
           e.preventDefault();
-          Object.keys(this.state.actions).map(function (key, index) {
-            var action = that.state.actions;
-            if(action[key].defaultAction == true){
-              that.handleAction(key, dataItem.dataItem);
-            }
-          });
+          if(this.state.actions){
+            Object.keys(this.state.actions).map(function (key, index) {
+              var action = that.state.actions;
+              if(action[key].defaultAction == true){
+                that.handleAction(key, dataItem.dataItem);
+              }
+            });
+          }
         }
     };
     return React.cloneElement(trElement, { ...trProps }, trElement.props.children);
