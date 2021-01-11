@@ -95,6 +95,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// params - *
 	// method - string
 	async makeRequest(version, action, params, method, headers = null, raw = false) {
+		this.messageBox = this.core.make("oxzion/messageDialog");
 		let userData = this.core.getUser();
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
@@ -252,4 +253,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 		}
 	}
 
+	errorMessage(message){
+		this.messageBox.show(message, '', 'OK', false)
+		.then((response) => {
+			return response;
+		});
+	}
 }
