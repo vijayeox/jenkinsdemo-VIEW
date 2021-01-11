@@ -131,7 +131,7 @@ class DashboardManager extends React.Component {
     let that = this
     let helper = this.restClient;
     let inputs = this.state.inputs !== undefined ? this.state.inputs : undefined;
-    let dashboardStack = [...this.state.dashboardStack]
+    let dashboardStack = JSON.parse(JSON.stringify(this.state.dashboardStack))
 
     let response = await helper.request('v1', '/analytics/dashboard?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
 
@@ -146,7 +146,27 @@ class DashboardManager extends React.Component {
             let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
             inputs["dashname"] = dash
             let preapredExtractedFilterValue = this.getPreparedExtractedFilterValues(dashboardFilter, "default")
-            !isRefreshed && dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
+            if(!isRefreshed)
+            {
+              dashboardStack.push({ data: dash, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
+            }else{
+              if(dashboardStack.length>0){
+                let filterOption = []
+                let appliedFilters = []
+                dashboardFilter && dashboardFilter.map((filter, index) => {
+                  if (!filter.isDefault) {
+                    filterOption.push({ label: filter["filterName"], value: filter })
+                  }else{
+                    appliedFilters.push(filter)
+                  }
+                })
+                //replacing with new filter values after dashboard edit
+                dashboardStack[dashboardStack.length-1]["filterConfiguration"]=appliedFilters
+                dashboardStack[dashboardStack.length-1]["filterOptions"]=filterOption
+                dashboardStack[dashboardStack.length-1]["drilldownDashboardFilter"]=preapredExtractedFilterValue
+                dashboardStack[dashboardStack.length-1]["data"]=dash
+              }
+            }
             that.setState({ inputs, dashList: response.data, uuid: dash.uuid, filterConfiguration: dashboardFilter, exportConfiguration: dash.export_configuration, dashboardStack: dashboardStack })
             isRefreshed && that.setState({ drilldownDashboardFilter: preapredExtractedFilterValue })
           } else {
