@@ -8,7 +8,7 @@
     "build:esm": "rollup -c",
     "watch": "webpack --watch",
     "watch:esm": "rollup -c --watch",
-    "stylelint": "stylelint index.scss src/**/*.scss",
+    "stylelint": "stylelint index.scss src/**/*.scss"
     },
     "dependencies": {
         "@amcharts/amcharts4": "4.9.13",
