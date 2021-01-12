@@ -115,7 +115,7 @@ export default class DocumentSignerComponent extends Base {
             }).catch(function (response) {
               
             });
-      },70000)
+      },30000)
     }
      
 
