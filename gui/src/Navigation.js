@@ -32,7 +32,7 @@ class Navigation extends React.Component {
     } else {
       Requests.getMenulist(this.core,this.appId).then((response) => {
         this.props.menuLoad(response["data"]);
-        if (response["data"][0]) {
+        if (response["data"] && response["data"][0]) {
           this.homepage = response["data"][0];
         }
         if (this.params && this.params.page) {
