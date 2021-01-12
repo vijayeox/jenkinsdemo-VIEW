@@ -2,6 +2,11 @@ import React from "react";
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
 import ParameterHandler from "./ParameterHandler";
+import Requests from '../../Requests';
+import Swal from 'sweetalert2';
+import '../../public/css/ckeditorStyle.scss';
+import WidgetRenderer from '../../WidgetRenderer';
+import WidgetDrillDownHelper from '../../WidgetDrillDownHelper';
 
 class HTMLViewer extends React.Component {
   constructor(props) {
@@ -10,9 +15,12 @@ class HTMLViewer extends React.Component {
     this.profileAdapter = this.core.make("oxzion/profile");
     this.profile = this.profileAdapter.get();
     this.appId = this.props.appId;
+    this.renderedWidgets = {};
+    this.loader = this.core.make('oxzion/splash');
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
+      widgetCounter: 0,
       dataReady: this.props.fileId ? false : true,
       dataReady: this.props.url ? false : true
     };
@@ -87,6 +95,7 @@ class HTMLViewer extends React.Component {
       }
     });
     content = this.getXrefFields(content);
+    this.updateGraph();
     return content
   }
   getXrefFields(content){
@@ -116,6 +125,75 @@ class HTMLViewer extends React.Component {
     });
     return editContent
   }
+  
+updateGraph =  async(filterParams) => {
+  if (null === this.state.htmlData) {
+    return;
+  }
+  let root = document;
+  var widgets = root.getElementsByClassName('oxzion-widget');
+  let thiz = this;
+  // this.loader.show();
+  let errorFound = false;
+  for (let elementId in this.renderedWidgets) {
+    let widget = this.renderedWidgets[elementId];
+    if (widget) {
+      if (widget.dispose) {
+        widget.dispose();
+      }
+      delete this.renderedWidgets[elementId];
+    }
+  }
+  if (widgets.length == 0) {
+    this.loader.destroy();
+  }
+  else {
+    for (let widget of widgets) {
+      var attributes = widget.attributes;
+      //dispose 
+      var that = this;
+      var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
+      Requests.getWidgetByUuid(this.core, widgetUUId, filterParams)
+        .then(response => {
+          if (response.status == "success") {
+            response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
+            that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+            if ('error' === response.status) {
+              console.error('Could not load widget.');
+              console.error(response);
+              errorFound = true;
+            }
+            else {
+              //dispose if widget exists
+              let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
+              let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
+
+              let widgetObject = WidgetRenderer.render(renderproperties);
+              if (widgetObject) {
+                this.renderedWidgets[widgetUUId] = widgetObject;
+              }
+            }
+            if (that.state.widgetCounter >= widgets.length) {
+              this.loader.destroy();
+            }
+          } else {
+            that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+            if (this.state.widgetCounter >= widgets.length) {
+              that.loader.destroy();
+            }
+          }
+        });
+    }
+  }
+  if (errorFound) {
+    Swal.fire({
+      type: 'error',
+      title: 'Oops ...',
+      text: 'Could not load one or more widget(s). Please try after some time.'
+    });
+    return;
+  }
+}
 
   render() {
       
@@ -152,7 +230,7 @@ class HTMLViewer extends React.Component {
   var content = this.searchAndReplaceParams(this.state.content,fileData);
     return (
       this.state.dataReady && (
-        <JsxParser className ={this.props.className}
+        <JsxParser autoCloseVoidElements className ={this.props.className}
           jsx={content}
           bindings={{
             data: fileData ? fileData : {},

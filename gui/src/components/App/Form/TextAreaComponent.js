@@ -5,6 +5,8 @@ import * as _lodash from "lodash";
 import * as _nativePromiseOnly from "native-promise-only";
 import Swal from 'sweetalert2';
 import Requests from "../../../Requests";
+import {ckeditorConfig} from '../../../CkEditorConfig';
+import '../../../public/css/ckeditorStyle.scss';
 
 export default class TextAreaComponent extends TextArea {
 
@@ -18,6 +20,7 @@ export default class TextAreaComponent extends TextArea {
         component.renderedCharts = {};
         this.form = this.getRoot();
         var that = this;
+        console.log(this.form);
         if (that.form && that.form.element) {
             that.form.element.addEventListener("appDetails", function(e) {
                 component.core = e.detail.core;
@@ -30,45 +33,48 @@ export default class TextAreaComponent extends TextArea {
             });
             that.form.element.dispatchEvent(evt);
         }
-        this.editorDialogMessageHandler = function (event) {
-            let editorDialog = event.source;
-            let eventData = event.data;
-            switch (eventData.action) {
-                case 'data':
-                    Requests.doRestRequest(component.core,eventData.url, eventData.params, eventData.method ? eventData.method : 'get',
-                        function (response) { //Successful response
-                            editorDialog.postMessage(response, '*');
-                        },
-                        function (response) { //Failure response
-                            editorDialog.postMessage(response, '*');
-                        },component.loader
-                    );
-                    break;
-                case 'permissions':
-                    component.userProfile = component.core.make("oxzion/profile").get();
-                    let permissions = component.userProfile.key.privileges;
-                    let preparedData = {
-                        "permissions": permissions,
-                        "corrid": eventData.params["OX_CORR_ID"]
-                    }
-                    editorDialog.postMessage({ "data": preparedData }, '*')
-                default:
-                    return event;
-            }
-        };
+        if(this.component.editor == 'ckeditor'){
+            this.editorDialogMessageHandler = function (event) {
+                let editorDialog = event.source;
+                let eventData = event.data;
+                switch (eventData.action) {
+                    case 'data':
+                        Requests.doRestRequest(component.core,eventData.url, eventData.params, eventData.method ? eventData.method : 'get',
+                            function (response) { //Successful response
+                                editorDialog.postMessage(response, '*');
+                            },
+                            function (response) { //Failure response
+                                editorDialog.postMessage(response, '*');
+                            },component.loader
+                        );
+                        break;
+                    case 'permissions':
+                        component.userProfile = component.core.make("oxzion/profile").get();
+                        let permissions = component.userProfile.key.privileges;
+                        let preparedData = {
+                            "permissions": permissions,
+                            "corrid": eventData.params["OX_CORR_ID"]
+                        }
+                        editorDialog.postMessage({ "data": preparedData }, '*')
+                    default:
+                        return event;
+                }
+            };
+        }
     }
     attachElement(element, index) {
         var _this2 = this;
-        if(_this2.component.editor == 'ace' || _this2.component.editor == 'quill'){
+        if(this.component.editor != 'ckeditor'){
             return super.attachElement(element,index);
+        } else {
+            var evt = new CustomEvent("getAppDetails", { detail: {} });
+            this.form.element.dispatchEvent(evt);
+            window.addEventListener('message', this.editorDialogMessageHandler, false);
+            window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
+            var editor = _this2.setupCkEditor(_this2, element, index);
+            this.editorsReady[index] = editor;
+            return element;
         }
-        window.addEventListener('message', this.editorDialogMessageHandler, false);
-        window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
-        var evt = new CustomEvent("getAppDetails", { detail: {} });
-        this.form.element.dispatchEvent(evt);
-        var editor = _this2.setupCkEditor(_this2, element, index);
-        this.editorsReady[index] = editor;
-        return element;
     }
     setValueAt(index, value) {
         if(this.component.editor == 'ckeditor'){
@@ -108,11 +114,7 @@ export default class TextAreaComponent extends TextArea {
         var editor = null;
         try {
             CKEDITOR.dtd.$removeEmpty['span'] = false;
-            const settings = {
-                rows: _this2.component.rows, extraPlugins: 'oxzion,autogrow', autoGrow_minHeight: 250, autoGrow_maxHeight: 400, height: 400, width: '100%', allowedContent: true,
-                oxzion: { dimensions: { begin: { width: 300, height: 200 }, min: { width: 300, height: 200 }, max: { width: '100%', height: 600 } }, dialogUrl: './widgetEditorDialog.html' }
-            };
-            editor = CKEDITOR.replace(element, settings);
+            editor = CKEDITOR.replace(element, ckeditorConfig);
             this.ckeditorInstance = editor.name;
             var isReadOnly = _this2.options.readOnly || _this2.disabled;
             var numRows = parseInt(_this2.component.rows, 10);
