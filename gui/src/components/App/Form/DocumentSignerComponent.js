@@ -15,13 +15,13 @@ export default class DocumentSignerComponent extends Base {
     
     var that = this;
     if(that.form && that.form.element){
-      that.form.element.addEventListener("appDetails", function(e) {
+      document.addEventListener("appDetails", function(e) {
         component.core = e.detail.core;
         component.appId = e.detail.appId;
         component.uiUrl = e.detail.uiUrl;
         component.wrapperUrl = e.detail.wrapperUrl;
       },true);
-      var evt = new CustomEvent("getAppDetails", { detail: {} });
+      var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
       that.form.element.dispatchEvent(evt);
 
       this.formList=[{name:"document1",status:"unsigned"},{name:"document2",status:"signed"},{name:"document3",status:"unsigned"}]
@@ -86,7 +86,7 @@ export default class DocumentSignerComponent extends Base {
 
     showInsureSignModal(docid,signing_url){
       let modalHTML=""
-      modalHTML+=`<div class="insuresign modal-content">`
+      modalHTML+=`<div class="insuresign modal-content" style="height:100%">`
       modalHTML+=`<span class="close">&times;</span>`
       modalHTML+=`<iframe width="100%" height="100%" src=${signing_url}></iframe>`
       // <iframe height='100%' width='100%' src='data.url+"'></iframe>
@@ -103,11 +103,19 @@ export default class DocumentSignerComponent extends Base {
     }
 
     pollForStatus(){
-      //implement once api is ready
       setTimeout(()=>{
-
-        $("#myModal").css("display", "none")
-      },60000)
+      let helper=this.component.core.make("oxzion/restClient");
+      helper.request("v1","/status/" + "fa640661-a00a-4e7a-b8c3-57ac898a0da0",{},"get").then(function (response) {
+              if(response.data['status'] == 'FINALIZED' || response.data['status'] == 'CANCELLED'){
+                $("#myModal").css("display", "none")
+              }
+              else{
+                this.pollForStatus()
+              }
+            }).catch(function (response) {
+              
+            });
+      },70000)
     }
      
 
@@ -131,7 +139,7 @@ export default class DocumentSignerComponent extends Base {
     document.getElementById("sign_btn").addEventListener("click",async()=>{
       // this.ShowPopupMessageBytype("error","random message")
       //currently added a dummy cross origin link.. change the link to signing_url 
-         this.showInsureSignModal("qwerty","https://lab.insuresign.com/?d=NDMxMmJmNTItNmExMy00NTRlLWI3YzYtNmY5YTY2ODliOWE3JmVveF91c2VyXzFAZ21haWwuY29t#/signing/doc")
+         this.showInsureSignModal("qwerty","https://lab.insuresign.com?d=ZmE2NDA2NjEtYTAwYS00ZTdhLWI4YzMtNTdhYzg5OGEwZGEwJmVveF91c2VyXzFAZ21haWwuY29t")
 
          this.pollForStatus()
       
@@ -147,8 +155,8 @@ export default class DocumentSignerComponent extends Base {
  }
 
   render(children) {
-    var evt = new CustomEvent("getAppDetails", { detail: {} });
-    this.form.element.dispatchEvent(evt);
+    var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
+    document.dispatchEvent(evt);
     var row = `<button id="sign_btn" >Sign Form</button>`
     row+=`<div id="myModal" class="insuresign modal"></div>`
     // this.formList.map(form=>{
