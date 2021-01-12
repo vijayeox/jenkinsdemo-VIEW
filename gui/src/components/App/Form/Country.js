@@ -261,7 +261,7 @@ var countryList = [ {
     "states": ["Atlantida", "Choluteca", "Colon", "Comayagua", "Copan", "Cortes", "El Paraiso", "Francisco Morazan", "Gracias a Dios", "Intibuca", "Islas de la Bahia", "La Paz", "Lempira", "Ocotepeque", "Olancho", "Santa Barbara", "Valle", "Yoro"]
 }, {
     "country": "Hong Kong",
-    "states": ["Not Applicable"]
+    "states": ["Islands","Kwai Tsing","North","Sai Kung","Sha Tin","Tai Po","Tsuen Wan","Tuen Mun","Yuen Long","Kowloon City","Kwun Tong","Sham Shui Po","Wong Tai Sin","Yau Tsim Mong","Central and Western","Eastern","Southern","Wan Chai"]
 }, {
     "country": "Hungary",
     "states": ["Bacs-Kiskun", "Baranya", "Bekes", "Borsod-Abauj-Zemplen", "Csongrad", "Fejer", "Gyor-Moson-Sopron", "Hajdu-Bihar", "Heves", "Jasz-Nagykun-Szolnok", "Komarom-Esztergom", "Nograd", "Pest", "Somogy", "Szabolcs-Szatmar-Bereg", "Tolna", "Vas", "Veszprem", "Zala", "Bekescsaba", "Debrecen", "Dunaujvaros", "Eger", "Gyor", "Hodmezovasarhely", "Kaposvar", "Kecskemet", "Miskolc", "Nagykanizsa", "Nyiregyhaza", "Pecs", "Sopron", "Szeged", "Szekesfehervar", "Szolnok", "Szombathely", "Tatabanya", "Veszprem", "Zalaegerszeg"]
@@ -479,6 +479,9 @@ var countryList = [ {
     "country": "Rwanda",
     "states": ["Butare", "Byumba", "Cyangugu", "Gikongoro", "Gisenyi", "Gitarama", "Kibungo", "Kibuye", "Kigali Rurale", "Kigali-ville", "Umutara", "Ruhengeri"]
 }, {
+    "country": "Saint Vincent and the Grenadines",
+    "states": ["Not Applicable"]
+}, {
     "country": "Samoa",
     "states": ["Aana", "Aiga-i-le-Tai", "Atua", "Faasaleleaga", "Gagaemauga", "Gagaifomauga", "Palauli", "Satupaitea", "Tuamasaga", "Vaa-o-Fonoti", "Vaisigano"]
 }, {
@@ -531,7 +534,7 @@ var countryList = [ {
     "states": ["Central", "North Central", "North Eastern", "North Western", "Sabaragamuwa", "Southern", "Uva", "Western"]
 }, {
     "country": "St Kitts and Nevis",
-    "states": ["Not Applicable"]
+    "states": ["Saint Peter Basseterre","Saint Mary Cayon","Christ Church Nichola Town","Saint John Capesterre","Saint Paul Capesterre","Saint Anne Sandy Point","Saint Thomas Middle Island","Trinity Palmetto Point","Saint George Basseterre","Saint James Windward","Saint Paul Charlestown","Saint George Gingerland","Saint John Figtree","Saint Thomas Lowland"]
 }, {
     "country": "St Lucia",
     "states": ["Not Applicable"]
@@ -582,7 +585,7 @@ var countryList = [ {
     "states": ["Adana", "Adiyaman", "Afyonkarahisar", "Agri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingol", "Bitlis", "Bolu", "Burdur", "Bursa", "Canakkale", "Cankiri", "Corum", "Denizli", "Diyarbakir", "Duzce", "Edirne", "Elazig", "Erzincan", "Erzurum", "Eskisehir", "Gaziantep", "Giresun", "Gumushane", "Hakkari", "Hatay", "Igdir", "Isparta", "Istanbul", "Izmir", "Kahramanmaras", "Karabuk", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirsehir", "Kocaeli", "Konya", "Kutahya", "Malatya", "Manisa", "Mardin", "Mersin", "Mugla", "Mus", "Nevsehir", "Nigde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Sanliurfa", "Siirt", "Sinop", "Sirnak", "Sivas", "Tekirdag", "Tokat", "Trabzon", "Tunceli", "Usak", "Van", "Yalova", "Yozgat", "Zonguldak"]
 }, {
     "country": "Turks and Caicos",
-    "states": ["Not Applicable"]
+    "states": ["Providenciales","North Caicos","Middle Caicos","South Caicos","Grand Turk","Salt Cay"]
 },{
     "country": "Tuvalu",
     "states": ["Not Applicable"]

@@ -90,6 +90,15 @@ export default class DocumentViewer extends Component {
           if (response.status == "success") {
             this.uploadAttachments(fileIndex - 1);
           }
+          this.loader.destroy();
+          if(response.status == "error"){
+            this.notif.current.notify(
+              response.message,
+              "Please choose a different file.",
+              "danger"
+            )
+            
+          }
         }
       );
     }
@@ -215,8 +224,8 @@ export default class DocumentViewer extends Component {
                         >
                           <div
                             className={
-                              doc.file == this.state.selectedDocument
-                                ? this.state.selectedDocument.file
+                              this.state.selectedDocument && this.state.selectedDocument.file
+                                ? doc.file == this.state.selectedDocument.file
                                   ? "docListBody borderActive"
                                   : "docListBody border"
                                 : "docListBody border"

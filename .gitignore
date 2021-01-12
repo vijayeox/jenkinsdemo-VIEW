@@ -9,3 +9,4 @@ dist
 npm-debug.log
 package-lock.json
 ./vscode
+/view_built
