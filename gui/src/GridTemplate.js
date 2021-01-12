@@ -33,7 +33,7 @@ export default class GridTemplate extends React.Component {
   }
 
   componentDidMount() {
-    $(document).ready(function () {
+    $(document).ready(function() {
       $(".k-textbox").attr("placeholder", "Search");
     });
   }
@@ -46,14 +46,14 @@ export default class GridTemplate extends React.Component {
     }
   }
 
-  dataStateChange = (e) => {
+  dataStateChange = e => {
     this.setState({
       ...this.state,
       dataState: e.data
     });
   };
 
-  dataRecieved = (data) => {
+  dataRecieved = data => {
     this.setState({
       gridData: data
     });
@@ -70,7 +70,7 @@ export default class GridTemplate extends React.Component {
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
-            cell={(props) => (
+            cell={props => (
               <LogoCell {...props} myProp={this.props} url={this.baseUrl} />
             )}
           />
@@ -83,7 +83,7 @@ export default class GridTemplate extends React.Component {
             title={this.props.config.column[i].title}
             filterCell={this.emptyCell}
             sortable={false}
-            cell={(props) => <LogoCell2 {...props} myProp={this.props} />}
+            cell={props => <LogoCell2 {...props} myProp={this.props} />}
           />
         );
       } else {
@@ -100,7 +100,7 @@ export default class GridTemplate extends React.Component {
             title={this.props.config.column[i].title}
             cell={
               checkCellTemplate
-                ? (item) => checkCellTemplate(item.dataItem)
+                ? item => checkCellTemplate(item.dataItem)
                 : undefined
             }
           />
@@ -127,7 +127,7 @@ export default class GridTemplate extends React.Component {
     }
   }
 
-  refreshHandler = (serverResponse) => {
+  refreshHandler = serverResponse => {
     if (serverResponse.status == "success") {
       this.notif.current.notify(
         "Success",
@@ -164,11 +164,17 @@ export default class GridTemplate extends React.Component {
           resizable={true}
           reorderable={true}
           scrollable={"scrollable"}
-          total={this.state.gridData.total?this.state.gridData.total:0}
+          total={this.state.gridData.total ? this.state.gridData.total : 0}
           pageable={{ buttonCount: 5, pageSizes: true, info: true }}
           onDataStateChange={this.dataStateChange}
-          onRowClick={(e) => {
-            this.props.permission.canEdit
+          onRowClick={e => {
+            e.dataItem.hasOwnProperty("is_system_role")
+              ? e.dataItem.type === "2"
+                ? this.props.manageGrid.edit(e.dataItem, { diableField: true })
+                : this.props.permission.canEdit
+                ? this.props.manageGrid.edit(e.dataItem, { diableField: false })
+                : this.props.manageGrid.edit(e.dataItem, { diableField: true })
+              : this.props.permission.canEdit
               ? this.props.manageGrid.edit(e.dataItem, { diableField: false })
               : this.props.manageGrid.edit(e.dataItem, { diableField: true });
           }}
@@ -344,7 +350,7 @@ function CellWithEditing(
           <button
             type="button"
             className="btn manage-btn k-grid-remove-command"
-            onClick={(e) => {
+            onClick={e => {
               e.preventDefault();
               Swal.fire({
                 title: "Are you sure?",
@@ -359,7 +365,7 @@ function CellWithEditing(
                 showCancelButton: true,
                 cancelButtonColor: "#3085d6",
                 target: ".Window_Admin"
-              }).then((result) => {
+              }).then(result => {
                 if (result.value) {
                   remove(this.props.dataItem);
                 }
@@ -383,9 +389,9 @@ function CellWithEditing(
       return response;
     }
 
-    triggerPasswordReset = (dataItem) => {
+    triggerPasswordReset = dataItem => {
       console.log(dataItem);
-      this.passwordReset(dataItem.username).then((response) => {
+      this.passwordReset(dataItem.username).then(response => {
         response.status == "success"
           ? fullConfig.notification.current.notify(
               "Success",
@@ -405,51 +411,61 @@ function CellWithEditing(
     };
 
     render() {
+      let editButton = (
+        <React.Fragment>
+          <abbr title={"Edit " + title + " Details"}>
+            <button
+              type="button"
+              className=" btn manage-btn k-grid-edit-command"
+              onClick={() => {
+                edit(this.props.dataItem, { diableField: false });
+              }}
+            >
+              <i className="fa fa-pencil manageIcons"></i>
+            </button>
+          </abbr>
+          {addUsers && (
+            <React.Fragment>
+              &nbsp; &nbsp;
+              <abbr
+                title={
+                  "Add " +
+                  (title == "Announcement" ? "Groups" : "Users") +
+                  " to " +
+                  title
+                }
+              >
+                <button
+                  type="button"
+                  className="btn manage-btn"
+                  onClick={() => {
+                    addUsers(this.props.dataItem);
+                  }}
+                >
+                  {title == "Announcement" ? (
+                    <i className="fa fa-users manageIcons"></i>
+                  ) : (
+                    <i className="fa fa-user-plus manageIcons"></i>
+                  )}
+                </button>
+              </abbr>
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      );
+
       return (
         <td>
           <center>
-            {permission.canEdit ? (
-              <React.Fragment>
-                <abbr title={"Edit " + title + " Details"}>
-                  <button
-                    type="button"
-                    className=" btn manage-btn k-grid-edit-command"
-                    onClick={() => {
-                      edit(this.props.dataItem, { diableField: false });
-                    }}
-                  >
-                    <i className="fa fa-pencil manageIcons"></i>
-                  </button>
-                </abbr>
-                {addUsers && (
-                  <React.Fragment>
-                    &nbsp; &nbsp;
-                    <abbr
-                      title={
-                        "Add " +
-                        (title == "Announcement" ? "Groups" : "Users") +
-                        " to " +
-                        title
-                      }
-                    >
-                      <button
-                        type="button"
-                        className="btn manage-btn"
-                        onClick={() => {
-                          addUsers(this.props.dataItem);
-                        }}
-                      >
-                        {title == "Announcement" ? (
-                          <i className="fa fa-users manageIcons"></i>
-                        ) : (
-                          <i className="fa fa-user-plus manageIcons"></i>
-                        )}
-                      </button>
-                    </abbr>
-                  </React.Fragment>
-                )}
-              </React.Fragment>
-            ) : null}
+            {this.props.dataItem.hasOwnProperty("is_system_role")
+              ? this.props.dataItem.type === "2"
+                ? null
+                : permission.canEdit
+                ? editButton
+                : null
+              : permission.canEdit
+              ? editButton
+              :  null}
             &nbsp; &nbsp;
             {this.props.dataItem.is_system_role || this.props.dataItem.is_admin
               ? (this.props.dataItem.is_system_role == "0" ||

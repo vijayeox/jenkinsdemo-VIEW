@@ -14,17 +14,19 @@ class RenderButtons extends React.Component {
 
   createTiles = () => {
     let adminItems = [];
+    var rowData = this.fileData;
     this.props.content.buttonList.map((currentValue, index) => {
       var showButton;
       if(currentValue.rule){
-        var string = this.replaceParams(currentValue.rule, this.fileData);
-          showButton = eval(string);
+        var string = this.replaceParams(currentValue.rule, rowData);
+        var _moment = moment;
+        string = string.replace(/moment/g,'_moment');
+        showButton = eval(string);
       } else {
         showButton = true;
       }
       var copyPageContent = [];
       var that = this;
-      var rowData = this.fileData;
       if(currentValue.details && currentValue.details.length > 0){
         currentValue.details.every(async (item, index) => {
             if (item.params && item.params.page_id) {

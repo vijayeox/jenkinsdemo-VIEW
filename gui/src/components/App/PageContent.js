@@ -16,7 +16,7 @@ import Page from "./Page";
 import TabSegment from "./TabSegment";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
-import * as OxzionGUIComponents from "../../../index.js";
+import * as OxzionGUIComponents from "../../../index";
 import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
@@ -570,10 +570,12 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "DashboardManager") {
+        var uuid = item.content ? (item.content.uuid? item.content.uuid: null) : null;
         content.push(
           <DashboardManager
             appId={this.appId}
-            uuid={item.content.uuid}
+            uuid={uuid}
+            content={item.content}
             args={this.core}
             key={i}
             content={item.content}
