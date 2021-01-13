@@ -31,12 +31,12 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
-      this.props.dataItem.parent_id
+      this.props.dataItem.parentId
         ? GetSingleEntityData(
             "account/" +
               this.props.selectedOrg +
               "/group/" +
-              this.props.dataItem.parent_id
+              this.props.dataItem.parentId
           ).then(response => {
             this.setState({
               parentGroupName: {
@@ -88,7 +88,7 @@ export default class DialogContainer extends React.Component {
     )
     let tempData = {
       name: this.state.groupInEdit.name,
-      parent_id: this.state.groupInEdit.parent_id,
+      parentId: this.state.groupInEdit.parentId,
       managerId: this.state.groupInEdit.managerId,
       description: this.state.groupInEdit.description
     };
@@ -192,7 +192,7 @@ export default class DialogContainer extends React.Component {
                       selectedEntityType={"text"}
                       preFetch={true}
                       onDataChange={event =>
-                        this.listOnChange(event, "parent_id")
+                        this.listOnChange(event, "parentId")
                       }
                       disableItem={this.props.diableField}
                       required={false}
