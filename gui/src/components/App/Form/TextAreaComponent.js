@@ -18,11 +18,26 @@ export default class TextAreaComponent extends TextArea {
         component.loader = null;
         component.ckeditorInstance = null;
         component.renderedCharts = {};
-        this.form = this.getRoot();
+        var root = this.getRoot();
+        console.log(root);
         var that = this;
-        console.log(this.form);
+        var element;
         if (that.form && that.form.element) {
-            that.form.element.addEventListener("appDetails", function(e) {
+            element = that.form.element;
+        } else {
+            if(that.form && that.form.root && that.form.root.parent && that.form.root.parent.root && that.form.root.parent.root.element){
+                element = that.form.root.parent.root.element;
+            }
+            if(that.parent && that.parent.root && that.parent.root.element){
+                element = that.parent.root.element;
+            }
+            if(that.component && that.component.rootElement){
+                element = that.component.rootElement;
+            }
+        }
+        console.log(element);
+        if(element){
+            element.addEventListener("appDetails", function(e) {
                 component.core = e.detail.core;
                 component.appId = e.detail.appId;
                 component.uiUrl = e.detail.uiUrl;
@@ -31,7 +46,7 @@ export default class TextAreaComponent extends TextArea {
             var evt = new CustomEvent("getAppDetails", {
                 detail: {}
             });
-            that.form.element.dispatchEvent(evt);
+            element.dispatchEvent(evt);
         }
         if(this.component.editor == 'ckeditor'){
             this.editorDialogMessageHandler = function (event) {
@@ -68,7 +83,7 @@ export default class TextAreaComponent extends TextArea {
             return super.attachElement(element,index);
         } else {
             var evt = new CustomEvent("getAppDetails", { detail: {} });
-            this.form.element.dispatchEvent(evt);
+            _this2.getRoot().element.dispatchEvent(evt);
             window.addEventListener('message', this.editorDialogMessageHandler, false);
             window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
             var editor = _this2.setupCkEditor(_this2, element, index);

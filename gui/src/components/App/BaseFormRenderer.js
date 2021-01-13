@@ -1352,7 +1352,7 @@ class BaseFormRenderer extends React.Component {
                         e.stopImmediatePropagation();
                         that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined } });
                     }, true);
-                    document.addEventListener("getAppDetailsForEsign", function (e) {
+                    form.element.addEventListener("getAppDetailsForEsign", function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();

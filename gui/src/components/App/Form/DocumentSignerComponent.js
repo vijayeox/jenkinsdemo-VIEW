@@ -11,24 +11,27 @@ export default class DocumentSignerComponent extends Base {
     component.appId = null;
     component.uiUrl = null;
     this.data = data;
-    this.form = this.getRoot();
     this.documentsList = [];
-
     var that = this;
+    var element;
     if (that.form && that.form.element) {
-      document.addEventListener(
-        "appDetails",
-        function (e) {
+        element = that.form.element;
+    } else {
+        if(that.form && that.form.root && that.form.root.parent && that.form.root.parent.root && that.form.root.parent.root.element){
+            element = that.form.root.parent.root.element;
+        }
+    }
+    if(element){
+      element.addEventListener("appDetails", function (e) {
           component.core = e.detail.core;
           component.appId = e.detail.appId;
           component.uiUrl = e.detail.uiUrl;
           component.wrapperUrl = e.detail.wrapperUrl;
         },
-        true
+        true  
       );
-      // var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
-      // document.dispatchEvent(evt);
-
+      var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
+      element.dispatchEvent(evt);
       this.formList = [
         { name: "document1", status: "unsigned" },
         { name: "document2", status: "signed" },
