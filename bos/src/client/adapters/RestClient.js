@@ -158,7 +158,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				let parameters = params;
 				let formData = new FormData();
 				for (var k in parameters) {
-					if (parameters[k].name && parameters[k].body) {
+					if (parameters[k] && parameters[k].name && parameters[k].body) {
 						formData.append(k, parameters[k].body, parameters[k].name);
 					} else {
 						formData.append(k, parameters[k]);
