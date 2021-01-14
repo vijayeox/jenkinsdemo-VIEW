@@ -202,7 +202,7 @@ class DashboardEditor extends React.Component {
                 'dashboard_type': "html",
                 'filter_configuration': JSON.stringify(this.state.filterConfiguration),
                 'ispublic': this.state.dashboardVisibility,
-                'export_configuration': JSON.stringify(this.state.selectQuery)
+                'export_configuration': (typeof this.state.selectQuery === 'object') ? JSON.stringify(this.state.selectQuery) : this.state.selectQuery
             };
             let url = 'analytics/dashboard';
             let method = '';
@@ -436,6 +436,10 @@ class DashboardEditor extends React.Component {
     displayFilterDiv() {
         var element = document.getElementById("filtereditor-form-container");
         element.classList.remove("disappear");
+
+        var element = document.getElementById("dash-manager-buttons");
+        element.classList.add("disappear");
+
         document.getElementById("dashboard-container").classList.add("disappear")
         document.getElementById("dashboard-filter-btn").disabled = true
     }
@@ -464,14 +468,14 @@ class DashboardEditor extends React.Component {
 
     render() {
         return (
-            <form className="dashboard-editor-form">
-                <div className="dash-manager-buttons">
+            <form className="dashboard-editor-form" style={{ marginleft: '10px', width: '98%' }}>
+                <div id="dash-manager-buttons" className="dash-manager-buttons">
                     <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i class="fas fa-file-export" title="Set Export OI Query"></i></Button>
                     <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
                     <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
                     <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
                 </div>
-                <div id="filtereditor-form-container" className="disappear">{
+                <div id="filtereditor-form-container" style={{ marginTop: '0px', width: '98%' }} className="disappear">{
                     this.state.filterConfiguration &&
                     <DashboardFilter
                         hideFilterDiv={() => this.setState({ showFilterDiv: false })}

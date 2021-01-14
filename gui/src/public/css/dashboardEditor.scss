@@ -81,6 +81,7 @@
 .dashboard-filter-field {
   min-width: 15px;
   margin-right: 0px;
+  margin-bottom: 5px;
 }
 
 .dashboard-filter-field .form-checkbox {
@@ -316,6 +317,31 @@
   position: relative;
 }
 
-.errorMsg{
-  color:red !important;
+.errorMsg {
+  color: red !important;
+}
+
+.dashboard-filter-field {
+  font-size: 11px;
+}
+
+.dashboardTextField {
+  font-size: 11px !important;
+  height: 38px !important;
+}
+
+.field-width-75 {
+  width:75px !important;
+}
+
+.field-width-100 {
+  width:100px !important;
+}
+
+.field-width-150 {
+  width:150px !important;
+}
+
+.field-width-200 {
+  width:200px !important;
 }
