@@ -16,7 +16,6 @@ export class BosAdapter extends ServiceProvider {
     this.core.on("osjs/core:started", () => {
       document.body.classList.add("osjs-root");
       var queryString = window.location.search.substr(1);
-      console.log(queryString);
       if (queryString) {
         var queryObj = queryString
           .split("&")
