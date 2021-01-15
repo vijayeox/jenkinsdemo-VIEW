@@ -39,12 +39,14 @@ class TabSegment extends React.Component {
     this.appId = this.props.appId;
     this.pageId = this.props.pageId;
     this.tabs = this.props.tabs;
+    this.fileId = this.props.fileId;
     this.currentRow = this.props.currentRow;
     this.state = {
       content: this.props.content,
       pageContent: [],
       dataReady: false,
       currentRow: this.props.currentRow?this.props.currentRow:{},
+      fileData: this.props.fileData?this.props.fileData : {},
       tabNames: [],
       tabContent: [],
       tabs: this.props.tabs?this.props.tabs:[]
@@ -55,6 +57,7 @@ class TabSegment extends React.Component {
       this.props.tabs.map((item, i) => {
         tabNames.push(<TabLink to={item.uuid}> {item.name}</TabLink>);
         var tabContentKey = item.uuid+'_tab';
+        var fileData = item.fileData? item.fileData : {};
         tabContent.push(<TabContent for={item.uuid}>
         <PageContent
           key={tabContentKey}
@@ -63,10 +66,11 @@ class TabSegment extends React.Component {
           isTab="true"
           appId={this.props.appId}
           parentPage={this.pageId}
+          fileData={fileData}
           currentRow={this.state.currentRow}
           pageContent={item.content}
           pageId={item.pageId}
-          fileId={this.uuid}
+          fileId={this.fileId}
           core={this.core}
         />
             </TabContent>)
@@ -95,7 +99,7 @@ class TabSegment extends React.Component {
             parentPage={this.pageId}
             pageContent={item.content}
             pageId={this.pageId}
-            fileId={this.uuid}
+            fileId={this.fileId}
             currentRow={this.state.currentRow}
             core={this.core}
           />
@@ -117,7 +121,7 @@ class TabSegment extends React.Component {
           config={this.props.config}
           proc={this.props.proc}
           appId={this.props.appId}
-          fileId={this.uuid}
+          fileId={this.fileId}
           pageContent={this.state.tabs[0].content?this.state.tabs[0].content:null}
           currentRow={this.state.currentRow}
           core={this.core}

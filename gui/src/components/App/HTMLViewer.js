@@ -20,11 +20,25 @@ class HTMLViewer extends React.Component {
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
+      fileId: this.props.fileId,
       widgetCounter: 0,
       dataReady: this.props.fileId ? false : true,
       dataReady: this.props.url ? false : true
     };
   }
+  formatDate = (dateTime, dateTimeFormat) => {
+    let userTimezone, userDateTimeFomat = null;
+    userTimezone = this.profile.key.preferences.timezone ? this.profile.key.preferences.timezone : moment.tz.guess();
+    userDateTimeFomat = this.profile.key.preferences.dateformat ? this.profile.key.preferences.dateformat : "YYYY-MM-DD";
+    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+    return moment(dateTime).utc(dateTime, "MM/dd/yyyy HH:mm:ss").clone().tz(userTimezone).format(userDateTimeFomat);
+  };
+  formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
+    let userDateTimeFomat = null;
+    userDateTimeFomat = this.profile.key.preferences.dateformat ? this.profile.key.preferences.dateformat : "YYYY-MM-DD";
+    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
+    return moment(dateTime).format(userDateTimeFomat);
+  };
 
   async getFileDetails(fileId) {
     let helper = this.core.make("oxzion/restClient");
@@ -38,23 +52,20 @@ class HTMLViewer extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.fileId != undefined) {
-      this.getFileDetails(this.props.fileId).then(response => {
+    var that = this;
+    if (this.state.fileId != undefined) {
+      this.getFileDetails(this.state.fileId).then(response => {
         if (response.status == "success") {
-          this.setState({
-            fileData: response.data.data,
-            dataReady: true
-          });
+          this.setState({ fileData: response.data.data });
+          that.preRender();
         }
       });
     }
     if (this.props.url != undefined) {
       this.getURL(this.props.url).then(response => {
         if (response.status == "success") {
-          this.setState({
-            fileData: response.data,
-            dataReady: true
-          });
+          this.setState({ fileData: response.data });
+          that.preRender();
         }
       });
     }
@@ -88,15 +99,20 @@ class HTMLViewer extends React.Component {
     } while (m);
     matches.forEach((match, groupIndex) => {
       if(params[match[1]] !=undefined && this.isHTML(params[match[1]])){
-        content = content.replace(
-          match[0],
-          params[match[1]]
-          );
+        content = content.replace(match[0],params[match[1]]);
       }
     });
     content = this.getXrefFields(content);
-    this.updateGraph();
     return content
+  }
+  preRender(){
+    var fileData = {};
+    for (const [key, value] of Object.entries(this.state.fileData)) {
+      fileData[key] = value;
+    }
+    var content = this.searchAndReplaceParams(this.state.content,fileData);
+    this.setState({content: content,fileData:fileData,dataReady: true});
+    this.updateGraph();
   }
   getXrefFields(content){
     var regex = /\{file\.(.*)?\}/g;
@@ -196,53 +212,23 @@ updateGraph =  async(filterParams) => {
 }
 
   render() {
-      
-  var _moment = moment;
-  var formatDate = (dateTime, dateTimeFormat) => {
-    let userTimezone,
-      userDateTimeFomat = null;
-    userTimezone = this.profile.key.preferences.timezone
-      ? this.profile.key.preferences.timezone
-      : moment.tz.guess();
-    userDateTimeFomat = this.profile.key.preferences.dateformat
-      ? this.profile.key.preferences.dateformat
-      : "YYYY-MM-DD";
-    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
-    return moment(dateTime)
-      .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
-      .clone()
-      .tz(userTimezone)
-      .format(userDateTimeFomat);
-  };
-  var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
-    let userDateTimeFomat = null;
-    userDateTimeFomat = this.profile.key.preferences.dateformat
-      ? this.profile.key.preferences.dateformat
-      : "YYYY-MM-DD";
-    dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
-    return moment(dateTime).format(userDateTimeFomat);
-  };
-
-  var fileData = {};
-  for (const [key, value] of Object.entries(this.state.fileData)) {
-    fileData[key] = value;
-  }
-  var content = this.searchAndReplaceParams(this.state.content,fileData);
-    return (
-      this.state.dataReady && (
-        <JsxParser autoCloseVoidElements className ={this.props.className}
-          jsx={content}
-          bindings={{
-            data: fileData ? fileData : {},
-            item: fileData ? fileData : {},
-            moment: moment,
-            formatDate: formatDate,
-            formatDateWithoutTimezone: formatDateWithoutTimezone,
-            profile: this.profile.key
-          }}
-        />
-      )
-    );
+    if(this.state.dataReady){
+        return (
+          <div>
+            <JsxParser autoCloseVoidElements className ={this.props.className}
+              jsx={this.state.content}
+              bindings={{
+                data: this.statefileData ? this.statefileData : {},
+                item: this.statefileData ? this.statefileData : {},
+                moment: moment,
+                formatDate: this.formatDate,
+                formatDateWithoutTimezone: this.formatDateWithoutTimezone,
+                profile: this.profile.key
+              }}
+            /></div>);
+    } else {
+      return (<div></div>);
+    }
   }
 }
 
