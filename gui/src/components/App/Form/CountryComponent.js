@@ -7,10 +7,7 @@ export default class CountryComponent extends Base {
     constructor(component, options, data) {
         super(component, options, data);
         this.data = data;
-        this.form = this.getRoot();
         var that = this;
-        console.log(this.data)
-
     }
     static schema() {
         return Base.schema({
