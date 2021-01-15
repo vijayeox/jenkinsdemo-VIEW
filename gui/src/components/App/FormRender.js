@@ -595,14 +595,15 @@ class FormRender extends React.Component {
             await this.helper.request("v1", url, {}, "get");
     }
     processProperties(form, action = null) {
+        var action = action ? action : '';
         if (form._form["properties"]) {
             this.runDelegates(form, form._form["properties"], action);
             this.runProps(
-                form._form,
-                form,
-                form._form["properties"],
-                this.formatFormData(form.submission.data)
-            );
+                    form._form,
+                    form,
+                    form._form["properties"],
+                    this.formatFormData(form.submission.data)
+                );
         } else {
             if (form.originalComponent["properties"]) {
                 this.runDelegates(form, form.originalComponent["properties"], action);
@@ -618,7 +619,6 @@ class FormRender extends React.Component {
 
     loadWorkflow(form) {
         let that = this;
-        console.log(this.state);
         if (this.state.parentWorkflowInstanceId && !this.state.isDraft) {
             this.getFileData()
                 .then((response) => {
@@ -1099,8 +1099,6 @@ class FormRender extends React.Component {
                         that.setState({
                             currentData : {...changed.data}
                         })
-                        console.log(that.state.previousData);
-                        console.log(that.state.currentData);
                         var component = changed.changed.component;
                         var instance = changed.changed.instance;
                         var properties = component.properties;
@@ -1109,6 +1107,13 @@ class FormRender extends React.Component {
                             var componentKey = component.key + 'Changed';
                             if (changed.data.functions.hasOwnProperty(componentKey)) {
                                 this.functions[componentKey]();
+                                if(properties.targetProperties){
+                                    var targetList = properties.targetProperties.split(",");
+                                    targetList.map((item) => {
+                                        var targetComponent = form.getComponent(item);
+                                             targetComponent.triggerRedraw();
+                                    });
+                                }
                             }
                         }
                         if (properties && Object.keys(properties).length > 0) {
@@ -1520,6 +1525,9 @@ class FormRender extends React.Component {
                                 });
                             }
                         } else {
+                            if(this.state.previousData.length != 0){
+                                this.state.currentForm.setSubmission({ data: this.state.previousData });
+                            }
                             that.showFormLoader(false, 0);
                         }
                     })
