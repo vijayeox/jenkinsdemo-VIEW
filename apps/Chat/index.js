@@ -84,8 +84,10 @@
        };
 
        const handleUrlClick = (params) => {
-               console.log("URL CLICKED");
-               console.log(params);
+        let helper = core.make("oxzion/link");
+        helper.launchApplication({
+          fileId: params.detail.fileIid,
+        },params.detail.appName);
        };
       
       // This will proxy the window focus events to iframe

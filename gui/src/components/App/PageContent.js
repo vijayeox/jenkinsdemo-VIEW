@@ -49,6 +49,7 @@ class PageContent extends React.Component {
       pageId: this.props.pageId,
       submission: this.props.submission,
       showLoader: false,
+      fileData: this.props.fileData? this.props.fileData : {},
       fileId: this.props.fileId ? this.props.fileId : null,
       isMenuOpen: false,
       currentRow: this.props.currentRow ? this.props.currentRow : {},
@@ -603,6 +604,8 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
+        var fileData = this.state.fileData? this.state.fileData : this.state.currentRow;
+        var fileId = item.fileId ? item.fileId : item.uuid;
         content.push(
           <HTMLViewer
             key={i}
@@ -614,9 +617,9 @@ class PageContent extends React.Component {
                 ? ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow)
                 : undefined
             }
-            fileId={item.uuid}
+            fileId={fileId}
             content={item.content ? item.content : ""}
-            fileData={this.state.currentRow}
+            fileData={fileData}
             className={item.className}
           />
         );

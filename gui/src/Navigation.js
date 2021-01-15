@@ -48,14 +48,9 @@ class Navigation extends React.Component {
           this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.fileId) {
-          this.setState({
-            pages: [
-              {
-                pageContent: [{type:"EntityViewer",fileId: this.params.fileId}],title: "View",icon: "fa fa-eye",fileId:this.params.fileId
-              },
-            ],
-          });
-          this.pageActive(this.params.page);
+          this.props.selectLoad(this.homepage);
+          this.addPage({detail:{pageContent:[{type:"EntityViewer",fileId: this.params.fileId}],title: "View",icon: "fa fa-eye",fileId:this.params.fileId}})
+          // this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
@@ -155,7 +150,7 @@ class Navigation extends React.Component {
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
-      if(pages[pages.length - 2].pageId){
+      if(pages[pages.length - 2] && pages[pages.length - 2].pageId){
         pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
       }
     }
