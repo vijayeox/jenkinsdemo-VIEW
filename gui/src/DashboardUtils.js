@@ -1,5 +1,5 @@
 export function scrollDashboardToTop() {
-  if(document.getElementById("page-content")){
+  if (document.getElementById("page-content")) {
     document.getElementById("page-content").scrollTo(0, 0)
   }
 }
@@ -25,7 +25,7 @@ export function replaceCommonFilters(parentFilters, childFilters, property) {
           if (parentFilterCopy.length > 0 && childFilterCopy.length > 0) {
             if (parentFilterCopy[parentindex].field == childFilterCopy[childIndex].field) {
               hasCommonFilter += 1
-              parentFilterCopy[parentindex]["isParentFilter"]=true
+              parentFilterCopy[parentindex]["isParentFilter"] = true
               appliedFilters.push(parentFilterCopy[parentindex])
               childFilterCopy.splice(childIndex, 1)
               parentFilterCopy.splice(parentindex, 1)
@@ -34,7 +34,7 @@ export function replaceCommonFilters(parentFilters, childFilters, property) {
           }
         }
         if (hasCommonFilter == 0) {
-          parentFilterCopy[parentindex]["isParentFilter"]=true
+          parentFilterCopy[parentindex]["isParentFilter"] = true
           appliedFilters.push(parentFilterCopy[parentindex])
         }
       }
@@ -110,7 +110,7 @@ export function overrideCommonFilters(parentFilter, childFilter) {
   return filter
 }
 
-function getformattedDate(date){
+function getformattedDate(date) {
   return "date:" + date.getFullYear() + "-" + (("0" + (date.getMonth() + 1)).slice(-2)) + "-" + (("0" + date.getDate()).slice(-2))
 }
 
@@ -162,18 +162,18 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
               //get current date values
               startDate = new Date()
               endDate = new Date()
-              if(filtermode=="applied"){
+              if (filtermode == "applied") {
                 startDate = new Date(filter["startDate"])
                 startDate = getformattedDate(startDate)
 
-                endDate=filter["endDate"]
+                endDate = filter["endDate"]
                 if (typeof endDate !== "string") {
                   endDate = getformattedDate(endDate)
-                }else{
+                } else {
                   endDate = new Date(filter["endDate"])
                   endDate = getformattedDate(endDate)
                 }
-              }else{
+              } else {
                 //on default current mtd and ytd is set
                 if (filter["operator"] === "mtd") {
                   startDate = "date:" + startDate.getFullYear() + "-" + (("0" + (startDate.getMonth() + 1)).slice(-2)) + "-" + ("01")
