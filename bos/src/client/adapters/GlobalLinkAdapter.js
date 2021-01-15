@@ -10,6 +10,13 @@ export class GlobalLinkAdapter extends ServiceProvider {
   providers() {
     return ["oxzion/link"];
   }
+  async init() {
+    this.core.instance('oxzion/link', () => ({
+        launchApp: (attibutes,application) => this.launchApp(attibutes,application)
+    }));
+
+
+}
   launchApp(attibutes,application){
     this.core.run(application, {
         page: attibutes.pageId,

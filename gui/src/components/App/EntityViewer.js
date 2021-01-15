@@ -93,7 +93,7 @@ class EntityViewer extends React.Component {
     var that = this;
     var content = page.content;
     var finalContentArray = [];
-    if(content.length > 0){
+    if(content && content.length > 0){
       content.map(function (key, index) {
         content[index]['fileId'] = that.fileId;
         finalContentArray.push(content[index]);
