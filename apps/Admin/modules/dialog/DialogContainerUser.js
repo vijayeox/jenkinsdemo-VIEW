@@ -49,7 +49,7 @@ export default class DialogContainer extends React.Component {
           }
           apiResponse.project = tempProjects;
           apiResponse.manager_name = {
-            id: apiResponse.managerid,
+            id: apiResponse.managerId,
             name: apiResponse.manager_name
           };
           this.setState({
@@ -204,7 +204,7 @@ export default class DialogContainer extends React.Component {
           ),
           designation: this.state.userInEdit.designation,
           gender: this.state.userInEdit.gender,
-          managerid: this.state.userInEdit.managerid,
+          managerId: this.state.userInEdit.managerId,
           role: userRoles,
           project: this.state.userInEdit.project,
           date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
@@ -240,7 +240,7 @@ export default class DialogContainer extends React.Component {
         ),
         designation: this.state.userInEdit.designation,
         gender: this.state.userInEdit.gender,
-        managerid: this.state.userInEdit.managerid,
+        managerId: this.state.userInEdit.managerId,
         role: userRoles,
         project: this.state.userInEdit.project,
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
@@ -381,7 +381,7 @@ export default class DialogContainer extends React.Component {
                       selectedItem={this.state.userInEdit.manager_name}
                       selectedEntityType={"object"}
                       onDataChange={(e) =>
-                        this.managerValueChange("managerid", e)
+                        this.managerValueChange("managerId", e)
                       }
                       disableItem={this.props.diableField}
                     />
