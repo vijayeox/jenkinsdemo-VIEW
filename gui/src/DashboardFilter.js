@@ -360,21 +360,20 @@ const FilterFields = function (props) {
                     }
                 </Form.Group>
             </div>
-            {visibility &&
-                <div className="dashboard-filter-field dash-manager-buttons">
-                    <Form.Group className="dashboard-filter-field">
+            <div className="dashboard-filter-field dash-manager-buttons">
+                <Form.Group className="dashboard-filter-field">
+                    {visibility &&
                         <Form.Control type="checkbox" name="isDefault" className="form-checkbox filter_remove_button" value={isDefault} defaultChecked={isDefault} onChange={(e) => onUpdate(e, index)} style={{
                             cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative", width: "50px", height: "34px;"
                         }} />
-
-                        {!filters[index]["isParentFilter"] &&
-                            <Button className="filter_remove_button" style={{
-                                cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
-                            }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
-                        }
-                    </Form.Group>
-                </div>
-            }
+                    }
+                    {!filters[index]["isParentFilter"] &&
+                        <Button className="filter_remove_button" style={{
+                            cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
+                        }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                    }
+                </Form.Group>
+            </div>
         </Form.Row>)
 }
 class DashboardFilter extends React.Component {

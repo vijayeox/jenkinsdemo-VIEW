@@ -136,7 +136,7 @@ class DashboardManager extends React.Component {
     }
     return preapredExtractedFilterValue
   }
-  
+
   async fetchDashboards(isRefreshed) {
     let that = this
     let helper = this.restClient;
@@ -257,6 +257,7 @@ class DashboardManager extends React.Component {
     let filterOptions = dashboardFilterRef.state.applyFilterOption
 
     if (this.state.dashboardStack.length == 1) {
+
       dashboardStack = [...this.state.dashboardStack]
       let dashboardFilter = filter
       let extractedFilterValues = extractFilterValues(dashboardFilter, dashboardStack);
@@ -270,6 +271,9 @@ class DashboardManager extends React.Component {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = preapredExtractedFilterValue
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filter
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterOptions
+    } else  {
+      dashboardStack = [...this.state.dashboardStack]
+      dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filter
     }
     if (dashboardStack != null) {
       this.setState({ dashboardFilter: filter, dashboardStack: dashboardStack, filterConfiguration: filter, filter, filterOptions: filterOptions })
