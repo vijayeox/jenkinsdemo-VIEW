@@ -595,7 +595,6 @@ class FormRender extends React.Component {
             await this.helper.request("v1", url, {}, "get");
     }
     processProperties(form, action = null) {
-        var action = action ? action : '';
         if (form._form["properties"]) {
             this.runDelegates(form, form._form["properties"], action);
             this.runProps(
