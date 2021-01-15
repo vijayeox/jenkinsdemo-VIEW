@@ -26,8 +26,8 @@ class Slider extends React.Component {
     let parent = document.querySelectorAll(
       ".osjs-window[data-id=annoucementsWindow] div.osjs-window-header"
     )[0];
-    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
-      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+    if (parent.childNodes[3].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[3]).cloneNode(true);
       clonedItem.className = "osjs-window-button dummyCloseButton";
       parent.appendChild(clonedItem);
     }

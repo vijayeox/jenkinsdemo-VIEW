@@ -56,11 +56,12 @@ export default class GlobalLinkHandler {
   }
 
   launchApplication(event, selectedApplication) {
-    this.core.run(selectedApplication, {
-      page: event.target.getAttribute("page-id"),
+    let helper = this.core.make("oxzion/links");
+    helper.launchApplication({
+      pageId: event.target.getAttribute("page-id"),
       pageTitle: event.target.getAttribute("title"),
       pageIcon: event.target.getAttribute("icon"),
       fileId: event.target.getAttribute("file-id"),
-    });
+    },selectedApplication);
   }
 }

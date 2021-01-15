@@ -1043,7 +1043,7 @@ class BaseFormRenderer extends React.Component {
     }
     createForm() {
         let that = this;
-
+        Formio.registerComponent("form", Nested);
         Formio.registerComponent("slider", SliderComponent);
         Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
         Formio.registerComponent("document", DocumentComponent);
@@ -1056,7 +1056,6 @@ class BaseFormRenderer extends React.Component {
         Formio.registerComponent("file", FileComponent);
         Formio.registerComponent("select", SelectComponent);
         Formio.registerComponent("textarea", TextAreaComponent);
-        Formio.registerComponent("form", Nested);
 
 
         if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
@@ -1350,7 +1349,7 @@ class BaseFormRenderer extends React.Component {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined } });
+                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined,element: form.element } });
                     }, true);
                     form.element.addEventListener("getAppDetailsForEsign", function (e) {
                         e.preventDefault();

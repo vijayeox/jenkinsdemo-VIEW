@@ -12,30 +12,36 @@ export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
         super(component, options, data);
+        var root = this.getRoot();
         component.core = null;
         component.appId = null;
         component.uiUrl = null;
         component.loader = null;
         component.ckeditorInstance = null;
         component.renderedCharts = {};
-        var root = this.getRoot();
-        console.log(root);
         var that = this;
-        var element;
-        if (that.form && that.form.element) {
-            element = that.form.element;
-        } else {
-            if(that.form && that.form.root && that.form.root.parent && that.form.root.parent.root && that.form.root.parent.root.element){
-                element = that.form.root.parent.root.element;
-            }
-            if(that.parent && that.parent.root && that.parent.root.element){
-                element = that.parent.root.element;
-            }
-            if(that.component && that.component.rootElement){
-                element = that.component.rootElement;
-            }
+        var element = null;
+        if (root && root.element) {
+            element = root.element;
         }
-        console.log(element);
+        if(root && root.root && root.root.parent && root.root.parent.root && root.root.parent.root.element && element == null){
+            element = root.root.parent.root.element;
+        }
+        if(that.parent && that.parent.root && that.parent.root.element && element == null){
+            element = that.parent.root.element;
+        }
+        if(that.parent && that.parent.rootElement && element == null){
+            element = that.parent.rootElement;
+        }
+        if(root.root && root.root.element && element == null){
+            element = root.root.element;
+        }
+        if(that.root && that.root.element && element == null){
+            element = that.root.element;
+        }
+        if(root.parent && root.parent.element && element == null){
+            element = root.parent.element;
+        }
         if(element){
             element.addEventListener("appDetails", function(e) {
                 component.core = e.detail.core;

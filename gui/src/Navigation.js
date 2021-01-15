@@ -51,7 +51,7 @@ class Navigation extends React.Component {
           this.setState({
             pages: [
               {
-                pageContent: {type:"EntityViewer",}
+                pageContent: [{type:"EntityViewer",fileId: this.params.fileId}],title: "View",icon: "fa fa-eye",fileId:this.params.fileId
               },
             ],
           });
