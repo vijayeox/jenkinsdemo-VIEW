@@ -88,7 +88,7 @@ export function overrideCommonFilters(parentFilter, childFilter) {
         filter.push(childFilterCopy[childIndex])
         childFilterCopy.splice(childIndex, 1)
         parentFilterCopy.splice(parentindex, 1)
-        parentindex--
+        // parentindex--
       }
     }
     if (hasCommonFilter == 0) {

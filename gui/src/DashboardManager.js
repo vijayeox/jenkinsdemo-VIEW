@@ -263,6 +263,7 @@ class DashboardManager extends React.Component {
     } else  {
       dashboardStack = [...this.state.dashboardStack]
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filter
+      // dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterOptions
     }
     if (dashboardStack != null) {
       this.setState({ dashboardFilter: filter, dashboardStack: dashboardStack, filterConfiguration: filter, filter, filterOptions: filterOptions })

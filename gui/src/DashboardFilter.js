@@ -348,6 +348,7 @@ const FilterFields = function (props) {
                         :
                         // filterMode == "CREATE" ?
                         <Select
+                            className="dashboardTextField field-width-150"
                             selected={filters[index]["value"] || ""}
                             name="value"
                             id="value"
