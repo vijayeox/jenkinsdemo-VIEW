@@ -95,6 +95,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 	// params - *
 	// method - string
 	async makeRequest(version, action, params, method, headers = null, raw = false) {
+		this.messageBox = this.core.make("oxzion/messageDialog");
 		let userData = this.core.getUser();
 		if (action.charAt(0) == '/')
 			action = action.substr(1);
@@ -157,7 +158,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 				let parameters = params;
 				let formData = new FormData();
 				for (var k in parameters) {
-					if (parameters[k].name && parameters[k].body) {
+					if (parameters[k] && parameters[k].name && parameters[k].body) {
 						formData.append(k, parameters[k].body, parameters[k].name);
 					} else {
 						formData.append(k, parameters[k]);
@@ -252,4 +253,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 		}
 	}
 
+	errorMessage(message){
+		this.messageBox.show(message, '', 'OK', false)
+		.then((response) => {
+			return response;
+		});
+	}
 }

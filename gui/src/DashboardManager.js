@@ -25,12 +25,23 @@ class DashboardManager extends React.Component {
     this.userProfile = this.core.make("oxzion/profile").get();
     this.filterRef = React.createRef();
     this.props.setTitle(section.title.en_EN);
+    this.content = this.props.content;
+    var uuid = '';
+    if (this.props.uuid) {
+      uuid = this.props.uuid;
+    }
+    if (this.props.content) {
+      var content = this.props.content
+      if (content && content.uuid) {
+        uuid = content.uuid;
+      }
+    }
     this.state = {
       showModal: false,
       modalType: "",
       modalContent: {},
       flipped: false,
-      uuid: this.props.uuid,
+      uuid: uuid,
       dashList: [],
       inputs: {},
       dashboardBody: "",

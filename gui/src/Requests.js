@@ -1,5 +1,6 @@
 import merge from "deepmerge";
 import moment from "moment";
+
 class Requests {
     static async getDashboardHtmlDataByUuid(core,uuid) {
         let helper = core.make("oxzion/restClient");
@@ -34,6 +35,72 @@ class Requests {
       let helper = core.make("oxzion/restClient");
       let menulist = await helper.request("v1","/app/" + appId + "/menu",{},"get");
       return menulist;
+    }
+    static doRestRequest = (core,url, params, method, successHandler, failureHandler, loader) => {
+        if (!loader) {
+            loader = core.make('oxzion/splash');
+        }
+        loader.show();
+        let restResponse = core.make("oxzion/restClient").request('v1', url, params ? params : {}, method ? method : 'get');
+        function handleNonSuccessResponse(response) {
+            console.info(`Received a non-success status from server for URL ${url}. JSON:${JSON.stringify(response)}.`);
+            if (loader) {
+                loader.destroy();
+            }
+            if (failureHandler) {
+                response.url = url;
+                response.params = params;
+                try {
+                    failureHandler(response);
+                }
+                catch (e) {
+                    console.error(response);
+                }
+            }
+            else {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Unexpected error occurred. Please try after some time.'
+                });
+            }
+        }
+        restResponse.then(function (response) {
+                if (response.status !== 'success') {
+                    handleNonSuccessResponse(response);
+                }
+                else {
+                    if (successHandler) {
+
+                        let responseObject = {
+                            'url': url,
+                            'params': params,
+                            'status': 'success'
+                        };
+                        let dataContent = response.data;
+                        for (let property in dataContent) {
+                            if ((property === 'url') || (property === 'params') || (property === 'status')) {
+                                throw `Reserved property name ${property} used in REST response. Modify the server side controller to use some other property name.`;
+                            }
+                            responseObject[property] = dataContent[property];
+                        }
+                        try {
+                            successHandler(responseObject);
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
+                    }
+                }
+            }).
+            catch(function (response) {
+                handleNonSuccessResponse(response);
+            }).
+            finally(function (response) {
+                if (loader) {
+                    loader.destroy();
+                }
+            });
     }
 }
 export default Requests;

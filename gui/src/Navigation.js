@@ -32,7 +32,7 @@ class Navigation extends React.Component {
     } else {
       Requests.getMenulist(this.core,this.appId).then((response) => {
         this.props.menuLoad(response["data"]);
-        if (response["data"][0]) {
+        if (response["data"] && response["data"][0]) {
           this.homepage = response["data"][0];
         }
         if (this.params && this.params.page) {
@@ -48,14 +48,9 @@ class Navigation extends React.Component {
           this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.fileId) {
-          this.setState({
-            pages: [
-              {
-                pageContent: {type:"EntityViewer",}
-              },
-            ],
-          });
-          this.pageActive(this.params.page);
+          this.props.selectLoad(this.homepage);
+          this.addPage({detail:{pageContent:[{type:"EntityViewer",fileId: this.params.fileId}],title: "View",icon: "fa fa-eye",fileId:this.params.fileId}})
+          // this.pageActive(this.params.page);
           history.push("/");
         } else if (this.params && this.params.activityId) {
           this.setState({ selected: { activity_id: this.params.activityId } });
@@ -125,7 +120,7 @@ class Navigation extends React.Component {
     var that = this;
     if(e.detail.fileId){
       var filePage = [{type:"EntityViewer",fileId:e.detail.fileId}]
-      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId: e.detail.fileId};
+      var pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId: e.detail.fileId};
       if(!this.checkIfEntityViewerPageExists(pageContent)){
         pages.push(pageContent)
       } else {
@@ -155,7 +150,7 @@ class Navigation extends React.Component {
     if (e.detail.parentPage && document.getElementById(e.detail.parentPage + "_page")) {
       this.pageInActive(e.detail.parentPage);
     } else {
-      if(pages[pages.length - 2].pageId){
+      if(pages[pages.length - 2] && pages[pages.length - 2].pageId){
         pages.length > 0 ? this.pageInActive(pages[pages.length - 2].pageId) : null;
       }
     }

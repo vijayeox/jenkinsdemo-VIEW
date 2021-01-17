@@ -15,10 +15,10 @@ import RadioCardComponent from "./Form/RadioCardComponent";
 import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
-import SelectComponent from "./Form/SelectComponent.js";
-import TextAreaComponent from "./Form/TextAreaComponent.js";
+import SelectComponent from "./Form/SelectComponent";
+import TextAreaComponent from "./Form/TextAreaComponent";
 import ParameterHandler from "./ParameterHandler";
-import Nested from "./Form/Nested.js";
+import Nested from "./Form/Nested";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 
 import DateFormats from '../../public/js/DateFormats'
@@ -26,8 +26,8 @@ import React from 'react'
 import Swal from "sweetalert2";
 import axios from 'axios'
 import * as MomentTZ from "moment-timezone";
-import { countryList } from "./Form/Country.js";
-import { phoneList } from "./Form/Phonelist.js";
+import { countryList } from "./Form/Country";
+import { phoneList } from "./Form/Phonelist";
 import merge from "deepmerge";
 
 
@@ -66,12 +66,12 @@ class BaseFormRenderer extends React.Component {
         this.formDivID = "formio_" + formID;
         this.loaderDivID = "formio_loader_" + formID;
         this.formErrorDivId = "formio_error_" + formID;
-        JavascriptLoader.loadScript([{
-            'name': 'ckEditorJs',
-            'url': './ckeditor/ckeditor.js',
-            'onload': function () { },
-            'onerror': function () { }
-        }]);
+        // JavascriptLoader.loadScript([{
+        //     'name': 'ckEditorJs',
+        //     'url': './ckeditor/ckeditor.js',
+        //     'onload': function () { },
+        //     'onerror': function () { }
+        // }]);
     }
     updatePageContent = (config) => {
         if(this.state.appId){
@@ -80,7 +80,6 @@ class BaseFormRenderer extends React.Component {
                 detail: config,
                 bubbles: true
             });
-            console.log(ev2);   
             eventDiv.dispatchEvent(ev2);
         }
     };
@@ -92,10 +91,10 @@ class BaseFormRenderer extends React.Component {
         }
     }
     componentWillUnmount() {
-    if (this.state.currentForm != undefined || this.state.currentForm != null) {
-      this.state.currentForm.destroy();
+        if (this.state.currentForm != undefined || this.state.currentForm != null) {
+            this.state.currentForm.destroy(true);
+        }
     }
-  }
 
     stepDownPage() {
         let ev = new CustomEvent("stepDownPage", {
@@ -509,7 +508,6 @@ class BaseFormRenderer extends React.Component {
                 form.submission.data.bos ? null : (form.submission.data.bos = {});
                 form.submission.data.bos.assoc_id = that.props.parentFileId;
             }
-            console.log(that);
             return await that.callPipeline(form._form["properties"]["submission_commands"], that.cleanData(form.submission.data)).then(async response => {
                 if (response.status == "success") {
                     await that.deleteCacheData().then(response2 => {
@@ -590,7 +588,6 @@ class BaseFormRenderer extends React.Component {
                     return response;
                 } else {
                     if (that.props.route) {
-                        console.log(response)
                         that.showFormLoader(false, 0);
                     }
                     else {
@@ -1028,10 +1025,10 @@ class BaseFormRenderer extends React.Component {
     generateViewButton(){
         let gridToolbarContent = [];
         let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
-        let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-info",fileId:this.state.fileId};
+        let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
         let commentPage = [{type:"Comment",fileId:this.state.fileId}];
         let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
-        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-info"}></i></Button>);
+        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
         gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
         let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
         document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
@@ -1046,7 +1043,7 @@ class BaseFormRenderer extends React.Component {
     }
     createForm() {
         let that = this;
-
+        Formio.registerComponent("form", Nested);
         Formio.registerComponent("slider", SliderComponent);
         Formio.registerComponent("convergepay", ConvergePayCheckoutComponent);
         Formio.registerComponent("document", DocumentComponent);
@@ -1059,7 +1056,6 @@ class BaseFormRenderer extends React.Component {
         Formio.registerComponent("file", FileComponent);
         Formio.registerComponent("select", SelectComponent);
         Formio.registerComponent("textarea", TextAreaComponent);
-        Formio.registerComponent("form", Nested);
 
 
         if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
@@ -1318,7 +1314,6 @@ class BaseFormRenderer extends React.Component {
                                     var data = that.cleanData(changed);
                                     delete data.orgId;
                                     that.PushDataPOST(postParams['api']['url'], postParams['api']['method'], null, data).then(response => {
-                                        console.log(response);
                                         if (response.status == "success") {
                                             if (response.data) {
                                                 try {
@@ -1354,7 +1349,13 @@ class BaseFormRenderer extends React.Component {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined } });
+                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined,element: form.element } });
+                    }, true);
+                    form.element.addEventListener("getAppDetailsForEsign", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
                     }, true);
                     form.emit("render");
                 });

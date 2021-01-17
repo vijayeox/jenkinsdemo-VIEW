@@ -67,7 +67,9 @@ import { WebSocketAdapter } from './adapters/WebSocketAdapter.js';
 import { SplashServiceProvider } from './adapters/SplashAdapter.js';
 import {UserSessionServiceProvider} from './adapters/UserSessionAdapter.js';
 import { BosAdapter } from './adapters/BosAdapter.js';
+import { GlobalLinkAdapter } from "./adapters/GlobalLinkAdapter.js";
 import {ScriptLoaderServiceProvider} from './adapters/ScriptLoader.js';
+import { MessageServiceProvider } from "./adapters/MessageAdapter.js";
 /*import {MyApiServiceProvider} from './testProvider.js';
 import announcementWidget from './customWidget.js';
 import customPanelItem from './customPanel.js'*/
@@ -83,6 +85,7 @@ const init = () => {
   osjs.register(NotificationServiceProvider);
   osjs.register(SettingsServiceProvider, {before: true});
   osjs.register(BosAdapter);
+  osjs.register(GlobalLinkAdapter);
   osjs.register(AuthServiceProvider, {
     before: true,
     args:
@@ -100,6 +103,7 @@ const init = () => {
   osjs.register(UserSessionServiceProvider, {before: true});
   osjs.register(WebSocketAdapter);
   osjs.register(ScriptLoaderServiceProvider,{before: true});
+  osjs.register(MessageServiceProvider, { before: true });
   osjs.register(GlobalLinkHandler,{before: true});
   osjs.boot();
 };

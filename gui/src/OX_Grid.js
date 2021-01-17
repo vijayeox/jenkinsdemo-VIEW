@@ -63,7 +63,7 @@ export default class OX_Grid extends React.Component {
     this.menuWrapperRef;
     this.appNavigationDiv = "navigation_" + this.props.appId;
     this.loader = this.props.osjsCore.make("oxzion/splash");
-    this.child = React.createRef();
+    this.child = this.props.reference? this.props.reference : React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
     this.inlineEdit = this.inlineEdit.bind(this);
   }
@@ -120,7 +120,6 @@ export default class OX_Grid extends React.Component {
         try {
           defaultFilters = JSON.parse(getUrlParams.filter);
         } catch (e) {
-          console.log(getUrlParams.filter);
           defaultFilters = getUrlParams.filter;
         }
       } else {
@@ -281,12 +280,14 @@ export default class OX_Grid extends React.Component {
         },
         onClick: (e) => {
           e.preventDefault();
-          Object.keys(this.state.actions).map(function (key, index) {
-            var action = that.state.actions;
-            if(action[key].defaultAction == true){
-              that.handleAction(key, dataItem.dataItem);
-            }
-          });
+          if(this.state.actions){
+            Object.keys(this.state.actions).map(function (key, index) {
+              var action = that.state.actions;
+              if(action[key].defaultAction == true){
+                that.handleAction(key, dataItem.dataItem);
+              }
+            });
+          }
         }
     };
     return React.cloneElement(trElement, { ...trProps }, trElement.props.children);
@@ -378,9 +379,7 @@ handleContextMenuOpen = (e, dataItem) => {
     if (this.props.gridOperations) {
       gridToolbarContent.length == 0 ? gridToolbarContent.push(<div></div>) : null;
       gridToolbarContent.push( this.renderListOperations(this.props.gridOperations) );
-      console.log(this.props.defaultToolBar);
       if(this.props.defaultToolBar != true){
-        console.log(this.props.defaultToolBar);
         let ev = new CustomEvent("addcustomActions", {
           detail: { customActions: gridToolbarContent },
           bubbles: true,
@@ -393,7 +392,9 @@ handleContextMenuOpen = (e, dataItem) => {
 
   exportPDF = () => {
     this.loader.show();
-    this.gridPDFExport.save(this.state.data, this.loader.destroy());
+    if(this.gridPDFExport){
+      this.gridPDFExport.save(this.state.data, this.loader.destroy());
+    }
   };
 
   exportExcel = (excelConfig) => {
@@ -437,10 +438,12 @@ handleContextMenuOpen = (e, dataItem) => {
         return tempItem;
       });
     }
-    this._excelExport.save(
-      gridData,
-      excelConfig.columnConfig ? undefined : this._grid.columns
-    );
+    if(this._excelExport){
+      this._excelExport.save(
+        gridData,
+        excelConfig.columnConfig ? undefined : this._grid.columns
+      );
+    }
   };
 
   expandChange = (event) => {
@@ -751,14 +754,16 @@ handleAction(key,dataItem){
 }
 handleOnSelect = (e) => {
   var dataItem = this.dataItem;
-  Object.keys(this.state.actions).map(function (key, index) {
-    if(this.state.actions[key].name==e.item.text){
-      this.handleAction(key,dataItem);
-    }
-  }, this);
-  this.setState({
-    contextMenuOpen: false
-  })
+  if(this.state.actions){
+    Object.keys(this.state.actions).map(function (key, index) {
+      if(this.state.actions[key].name==e.item.text){
+        this.handleAction(key,dataItem);
+      }
+    }, this);
+    this.setState({
+      contextMenuOpen: false
+    });
+  }
 }
 
   render() {

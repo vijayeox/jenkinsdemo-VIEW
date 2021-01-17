@@ -75,12 +75,12 @@ class WidgetEditorApp extends React.Component {
         window.postDataRequest(`analytics/widget/${uuid}?data=true`).
             then(function (responseData) {
                 if ('error' === responseData.status) {
-                    console.error('Could not load widget.');
+                    console.error('Could not load MLET.');
                     console.error(responseData);
                     Swal.fire({
                         type: 'error',
                         title: 'Oops ...',
-                        text: 'Could not load a widget. Please try after some time.'
+                        text: 'Could not load a MLET. Please try after some time.'
                     });
                     return;
                 }
@@ -111,12 +111,12 @@ class WidgetEditorApp extends React.Component {
                     });
             }).
             catch(function (responseData) {
-                console.error('Could not load widget.');
+                console.error('Could not load MLET.');
                 console.error(responseData);
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',
-                    text: 'Could not load a widget. Please try after some time.'
+                    text: 'Could not load a MLET. Please try after some time.'
                 });
             });
     }
@@ -197,7 +197,7 @@ class WidgetEditorApp extends React.Component {
                         Swal.fire({
                             type: 'error',
                             title: 'Oops ...',
-                            text: 'Failed to load widgets. Please try after some time.'
+                            text: 'Failed to load MLET. Please try after some time.'
                         });
                     });
                 Swal.fire({
@@ -211,7 +211,7 @@ class WidgetEditorApp extends React.Component {
                 Swal.fire({
                     type: 'error',
                     title: 'Operation Failed',
-                    text: 'Failed to Delete widget. Please try after some time.'
+                    text: 'Failed to Delete MLET. Please try after some time.'
                 });
             });
     }
@@ -276,7 +276,7 @@ class WidgetEditorApp extends React.Component {
                 Swal.fire({
                     type: 'error',
                     title: 'Oops ...',
-                    text: 'Failed to load widgets. Please try after some time.'
+                    text: 'Failed to load MLETs. Please try after some time.'
                 });
             })
     }
@@ -340,12 +340,12 @@ class WidgetEditorApp extends React.Component {
                     let responseWidget = response.widget;
                     if ('copy' === thiz.state.mode) {
                         if (responseWidget) {
-                            thiz.setErrorMessage('widgetName', 'Widget name is already in use. Please provide another name.');
+                            thiz.setErrorMessage('widgetName', 'MLET name is already in use. Please provide another name.');
                             resolvePromise(false);
-                            console.log('Widget copy is in progress. Given widget name is in use. Error.');
+                            console.log('MLET copy is in progress. Given MLET name is in use. Error.');
                         }
                         else {
-                            console.log('Widget copy is in progress. Given widget name not found. Ok to continue.');
+                            console.log('MLET copy is in progress. Given MLET name not found. Ok to continue.');
                             resolvePromise(true);
                         }
                     }
@@ -353,13 +353,13 @@ class WidgetEditorApp extends React.Component {
                         if (localWidget.uuid) { //Case of editing existing widget.
                             if (responseWidget) { //If name is found uuid's should match.
                                 if (responseWidget.uuid === localWidget.uuid) {
-                                    console.log('UUIDs of widget being edited and name search response widget are matching. Ok to continue.');
+                                    console.log('UUIDs of MLET being edited and name search response MLET are matching. Ok to continue.');
                                     resolvePromise(true);
                                 }
                                 else {
-                                    thiz.setErrorMessage('widgetName', 'Widget name is already in use. Please provide another name.');
+                                    thiz.setErrorMessage('widgetName', 'MLET name is already in use. Please provide another name.');
                                     resolvePromise(false);
-                                    console.log('UUIDs not matching. Some other widget has given name. Error.');
+                                    console.log('UUIDs not matching. Some other MLET has given name. Error.');
                                 }
                             }
                             else { //Else it is ok because it may be the name of the widget being edited OR a new name.
@@ -369,13 +369,13 @@ class WidgetEditorApp extends React.Component {
                         }
                         else { //Case of new widget. Name should not be found.
                             if (responseWidget) {
-                                thiz.setErrorMessage('widgetName', 'Widget name is already in use. Please provide another name.');
+                                thiz.setErrorMessage('widgetName', 'MLET name is already in use. Please provide another name.');
                                 resolvePromise(false);
-                                console.log('UUIDs not matching. Some other widget has given name.');
+                                console.log('UUIDs not matching. Some other MLET has given name.');
                             }
                             else {
                                 resolvePromise(true);
-                                console.log('Widget having given name not found. Ok to continue.');
+                                console.log('MLET having given name not found. Ok to continue.');
                             }
                         }
                     }
@@ -383,7 +383,7 @@ class WidgetEditorApp extends React.Component {
                 catch(function (response) {
                     if (response.errorCode == 404) {
                         thiz.setErrorMessage('widgetName', null);
-                        console.debug('Widget name is not in use. valid.');
+                        console.debug('MLET name is not in use. valid.');
                         resolvePromise(true); //No validation errors.
                     }
                     else {
@@ -391,9 +391,9 @@ class WidgetEditorApp extends React.Component {
                         Swal.fire({
                             type: 'error',
                             title: 'Oops ...',
-                            text: 'Could not validate widget name. Please try after some time.'
+                            text: 'Could not validate MLET name. Please try after some time.'
                         });
-                        console.debug('Widget name validation REST request failed. Forced invalid.');
+                        console.debug('MLET name validation REST request failed. Forced invalid.');
                         resolvePromise(false); //Found validation error.
                     }
                 });
@@ -587,11 +587,11 @@ class WidgetEditorApp extends React.Component {
                     <FrontSide>
                         <div className="form-group row no-left-margin no-right-margin">
                             <div className="col-1 right-align" style={{ maxWidth: '3em', paddingLeft: '0px' }}>
-                                <label htmlFor="selectWidget" className="col-form-label form-control-sm">Widget</label>
+                                <label htmlFor="selectWidget" className="col-form-label form-control-sm">MLET</label>
                             </div>
                             <div className="col-2">
                                 <Select
-                                    placeholder="Choose Widget"
+                                    placeholder="Choose MLET"
                                     name="selectWidget"
                                     id="selectWidget"
                                     isDisabled={this.state.isPreLoadedWidget}
@@ -635,7 +635,7 @@ class WidgetEditorApp extends React.Component {
                             <div className="dash-manager-buttons">
                                 {this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Create widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Create MLET"
                                             onClick={() => this.toggleWidgetDiv()} disabled={!this.state.readOnly}>
                                             <span className="fa fa-plus" aria-hidden="true"></span>
                                         </button>
@@ -643,7 +643,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Edit MLET"
                                             onClick={this.editWidget} disabled={!this.state.readOnly && (this.state.mode != 'edit')}>
                                             <span className="fa fa-edit" aria-hidden="true"></span>
                                         </button>
@@ -651,7 +651,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Delete widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Delete MLET"
                                             onClick={() => { this.setState({ showModal: true }) }} disabled={!this.state.readOnly}>
                                             <span className="fa fa-trash" aria-hidden="true"></span>
                                         </button>
@@ -659,7 +659,7 @@ class WidgetEditorApp extends React.Component {
                                 }
                                 {(this.state.widget.uuid && this.state.widgetPermissions.MANAGE_ANALYTICS_WIDGET_WRITE) &&
                                     <>
-                                        <button type="button" className="btn btn-primary widget-action-btn" title="Copy widget"
+                                        <button type="button" className="btn btn-primary widget-action-btn" title="Copy MLET"
                                             onClick={this.copyWidget} disabled={!this.state.readOnly && (this.state.mode != 'copy')}>
                                             <span className="fa fa-copy" aria-hidden="true"></span>
                                         </button>
@@ -708,7 +708,7 @@ class WidgetEditorApp extends React.Component {
                                         <label htmlFor="selectVisibility" className="right-align col-form-label form-control-sm">Visibility</label>
                                     </div>
                                     <div className="col-2">
-                                        <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select widget" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
+                                        <select id="selectVisibility" name="selectVisibility" className="form-control form-control-sm" placeholder="Select MLET" value={this.state.visibility != null ? this.state.visibility : -1} onChange={(e) => this.setState({ visibility: e.target.value })}>
                                             <option disabled value="-1" key="-1"></option>
                                             <option key="1" value="1">Public</option>
                                             <option key="2" value="0">Private</option>

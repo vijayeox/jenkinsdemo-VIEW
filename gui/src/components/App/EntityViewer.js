@@ -90,13 +90,22 @@ class EntityViewer extends React.Component {
   }
   constructTabs(page,enableDocuments){
     var tabs = [];
-    if(page && page.content){
-      tabs.push({name:"View",uuid:this.uuidv4(),content: page.content});
+    var that = this;
+    var content = page.content;
+    var finalContentArray = [];
+    if(content && content.length > 0){
+      content.map(function (key, index) {
+        content[index]['fileId'] = that.fileId;
+        finalContentArray.push(content[index]);
+      });
+    }
+    if(finalContentArray){
+      tabs.push({name:"View",uuid:this.uuidv4(),content: finalContentArray});
     }
     if(enableDocuments != "0"){
       tabs.push({name: "Attachments",uuid:this.uuidv4(),content: [{type:"DocumentViewer",url:"file/"+this.fileId+"/document"}]});
     }
-    return (<TabSegment appId={this.appId} core={this.core} appId={this.appId} proc={this.proc} tabs={tabs} pageId={this.uuidv4()} currentRow={this.state.fileData} />);
+    return (<TabSegment appId={this.appId} core={this.core} appId={this.appId} proc={this.proc} fileId={this.state.fileId} tabs={tabs} pageId={this.uuidv4()} currentRow={this.state.fileData} />);
   }
           
   render() {

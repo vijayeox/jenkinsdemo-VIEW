@@ -16,7 +16,7 @@ export default class DialogContainer extends React.Component {
     this.state = {
       prjInEdit: this.props.dataItem || null,
       managerName: undefined,
-      parentProject: this.props.dataItem.parent_id,
+      parentProject: this.props.dataItem.parentId,
     };
     this.notif = React.createRef();
   }
@@ -64,7 +64,7 @@ export default class DialogContainer extends React.Component {
           managerName: event.target.value,
         })
       : null;
-    item == "parent_id"
+    item == "parentId"
       ? this.setState({
           parentProject: event.target.value,
         })
@@ -86,7 +86,7 @@ export default class DialogContainer extends React.Component {
         name: this.state.prjInEdit.name,
         description: this.state.prjInEdit.description,
         managerId: this.state.prjInEdit.managerId,
-        parent_id: this.state.prjInEdit.parent_id,
+        parentId: this.state.prjInEdit.parentId,
       },
       this.props.selectedOrg
     ).then((response) => {
@@ -176,7 +176,7 @@ export default class DialogContainer extends React.Component {
                       selectedItem={this.state.parentProject}
                       preFetch={true}
                       onDataChange={(event) =>
-                        this.listOnChange(event, "parent_id")
+                        this.listOnChange(event, "parentId")
                       }
                       disableItem={this.props.diableField}
                       validationMessage={"Please select the Parent project."}

@@ -72,7 +72,7 @@ class Home extends React.Component {
   createBlock = () => {
     var appsList = [
       {
-        name: "Organization",
+        name: "Account",
         api: "ACCOUNT",
         icon: "apps/Admin/org.svg",
         component: Organization

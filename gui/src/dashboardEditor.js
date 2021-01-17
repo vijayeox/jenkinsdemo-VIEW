@@ -10,6 +10,7 @@ import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
 import './public/css/dashboardEditor.scss'
 import '@progress/kendo-theme-bootstrap/dist/all.css';
+import {ckeditorConfig} from './CkEditorConfig';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
@@ -122,38 +123,9 @@ class DashboardEditor extends React.Component {
     }
 
     setupCkEditor = () => {
-        const config = {
-            extraPlugins: 'oxzion,autogrow',
-            autoGrow_minHeight: 250,
-            autoGrow_maxHeight: 400,
-            height: 400,
-            width: '100%',
-            //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
-            //CKEDITOR removes tags like span and flattens HTML structure.
-            allowedContent: true,
-            //extraAllowedContent:'span(*)',
-            oxzion: {
-                dimensions: {
-                    begin: {
-                        width: 300,
-                        height: 200
-                    },
-                    min: {
-                        width: 100,
-                        height: 100
-                    },
-                    max: {
-                        width: '100%',
-                        height: 600,
-                    }
-                },
-                dialogUrl: './widgetEditorDialog.html'
-            }
-        };
-
         //Without this setting CKEditor removes empty inline widgets (which is <span></span> tag).
         CKEDITOR.dtd.$removeEmpty['span'] = false;
-        let editor = CKEDITOR.appendTo('ckEditorInstance', config);
+        let editor = CKEDITOR.appendTo('ckEditorInstance', ckeditorConfig);
         //Kendo theme CSS is added like this for rendering Kendo grid inside a widget displayed within ckeditor.
         editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
         this.editor = editor;

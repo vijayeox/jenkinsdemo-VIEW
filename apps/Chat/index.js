@@ -55,8 +55,8 @@
   let parent = document.querySelectorAll(
       ".osjs-window[data-id=ChatWindow] div.osjs-window-header"
     )[0];
-    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
-      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+    if (parent.childNodes[3].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[3]).cloneNode(true);
       clonedItem.className = "osjs-window-button dummyCloseButton";
       parent.appendChild(clonedItem);
     }
@@ -82,6 +82,13 @@
         
         tray.update(trayOptions);
        };
+
+       const handleUrlClick = (params) => {
+        let helper = core.make("oxzion/link");
+        helper.launchApplication({
+          fileId: params.detail.fileIid,
+        },params.detail.appName);
+       };
       
       // This will proxy the window focus events to iframe
       win.on('focus', () => {
@@ -99,7 +106,7 @@
            ref.postMessage(msg, baseUrl);
     });
 
-      win.on('iframe:get', msg => {
+      win.on('iframe:get', (msg , params) => {
         console.warn('Message from Iframe', msg);
         switch(msg){
           case 'Ping':
@@ -110,6 +117,10 @@
           break;
           case 'help':
           core.emit("oxzion/application:launch", {app : "HelpApp", args : {topic  : 'chat'}});
+          break;
+          case 'Urlclick':
+          console.log(params);
+          handleUrlClick(params);  
           break;
         }
         

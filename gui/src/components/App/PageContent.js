@@ -16,7 +16,7 @@ import Page from "./Page";
 import TabSegment from "./TabSegment";
 import merge from "deepmerge";
 import "./Styles/PageComponentStyles.scss";
-import * as OxzionGUIComponents from "../../../index.js";
+import * as OxzionGUIComponents from "../../../index";
 import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
@@ -49,6 +49,7 @@ class PageContent extends React.Component {
       pageId: this.props.pageId,
       submission: this.props.submission,
       showLoader: false,
+      fileData: this.props.fileData? this.props.fileData : {},
       fileId: this.props.fileId ? this.props.fileId : null,
       isMenuOpen: false,
       currentRow: this.props.currentRow ? this.props.currentRow : {},
@@ -570,10 +571,12 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "DashboardManager") {
+        var uuid = item.content ? (item.content.uuid? item.content.uuid: null) : null;
         content.push(
           <DashboardManager
             appId={this.appId}
-            uuid={item.content.uuid}
+            uuid={uuid}
+            content={item.content}
             args={this.core}
             key={i}
             content={item.content}
@@ -601,6 +604,8 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
+        var fileData = this.state.fileData? this.state.fileData : this.state.currentRow;
+        var fileId = item.fileId ? item.fileId : item.uuid;
         content.push(
           <HTMLViewer
             key={i}
@@ -612,9 +617,9 @@ class PageContent extends React.Component {
                 ? ParameterHandler.replaceParams(this.appId,item.url, this.state.currentRow)
                 : undefined
             }
-            fileId={item.uuid}
+            fileId={fileId}
             content={item.content ? item.content : ""}
-            fileData={this.state.currentRow}
+            fileData={fileData}
             className={item.className}
           />
         );

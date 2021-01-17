@@ -12,6 +12,7 @@ export default class GlobalLinkHandler {
         if (event.target.href == undefined || event.target.href == "" || event.target.href == "#") {
           event.preventDefault();
           event.stopPropagation();
+          console.log(event);
           if (event.target.getAttribute("eoxapplication") !== null) {
             var selectedApplication = event.target.getAttribute("eoxapplication");
             const packages = EOXCore.make("osjs/packages").getPackages((m) => m.type === "application");
@@ -56,11 +57,12 @@ export default class GlobalLinkHandler {
   }
 
   launchApplication(event, selectedApplication) {
-    this.core.run(selectedApplication, {
-      page: event.target.getAttribute("page-id"),
+    let helper = this.core.make("oxzion/link");
+    helper.launchApp({
+      pageId: event.target.getAttribute("page-id"),
       pageTitle: event.target.getAttribute("title"),
       pageIcon: event.target.getAttribute("icon"),
       fileId: event.target.getAttribute("file-id"),
-    });
+    },selectedApplication);
   }
 }

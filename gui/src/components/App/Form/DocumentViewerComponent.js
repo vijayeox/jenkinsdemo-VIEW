@@ -200,7 +200,8 @@ export default class DocumentViewerComponent extends Base {
           disableView = true;
         }
         if(typeof file){
-          downloadUrl = component.wrapperUrl + file.url;
+          downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
+          url = component.wrapperUrl + "app/" + component.appId + "/document/" + fileName+"?docPath="+file;
         }
         fileList +=
           `<div class="docList" style="margin:0;" key="` +

@@ -50,8 +50,8 @@
   let parent = document.querySelectorAll(
       ".osjs-window[data-id=MailApplicationWindow] div.osjs-window-header"
     )[0];
-    if (parent.childNodes[2].getAttribute("data-action") == "minimize") {
-      var clonedItem = (parent.childNodes[2]).cloneNode(true);
+    if (parent.childNodes[3].getAttribute("data-action") == "minimize") {
+      var clonedItem = (parent.childNodes[3]).cloneNode(true);
       clonedItem.className = "osjs-window-button dummyCloseButton";
       parent.appendChild(clonedItem);
     }
@@ -234,7 +234,7 @@
                 trayInitialized = true;
                 trayOptions.title = "Mail";
                 trayOptions.icon = proc.resource(metadata.icon_white);
-                trayOptions.pos = 1;
+                trayOptions.pos = 3;
                 trayOptions.onclick = () => {
                   
                   win.raise();
