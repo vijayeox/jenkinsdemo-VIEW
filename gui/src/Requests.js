@@ -10,7 +10,7 @@ class Requests {
 
     static async getWidgetByUuid(core, uuid, filterParams) {
         let helper = core.make("oxzion/restClient");
-        let filterParameter = (filterParams && filterParams != []) ? ("&filter=" + JSON.stringify(filterParams)) : ''
+        let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
         let response = await helper.request("v1","analytics/widget/" + uuid + '?data=true' + filterParameter,{},"get");
         return response;
     }

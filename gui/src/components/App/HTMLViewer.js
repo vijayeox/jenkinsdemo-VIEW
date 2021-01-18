@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import '../../public/css/ckeditorStyle.scss';
 import WidgetRenderer from '../../WidgetRenderer';
 import WidgetDrillDownHelper from '../../WidgetDrillDownHelper';
+import { scrollDashboardToTop, preparefilter, overrideCommonFilters, extractFilterValues } from '../../DashboardUtils'
+import '../../WidgetStyles.css';
 
 class HTMLViewer extends React.Component {
   constructor(props) {
@@ -15,17 +17,35 @@ class HTMLViewer extends React.Component {
     this.profileAdapter = this.core.make("oxzion/profile");
     this.profile = this.profileAdapter.get();
     this.appId = this.props.appId;
+    this.fileDivID = 'file_'+this.generateUUID();
     this.renderedWidgets = {};
+    this.helper = this.core.make("oxzion/restClient");
     this.loader = this.core.make('oxzion/splash');
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
       fileId: this.props.fileId,
       widgetCounter: 0,
+      preparedDashboardFilter: null,
       dataReady: this.props.fileId ? false : true,
       dataReady: this.props.url ? false : true
     };
   }
+  generateUUID() { // Public Domain/MIT
+    let d = new Date().getTime();//Timestamp
+    let d2 = (performance && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = Math.random() * 16;//random number between 0 and 16
+        if (d > 0) {  //Use timestamp until depleted
+            r = (d + r) % 16 | 0;
+            d = Math.floor(d / 16);
+        } else {    //Use microseconds since page-load if supported
+            r = (d2 + r) % 16 | 0;
+            d2 = Math.floor(d2 / 16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
   formatDate = (dateTime, dateTimeFormat) => {
     let userTimezone, userDateTimeFomat = null;
     userTimezone = this.profile.key.preferences.timezone ? this.profile.key.preferences.timezone : moment.tz.guess();
@@ -41,13 +61,11 @@ class HTMLViewer extends React.Component {
   };
 
   async getFileDetails(fileId) {
-    let helper = this.core.make("oxzion/restClient");
-    let fileContent = await helper.request("v1","/app/" + this.appId + "/file/" + fileId + "/data" ,{},"get");
+    let fileContent = await this.helper.request("v1","/app/" + this.appId + "/file/" + fileId + "/data" ,{},"get");
     return fileContent;
   }
   async getURL(url) {
-    let helper = this.core.make("oxzion/restClient");
-    let fileContent = await helper.request("v1",url,{},"get");
+    let fileContent = await this.helper.request("v1",url,{},"get");
     return fileContent;
   }
 
@@ -69,12 +87,114 @@ class HTMLViewer extends React.Component {
         }
       });
     }
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
+    window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
+  }
+
+  widgetDrillDownMessageHandler = (event) => {
+    console.log(event);
+    let eventData = event.data;
+    if (eventData.target == 'dashboard') {
+      this.drillDownToDashboard(eventData);
+    }
+
+    let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
+    if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
+      return;
+    }
+    let target = eventData[WidgetDrillDownHelper.MSG_PROP_TARGET];
+    if (target && (target !== 'widget')) {
+      return;
+    }
+    var thiz = this;
+    function cleanup(elementId) {
+      let widget = thiz.renderedWidgets[elementId];
+      if (widget) {
+        if (widget.dispose) {
+          widget.dispose();
+        }
+        delete thiz.renderedWidgets[elementId];
+      }
+    }
+    let elementId = eventData[WidgetDrillDownHelper.MSG_PROP_ELEMENT_ID];
+    let widgetId = eventData[WidgetDrillDownHelper.MSG_PROP_WIDGET_ID];
+    cleanup(elementId);
+    let nextWidgetId = eventData[WidgetDrillDownHelper.MSG_PROP_NEXT_WIDGET_ID];
+    if (nextWidgetId) {
+      widgetId = nextWidgetId;
+    }
+    let url = `analytics/widget/${widgetId}?data=true`;
+    let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
+    // console.log("Printing Filter: " + this.state.preparedDashboardFilter)
+    //apply dashboard filter if exists
+    if (this.state.preparedDashboardFilter) {
+      let preparedFilter
+      if (this.state.preparedDashboardFilter.length > 0) {
+        //combining dashboardfilter with widgetfilter
+        preparedFilter = filter ? preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
+      } else {
+        preparedFilter = filter ? JSON.parse(filter) : ''
+      }
+      filter = preparedFilter
+      filter = preparedFilter
+      if (filter && ('' !== filter)) {
+        url = url + '&filter=' + JSON.stringify(filter);
+      } else {
+        url = url;
+      }
+    } else if (filter && ('' !== filter)) {
+      url = url + '&filter=' + encodeURIComponent(filter);
+    } else {
+      url = url;
+    }
+    //starting spinner 
+    if (eventData.elementId) {
+      var widgetDiv = document.getElementById(eventData.elementId);
+      this.loader.show(widgetDiv);
+    }
+    var self = this;
+    let element = document.getElementById(elementId);
+    this.helper.request('v1', url, null, 'get').
+      then(response => {
+        let renderproperties = { "element": element, "widget": response.data.widget, "props": eventData, "dashboardEditMode": false }
+        let widgetObject = WidgetRenderer.render(renderproperties);
+        if (widgetObject) {
+          self.renderedWidgets[elementId] = widgetObject;
+        }
+        if (eventData.elementId) {
+          var widgetDiv = document.getElementById(eventData.elementId);
+        }
+        this.loader.destroy(element)
+      }).
+      catch(response => {
+        this.loader.destroy(element)
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Could not fetch the widget data. Please try after some time.'
+        });
+        if (eventData.elementId) {
+          var widgetDiv = document.getElementById(eventData.elementId);
+        }
+      });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.content !== prevProps.content) {
       this.setState({ content: this.props.content });
     }
+  }
+  componentWillUnmount(){
+    for (let elementId in this.renderedWidgets) {
+      let widget = this.renderedWidgets[elementId];
+      if (widget) {
+        if (widget.dispose) {
+          widget.dispose();
+        }
+        delete this.renderedWidgets[elementId];
+      }
+    }
+    window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
   isHTML(str) {
     var a = document.createElement('div');
@@ -169,36 +289,33 @@ updateGraph =  async(filterParams) => {
       //dispose 
       var that = this;
       var widgetUUId = attributes[WidgetDrillDownHelper.OXZION_WIDGET_ID_ATTRIBUTE].value;
-      Requests.getWidgetByUuid(this.core, widgetUUId, filterParams)
-        .then(response => {
-          if (response.status == "success") {
-            response.data.widget && console.timeEnd("analytics/widget/" + response.data.widget.uuid + "?data=true")
-            that.setState({ widgetCounter: that.state.widgetCounter + 1 });
-            if ('error' === response.status) {
-              console.error('Could not load widget.');
-              console.error(response);
-              errorFound = true;
-            }
-            else {
-              //dispose if widget exists
-              let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
-              let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
-
-              let widgetObject = WidgetRenderer.render(renderproperties);
-              if (widgetObject) {
-                this.renderedWidgets[widgetUUId] = widgetObject;
-              }
-            }
-            if (that.state.widgetCounter >= widgets.length) {
-              this.loader.destroy();
-            }
-          } else {
-            that.setState({ widgetCounter: that.state.widgetCounter + 1 });
-            if (this.state.widgetCounter >= widgets.length) {
-              that.loader.destroy();
+      Requests.getWidgetByUuid(that.core,widgetUUId, filterParams).then(response => {
+        if (response.status == "success") {
+          that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+          if ('error' === response.status) {
+            console.error('Could not load widget.');
+            console.error(response);
+            errorFound = true;
+          }
+          else {
+            //dispose if widget exists
+            let hasDashboardFilters = that.state.preparedDashboardFilter ? true : false;
+            let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
+            let widgetObject = WidgetRenderer.render(renderproperties);
+            if (widgetObject) {
+              that.renderedWidgets[widgetUUId] = widgetObject;
             }
           }
-        });
+          if (that.state.widgetCounter >= widgets.length) {
+            that.loader.destroy();
+          }
+        } else {
+          that.setState({ widgetCounter: that.state.widgetCounter + 1 });
+          if (that.state.widgetCounter >= widgets.length) {
+            that.loader.destroy();
+          }
+        }
+      });
     }
   }
   if (errorFound) {
@@ -214,7 +331,7 @@ updateGraph =  async(filterParams) => {
   render() {
     if(this.state.dataReady){
         return (
-          <div>
+          <div id={this.fileDivID}>
             <JsxParser autoCloseVoidElements className ={this.props.className}
               jsx={this.state.content}
               bindings={{

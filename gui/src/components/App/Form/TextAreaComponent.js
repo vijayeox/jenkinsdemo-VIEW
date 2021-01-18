@@ -36,7 +36,7 @@ export default class TextAreaComponent extends TextArea {
         component.ckeditorInstance = null;
         this.renderedCharts = {};
         this.core = options.core;
-        if(this.component.editor == 'ckeditor'){
+        if(component.core && this.component.editor == 'ckeditor'){
             this.editorDialogMessageHandler = function (event) {
                 let editorDialog = event.source;
                 let eventData = event.data;
@@ -79,18 +79,18 @@ export default class TextAreaComponent extends TextArea {
     }
     setValueAt(index, value) {
         if(this.component.editor == 'ckeditor'){
-            var _this4 = this;
+            var _this2 = this;
             if(value == "" || value == null){
-                if(_this4._data[_this4.path]){
-                    value = _this4._data[_this4.path];
+                if(_this2._data[_this2.path]){
+                    value = _this2._data[_this2.path];
                 }
             }
-            if (_this4.editorsReady[index]) {
-                _this4.editorsReady[index].setData(_this4.setConvertedValue(value, index));
+            if (_this2.editorsReady[index]) {
+                _this2.editorsReady[index].setData(_this2.setConvertedValue(value, index));
             }
             CKEDITOR.instances[this.ckeditorInstance].setData(value,{
                 callback: function() {
-                    _this4.updateEditorValue(index, value);
+                    _this2.updateEditorValue(index, value);
                 }
             });
         } else {
@@ -210,13 +210,13 @@ export default class TextAreaComponent extends TextArea {
     }
 
     updateWidget = (elementId, widgetId) => {
-        var thisInstance = this;
+        var _this2 = this;
         //Dispose and cleanup if this chart had been painted previously.
-        let existingChart = thisInstance.renderedCharts[elementId];
+        let existingChart = _this2.renderedCharts[elementId];
         if (existingChart) {
             if (existingChart.dispose) {
                 existingChart.dispose();
-                thisInstance.renderedCharts[elementId] = null;
+                _this2.renderedCharts[elementId] = null;
             }
         }
 
@@ -230,14 +230,14 @@ export default class TextAreaComponent extends TextArea {
                 widgetId = widgetIdAttribute.nodeValue;
             }
         }
-        Requests.doRestRequest(thisInstance.core,`analytics/widget/${widgetId}?data=true`, {}, 'get',
+        Requests.doRestRequest(_this2.core,`analytics/widget/${widgetId}?data=true`, {}, 'get',
             function (response) {
                 let renderProperties = {}
                 renderProperties["element"] = widgetElement
                 renderProperties["widget"] = response.widget
                 renderProperties["dashboardEditMode"] = true
                 let chart = WidgetRenderer.render(renderProperties);
-                thisInstance.renderedCharts[elementId] = chart;
+                _this2.renderedCharts[elementId] = chart;
             },
             function (response) {
                 Swal.fire({
@@ -245,6 +245,6 @@ export default class TextAreaComponent extends TextArea {
                     title: 'Oops...',
                     text: 'Could not fetch contents of a widget. Please try after some time.'
                 });
-            },thisInstance.loader);
+            },_this2.loader);
     }
 }
