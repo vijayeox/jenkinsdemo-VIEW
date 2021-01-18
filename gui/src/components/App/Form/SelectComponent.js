@@ -8,25 +8,13 @@ export default class SelectComponent extends Select {
 
     constructor(component, options, data) {
         super(component, options, data);
-        component.core = null;
-        component.appId = null;
-        component.uiUrl = null;
+        component.core = options.core;
+        component.appId = options.appId;
+        component.uiUrl = options.uiUrl;
+        component.wrapperUrl = options.wrapperUrl;
         this.form = this.getRoot();
-        var that = this;
-        if(that.form && that.form.element){
-            that.form.element.addEventListener("appDetails", function(e) {
-              component.core = e.detail.core;
-              component.appId = e.detail.appId;
-              component.uiUrl = e.detail.uiUrl;
-              component.wrapperUrl = e.detail.wrapperUrl;
-          },true);
-          var evt = new CustomEvent("getAppDetails", { detail: {} });
-          that.form.element.dispatchEvent(evt);
-        }
     }
     loadItems(url, search, headers, options, method, body){
-    var evt = new CustomEvent("getAppDetails", { detail: {} });
-    this.form.element.dispatchEvent(evt);
     var _this3 = this;
     options = options || {}; // See if they have not met the minimum search requirements.
 
@@ -120,10 +108,6 @@ export default class SelectComponent extends Select {
     });
     }
     render(){
-        var evt = new CustomEvent("getAppDetails", { detail: {} });
-        if(this.form.element){
-          this.form.element.dispatchEvent(evt);
-        }
         return super.render();
     }
     updateItems(searchInput, forceUpdate){

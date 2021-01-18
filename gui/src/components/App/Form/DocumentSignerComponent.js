@@ -7,9 +7,10 @@ import $ from "jquery";
 export default class DocumentSignerComponent extends Base {
   constructor(component, options, data) {
     super(component, options, data);
-    component.core = null;
-    component.appId = null;
-    component.uiUrl = null;
+    component.core = options.core;
+    component.appId = options.appId;
+    component.uiUrl = options.uiUrl;
+    component.wrapperUrl = options.wrapperUrl;
     this.data = data;
     this.documentsList = [];
     var that = this;
@@ -22,16 +23,6 @@ export default class DocumentSignerComponent extends Base {
         }
     }
     if(element){
-      element.addEventListener("appDetails", function (e) {
-          component.core = e.detail.core;
-          component.appId = e.detail.appId;
-          component.uiUrl = e.detail.uiUrl;
-          component.wrapperUrl = e.detail.wrapperUrl;
-        },
-        true  
-      );
-      var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
-      element.dispatchEvent(evt);
       this.formList = [
         { name: "document1", status: "unsigned" },
         { name: "document2", status: "signed" },
@@ -199,8 +190,6 @@ export default class DocumentSignerComponent extends Base {
   }
 
   render(children) {
-    var evt = new CustomEvent("getAppDetailsForEsign", { detail: {} });
-    document.dispatchEvent(evt);
     var documentsList = this.documentsList
       ? this.documentsList
       : `<p>not working</p>`;

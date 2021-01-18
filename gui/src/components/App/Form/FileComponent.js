@@ -5,17 +5,10 @@ export default class FileComponent extends File {
 
     constructor(component, options, data) {
         super(component, options, data);
-        component.core = null;
-        component.appId = null;
-        component.uiUrl = null;
-        this.form = this.getRoot();
-        var that = this;
-        that.form.element.addEventListener("appDetails", function(e) {
-            component.core = e.detail.core;
-            component.appId = e.detail.appId;
-            component.uiUrl = e.detail.uiUrl;
-            component.wrapperUrl = e.detail.wrapperUrl;
-        },true);
+        component.core = options.core;
+        component.appId = options.appId;
+        component.uiUrl = options.uiUrl;
+        component.wrapperUrl = options.wrapperUrl;
     }
     upload(files){
     var _this6 = this;
@@ -163,10 +156,5 @@ export default class FileComponent extends File {
         // User is expecting an immediate notification due to attempting to download a file.
         alert(response);
       });
-    }
-    render(children){
-        var evt = new CustomEvent("getAppDetails", { detail: {} });
-        this.form.element.dispatchEvent(evt);
-        return super.render(children);
     }
 }

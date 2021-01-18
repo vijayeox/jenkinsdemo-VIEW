@@ -6,22 +6,13 @@ import Viewer from "viewerjs";
 export default class DocumentViewerComponent extends Base {
   constructor(component, options, data) {
     super(component, options, data);
-    component.core = null;
-    component.appId = null;
-    component.uiUrl = null;
+    component.core = options.core;
+    component.appId = options.appId;
+    component.uiUrl = options.uiUrl;
+    component.wrapperUrl = options.wrapperUrl;
     this.form = this.getRoot();
     var that = this;
     component.wrapperUrl = "<p> No Files to Display</p>";
-    that.form.element.addEventListener(
-      "appDetails",
-      function(e) {
-        component.core = e.detail.core;
-        component.appId = e.detail.appId;
-        component.uiUrl = e.detail.uiUrl;
-        component.wrapperUrl = e.detail.wrapperUrl;
-      },
-      true
-    );
     this.form.on("change", changed => {
       if(changed.data[this.component.refreshOn]){
           var that = this;
@@ -97,8 +88,6 @@ export default class DocumentViewerComponent extends Base {
       console.log(dataValue + 'Not a JSON');
     }
     var that = this;
-    var evt = new CustomEvent("getAppDetails", { detail: {} });
-    this.form.element.dispatchEvent(evt);
     this.fileList = this.generateFileList(dataValue, component);
     this.redraw();
     if (dataValue && dataValue != undefined) {

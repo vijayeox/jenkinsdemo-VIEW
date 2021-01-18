@@ -4,48 +4,33 @@ import * as _utils from 'formiojs/utils/utils'
 export default class Nested extends FormComponent { 
 
     constructor(component, options, data) {
-        super(component, options, data);
-        this.parentData = this.root._data;
-        var that = this;
-        var root = this.getRoot();
-        var element;
-        if (root && root.element) {
-            element = root.element;
-        }
-        if(root && root.root && root.root.parent && root.root.parent.root && root.root.parent.root.element && element == null){
-            element = root.root.parent.root.element;
-        }
-        if(that.parent && that.parent.root && that.parent.root.element && element == null){
-            element = that.parent.root.element;
-        }
-        if(that.parent && that.parent.rootElement && element == null){
-            element = that.parent.rootElement;
-        }
-        if(root.root && root.root.element && element == null){
-            element = root.root.element;
-        }
-        if(root.parent && root.parent.element && element == null){
-            element = root.parent.element;
-        }
-        if(that.root && that.root.element && element == null){
-            element = that.root.element;
-        }
-        if(element){
-            element.addEventListener("appDetails", function(e) {
-                component.core = e.detail.core;
-                component.appId = e.detail.appId;
-                component.uiUrl = e.detail.uiUrl;
-                component.wrapperUrl = e.detail.wrapperUrl;
-                that.rootElement = e.detail.element;
-            }, true);
-            if(component.core == null){
-                var evt = new CustomEvent("getAppDetails", {
-                    detail: {}
-                });
-                element.dispatchEvent(evt);
+        if(options.appId == null){
+            options.core = options.root.core;
+            options.appId = options.root.appId;
+            options.uiUrl = options.root.uiUrl;
+            options.formDivID = options.root.formDivID;
+            options.wrapperUrl = options.root.wrapperUrl;
+            if(options.parent && options.parent.root && options.parent.root.parent && options.parent.root.parent.appId){
+                options.core = options.parent.root.parent.core;
+                options.appId = options.parent.root.parent.appId;
+                options.uiUrl = options.parent.root.parent.uiUrl;
+                options.formDivID = options.parent.root.parent.formDivID;
+                options.wrapperUrl = options.parent.root.parent.wrapperUrl;
             }
-            that.rootElement = element;
         }
+        console.log(options);
+        component.core = options.core;
+        component.appId = options.appId;
+        component.uiUrl = options.uiUrl;
+        component.wrapperUrl = options.wrapperUrl;
+        component.formDivID = options.formDivID;
+        super(component, options, data);
+        this.core = options.core;
+        this.appId = options.appId;
+        this.uiUrl = options.uiUrl;
+        this.wrapperUrl = options.wrapperUrl;
+        this.formDivID = options.formDivID;
+        console.log(this);
     }
     beforePage(next) {
         this.component.reference = true;
@@ -54,15 +39,6 @@ export default class Nested extends FormComponent {
     }
     shouldSubmit(){
         return false;
-    }
-    loadSubForm(){
-      var _this4 = this;
-      console.log(this);
-      return super.loadSubForm();
-    }
-    attach(element){
-        console.log(element);
-        return super.attach(element);
     }
     submitSubForm(rejectOnError){
         return this.getSubFormData();

@@ -11,49 +11,30 @@ import '../../../public/css/ckeditorStyle.scss';
 export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
+        if(options.appId == null){
+            options.core = options.root.core;
+            options.appId = options.root.appId;
+            options.uiUrl = options.root.uiUrl;
+            options.formDivID = options.root.formDivID;
+            options.wrapperUrl = options.root.wrapperUrl;
+            if(options.parent && options.parent.root && options.parent.root.parent && options.parent.root.parent.appId){
+                options.core = options.parent.root.parent.core;
+                options.appId = options.parent.root.parent.appId;
+                options.uiUrl = options.parent.root.parent.uiUrl;
+                options.formDivID = options.parent.root.parent.formDivID;
+                options.wrapperUrl = options.parent.root.parent.wrapperUrl;
+            }
+        }
         super(component, options, data);
-        var root = this.getRoot();
-        component.core = null;
-        component.appId = null;
-        component.uiUrl = null;
+        component.core = options.core;
+        component.appId = options.appId;
+        component.uiUrl = options.uiUrl;
+        component.wrapperUrl = options.wrapperUrl;
+        component.formDivID = options.formDivID;
+        console.log(this);
         component.loader = null;
         component.ckeditorInstance = null;
         component.renderedCharts = {};
-        var that = this;
-        var element = null;
-        if (root && root.element) {
-            element = root.element;
-        }
-        if(root && root.root && root.root.parent && root.root.parent.root && root.root.parent.root.element && element == null){
-            element = root.root.parent.root.element;
-        }
-        if(that.parent && that.parent.root && that.parent.root.element && element == null){
-            element = that.parent.root.element;
-        }
-        if(that.parent && that.parent.rootElement && element == null){
-            element = that.parent.rootElement;
-        }
-        if(root.root && root.root.element && element == null){
-            element = root.root.element;
-        }
-        if(that.root && that.root.element && element == null){
-            element = that.root.element;
-        }
-        if(root.parent && root.parent.element && element == null){
-            element = root.parent.element;
-        }
-        if(element){
-            element.addEventListener("appDetails", function(e) {
-                component.core = e.detail.core;
-                component.appId = e.detail.appId;
-                component.uiUrl = e.detail.uiUrl;
-                component.wrapperUrl = e.detail.wrapperUrl;
-            }, true);
-            var evt = new CustomEvent("getAppDetails", {
-                detail: {}
-            });
-            element.dispatchEvent(evt);
-        }
         if(this.component.editor == 'ckeditor'){
             this.editorDialogMessageHandler = function (event) {
                 let editorDialog = event.source;
@@ -88,8 +69,6 @@ export default class TextAreaComponent extends TextArea {
         if(this.component.editor != 'ckeditor'){
             return super.attachElement(element,index);
         } else {
-            var evt = new CustomEvent("getAppDetails", { detail: {} });
-            _this2.getRoot().element.dispatchEvent(evt);
             window.addEventListener('message', this.editorDialogMessageHandler, false);
             window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
             var editor = _this2.setupCkEditor(_this2, element, index);

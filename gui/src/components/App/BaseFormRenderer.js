@@ -17,6 +17,7 @@ import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent";
 import TextAreaComponent from "./Form/TextAreaComponent";
+import MasterComponent from "./Form/MasterComponent";
 import ParameterHandler from "./ParameterHandler";
 import Nested from "./Form/Nested";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
@@ -63,7 +64,7 @@ class BaseFormRenderer extends React.Component {
             this.userprofile = userprofile.key;
         }
         this.appUrl = "/app/" + this.state.appId;
-        this.formDivID = "formio_" + formID;
+        this.formDivID = "formio_" + this.generateUUID();
         this.loaderDivID = "formio_loader_" + formID;
         this.formErrorDivId = "formio_error_" + formID;
         // JavascriptLoader.loadScript([{
@@ -72,6 +73,21 @@ class BaseFormRenderer extends React.Component {
         //     'onload': function () { },
         //     'onerror': function () { }
         // }]);
+    }
+    generateUUID() { // Public Domain/MIT
+        let d = new Date().getTime();//Timestamp
+        let d2 = (performance && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            let r = Math.random() * 16;//random number between 0 and 16
+            if (d > 0) {  //Use timestamp until depleted
+                r = (d + r) % 16 | 0;
+                d = Math.floor(d / 16);
+            } else {    //Use microseconds since page-load if supported
+                r = (d2 + r) % 16 | 0;
+                d2 = Math.floor(d2 / 16);
+            }
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
     }
     updatePageContent = (config) => {
         if(this.state.appId){
@@ -1056,6 +1072,7 @@ class BaseFormRenderer extends React.Component {
         Formio.registerComponent("file", FileComponent);
         Formio.registerComponent("select", SelectComponent);
         Formio.registerComponent("textarea", TextAreaComponent);
+        Formio.registerComponent("component", MasterComponent);
 
 
         if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {
@@ -1063,6 +1080,11 @@ class BaseFormRenderer extends React.Component {
         }
         if (this.state.content && !this.state.form) {
             var options = {};
+            options.core = this.core;
+            options.formDivID = this.formDivID;
+            options.appId = this.state.appId;
+            options.uiUrl = this.core.config("ui.url");
+            options.wrapperUrl = this.core.config("wrapper.url");
             if (this.state.content["properties"]) {
                 if (this.state.content["properties"]["clickable"]) {
                     options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
@@ -1345,18 +1367,6 @@ class BaseFormRenderer extends React.Component {
                     that.showFormLoader(false, 1);
                 });
                 form.submissionReady.then(() => {
-                    form.element.addEventListener("getAppDetails", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.hasCore?that.core.config("ui.url"):undefined, wrapperUrl: that.hasCore?that.core.config("wrapper.url"):undefined,element: form.element } });
-                    }, true);
-                    form.element.addEventListener("getAppDetailsForEsign", function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        that.formSendEvent("appDetails", { detail: { core: that.core, appId: that.state.appId, uiUrl: that.core.config("ui.url"), wrapperUrl: that.core.config("wrapper.url") } });
-                    }, true);
                     form.emit("render");
                 });
                 that.setState({ currentForm: form });
