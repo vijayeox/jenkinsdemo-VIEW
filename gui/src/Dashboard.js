@@ -61,6 +61,7 @@ class Dashboard extends Component {
     );
     return response;
   }
+
   extractFilter() {
     let stack = this.props.dashboardStack;
     let filter = stack[stack.length - 1].drilldownDashboardFilter
@@ -71,6 +72,7 @@ class Dashboard extends Component {
     }
     return filterText
   }
+
   appendToDashboardContainer(htmlData) {
     let backButton = ""
     let dashboardFilterDescription = ""
@@ -83,6 +85,7 @@ class Dashboard extends Component {
     let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
     return container
   }
+
   setupDrillDownListeners() {
     if (document.getElementById("dashboard-rollup-button")) {
       let backbutton = document.getElementById("dashboard-rollup-button")
@@ -91,8 +94,6 @@ class Dashboard extends Component {
       });
     }
   }
-
-
 
   componentDidMount() {
     if (this.uuid) {
@@ -105,7 +106,7 @@ class Dashboard extends Component {
             this.setupDrillDownListeners()
           }
           );
-          let extractedFilterValues = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack,this.props.loadDefaultFilters?"default":undefined);
+          let extractedFilterValues = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack, this.props.loadDefaultFilters ? "default" : undefined);
           let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
             preapredExtractedFilterValue = extractedFilterValues[0]
@@ -196,6 +197,12 @@ class Dashboard extends Component {
           let currentFilter = this.props.dashboardFilter
           let widgetFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["widgetFilter"]
           let combinedFilter = overrideCommonFilters(parentFilter, currentFilter)
+          for (let combinedindex = combinedFilter.length - 1; combinedindex >= 0; combinedindex--) {
+            if (combinedFilter[combinedindex].field == widgetFilter[0]) {
+              combinedFilter[combinedindex].value == widgetFilter[2]
+              widgetFilter = []
+            }
+          }
           let extractedFilterValues = extractFilterValues(combinedFilter, this.props.dashboardStack);
           let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
@@ -205,7 +212,9 @@ class Dashboard extends Component {
 
             }
           }
-          preparedFilter = preparefilter(preapredExtractedFilterValue, widgetFilter)
+          if (widgetFilter.length > 0) {
+            preparedFilter = preparefilter(preapredExtractedFilterValue, widgetFilter)
+          }
           // let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
           //   if (drilldownDashboardFilter.length > 1)
           //     preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
