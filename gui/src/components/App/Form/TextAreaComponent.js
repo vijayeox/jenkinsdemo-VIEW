@@ -6,25 +6,14 @@ import * as _nativePromiseOnly from "native-promise-only";
 import Swal from 'sweetalert2';
 import Requests from "../../../Requests";
 import {ckeditorConfig} from '../../../CkEditorConfig';
-import '../../../public/css/ckeditorStyle.scss';
+import '../../../public/css/ckeditorStyle.css';
 import WidgetRenderer from '../../../WidgetRenderer';
 
 export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
-        if(options.appId == null){
-            options.core = options.root.core;
-            options.appId = options.root.appId;
-            options.uiUrl = options.root.uiUrl;
-            options.formDivID = options.root.formDivID;
-            options.wrapperUrl = options.root.wrapperUrl;
-            if(options.parent && options.parent.root && options.parent.root.parent && options.parent.root.parent.appId){
-                options.core = options.parent.root.parent.core;
-                options.appId = options.parent.root.parent.appId;
-                options.uiUrl = options.parent.root.parent.uiUrl;
-                options.formDivID = options.parent.root.parent.formDivID;
-                options.wrapperUrl = options.parent.root.parent.wrapperUrl;
-            }
+        if(options.appId == null || options.appId == undefined){
+            console.log(options);
         }
         super(component, options, data);
         component.core = options.core;
@@ -125,6 +114,8 @@ export default class TextAreaComponent extends TextArea {
                 editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
             }
             editor.isReadOnly = isReadOnly;
+            editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
+            editor.addContentsCss('/public/css/ckeditorStyle.css');
             editor.on('instanceReady', function () {
                 var dataValue = _this2.dataValue;
                 dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
