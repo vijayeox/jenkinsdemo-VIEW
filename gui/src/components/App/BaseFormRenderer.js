@@ -17,7 +17,6 @@ import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
 import SelectComponent from "./Form/SelectComponent";
 import TextAreaComponent from "./Form/TextAreaComponent";
-import MasterComponent from "./Form/MasterComponent";
 import ParameterHandler from "./ParameterHandler";
 import Nested from "./Form/Nested";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
@@ -1072,7 +1071,6 @@ class BaseFormRenderer extends React.Component {
         Formio.registerComponent("file", FileComponent);
         Formio.registerComponent("select", SelectComponent);
         Formio.registerComponent("textarea", TextAreaComponent);
-        Formio.registerComponent("component", MasterComponent);
 
 
         if (this.props.proc && this.props.proc.metadata && this.props.proc.metadata.formio_endpoint) {

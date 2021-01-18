@@ -191,7 +191,7 @@ class Navigation extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.selected != this.props.selected) {
       var item = this.props.selected;
-      if (item.page_id) {
+      if (item && item.page_id) {
         var page = [{ pageId: item.page_id, title: item.name }];
         this.setState({ pages: page });
         this.pageActive(item.page_id);

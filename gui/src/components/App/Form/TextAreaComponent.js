@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import Requests from "../../../Requests";
 import {ckeditorConfig} from '../../../CkEditorConfig';
 import '../../../public/css/ckeditorStyle.scss';
+import WidgetRenderer from '../../../WidgetRenderer';
 
 export default class TextAreaComponent extends TextArea {
 
@@ -31,10 +32,10 @@ export default class TextAreaComponent extends TextArea {
         component.uiUrl = options.uiUrl;
         component.wrapperUrl = options.wrapperUrl;
         component.formDivID = options.formDivID;
-        console.log(this);
         component.loader = null;
         component.ckeditorInstance = null;
-        component.renderedCharts = {};
+        this.renderedCharts = {};
+        this.core = options.core;
         if(this.component.editor == 'ckeditor'){
             this.editorDialogMessageHandler = function (event) {
                 let editorDialog = event.source;
@@ -229,7 +230,7 @@ export default class TextAreaComponent extends TextArea {
                 widgetId = widgetIdAttribute.nodeValue;
             }
         }
-        Requests.doRestRequest(component.core,`analytics/widget/${widgetId}?data=true`, {}, 'get',
+        Requests.doRestRequest(thisInstance.core,`analytics/widget/${widgetId}?data=true`, {}, 'get',
             function (response) {
                 let renderProperties = {}
                 renderProperties["element"] = widgetElement
