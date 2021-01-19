@@ -85,8 +85,8 @@
 
        const handleUrlClick = (params) => {
         let helper = core.make("oxzion/link");
-        helper.launchApplication({
-          fileId: params.detail.fileIid,
+        helper.launchApp({
+          fileId: params.detail.fileId,
         },params.detail.appName);
        };
       

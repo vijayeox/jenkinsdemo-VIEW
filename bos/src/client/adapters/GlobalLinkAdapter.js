@@ -18,11 +18,26 @@ export class GlobalLinkAdapter extends ServiceProvider {
 
 }
   launchApp(attibutes,application){
-    this.core.run(application, {
-        page: attibutes.pageId,
-        pageTitle: attibutes.title,
-        pageIcon: attibutes.icon,
-        fileId: attibutes.fileId,
-      });
+    let checkRunning = this.core.make("osjs/packages").running().some((app) => app == application);
+    if(checkRunning){
+        const packages = this.core.make("osjs/packages").getPackages((m) => m.type === "application");
+        let selectedApplicationProps = packages.filter((e) => e.name == application)[0];
+        var appNavElement = "navigation_" + selectedApplicationProps.appId;
+        let ev = new CustomEvent("addPage", {
+            detail: {
+                page: attibutes.pageId,
+                pageTitle: attibutes.title,
+                pageIcon: attibutes.icon,
+                fileId: attibutes.fileId,
+              },bubbles: true,});
+          document.getElementById(appNavElement).dispatchEvent(ev);
+    } else {
+        this.core.run(application, {
+            page: attibutes.pageId,
+            pageTitle: attibutes.title,
+            pageIcon: attibutes.icon,
+            fileId: attibutes.fileId
+          });
+    }
   }
 }
