@@ -1,5 +1,5 @@
 var ckeditorConfig = {
-    extraPlugins: 'oxzion,autogrow,wordcount,abbr,imagepaste,slideshow,slideshow,sourcedialog,autocorrect,autolink,tableresize,lineheight,texttransform,quicktable,preview',
+    extraPlugins: 'oxzion,autogrow,wordcount,abbr,imagepaste,sourcedialog,autocorrect,autolink,tableresize,lineheight,texttransform,quicktable,preview',
     autoGrow_minHeight: 250,
     autoGrow_maxHeight: 400,
     height: 400,
