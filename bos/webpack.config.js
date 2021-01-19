@@ -85,7 +85,8 @@ module.exports = {
       'src/client/assets/images/load.svg',
       'src/client/assets/images/poweredby.png',
       './ViewerJS',
-      {from: path.resolve(__dirname, "../gui/src/ckeditor/")}
+      {from: path.resolve(__dirname, "../gui/src/ckeditor/")},
+      {from: path.resolve(__dirname, "../gui/src/public/")}
     ]),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),

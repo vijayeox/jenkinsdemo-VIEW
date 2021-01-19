@@ -115,7 +115,7 @@ export default class TextAreaComponent extends TextArea {
             }
             editor.isReadOnly = isReadOnly;
             editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
-            editor.addContentsCss('/public/css/ckeditorStyle.css');
+            editor.addContentsCss('/css/ckeditorStyle.css');
             editor.on('instanceReady', function () {
                 var dataValue = _this2.dataValue;
                 dataValue = _this2.component.multiple && Array.isArray(dataValue) ? dataValue[index] : dataValue;
