@@ -4,38 +4,42 @@ import * as _utils from 'formiojs/utils/utils'
 export default class Nested extends FormComponent { 
 
     constructor(component, options, data) {
-        if(options.appId == null){
-            options.core = options.root.core;
-            options.appId = options.root.appId;
-            options.uiUrl = options.root.uiUrl;
-            options.formDivID = options.root.formDivID;
-            options.wrapperUrl = options.root.wrapperUrl;
-            if(options.parent && options.parent.root && options.parent.root.parent && options.parent.root.parent.appId){
-                options.core = options.parent.root.parent.core;
-                options.appId = options.parent.root.parent.appId;
-                options.uiUrl = options.parent.root.parent.uiUrl;
-                options.formDivID = options.parent.root.parent.formDivID;
-                options.wrapperUrl = options.parent.root.parent.wrapperUrl;
-            }
+        if((options.appId == null || options.appId == undefined)){
+            options.core = options.root.options.core;
+            options.appId = options.root.options.appId;
+            options.uiUrl = options.root.options.uiUrl;
+            options.formDivID = options.root.options.formDivID;
+            options.wrapperUrl = options.root.options.wrapperUrl;
         }
-        console.log(options);
+        if((options.appId == null || options.appId == undefined)){
+            options.core = options.parent.options.core;
+            options.appId = options.parent.options.appId;
+            options.uiUrl = options.parent.options.uiUrl;
+            options.formDivID = options.parent.options.formDivID;
+            options.wrapperUrl = options.parent.options.wrapperUrl;
+        }
         component.core = options.core;
         component.appId = options.appId;
         component.uiUrl = options.uiUrl;
         component.wrapperUrl = options.wrapperUrl;
         component.formDivID = options.formDivID;
         super(component, options, data);
+        options.root = this.root;
         this.core = options.core;
         this.appId = options.appId;
         this.uiUrl = options.uiUrl;
         this.wrapperUrl = options.wrapperUrl;
         this.formDivID = options.formDivID;
-        console.log(this);
     }
     beforePage(next) {
         this.component.reference = true;
         this.component.shouldSubmit = false;
         super.beforePage(next);
+    }
+    detach(){
+        if(this.components){
+            super.detach();
+        }
     }
     shouldSubmit(){
         return false;
