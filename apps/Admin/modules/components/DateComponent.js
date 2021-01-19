@@ -47,6 +47,10 @@ export default class DateComponent extends React.Component {
   };
 
   render() {
+    let formattedDate = this.dateformat.replace(/D/g, "d");
+    formattedDate = formattedDate.replace(/Y/g, "y");
+    formattedDate = formattedDate.replace(/m/g, "M");
+    this.dateformat = formattedDate;
     return (
       <KendoReactDateInputs.DatePicker
         format={this.dateformat}
