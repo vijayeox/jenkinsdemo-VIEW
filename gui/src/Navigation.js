@@ -175,18 +175,10 @@ class Navigation extends React.Component {
     if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent  && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="Comment" && page.pageContent && (page.pageContent[0].type=="EntityViewer" || page.pageContent[0].type=="Form")){
       return true;
     }
-    return false;
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.selected) {
-      var item = props.selected;
-      if (item.page_id) {
-        var page = [{ pageId: item.page_id, title: item.name }];
-        this.setState({ pages: page });
-        this.pageActive(item.page_id);
-      }
+    if(this.state.pages[last_page_key] &&this.state.pages[last_page_key].pageContent  && this.state.pages[last_page_key].pageContent[0] && this.state.pages[last_page_key].pageContent[0].type=="EntityViewer" && page.pageContent && page.pageContent[0].type=="EntityViewer"){
+      return true;
     }
+    return false;
   }
   componentDidUpdate(prevProps) {
     if (prevProps.selected != this.props.selected) {
