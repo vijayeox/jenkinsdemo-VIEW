@@ -12,7 +12,6 @@ export default class GlobalLinkHandler {
         if (event.target.href == undefined || event.target.href == "" || event.target.href == "#") {
           event.preventDefault();
           event.stopPropagation();
-          console.log(event);
           if (event.target.getAttribute("eoxapplication") !== null) {
             var selectedApplication = event.target.getAttribute("eoxapplication");
             const packages = EOXCore.make("osjs/packages").getPackages((m) => m.type === "application");
