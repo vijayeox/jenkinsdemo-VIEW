@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
 import ParameterHandler from "./ParameterHandler";
@@ -8,6 +9,7 @@ import '../../public/css/ckeditorStyle.css';
 import WidgetRenderer from '../../WidgetRenderer';
 import WidgetDrillDownHelper from '../../WidgetDrillDownHelper';
 import DashboardManager from '../../DashboardManager';
+import ReactDOMServer from 'react-dom/server';
 import { scrollDashboardToTop, preparefilter, overrideCommonFilters, extractFilterValues } from '../../DashboardUtils'
 import '../../WidgetStyles.css';
 
@@ -25,6 +27,7 @@ class HTMLViewer extends React.Component {
     this.state = {
       content: this.props.content,
       fileData: this.props.fileData,
+      outputHtml: null,
       fileId: this.props.fileId,
       widgetCounter: 0,
       preparedDashboardFilter: null,
@@ -79,14 +82,15 @@ class HTMLViewer extends React.Component {
           that.preRender();
         }
       });
-    }
-    if (this.props.url != undefined) {
+    } else if (this.props.url != undefined) {
       this.getURL(this.props.url).then(response => {
         if (response.status == "success") {
           this.setState({ fileData: response.data });
           that.preRender();
         }
       });
+    } else {
+      that.preRender();
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
@@ -94,10 +98,6 @@ class HTMLViewer extends React.Component {
 
   widgetDrillDownMessageHandler = (event) => {
     let eventData = event.data;
-    if (eventData.target == 'dashboard') {
-      this.drillDownToDashboard(eventData);
-    }
-
     let action = eventData[WidgetDrillDownHelper.MSG_PROP_ACTION];
     if ((action !== WidgetDrillDownHelper.ACTION_DRILL_DOWN) && (action !== WidgetDrillDownHelper.ACTION_ROLL_UP)) {
       return;
@@ -124,29 +124,6 @@ class HTMLViewer extends React.Component {
       widgetId = nextWidgetId;
     }
     let url = `analytics/widget/${widgetId}?data=true`;
-    let filter = eventData[WidgetDrillDownHelper.MSG_PROP_FILTER];
-    // console.log("Printing Filter: " + this.state.preparedDashboardFilter)
-    //apply dashboard filter if exists
-    if (this.state.preparedDashboardFilter) {
-      let preparedFilter
-      if (this.state.preparedDashboardFilter.length > 0) {
-        //combining dashboardfilter with widgetfilter
-        preparedFilter = filter ? preparefilter(this.state.preparedDashboardFilter, JSON.parse(filter)) : this.state.preparedDashboardFilter
-      } else {
-        preparedFilter = filter ? JSON.parse(filter) : ''
-      }
-      filter = preparedFilter
-      filter = preparedFilter
-      if (filter && ('' !== filter)) {
-        url = url + '&filter=' + JSON.stringify(filter);
-      } else {
-        url = url;
-      }
-    } else if (filter && ('' !== filter)) {
-      url = url + '&filter=' + encodeURIComponent(filter);
-    } else {
-      url = url;
-    }
     //starting spinner 
     if (eventData.elementId) {
       var widgetDiv = document.getElementById(eventData.elementId);
@@ -154,28 +131,20 @@ class HTMLViewer extends React.Component {
     }
     var self = this;
     let element = document.getElementById(elementId);
-    this.helper.request('v1', url, null, 'get').
-      then(response => {
+    this.helper.request('v1', url, null, 'get').then(response => {
         let renderproperties = { "element": element, "widget": response.data.widget, "props": eventData, "dashboardEditMode": false }
         let widgetObject = WidgetRenderer.render(renderproperties);
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;
         }
-        if (eventData.elementId) {
-          var widgetDiv = document.getElementById(eventData.elementId);
-        }
         this.loader.destroy(element)
-      }).
-      catch(response => {
+      }).catch(response => {
         this.loader.destroy(element)
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Could not fetch the widget data. Please try after some time.'
         });
-        if (eventData.elementId) {
-          var widgetDiv = document.getElementById(eventData.elementId);
-        }
       });
   }
 
@@ -226,13 +195,27 @@ class HTMLViewer extends React.Component {
     return content
   }
   preRender(){
+    var that = this;
     var fileData = {};
     for (const [key, value] of Object.entries(this.state.fileData)) {
       fileData[key] = value;
     }
     var content = this.searchAndReplaceParams(this.state.content,fileData);
-    this.setState({content: content,fileData:fileData,dataReady: true});
-    this.updateGraph();
+    this.setState({content: content,fileData:fileData});
+    var rawHTML = ReactDOMServer.renderToString(<JsxParser autoCloseVoidElements className ={this.props.className}
+      jsx={this.state.content}
+      bindings={{
+        data: this.statefileData ? this.statefileData : {},
+        item: this.statefileData ? this.statefileData : {},
+        moment: moment,
+        formatDate: this.formatDate,
+        formatDateWithoutTimezone: this.formatDateWithoutTimezone,
+        profile: this.profile.key
+      }}
+    />);
+    this.setState({ outputHtml: rawHTML,dataReady: true },()=> {
+      that.updateGraph();
+    });
   }
   getXrefFields(content){
     var regex = /\{file\.(.*)?\}/g;
@@ -263,10 +246,10 @@ class HTMLViewer extends React.Component {
   }
   
 updateGraph =  async(filterParams) => {
-  if (null === this.state.htmlData) {
+  if (false === this.state.dataReady) {
     return;
   }
-  let root = document;
+  let root = document.getElementById(this.fileDivID);
   var widgets = root.getElementsByClassName('oxzion-widget');
   let thiz = this;
   // this.loader.show();
@@ -282,8 +265,7 @@ updateGraph =  async(filterParams) => {
   }
   if (widgets.length == 0) {
     this.loader.destroy();
-  }
-  else {
+  } else {
     for (let widget of widgets) {
       var attributes = widget.attributes;
       //dispose 
@@ -302,6 +284,7 @@ updateGraph =  async(filterParams) => {
             let hasDashboardFilters = that.state.preparedDashboardFilter ? true : false;
             let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
             let widgetObject = WidgetRenderer.render(renderproperties);
+            console.log(widgetObject);
             if (widgetObject) {
               that.renderedWidgets[widgetUUId] = widgetObject;
             }
@@ -331,20 +314,9 @@ updateGraph =  async(filterParams) => {
   render() {
     if(this.state.dataReady){
         return (
-          <div id={this.fileDivID}>
-            <JsxParser autoCloseVoidElements className ={this.props.className}
-              jsx={this.state.content}
-              bindings={{
-                data: this.statefileData ? this.statefileData : {},
-                item: this.statefileData ? this.statefileData : {},
-                moment: moment,
-                formatDate: this.formatDate,
-                formatDateWithoutTimezone: this.formatDateWithoutTimezone,
-                profile: this.profile.key
-              }}
-            /></div>);
+          <div id={this.fileDivID} dangerouslySetInnerHTML={{ __html: this.state.outputHtml ? this.state.outputHtml : '' }} />);
     } else {
-      return (<div></div>);
+      return (<div id={this.fileDivID}></div>);
     }
   }
 }
