@@ -66,7 +66,20 @@ class Project extends React.Component {
       temp2.push(uid);
     }
     this.pushProjectUsers(item, temp2).then((response) => {
-      this.OX_Grid.current.refreshHandler(response);
+      if(response.status == 'success'){
+        this.notif.current.notify(
+          "Success",
+          "Operation succesfully completed",
+          "success"
+        )
+      }else{
+        this.notif.current.notify(
+          "Error",
+          "Operation Failed",
+          "danger"
+        )
+      }   
+      this.OX_Grid.current.refreshHandler(response);   
     });
     this.toggleDialog();
   };
@@ -173,7 +186,12 @@ class Project extends React.Component {
                   dataItem.uuid + "/true"
                 ).then((response) => {
                   response.status == "success"
-                    ? this.OX_Grid.current.refreshHandler(response)
+                    ? (this.OX_Grid.current.refreshHandler(response),
+                      this.notif.current.notify(
+                        "Operation succesfully completed",
+                        response.message,
+                        "success"
+                      ))
                     : this.notif.current.notify(
                         "Operation Failed",
                         response.message,
@@ -184,6 +202,11 @@ class Project extends React.Component {
             });
           } else if (response.status == "success") {
             this.OX_Grid.current.refreshHandler(response);
+            this.notif.current.notify(
+              "Operation succesfully completed",
+              response.message,
+              "success"
+            );
           } else {
             this.notif.current.notify(
               "Operation Failed",
@@ -225,8 +248,15 @@ class Project extends React.Component {
     }
   };
 
-  cancel = () => {
+  cancel = (mode) => {
     this.setState({ itemInEdit: undefined });
+    if(mode && (mode == 'save')){
+      this.notif.current.notify(
+        "Success",
+        "Operation succesfully completed",
+        "success"
+      );
+    }
   };
 
   cloneItem(dataItem) {

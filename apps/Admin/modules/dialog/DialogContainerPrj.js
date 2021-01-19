@@ -92,7 +92,7 @@ export default class DialogContainer extends React.Component {
     ).then((response) => {
       if (response.status == "success") {
         this.props.action(response);
-        this.props.cancel();
+        this.props.cancel('save');
       } else {
         this.notif.current.notify(
           "Error",
