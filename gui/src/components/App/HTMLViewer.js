@@ -4,9 +4,10 @@ import moment from "moment";
 import ParameterHandler from "./ParameterHandler";
 import Requests from '../../Requests';
 import Swal from 'sweetalert2';
-import '../../public/css/ckeditorStyle.scss';
+import '../../public/css/ckeditorStyle.css';
 import WidgetRenderer from '../../WidgetRenderer';
 import WidgetDrillDownHelper from '../../WidgetDrillDownHelper';
+import DashboardManager from '../../DashboardManager';
 import { scrollDashboardToTop, preparefilter, overrideCommonFilters, extractFilterValues } from '../../DashboardUtils'
 import '../../WidgetStyles.css';
 
@@ -92,7 +93,6 @@ class HTMLViewer extends React.Component {
   }
 
   widgetDrillDownMessageHandler = (event) => {
-    console.log(event);
     let eventData = event.data;
     if (eventData.target == 'dashboard') {
       this.drillDownToDashboard(eventData);
