@@ -2,14 +2,21 @@ import Base from "formiojs/components/_classes/component/Component";
 import editForm from "formiojs/components/table/Table.form";
 import "viewerjs/dist/viewer.css";
 import Viewer from "viewerjs";
+import { Formio } from "formiojs";
+import * as _lodash from "lodash";
 
 export default class DocumentViewerComponent extends Base {
   constructor(component, options, data) {
-    super(component, options, data);
-    component.core = options.core;
-    component.appId = options.appId;
-    component.uiUrl = options.uiUrl;
-    component.wrapperUrl = options.wrapperUrl;
+    var formOptions = Formio.getPlugin("options");
+    var customOptions = _lodash.default.merge(options, formOptions);
+    if(customOptions.core == null || customOptions.core == undefined){
+        console.log(customOptions);
+    }
+    super(component, customOptions, data);
+    component.core = customOptions.core;
+    component.appId = customOptions.appId;
+    component.uiUrl = customOptions.uiUrl;
+    component.wrapperUrl = customOptions.wrapperUrl;
     this.form = this.getRoot();
     var that = this;
     component.wrapperUrl = "<p> No Files to Display</p>";

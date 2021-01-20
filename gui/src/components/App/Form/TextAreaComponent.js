@@ -1,6 +1,6 @@
 import TextArea from 'formiojs/components/textarea/TextArea'
 import * as _utils from 'formiojs/utils/utils'
-import * as _Formio from 'formiojs/Formio'
+import { Formio } from "formiojs";
 import * as _lodash from "lodash";
 import * as _nativePromiseOnly from "native-promise-only";
 import Swal from 'sweetalert2';
@@ -12,19 +12,19 @@ import WidgetRenderer from '../../../WidgetRenderer';
 export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
-        if(options.appId == null || options.appId == undefined){
-            console.log(options);
+        var formOptions = Formio.getPlugin("options");
+        var customOptions = _lodash.default.merge(options, formOptions);
+        if(customOptions.core == null || customOptions.core == undefined){
+            console.log(customOptions);
         }
-        super(component, options, data);
-        component.core = options.core;
-        component.appId = options.appId;
-        component.uiUrl = options.uiUrl;
-        component.wrapperUrl = options.wrapperUrl;
-        component.formDivID = options.formDivID;
+        super(component, customOptions, data);
+        component.core = customOptions.core;
+        component.uiUrl = customOptions.uiUrl;
+        component.wrapperUrl = customOptions.wrapperUrl;
         component.loader = null;
         component.ckeditorInstance = null;
         this.renderedCharts = {};
-        this.core = options.core;
+        this.core = customOptions.core;
         if(component.core && this.component.editor == 'ckeditor'){
             this.editorDialogMessageHandler = function (event) {
                 let editorDialog = event.source;

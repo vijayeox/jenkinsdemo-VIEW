@@ -3,14 +3,20 @@ import editForm from "formiojs/components/table/Table.form";
 import "viewerjs/dist/viewer.css";
 import Viewer from "viewerjs";
 import $ from "jquery";
+import { Formio } from "formiojs";
+import * as _lodash from "lodash";
 
 export default class DocumentSignerComponent extends Base {
   constructor(component, options, data) {
-    super(component, options, data);
-    component.core = options.core;
-    component.appId = options.appId;
-    component.uiUrl = options.uiUrl;
-    component.wrapperUrl = options.wrapperUrl;
+    var formOptions = Formio.getPlugin("options");
+    var customOptions = _lodash.default.merge(options, formOptions);
+    if(customOptions.core == null || customOptions.core == undefined){
+        console.log(customOptions);
+    }
+    super(component, customOptions, data);
+    component.core = customOptions.core;
+    component.uiUrl = customOptions.uiUrl;
+    component.wrapperUrl = customOptions.wrapperUrl;
     this.data = data;
     this.documentsList = [];
     var that = this;
