@@ -302,7 +302,7 @@ const FilterFields = function (props) {
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
                                     startDate={Date.parse(filters[index]["startDate"])}
-                                    endDate={Date.parse(filters[index]["endDate"])}
+                                    endDate={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     showMonthDropdown
                                     showYearDropdown
                                     popperPlacement="bottom"
@@ -321,12 +321,12 @@ const FilterFields = function (props) {
                                 />
                                 <DatePicker
                                     className="dashboardTextField field-width-100"
-                                    selected={Date.parse(filters[index]["endDate"])}
+                                    selected={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     dateFormat={dateFormat}
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
                                     startDate={Date.parse(filters[index]["startDate"])}
-                                    endDate={Date.parse(filters[index]["endDate"])}
+                                    endDate={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     minDate={Date.parse(filters[index]["startDate"])}
                                     showMonthDropdown
                                     showYearDropdown
@@ -404,7 +404,7 @@ class DashboardFilter extends React.Component {
             // userProfile: this.core.make("oxzion/profile").get()
         }
         // this.state.dateFormat.toLowerCase();
-        console.log("Inside the filter Function: " + this.state.dateFormat);
+        // console.log("Inside the filter Function: " + this.state.dateFormat);
     }
 
     async getDataSourceOptions() {
@@ -435,6 +435,8 @@ class DashboardFilter extends React.Component {
     componentDidMount(props) {
         this.getDataSourceOptions()
         this.displayDefaultFilters()
+        let filterConfig = this.props.filterConfiguration
+
     }
 
     //showing only default filters on load
@@ -646,6 +648,14 @@ class DashboardFilter extends React.Component {
     saveFilter() {
         let filters
         if (this.state.filters !== undefined) {
+
+            this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
+                if (filterRow.fieldType == 'date' && (filterRow.operator == 'ytd' || filterRow.operator == 'mtd')) {
+                    this.state.filters[index]['endDate'] = new Date()
+                }
+
+
+            })
             filters = this.state.filters.filter(function (obj) {
                 return obj !== undefined && obj.value !== undefined;
             });

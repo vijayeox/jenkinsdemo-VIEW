@@ -79,7 +79,7 @@ class DashboardManager extends React.Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.dashboardStack !== this.state.dashboardStack) {
-      console.log(this.state.dashboardStack)
+      // console.log(this.state.dashboardStack)
     }
   }
 
@@ -311,7 +311,7 @@ class DashboardManager extends React.Component {
       //filter which are applied on the dashboard
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = (filterConfiguration && filterConfiguration.state.filters) ? filterConfiguration.state.filters : []
       //filters which appear in drop down
-      console.log(this.getFilterProperty("filterConfiguration"))
+      // console.log(this.getFilterProperty("filterConfiguration"))
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = this.getOptionalFilters("filterOptions")
       dashboardStack[dashboardStack.length - 1]["widgetFilter"] = e.widgetFilter ? e.widgetFilter : []
     }
@@ -448,7 +448,7 @@ class DashboardManager extends React.Component {
       "warning"
     )
     if (response.status == "success") {
-      console.log(response.data.result)
+      // console.log(response.data.result)
       let data = response.data.result
       let filename = this.state.inputs["dashname"]["name"]
       exportFromJSON({ data, fileName: filename, exportType })
