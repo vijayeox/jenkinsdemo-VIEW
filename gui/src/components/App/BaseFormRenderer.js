@@ -29,9 +29,6 @@ import * as MomentTZ from "moment-timezone";
 import { countryList } from "./Form/Country";
 import { phoneList } from "./Form/Phonelist";
 import merge from "deepmerge";
-import MasterField from "./Form/MasterField";
-
-
 class BaseFormRenderer extends React.Component {
     constructor(props) {
         super(props)
