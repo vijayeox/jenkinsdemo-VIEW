@@ -264,15 +264,15 @@ class WidgetRenderer {
                     "adapter": {
                         "fill": function (fill, target) {
                             if (target.dataItem && (target.dataItem.valueY < 0)) {
-                                return am4core.color('#EE4424');
+                                return am4core.color('red');
                             } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
-                                return am4core.color('#EE4424');
+                                return am4core.color('red');
                             } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
-                                return am4core.color('#F3BA1D');
+                                return am4core.color('yellow');
                             } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
-                                return am4core.color('#A3C53A');
+                                return am4core.color('green');
                             } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
-                                return am4core.color('#A3C53A');
+                                return am4core.color('green');
                             } else {
                                 return fill;
                             }

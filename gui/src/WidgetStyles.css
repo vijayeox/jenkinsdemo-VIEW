@@ -66,16 +66,16 @@ div > div.oxzion-widget-drilldown-table-icon{
 }
 
 .red {
-    color: #EE4424;
+    color: red;
     font-weight: bold;
 }
 
 .green {
-    color:#A3C53A;
+    color:green;
     font-weight: bold;
 }
 
 .yellow {
-    color: #F3BA1D;
+    color: yellow;
     font-weight: bold;
 }
