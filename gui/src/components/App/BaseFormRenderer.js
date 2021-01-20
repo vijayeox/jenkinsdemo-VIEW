@@ -29,8 +29,6 @@ import * as MomentTZ from "moment-timezone";
 import { countryList } from "./Form/Country";
 import { phoneList } from "./Form/Phonelist";
 import merge from "deepmerge";
-
-
 class BaseFormRenderer extends React.Component {
     constructor(props) {
         super(props)
@@ -1079,10 +1077,12 @@ class BaseFormRenderer extends React.Component {
         if (this.state.content && !this.state.form) {
             var options = {};
             options.core = this.core;
-            options.formDivID = this.formDivID;
-            options.appId = this.state.appId;
             options.uiUrl = this.core.config("ui.url");
             options.wrapperUrl = this.core.config("wrapper.url");
+            var OptionsPlugin = options;
+            Formio.registerPlugin(OptionsPlugin,"options");
+            options.appId = this.state.appId;
+            options.formDivID = this.formDivID;
             if (this.state.content["properties"]) {
                 if (this.state.content["properties"]["clickable"]) {
                     options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
@@ -1359,6 +1359,7 @@ class BaseFormRenderer extends React.Component {
 
                 });
                 form.formReady.then(() => {
+                    console.log(form);
                     if(that.state.fileId){
                         that.generateViewButton();
                     }
