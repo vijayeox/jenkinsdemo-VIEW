@@ -2,16 +2,22 @@ import Select from 'formiojs/components/select/Select'
 import * as _utils from 'formiojs/utils/utils'
 import * as _Formio from 'formiojs/Formio'
 import * as _lodash from "lodash";
+import { Formio } from "formiojs";
 import * as _nativePromiseOnly from "native-promise-only";
 
 export default class SelectComponent extends Select { 
 
     constructor(component, options, data) {
-        super(component, options, data);
-        component.core = options.core;
-        component.appId = options.appId;
-        component.uiUrl = options.uiUrl;
-        component.wrapperUrl = options.wrapperUrl;
+        var formOptions = Formio.getPlugin("options");
+        var customOptions = _lodash.default.merge(options, formOptions);
+        if(customOptions.core == null || customOptions.core == undefined){
+            console.log(customOptions);
+        }
+        super(component, customOptions, data);
+        component.core = customOptions.core;
+        component.uiUrl = customOptions.uiUrl;
+        component.wrapperUrl = customOptions.wrapperUrl;
+        component.appId = customOptions.appId;
         this.form = this.getRoot();
     }
     loadItems(url, search, headers, options, method, body){
