@@ -648,13 +648,10 @@ class DashboardFilter extends React.Component {
     saveFilter() {
         let filters
         if (this.state.filters !== undefined) {
-
             this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
                 if (filterRow.fieldType == 'date' && (filterRow.operator == 'ytd' || filterRow.operator == 'mtd')) {
                     this.state.filters[index]['endDate'] = new Date()
                 }
-
-
             })
             filters = this.state.filters.filter(function (obj) {
                 return obj !== undefined && obj.value !== undefined;
