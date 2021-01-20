@@ -1,7 +1,5 @@
 var ckeditorConfig = {
-    extraPlugins: 'oxzion,autogrow,wordcount,abbr,imagepaste,sourcedialog,autocorrect,autolink,tableresize,lineheight,texttransform,quicktable,preview',
-    autoGrow_minHeight: 250,
-    autoGrow_maxHeight: 400,
+    extraPlugins: 'oxzion,wordcount,abbr,imagepaste,sourcedialog,autocorrect,autolink,tableresize,lineheight,texttransform,quicktable,preview',
     height: 400,
     width: '100%',
     //IMPORTANT: Need this setting to retain HTML tags as we want them. Without this setting, 
