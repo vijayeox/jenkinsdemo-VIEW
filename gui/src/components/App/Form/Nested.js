@@ -6,7 +6,7 @@ import * as _lodash from "lodash";
 export default class Nested extends FormComponent { 
 
     constructor(component, options, data) {
-        var formOptions = Formio.getPlugin("options");
+        var formOptions = Formio.getPlugin("optionsPlugin");
         var customOptions = _lodash.default.merge(options, formOptions);
         if(customOptions.core == null || customOptions.core == undefined){
             console.log(customOptions);
