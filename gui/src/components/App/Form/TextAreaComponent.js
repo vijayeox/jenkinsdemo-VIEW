@@ -12,7 +12,7 @@ import WidgetRenderer from '../../../WidgetRenderer';
 export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
-        var formOptions = Formio.getPlugin("options");
+        var formOptions = Formio.getPlugin("optionsPlugin");
         var customOptions = _lodash.default.merge(options, formOptions);
         if(customOptions.core == null || customOptions.core == undefined){
             console.log(customOptions);
@@ -104,7 +104,7 @@ export default class TextAreaComponent extends TextArea {
         var editor = null;
         try {
             CKEDITOR.dtd.$removeEmpty['span'] = false;
-            editor = CKEDITOR.replace(element, ckeditorConfig);
+            editor = CKEDITOR.appendTo(element, ckeditorConfig);
             this.ckeditorInstance = editor.name;
             var isReadOnly = _this2.options.readOnly || _this2.disabled;
             var numRows = parseInt(_this2.component.rows, 10);
@@ -114,7 +114,6 @@ export default class TextAreaComponent extends TextArea {
                 editor.ui.view.editable.editableElement.style.height = "".concat(editorHeight, "px");
             }
             editor.isReadOnly = isReadOnly;
-            editor.addContentsCss('/apps/Analytics/kendo-theme-default-all.css');
             editor.addContentsCss('/css/ckeditorStyle.css');
             editor.on('instanceReady', function () {
                 var dataValue = _this2.dataValue;
@@ -125,7 +124,6 @@ export default class TextAreaComponent extends TextArea {
                         value = _this2._data[_this2.path];
                     }
                 }
-                editor.setReadOnly(isReadOnly);
                 editor.setData(value);
             });
             editor.on('oxzionWidgetInitialization', function (event) {

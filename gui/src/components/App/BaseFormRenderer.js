@@ -1077,10 +1077,11 @@ class BaseFormRenderer extends React.Component {
         if (this.state.content && !this.state.form) {
             var options = {};
             options.core = this.core;
-            options.formDivID = this.formDivID;
-            options.appId = this.state.appId;
             options.uiUrl = this.core.config("ui.url");
             options.wrapperUrl = this.core.config("wrapper.url");
+            options.formDivID = this.formDivID;
+            options.appId = this.state.appId;
+            Formio.registerPlugin({options:{core:this.core,formDivID:this.formDivID,uiUrl:this.core.config("ui.url"),wrapperUrl:this.core.config("wrapper.url")}},"optionsPlugin");
             if (this.state.content["properties"]) {
                 if (this.state.content["properties"]["clickable"]) {
                     options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
