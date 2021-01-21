@@ -8,7 +8,7 @@ import * as _nativePromiseOnly from "native-promise-only";
 export default class SelectComponent extends Select { 
 
     constructor(component, options, data) {
-        var formOptions = Formio.getPlugin("options");
+        var formOptions = Formio.getPlugin("optionsPlugin");
         var customOptions = _lodash.default.merge(options, formOptions);
         if(customOptions.core == null || customOptions.core == undefined){
             console.log(customOptions);
