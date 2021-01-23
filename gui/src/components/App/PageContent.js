@@ -421,7 +421,7 @@ class PageContent extends React.Component {
           if(itemContent.operations.actions){
             itemContent.operations.actions.map((action, j) => {
               var act = action;
-              if(act.details){
+              if(Array.isArray(act.details)){
                 act.details.map((detail, k) => {
                   if(detail.params){
                     Object.keys(detail.params).map(function (key, index) {
