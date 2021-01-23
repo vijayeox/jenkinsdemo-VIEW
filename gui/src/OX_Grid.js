@@ -42,6 +42,7 @@ export default class OX_Grid extends React.Component {
     this.userprofile = this.props.osjsCore
       ? this.props.osjsCore.make("oxzion/profile").get().key
       : undefined;
+    this.restClient = this.core.make("oxzion/restClient");
     this.rawDataPresent = typeof this.props.data == "object" ? true : false;
     this.pageId = this.props.pageId;
     this.appId = this.props.appId;
@@ -657,7 +658,28 @@ async buttonAction(actionCopy, rowData) {
             });
             return false;
           }
-        } else {
+        } else if (item.type == "API") {
+          this.loader.show(PageRenderDiv ? PageRenderDiv : null);
+          action.updateOnly = true;
+          var url = ParameterHandler.replaceParams(this.appId,item.route, mergeRowData);
+          await this.restClient.request("v1", "app/" + this.appId + "/" + url, {}, item.typeOfRequest?item.typeOfRequest:"post").then(response => {
+            if (response.status == "success") {
+              this.loader.destroy();
+              Swal.fire({
+                icon: "success",
+                title: response.message,
+                showConfirmButton: true,
+              });
+            } else {
+              this.loader.destroy();
+              Swal.fire({
+                icon: "error",
+                title: response.message,
+                showConfirmButton: true,
+              });
+            }
+        });
+      } else {
           if (item.params && item.params.page_id) {
             pageId = item.params.page_id;
             if (item.params.params) {
@@ -694,45 +716,27 @@ updateActionHandler(details, rowData) {
     try {
       if (details.params.postData) {
         Object.keys(details.params.postData).map((i) => {
-          postData[i] = ParameterHandler.replaceParams(this.appId,
-            details.params.postData[i],
-            rowData
-          );
+          postData[i] = ParameterHandler.replaceParams(this.appId, details.params.postData[i], rowData);
         });
       } else {
         Object.keys(details.params).map((i) => {
-          postData[i] = ParameterHandler.replaceParams(this.appId,
-            details.params[i],
-            rowData
-          );
+          postData[i] = ParameterHandler.replaceParams(this.appId, details.params[i], rowData);
         });
         postData = rowData;
       }
     } catch (error) {
       postData = rowData;
     }
-    ParameterHandler.updateCall(
-        that.core,that.appId,
-        queryRoute,
-        postData,
-        details.params.disableAppId,
-        details.method
-      )
-      .then((response) => {
+    ParameterHandler.updateCall(that.core,that.appId,queryRoute, postData, details.params.disableAppId, details.method).then((response) => {
         if (details.params.downloadFile && response.status == 200) {
-          ParameterHandler.downloadFile(response).then(
-              (result) => {
-                that.setState({
-                  showLoader: false,
-                });
+          ParameterHandler.downloadFile(response).then((result) => {
+                that.setState({ showLoader: false});
                 var downloadStatus = result ? "success" : "failed";
                 resolve({ status: downloadStatus });
               }
             );
         } else {
-          that.setState({
-            showLoader: false,
-          });
+          that.setState({ showLoader: false });
           resolve(response);
         }
       });
@@ -740,17 +744,14 @@ updateActionHandler(details, rowData) {
 }
 handleAction(key,dataItem){
   this.dataItem = dataItem;
-  this.state.actions[key].confirmationMessage
-      ? Swal.fire({
+  this.state.actions[key].confirmationMessage ? Swal.fire({
         title: this.state.actions[key].confirmationMessage,
         confirmButtonText: "Agree",
         confirmButtonColor: "#275362",
         showCancelButton: true,
         cancelButtonColor: "#7b7878",
         target: ".PageRender"
-      }).then((result) => {
-        result.value ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
-      }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
+      }).then((result) => { result.value ? this.buttonAction(this.state.actions[key],this.dataItem) : null; }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
 }
 handleOnSelect = (e) => {
   var dataItem = this.dataItem;
@@ -760,52 +761,22 @@ handleOnSelect = (e) => {
         this.handleAction(key,dataItem);
       }
     }, this);
-    this.setState({
-      contextMenuOpen: false
-    });
+    this.setState({ contextMenuOpen: false });
   }
 }
 
   render() {
     return (
-      <div
-        style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }}
-        className={
-          "GridCustomStyle " +
-          (this.props.className ? this.props.className : "")
-        }
-      >
-      <Popup
-        offset={this.offset}
-        show={this.state.contextMenuOpen}
-        open={this.onPopupOpen}
-        popupClass={'popup-content'} >
-          <div onFocus={this.onFocusHandler}
-              onBlur={this.onBlurHandler}
-              tabIndex={-1}
-              ref={el => (this.menuWrapperRef = el)} >
+      <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }} className={ "GridCustomStyle " + (this.props.className ? this.props.className : "")} >
+      <Popup offset={this.offset} show={this.state.contextMenuOpen} open={this.onPopupOpen} popupClass={'popup-content'} >
+          <div onFocus={this.onFocusHandler} onBlur={this.onBlurHandler} tabIndex={-1} ref={el => (this.menuWrapperRef = el)} >
             <Menu vertical={true} style={{ display: 'inline-block' }} onSelect={this.handleOnSelect}>
               {this.state.menu}
             </Menu>
           </div>
       </Popup>
-        {this.rawDataPresent ? (
-          <DataOperation
-            args={this.props.osjsCore}
-            gridData={this.props.data}
-            total={this.props.data.length}
-            dataState={this.state.dataState}
-            onDataRecieved={this.dataRecieved}
-          />
-        ) : (
-          <DataLoader
-            ref={(r)=>{this.child = r;}}
-            args={this.props.osjsCore}
-            url={this.props.data}
-            dataState={this.state.dataState}
-            onDataRecieved={this.dataRecieved}
-            {...this.props}
-          />
+        {this.rawDataPresent ? (<DataOperation args={this.props.osjsCore} gridData={this.props.data} total={this.props.data.length} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} />) : (
+          <DataLoader ref={(r)=>{this.child = r;}} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
         )}
         <div id="customActionsToolbar" />
         <Grid
@@ -842,9 +813,7 @@ handleOnSelect = (e) => {
           onExpandChange={this.props.expandable ? this.expandChange : null}
           onHeaderSelectionChange={this.headerSelectionChange}
           onSelectionChange={this.selectionChange}
-          onRowClick={(e) => {
-            this.props.onRowClick ? this.props.onRowClick(e) : null;
-          }}
+          onRowClick={(e) => { this.props.onRowClick ? this.props.onRowClick(e) : null; }}
           selectedField="selected"
           expandField={this.props.expandable ? "expanded" : null}
           {...this.state.dataState}
@@ -853,9 +822,7 @@ handleOnSelect = (e) => {
         >
           {this.props.defaultToolBar && this.generateGridToolbar() && this.state.apiActivityCompleted  ? (
             <GridToolbar>
-              <div
-              className={"GridToolBar"}
-              >
+              <div className={"GridToolBar"} >
                 {this.generateGridToolbar()}
               </div>
             </GridToolbar>
@@ -864,56 +831,17 @@ handleOnSelect = (e) => {
           {/* {this.noRecordsJSX()} */}
         </Grid>
         {this.props.exportToPDF ? (
-          <GridPDFExport
-            pageTemplate={(props) => this.generatePDFTemplate(props)}
-            ref={(pdfExport) => (this.gridPDFExport = pdfExport)}
-            {...this.props.exportToPDF}
-            fileName={
-              this.props.exportToPDF.fileNameTemplate
-                ? eval(this.props.exportToPDF.fileNameTemplate)
-                : undefined
-            }
-          >
-            <Grid
-              data={
-                this.props.exportToPDF.defaultFilters &&
-                this.state.gridData.data &&
-                typeof this.state.gridData.data == "array"
-                  ? process(
-                      this.state.gridData.data,
-                      JSON.parse(this.props.exportToPDF.defaultFilters)
-                    )
-                  : this.state.gridData.data
-              }
-            >
-              {this.createColumns(
-                this.props.exportToPDF.columnConfig
-                  ? this.props.exportToPDF.columnConfig
-                  : this.props.columnConfig
-              )}
+          <GridPDFExport pageTemplate={(props) => this.generatePDFTemplate(props)} ref={(pdfExport) => (this.gridPDFExport = pdfExport)} {...this.props.exportToPDF}fileName={ this.props.exportToPDF.fileNameTemplate ? eval(this.props.exportToPDF.fileNameTemplate) : undefined} >
+            <Grid data={ this.props.exportToPDF.defaultFilters && this.state.gridData.data && typeof this.state.gridData.data == "array" ? process( this.state.gridData.data, JSON.parse(this.props.exportToPDF.defaultFilters) ): this.state.gridData.data }>
+              {this.createColumns( this.props.exportToPDF.columnConfig ? this.props.exportToPDF.columnConfig : this.props.columnConfig )}
             </Grid>
           </GridPDFExport>
         ) : null}
         {this.props.exportToExcel ? (
-          <ExcelExport
-            ref={(excelExport) => (this._excelExport = excelExport)}
-            fileName={
-              this.props.exportToExcel.fileNameTemplate
-                ? eval(this.props.exportToExcel.fileNameTemplate)
-                : undefined
-            }
-          >
-            {this.props.exportToExcel.columnConfig
-              ? this.props.exportToExcel.columnConfig.map((item) => (
-                  <ExcelExportColumn
-                    field={item.field}
-                    title={item.title}
-                    cellOptions={item.cellOptions}
-                    locked={item.locked}
-                    width={item.width}
-                  />
-                ))
-              : null}
+          <ExcelExport ref={(excelExport) => (this._excelExport = excelExport)} fileName={ this.props.exportToExcel.fileNameTemplate ? eval(this.props.exportToExcel.fileNameTemplate) : undefined } >
+            {this.props.exportToExcel.columnConfig ? this.props.exportToExcel.columnConfig.map((item) => (
+                  <ExcelExportColumn  field={item.field} title={item.title} cellOptions={item.cellOptions} locked={item.locked} width={item.width} />
+                )) : null}
           </ExcelExport>
         ) : null}
       </div>
@@ -924,20 +852,11 @@ handleOnSelect = (e) => {
 class CustomCell extends GridCell {
   render() {
     var formatDate = (dateTime, dateTimeFormat) => {
-      let userTimezone,
-        userDateTimeFomat = null;
-      userTimezone = this.props.userProfile.preferences.timezone
-        ? this.props.userProfile.preferences.timezone
-        : moment.tz.guess();
-      userDateTimeFomat = this.props.userProfile.preferences.dateformat
-        ? this.props.userProfile.preferences.dateformat
-        : "MM/dd/yyyy";
+      let userTimezone, userDateTimeFomat = null;
+      userTimezone = this.props.userProfile.preferences.timezone ? this.props.userProfile.preferences.timezone : moment.tz.guess();
+      userDateTimeFomat = this.props.userProfile.preferences.dateformat ? this.props.userProfile.preferences.dateformat : "MM/dd/yyyy";
       dateTimeFormat ? (userDateTimeFomat = dateTimeFormat) : null;
-      return moment(dateTime)
-        .utc(dateTime, "MM/dd/yyyy HH:mm:ss")
-        .clone()
-        .tz(userTimezone)
-        .format(userDateTimeFomat);
+      return moment(dateTime).utc(dateTime, "MM/dd/yyyy HH:mm:ss").clone().tz(userTimezone).format(userDateTimeFomat);
     };
     var formatDateWithoutTimezone = (dateTime, dateTimeFormat) => {
       let userDateTimeFomat = null;
