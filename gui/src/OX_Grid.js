@@ -186,9 +186,9 @@ export default class OX_Grid extends React.Component {
             dataItem.minResizableWidth ? dataItem.minResizableWidth : undefined
           }
           orderIndex={dataItem.orderIndex ? dataItem.orderIndex : undefined}
-          reorderable={dataItem.reorderable ? dataItem.reorderable : undefined}
-          resizable={dataItem.resizable ? dataItem.resizable : undefined}
-          sortable={dataItem.sortable ? dataItem.sortable : undefined}
+          reorderable={this.props.reorderable ? this.props.reorderable : (dataItem.reorderable? dataItem.reorderable: undefined)}
+          resizable={this.props.resizable ? this.props.resizable : (dataItem.resizable? dataItem.resizable: undefined)}
+          sortable={this.props.sortable ? this.props.sortable : (dataItem.sortable? dataItem.sortable: undefined)}
           width={dataItem.width ? dataItem.width : undefined}
           title={dataItem.title ? dataItem.title : undefined}
         />
