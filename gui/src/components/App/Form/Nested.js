@@ -11,7 +11,7 @@ export default class Nested extends FormComponent {
         if(customOptions.core == null || customOptions.core == undefined){
             console.log(customOptions);
         }
-        super(component, options, data);
+        super(component, customOptions, data);
     }
     beforePage(next) {
         this.component.reference = true;
