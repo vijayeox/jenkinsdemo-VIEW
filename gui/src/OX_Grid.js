@@ -186,9 +186,9 @@ export default class OX_Grid extends React.Component {
             dataItem.minResizableWidth ? dataItem.minResizableWidth : undefined
           }
           orderIndex={dataItem.orderIndex ? dataItem.orderIndex : undefined}
-          reorderable={this.props.reorderable ? this.props.reorderable : (dataItem.reorderable? dataItem.reorderable: undefined)}
-          resizable={this.props.resizable ? this.props.resizable : (dataItem.resizable? dataItem.resizable: undefined)}
-          sortable={this.props.sortable ? this.props.sortable : (dataItem.sortable? dataItem.sortable: undefined)}
+          reorderable={this.props.reorderable ? (this.props.reorderable=='true') : (dataItem.reorderable? dataItem.reorderable: undefined)}
+          resizable={this.props.resizable ? (this.props.resizable == 'true') : (dataItem.resizable? dataItem.resizable: undefined)}
+          sortable={this.props.sortable ? (this.props.sortable == 'true') : (dataItem.sortable? dataItem.sortable: undefined)}
           width={dataItem.width ? dataItem.width : undefined}
           title={dataItem.title ? dataItem.title : undefined}
         />
@@ -805,8 +805,8 @@ handleOnSelect = (e) => {
           groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}
-          resizable={this.props.resizable}
-          reorderable={this.props.reorderable}
+          resizable={(this.props.resizable=='true'?true:false)}
+          reorderable={(this.props.reorderable=='true'? true:false)}
           sortable={this.props.sortable}
           scrollable={this.props.scrollable}
           onDataStateChange={this.dataStateChange}
