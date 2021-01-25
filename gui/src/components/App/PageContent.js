@@ -452,9 +452,6 @@ class PageContent extends React.Component {
             data={dataString}
             postSubmitCallback={this.postSubmitCallback}
             pageId={this.state.pageId}
-            // sortable={sortable}
-            // resizable={resizable}
-            // reorderable={reorderable}
             parentData={this.state.currentRow}
             pageId={this.pageId}
             notif={this.state.notif}
