@@ -234,7 +234,7 @@ export default class CoreServiceProvider extends ServiceProvider {
 
     const trayApi = {
       create: (options, handler) => this.tray.create(options, handler),
-      list: () => this.tray.entries.map(e => Object.assign({}, e))
+      list: () => this.tray.trayEntries.map(e => Object.assign({}, e))
     };
 
     this.core.instance('osjs/tray', (options) => {
