@@ -259,7 +259,7 @@ class WidgetRenderer {
                     '</div>');
             }
         } else {
-            if ((data[0].green_limit) || (data[0].yellow_limit) || (data[0].red_limit)) {
+            if (data[0] && ((data[0].green_limit) || (data[0].yellow_limit) || (data[0].red_limit))) {
                 configuration["series"][0]["columns"] = {
                     "adapter": {
                         "fill": function (fill, target) {
