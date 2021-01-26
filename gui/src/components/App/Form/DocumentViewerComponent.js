@@ -8,7 +8,7 @@ import * as _lodash from "lodash";
 export default class DocumentViewerComponent extends Base {
   constructor(component, options, data) {
     var formOptions = Formio.getPlugin("optionsPlugin");
-    var customOptions = _lodash.default.merge(options, formOptions);
+    var customOptions = _lodash.default.merge(options, formOptions.options);
     if(customOptions.core == null || customOptions.core == undefined){
         console.log(customOptions);
     }

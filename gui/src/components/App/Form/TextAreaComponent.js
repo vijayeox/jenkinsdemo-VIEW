@@ -13,9 +13,17 @@ export default class TextAreaComponent extends TextArea {
 
     constructor(component, options, data) {
         var formOptions = Formio.getPlugin("optionsPlugin");
-        var customOptions = _lodash.default.merge(options, formOptions);
-        if(customOptions.core == null || customOptions.core == undefined){
-            console.log(customOptions);
+        var customOptions = _lodash.default.merge(options, formOptions.options);
+        if(customOptions.appId == null || customOptions.appId == undefined){
+            if(customOptions.root && customOptions.root.options && customOptions.root.options.appId){
+                customOptions.appId = customOptions.root.options.appId;
+                customOptions.formDivID = customOptions.root.options.formDivID;
+            }else if(customOptions.root && customOptions.root.options  && customOptions.root.root.options && customOptions.root.root.options.appId){
+                customOptions.appId = customOptions.root.root.options.appId;
+                customOptions.formDivID = customOptions.root.root.options.formDivID;
+            }  else {
+                console.log(customOptions);
+            }
         }
         super(component, customOptions, data);
         component.core = customOptions.core;
