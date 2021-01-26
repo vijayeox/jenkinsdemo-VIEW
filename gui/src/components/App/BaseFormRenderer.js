@@ -71,6 +71,25 @@ class BaseFormRenderer extends React.Component {
         //     'onerror': function () { }
         // }]);
     }
+
+    cancelFormSubmission=()=>{
+        Swal.fire({
+          title: "Are you sure?",
+          text: "Do you really want to cancel the submission? This action cannot be undone!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          cancelButtonText: "No",
+          confirmButtonText: "Yes",
+          target:".AppBuilderPage"
+        }).then(result => {
+          if (result.value) {
+            this.stepDownPage();
+          }
+        });      
+      }
+  
     generateUUID() { // Public Domain/MIT
         let d = new Date().getTime();//Timestamp
         let d2 = (performance && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
@@ -139,23 +158,7 @@ class BaseFormRenderer extends React.Component {
                 that.storeCache(this.cleanData(form_data));
                 next(null);
             },
-            beforeCancel: () => {
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you really want to cancel the submission? This action cannot be undone!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    cancelButtonText: "No",
-                    confirmButtonText: "Yes",
-                    target: ".AppBuilderPage"
-                }).then(result => {
-                    if (result.value) {
-                        that.stepDownPage();
-                    }
-                });
-            },
+            beforeCancel: () => that.cancelFormSubmission(),
             beforeSubmit: async (submission, next) => {
                 var submitErrors = [];
                 if (that.state.currentForm.isValid(submission.data, true) == false) {
@@ -350,7 +353,7 @@ class BaseFormRenderer extends React.Component {
         var loaderDiv = document.getElementById(this.loaderDivID);
         if (loaderDiv) {
             if (document.getElementById(this.formDivID).clientHeight > 0) {
-                loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight + " px";
+                loaderDiv.style.height = document.getElementById(this.formDivID).clientHeight + "px";
             } else {
                 loaderDiv.style.height = "100%";
             }
@@ -511,9 +514,13 @@ class BaseFormRenderer extends React.Component {
                     }
                 }
             }
-            if (that.props.fileId) {
-                form.submission.data.fileId = that.state.fileId;
+            if (that.props.fileId || this.state.fileId) {
+                form.submission.data.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
                 form.submission.data["workflow_instance_id"] = undefined;
+            }
+            if(this.props.parentFileId){
+              form.submission.data.fileId = undefined;
+              form.submission.data["workflow_instance_id"] = undefined;
             }
             if (that.props.parentFileId) {
                 form.submission.data.fileId = undefined;
@@ -811,6 +818,9 @@ class BaseFormRenderer extends React.Component {
                     }
                 }
             }
+            if (properties["triggerChange"]) {
+                that.state.currentForm ? that.state.currentForm.triggerChange() : null;
+            }
             if (properties["clear_field"]) {
                 var processed = false;
                 if (instance) {
@@ -1081,7 +1091,7 @@ class BaseFormRenderer extends React.Component {
             options.wrapperUrl = this.core.config("wrapper.url");
             options.formDivID = this.formDivID;
             options.appId = this.state.appId;
-            Formio.registerPlugin({options:{core:this.core,formDivID:this.formDivID,uiUrl:this.core.config("ui.url"),wrapperUrl:this.core.config("wrapper.url")}},"optionsPlugin");
+            Formio.registerPlugin({options:{core:this.core,uiUrl:this.core.config("ui.url"),wrapperUrl:this.core.config("wrapper.url")}},"optionsPlugin");
             if (this.state.content["properties"]) {
                 if (this.state.content["properties"]["clickable"]) {
                     options.breadcrumbSettings = { clickable: eval(this.state.content["properties"]["clickable"]) };
@@ -1293,8 +1303,33 @@ class BaseFormRenderer extends React.Component {
                             }
                         }
                     }
+                    if (event.type == "formLoader") {
+                      that.showFormLoader(event.state);
+                      if(event.timer){
+                        setTimeout((e) => {
+                          that.showFormLoader(false);
+                        }, event.timer);
+                      }
+                    }
+                    if (event.type == "resetState") {
+                      that.setState({
+                        ...this.state,
+                        ...event.state
+                      })
+                    }
                     if (event.type == "triggerFormChange") {
                         form.triggerChange();
+                    }
+                    if (event.type == "cancelSubmission") {
+                      that.cancelFormSubmission();
+                    }
+                    if (event.type == "customButtonAction") {
+                      let buttonCustomEvent = new Event("customButtonAction");
+                      buttonCustomEvent.detail = {
+                        formData: changed,
+                        ...event.component.properties
+                      };
+                      that.customButtonAction(buttonCustomEvent);
                     }
                     if (event.type == "callPipeline") {
                         var component = event.component;
@@ -1372,6 +1407,77 @@ class BaseFormRenderer extends React.Component {
         }
         return formCreated
     }
+    customButtonAction = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.showFormLoader(true, 0);
+        let actionDetails = e.detail;
+        let formData = actionDetails.formData;
+        if (this.state.workflowId) {
+          formData["workflowId"] = this.state.workflowId;
+        }
+        if (this.state.workflowInstanceId) {
+          formData["workflowInstanceId"] = this.state.workflowInstanceId;
+          if (this.state.activityInstanceId) {
+            formData["activityInstanceId"] = this.state.activityInstanceId;
+            if (this.state.instanceId) {
+              formData["instanceId"] = $this.state.instanceId;
+            }
+          }
+        }
+        if (this.props.fileId) {
+          formData.fileId = this.props.fileId;
+          formData["workflow_instance_id"] = undefined;
+        }
+        if (this.state.fileId) {
+          formData.fileId = this.state.fileId;
+          formData["workflow_instance_id"] = undefined;
+        }
+        if (actionDetails["commands"]) {
+          this.callPipeline(
+            actionDetails["commands"],
+            this.cleanData(formData)
+          ).then((response) => {
+            if (response.status == "success") {
+              var formData = { data: this.formatFormData(response.data) };
+              if (response.data.fileId) {
+                this.setState({
+                  fileId: response.data.fileId
+                })
+              }
+              if (this.state.currentForm) {
+                this.state.currentForm.setSubmission(formData).then(response2 => {
+                  this.state.currentForm.setPristine(true);
+                  actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
+                });
+              } else {
+                actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
+              }
+              this.notif.current.notify(
+                "Success",
+                actionDetails.notification
+                  ? actionDetails.notification
+                  : "Operation completed successfully",
+                "success"
+              );
+              if (actionDetails.exit == true || actionDetails.exit == "true") {
+                clearInterval(actionDetails.timerVariable);
+                this.stepDownPage();
+              } else if(actionDetails.postSubmitCallback == true || actionDetails.postSubmitCallback == "true") {
+                this.props.postSubmitCallback();
+              }
+            } else {
+              this.notif.current.notify(
+                "Error",
+                response.errors[0].message ? response.errors[0].message : "Operation failed",
+                "danger"
+              );
+            }
+          }).catch(e => {
+            this.handleError(e);
+          });
+        }
+      };
     render() {
         return (
             <div>

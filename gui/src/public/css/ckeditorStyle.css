@@ -431,3 +431,21 @@
  padding: 30px;
  border:5px double teal;
  }
+
+ figure.oxzion-widget,
+div.oxzion-widget
+{
+	text-align: center;
+	outline: solid 1px #ccc;
+	background: rgba(0,0,0,0.05);
+	padding: 10px;
+	margin: 10px 20px;
+	display: inline-block;
+}
+
+/* figure > figcaption, */
+figure.oxzion-widget > figcaption
+{
+	text-align: center;
+	display: block; /* For IE8 */
+}
