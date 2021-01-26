@@ -156,6 +156,7 @@ class Navigation extends React.Component {
     }
     this.setState({ pages: pages });
     this.resetCustomActions();
+    this.props.selectLoad({});
   };
   selectPage = (e) => {
     this.pageActive(e.detail.parentPage);
