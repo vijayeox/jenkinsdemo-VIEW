@@ -32,7 +32,7 @@ export class DataLoader extends React.Component {
           });
         });
     }
-    if (this.props.autoRefresh) {
+    if (this.props.autoRefresh && this.props.autoRefresh != "false") {
       var that = this;
       var autoRefreshTimer = setInterval(() => {
         var gridElement = document.getElementById(this.props.parentDiv);
