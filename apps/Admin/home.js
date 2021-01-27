@@ -173,7 +173,7 @@ class Home extends React.Component {
             <div className="titles">PPM Admin</div>
           </div>
         ) : null}
-        {this.userProfile.privileges.MANAGE_APPLICATION ? (
+        {this.userProfile.privileges.MANAGE_APPLICATION_WRITE ? (
           <div onClick={()=>this.launchExternalApp("EOXAppBuilder")}>
             <div className="block d1">
               <img src="apps/Admin/008-development-2.svg" />
