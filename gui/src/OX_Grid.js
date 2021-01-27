@@ -361,6 +361,7 @@ handleContextMenuOpen = (e, dataItem) => {
           primary={true}
           onClick={this.exportPDF}
           className={"toolBarButton"}
+          title = "Export to PDF"
         >
           <i className='fa fa-file-pdf-o'></i>
         </Button>
