@@ -5,7 +5,6 @@ import {
   GridCell,
   GridColumn,
   GridDetailRow,
-  GridColumnMenuFilter,
   GridColumnMenuCheckboxFilter,
   GridNoRecords,
   GridToolbar
@@ -20,6 +19,7 @@ import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import $ from "jquery";
 import JsxParser from "react-jsx-parser";
 import moment from "moment";
+import { ColumnMenu } from './components/Grid/ColumnMenu';
 import Swal from "sweetalert2";
 import DataLoader from "./components/Grid/DataLoader";
 import DataOperation from "./components/Grid/DataOperation";
@@ -169,7 +169,7 @@ export default class OX_Grid extends React.Component {
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
           filterable={this.props.columnMenuFilter==false?dataItem.filterable:undefined}
-          columnMenu={this.props.columnMenuFilter!=false?GridColumnMenuFilter:undefined}
+          columnMenu={this.props.columnMenuFilter!=false?ColumnMenu:undefined}
           filterCell={
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }
