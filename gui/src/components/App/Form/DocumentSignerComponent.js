@@ -15,26 +15,13 @@ export default class DocumentSignerComponent extends Base {
     }
     super(component, customOptions, data);
     component.core = customOptions.core;
+    component.appId = customOptions.appId;
     component.uiUrl = customOptions.uiUrl;
     component.wrapperUrl = customOptions.wrapperUrl;
+    this.form = this.getRoot();
+    var that = this;
     this.data = data;
     this.documentsList = [];
-    var that = this;
-    var element;
-    if (that.form && that.form.element) {
-        element = that.form.element;
-    } else {
-        if(that.form && that.form.root && that.form.root.parent && that.form.root.parent.root && that.form.root.parent.root.element){
-            element = that.form.root.parent.root.element;
-        }
-    }
-    if(element){
-      this.formList = [
-        { name: "document1", status: "unsigned" },
-        { name: "document2", status: "signed" },
-        { name: "document3", status: "unsigned" },
-      ];
-    }
   }
 
   //disable
@@ -67,30 +54,23 @@ export default class DocumentSignerComponent extends Base {
       return;
     }
     try {
-      var name = this.form._data[this.component.documentsList][
-        this.component.index
-      ].originalName;
+      var form = this.form ? this.form : this;
+      var name = form._data[this.component.documentsList][this.component.index].originalName;
     } catch (error) {
       this.redraw();
       return;
     }
     this.dataValue = name;
-
     this.previousValue = this.dataValue;
     var that = this;
-    that.documentsList =
-      `<h5>` + name + `<button id="sign_btn" >Sign Form</button></h5>`;
+    that.documentsList = `<h5>` + name + `<button id="sign_btn" >Sign Form</button></h5>`;
     that.documentsList += `<div id="myModal" class="insuresign modal"></div>`;
     that.redraw();
   }
 
   attach(element) {
     var that = this;
-    // this.formList.map(form=>{
-    //   this.attachEventListeners(form)
-    // })
     this.attachEventListeners({});
-
     return super.attach(element);
   }
 
@@ -158,20 +138,6 @@ export default class DocumentSignerComponent extends Base {
   }
 
   attachEventListeners(form) {
-    //  let button_id=form.name+"-btn"
-    //  let core=this.component.core
-    //  let helper=this.component.core.make("oxzion/restClient");
-    //  var modal = document.getElementById("myModal");
-    //  if( document.getElementById(button_id)){
-    //   document.getElementById(button_id).addEventListener("click",async()=>{
-    //   let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
-    //     alert("this is "+form.name)
-    //     console.log(core)
-    //     console.log(response)
-    //     // console.log(that.core)
-    //   })
-    //  }
-
     if (document.getElementById("sign_btn")) {
       document
         .getElementById("sign_btn")
@@ -182,35 +148,18 @@ export default class DocumentSignerComponent extends Base {
             this.component.index
           ].signingLink;
           this.showInsureSignModal("qwerty", signingLink);
-
           this.pollForStatus();
-
-          // let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
-          // alert("this is clicked")
-          // modal.style.display="block"
-          // console.log(core)
-          // console.log(response)
-          // console.log(that.core)
         });
     }
   }
 
   render(children) {
-    var documentsList = this.documentsList
-      ? this.documentsList
-      : `<p>not working</p>`;
-
+    var documentsList = this.documentsList ? this.documentsList : `<p>not working</p>`;
     setTimeout(() => {
       this.bindHandlers();
     }, 2000);
-
     var row = `<button id="sign_btn" >Sign Form</button>`;
     row += `<div id="myModal" class="insuresign modal"></div>`;
-
-    // this.formList.map(form=>{
-    // row+=`<div>Form Name:${form.name} <span>Status:${form.status}</span>`
-    // row+=form.status=="unsigned"?`<span><button id=${form.name+"-btn"} >Sign Form</button</span></div></br>`:`</div></br>`
-    // })
     return super.render(`<div>${documentsList}</div>`);
   }
 
