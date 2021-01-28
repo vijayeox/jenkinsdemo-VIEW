@@ -108,6 +108,15 @@ export default class OX_Grid extends React.Component {
     }
   }
 
+  async DeleteFile(api, item) {
+  let response = await this.restClient.request(
+    "v1",
+    "/" + api,
+    {},
+    item.typeOfRequest?item.typeOfRequest:"post"
+  );
+  return response;
+}
 
   parseDefaultFilters() {
     var splitUrl = this.props.data.split("?");
@@ -660,26 +669,35 @@ async buttonAction(actionCopy, rowData) {
             return false;
           }
         } else if (item.type == "API") {
-          this.loader.show(PageRenderDiv ? PageRenderDiv : null);
           action.updateOnly = true;
           var url = ParameterHandler.replaceParams(this.appId,item.route, mergeRowData);
-          await this.restClient.request("v1", "app/" + this.appId + "/" + url, {}, item.typeOfRequest?item.typeOfRequest:"post").then(response => {
-            if (response.status == "success") {
-              this.loader.destroy();
-              Swal.fire({
-                icon: "success",
-                title: response.message,
-                showConfirmButton: true,
-              });
-            } else {
-              this.loader.destroy();
-              Swal.fire({
-                icon: "error",
-                title: response.message,
-                showConfirmButton: true,
+          Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to delete the record? This cannot be undone.",
+            imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+            imageWidth: 75,
+            imageHeight: 75,
+            confirmButtonText: "Delete",
+            confirmButtonColor: "#d33",
+            showCancelButton: true,
+            cancelButtonColor: "#3085d6"
+          }).then((result) => {
+            if (result.value) {
+              this.DeleteFile(
+                "app/" + this.appId + "/" + url,
+                item
+              ).then( (response) => {
+                console.log(response); 
+                this.refreshHandler(response);
+                if(response.status=="success"){
+                  this.state.notif.current.notify("Success","Deleted Successfully","success")
+                }else{
+                  this.state.notif.current.notify("Error",response.message,"danger")
+
+                }
               });
             }
-        });
+          });
       } else {
           if (item.params && item.params.page_id) {
             pageId = item.params.page_id;
