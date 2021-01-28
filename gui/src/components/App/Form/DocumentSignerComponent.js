@@ -63,8 +63,8 @@ export default class DocumentSignerComponent extends Base {
     this.dataValue = name;
     this.previousValue = this.dataValue;
     var that = this;
-    that.documentsList = `<h5>` + name + `<button id="sign_btn" >Sign Form</button></h5>`;
-    that.documentsList += `<div id="myModal" class="insuresign modal"></div>`;
+    that.documentsList = `<h5>` + name + `<button id="sign_btn_`+this.id+`" >Sign Form</button></h5>`;
+    that.documentsList += `<div id="myModal_`+this.id+`" class="insuresign modal"></div>`;
     that.redraw();
   }
 
@@ -75,7 +75,7 @@ export default class DocumentSignerComponent extends Base {
   }
 
   ShowPopupMessageBytype(status, message) {
-    var modal = document.getElementById("myModal");
+    var modal = document.getElementById("myModal_"+this.id);
     // Get the button that opens the modal
     var btn = document.getElementById("myBtn");
     // Get the <span> element that closes the modal
@@ -98,14 +98,11 @@ export default class DocumentSignerComponent extends Base {
     // <iframe height='100%' width='100%' src='data.url+"'></iframe>
     modalHTML += `</div>`;
 
-    $("#myModal").html(modalHTML);
-    $("#myModal").css("display", "block");
+    $("#myModal_"+this.id).html(modalHTML);
+    $("#myModal_"+this.id).css("display", "block");
     $("span.close").on("click", () => {
-      $("#myModal").css("display", "none");
+      $("#myModal_"+this.id).css("display", "none");
     });
-
-    // var modal = document.getElementById("myModal");
-    // modal.innerHTML(modalHTML)
   }
 
   pollForStatus() {
@@ -114,20 +111,19 @@ export default class DocumentSignerComponent extends Base {
         this.component.index
       ].docId;
       let helper = this.component.core.make("oxzion/restClient");
-      helper
-        .request("v1", "/status/" + docId, {}, "get")
+      helper.request("v1", "/status/" + docId, {}, "get")
         .then(function (response) {
           var that = _this2 || _this3 || _this4 || _this5 || _this6 || _this7;
           if (
             response.data["status"] == "FINALIZED" ||
             response.data["status"] == "CANCELLED"
           ) {
-            $("#myModal").css("display", "none");
+            $("#myModal_"+this.id).css("display", "none");
             that.documentsList =
               `<h5>` +
               that.component.previousValue +
-              `<button disabled id="sign_btn" >Signed</button></h5>`;
-            that.documentsList += `<div id="myModal" class="insuresign modal"></div>`;
+              `<button disabled id="sign_btn_`+this.id+`">Signed</button></h5>`;
+            that.documentsList += `<div id="myModa_`+this.id`" class="insuresign modal"></div>`;
             that.redraw();
           } else {
             that.pollForStatus();
@@ -138,16 +134,12 @@ export default class DocumentSignerComponent extends Base {
   }
 
   attachEventListeners(form) {
-    if (document.getElementById("sign_btn")) {
-      document
-        .getElementById("sign_btn")
-        .addEventListener("click", async () => {
+    if (document.getElementById("sign_btn_"+this.id)) {
+      document.getElementById("sign_btn_"+this.id).addEventListener("click", async () => {
           // this.ShowPopupMessageBytype("error","random message")
           //currently added a dummy cross origin link.. change the link to signing_url
-          var signingLink = this.form._data[this.component.documentsList][
-            this.component.index
-          ].signingLink;
-          this.showInsureSignModal("qwerty", signingLink);
+          var signingLink = this.form._data[this.component.documentsList][this.component.index].signingLink;
+          this.showInsureSignModal(this.component.documentsList+this.component.index, signingLink);
           this.pollForStatus();
         });
     }
@@ -158,8 +150,8 @@ export default class DocumentSignerComponent extends Base {
     setTimeout(() => {
       this.bindHandlers();
     }, 2000);
-    var row = `<button id="sign_btn" >Sign Form</button>`;
-    row += `<div id="myModal" class="insuresign modal"></div>`;
+    var row = `<button id="sign_btn_`+this.id+`" >Sign Form</button>`;
+    row += `<div id="myModal_`+this.id+`" class="insuresign modal"></div>`;
     return super.render(`<div>${documentsList}</div>`);
   }
 
