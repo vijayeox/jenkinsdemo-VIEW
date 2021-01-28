@@ -16,7 +16,6 @@ class Dashboard extends Component {
       preparedDashboardFilter: null,
       drilldownDashboardFilter: [],
       widgetCounter: 0,
-
     };
     this.content = this.props.content;
     this.renderedWidgets = {};
@@ -49,7 +48,6 @@ class Dashboard extends Component {
     );
     return response;
   }
-
 
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
@@ -154,10 +152,6 @@ class Dashboard extends Component {
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false);
   }
-
-
-
-
 
   updateGraphWithFilterChanges() {
     let filterParams = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack)
@@ -291,7 +285,6 @@ class Dashboard extends Component {
                 //dispose if widget exists
                 let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
                 let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
-
                 let widgetObject = WidgetRenderer.render(renderproperties);
                 if (widgetObject) {
                   this.renderedWidgets[widgetUUId] = widgetObject;
