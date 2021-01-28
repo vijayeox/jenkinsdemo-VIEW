@@ -159,6 +159,7 @@ class Navigation extends React.Component {
     this.props.selectLoad({});
   };
   selectPage = (e) => {
+    this.resetCustomActions();
     this.pageActive(e.detail.parentPage);
   };
   addcustomActions = (e) => {
@@ -215,8 +216,9 @@ class Navigation extends React.Component {
       detail: {},
       bubbles: true,
     });
-    if(document.getElementsByClassName('page-active') && document.getElementsByClassName('page-active')[0] ){
-      var foundElement = this.getElementInsideElement(document.getElementsByClassName('page-active')[0],'customActionsToolbar');
+    var navigationElement = document.getElementById('navigation_'+this.appId);
+    if(navigationElement && navigationElement.getElementsByClassName('page-active') && navigationElement.getElementsByClassName('page-active')[0] ){
+      var foundElement = this.getElementInsideElement(navigationElement.getElementsByClassName('page-active')[0],'customActionsToolbar');
       if(foundElement){
         foundElement.dispatchEvent(ev);
       }
