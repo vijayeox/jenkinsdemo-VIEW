@@ -539,14 +539,14 @@ class DashboardManager extends React.Component {
                             <i className="fa fa-filter" aria-hidden="true"></i>
                           </Button>
                         }
-                        <ReactToPrint
+                        {/* <ReactToPrint
                           trigger={() => {
                             return <Button title="Print OI">
                               <i className="fa fa-print" aria-hidden="true"></i>
                             </Button>
                           }}
                           content={() => this.dashboardViewerRef}
-                        />
+                        /> */}
                         {this.state.exportConfiguration != null &&
                           <Button onClick={() => this.exportExcel()} title="Export OI"><i className="fas fa-file-export"></i></Button>
                         }

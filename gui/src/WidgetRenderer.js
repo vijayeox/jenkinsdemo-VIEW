@@ -259,33 +259,52 @@ class WidgetRenderer {
                     '</div>');
             }
         } else {
-            if (data[0] && ((data[0].green_limit) || (data[0].yellow_limit) || (data[0].red_limit))) {
-                configuration["series"][0]["columns"] = {
-                    "adapter": {
-                        "fill": function (fill, target) {
-                            if (target.dataItem && (target.dataItem.valueY < 0)) {
-                                return am4core.color('#EE4424');
-                            } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
-                                return am4core.color('#EE4424');
-                            } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
-                                return am4core.color('#F3BA1D');
-                            } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
-                                return am4core.color('#A3C53A');
-                            } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
-                                return am4core.color('#A3C53A');
-                            } else {
-                                return fill;
+            if (data && data.length > 0) {
+                if ((data[0].green_limit) || (data[0].yellow_limit) || (data[0].red_limit)) {
+                    configuration["series"][0]["columns"] = {
+                        "adapter": {
+                            "fill": function (fill, target) {
+                                if (target.dataItem && (target.dataItem.valueY < 0)) {
+                                    return am4core.color('#EE4424');
+                                } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
+                                    return am4core.color('#EE4424');
+                                } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
+                                    return am4core.color('#F3BA1D');
+                                } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
+                                    return am4core.color('#A3C53A');
+                                } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
+                                    return am4core.color('#A3C53A');
+                                } else {
+                                    return fill;
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                    // configuration["series"][0]["bullets"] = {
+                    //     "adapter": {
+                    //         "fill": function (fill, target) {
+                    //             if (target.dataItem && (target.dataItem.valueY < 0)) {
+                    //                 return am4core.color('#EE4424');
+                    //             } else if (target.dataItem && (target.dataItem.valueY > 0 && target.dataItem.valueY < target.dataItem._dataContext.red_limit)) {
+                    //                 return am4core.color('#EE4424');
+                    //             } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.red_limit && target.dataItem.valueY < target.dataItem._dataContext.yellow_limit)) {
+                    //                 return am4core.color('#F3BA1D');
+                    //             } else if (target.dataItem && (target.dataItem.valueY >= target.dataItem._dataContext.yellow_limit && target.dataItem.valueY < target.dataItem._dataContext.green_limit)) {
+                    //                 return am4core.color('#A3C53A');
+                    //             } else if (target.dataItem && (target.dataItem.valueY > target.dataItem._dataContext.green_limit)) {
+                    //                 return am4core.color('#A3C53A');
+                    //             } else {
+                    //                 return fill;
+                    //             }
+                    //         }
+                    //     }
+                    // };
+                }
             }
-
             if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
                 WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
                 isDrillDownChart = true;
             }
-
             chart = am4core.createFromConfig(configuration, canvasElement, am4ChartType);
             chart.responsive.enabled = true;
             if (chart && data) {
