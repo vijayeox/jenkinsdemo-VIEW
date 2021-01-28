@@ -71,7 +71,7 @@ class Body extends React.Component {
 
   render() {
     let sectionContent;
-    console.log("Inside the body render");
+    // console.log("Inside the body render");
     switch (this.state.displaySection) {
       case SECTION_DATA_SOURCE:
         sectionContent = <DataSource args={this.core} setTitle={this.setTitle} />;
