@@ -730,7 +730,7 @@ class DashboardFilter extends React.Component {
                         </Form.Group>
                     }
                     {   // Rendered on dashboard Viewer
-                        this.props.filterMode === "APPLY" && (this.state.applyFilterOption.length !== 0 || this.props.applyFilterOption.length !== 0) &&
+                        (this.state.applyFilterOption.length !== 0 || this.props.applyFilterOption.length !== 0) &&
                         < Form.Group >
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select

@@ -18,7 +18,6 @@ am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
     // static render(element, widget, props,hasDashboardFilters,dashboardMode) {
-
     static render(renderpropertiesObject) {
         let { element, widget, props, hasDashboardFilters, dashboardEditMode } = { ...renderpropertiesObject }
         // am4core.options.queue = true //reduces load on the browser
@@ -30,7 +29,6 @@ class WidgetRenderer {
                 }
                 return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data, hasDashboardFilters, dashboardEditMode, widget);
                 break;
-
             case 'amCharts':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected chart widget tag "${widgetTagName}"`);
