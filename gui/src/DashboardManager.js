@@ -71,14 +71,15 @@ class DashboardManager extends React.Component {
     } else {
       this.fetchDashboards(false)
     }
-
     this.myRef.current.scrollTo(100, 100);
     if (this.filterRef.current && this.filterRef.current.state.applyFilterOption) {
       this.setState({ filterOptions: this.filterRef.current.state.applyFilterOption })
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.dashboardStack !== this.state.dashboardStack) {
+      // this.getDashboardHtmlDataByUuid(this.props.uuid)
       // console.log(this.state.dashboardStack)
     }
   }
@@ -271,7 +272,7 @@ class DashboardManager extends React.Component {
       dashboardStack[dashboardStack.length - 1]["drilldownDashboardFilter"] = preapredExtractedFilterValue
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filter
       dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterOptions
-    } else  {
+    } else {
       dashboardStack = [...this.state.dashboardStack]
       dashboardStack[dashboardStack.length - 1]["filterConfiguration"] = filter
       // dashboardStack[dashboardStack.length - 1]["filterOptions"] = filterOptions
@@ -380,6 +381,14 @@ class DashboardManager extends React.Component {
     }
     dashboardStack.push({ data: value, drilldownDashboardFilter: preapredExtractedFilterValue, filterConfiguration: dashboardFilter })
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack, loadDefaultFilters: true })
+  }
+
+  refreshDashboard() {
+    let dashName = {}
+    dashName['value'] = JSON.stringify(this.state.inputs.dashname)
+    dashName['label'] = this.state.inputs.dashname.name
+    dashName['key'] = this.state.inputs.dashname.uuid
+    this.handleChange(dashName, "dashname")
   }
 
   rollupToDashboard() {
@@ -537,6 +546,11 @@ class DashboardManager extends React.Component {
                           containsFilter &&
                           <Button onClick={() => this.showFilter()} title="Filter OI">
                             <i className="fa fa-filter" aria-hidden="true"></i>
+                          </Button>
+                        }
+                        {
+                          <Button onClick={() => this.refreshDashboard()} title="Refresh OI">
+                            <i className="fa fa-refresh" aria-hidden="true"></i>
                           </Button>
                         }
                         {/* <ReactToPrint
