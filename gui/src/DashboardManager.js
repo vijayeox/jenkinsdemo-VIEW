@@ -383,13 +383,13 @@ class DashboardManager extends React.Component {
     this.setState({ inputs: inputs, uuid: value["uuid"], filterConfiguration: dashboardFilter, showFilter: false, drilldownDashboardFilter: event.drilldownDashboardFilter, dashboardStack: dashboardStack, loadDefaultFilters: true })
   }
 
-  refreshDashboard() {
-    let dashName = {}
-    dashName['value'] = JSON.stringify(this.state.inputs.dashname)
-    dashName['label'] = this.state.inputs.dashname.name
-    dashName['key'] = this.state.inputs.dashname.uuid
-    this.handleChange(dashName, "dashname")
-  }
+  // refreshDashboard() {
+  //   let dashName = {}
+  //   dashName['value'] = JSON.stringify(this.state.inputs.dashname)
+  //   dashName['label'] = this.state.inputs.dashname.name
+  //   dashName['key'] = this.state.inputs.dashname.uuid
+  //   this.handleChange(dashName, "dashname")
+  // }
 
   rollupToDashboard() {
     let stack = [...this.state.dashboardStack]
@@ -415,7 +415,6 @@ class DashboardManager extends React.Component {
         appliedFilters = replaceCommonFilters([...this.state.dashboardStack[this.state.dashboardStack.length - 2][property]], [...this.state[property]], property)
         // appliedFilters.push(...this.state.dashboardStack[this.state.dashboardStack.length - 2][property])
         // appliedFilters.push(...this.state[property])
-
         return appliedFilters
       }
       else
@@ -548,11 +547,11 @@ class DashboardManager extends React.Component {
                             <i className="fa fa-filter" aria-hidden="true"></i>
                           </Button>
                         }
-                        {
+                        {/* {
                           <Button onClick={() => this.refreshDashboard()} title="Refresh OI">
                             <i className="fa fa-refresh" aria-hidden="true"></i>
                           </Button>
-                        }
+                        } */}
                         {/* <ReactToPrint
                           trigger={() => {
                             return <Button title="Print OI">
