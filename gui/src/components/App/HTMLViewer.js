@@ -34,6 +34,14 @@ class HTMLViewer extends React.Component {
       dataReady: this.props.fileId ? false : true,
       dataReady: this.props.url ? false : true
     };
+    var that = this;
+    this.observer = new MutationObserver(function(mutationsList){
+        mutationsList.forEach((mutation,key) => {
+          if (mutation.attributeName === 'class' && mutation.target.classList.contains('page-active') && (key == 0)) {
+            that.updateGraph();
+          }
+        });
+    });
   }
   generateUUID() { // Public Domain/MIT
     let d = new Date().getTime();//Timestamp
@@ -215,6 +223,10 @@ class HTMLViewer extends React.Component {
     />);
     this.setState({ outputHtml: rawHTML,dataReady: true },()=> {
       that.updateGraph();
+      var viewerElement = document.getElementById(this.fileDivID);
+      if(viewerElement && viewerElement.parentNode && viewerElement.parentNode.parentNode){
+        that.observer.observe(viewerElement.parentNode.parentNode, { attributes: true });
+      }
     });
   }
   getXrefFields(content){
@@ -278,8 +290,7 @@ updateGraph =  async(filterParams) => {
             console.error('Could not load widget.');
             console.error(response);
             errorFound = true;
-          }
-          else {
+          } else {
             //dispose if widget exists
             let hasDashboardFilters = that.state.preparedDashboardFilter ? true : false;
             let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
