@@ -313,7 +313,7 @@ getElementInsideElement(baseElement, wantedElementID) {
     const { expanded, selected } = this.state;
     return (
       <div id={this.appNavigationDiv} className="Navigation">
-        <div className={this.breadcrumbDiv} id={this.breadcrumbDiv}>
+        <div className={this.breadcrumbDiv + " breadcrumbHearder"} id={this.breadcrumbDiv}>
           {this.state.pages.length > 0 ? (
             <div className="row">
             <div className="breadcrumbs col-md-9">{this.renderBreadcrumbs()}</div><div className="col-md-3 customActions" id="customActions">{this.state.customActions}</div>
