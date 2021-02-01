@@ -715,8 +715,8 @@ class DashboardFilter extends React.Component {
                         />
                     })
                     }
-                    {   // Rendered on dashboard Edtior
-                        this.props.filterMode === "CREATE" &&
+                    {(this.props.filterMode === "CREATE") ?
+                        // Rendered on dashboard Edtior
                         <Form.Group>
                             <Form.Label> Choose/Create Filters </Form.Label>
                             <Select
@@ -728,9 +728,9 @@ class DashboardFilter extends React.Component {
                                 options={this.state.createFilterOption}
                             />
                         </Form.Group>
-                    }
-                    {   // Rendered on dashboard Viewer
-                        this.props.filterMode === "APPLY" && (this.state.applyFilterOption.length !== 0 || this.props.applyFilterOption.length !== 0) &&
+                        :
+                        // Rendered on dashboard Viewer
+                        (this.state.applyFilterOption.length !== 0) &&
                         <Form.Group>
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select
