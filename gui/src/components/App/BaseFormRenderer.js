@@ -540,10 +540,10 @@ class BaseFormRenderer extends React.Component {
                     });
                     return response;
                 } else {
-                    if (response.errors) {
-                        await that.storeError(data, response.errors, "pipeline");
+                    if (response.status == 'error') {
+                        await that.storeError(data, response, "pipeline");
                         that.showFormLoader(false, 0);
-                        that.notif.current.notify("Error", response.errors[0].message, "danger");
+                        that.notif.current.notify("Error", response.message, "danger");
                         return response;
                     } else {
                         await that.storeCache(data);
