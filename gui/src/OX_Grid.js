@@ -359,6 +359,16 @@ handleContextMenuOpen = (e, dataItem) => {
             }}
             jsx={this.props.gridToolbar}
           />
+          {/* {this.props.refreshButton ? (
+            <abbr
+              title="Refresh"
+              style={{ right: "10px", float: "right", paddingLeft: "15px" }}
+            >
+              <Button primary={true} onClick={() => this.refreshHandler()}>
+                <i className="far fa-redo manageIcons"></i>
+              </Button>
+            </abbr>
+          ) : null} */}
         </div>
       );
     } else if (this.props.gridToolbar) {
@@ -786,7 +796,7 @@ handleOnSelect = (e) => {
 
   render() {
     return (
-      <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%" }} className={ "GridCustomStyle " + (this.props.className ? this.props.className : "")} >
+      <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%", float:"left" }} className={ "GridCustomStyle " + (this.props.className ? this.props.className : "")} >
       <Popup offset={this.offset} show={this.state.contextMenuOpen} open={this.onPopupOpen} popupClass={'popup-content'} >
           <div onFocus={this.onFocusHandler} onBlur={this.onBlurHandler} tabIndex={-1} ref={el => (this.menuWrapperRef = el)} >
             <Menu vertical={true} style={{ display: 'inline-block' }} onSelect={this.handleOnSelect}>

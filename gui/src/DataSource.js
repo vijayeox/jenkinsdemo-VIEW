@@ -28,6 +28,7 @@ class DataSource extends React.Component {
     //set switch respect to activated and deactivated datasource
     this.setState({ checked: this.checkedList })
   }
+
   handleSwitch(checked, event, id) {
     let toggleList = { ...this.state.checked }
     toggleList[id] = checked
@@ -44,7 +45,6 @@ class DataSource extends React.Component {
   }
 
   renderButtons(e, action) {
-
     var actionButtons = [];
     Object.keys(action).map(function (key, index) {
       var string = this.replaceParams(action[key].rule, e);
@@ -52,15 +52,12 @@ class DataSource extends React.Component {
       var variant = "primary"
       if (action[key].name === "Activate") {
         variant = "success"
-      }
-      else if (action[key].name === "Delete") {
+      } else if (action[key].name === "Delete") {
         variant = "danger"
-      }
-      else if (action[key].name === "toggleActivate") {
+      } else if (action[key].name === "toggleActivate") {
         this.checkedList[e.name] = showButton //check if the datasource is deleted or not
         showButton = true   //always show the button
-      }
-      else {
+      } else {
         variant = "primary"
       }
       var buttonStyles = action[key].icon
@@ -100,16 +97,16 @@ class DataSource extends React.Component {
           actionButtons.push(
             <abbr title={action[key].name} key={index}>
               <Button
-                key={"manage"+action[key].name}
+                key={"manage" + action[key].name}
                 className=" btn manage-btn k-grid-edit-command"
                 variant={variant}
                 onClick={() => this.buttonAction(action[key], e)}
                 style={buttonStyles}
               >
                 {
-                 action[key].icon ? 
-                (<i className={action[key].icon + " manageIcons"}></i>) 
-                : (action[key].name)}
+                  action[key].icon ?
+                    (<i className={action[key].icon + " manageIcons"}></i>)
+                    : (action[key].name)}
               </Button>
             </abbr>
           )
@@ -128,7 +125,6 @@ class DataSource extends React.Component {
       </Button>
     );
   };
-
 
   replaceParams(route, params) {
     if (!params) {
@@ -165,6 +161,13 @@ class DataSource extends React.Component {
   render() {
     return (
       <div className="data-source">
+        <Button
+          ref={this.create}
+          style={{ right: "10px", float: "left", marginBottom: "10px" }}
+          onClick={() => this.buttonAction({ name: "Create" })}
+        >
+          <i className="fa fa-plus" aria-hidden="true"></i> {"Create"}
+        </Button>
         <Notification ref={this.notif} />
         <OX_Grid
           ref={this.refresh}
@@ -173,6 +176,7 @@ class DataSource extends React.Component {
           filterable={true}
           reorderable={true}
           sortable={true}
+          style={{ float: "left" }}
           pageable={true}
           columnConfig={[
             {
@@ -199,19 +203,19 @@ class DataSource extends React.Component {
             })
           }
         />
-          {
+        {
           this.state.showModal &&
-        <DataSourceModal
-          osjsCore={this.core}
-          modalType={this.state.modalType}
-          show={this.state.showModal}
-          onHide={() => this.setState({ showModal: false })}
-          content={this.state.modalContent}
-          handleChange={(e) => this.handleChange(e)}
-          notification={this.notif}
-          refreshGrid={this.refresh}
-        />
-          }
+          <DataSourceModal
+            osjsCore={this.core}
+            modalType={this.state.modalType}
+            show={this.state.showModal}
+            onHide={() => this.setState({ showModal: false })}
+            content={this.state.modalContent}
+            handleChange={(e) => this.handleChange(e)}
+            notification={this.notif}
+            refreshGrid={this.refresh}
+          />
+        }
       </div>
     );
   }
