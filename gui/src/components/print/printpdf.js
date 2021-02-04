@@ -1,30 +1,28 @@
 import React from "react";
 import { Button } from "@progress/kendo-react-buttons";
+import html2canvas from 'html2canvas';
 
 export default class PrintPdf extends React.Component {
   constructor(props) {
       super(props);
       this.core = this.props.osjsCore;
-      this.profileAdapter = this.core.make("oxzion/profile");
-      this.profile = this.profileAdapter.get().key;
-      this.appId = this.props.appId;
       this.loader = this.core.make("oxzion/splash");
-      this.state = false;
+      this.state = {showImages : true, 
+                    pageFormat : 'portrait'}};
   }
-    //TODO 
-  // HTMLElement.prototype.removeClass = function(remove) {
-  //       var newClassName = "";
-  //       var i;
-  //       var classes = this.className.split(" ");
-  //       for(i = 0; i < classes.length; i++) {
-  //           if(classes[i] !== remove) {
-  //               newClassName += classes[i] + " ";
-  //           }
-  //       }
-  //       this.className = newClassName;
-  //   }
+  removeClass(ele, remove) {
+        var newClassName = "";
+        var i;
+        var classes = ele.className.split(" ");
+        for(i = 0; i < classes.length; i++) {
+            if(classes[i] !== remove) {
+                newClassName += classes[i] + " ";
+            }
+        }
+        ele.className = newClassName;
+    }
 
-  getOrigin(url) {
+    getOrigin(url) {
     var link = document.createElement("a");
     link.href = url;
         link.href = link.href; // IE9, LOL! - http://jsfiddle.net/niklasvh/2e48b/
@@ -36,9 +34,8 @@ export default class PrintPdf extends React.Component {
     }
 
     toggleShowImages(){
-        var object = document.getElementById('showImg');
-        object.checked = !object.checked;
-        this.processPdf(null, object.checked);
+        this.state.showImages = !this.state.showImages;
+        this.processPdf(null, this.state.showImages);
     }
     handleFormatSelection(selectedFormat){
         var object = document.getElementById(selectedFormat);
@@ -119,7 +116,7 @@ export default class PrintPdf extends React.Component {
             this.resetFrameSrc();
         }
         if(iframe.src && iframe.src != 'about:blank'){
-            iframe.removeClass('hide');
+            removeClass(iframe, 'hide');
             return;
         }
         selectedTab = tab;
@@ -249,7 +246,7 @@ export default class PrintPdf extends React.Component {
                         break;
                     }
                     this.loader.destroy();
-                    iframe.removeClass("hide");
+                    removeClass(iframe, "hide");
                     iframe.src = output;
                 }
             });
