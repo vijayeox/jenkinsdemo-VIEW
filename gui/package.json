@@ -65,6 +65,8 @@
         "react-bootstrap": "^1.0.0",
         "react-datepicker": "^2.14.1",
         "react-flippy": "^0.1.5",
+        "react-iframe": "^1.8.0",
+        "jspdf": "2.3.0",
         "react-jsx-parser": "1.25.1",
         "react-loader-spinner": "^3.1.14",
         "react-mentions": "^4.0.2",
