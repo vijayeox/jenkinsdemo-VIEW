@@ -172,14 +172,16 @@ export class DataLoader extends React.Component {
     this.props.columnConfig.map((ColumnItem) => {
       if (ColumnItem.filterFormat && gridConfig.filter) {
         gridConfig.filter.filters.map((filterItem1, i) => {
-          if (filterItem1.field == ColumnItem.field) {
-            var result = moment(filterItem1.value).format(
-              ColumnItem.filterFormat
-            );
-            if (filterItem1.value && result != "Invalid date") {
-              gridConfig.filter.filters[i].value = result;
+          filterItem1.filters.map((filterItems1, j) => {
+            if (filterItems1.field == ColumnItem.field) {
+              var result = moment(filterItems1.value).format(
+                ColumnItem.filterFormat
+              );
+              if (filterItems1.value && result != "Invalid date") {
+                gridConfig.filter.filters[i].filters[j].value = result;
+              }
             }
-          }
+          });
         });
       }
       if (ColumnItem.multiFieldFilter && gridConfig.filter) {
