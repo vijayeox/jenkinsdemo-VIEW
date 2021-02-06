@@ -3,31 +3,27 @@ import html2canvas from 'html2canvas';
 import Iframe from 'react-iframe';
 import $ from 'jquery';
 import { jsPDF } from 'jspdf';
+import * as KendoReactWindow from "@progress/kendo-react-dialogs";
+import "../App/Styles/pdfPrintStyles.scss";
 
 export default class PrintPdf extends React.Component {
   constructor(props) {
-      super(props);
-      this.core = this.props.osjsCore;
-      this.domElementId = this.props.idSelector;
-      this.cssClass = this.props.cssClass;
-      this.loader = this.core.make("oxzion/splash");
-      this.state = {showImages : true, 
-                    pageFormat : 'portrait',
-                    selectedFrame : undefined,
-                    includeImg : true,
-                    selectedTab : "",
-                    printMode: false
-            };}
-      removeClass(ele, remove) {
-        var newClassName = "";
-        var i;
-        var classes = ele.className.split(" ");
-        for(i = 0; i < classes.length; i++) {
-            if(classes[i] !== remove) {
-                newClassName += classes[i] + " ";
-            }
-        }
-        ele.className = newClassName;
+        super(props);
+        this.core = this.props.osjsCore;
+        this.domElementId = this.props.idSelector;
+        this.cssClass = this.props.cssClass;
+        this.loader = this.core.make("oxzion/splash");
+        this.state = {
+            showImages : true, 
+            pageFormat : 'portrait',
+            selectedFrame : undefined,
+            includeImg : true,
+            selectedTab : "",
+            printMode: false
+        };
+    }
+    componentDidMount(){
+        this.processPdf();
     }
 
     getOrigin(url) {
@@ -42,13 +38,16 @@ export default class PrintPdf extends React.Component {
     }
 
     toggleShowImages(){
-        this.state.showImages = !this.state.showImages;
-        this.processPdf(null, this.state.showImages);
+        this.setState({showImages: !this.state.showImages}, () => {
+            this.processPdf();
+        });
     }
     handleFormatSelection(selectedFormat){
         var object = document.getElementById(selectedFormat);
         object.checked = true;
-        this.processPdf(selectedFormat);
+        this.setState({pageFormat:selectedFormat}, () => {
+            this.processPdf();
+        });
     }
 
     getSelectedTab(){
@@ -100,39 +99,41 @@ export default class PrintPdf extends React.Component {
         return window.URL.createObjectURL(blob);
     }
 
-    processPdf(selectedFormat, showImages, fileType){
+    processPdf(fileType){
         if (window.navigator && window.navigator.msSaveOrOpenBlob) {
             return;            
         }
-
         if(fileType == undefined){
             fileType = 'pdf';
         }
-        var format = selectedFormat ? selectedFormat : this.state.pageFormat;
+        var format = this.state.pageFormat;
         // format = selectedFormat;
-        var includeImg = showImages != null ? showImages : this.state.includeImg;
+        var includeImg = this.state.includeImg;
         var ele = document.getElementById(this.domElementId);
         var output;
         window.scrollTo(0,0);
-        var iframe = document.getElementById('pdf-'+format+"-"+(includeImg ? 'img' : 'no-img'));
-        if(this.state.selectedFrame){
-            this.state.selectedFrame.className += "hide";
-        }
+        var iframe = document.getElementById('printIframe');
+        console.log(iframe);
+        // if(this.state.selectedFrame){
+        //     iframe.classList.add("hide");
+        //     iframe.style.removeProperty('display');
+        // }
         this.state.selectedFrame = iframe;
         var tab = this.getSelectedTab();
         if(tab != this.state.selectedTab){
             this.resetFrameSrc();
         }
-        if(iframe.src && iframe.src != 'about:blank'){
-            this.removeClass(iframe, 'hide');
-            return;
-        }
+        // if(iframe.src && iframe.src != 'about:blank'){
+        //     iframe.classList.remove("hide");
+        //     return;
+        // }
         this.state.selectedTab = tab;
-        this.loader.show();
-        if(iframe.className.indexOf('hide') == -1){
-            iframe.className += "hide";
-        }
-        this.loader.destroy();
+        // this.loader.show();
+        // if(iframe.classList.contains('hide')){
+        //     iframe.classList.add("hide");
+        //     iframe.style.removeProperty('display');
+        // }
+        // this.loader.destroy();
         var pageWidth = 900;
         var pageHeight = 1200;
         var pageWidthInPts = 595; //8.5" x 11" in pts (in*72)
@@ -253,7 +254,6 @@ export default class PrintPdf extends React.Component {
                         break;
                     }
                     that.loader.destroy();
-                    that.removeClass(iframe, "hide");
                     iframe.src = output;
                 });            
 }
@@ -265,26 +265,21 @@ displayContent(){
     },100);
 }
 render() {
-    return (<>{ !this.state.printMode ? (
-            <div className={this.cssClass} onClick={() => this.displayContent()}><i className="fa fa-print"/></div>
-        ) : (
-            <div style={{zIndex: '15000', width:'70%', height:'80'}}>
-        <div className="portlet box portletcolor">
-        <div className="portlet-title modal-header">
-        <div className="actions">
-        <button className="btn btn-icon-only btn-circle red" title="Close" data-dismiss="modal" aria-hidden="true"></button>
-        </div>
-        </div>
-
-        <div id="print-controls" className="details_block col-md-12 ">
-        <input type="radio" name="format" id="portrait" className="bg-radio" onClick={() => this.processPdf("portrait")} value="portrait" defaultChecked/>
+    return (<>
+        <KendoReactWindow.Window onClose={this.props.cancel}>
+            <div className="printWindow">
+        <div id="print-controls">
+        <input type="radio" name="format" id="portrait" className="bg-radio" onClick={() => this.handleFormatSelection('portrait')} value="portrait" defaultChecked/>
         <label className="format-label" onClick={() => this.handleFormatSelection('portrait')}>Portrait</label>
-        <input type="radio" name="format" id="landscape" className="bg-radio" onClick={() => this.processPdf("landscape")} value="landscape"/>
+        <input type="radio" name="format" id="landscape" className="bg-radio" onClick={() => this.handleFormatSelection('landscape')} value="landscape"/>
         <label className="format-label" onClick={() => this.handleFormatSelection('landscape')}>Landscape</label>
-        <input type="checkbox" name="showImg" id="showImg" className="bg-check" onClick={() => this.processPdf(null, this.checked)} defaultChecked />
+        <input type="checkbox" name="showImg" id="showImg" className="bg-check" onClick={() => this.processPdf()} defaultChecked />
         <label className="format-label" onClick={() => this.toggleShowImages()}>Show Images</label>
+        <div style={{float: "right"}}>
+        <button  type="button" className="btn btn-danger" onClick={this.props.cancel} >
+                    <i className="fa fa-close"></i>
+                </button></div>
         </div>
-        <div className="portlet-body">
         <div id="loading-animation" className="blockUI blockMsg blockElement loadingdivcss hide">
         <div className="loading-message ">
         <div className="block-spinner-bar">
@@ -298,14 +293,9 @@ render() {
         Your browser does not support this functionality! <br/> 
         Please use Google Chrome or Firefox.
         </div> */}
-        <Iframe url ="" id="pdf-portrait-img" width="100%" height="400px" className="hide"/>
-        <Iframe url ="" id="pdf-landscape-img" width="100%" height="400px" className="hide"/>
-        <Iframe url ="" id="pdf-landscape-no-img" width="100%" height="400px" className="hide"/>
+        <Iframe id="printIframe" className="iframePortlet" />
         </div>
-        </div>
-        </div>
-        )}</>
-
+      </KendoReactWindow.Window></>
         );
     }
 }
