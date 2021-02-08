@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 import Iframe from 'react-iframe';
 import $ from 'jquery';
 import { jsPDF } from 'jspdf';
+import Canvg from 'canvg';
 import * as KendoReactWindow from "@progress/kendo-react-dialogs";
 import "../App/Styles/pdfPrintStyles.scss";
 
@@ -194,9 +195,7 @@ export default class PrintPdf extends React.Component {
                     var svg = parentNode.innerHTML;
 
                     var canvas = document.createElement('canvas');
-
-                    canvg(canvas, svg);
-
+                    Canvg.from(canvas, svg);
                     parentNode.insertBefore(canvas, node.nextSibling);
                     parentNode.removeChild(node);
 
