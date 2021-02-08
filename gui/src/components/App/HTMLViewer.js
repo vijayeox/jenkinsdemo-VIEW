@@ -31,7 +31,7 @@ class HTMLViewer extends React.Component {
       fileId: this.props.fileId,
       widgetCounter: 0,
       preparedDashboardFilter: null,
-      dataReady: this.props.fileId ? false : true,
+      dataReady: this.props.fileId ? (this.props.url ? false : true) : true,
       dataReady: this.props.url ? false : true
     };
     var that = this;
@@ -213,8 +213,8 @@ class HTMLViewer extends React.Component {
     var rawHTML = ReactDOMServer.renderToString(<JsxParser autoCloseVoidElements className ={this.props.className}
       jsx={this.state.content}
       bindings={{
-        data: this.statefileData ? this.statefileData : {},
-        item: this.statefileData ? this.statefileData : {},
+        data: this.state.fileData ? this.state.fileData : {},
+        item: this.state.fileData ? this.state.fileData : {},
         moment: moment,
         formatDate: this.formatDate,
         formatDateWithoutTimezone: this.formatDateWithoutTimezone,
