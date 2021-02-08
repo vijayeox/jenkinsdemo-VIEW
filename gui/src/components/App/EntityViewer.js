@@ -3,6 +3,7 @@ import PageContent from "./PageContent";
 import TabSegment from "./TabSegment";
 import { Button, DropDownButton } from "@progress/kendo-react-buttons";
 import PrintPdf from "./../print/printpdf";
+import ActivityLog from "./ActivityLog";
 class EntityViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +18,7 @@ class EntityViewer extends React.Component {
       content: this.props.content,
       fileData: this.props.fileData,
       entityId: null,
+      showAuditLog: false,
       showPDF: false,
       dataReady: false,
       editButton: null,
@@ -45,6 +47,9 @@ class EntityViewer extends React.Component {
   callPrint(){
     this.setState({ showPDF: true });
   }
+  callAuditLog(){
+    this.setState({ showAuditLog: true });
+  }
   generateEditButton(enableComments){
     if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
       var fileId;
@@ -61,6 +66,7 @@ class EntityViewer extends React.Component {
       let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
       gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
       gridToolbarContent.push(<Button title={"Print"} className={"toolBarButton"} primary={true} onClick={(e) => this.callPrint()} ><i className={"fa fa-print"}></i></Button>);
+      gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
       if(enableComments != "0"){
         var commentPage = {title: "Comments",icon: "far fa-comment",pageContent: [{type:"Comment",fileId: fileId}]};
         gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentPage)} ><i className={"fa fa-comment"}></i></Button>);
@@ -117,6 +123,9 @@ class EntityViewer extends React.Component {
   closePDF = () => {
     this.setState({ showPDF: false });
   };
+  closeAuditLog = () => {
+    this.setState({ showAuditLog: false });
+  };
           
   render() {
     if ( this.state.dataReady) {
@@ -125,7 +134,13 @@ class EntityViewer extends React.Component {
           cancel={this.closePDF}
           idSelector={"tabpanel-"+this.filePanelUuid}
           osjsCore={this.core}
-          />: null}{this.state.content}</div>);
+          />: null}{this.state.showAuditLog ?
+            <ActivityLog
+            cancel={this.closeAuditLog}
+            appId={this.appId}
+            fileId={this.fileId}
+            core={this.core}
+            />: null}{this.state.content}</div>);
       } else {
         return <div></div>;
       }
