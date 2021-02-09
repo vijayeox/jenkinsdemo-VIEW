@@ -172,16 +172,12 @@ export class DataLoader extends React.Component {
     this.props.columnConfig.map((ColumnItem) => {
       if (ColumnItem.filterFormat && gridConfig.filter) {
         gridConfig.filter.filters.map((filterItem1, i) => {
-          filterItem1.filters.map((filterItems1, j) => {
-            if (filterItems1.field == ColumnItem.field) {
-              var result = moment(filterItems1.value).format(
-                ColumnItem.filterFormat
-              );
-              if (filterItems1.value && result != "Invalid date") {
-                gridConfig.filter.filters[i].filters[j].value = result;
-              }
-            }
+          filterItem1.filters && filterItem1.filters.map((filterItems1, j) => {
+              this.processFilters(filterItems1,ColumnItem,gridConfig,i,j,filterItem1);
+              console.log(gridConfig);
           });
+          filterItem1 && this.processFilters(filterItem1,ColumnItem,gridConfig,i);     
+          console.log(gridConfig);    
         });
       }
       if (ColumnItem.multiFieldFilter && gridConfig.filter) {
@@ -225,6 +221,16 @@ export class DataLoader extends React.Component {
     this.triggerGetCall();
   };
 
+  processFilters = (filterItem, ColumnItem, gridConfig, i ,j,filterItem1) => {
+    if (filterItem.field == ColumnItem.field) {
+      var result = moment(filterItem.value).format(
+        ColumnItem.filterFormat
+      );
+      if (filterItem.value && result != "Invalid date") {
+        filterItem1.filters ? gridConfig.filter.filters[i].filters[j].value = result : gridConfig.filter.filters[i].value = result;
+      }
+    }
+  }
   render() {
     if (this.lastSuccess) {
       this.timeout ? clearTimeout(this.timeout) : null;
