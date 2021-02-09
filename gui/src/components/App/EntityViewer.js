@@ -104,7 +104,7 @@ class EntityViewer extends React.Component {
   constructTabs(page,enableDocuments){
     var tabs = [];
     var that = this;
-    var content = page.content;
+    var content = page.content ? page.content : null;
     var finalContentArray = [];
     if(content && content.length > 0){
       content.map(function (key, index) {
