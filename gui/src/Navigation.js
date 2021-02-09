@@ -4,6 +4,7 @@ import FormRender from "./components/App/FormRender";
 import { createBrowserHistory } from "history";
 import { Chip } from "@progress/kendo-react-buttons";
 import Requests from "./Requests";
+import Notification from "./Notification";
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Navigation extends React.Component {
     this.appId = this.props.appId;
     this.proc = this.props.proc;
     this.params = this.props.params;
+    this.notif = React.createRef();
     this.pageClass = this.appId + "_page";
     this.pageDiv = this.appId + "_pages";
     this.appNavigationDiv = "navigation_" + this.appId;
@@ -186,9 +188,11 @@ class Navigation extends React.Component {
     if (prevProps.selected != this.props.selected) {
       var item = this.props.selected;
       if (item && item.page_id) {
+        this.setState({ pages: [],selected:this.props.selected });
         var page = [{ pageId: item.page_id, title: item.name }];
-        this.setState({ pages: page });
-        this.pageActive(item.page_id);
+        this.setState({ pages: page },()=>{
+          this.pageActive(item.page_id);
+        });
       }
     }
   }
@@ -298,6 +302,7 @@ getElementInsideElement(baseElement, wantedElementID) {
               core={this.core}
               fileId={item.fileId}
               pageId={item.pageId}
+              notif={this.notif}
               params={item.params}
               pageContent={item.pageContent}
               currentRow={item.currentRow}
@@ -313,7 +318,8 @@ getElementInsideElement(baseElement, wantedElementID) {
     const { expanded, selected } = this.state;
     return (
       <div id={this.appNavigationDiv} className="Navigation">
-        <div className={this.breadcrumbDiv + " breadcrumbHearder"} id={this.breadcrumbDiv}>
+        <Notification ref={this.notif} />
+        <div className={this.breadcrumbDiv + " breadcrumbHeader"} id={this.breadcrumbDiv}>
           {this.state.pages.length > 0 ? (
             <div className="row">
             <div className="breadcrumbs col-md-9">{this.renderBreadcrumbs()}</div><div className="col-md-3 customActions" id="customActions">{this.state.customActions}</div>
@@ -329,6 +335,7 @@ getElementInsideElement(baseElement, wantedElementID) {
               <FormRender
                 core={this.core}
                 appId={this.props.appId}
+                notif={this.notif}
                 activityInstanceId={this.state.selected.activityInstanceId}
                 workflowInstanceId={this.state.selected.workflowInstanceId}
                 pipeline={this.state.selected.pipeline}
