@@ -609,7 +609,9 @@ generatePDFTemplate(pageData) {
   );
 }
 onPopupOpen = (e,props) => {
-  this.menuWrapperRef.querySelector('[tabindex]').focus();
+  if(this.menuWrapperRef.querySelector('[tabindex]')){
+    this.menuWrapperRef.querySelector('[tabindex]').focus();
+  }
 };
 onFocusHandler = () => {
   clearTimeout(this.blurTimeoutRef);
