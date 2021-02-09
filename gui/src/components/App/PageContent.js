@@ -30,7 +30,7 @@ class PageContent extends React.Component {
     this.pageId = this.props.pageId;
     this.contentRef = React.createRef();
     this.params = this.props.params;
-    this.notif = React.createRef();
+    this.notif = this.props.notif;
     this.userprofile = this.props.core.make("oxzion/profile").get().key;
     this.isTab = this.props.isTab;
     this.parentPage = this.props.parentPage ? this.props.parentPage : null;
@@ -180,44 +180,22 @@ class PageContent extends React.Component {
             if (response.status == "success") {
               this.loader.destroy();
               if (item.successMessage) {
-                Swal.fire({
-                  icon: "success",
-                  title: item.successMessage,
-                  showConfirmButton: true,
-                });
+                Swal.fire({ icon: "success", title: item.successMessage, showConfirmButton: true });
               }
-              item.params.successNotification
-                ? that.notif.current.notify(
-                    "Success",
-                    item.params.successNotification.length > 0
-                      ? item.params.successNotification
-                      : "Update Completed",
-                    "success"
-                  )
-                : null;
+              item.params.successNotification ? that.notif.current.notify("Success", item.params.successNotification.length > 0 ? item.params.successNotification : "Update Completed", "success") : null;
               this.postSubmitCallback();
               this.setState({ showLoader: false });
             } else {
               this.loader.destroy();
-              Swal.fire({
-                icon: "error",
-                title: response.message,
-                showConfirmButton: true,
-              });
-              that.setState({
-                pageContent: pageDetails,
-                showLoader: false,
-              });
+              Swal.fire({ icon: "error", title: response.message, showConfirmButton: true });
+              that.setState({ pageContent: pageDetails, showLoader: false });
               return false;
             }
           } else {
             if (item.params && item.params.page_id) {
               pageId = item.params.page_id;
               if (item.params.params) {
-                var newParams = ParameterHandler.replaceParams(this.appId,
-                  item.params.params,
-                  mergeRowData
-                );
+                var newParams = ParameterHandler.replaceParams(this.appId, item.params.params, mergeRowData);
                 mergeRowData = { ...newParams, ...mergeRowData };
               }
               copyPageContent = [];
@@ -228,16 +206,7 @@ class PageContent extends React.Component {
             }
           }
         });
-        action.updateOnly
-          ? null
-          : PageNavigation.loadPage(this.appId,this.pageId,
-              pageId,
-              action.icon,
-              true,
-              action.name,
-              mergeRowData,
-              copyPageContent
-            );
+        action.updateOnly ? null : PageNavigation.loadPage(this.appId,this.pageId, pageId, action.icon, true, action.name, mergeRowData, copyPageContent);
       }
     }
   }
@@ -250,45 +219,26 @@ class PageContent extends React.Component {
       try {
         if (details.params.postData) {
           Object.keys(details.params.postData).map((i) => {
-            postData[i] = ParameterHandler.replaceParams(that.appId,
-              details.params.postData[i],
-              rowData
-            );
+            postData[i] = ParameterHandler.replaceParams(that.appId, details.params.postData[i], rowData );
           });
         } else {
           Object.keys(details.params).map((i) => {
-            postData[i] = ParameterHandler.replaceParams(that.appId,
-              details.params[i],
-              rowData
-            );
+            postData[i] = ParameterHandler.replaceParams(that.appId, details.params[i], rowData );
           });
           postData = rowData;
         }
       } catch (error) {
         postData = rowData;
       }
-      ParameterHandler.updateCall(
-          this.core,this.appId,
-          queryRoute,
-          postData,
-          details.params.disableAppId,
-          details.method
-        )
-        .then((response) => {
+      ParameterHandler.updateCall( this.core,this.appId, queryRoute, postData, details.params.disableAppId, details.method ).then((response) => {
           if (details.params.downloadFile && response.status == 200) {
-              ParameterHandler.downloadFile(response).then(
-                (result) => {
-                  that.setState({
-                    showLoader: false,
-                  });
+              ParameterHandler.downloadFile(response).then((result) => {
+                  that.setState({ showLoader: false });
                   var downloadStatus = result ? "success" : "failed";
                   resolve({ status: downloadStatus });
-                }
-              );
+                });
           } else {
-            that.setState({
-              showLoader: false,
-            });
+            that.setState({ showLoader: false });
             resolve(response);
           }
         });
@@ -379,6 +329,7 @@ class PageContent extends React.Component {
             content={item.content}
             fileId={fileId}
             formId={item.form_id}
+            notif={this.notif}
             page={item.page}
             pipeline={item.pipeline}
             workflowId={workflowId}
@@ -475,7 +426,7 @@ class PageContent extends React.Component {
             reorderable={reorderable}
             parentData={this.state.currentRow}
             pageId={this.pageId}
-            notif={this.state.notif}
+            notif={this.notif}
             urlPostParams={urlPostParams}
             gridDefaultFilters={
               itemContent.defaultFilters
@@ -510,6 +461,7 @@ class PageContent extends React.Component {
           <SearchPage
             key={i}
             core={this.core}
+            notif={this.notif}
             content={item.content}
             filterColumns={item.content.filterColumns}
             appId={this.appId}
@@ -543,6 +495,7 @@ class PageContent extends React.Component {
             ref={this.contentRef}
             core={this.core}
             pageId={this.state.pageId}
+            notif={this.notif}
             currentRow={this.state.currentRow}
             {...item}
           />
@@ -567,6 +520,7 @@ class PageContent extends React.Component {
             key={i}
             core={this.core}
             url={url}
+            notif={this.notif}
             fileId={fileId}
           />
         );
@@ -576,6 +530,7 @@ class PageContent extends React.Component {
             appId={this.appId}
             core={this.core}
             appId={this.appId}
+            notif={this.notif}
             proc={this.props.proc}
             tabs={item.content.tabs}
             pageId={this.state.pageId}
@@ -588,6 +543,7 @@ class PageContent extends React.Component {
             appId={this.appId}
             key={i}
             core={this.core}
+            notif={this.notif}
             content={item.content}
             proc={this.proc}
           />
@@ -599,6 +555,7 @@ class PageContent extends React.Component {
             appId={this.appId}
             uuid={uuid}
             content={item.content}
+            notif={this.notif}
             args={this.core}
             key={i}
             content={item.content}
@@ -619,6 +576,7 @@ class PageContent extends React.Component {
             isTab={this.isTab}
             parentPage={this.parentPage}
             app={this.props.appId}
+            notif={this.notif}
             currentRow={this.state.currentRow}
             pageId={item.page_id}
             core={this.core}
@@ -642,6 +600,7 @@ class PageContent extends React.Component {
             fileId={fileId}
             content={item.content ? item.content : ""}
             fileData={fileData}
+            notif={this.notif}
             className={item.className}
           />
         );
@@ -655,6 +614,7 @@ class PageContent extends React.Component {
             appId={this.appId}
             proc={this.props.proc}
             fileId={fileId}
+            notif={this.notif}
             fileData={this.state.currentRow}
             className={item.className}
           />
@@ -669,6 +629,7 @@ class PageContent extends React.Component {
               key={i}
               components={OxzionGUIComponents}
               appId={this.appId}
+              notif={this.notif}
               core={this.core}
               refresh={this.postSubmitCallback}
             ></this.externalComponent>
@@ -700,7 +661,6 @@ class PageContent extends React.Component {
       var pageRender = this.renderContent(this.state.pageContent);
       return (
         <div id={this.contentDivID} className="contentDiv">
-          <Notification ref={this.notif} />
           {pageRender}
         </div>
       );

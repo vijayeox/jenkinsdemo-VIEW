@@ -60,6 +60,18 @@
     background-color: #275262 !important;
     color: white;
   }
+  .formLoader{
+    position: absolute;
+    width: 100%;
+    z-index: 1232132132;
+    background: #ffffff8f;
+    margin: -5px;
+    justify-content: center;
+    display: flex;
+    flex-flow: column;
+    align-content: center;
+    align-items: center;
+  }
   .text-muted {
     color: #ddd;
   }

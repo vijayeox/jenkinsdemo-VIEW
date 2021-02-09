@@ -91,6 +91,7 @@ class Page extends React.Component {
           isTab={this.props.isTab}
           params={this.props.params}
           fileId={this.props.fileId}
+          notif={this.props.notif}
           parentPage={this.props.parentPage}
           proc={this.props.proc}
           pageContent={this.state.pageContent}
