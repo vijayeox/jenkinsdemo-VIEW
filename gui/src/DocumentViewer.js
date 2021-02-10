@@ -469,12 +469,16 @@ export default class DocumentViewer extends Component {
       return (
         <React.Fragment>
           {this.attachmentOperations(documentData, true, true, url)}
+          <div className="row">
+          <div className="col-md-12">
           <img
             onLoad={() => this.loader.destroy()}
             className="img-fluid"
             style={{ height: "100%" }}
             src={url}
           />
+          </div>
+          </div>
         </React.Fragment>
       );
     } else if (type == "mp4" || type == "avi") {
@@ -559,7 +563,11 @@ export default class DocumentViewer extends Component {
       return (
         <React.Fragment>
           {this.attachmentOperations(documentData, true, true, url)}
+          <div className="row">
+          <div className="col-md-12">
           <img className="img-fluid" style={{ height: "100%" }} src={url2} />
+          </div>
+          </div>
         </React.Fragment>
       );
     }
@@ -570,7 +578,7 @@ export default class DocumentViewer extends Component {
     if (this.state.apiCallStatus) {
       if (documentsList) {
         return (
-          <div className="docViewerComponent">
+          <div className="row docViewerComponent">
             <Notification ref={this.notif} />
             <div className="col-md-3 docListDiv">
               <Accordion defaultActiveKey={this.state.documentTypes[0]}>
