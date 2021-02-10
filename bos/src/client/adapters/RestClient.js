@@ -157,9 +157,9 @@ export class RestClientServiceProvider extends ServiceProvider {
 					body: JSON.stringify(parameters)
 				})
 				
-				if (resp.status >= 200 && resp.status < 300) {
+				if ((resp.status >= 200 && resp.status < 300) ||resp.status == 412 ) {
 					return resp.json();
-				} else {
+				}else {
 					this.errorMessage(resp.statusText);
 					// fall through to refresh handling
 				}
