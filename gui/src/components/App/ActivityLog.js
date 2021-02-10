@@ -15,7 +15,7 @@ class ActivityLog extends React.Component {
     this.resizable = false;
     this.sortable = true;
     this.api = "app/" + this.appId + "/file/"+this.fileId+"/audit";
-    var columnConfig = [{field:"version",title:"Version"},{field:"date_modified",title:"Performed On"},{field:"modifiedUser",title:"Modified By"},{field:"action",title:"Action Performed"}]
+    var columnConfig = [{field:"version",title:"Version"},{field:"file_date_modified",title:"Performed On"},{field:"modifiedUser",title:"Modified By"},{field:"action",title:"Action Performed"}]
     this.pageable = { buttonCount: 3, pageSizes: [10, 20, 50] };
     this.state = {
       columnConfig: columnConfig,
