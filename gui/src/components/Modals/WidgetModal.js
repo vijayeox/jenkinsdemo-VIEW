@@ -3,7 +3,6 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap'
 
 
 function WidgetModal(props) {
-
   const [input, setInput] = useState({})
   const allowedOperation = {
     ACTIVATE: "Activated",
@@ -25,7 +24,6 @@ function WidgetModal(props) {
 
 
   function notify(response, operation) {
-
     if (response.status == "success")
       props.notification.current.notify(
         "Widget " + operation,
@@ -41,9 +39,7 @@ function WidgetModal(props) {
     }
   }
 
-
   function widgetOperation(operation) {
-
     let helper = props.osjsCore.make("oxzion/restClient");
     let requestUrl = ""
     let method = ""
@@ -53,7 +49,6 @@ function WidgetModal(props) {
       formData["name"] = input["name"];
       formData["type"] = input["type"];
       formData["configuration"] = input["configuration"];
-
       if (operation === allowedOperation.EDIT || operation === allowedOperation.ACTIVATE) {
         //pass additional form inputs required for edit operation
         formData["uuid"] = props.content.uuid
@@ -61,13 +56,11 @@ function WidgetModal(props) {
         requestUrl = "analytics/widget/" + props.content.uuid;
         operation === "Activated" ? formData["isdeleted"] = "0" : null
         method = "put"
-      }
-      else {
+      } else {
         requestUrl = "analytics/widget";
         method = "filepost"
       }
-    }
-    else if (operation === allowedOperation.DELETE) {
+    } else if (operation === allowedOperation.DELETE) {
       requestUrl = "analytics/widget/" + props.content.uuid + "?version=" + props.content.version
       method = "delete"
     }
@@ -100,16 +93,13 @@ function WidgetModal(props) {
     //set to none if no content is changed else set to block
     Footer = (<Button variant="primary" onClick={() => widgetOperation("Edited")} >Save Changes</Button>)
     DisabledFields = false
-  }
-  else if (props.modalType === "Delete") {
+  } else if (props.modalType === "Delete") {
     Footer = (<Button variant="danger" onClick={() => widgetOperation("Deleted")}>Delete</Button>)
     DisabledFields = true
-  }
-  else if (props.modalType === "Create") {
+  } else if (props.modalType === "Create") {
     Footer = (<Button variant="primary" onClick={() => widgetOperation("Created")}>Create</Button>)
     DisabledFields = false
-  }
-  else if (props.modalType === "Activate") {
+  } else if (props.modalType === "Activate") {
     Footer = (<Button variant="success" onClick={() => widgetOperation("Activated")}>Activate</Button>)
     DisabledFields = true
   }

@@ -10,7 +10,7 @@ var ckeditorConfig = {
         dimensions: {
             begin: {
                 width: 300,
-                height: 200
+                height: 400
             },
             min: {
                 width: 100,
