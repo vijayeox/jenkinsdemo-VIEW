@@ -377,32 +377,24 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError();
                             });
                         return response;
                     } else {
                         if (response.errors) {
                             await this.storeError(data, response.errors, "pipeline");
                             that.showFormLoader(false, 0);
-                            this.notif.current.notify(
-                                "Error",
-                                response.errors[0].message,
-                                "danger"
-                            );
+                            that.handleError("Form Submission Failed");
                             return response;
                         } else {
                             await this.storeCache(data);
                             that.showFormLoader(false, 0);
-                            this.notif.current.notify(
-                                "Error",
-                                "Form Submission Failed",
-                                "danger"
-                            );
+                            that.handleError("Form Submission Failed");
                         }
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e);
+                    that.handleError();
                 });
         } else {
             let route = "";
@@ -473,7 +465,7 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError();
                             });
                         return response;
                     } else {
@@ -491,15 +483,11 @@ class FormRender extends React.Component {
                                         )
                                             .then((storeErrorResponse) => {
                                                 that.showFormLoader(false, 0);
-                                                this.notif.current.notify(
-                                                    "Error",
-                                                    "Form Submission Failed",
-                                                    "danger"
-                                                );
+                                                that.handleError("Form Submission Failed");
                                                 return storeErrorResponse;
                                             })
                                             .catch((e) => {
-                                                that.handleError(e);
+                                                that.handleError();
                                             });
                                     } else {
                                         that.showFormLoader(false, 0);
@@ -507,7 +495,7 @@ class FormRender extends React.Component {
                                     }
                                 })
                                 .catch((e) => {
-                                    that.handleError(e);
+                                    that.handleError();
                                 });
                         }
                     }
@@ -641,7 +629,7 @@ class FormRender extends React.Component {
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (
             this.state.workflowId &&
@@ -698,12 +686,12 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e, 'loadWorkflow');
+                                that.handleError(null, 'loadWorkflow');
                             });
                     });
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (
             this.state.activityInstanceId &&
@@ -760,12 +748,12 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e, 'loadWorkflow');
+                                that.handleError(null, 'loadWorkflow');
                             });
                     });
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (this.state.fileId) {
             this.getFileDataById()
@@ -792,12 +780,12 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e, 'loadWorkflow');
+                                that.handleError(null, 'loadWorkflow');
                             });
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (
             this.state.activityInstanceId &&
@@ -826,7 +814,7 @@ class FormRender extends React.Component {
                     }
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (this.state.formId) {
             this.getWorkflow()
@@ -869,13 +857,13 @@ class FormRender extends React.Component {
                                 }
                             })
                             .catch((e) => {
-                                that.handleError(e, 'loadWorkflow');
+                                that.handleError(null, 'loadWorkflow');
                             });
                     }
                     that.setState({ formDivID: "formio_" + that.state.formId });
                 })
                 .catch((e) => {
-                    that.handleError(e, 'loadWorkflow');
+                    that.handleError(null, 'loadWorkflow');
                 });
         } else if (this.state.instanceId) {
             this.getInstanceData().then((response) => {
@@ -1020,10 +1008,21 @@ class FormRender extends React.Component {
                                 if (response.status == "success") {
                                     next(null);
                                 } else {
-                                    if (that.props.route) {
-                                        next([response.message]);
+                                    if(response.message == "Errors"){
+                                        if(response.data){
+                                            var errorMsg = (response.data.errors) ? response.data.errors : null;
+                                            that.handleError(errorMsg); 
+                                            next(errorMsg);
+                                        }else{
+                                            that.handleError();  
+                                            next(null);
+                                        }
+                                    }else{
+                                        if (that.props.route) {
+                                            next([response.message]);
+                                        }
+                                        next([response.errors[0].message]);
                                     }
-                                    next([response.errors[0].message]);
                                 }
                             });
                     }
@@ -1170,7 +1169,7 @@ class FormRender extends React.Component {
                                                         }
                                                     })
                                                     .catch((e) => {
-                                                        that.handleError(e);
+                                                        that.handleError();
                                                     });
                                                 break;
                                             default:
@@ -1304,7 +1303,7 @@ class FormRender extends React.Component {
                                                 that.showFormLoader(false, 0);
                                             })
                                             .catch((e) => {
-                                                that.handleError(e);
+                                                that.handleError();
                                             });
                                     } else if (properties["sourceDataKey"]) {
                                         var paramData = {};
@@ -1349,7 +1348,7 @@ class FormRender extends React.Component {
                                                 that.showFormLoader(false, 0);
                                             })
                                             .catch((e) => {
-                                                that.handleError(e);
+                                                that.handleError();
                                             });
                                     } else {
                                         that
@@ -1373,7 +1372,7 @@ class FormRender extends React.Component {
                                                 }
                                             })
                                             .catch((e) => {
-                                                that.handleError(e);
+                                                that.handleError();
                                             });
                                     }
                                 }
@@ -1416,7 +1415,7 @@ class FormRender extends React.Component {
                                         }
                                     })
                                     .catch((e) => {
-                                        that.handleError(e);
+                                        that.handleError();
                                     });
                             }
                         }
@@ -1531,7 +1530,7 @@ class FormRender extends React.Component {
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e,null);
+                        that.handleError();
                     });
             }
             if (properties["target"]) {
@@ -1722,9 +1721,10 @@ class FormRender extends React.Component {
         }
     }
 
-    handleError(e, action) {
+    handleError(emsg, action) {
         this.showFormLoader(false, 0);
-        this.messageBox.show("Unexpected Error! Please contact support team", '', 'OK', false)
+        emsg = emsg ? emsg : "Unexpected Error! Please contact support team";
+        this.messageBox.show(emsg, '', 'OK', false)
             .then((response) => {
                 if (action) {
                     if (action == 'loadWorkflow') {
@@ -1765,7 +1765,7 @@ class FormRender extends React.Component {
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e, action);
+                        that.handleError(null, action);
                     });
             }
             if (properties["commands"]) {
@@ -1808,7 +1808,7 @@ class FormRender extends React.Component {
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e, action);
+                        that.handleError(null, action);
                     });
             }
             if (properties["payment_confirmation_page"]) {
@@ -1824,7 +1824,7 @@ class FormRender extends React.Component {
                         }
                     })
                     .catch((e) => {
-                        that.handleError(e);
+                        that.handleError();
                     });
                 var that = this;
                 form.element.removeEventListener(
@@ -1897,7 +1897,7 @@ class FormRender extends React.Component {
                                 that.showFormLoader(false, 0);
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError();
                             });
                     },
                     false
@@ -1931,7 +1931,7 @@ class FormRender extends React.Component {
                                 that.showFormLoader(false, 0);
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError();
                             });
                     },
                     false
@@ -1964,7 +1964,7 @@ class FormRender extends React.Component {
                                 that.showFormLoader(false, 0);
                             })
                             .catch((e) => {
-                                that.handleError(e);
+                                that.handleError();
                             });
                     },
                     false
@@ -2011,7 +2011,7 @@ class FormRender extends React.Component {
                 that.showFormLoader(false, 0);
             })
             .catch((e) => {
-                that.handleError(e);
+                that.handleError();
             });
     }
     parseResponseData = (data) => {
@@ -2175,7 +2175,7 @@ class FormRender extends React.Component {
                     }
                 })
                 .catch((e) => {
-                    this.handleError(e);
+                    this.handleError();
                 });
         }
     };
@@ -2225,7 +2225,7 @@ class FormRender extends React.Component {
                 }
             })
             .catch((e) => {
-                this.handleError(e);
+                this.handleError();
             });
     }
     async PushDataPOST(api, method, item, body) {
