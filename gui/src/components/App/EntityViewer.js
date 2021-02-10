@@ -51,7 +51,6 @@ class EntityViewer extends React.Component {
     this.setState({ showAuditLog: true });
   }
   generateEditButton(enableComments){
-    if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
       var fileId;
       let gridToolbarContent = [];
       var filePage;
@@ -62,9 +61,11 @@ class EntityViewer extends React.Component {
           fileId = this.state.fileId;
         }
       }
-      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:fileId}];
-      let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
-      gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+      if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
+        filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:fileId}];
+        let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
+        gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+      }
       gridToolbarContent.push(<Button title={"Print"} className={"toolBarButton"} primary={true} onClick={(e) => this.callPrint()} ><i className={"fa fa-print"}></i></Button>);
       gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
       if(enableComments != "0"){
@@ -76,7 +77,6 @@ class EntityViewer extends React.Component {
         bubbles: true,
       });
       document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
-    }
   }
     
   componentDidMount() {
