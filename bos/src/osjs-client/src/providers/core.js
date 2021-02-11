@@ -340,7 +340,9 @@ export default class CoreServiceProvider extends ServiceProvider {
 
     this.core.on('osjs/packages:metadata:changed', () => {
       this.core.make("oxzion/profile").update();
-      this.pm.init();
+      setTimeout(() => {
+        this.pm.init();
+      },1000);
     });
   }
 
