@@ -1,7 +1,7 @@
 export default {
     control: {
       backgroundColor: '#fff',
-  
+      wordBreak: 'break-word',
       fontSize: 14,
       fontWeight: 'normal',
     },
