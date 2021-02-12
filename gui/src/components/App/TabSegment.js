@@ -3,31 +3,7 @@ import JsxParser from "react-jsx-parser";
 import moment from "moment";
 import PageContent from "./PageContent";
 import { Tabs, TabLink, TabContent } from "react-tabs-redux";
-
-const styles = {
-  tabs: {
-    width: "100%",
-    position: "relative",
-    display: "-ms-flexbox",
-    display: "flex",
-    flexDirection: "column",
-    minWidth: "0",
-    wordWrap: "break-word",
-    backgroundColor: "#fff",
-    backgroundClip: "border-box",
-    border: "1px solid rgba(0,0,0,.125)",
-    borderRadius: ".25rem"
-  },
-  links: {
-    padding: ".75rem 1.25rem",
-    paddingBottom: "0",
-    marginBottom: "0",
-    borderBottom: "1px solid rgba(0,0,0,.125)"
-  },
-  visibleTabStyle: {
-    display: "block"
-  }
-};
+import "./Styles/TabStyles.scss"
 
 class TabSegment extends React.Component {
   constructor(props) {
@@ -58,7 +34,7 @@ class TabSegment extends React.Component {
         tabNames.push(<TabLink to={item.uuid}> {item.name}</TabLink>);
         var tabContentKey = item.uuid+'_tab';
         var fileData = item.fileData? item.fileData : {};
-        tabContent.push(<TabContent for={item.uuid}>
+        tabContent.push(<TabContent for={item.uuid} visibleClassName="visibleTabStyle">
         <PageContent
           key={tabContentKey}
           config={this.props.config}
@@ -87,7 +63,7 @@ class TabSegment extends React.Component {
         var tabNames = [];
         var tabContent = []
         this.props.tabs.map((item, i) => {
-          tabNames.push(<TabLink to={item.uuid} style={styles.tabLink}> {item.name}</TabLink>);
+          tabNames.push(<TabLink to={item.uuid}> {item.name}</TabLink>);
           var tabContentKey = item.uuid+'_tab';
           tabContent.push(<TabContent for="uuid" key={uuid}>
           <PageContent
@@ -130,11 +106,10 @@ class TabSegment extends React.Component {
   this.state.dataReady){
     return (<Tabs
               name="tabs2"
+              className="tabs"
               selectedTab={this.state.tabs[0].uuid}
-              visibleTabStyle={styles.visibleTabStyle}
-              style={styles.tabs}
             >
-          <div style={styles.links}>
+          <div className="links">
 {this.state.tabNames}
                     </div>
           <div className="tabContentDiv">

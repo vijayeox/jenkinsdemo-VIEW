@@ -318,6 +318,7 @@ class PageContent extends React.Component {
         var fileId = ParameterHandler.replaceParams(this.appId,item.fileId, this.state.currentRow);
         content.push(
           <FormRender
+            {...item}
             key={i}
             url={item.url == '' ? undefined: dataString}
             urlPostParams={urlPostParams}
@@ -325,16 +326,11 @@ class PageContent extends React.Component {
             proc={this.proc}
             appId={this.appId}
             postSubmitCallback={this.postSubmitCallback}
-            data={item.data}
-            content={item.content}
             fileId={fileId}
             formId={item.form_id}
             notif={this.notif}
-            page={item.page}
-            pipeline={item.pipeline}
             workflowId={workflowId}
             cacheId={cacheId}
-            isDraft={item.isDraft}
             activityInstanceId={activityInstanceId}
             parentWorkflowInstanceId={workflowInstanceId}
             dataUrl={item.dataUrl ? this.prepareDataRoute(item.dataUrl, this.state.currentRow,true) : undefined}
