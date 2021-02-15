@@ -8,24 +8,46 @@ const serverUrl = process.env.SERVER;
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make('osjs/application', {args, options, metadata});
-
+  this.loader = core.make("oxzion/splash");
+  this.loader.show();
+  let session = core.make('osjs/settings').get('osjs/session');
+  let sessions = Object.entries(session);
+  var i, finalposition, finalDimension,finalMaximised,finalMinimised;
+  for (i = 0; i < sessions.length; i++) {
+    if (Object.keys(session[i].windows).length && session[i].name == metadata.name){
+      finalposition = session[i].windows[0].position;
+      finalDimension = session[i].windows[0].dimension;
+      finalMaximised = session[i].windows[0].maximized;
+      finalMinimised = session[i].windows[0].minimized;
+    }
+  }
   // Create  a new Window instance
   proc.createWindow({
     id: 'TimesheetWindow',
     title: metadata.title.en_EN,
-    dimension: {width: 400, height: 400},
-    position: {left: 700, top: 200}
+    dimension: finalDimension ? finalDimension : {
+      width: 900,
+      height: 570
+    },
+    minDimension: {
+      width: 900,
+      height: 570
+    },
+    position: finalposition ? finalposition : {
+      left: 150,
+      top: 50
+    }
   })
   .on('destroy', () => proc.destroy())
   .render(($content, win) => {
     // Add our process and window id to iframe URL
-    // if(finalMinimised){
-    //   win.minimize();
-    // }
-    // if(finalMaximised){
-    //   win.maximize();
-    // }
-    win.maximize();
+    if(finalMinimised){
+      win.minimize();
+    }
+    if(finalMaximised){
+      win.maximize();
+    }
+    // win.maximize();
     win.attributes.maximizable = false;
     const profile = core.make("oxzion/profile");
     const details = profile.get();
