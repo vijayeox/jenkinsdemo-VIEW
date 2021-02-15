@@ -9,6 +9,7 @@ const register = (core, args, options, metadata) => {
     const proc = core.make('osjs/application', {args, options, metadata});
     // Create  a new Window instance
     //
+    core.appConfig = metadata.config;
     const win = proc.createWindow({
       id: 'PreferencesWindow',
       title: metadata.title.en_EN,

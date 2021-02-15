@@ -34,6 +34,7 @@ class FormRender extends React.Component {
         this.userprofile = userprofile.key;
         this.loader = this.core.make("oxzion/splash");
         this.messageBox = this.core.make("oxzion/messageDialog");
+        this.appConfig = this.core.appConfig ? this.core.appConfig : null;
         this.state = {
             form: null,
             showLoader: false,
@@ -535,6 +536,7 @@ class FormRender extends React.Component {
         formData.dateFormats = undefined;
         formData.orgId = this.userprofile.orgid;
         formData.functions = undefined;
+        formData.appConfig = undefined;
         var ordered_data = {};
         var componentList = flattenComponents(
             this.state.currentForm._form.components,
@@ -574,6 +576,7 @@ class FormRender extends React.Component {
             timezones: MomentTZ.tz.names(),
             dateFormats: DateFormats,
             functions: this.functions,
+            appConfig: this.appConfig,
         });
     }
 
