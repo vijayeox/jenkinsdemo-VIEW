@@ -214,7 +214,7 @@ class CommentsView extends React.Component {
                   return (
                     <div className="msg right-msg">
       <div className="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
-                    <div className="msg-bubble" style={{wordBreak: 'break-word'}}>
+                    <div className="msg-bubble">
                       <div className="msg-info">
                         <div className="msg-info-name">{commentItem.name}</div>
                         <div className="msg-info-time">{moment
@@ -223,7 +223,7 @@ class CommentsView extends React.Component {
                                                 .tz(this.userTimezone)
                                                 .format(this.userDateFormat + " - HH:mm:ss")}</div>
                       </div>
-                      <div className="msg-text" style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html : commentItem.text}}>
+                      <div className="msg-text" dangerouslySetInnerHTML={{__html : commentItem.text}}>
                       </div>
                     </div>
                   </div>
@@ -232,7 +232,7 @@ class CommentsView extends React.Component {
                     return (
                     <div className="msg left-msg">
       <div className="msg-img" style={{ background: `url(${image})`,backgroundSize: "contain" }}></div>
-                    <div className="msg-bubble" style={{wordBreak: 'break-word'}}>
+                    <div className="msg-bubble">
                       <div className="msg-info">
                         <div className="msg-info-name">{commentItem.name}</div>
                         <div className="msg-info-time">{moment
@@ -242,7 +242,7 @@ class CommentsView extends React.Component {
                                                 .format(this.userDateFormat + " - HH:mm:ss")}</div>
                       </div>
 
-                      <div className="msg-text" style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html : commentItem.text}}>
+                      <div className="msg-text" dangerouslySetInnerHTML={{__html : commentItem.text}}>
                       </div>
                     </div>
                   </div>

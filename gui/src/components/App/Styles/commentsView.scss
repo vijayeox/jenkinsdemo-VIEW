@@ -139,6 +139,10 @@
     padding: 15px;
     border-radius: 15px;
     background: var(--left-msg-bg);
+    word-break: break-word;
+}
+.msg-text {
+  white-space: pre-wrap;
 }
 .msg-info {
     display: flex;
