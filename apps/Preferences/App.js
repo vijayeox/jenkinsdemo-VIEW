@@ -10,6 +10,7 @@ class App extends React.Component {
     super(props);
     this.core = this.props.args;
     this.win = this.props.win;
+    this.appConfig = this.props.appConfig;
     this.state = {
       fields: {}
     };
@@ -47,7 +48,7 @@ class App extends React.Component {
           tabId="vertical-tab-one"
           className="tab1"
           render={({ selected }) =>
-            selected ? <EditProfile args={this.core} /> : null
+            selected ? <EditProfile args={this.core} appConfig={this.appConfig}/> : null
           }
         ></ReactWebTabs.TabPanel>
         <ReactWebTabs.TabPanel

@@ -9,7 +9,6 @@ const register = (core, args, options, metadata) => {
     const proc = core.make('osjs/application', {args, options, metadata});
     // Create  a new Window instance
     //
-    core.appConfig = metadata.config;
     const win = proc.createWindow({
       id: 'PreferencesWindow',
       title: metadata.title.en_EN,
@@ -31,7 +30,7 @@ const register = (core, args, options, metadata) => {
     })
     .on('destroy', () => proc.destroy())
     .render(($content,win) => 
-        ReactDOM.render(<App args = {core} win={win} />, $content));
+        ReactDOM.render(<App args = {core} win={win} appConfig = {metadata.config}/>, $content));
     if(win.$element.className.indexOf('Window_'+applicationName) == -1){
       win.$element.className += " Window_"+applicationName;
     } 

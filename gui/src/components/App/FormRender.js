@@ -34,7 +34,7 @@ class FormRender extends React.Component {
         this.userprofile = userprofile.key;
         this.loader = this.core.make("oxzion/splash");
         this.messageBox = this.core.make("oxzion/messageDialog");
-        this.appConfig = this.core.appConfig ? this.core.appConfig : null;
+        this.appConfig = this.props.appConfig ? this.props.appConfig : null;
         this.state = {
             form: null,
             showLoader: false,
