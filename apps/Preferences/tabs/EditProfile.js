@@ -15,6 +15,7 @@ class EditProfile extends React.Component {
     super(props);
 
     this.core = this.props.args;
+    this.appConfig = this.props.appConfig;
     this.userprofile = this.core.make("oxzion/profile").get();
     let countryList = countryStateList.map((item) => item.country);
     console.log(this.userprofile);
@@ -255,6 +256,7 @@ class EditProfile extends React.Component {
               route= {"/user/me/save"}
               postSubmitCallback = {this.handleSubmit}
               editProfile = {true}
+              appConfig = {this.appConfig}
             />
           </React.Suspense>
             </div>
