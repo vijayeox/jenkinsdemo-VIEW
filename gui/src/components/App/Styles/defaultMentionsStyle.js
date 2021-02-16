@@ -54,10 +54,17 @@ export default {
     },
   
     suggestions: {
+      left:'0px',
+      width: 'inherit',
+      marginTop: '0px',
+      bottom: '35px',
+      top: 'auto',
       list: {
         backgroundColor: 'white',
         border: '1px solid rgba(0,0,0,0.15)',
         fontSize: 14,
+        overflowY:'auto',
+        maxHeight:'80px',
       },
   
       item: {
