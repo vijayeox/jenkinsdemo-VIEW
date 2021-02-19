@@ -150,7 +150,7 @@ export default class FileComponent extends File {
             download(file.url, file.originalName || file.name, file.type);
           }
           else {
-            if(fileInfo.url){
+            if(fileInfo.url && !fileInfo.url.includes(this.component.wrapperUrl+this.component.appId, 0)){
               window.open(fileInfo.url.replace(this.component.uiUrl,this.component.wrapperUrl+this.component.appId), '_blank');
             } else {
               window.open(file.url, '_blank');
