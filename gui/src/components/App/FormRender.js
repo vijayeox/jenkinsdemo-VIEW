@@ -20,7 +20,6 @@ import RadioCardComponent from "./Form/RadioCardComponent";
 import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
-import { TabPanelComponent } from "react-web-tabs";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -30,9 +29,6 @@ class FormRender extends React.Component {
     this.privileges = userprofile.key.privileges;
     this.userprofile = userprofile.key;
     this.loader = this.core.make("oxzion/splash");
-    this.downloadPdf = this.props.downloadPdf;
-    this.changedData = null;
-    this.unansweredFields = [];
     this.state = {
       form: null,
       showLoader: false,
@@ -693,50 +689,6 @@ class FormRender extends React.Component {
         }
       }
     }
-    getUnansweredFieldsFromComponent(panelComponent,data){
-      var promise = new Promise(function(resolve,reject){
-        panelComponent.checkValidity(
-          data,
-          true,
-          data
-        );
-        if (panelComponent.errors.length>0){
-          var errors = []
-          panelComponent.errors.forEach((error)=>{
-            errors.push({'api':error.message})
-          })
-          resolve(errors);
-        }
-        else{
-          resolve([]);
-        }
-      })
-      return promise;
-    }
-    getUnansweredFields(){
-      var that = this;
-      if(that.state.currentForm && that.changedData){
-        var data = that.changedData;
-        var panelComponents = that.state.currentForm.components;
-        var promise = new Promise(function(resolve,reject){
-          var unansweredFields = []
-          var processPanelComponents = async function(index){
-            var panelComponent = panelComponents[index];
-            var panelComponentErrors = await that.getUnansweredFieldsFromComponent(panelComponent,data);
-            if(index<panelComponents.length-1){
-              unansweredFields.push(...panelComponentErrors);
-              processPanelComponents(index+1)
-            }
-            else{
-              resolve(unansweredFields);
-            }
-          }
-          processPanelComponents(0);
-        })
-        return promise;
-      }
-    }
-
     createForm() {
       let that = this;
       Formio.registerComponent("slider", SliderComponent);
@@ -752,8 +704,6 @@ class FormRender extends React.Component {
         this.props.proc.metadata.formio_endpoint ? Formio.setProjectUrl(this.props.proc.metadata.formio_endpoint) : null;
       }
       if (this.state.content && !this.state.form) {
-        console.log('FORM CONTENT BEFORE CREATE');
-        console.log(this.state.content);
         var options = {};
         if (this.state.content["properties"]) {
           if (this.state.content["properties"]["clickable"]) {
@@ -776,7 +726,6 @@ class FormRender extends React.Component {
         }
         var hooks = {
           beforeNext: (currentPage, submission, next) => {
-            console.log('Before next called');
             var form_data = JSON.parse(JSON.stringify(submission.data));
             if (currentPage.component["properties"]["set_property"]) {
               var property = JSON.parse(currentPage.component["properties"]["set_property"]);
@@ -784,13 +733,10 @@ class FormRender extends React.Component {
             }
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(this.cleanData(form_data));
-            
-            next([]);
+            next(null);
           },
           beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
-            console.log('BEFORE SUBMIT CALLED');
-            console.log(submission.data);
             if (
               that.state.currentForm.checkValidity() &&
               that.state.currentForm.checkValidity(
@@ -821,15 +767,12 @@ class FormRender extends React.Component {
               that.state.currentForm.errors.forEach((error) => {
                 submitErrors.push(error.message);
               });
-              // console.log("ERRORS");
-              // console.log(submitErrors);
-
               if (submitErrors.length > 0) {
                 next([]);
               } else {
                 // Disable based on client req for go live
                 // that.state.currentForm.triggerChange();
-                next([]);
+                // next([]);
                 var response = await that
                 .saveForm(null, that.cleanData(submission.data))
                 .then(function (response) {
@@ -883,19 +826,8 @@ class FormRender extends React.Component {
             }
           });
 
-          // form.on("wizardNavigationClicked", newPage =>{
-          //   console.log('Breadcrumb clicked');
-          //   console.log(newPage);
-          //   console.log(newPage.checkValidity);
-          //   if(newPage.checkValidity()){
-          //     console.log('Breadcrumb event listener has validator');
-          //   }
-          // })
-
-          form.on("change",function (changed) {
-            console.log('Change triggered');
+          form.on("change", function (changed) {
             console.log(changed);
-            that.changedData = changed.data;
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
@@ -943,49 +875,6 @@ class FormRender extends React.Component {
             var nextButton = document.getElementsByClassName(
               "btn-wizard-nav-next"
             );
-
-            var buttonList = document.querySelector("div.formio-form div ul.list-inline");
-
-            if(that.downloadPdf){
-              var listElement = document.createElement("li");
-              listElement.classList.add("list-inline-item");
-
-              var answeredButton = document.createElement("BUTTON");
-              answeredButton.innerHTML = "Answered";
-              answeredButton.classList.add("btn","btn-secondary","btn-wizard-nav-answer");
-              answeredButton.addEventListener("click",()=>{
-                that.state.currentForm.triggerChange();
-                that.getUnansweredFields().then((unansweredFields)=>{
-                  // console.log(unansweredFields.length)
-                  // console.log('Unanswered fields retrieved');
-                  // console.log(unansweredFields);
-                  var data = {}
-                  data['appId'] = that.state.appId;
-                  data['fileId'] = that.state.fileId?that.state.fileId:null;
-                  data['unansweredQuestions'] = unansweredFields;
-                  that.callDelegate('Unanswered',data).then(response=>{
-                    var url = response.data.unansweredQuestionsDocument;
-                    var a = document.createElement("a");
-                    // var url = URL.createObjectURL(file);
-                    a.href = url;
-                    a.download = "";
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function () {
-                      document.body.removeChild(a);
-                      window.URL.revokeObjectURL(url);
-                    }, 0);
-          
-                  });
-                
-                }
-                )
-
-              })
-              listElement.appendChild(answeredButton);
-              buttonList.appendChild(listElement);
-            }
-
             var elm = document.getElementsByClassName(
               that.state.appId + "_breadcrumbParent"
             );
@@ -1189,7 +1078,7 @@ class FormRender extends React.Component {
               }, true);
             form.emit("render");
           });
-          that.setState({ currentForm: form }); 
+          that.setState({ currentForm: form });
     var componentList = flattenComponents(form._form.components, true);
           return form;
         });
@@ -1617,8 +1506,6 @@ class FormRender extends React.Component {
            );
          }
           this.createForm().then((form) => {
-            console.log('FORM AFTER CREATE');
-            console.log(form);
             var that = this;
             that.setState({ currentForm: form });
             that.processProperties(form);

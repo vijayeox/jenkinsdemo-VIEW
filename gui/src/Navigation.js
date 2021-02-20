@@ -135,8 +135,6 @@ class Navigation extends React.Component {
 
   addPage = (e) => {
     var pages = this.state.pages;
-    console.log('New Page');
-    console.log(e);
     pages.push(e.detail);
     if (
       e.detail.parentPage &&
