@@ -50,7 +50,7 @@ class EntityViewer extends React.Component {
   callAuditLog(){
     this.setState({ showAuditLog: true });
   }
-  generateEditButton(enableComments){
+  generateEditButton(enableComments,enableAuditLog){
       var fileId;
       let gridToolbarContent = [];
       var filePage;
@@ -67,7 +67,9 @@ class EntityViewer extends React.Component {
         gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
       }
       gridToolbarContent.push(<Button title={"Print"} className={"toolBarButton"} primary={true} onClick={(e) => this.callPrint()} ><i className={"fa fa-print"}></i></Button>);
-      gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
+      if(enableAuditLog){
+        gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
+      }
       if(enableComments != "0"){
         var commentPage = {title: "Comments",icon: "far fa-comment",pageContent: [{type:"Comment",fileId: fileId}]};
         gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentPage)} ><i className={"fa fa-comment"}></i></Button>);
@@ -86,8 +88,8 @@ class EntityViewer extends React.Component {
           this.setState({ entityId:fileData.data.entity_id,fileData: file });
           this.getEntityPage().then(entityPage => {
             this.setState({entityConfig: entityPage.data});
-            this.generateEditButton(entityPage.data.enable_documents);
-            var content = this.constructTabs(entityPage.data,entityPage.data.enable_documents);
+            this.generateEditButton(entityPage.data.enable_documents,entityPage.data.enable_auditlog);
+            var content = this.constructTabs(entityPage.data,entityPage.data.enable_documents,entityPage.data.enable_view);
             this.setState({content: content});
             this.setState({dataReady: true});
           });
@@ -101,7 +103,7 @@ class EntityViewer extends React.Component {
       return v.toString(16);
     });
   }
-  constructTabs(page,enableDocuments){
+  constructTabs(page,enableDocuments,enableView){
     var tabs = [];
     var that = this;
     var content = page.content ? page.content : null;
@@ -112,7 +114,7 @@ class EntityViewer extends React.Component {
         finalContentArray.push(content[index]);
       });
     }
-    if(finalContentArray){
+    if(finalContentArray && enableView){
       tabs.push({name:"View",uuid:that.filePanelUuid,content: finalContentArray});
     }
     if(enableDocuments != "0"){
