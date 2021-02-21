@@ -34,7 +34,7 @@ class TabSegment extends React.Component {
         tabNames.push(<TabLink to={item.uuid}> {item.name}</TabLink>);
         var tabContentKey = item.uuid+'_tab';
         var fileData = item.fileData? item.fileData : {};
-        tabContent.push(<TabContent for={item.uuid} visibleClassName="visibleTabStyle">
+        tabContent.push(<TabContent for={item.uuid} key={item.uuid} visibleClassName="visibleTabStyle">
         <PageContent
           key={tabContentKey}
           config={this.props.config}
