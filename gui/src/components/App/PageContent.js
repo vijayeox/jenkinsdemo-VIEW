@@ -522,6 +522,7 @@ class PageContent extends React.Component {
             appId={this.appId}
             postSubmitCallback={this.postSubmitCallback}
             data={item.data}
+            downloadPdf={true}
             content={item.content}
             fileId={fileId}
             formId={item.form_id}
