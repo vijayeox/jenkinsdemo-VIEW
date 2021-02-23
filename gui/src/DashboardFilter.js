@@ -430,6 +430,9 @@ class DashboardFilter extends React.Component {
         if (this.props.filterMode == "APPLY" && (prevProps.filterConfiguration != this.props.filterConfiguration)) {
             this.setState({ filters: this.props.filterConfiguration })
         }
+        console.log(this.props.filterMode)
+        console.log(this.state.applyFilterOption)
+
     }
 
     componentDidMount(props) {
