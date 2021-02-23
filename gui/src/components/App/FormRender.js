@@ -929,9 +929,11 @@ class FormRender extends React.Component {
             );
 
             var buttonList = document.querySelector("div.formio-form div ul.list-inline");
+
             if(that.downloadPdf){
               var listElement = document.createElement("li");
               listElement.classList.add("list-inline-item");
+
               var answeredButton = document.createElement("BUTTON");
               answeredButton.innerHTML = "Answered";
               answeredButton.classList.add("btn","btn-secondary","btn-wizard-nav-answer");
@@ -939,52 +941,23 @@ class FormRender extends React.Component {
                 that.state.currentForm.triggerChange();
                 that.getUnansweredFields().then((unansweredFields)=>{
                   var data = {}
-                  //If button is clicked save the form and then download PDF's
-
-                  if(that.changedData && that.state.fileId){
-                    that.changedData['fileId'] = that.state.fileId;
-                  }
-                  var formFields = that.cleanData(that.changedData);
-                  var commands = '[{ "command": "fileSave", "entity_name": "Dealer Policy" }]';
-                  that.callPipeline(commands,formFields).then((fileSaveResponse)=>{
-
-                    data['appId'] = that.state.appId;
-                    data['unansweredQuestions'] = unansweredFields;
-                    data['fileId'] = fileSaveResponse.data.fileId;
-                    that.state.fileId = fileSaveResponse.data.fileId;
-
-
-                    that.callDelegate('Unanswered',data).then(delegateResponse=>{
-                      console.log('DELEGATE CALLED');
-                      console.log(delegateResponse);
-                      console.log('DATA SENT TO DELEGATE');
-                      console.log(data);
-                      var unansweredQuestionsUrl = delegateResponse.data.unansweredQuestionsDocument;
-                      var answeredQuestionsUrl = delegateResponse.data.answeredQuestionsDocument;
-                      var a = document.createElement("a");
-                      var a2 = document.createElement("a");
-                      // var url = URL.createObjectURL(file);
-                      a.href = unansweredQuestionsUrl;
-                      a.download = "";
-                      a.target='_blank';
-                      document.body.appendChild(a);
-                      a.click();
-
-                      a2.href = answeredQuestionsUrl;
-                      a2.target='_blank';
-                      a2.download = "";
-                      document.body.appendChild(a2);
-                      a2.click();
-
-                      setTimeout(function () {
-                        document.body.removeChild(a);
-                        document.body.removeChild(a2);
-                        // window.URL.revokeObjectURL(url);
-                      }, 0);
-            
-                    });
-                  })
-
+                  data['appId'] = that.state.appId;
+                  data['fileId'] = that.state.fileId?that.state.fileId:null;
+                  data['unansweredQuestions'] = unansweredFields;
+                  that.callDelegate('Unanswered',data).then(response=>{
+                    var url = response.data.unansweredQuestionsDocument;
+                    var a = document.createElement("a");
+                    // var url = URL.createObjectURL(file);
+                    a.href = url;
+                    a.download = "";
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function () {
+                      document.body.removeChild(a);
+                      window.URL.revokeObjectURL(url);
+                    }, 0);
+          
+                  });
                 
                 }
                 )
@@ -1151,7 +1124,6 @@ class FormRender extends React.Component {
               that.cancelFormSubmission();
             }
             if (event.type == "customButtonAction") {
-              console.log('custom button action called');
               let buttonCustomEvent = new Event("customButtonAction");
               buttonCustomEvent.detail = {
                 formData: changed,
