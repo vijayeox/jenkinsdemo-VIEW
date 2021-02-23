@@ -30,7 +30,6 @@ class FormRender extends React.Component {
     this.privileges = userprofile.key.privileges;
     this.userprofile = userprofile.key;
     this.loader = this.core.make("oxzion/splash");
-    this.downloadPdf = this.props.downloadPdf;
     this.changedData = null;
     this.unansweredFields = [];
     this.state = {
@@ -928,41 +927,44 @@ class FormRender extends React.Component {
               "btn-wizard-nav-next"
             );
 
-            var buttonList = document.querySelector("div.formio-form div ul.list-inline");
-
-            if(that.downloadPdf){
+            if (that.props.downloadPdf) {
+              var buttonList = document.querySelector(
+                "div.formio-form div ul.list-inline"
+              );
               var listElement = document.createElement("li");
               listElement.classList.add("list-inline-item");
 
               var answeredButton = document.createElement("BUTTON");
-              answeredButton.innerHTML = "Answered";
-              answeredButton.classList.add("btn","btn-secondary","btn-wizard-nav-answer");
-              answeredButton.addEventListener("click",()=>{
+              answeredButton.innerHTML = "Export Form to PDF";
+              answeredButton.classList.add(
+                "btn",
+                "btn-secondary",
+                "btn-wizard-nav-answer"
+              );
+              answeredButton.addEventListener("click", () => {
                 that.state.currentForm.triggerChange();
-                that.getUnansweredFields().then((unansweredFields)=>{
-                  var data = {}
-                  data['appId'] = that.state.appId;
-                  data['fileId'] = that.state.fileId?that.state.fileId:null;
-                  data['unansweredQuestions'] = unansweredFields;
-                  that.callDelegate('Unanswered',data).then(response=>{
-                    var url = response.data.unansweredQuestionsDocument;
-                    var a = document.createElement("a");
-                    // var url = URL.createObjectURL(file);
-                    a.href = url;
-                    a.download = "";
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function () {
-                      document.body.removeChild(a);
-                      window.URL.revokeObjectURL(url);
-                    }, 0);
-          
+                that.getUnansweredFields().then((unansweredFields) => {
+                  var data = {};
+                  data["appId"] = that.state.appId;
+                  data["fileId"] = that.state.fileId ? that.state.fileId : null;
+                  data["unansweredQuestions"] = unansweredFields;
+                  that.callDelegate("Unanswered", data).then((response) => {
+                    ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
+                      var url = response.data[i];
+                      var a = document.createElement("a");
+                      a.href = url;
+                      a.target = "_blank";
+                      a.download = "";
+                      document.body.appendChild(a);
+                      a.dispatchEvent(new MouseEvent('click'));
+                      setTimeout(function () {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                      }, 0);
+                    })
                   });
-                
-                }
-                )
-
-              })
+                });
+              });
               listElement.appendChild(answeredButton);
               buttonList.appendChild(listElement);
             }
