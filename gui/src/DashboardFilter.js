@@ -737,7 +737,7 @@ class DashboardFilter extends React.Component {
                                 id="applyfiltertype"
                                 onChange={(e) => this.handleSelect(e)}
                                 value={this.state.input["applyfiltertype"]}
-                                options={this.state.applyFilterOption.length !== 0 ? this.state.applyFilterOption : []}
+                                options={this.state.applyFilterOption}
                                 style={{ marginleft: "0px" }}
                             />
                         </Form.Group>
