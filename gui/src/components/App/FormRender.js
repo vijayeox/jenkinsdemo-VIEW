@@ -702,7 +702,22 @@ class FormRender extends React.Component {
         if (panelComponent.errors.length>0){
           var errors = []
           panelComponent.errors.forEach((error)=>{
-            errors.push({'api':error.message})
+            if(error.messages[0].path && error.messages[0].path.length>1){
+              var errorMessages = error.messages[0].path;
+              var errorMessage = ""
+              for(var i = 0; i<errorMessages.length;i++){
+                if(i%2!=0){
+                  errorMessage+= '['+errorMessages[i] +'].';
+                }
+                else{
+                  errorMessage +=  errorMessages[i];
+                }
+              }
+              errors.push({'api':errorMessage});
+            }
+            else{
+              errors.push({'api':error.component.key});
+            }
           })
           resolve(errors);
         }
@@ -712,10 +727,10 @@ class FormRender extends React.Component {
       })
       return promise;
     }
-    getUnansweredFields(){
+    getUnansweredFields(formData){
       var that = this;
       if(that.state.currentForm && that.changedData){
-        var data = that.changedData;
+        var data = formData;
         var panelComponents = that.state.currentForm.components;
         var promise = new Promise(function(resolve,reject){
           var unansweredFields = []
@@ -876,8 +891,6 @@ class FormRender extends React.Component {
           });
 
           form.on("change",function (changed) {
-            console.log('Change triggered');
-            console.log(changed);
             that.changedData = changed.data;
             if (changed && changed.changed) {
               var component = changed.changed.component;
@@ -926,49 +939,6 @@ class FormRender extends React.Component {
             var nextButton = document.getElementsByClassName(
               "btn-wizard-nav-next"
             );
-
-            if (that.props.downloadPdf) {
-              var buttonList = document.querySelector(
-                "div.formio-form div ul.list-inline"
-              );
-              var listElement = document.createElement("li");
-              listElement.classList.add("list-inline-item");
-
-              var answeredButton = document.createElement("BUTTON");
-              answeredButton.innerHTML = "Export Form to PDF";
-              answeredButton.classList.add(
-                "btn",
-                "btn-secondary",
-                "btn-wizard-nav-answer"
-              );
-              answeredButton.addEventListener("click", () => {
-                that.state.currentForm.triggerChange();
-                that.getUnansweredFields().then((unansweredFields) => {
-                  var data = {};
-                  data["appId"] = that.state.appId;
-                  data["fileId"] = that.state.fileId ? that.state.fileId : null;
-                  data["unansweredQuestions"] = unansweredFields;
-                  that.callDelegate("Unanswered", data).then((response) => {
-                    ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
-                      var url = response.data[i];
-                      var a = document.createElement("a");
-                      a.href = url;
-                      a.target = "_blank";
-                      a.download = "";
-                      document.body.appendChild(a);
-                      a.dispatchEvent(new MouseEvent('click'));
-                      setTimeout(function () {
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                      }, 0);
-                    })
-                  });
-                });
-              });
-              listElement.appendChild(answeredButton);
-              buttonList.appendChild(listElement);
-            }
-
             var elm = document.getElementsByClassName(
               that.state.appId + "_breadcrumbParent"
             );
@@ -1665,13 +1635,39 @@ class FormRender extends React.Component {
               fileId: response.data.fileId
             })
           }
-          if(this.state.currentForm){
+          if(this.state.currentForm ){
             this.state.currentForm.setSubmission(formData).then(response2 =>{
               this.state.currentForm.setPristine(true);
               actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
             });
           } else {
             actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
+          }
+
+          if(actionDetails.downloadPdf){
+            var that=this;
+            this.getUnansweredFields(actionDetails.formData).then((unansweredFields)=>{
+              var data = {};
+              data["appId"] = that.state.appId;
+              data["unansweredQuestions"] = unansweredFields;
+              data['fileId'] = response.data.fileId;
+
+              that.callDelegate("Unanswered", data).then((response) => {
+                ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
+                  var url = response.data[i];
+                  var a = document.createElement("a");
+                  a.href = url;
+                  a.target = "_blank";
+                  a.download = "";
+                  document.body.appendChild(a);
+                  a.dispatchEvent(new MouseEvent('click'));
+                  setTimeout(function () {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                  }, 0);
+                })
+              });
+            })
           }
           this.notif.current.notify(
             "Success",
@@ -1680,6 +1676,9 @@ class FormRender extends React.Component {
               : "Operation completed successfully",
             "success"
           );
+
+
+
           if (actionDetails.exit == true || actionDetails.exit == "true") {
             clearInterval(actionDetails.timerVariable);
             this.stepDownPage();
@@ -1695,6 +1694,7 @@ class FormRender extends React.Component {
         }
       });
     }
+
   };
   stepDownPage(){
     let ev = new CustomEvent("stepDownPage", {
