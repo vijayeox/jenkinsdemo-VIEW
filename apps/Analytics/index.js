@@ -12,7 +12,7 @@ const register = (core, args, options, metadata) => {
   // Create  a new Window instance
   let session = core.make('osjs/settings').get('osjs/session');
   let sessions = Object.entries(session);
-  var i, finalposition, finalDimension,finalMaximised,finalMinimised;
+  var i, finalposition, finalDimension,finalMaximised,finalMinimised, win;
   for (i = 0; i < sessions.length; i++) {
     if (Object.keys(session[i].windows).length && session[i].name == metadata.name){
       finalposition = session[i].windows[0].position;
@@ -41,7 +41,7 @@ const register = (core, args, options, metadata) => {
         }
       }
     }).on('destroy', () => proc.destroy())
-    .on('render', () => { win.maximize(); })
+    .on('render', (e) => { win.maximize(); })
     .render($content => ReactDOM.render(<Body args={core} proc={proc}/>, $content));
     if(finalMinimised){
       win.minimize();
