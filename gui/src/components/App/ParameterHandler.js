@@ -46,8 +46,13 @@ class ParameterHandler {
         matches.forEach((match, groupIndex) => {
           var param = match[0].replace("{{", "");
           param = param.replace("}}", "");
-          if (param.includes(".")) {
-            route = route.replace(match[0], finalParams[param.split(".")[0]][param.split(".")[1]]);
+          if (param.includes(".")) { 
+            param = param.split(".");
+            let interpolation = finalParams;            
+            param.forEach(element => {
+              interpolation = interpolation[element];
+            });
+            route = route.replace(match[0], interpolation);
           } else if (finalParams[param] != undefined) {
             route = route.replace( match[0], finalParams[param] );
           } else {

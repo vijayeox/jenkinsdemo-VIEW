@@ -5,7 +5,7 @@ import $ from 'jquery';
 import { jsPDF } from 'jspdf';
 import Canvg from 'canvg';
 import * as KendoReactWindow from "@progress/kendo-react-dialogs";
-import "../App/Styles/pdfPrintStyles.scss";
+import "./printpdf.scoped.scss";
 
 export default class PrintPdf extends React.Component {
   constructor(props) {
@@ -264,7 +264,7 @@ displayContent(){
     },100);
 }
 render() {
-    return (<>
+    return (<div id="printPDFFile">
         <KendoReactWindow.Window onClose={this.props.cancel}>
             <div className="printWindow">
         <div id="print-controls">
@@ -294,7 +294,7 @@ render() {
         </div> */}
         <Iframe id="printIframe" className="iframePortlet" />
         </div>
-      </KendoReactWindow.Window></>
+      </KendoReactWindow.Window></div>
         );
     }
 }

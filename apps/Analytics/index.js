@@ -21,7 +21,7 @@ const register = (core, args, options, metadata) => {
       finalMinimised = session[i].windows[0].minimized;
     }
   }
-  proc.createWindow({
+  var win = proc.createWindow({
       id: metadata.name + "_Window",
       title: metadata.title.en_EN,
       icon: proc.resource(icon_white),

@@ -228,6 +228,9 @@ class Navigation extends React.Component {
       }
     }
   }
+  resetPageCustomActions(){
+    this.setState({customActions:[]});
+  }
 getElementInsideElement(baseElement, wantedElementID) {
   var elementToReturn;
   for (var i = 0; i < baseElement.childNodes.length; i++) {

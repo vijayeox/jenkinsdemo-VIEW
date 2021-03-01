@@ -5,6 +5,7 @@ import { MentionsInput, Mention } from "react-mentions";
 import Swal from "sweetalert2";
 import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
+import emojisData from "./Emoji.json";
 
 class CommentsView extends React.Component {
   constructor(props) {
@@ -29,7 +30,8 @@ class CommentsView extends React.Component {
       mentionData: [],
       value: "",
       fileId: fileId,
-      userList: []
+      userList: [],
+      emojis: []
     };
   }
 
@@ -46,6 +48,7 @@ class CommentsView extends React.Component {
         });
       }
     });
+    this.setState({emojis: emojisData})
   }
 
   async getComments() {
@@ -102,6 +105,81 @@ class CommentsView extends React.Component {
       this.setState({ userList: tempUsers }, callback(tempUsers) );
     });
   };
+
+  queryEmojis = (query, callback) => {
+    if (query.length < 2) return
+    
+    const emojiObject = this.state.emojis
+    const matches = emojiObject.emojis.filter((emoji) => {
+        return emoji.shortname.toLowerCase().indexOf(query.toLowerCase()) > -1
+      })
+    return matches.map((emoji) => ({
+        id: emoji.emoji,
+        name: emoji.shortname }))
+  };
+
+  emoticonCheck(){
+    const emojiObject = this.state.emojis
+    var regex = /\:(.*?)\:/g
+    var input = this.state.value
+    var matched = input.match(regex)
+    var emoticon
+    if(matched)
+    {
+      for(var i = 0; i < matched.length; i++) {
+        const match = emojiObject.emojis.filter((emoji) => {
+          return emoji.shortname.toLowerCase().startsWith(matched[i].toLowerCase())
+        }).slice(0, 1) 
+        if(Object.keys(match).length !== 0) {
+          emoticon = match.map(mapped => mapped.emoji)
+          input = input.replace(matched[i],emoticon)
+        }
+      }
+      this.state.value = input
+    }
+}
+
+  emojiCheck() {
+    var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff]|[\u200D])/g
+    var input = this.state.value
+    var matched = input.match(regex)
+    if(matched) {
+      for(var i = 0; i < matched.length; i++) {
+        var j = this.emojiUnicode(matched[i])
+        input = input.replace(matched[i],j)
+      }
+      this.state.value = input
+    }
+  }
+
+  emojiUnicode(emoji) {
+    if (emoji.length >= 1) {
+      const pairs = []
+      for (var i = 0; i < emoji.length; i++) {
+        if (emoji.charCodeAt(i) >= 0xd800 && emoji.charCodeAt(i) <= 0xdbff) {
+          if (emoji.charCodeAt(i + 1) >= 0xdc00 && emoji.charCodeAt(i + 1) <= 0xdfff) {
+            pairs.push(
+            (emoji.charCodeAt(i) - 0xd800) * 0x400
+            + (emoji.charCodeAt(i + 1) - 0xdc00) + 0x10000
+            );
+          }
+        } 
+        else if (emoji.charCodeAt(i) < 0xd800 || emoji.charCodeAt(i) > 0xdfff) {
+          pairs.push(emoji.charCodeAt(i))
+        }
+      }
+      emoji = ''
+      for (var i=0; i < pairs.length; i++) {
+        if(pairs[i]=='8205') {
+          emoji += '&zwj;'
+        }
+        else {
+          emoji += '&#'+ pairs[i] +';'
+        }
+      }
+      return emoji   
+    }
+  }
 
   uuidv4() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function ( c ) {
@@ -260,6 +338,7 @@ class CommentsView extends React.Component {
                 placeholder="Type a comment here..."
                 className="mentions"
                 style={defaultStyle}
+                allowSpaceInQuery = {true}
               >
                 <Mention
                   trigger="@"
@@ -274,6 +353,17 @@ class CommentsView extends React.Component {
                   className="mentions__mention"
                   style={{ backgroundColor: "#cee4e5" }}
                 />
+                <Mention
+                  trigger=":"
+                  renderSuggestion={(suggestion,search, highlightedDisplay, index, focused) => (
+                    <div className={`user ${focused ? 'focused' : ''}`}>
+                      {suggestion.id} {suggestion.name}
+                    </div>
+                  )}
+                  data={this.queryEmojis}
+                  className="mentions__mention"
+                  style={{ backgroundColor: "#cee4e5" }}
+                />
               </MentionsInput>
               <div style={{ padding: "5px" }}>
                 {this.state.value.length + "/1000"}
@@ -284,6 +374,8 @@ class CommentsView extends React.Component {
                   className="commentsSaveButton"
                   disabled={this.state.value.length == 0 ? true : false}
                   onClick={() => {
+                    this.emoticonCheck();
+                    this.emojiCheck();
                     this.saveComment();
                   }}
                 >
