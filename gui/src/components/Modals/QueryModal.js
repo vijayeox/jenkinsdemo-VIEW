@@ -176,7 +176,7 @@ function QueryModal(props) {
       )
         .then(response => {
           if (response.status == "success") {
-            props.refreshGrid.current.child.current.triggerGetCall()
+            props.refreshGrid.current.child.current ? props.refreshGrid.current.child.current.triggerGetCall() : props.refreshGrid.current.child.triggerGetCall();
             notify(response, operation)
             props.resetInput()
             props.hideQueryForm()
