@@ -16,7 +16,7 @@ const register = (core, args, options, metadata) => {
     let session = core.make('osjs/settings').get('osjs/session');
   let sessions = Object.entries(session);
   for (i = 0; i < sessions.length; i++) {
-    if (Object.keys(session[i].windows).length && session[i].name == "Admin"){
+    if (Object.keys(session[i].windows).length && session[i].name == metadata.name){
       finalposition = session[i].windows[0].position;
       finalDimension = session[i].windows[0].dimension;
       finalMaximised = session[i].windows[0].maximized;

@@ -48,9 +48,9 @@ class Announcement extends React.Component {
     });
   };
 
-  async pushAnnouncementGroups(dataItem, dataObject) {
+  async pushAnnouncementTeams(dataItem, dataObject) {
     let helper = this.core.make("oxzion/restClient");
-    let addGroups = await helper.request(
+    let addTeams = await helper.request(
       "v1",
       "account/" +
         this.state.selectedOrg +
@@ -62,10 +62,10 @@ class Announcement extends React.Component {
       },
       "post"
     );
-    return addGroups;
+    return addTeams;
   }
 
-  async getAnnouncementGroups(dataItem) {
+  async getAnnouncementTeams(dataItem) {
     let helper = this.core.make("oxzion/restClient");
     let groupUsers = await helper.request(
       "v1",
@@ -78,7 +78,7 @@ class Announcement extends React.Component {
 
   addUsersToEntity = (dataItem) => {
     this.loader.show(this.adminWindow);
-    this.getAnnouncementGroups(dataItem.uuid).then((response) => {
+    this.getAnnouncementTeams(dataItem.uuid).then((response) => {
       this.addUsersTemplate = React.createElement(MultiSelect, {
         args: this.core,
         config: {
@@ -86,7 +86,7 @@ class Announcement extends React.Component {
           title: "Announcement",
           mainList: "account/" + this.state.selectedOrg + "/groups/list",
           subList: response.data,
-          members: "Groups"
+          members: "Teams"
         },
         manage: {
           postSelected: this.sendTheData,
@@ -108,7 +108,7 @@ class Announcement extends React.Component {
       var uid = { uuid: selectedUsers[i].uuid };
       temp2.push(uid);
     }
-    this.pushAnnouncementGroups(dataItem, temp2).then((response) => {
+    this.pushAnnouncementTeams(dataItem, temp2).then((response) => {
       this.OX_Grid.current.refreshHandler(response);
     });
     this.toggleDialog();
