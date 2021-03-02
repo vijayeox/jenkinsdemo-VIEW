@@ -385,8 +385,14 @@ class FormRender extends React.Component {
                         if (response.errors) {
                             await this.storeError(data, response.errors, "pipeline");
                             that.showFormLoader(false, 0);
-                            that.handleError("Form Submission Failed");
-                            return response;
+                            if(response.errors[0]){
+                                var message = response.errors[0].message ? response.errors[0].message : 'Form Submission Failed';
+                                that.handleError(message);
+                                return response;
+                            }else{
+                                that.handleError("Form Submission Failed");
+                                return response;
+                            }
                         } else {
                             await this.storeCache(data);
                             that.showFormLoader(false, 0);
