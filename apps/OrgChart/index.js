@@ -2,7 +2,7 @@ import osjs from "osjs";
 import { name as applicationName } from "./metadata.json";
 import {React,ReactDOM} from "oxziongui";
 import { icon_white } from "./metadata.json";
-import Home from "./home";
+import App from "./App";
 
 var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 // Our launcher
@@ -27,11 +27,11 @@ const register = (core, args, options, metadata) => {
  const createProcWindow = () => {
     var win = proc
     .createWindow({
-      id: "AdminWindow",
+      id: "Window_OrgChartWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon_white),
       attributes: {
-        classNames: ["Window_Admin"],
+        classNames: ["Window_OrgChartWindow"],
         dimension: finalDimension ? finalDimension : {
           width: 900,
           height: 570
@@ -56,7 +56,7 @@ const register = (core, args, options, metadata) => {
       window.setTimeout(
         () =>
           document
-            .getElementsByClassName("Window_Admin")[0]
+            .getElementsByClassName("Window_OrgChart")[0]
             .dispatchEvent(event),
         0
       );
@@ -70,12 +70,12 @@ const register = (core, args, options, metadata) => {
       window.setTimeout(
         () =>
           document
-            .getElementsByClassName("Window_Admin")[0]
+            .getElementsByClassName("Window_OrgChart")[0]
             .dispatchEvent(event),
         0
       );
     })
-    .render($content => ReactDOM.render(<Home args={core} />, $content));
+    .render($content => ReactDOM.render(<App args={core} />, $content));
 
     if(finalMinimised){
       win.minimize();

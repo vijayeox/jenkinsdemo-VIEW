@@ -3,7 +3,7 @@ import $ from "jquery";
 import Organization from "./modules/Organization";
 import Project from "./modules/Project";
 import User from "./modules/User";
-import Group from "./modules/Group";
+import Team from "./modules/Team";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
 import Errorlog from "./modules/Errorlog";
@@ -90,10 +90,10 @@ class Home extends React.Component {
         component: Role
       },
       {
-        name: "Groups",
+        name: "Teams",
         api: "GROUP",
         icon: "apps/Admin/group.svg",
-        component: Group
+        component: Team
       },
       {
         name: "Projects",
