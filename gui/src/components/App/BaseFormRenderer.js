@@ -1024,9 +1024,11 @@ class BaseFormRenderer extends React.Component {
         if(this.hasCore){
             if (method == "put") {
                 return await this.helper.request("v1", "/" + api + "/" + item, body, "filepost");
-                } else if (method == "post") {
+            } else if (method == "post") {
                 return await this.helper.request("v1", "/" + api, body, "post");
-                }
+            }else if(method.toUpperCase() == 'GET'){
+                return await this.helper.request("v1", "/" + api, {}, "get");
+            }
         }else{
 
         }
@@ -1354,11 +1356,12 @@ class BaseFormRenderer extends React.Component {
                                     var postParams = JSON.parse(properties["api"]);
                                     var data = that.cleanData(changed);
                                     delete data.orgId;
-                                    that.PushDataPOST(postParams['api']['url'], postParams['api']['method'], null, data).then(response => {
+                                    let router = ParameterHandler.replaceParams(data.app.uuid, postParams['api']['url'], {'data':data});
+                                    that.PushDataPOST(router, postParams['api']['method'], null, data).then(response => {
                                         if (response.status == "success") {
                                             if (response.data) {
                                                 try {
-                                                    var formData = that.formatFormData(response.data);
+                                                    var formData = that.formatFormData(merge(data,response.data));
                                                     form.setSubmission({ data: formData }).then(response2 => {
                                                         that.showFormLoader(false, 0);
                                                     });
