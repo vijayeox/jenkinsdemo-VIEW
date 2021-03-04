@@ -124,14 +124,15 @@ return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
     that.documentsList =  `<div class="docList" style="margin:0;" key="` + this.id +`">
       <div class="fileDiv">
       <div class="singleFile row" ` + this.id + `" data-downloadurl="` + downloadUrl + `" data-file="` + this.id + `" data-type="` + type + `" data-url="` + url + `">
-        <span class="fileName col-md-9">` + icon + "&nbsp;&nbsp;" + name + `</span> <span class="col-md-3"><button` + ` class="btn btn-sm btn-info ` + component.key +`-selectFile" >
+        <span class="fileName col-md-9">` + icon + "&nbsp;&nbsp;" + name + `</span> <span class="col-md-3"><button` + ` class="btn btn-sm btn-info ` + component.key +`-selectFile" title="Click to preview the document" >
             <i class="fa fa-eye"></i>
           </button>
+          <!-- Disabling download 
           <button class="btn btn-sm btn-info ` + component.key + `-downloadFile" style="margin-left:5px;" >
             <i class="fa fa-download"></i>
-          </button>
-          <button class="btn btn-sm btn-info ` + component.key + `-signFile" id="sign_btn_`+this.id+`" style="margin-left:5px;" >
-            <i class="fa fa-pencil-square-o"></i>
+          </button> -->
+          <button class="btn btn-sm btn-info ` + component.key + `-signFile" id="sign_btn_`+this.id+`" style="margin-left:5px;" title="Click to sign the document">
+            <i class="fal fa-file-signature"></i>
           </button>
         </span>
       </div>
@@ -272,12 +273,13 @@ return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
             that.documentsList =  `<div class="docList" style="margin:0;" key="` + that.id +`">
               <div class="fileDiv">
               <div class="singleFile row" ` + that.id + `" data-downloadurl="` + downloadUrl + `" data-file="` + that.id + `" data-type="` + type + `" data-url="` + url + `">
-                <span class="fileName col-md-9">` + icon + "&nbsp;&nbsp;" + name + `</span> <span class="col-md-3"><button` + ` class="btn btn-sm btn-info ` + component.key +`-selectFile" >
+                <span class="fileName col-md-9">` + icon + "&nbsp;&nbsp;" + name + `</span> <span class="col-md-3"><button` + ` class="btn btn-sm btn-info ` + component.key +`-selectFile" title="Click to preview the document" >
                     <i class="fa fa-eye"></i>
                   </button>
+                  <!-- Disabling download 
                   <button class="btn btn-sm btn-info ` + component.key + `-downloadFile" style="margin-left:5px;" >
                     <i class="fa fa-download"></i>
-                  </button>
+                  </button> -->
                   Document has been Signed
                 </span>
               </div>
