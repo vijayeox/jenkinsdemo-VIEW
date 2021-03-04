@@ -1,4 +1,5 @@
 #!/bin/sh
+
 chmod 777 /app/api/v1
 chmod 777 -R /app/view/bos
 chmod 777 /app/view/apps
