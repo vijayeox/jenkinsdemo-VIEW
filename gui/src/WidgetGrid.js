@@ -1,11 +1,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Grid, GridColumn } from '@progress/kendo-react-grid';
-import { filterBy } from '@progress/kendo-data-query';
-import { orderBy } from '@progress/kendo-data-query';
-import { process } from '@progress/kendo-data-query';
-import {IntlService} from '@progress/kendo-react-intl'
+import { Grid, GridColumn, GridToolbar } from '@progress/kendo-react-grid';
+import { filterBy, orderBy, process } from '@progress/kendo-data-query';
+import { IntlService } from '@progress/kendo-react-intl'
 import { ExcelExport } from '@progress/kendo-react-excel-export';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 
@@ -29,7 +27,6 @@ export default class WidgetGrid extends React.Component {
         this.pageSize = configuration ? (configuration.pageSize ? configuration.pageSize : 10) : 10;
         let oxzionMeta = configuration ? (configuration['oxzion-meta'] ? configuration['oxzion-meta'] : null) : null;
         this.exportToExcel = oxzionMeta ? (oxzionMeta['exportToExcel'] ? oxzionMeta['exportToExcel'] : false) : false;
-
         this.state = {
             filter: null,
             pagination: {
@@ -38,7 +35,8 @@ export default class WidgetGrid extends React.Component {
             },
             sort: (configuration ? (configuration.sort ? configuration.sort : null) : null),
             group: null,
-            displayedData: []
+            displayedData: [],
+            exportFilterData: []
         };
 
         let beginWith = configuration ? configuration.beginWith : null;
@@ -55,7 +53,9 @@ export default class WidgetGrid extends React.Component {
     }
 
     saveAsExcel = () => {
-        this.excelExporter.save();
+        let filterData;
+        filterData = (this.state.exportFilterData.length > 0) ? this.state.exportFilterData : this.state.displayedData
+        this.excelExporter.save(filterData);
     }
 
     parseData = () => {
@@ -119,38 +119,35 @@ export default class WidgetGrid extends React.Component {
         }
         this.setState({
             pagination: pagination
-        },
-            () => {
-                this.prepareData(false);
-            });
+        }, () => {
+            this.prepareData(false);
+        });
     }
 
     gridFilterChanged = (e) => {
         this.setState({
-            filter: e.filter
-        },
-            () => {
-                this.prepareData(true);
-            });
+            filter: e.filter,
+            exportFilterData: e.target.props.data,
+        }, () => {
+            this.prepareData(true);
+        });
     }
 
     gridSortChanged = (e) => {
         this.allData = orderBy(this.allData, e.sort);
         this.setState({
             sort: e.sort
-        },
-            () => {
-                this.prepareData(true);
-            });
+        }, () => {
+            this.prepareData(true);
+        });
     }
 
     gridGroupChanged = (e) => {
         this.setState({
             group: e.group
-        },
-            () => {
-                this.prepareData(false);
-            });
+        }, () => {
+            this.prepareData(false);
+        });
     }
 
     gridGroupExpansionChanged = (e) => {
@@ -192,22 +189,21 @@ export default class WidgetGrid extends React.Component {
     cellRender(tdElement, cellProps, thiz) {
         if (cellProps.rowType === 'groupFooter') {
             let element = null
-            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"]!=false && thiz.props.configuration["groupable"]["aggregate"]) {
+            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"] != false && thiz.props.configuration["groupable"]["aggregate"]) {
                 let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
                 let sum = 0
-                let kendo_service=new IntlService()
-                let formattedSum=sum
+                let kendo_service = new IntlService()
+                let formattedSum = sum
                 aggregateColumns.forEach(column => {
                     if (cellProps.field == column.field) {
                         cellProps.dataItem.items.forEach(item => {
-                            if(typeof(item[column.field])=="number"){
+                            if (typeof (item[column.field]) == "number") {
                                 sum += item[column.field]
                             }
                         })
-                        formattedSum=sum
-                        if(column.format)
-                        {
-                            formattedSum=kendo_service.toString(sum,column.format)
+                        formattedSum = sum
+                        if (column.format) {
+                            formattedSum = kendo_service.toString(sum, column.format)
                         }
                         element = <td>{formattedSum}</td>
 
@@ -220,19 +216,20 @@ export default class WidgetGrid extends React.Component {
         }
         return tdElement;
     }
+
     Aggregate = (props, configuration) => {
         let total = 0
         if (this.state.displayedData.data) {
             total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
         }
         if (!Number.isNaN(total)) {
-            let formattedSum=total
-            if(configuration.format){
-                let kendo_service=new IntlService()
-                formattedSum=kendo_service.toString(total,configuration.format)
+            let formattedSum = total
+            if (configuration.format) {
+                let kendo_service = new IntlService()
+                formattedSum = kendo_service.toString(total, configuration.format)
             }
             return (
-                
+
                 <td colSpan={props.colSpan} style={configuration.style}>
                     {configuration.value}{formattedSum}
                 </td>
@@ -299,8 +296,9 @@ export default class WidgetGrid extends React.Component {
                     <>
                         <div className="oxzion-widget-drilldown-excel-icon" style={hasBackButton ? { right: "5%" } : { right: "10px" }} onClick={this.saveAsExcel}><i className="fa fa-file-excel fa-lg"></i></div>
                         <ExcelExport
-                            data={this.allData}
+                            data={this.state.exportFilterData}
                             ref={exporter => this.excelExporter = exporter}
+                            filterable
                         >
                             {gridTag}
                         </ExcelExport>

@@ -126,7 +126,7 @@ function VisualizationModal(props) {
         method
       )
         .then(response => {
-          props.refreshGrid.current.child.current.triggerGetCall()
+          props.refreshGrid.current.child.current ? props.refreshGrid.current.child.current.triggerGetCall() : props.refreshGrid.current.child.triggerGetCall();
           notify(response, operation)
           props.onHide()
         })

@@ -57,14 +57,14 @@ export default class OX_Grid extends React.Component {
       notif: this.notif,
       apiActivityCompleted: this.rawDataPresent ? true : false,
       isTab: this.props.isTab ? this.props.isTab : false,
-      actions: this.props.actions?this.props.actions:null,
+      actions: this.props.actions ? this.props.actions : null,
       menu: null
     };
     this.blurTimeoutRef;
     this.menuWrapperRef;
     this.appNavigationDiv = "navigation_" + this.props.appId;
     this.loader = this.props.osjsCore.make("oxzion/splash");
-    this.child = this.props.reference? this.props.reference : React.createRef();
+    this.child = this.props.reference ? this.props.reference : React.createRef();
     this.refreshHandler = this.refreshHandler.bind(this);
     this.inlineEdit = this.inlineEdit.bind(this);
   }
@@ -72,7 +72,7 @@ export default class OX_Grid extends React.Component {
   _grid;
 
   componentDidMount() {
-    document.getElementById(this.appNavigationDiv) ? document.getElementById(this.appNavigationDiv).addEventListener("handleGridRefresh",() => this.refreshHandler(),false) : null;
+    document.getElementById(this.appNavigationDiv) ? document.getElementById(this.appNavigationDiv).addEventListener("handleGridRefresh", () => this.refreshHandler(), false) : null;
     $(document).ready(function () {
       $(".k-textbox").attr("placeholder", "Search");
     });
@@ -82,7 +82,7 @@ export default class OX_Grid extends React.Component {
     this.generateGridToolbar();
     document.getElementById('customActionsToolbar').addEventListener("getCustomActions", this.getCustomActions, false);
   }
-  getCustomActions = (e) =>{
+  getCustomActions = (e) => {
     this.generateGridToolbar();
   }
   dataStateChange = (e) => {
@@ -95,10 +95,10 @@ export default class OX_Grid extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // change to use componentDidUpdate later in future
-  // Write different props which when changed we need to trigger a setState
-    if (util.inspect(this.props.data, { depth: 2 }) != util.inspect(nextProps.data) || util.inspect(this.props.gridDefaultFilters, {depth: 4}) != util.inspect(nextProps.gridDefaultFilters, {depth: 4}) || util.inspect(this.props.columnConfig) != util.inspect(nextProps.columnConfig)) {
+    // Write different props which when changed we need to trigger a setState
+    if (util.inspect(this.props.data, { depth: 2 }) != util.inspect(nextProps.data) || util.inspect(this.props.gridDefaultFilters, { depth: 4 }) != util.inspect(nextProps.gridDefaultFilters, { depth: 4 }) || util.inspect(this.props.columnConfig) != util.inspect(nextProps.columnConfig)) {
       if (nextProps.gridDefaultFilters) {
-        let mergedFilters = {...this.state.dataState,...nextProps.gridDefaultFilters,};
+        let mergedFilters = { ...this.state.dataState, ...nextProps.gridDefaultFilters, };
         this.setState({ dataState: mergedFilters });
       }
       // Disable untill there is a use case to do this
@@ -109,23 +109,23 @@ export default class OX_Grid extends React.Component {
   }
 
   async DeleteFile(api, item) {
-  let response = await this.restClient.request(
-    "v1",
-    "/" + api,
-    {},
-    item.typeOfRequest?item.typeOfRequest:"post"
-  );
-  return response;
-}
+    let response = await this.restClient.request(
+      "v1",
+      "/" + api,
+      {},
+      item.typeOfRequest ? item.typeOfRequest : "post"
+    );
+    return response;
+  }
 
   parseDefaultFilters() {
     var splitUrl = this.props.data.split("?");
     if (splitUrl[1]) {
       apiUrl = splitUrl[0];
       var getUrlParams = decodeURI(splitUrl[1]).replace("?", "").split("&").map((param) => param.split("=")).reduce((values, [key, value]) => {
-          values[key] = value;
-          return values;
-        }, {});
+        values[key] = value;
+        return values;
+      }, {});
       if (getUrlParams.filter) {
         try {
           defaultFilters = JSON.parse(getUrlParams.filter);
@@ -142,43 +142,43 @@ export default class OX_Grid extends React.Component {
     let table = [];
     this.props.checkBoxSelection
       ? table.push(
-          <GridColumn
-            field="selected"
-            filterable={false}
-            // headerSelectionValue={
-            //   this.state.gridData.findIndex(
-            //     dataItem => dataItem.selected === false
-            //   ) === -1
-            // }
-            columnMenu={this.props.columnMenuFilter!=false?GridColumnMenuCheckboxFilter:undefined}
-            key={Math.random() * 20}
-            locked={true}
-            reorderable={false}
-            orderIndex={0}
-            width="50px"
-          />
-        )
+        <GridColumn
+          field="selected"
+          filterable={false}
+          // headerSelectionValue={
+          //   this.state.gridData.findIndex(
+          //     dataItem => dataItem.selected === false
+          //   ) === -1
+          // }
+          columnMenu={this.props.columnMenuFilter != false ? GridColumnMenuCheckboxFilter : undefined}
+          key={Math.random() * 20}
+          locked={true}
+          reorderable={false}
+          orderIndex={0}
+          width="50px"
+        />
+      )
       : null;
     columnConfig.map((dataItem, i) => {
       table.push(
         <GridColumn
-          cell={dataItem.cell || dataItem.rygRule? (item) => (
-                  <CustomCell
-                    cellTemplate={dataItem.cell}
-                    dataItem={item.dataItem}
-                    type={"cellTemplate"}
-                    userProfile={this.userprofile}
-                    baseUrl={this.baseUrl}
-                  />
-                )
-              : undefined
+          cell={dataItem.cell || dataItem.rygRule ? (item) => (
+            <CustomCell
+              cellTemplate={dataItem.cell}
+              dataItem={item.dataItem}
+              type={"cellTemplate"}
+              userProfile={this.userprofile}
+              baseUrl={this.baseUrl}
+            />
+          )
+            : undefined
           }
           children={dataItem.children ? dataItem.children : undefined}
           className={dataItem.className ? dataItem.className : undefined}
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
-          filterable={this.props.columnMenuFilter==false?dataItem.filterable:undefined}
-          columnMenu={this.props.columnMenuFilter!=false?ColumnMenu:undefined}
+          filterable={this.props.columnMenuFilter == false ? dataItem.filterable : undefined}
+          columnMenu={this.props.columnMenuFilter != false ? ColumnMenu : undefined}
           filterCell={
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }
@@ -195,9 +195,9 @@ export default class OX_Grid extends React.Component {
             dataItem.minResizableWidth ? dataItem.minResizableWidth : undefined
           }
           orderIndex={dataItem.orderIndex ? dataItem.orderIndex : undefined}
-          reorderable={this.props.reorderable ? (this.props.reorderable) : (dataItem.reorderable? dataItem.reorderable: undefined)}
-          resizable={this.props.resizable ? (this.props.resizable) : (dataItem.resizable? dataItem.resizable: undefined)}
-          sortable={this.props.sortable ? (this.props.sortable) : (dataItem.sortable? dataItem.sortable: undefined)}
+          reorderable={this.props.reorderable ? (this.props.reorderable) : (dataItem.reorderable ? dataItem.reorderable : undefined)}
+          resizable={this.props.resizable ? (this.props.resizable) : (dataItem.resizable ? dataItem.resizable : undefined)}
+          sortable={this.props.sortable ? (this.props.sortable) : (dataItem.sortable ? dataItem.sortable : undefined)}
           width={dataItem.width ? dataItem.width : undefined}
           title={dataItem.title ? dataItem.title : undefined}
         />
@@ -206,19 +206,19 @@ export default class OX_Grid extends React.Component {
 
     this.props.inlineEdit
       ? table.push(
-          <GridColumn
-            filterable={false}
-            key={Math.random() * 20}
-            reorderable={false}
-            width="175px"
-            title={"Actions"}
-            cell={InlineComponent(
-              this.props.inlineActions,
-              this.inlineEdit,
-              this.refreshHandler
-            )}
-          />
-        )
+        <GridColumn
+          filterable={false}
+          key={Math.random() * 20}
+          reorderable={false}
+          width="175px"
+          title={"Actions"}
+          cell={InlineComponent(
+            this.props.inlineActions,
+            this.inlineEdit,
+            this.refreshHandler
+          )}
+        />
+      )
       : null;
 
     return table;
@@ -279,31 +279,31 @@ export default class OX_Grid extends React.Component {
       gridData: { data: data, total: this.state.gridData.total }
     });
   };
-  
+
   rowRender = (trElement, dataItem) => {
     var that = this;
     const trProps = {
-        ...trElement.props,
-        onContextMenu: (e) => {
-            e.preventDefault();
-            this.handleContextMenuOpen(e, dataItem.dataItem);
-        },
-        onClick: (e) => {
-          e.preventDefault();
-          if(this.state.actions){
-            Object.keys(this.state.actions).map(function (key, index) {
-              var action = that.state.actions;
-              if(action[key].defaultAction == true){
-                that.handleAction(key, dataItem.dataItem);
-              }
-            });
-          }
+      ...trElement.props,
+      onContextMenu: (e) => {
+        e.preventDefault();
+        this.handleContextMenuOpen(e, dataItem.dataItem);
+      },
+      onClick: (e) => {
+        e.preventDefault();
+        if (this.state.actions) {
+          Object.keys(this.state.actions).map(function (key, index) {
+            var action = that.state.actions;
+            if (action[key].defaultAction == true) {
+              that.handleAction(key, dataItem.dataItem);
+            }
+          });
         }
+      }
     };
     return React.cloneElement(trElement, { ...trProps }, trElement.props.children);
-}
-handleContextMenuOpen = (e, dataItem) => {
-  if(this.state.actions){
+  }
+  handleContextMenuOpen = (e, dataItem) => {
+    if (this.state.actions) {
       this.dataItem = dataItem;
       this.offset = { left: e.clientX, top: e.clientY };
       var actionButtons = [];
@@ -312,7 +312,7 @@ handleContextMenuOpen = (e, dataItem) => {
       });
       Object.keys(this.state.actions).map(function (key, index) {
         var action = this.state.actions;
-        var string = ParameterHandler.replaceParams(this.appId,action[key].rule, dataItem);
+        var string = ParameterHandler.replaceParams(this.appId, action[key].rule, dataItem);
         var _moment = moment;
         var profile = this.userprofile;
         string = string.replace(/moment/g, '_moment');
@@ -327,21 +327,21 @@ handleContextMenuOpen = (e, dataItem) => {
             color: "white",
             fontWeight: "600"
           };
-          const itemRender = (props) => {
-            return (
-                <div style={{ padding: '5px' }} text={action[key].name}><i style={{marginRight: '5px'}} className={action[key].icon + " manageIcons"}></i>{action[key].name}</div>
-            );
+        const itemRender = (props) => {
+          return (
+            <div style={{ padding: '5px' }} text={action[key].name}><i style={{ marginRight: '5px' }} className={action[key].icon + " manageIcons"}></i>{action[key].name}</div>
+          );
         };
         showButton ? actionButtons.push(
-            <MenuItem text={action[key].name}  render={itemRender} />
-        ): null;
+          <MenuItem text={action[key].name} render={itemRender} />
+        ) : null;
       }, this);
       this.setState({
         menu: actionButtons,
         contextMenuOpen: true
       });
+    }
   }
-}
 
   generateGridToolbar() {
     let gridToolbarContent = [];
@@ -380,7 +380,7 @@ handleContextMenuOpen = (e, dataItem) => {
           primary={true}
           onClick={this.exportPDF}
           className={"toolBarButton"}
-          title = "Export to PDF"
+          title="Export to PDF"
         >
           <i className='fa fa-file-pdf-o'></i>
         </Button>
@@ -393,19 +393,19 @@ handleContextMenuOpen = (e, dataItem) => {
           className={"toolBarButton"}
           onClick={() => this.exportExcel(this.props.exportToExcel)}
         >
-        <i className='fa fa-file-excel-o'></i>
+          <i className='fa fa-file-excel-o'></i>
         </Button>
       );
     }
     if (this.props.gridOperations) {
       gridToolbarContent.length == 0 ? gridToolbarContent.push(<div></div>) : null;
-      gridToolbarContent.push( this.renderListOperations(this.props.gridOperations) );
-      if(this.props.defaultToolBar != true){
+      gridToolbarContent.push(this.renderListOperations(this.props.gridOperations));
+      if (this.props.defaultToolBar != true) {
         let ev = new CustomEvent("addcustomActions", {
           detail: { customActions: gridToolbarContent },
           bubbles: true,
         });
-        document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
+        document.getElementById(this.appId + "_breadcrumbParent").dispatchEvent(ev);
       }
     }
     return gridToolbarContent.length > 0 ? gridToolbarContent : false;
@@ -413,7 +413,7 @@ handleContextMenuOpen = (e, dataItem) => {
 
   exportPDF = () => {
     this.loader.show();
-    if(this.gridPDFExport){
+    if (this.gridPDFExport) {
       this.gridPDFExport.save(this.state.data, this.loader.destroy());
     }
   };
@@ -459,7 +459,7 @@ handleContextMenuOpen = (e, dataItem) => {
         return tempItem;
       });
     }
-    if(this._excelExport){
+    if (this._excelExport) {
       this._excelExport.save(
         gridData,
         excelConfig.columnConfig ? undefined : this._grid.columns
@@ -488,30 +488,30 @@ handleContextMenuOpen = (e, dataItem) => {
         {this.props.gridNoRecords ? (
           this.props.gridNoRecords
         ) : (
-          <div className="grid-no-records">
-            <ul className="list-group" style={{ listStyle: "disc" }}>
-              <div
-                href="#"
-                className="list-group-item list-group-item-action bg-warning"
-                style={{
-                  display: "flex",
-                  width: "110%",
-                  alignItems: "center"
-                }}
-              >
-                <div style={{ marginLeft: "10px" }}>
-                  <i className="fas fa-info-circle"></i>
-                </div>
+            <div className="grid-no-records">
+              <ul className="list-group" style={{ listStyle: "disc" }}>
                 <div
-                  style={{ fontSize: "medium", paddingLeft: "30px" }}
-                  className="noRecords"
+                  href="#"
+                  className="list-group-item list-group-item-action bg-warning"
+                  style={{
+                    display: "flex",
+                    width: "110%",
+                    alignItems: "center"
+                  }}
                 >
-                  No Records Available
+                  <div style={{ marginLeft: "10px" }}>
+                    <i className="fas fa-info-circle"></i>
+                  </div>
+                  <div
+                    style={{ fontSize: "medium", paddingLeft: "30px" }}
+                    className="noRecords"
+                  >
+                    No Records Available
                 </div>
-              </div>
-            </ul>
-          </div>
-        )}
+                </div>
+              </ul>
+            </div>
+          )}
       </GridNoRecords>
     );
   }
@@ -574,12 +574,25 @@ handleContextMenuOpen = (e, dataItem) => {
     return null;
   };
 
-generatePDFTemplate(pageData) {
-  let PDFProps = this.props.exportToPDF;
-  return PDFProps.titleTemplate || PDFProps.JSXtemplate ? (
-    <div>
-      {pageData.pageNum == 1 && PDFProps.titleTemplate ? (
-        <div>
+  generatePDFTemplate(pageData) {
+    let PDFProps = this.props.exportToPDF;
+    return PDFProps.titleTemplate || PDFProps.JSXtemplate ? (
+      <div>
+        {pageData.pageNum == 1 && PDFProps.titleTemplate ? (
+          <div>
+            <JsxParser
+              bindings={{
+                pageData: pageData,
+                data: this.props.parentData,
+                moment: moment,
+                gridData: this.state.gridData.data
+              }}
+              jsx={PDFProps.titleTemplate}
+            />
+          </div>
+        ) : null}
+
+        {PDFProps.JSXtemplate ? (
           <JsxParser
             bindings={{
               pageData: pageData,
@@ -587,227 +600,214 @@ generatePDFTemplate(pageData) {
               moment: moment,
               gridData: this.state.gridData.data
             }}
-            jsx={PDFProps.titleTemplate}
+            jsx={PDFProps.JSXtemplate}
           />
-        </div>
-      ) : null}
-
-      {PDFProps.JSXtemplate ? (
-        <JsxParser
-          bindings={{
-            pageData: pageData,
-            data: this.props.parentData,
-            moment: moment,
-            gridData: this.state.gridData.data
-          }}
-          jsx={PDFProps.JSXtemplate}
-        />
-      ) : null}
-    </div>
-  ) : (
-    <div />
-  );
-}
-onPopupOpen = (e,props) => {
-  if(this.menuWrapperRef.querySelector('[tabindex]')){
-    this.menuWrapperRef.querySelector('[tabindex]').focus();
+        ) : null}
+      </div>
+    ) : (
+        <div />
+      );
   }
-};
-onFocusHandler = () => {
-  clearTimeout(this.blurTimeoutRef);
-  this.blurTimeoutRef = undefined;
-};
-
-onBlurTimeout = () => {
-  this.setState({
-      contextMenuOpen: false
-  });
-
-  this.blurTimeoutRef = undefined;
-};
-
-onBlurHandler = event => {
-  clearTimeout(this.blurTimeoutRef);
-  this.blurTimeoutRef = setTimeout(this.onBlurTimeout);
-};
-async buttonAction(actionCopy, rowData) {
-  var action = actionCopy;
-  if (action.content){
-    action.details = action.content;
-  }
-  var mergeRowData = this.props.currentRow ? {...this.props.currentRow, ...rowData} : rowData;
-  if (action.page_id) {
-    PageNavigation.loadPage(this.appId,this.pageId,action.page_id);
-  } else if (action.details) {
-    var pageDetails = this.state.pageContent;
-    var that = this;
-    var copyPageContent = [];
-    if(rowData.rygRule){
-      copyPageContent.push({type: "HTMLViewer" , content: rowData.rygRule, className: "rygBadge"});  
+  onPopupOpen = (e, props) => {
+    if (this.menuWrapperRef.querySelector('[tabindex]')) {
+      this.menuWrapperRef.querySelector('[tabindex]').focus();
     }
-    var checkForTypeUpdate = false;
-    var updateBreadcrumb = true;
-    var pageId = null;
-    if (action.details.length > 0) {
-      action.details.every(async (item, index) => {
-        if (item.type == "Update") {
-          var PageRenderDiv = document.getElementById(this.props.parentDiv);
-          this.loader.show(PageRenderDiv ? PageRenderDiv : null);
-          checkForTypeUpdate = true;
-          const response = await that.updateActionHandler(item, mergeRowData);
-          if (response.status == "success") {
-            this.loader.destroy();
-            if (item.successMessage) {
+  };
+  onFocusHandler = () => {
+    clearTimeout(this.blurTimeoutRef);
+    this.blurTimeoutRef = undefined;
+  };
+
+  onBlurTimeout = () => {
+    this.setState({
+      contextMenuOpen: false
+    });
+
+    this.blurTimeoutRef = undefined;
+  };
+
+  onBlurHandler = event => {
+    clearTimeout(this.blurTimeoutRef);
+    this.blurTimeoutRef = setTimeout(this.onBlurTimeout);
+  };
+  async buttonAction(actionCopy, rowData) {
+    var action = actionCopy;
+    if (action.content) {
+      action.details = action.content;
+    }
+    var mergeRowData = this.props.currentRow ? { ...this.props.currentRow, ...rowData } : rowData;
+    if (action.page_id) {
+      PageNavigation.loadPage(this.appId, this.pageId, action.page_id);
+    } else if (action.details) {
+      var pageDetails = this.state.pageContent;
+      var that = this;
+      var copyPageContent = [];
+      if (rowData.rygRule) {
+        copyPageContent.push({ type: "HTMLViewer", content: rowData.rygRule, className: "rygBadge" });
+      }
+      var checkForTypeUpdate = false;
+      var updateBreadcrumb = true;
+      var pageId = null;
+      if (action.details.length > 0) {
+        action.details.every(async (item, index) => {
+          if (item.type == "Update") {
+            var PageRenderDiv = document.getElementById(this.props.parentDiv);
+            this.loader.show(PageRenderDiv ? PageRenderDiv : null);
+            checkForTypeUpdate = true;
+            const response = await that.updateActionHandler(item, mergeRowData);
+            if (response.status == "success") {
+              this.loader.destroy();
+              if (item.successMessage) {
+                Swal.fire({
+                  icon: "success",
+                  title: item.successMessage,
+                  showConfirmButton: true,
+                });
+              }
+              item.params.successNotification ? that.state.notif.current.notify("Success", item.params.successNotification.length > 0 ? item.params.successNotification : "Update Completed", "success") : null;
+              this.props.postSubmitCallback();
+              this.setState({ showLoader: false });
+            } else {
+              this.loader.destroy();
               Swal.fire({
-                icon: "success",
-                title: item.successMessage,
+                icon: "error",
+                title: response.message,
                 showConfirmButton: true,
               });
-            }
-            item.params.successNotification ? that.state.notif.current.notify("Success",item.params.successNotification.length > 0 ? item.params.successNotification: "Update Completed","success") : null;
-            this.props.postSubmitCallback();
-            this.setState({ showLoader: false });
-          } else {
-            this.loader.destroy();
-            Swal.fire({
-              icon: "error",
-              title: response.message,
-              showConfirmButton: true,
-            });
-            that.setState({
-              pageContent: pageDetails,
-              showLoader: false,
-            });
-            return false;
-          }
-        } else if (item.type == "API") {
-          action.updateOnly = true;
-          var url = ParameterHandler.replaceParams(this.appId,item.route, mergeRowData);
-          Swal.fire({
-            title: "Are you sure?",
-            text: "Do you really want to delete the record? This cannot be undone.",
-            imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
-            imageWidth: 75,
-            imageHeight: 75,
-            confirmButtonText: "Delete",
-            confirmButtonColor: "#d33",
-            showCancelButton: true,
-            cancelButtonColor: "#3085d6"
-          }).then((result) => {
-            if (result.value) {
-              this.DeleteFile(
-                "app/" + this.appId + "/" + url,
-                item
-              ).then( (response) => {
-                console.log(response); 
-                this.refreshHandler(response);
-                if(response.status=="success"){
-                  this.state.notif.current.notify("Success","Deleted Successfully","success")
-                }else{
-                  this.state.notif.current.notify("Error",response.message,"danger")
-
-                }
+              that.setState({
+                pageContent: pageDetails,
+                showLoader: false,
               });
+              return false;
             }
-          });
-      } else {
-          if (item.params && item.params.page_id) {
-            pageId = item.params.page_id;
-            if (item.params.params) {
-              var newParams = ParameterHandler.replaceParams(this.appId,item.params.params,mergeRowData);
-              mergeRowData = { ...newParams, ...mergeRowData };
-            }
-            copyPageContent = [];
+          } else if (item.type == "API") {
+            action.updateOnly = true;
+            var url = ParameterHandler.replaceParams(this.appId, item.route, mergeRowData);
+            Swal.fire({
+              title: "Are you sure?",
+              text: "Do you really want to delete the record? This cannot be undone.",
+              imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+              imageWidth: 75,
+              imageHeight: 75,
+              confirmButtonText: "Delete",
+              confirmButtonColor: "#d33",
+              showCancelButton: true,
+              cancelButtonColor: "#3085d6"
+            }).then((result) => {
+              if (result.value) {
+                this.DeleteFile(
+                  "app/" + this.appId + "/" + url,
+                  item
+                ).then((response) => {
+                  console.log(response);
+                  this.refreshHandler(response);
+                  if (response.status == "success") {
+                    this.state.notif.current.notify("Success", "Deleted Successfully", "success")
+                  } else {
+                    this.state.notif.current.notify("Error", response.message, "danger")
+
+                  }
+                });
+              }
+            });
           } else {
-            var pageContentObj = {};
-            mergeRowData = {...this.props.parentData,...mergeRowData}
-            pageContentObj = ParameterHandler.replaceParams(this.appId,item, mergeRowData);
-            copyPageContent.push(pageContentObj);
+            if (item.params && item.params.page_id) {
+              pageId = item.params.page_id;
+              if (item.params.params) {
+                var newParams = ParameterHandler.replaceParams(this.appId, item.params.params, mergeRowData);
+                mergeRowData = { ...newParams, ...mergeRowData };
+              }
+              copyPageContent = [];
+            } else {
+              var pageContentObj = {};
+              mergeRowData = { ...this.props.parentData, ...mergeRowData }
+              pageContentObj = ParameterHandler.replaceParams(this.appId, item, mergeRowData);
+              copyPageContent.push(pageContentObj);
+            }
           }
-        }
-      });
-      action.updateOnly ? null : PageNavigation.loadPage(
-            this.appId,this.pageId,
-            pageId,
-            action.icon,
-            true,
-            action.name,
-            mergeRowData,
-            copyPageContent
-          );
+        });
+        action.updateOnly ? null : PageNavigation.loadPage(
+          this.appId, this.pageId,
+          pageId,
+          action.icon,
+          true,
+          action.name,
+          mergeRowData,
+          copyPageContent
+        );
+      }
     }
   }
-}
-updateActionHandler(details, rowData) {
-  var that = this;
-  rowData = {...this.props.parentData,...rowData}
-  return new Promise((resolve) => {
-    var queryRoute = ParameterHandler.replaceParams(this.appId,details.params.url, rowData);
-    var postData = {};
-    try {
-      if (details.params.postData) {
-        Object.keys(details.params.postData).map((i) => {
-          postData[i] = ParameterHandler.replaceParams(this.appId, details.params.postData[i], rowData);
-        });
-      } else {
-        Object.keys(details.params).map((i) => {
-          postData[i] = ParameterHandler.replaceParams(this.appId, details.params[i], rowData);
-        });
+  updateActionHandler(details, rowData) {
+    var that = this;
+    rowData = { ...this.props.parentData, ...rowData }
+    return new Promise((resolve) => {
+      var queryRoute = ParameterHandler.replaceParams(this.appId, details.params.url, rowData);
+      var postData = {};
+      try {
+        if (details.params.postData) {
+          Object.keys(details.params.postData).map((i) => {
+            postData[i] = ParameterHandler.replaceParams(this.appId, details.params.postData[i], rowData);
+          });
+        } else {
+          Object.keys(details.params).map((i) => {
+            postData[i] = ParameterHandler.replaceParams(this.appId, details.params[i], rowData);
+          });
+          postData = rowData;
+        }
+      } catch (error) {
         postData = rowData;
       }
-    } catch (error) {
-      postData = rowData;
-    }
-    ParameterHandler.updateCall(that.core,that.appId,queryRoute, postData, details.params.disableAppId, details.method).then((response) => {
+      ParameterHandler.updateCall(that.core, that.appId, queryRoute, postData, details.params.disableAppId, details.method).then((response) => {
         if (details.params.downloadFile && response.status == 200) {
           ParameterHandler.downloadFile(response).then((result) => {
-                that.setState({ showLoader: false});
-                var downloadStatus = result ? "success" : "failed";
-                resolve({ status: downloadStatus });
-              }
-            );
+            that.setState({ showLoader: false });
+            var downloadStatus = result ? "success" : "failed";
+            resolve({ status: downloadStatus });
+          }
+          );
         } else {
           that.setState({ showLoader: false });
           resolve(response);
         }
       });
-  });
-}
-handleAction(key,dataItem){
-  this.dataItem = dataItem;
-  this.state.actions[key].confirmationMessage ? Swal.fire({
-        title: this.state.actions[key].confirmationMessage,
-        confirmButtonText: "Agree",
-        confirmButtonColor: "#275362",
-        showCancelButton: true,
-        cancelButtonColor: "#7b7878",
-        target: ".PageRender"
-      }).then((result) => { result.value ? this.buttonAction(this.state.actions[key],this.dataItem) : null; }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key],this.dataItem) : null;
-}
-handleOnSelect = (e) => {
-  var dataItem = this.dataItem;
-  if(this.state.actions){
-    Object.keys(this.state.actions).map(function (key, index) {
-      if(this.state.actions[key].name==e.item.text){
-        this.handleAction(key,dataItem);
-      }
-    }, this);
-    this.setState({ contextMenuOpen: false });
+    });
   }
-}
+  handleAction(key, dataItem) {
+    this.dataItem = dataItem;
+    this.state.actions[key].confirmationMessage ? Swal.fire({
+      title: this.state.actions[key].confirmationMessage,
+      confirmButtonText: "Agree",
+      confirmButtonColor: "#275362",
+      showCancelButton: true,
+      cancelButtonColor: "#7b7878",
+      target: ".PageRender"
+    }).then((result) => { result.value ? this.buttonAction(this.state.actions[key], this.dataItem) : null; }) : this.state.actions[key].details ? this.buttonAction(this.state.actions[key], this.dataItem) : null;
+  }
+  handleOnSelect = (e) => {
+    var dataItem = this.dataItem;
+    if (this.state.actions) {
+      Object.keys(this.state.actions).map(function (key, index) {
+        if (this.state.actions[key].name == e.item.text) {
+          this.handleAction(key, dataItem);
+        }
+      }, this);
+      this.setState({ contextMenuOpen: false });
+    }
+  }
 
   render() {
     return (
-      <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%", float:"left" }} className={ "GridCustomStyle " + (this.props.className ? this.props.className : "")} >
-      <Popup offset={this.offset} show={this.state.contextMenuOpen} open={this.onPopupOpen} popupClass={'popup-content'} >
+      <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%", float: "left" }} className={"GridCustomStyle " + (this.props.className ? this.props.className : "")} >
+        <Popup offset={this.offset} show={this.state.contextMenuOpen} open={this.onPopupOpen} popupClass={'popup-content'} >
           <div onFocus={this.onFocusHandler} onBlur={this.onBlurHandler} tabIndex={-1} ref={el => (this.menuWrapperRef = el)} >
             <Menu vertical={true} style={{ display: 'inline-block' }} onSelect={this.handleOnSelect}>
               {this.state.menu}
             </Menu>
           </div>
-      </Popup>
+        </Popup>
         {this.rawDataPresent ? (<DataOperation args={this.props.osjsCore} gridData={this.props.data} total={this.props.data.length} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} />) : (
-          <DataLoader ref={(r)=>{this.child = r;}} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
+          <DataLoader ref={(r) => { this.child = r; }} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
         )}
         <div id="customActionsToolbar" />
         <Grid
@@ -824,11 +824,11 @@ handleOnSelect = (e) => {
           detail={
             this.props.rowTemplate
               ? (dataItem) => (
-                  <DetailComponent
-                    rowTemplate={this.props.rowTemplate}
-                    dataItem={dataItem.dataItem}
-                  />
-                )
+                <DetailComponent
+                  rowTemplate={this.props.rowTemplate}
+                  dataItem={dataItem.dataItem}
+                />
+              )
               : undefined
           }
           filterable={this.props.filterable}
@@ -836,9 +836,9 @@ handleOnSelect = (e) => {
           groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}
-          resizable={(this.props.resizable?true:false)}
-          reorderable={(this.props.reorderable? true:false)}
-          sortable={(this.props.sortable? true:false)}
+          resizable={(this.props.resizable ? true : false)}
+          reorderable={(this.props.reorderable ? true : false)}
+          sortable={(this.props.sortable ? true : false)}
           scrollable={this.props.scrollable}
           onDataStateChange={this.dataStateChange}
           onExpandChange={this.props.expandable ? this.expandChange : null}
@@ -851,7 +851,7 @@ handleOnSelect = (e) => {
           editField={this.props.inlineEdit ? "inEdit" : undefined}
           onItemChange={this.itemChange}
         >
-          {this.props.defaultToolBar && this.generateGridToolbar() && this.state.apiActivityCompleted  ? (
+          {this.props.defaultToolBar && this.generateGridToolbar() && this.state.apiActivityCompleted ? (
             <GridToolbar>
               <div className={"GridToolBar"} >
                 {this.generateGridToolbar()}
@@ -862,17 +862,21 @@ handleOnSelect = (e) => {
           {/* {this.noRecordsJSX()} */}
         </Grid>
         {this.props.exportToPDF ? (
-          <GridPDFExport pageTemplate={(props) => this.generatePDFTemplate(props)} ref={(pdfExport) => (this.gridPDFExport = pdfExport)} {...this.props.exportToPDF}fileName={ this.props.exportToPDF.fileNameTemplate ? eval(this.props.exportToPDF.fileNameTemplate) : undefined} >
-            <Grid data={ this.props.exportToPDF.defaultFilters && this.state.gridData.data && typeof this.state.gridData.data == "array" ? process( this.state.gridData.data, JSON.parse(this.props.exportToPDF.defaultFilters) ): this.state.gridData.data }>
-              {this.createColumns( this.props.exportToPDF.columnConfig ? this.props.exportToPDF.columnConfig : this.props.columnConfig )}
+          <GridPDFExport pageTemplate={(props) => this.generatePDFTemplate(props)} ref={(pdfExport) => (this.gridPDFExport = pdfExport)} {...this.props.exportToPDF} fileName={this.props.exportToPDF.fileNameTemplate ? eval(this.props.exportToPDF.fileNameTemplate) : undefined} >
+            <Grid data={this.props.exportToPDF.defaultFilters && this.state.gridData.data && typeof this.state.gridData.data == "array" ? process(this.state.gridData.data, JSON.parse(this.props.exportToPDF.defaultFilters)) : this.state.gridData.data}>
+              {this.createColumns(this.props.exportToPDF.columnConfig ? this.props.exportToPDF.columnConfig : this.props.columnConfig)}
             </Grid>
           </GridPDFExport>
         ) : null}
         {this.props.exportToExcel ? (
-          <ExcelExport ref={(excelExport) => (this._excelExport = excelExport)} fileName={ this.props.exportToExcel.fileNameTemplate ? eval(this.props.exportToExcel.fileNameTemplate) : undefined } >
+          <ExcelExport
+            ref={(excelExport) => (this._excelExport = excelExport)}
+            fileName={this.props.exportToExcel.fileNameTemplate ? eval(this.props.exportToExcel.fileNameTemplate) : undefined}
+            filterable={true}
+          >
             {this.props.exportToExcel.columnConfig ? this.props.exportToExcel.columnConfig.map((item) => (
-                  <ExcelExportColumn  field={item.field} title={item.title} cellOptions={item.cellOptions} locked={item.locked} width={item.width} />
-                )) : null}
+              <ExcelExportColumn field={item.field} title={item.title} cellOptions={item.cellOptions} locked={item.locked} width={item.width} />
+            )) : null}
           </ExcelExport>
         ) : null}
       </div>
@@ -905,7 +909,7 @@ class CustomCell extends GridCell {
       } else {
         return <td className="gridActions">{cellTemplate}</td>;
       }
-    } else if (checkType == "string"  || this.props.dataItem.rygRule) {
+    } else if (checkType == "string" || this.props.dataItem.rygRule) {
       return (
         <JsxParser
           bindings={{
@@ -916,7 +920,7 @@ class CustomCell extends GridCell {
             profile: this.props.userProfile,
             baseUrl: this.props.baseUrl
           }}
-          jsx={this.props.cellTemplate ? this.props.cellTemplate : this.props.dataItem.rygRule ? this.props.dataItem.rygRule : "<td></td>" }
+          jsx={this.props.cellTemplate ? this.props.cellTemplate : this.props.dataItem.rygRule ? this.props.dataItem.rygRule : "<td></td>"}
         />
       );
     }
