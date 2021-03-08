@@ -43,7 +43,7 @@ class CommentsView extends React.Component {
         this.setState({ entityId:fileData.data.entity_id,fileData: file });
         this.getEntityPage().then(entityPage => {
           this.setState({entityConfig: entityPage.data});
-          this.generateViewButton();
+          this.generateViewButton(entityPage.data.enable_auditlog);
           this.fetchCommentData();
         });
       }
@@ -85,13 +85,19 @@ class CommentsView extends React.Component {
       this.loader.destroy();
     });
   }
-  generateViewButton(){
+  generateViewButton(enableAuditLog){
     let gridToolbarContent = [];
     let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
     let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
-    let editPageContent = {pageContent: [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}],title: "Edit",icon: "far fa-pencil"}
     gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
-    gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(editPageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+    if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
+      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:fileId}];
+      let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
+      gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+    }
+    if(enableAuditLog){
+      gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
+    }
     let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
     document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
   }
