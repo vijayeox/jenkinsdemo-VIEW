@@ -54,7 +54,7 @@ export default class WidgetGrid extends React.Component {
 
     saveAsExcel = () => {
         let filterData;
-        filterData = (this.state.exportFilterData.length > 0) ? this.state.exportFilterData : this.state.displayedData
+        filterData = (this.state.exportFilterData.length > 0) ? this.state.exportFilterData : this.allData
         this.excelExporter.save(filterData);
     }
 
