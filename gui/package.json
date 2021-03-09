@@ -39,6 +39,7 @@
         "@trendmicro/react-dropdown": "^1.4.0",
         "@trendmicro/react-sidenav": "^0.5.0",
         "ansi-colors": "^4.1.1",
+        "antd": "^4.13.1",
         "bootstrap": "^4.5.2",
         "bootswatch": "^4.5.2",
         "canvg": "^3.0.7",

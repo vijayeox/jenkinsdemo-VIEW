@@ -35,6 +35,7 @@ import Query from "./src/Query";
 import DashboardFilter from "./src/DashboardFilter";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
+import DocumentList from "./src/DocumentList";
 
 const LazyLoad = ({ component: Component,...rest}) => (
   <>
@@ -112,5 +113,6 @@ export {
   FormBuilder,
   Suspense,
   Visualization,
-  WidgetManager
+  WidgetManager,
+  DocumentList
 };
