@@ -20,7 +20,7 @@ const customStyles = {
 };
 
 const FilterFields = function (props) {
-    const { filters, filterIndex, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat, dataSourceOptions, isDefault } = props;
+    const { filters, filterIndex, index, fieldType, dataType, onUpdate, removeField, field, filterName, filterMode, dateFormat, dataSourceOptions, isDefault, disableDateField } = props;
     const [isFilterIndexLoading, setIsFilterIndexLoading] = useState(false);
     const [isFilterNameLoading, setIsFilterNameLoading] = useState(false);
     const [isFilterValueLoading, setIsFilterValueLoading] = useState(false);
@@ -278,6 +278,7 @@ const FilterFields = function (props) {
                                 selected={Date.parse(filters[index]["startDate"])}
                                 showMonthDropdown
                                 showYearDropdown
+                                disableDateField
                                 dropdownMode="select"
                                 popperPlacement="bottom"
                                 popperModifiers={{
@@ -301,6 +302,8 @@ const FilterFields = function (props) {
                                     dateFormat={dateFormat}
                                     onChange={date => onUpdate(date, index, "startDate")}
                                     selectsStart
+                                    enabled={false}
+                                    disabled={disableDateField}
                                     startDate={Date.parse(filters[index]["startDate"])}
                                     endDate={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     showMonthDropdown
@@ -325,6 +328,8 @@ const FilterFields = function (props) {
                                     dateFormat={dateFormat}
                                     onChange={date => onUpdate(date, index, "endDate")}
                                     selectsEnd
+                                    enabled={false}
+                                    disabled={disableDateField}
                                     startDate={Date.parse(filters[index]["startDate"])}
                                     endDate={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     minDate={Date.parse(filters[index]["startDate"])}
@@ -400,7 +405,8 @@ class DashboardFilter extends React.Component {
             dateFormat: undefined,
             dateTimeFormat: dateTimeFormat.title.en_EN,
             showDefaultValue: true,
-            dataSourceOptions: []
+            dataSourceOptions: [],
+            disableDateField: null
             // userProfile: this.core.make("oxzion/profile").get()
         }
         // this.state.dateFormat.toLowerCase();
@@ -410,7 +416,7 @@ class DashboardFilter extends React.Component {
     async getDataSourceOptions() {
         let dataSourceResponse = await this.restClient.request(
             "v1",
-            'analytics/datasource?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":5000}]', {}, 'get');
+            'analytics/datasource?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
         let options = []
         if (dataSourceResponse.status == "success" && dataSourceResponse.data.length > 0) {
             dataSourceResponse.data.map(datasource => {
@@ -500,6 +506,8 @@ class DashboardFilter extends React.Component {
         let name
         let value
         let defaultValues = []
+        this.setState({ showing: false })
+        this.setState({ disableDateField: null })
         //deep cloning react state to avoid mutation
         let filters = JSON.parse(JSON.stringify(this.state.filters));
 
@@ -576,6 +584,7 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
+            this.setState({ disableDateField: "disabled" })
         } else if (e.target.value === "ytd") {
             name = e.target.name
             value = e.target.value
@@ -587,6 +596,7 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
+            this.setState({ disableDateField: "disabled "})
         } else if (e.target.name === "isDefault") {
             name = e.target.name
             value = e.target.checked
@@ -707,6 +717,7 @@ class DashboardFilter extends React.Component {
                             filterMode={this.props.filterMode}
                             dataSourceOptions={this.state.dataSourceOptions}
                             restClient={this.restClient}
+                            disableDateField={this.state.disableDateField}
                         />
                     })
                     }
