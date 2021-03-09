@@ -46,12 +46,12 @@ class WidgetEditorApp extends React.Component {
 
     _sendUnlimitedWidgetListRequest = (params, method) => {
         return window.postDataRequest('analytics/widget?filter=' +
-            encodeURIComponent('[{"take":500,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]'), params, method);
+            encodeURIComponent('[{"take":0,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]'), params, method);
     }
 
     _sendUnlimitedDashboardListRequest = (params, method) => {
         return window.postDataRequest('/analytics/dashboard?filter=' +
-            encodeURIComponent('[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":500}]'), params, method);
+            encodeURIComponent('[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]'), params, method);
     }
 
     inputChanged = (e) => {
