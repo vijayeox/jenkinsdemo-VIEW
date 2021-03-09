@@ -91,7 +91,7 @@ class CommentsView extends React.Component {
     let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
     gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
     if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
-      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:fileId}];
+      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}];
       let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
       gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
     }
