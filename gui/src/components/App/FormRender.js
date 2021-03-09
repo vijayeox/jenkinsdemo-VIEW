@@ -1651,9 +1651,7 @@ class FormRender extends React.Component {
               data["appId"] = that.state.appId;
               data["unansweredQuestions"] = unansweredFields;
               data['fileId'] = response.data.fileId;
-              var sequence = [];
-              that.state.currentForm.everyComponent(i=>sequence.push(i.component.key));
-              data['sequence'] =  sequence;
+
               that.callDelegate("Unanswered", data).then((response) => {
                 ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
                   var url = response.data[i];
