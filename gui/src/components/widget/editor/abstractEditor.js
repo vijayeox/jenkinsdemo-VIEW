@@ -522,7 +522,7 @@ class AbstractEditor extends React.Component {
     loadQueries = (postLoadCallback) => {
         let thiz = this;
         window.postDataRequest('analytics/query?filter=' +
-            encodeURIComponent('[{"take":10000,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]')).
+            encodeURIComponent('[{"take":0,"skip":0,"sort":[{"field":"name","dir":"asc"}]}]')).
             then(function (response) {
                 thiz.queryList = response.data;
                 thiz.forceUpdate();
