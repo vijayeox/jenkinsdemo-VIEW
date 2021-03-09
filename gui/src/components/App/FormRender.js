@@ -821,7 +821,6 @@ class FormRender extends React.Component {
                   }
                 });
             } else {
-
               that.state.currentForm.checkValidity(
                 submission.data,
                 true,
@@ -1652,7 +1651,6 @@ class FormRender extends React.Component {
               data["appId"] = that.state.appId;
               data["unansweredQuestions"] = unansweredFields;
               data['fileId'] = response.data.fileId;
-              console.log(unansweredFields);
 
               that.callDelegate("Unanswered", data).then((response) => {
                 ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
