@@ -54,7 +54,7 @@ export default class WidgetGrid extends React.Component {
 
     saveAsExcel = () => {
         let filterData;
-        filterData = (this.state.exportFilterData.length > 0) ? this.state.exportFilterData : this.allData
+        filterData = (Object.keys(this.state.exportFilterData).length > 0) ? this.state.exportFilterData : this.allData
         this.excelExporter.save(filterData);
     }
 
@@ -125,12 +125,20 @@ export default class WidgetGrid extends React.Component {
     }
 
     gridFilterChanged = (e) => {
-        this.setState({
-            filter: e.filter,
-            exportFilterData: e.target.props.data,
-        }, () => {
-            this.prepareData(true);
-        });
+        if (e.filter == null) {
+            this.setState({
+                filter: e.filter,
+                exportFilterData: this.allData,
+            });
+
+        } else {
+            this.setState({
+                filter: e.filter,
+                exportFilterData: e.target.props.data,
+            }, () => {
+                this.prepareData(true);
+            });
+        }
     }
 
     gridSortChanged = (e) => {
@@ -294,7 +302,12 @@ export default class WidgetGrid extends React.Component {
                 }
                 {this.exportToExcel &&
                     <>
-                        <div className="oxzion-widget-drilldown-excel-icon" style={hasBackButton ? { right: "5%" } : { right: "10px" }} onClick={this.saveAsExcel}><i className="fa fa-file-excel fa-lg"></i></div>
+                        <div
+                            className="oxzion-widget-drilldown-excel-icon"
+                            style={hasBackButton ? { right: "5%" } : { right: "10px" }}
+                            onClick={this.saveAsExcel}>
+                            <i className="fa fa-file-excel fa-lg"></i>
+                        </div>
                         <ExcelExport
                             data={this.state.exportFilterData}
                             ref={exporter => this.excelExporter = exporter}
