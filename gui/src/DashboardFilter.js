@@ -612,7 +612,7 @@ class DashboardFilter extends React.Component {
         }
         filters[index][name] = value
         this.setState({ filters })
-        this.setState({ disableDateField: "disabled "})
+        
     }
 
     handleSelect(e) {
