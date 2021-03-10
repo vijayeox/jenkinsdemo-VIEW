@@ -278,7 +278,7 @@ const FilterFields = function (props) {
                                 selected={Date.parse(filters[index]["startDate"])}
                                 showMonthDropdown
                                 showYearDropdown
-                                disableDateField
+                                disabled={disableDateField}
                                 dropdownMode="select"
                                 popperPlacement="bottom"
                                 popperModifiers={{
@@ -551,6 +551,7 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = false
             this.setState({ showing: false })
+            this.setState({ disableDateField: "disabled" })
         } else if (e.target.value === "monthly") {
             name = e.target.name
             value = e.target.value
@@ -562,6 +563,7 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
+            this.setState({ disableDateField: "disabled" })
         } else if (e.target.value === "yearly") {
             name = e.target.name
             value = e.target.value
@@ -573,6 +575,7 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
+            this.setState({ disableDateField: "disabled" })
         } else if (e.target.value === "mtd") {
             name = e.target.name
             value = e.target.value
@@ -597,7 +600,8 @@ class DashboardFilter extends React.Component {
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
             this.setState({ disableDateField: "disabled "})
-        } else if (e.target.name === "isDefault") {
+        } 
+        else if (e.target.name === "isDefault") {
             name = e.target.name
             value = e.target.checked
         } else {
@@ -608,6 +612,7 @@ class DashboardFilter extends React.Component {
         }
         filters[index][name] = value
         this.setState({ filters })
+        this.setState({ disableDateField: "disabled "})
     }
 
     handleSelect(e) {

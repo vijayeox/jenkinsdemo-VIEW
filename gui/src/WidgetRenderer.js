@@ -249,6 +249,10 @@ class WidgetRenderer {
 
         let chart = null;
         if ('amCharts-map' === am4ChartType || am4geodata_worldLow === am4ChartType) {
+            if (WidgetDrillDownHelper.setupDrillDownContextStack(element, configuration, hasDashboardFilters)) {
+                WidgetDrillDownHelper.setupAmchartsEventHandlers(series);
+                isDrillDownChart = true;
+            }
             chart = WidgetRenderer.renderAmMap(configuration, canvasElement, data);
             if (isDrillDownChart) {
                 canvasElement.insertAdjacentHTML('beforeend',
