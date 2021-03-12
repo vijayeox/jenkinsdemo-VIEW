@@ -38,7 +38,7 @@ class Dashboard extends Component {
     });
     this.myRef = React.createRef();
   }
-    // Can be used as API call
+
   async getDashboardHtmlDataByUuid(uuid) {
     let response = await this.helper.request(
       "v1",
