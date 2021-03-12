@@ -166,9 +166,6 @@ class BaseFormRenderer extends React.Component {
                             } else {
                                 var response = await that.saveForm(null, that.cleanData(submission.data)).then(function (response) {
                                     if (response.status == 'success') {
-                                        if(that.notif && that.notif.current){
-                                            that.notif.current.notify("Success", that.checkCustomSaveMessage(), "success");
-                                        }
                                         next(null);
                                     } else {
                                         next([response.errors[0].message]);
