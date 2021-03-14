@@ -780,8 +780,8 @@ export default class Desktop extends EventEmitter {
 
   async cookiesCheck(){
     let helper = this.core.make('oxzion/restClient');
-    let condition = await helper.request('v1','/user/me/getPolicyTerm', {}, 'get' );
-    if(typeof condition['data'][0] == 'undefined' && condition['data'][0] !== "1"){
+    let condition = await helper.request('v1','/user/me/hasLoggedIn', {}, 'get' );
+    if(condition['data'] && condition['data']['has_logged_in'] !== "1" && condition['data']['verification_pending'] == null){
       const { value: accept } = await Swal.fire({
         title: 'Privacy and Policy',
         allowOutsideClick: false,
@@ -792,16 +792,24 @@ export default class Desktop extends EventEmitter {
         inputValidator: (result) => {
           return !result && 'You need to agree with T&C'
         }
-      })
+      });
 
       if (accept) {
         let helper = this.core.make("oxzion/restClient");
         let updateterm = await helper.request(
           "v1",
-          "/user/me/updatePolicyTerm",{},
+          "/user/me/updateLoggedIn",{},
           "post"
           );
         updateterm.status == "success" ? Swal.fire('Thank you for accepting our terms and conditions') : Swal.fire({title : updateterm.message, allowOutsideClick: false});
+      }
+    } else {
+      if(condition['data']['verification_pending']){
+        try{
+          var verificationPaylod = JSON.parse(condition['data']['verification_pending']);
+        } catch (e){
+          console.log('Could not handle payload =>'+condition['data']['verification_pending']);
+        }
       }
     }
   }
