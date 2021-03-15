@@ -130,7 +130,6 @@ export default class WidgetGrid extends React.Component {
                 filter: e.filter,
                 exportFilterData: this.allData,
             });
-
         } else {
             this.setState({
                 filter: e.filter,
