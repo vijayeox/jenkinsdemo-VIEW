@@ -795,8 +795,7 @@ class FormRender extends React.Component {
             }
             // storeCache has to be fixed: For CSR if storeCache called, startForm will be loaded once we reload.
             that.storeCache(this.cleanData(form_data));
-            
-            next([]);
+            next(null);
           },
           beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
