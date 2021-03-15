@@ -836,6 +836,7 @@ handleOnSelect = (e) => {
           groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}
+          take={this.props.take}
           resizable={(this.props.resizable?true:false)}
           reorderable={(this.props.reorderable? true:false)}
           sortable={(this.props.sortable? true:false)}
