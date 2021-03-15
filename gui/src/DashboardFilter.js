@@ -416,7 +416,7 @@ class DashboardFilter extends React.Component {
     async getDataSourceOptions() {
         let dataSourceResponse = await this.restClient.request(
             "v1",
-            'analytics/datasource?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":0}]', {}, 'get');
+            'analytics/datasource?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":10000}]', {}, 'get');
         let options = []
         if (dataSourceResponse.status == "success" && dataSourceResponse.data.length > 0) {
             dataSourceResponse.data.map(datasource => {
