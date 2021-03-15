@@ -144,7 +144,17 @@
           const suffix = `?pid=${proc.pid}&wid=${win.wid}`;
             // Get path to iframe content
           const src = proc.resource( baseUrl + "/public/index.php/user/login" + suffix + "&oxauth=" + user.jwt);
-          console.log(src)
+          console.log(src);
+
+          const keepSessionActive = (url, params, win) => {
+            setTimeout(() => {
+              proc.resource(url, params)
+              if (!win.destroyed) {
+                keepSessionActive(url, params, win);}
+              }, 5000);
+          };
+          keepSessionActive(baseUrl + "/public/index.php/user/login", suffix + "&oxauth=" + user.jwt, win);
+
           // Create DOM element
           const iframe = createIframe(bus, proc, win, send => {
             bus.on("yo", (send, args) =>

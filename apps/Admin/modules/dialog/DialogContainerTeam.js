@@ -8,9 +8,9 @@ export default class DialogContainer extends React.Component {
     super(props);
     this.core = this.props.args;
     this.state = {
-      groupInEdit: this.props.dataItem || null,
+      teamInEdit: this.props.dataItem || null,
       managerName: null,
-      parentGroupName: null
+      parentTeamName: null
     };
     this.notif = React.createRef();
   }
@@ -35,11 +35,11 @@ export default class DialogContainer extends React.Component {
         ? GetSingleEntityData(
             "account/" +
               this.props.selectedOrg +
-              "/group/" +
+              "/team/" +
               this.props.dataItem.parentId
           ).then(response => {
             this.setState({
-              parentGroupName: {
+              parentTeamName: {
                 id: "111",
                 name: response.data.name
               }
@@ -52,17 +52,17 @@ export default class DialogContainer extends React.Component {
   listOnChange = (event, item) => {
     console.log(event.target.value);
 
-    const edited = this.state.groupInEdit;
+    const edited = this.state.teamInEdit;
     edited[item] = event.target.value;
     this.setState({
-      groupInEdit: edited
+      teamInEdit: edited
     });
     item == "managerId"
       ? this.setState({
           managerName: event.target.value
         })
       : this.setState({
-          parentGroupName: event.target.value
+          parentTeamName: event.target.value
         });
   };
 
@@ -71,11 +71,11 @@ export default class DialogContainer extends React.Component {
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.props ? target.props.name : target.name;
 
-    const edited = this.state.groupInEdit;
+    const edited = this.state.teamInEdit;
     edited[name] = value;
 
     this.setState({
-      groupInEdit: edited
+      teamInEdit: edited
     });
   };
 
@@ -87,10 +87,10 @@ export default class DialogContainer extends React.Component {
       "default"
     )
     let tempData = {
-      name: this.state.groupInEdit.name,
-      parentId: this.state.groupInEdit.parentId,
-      managerId: this.state.groupInEdit.managerId,
-      description: this.state.groupInEdit.description
+      name: this.state.teamInEdit.name,
+      parentId: this.state.teamInEdit.parentId,
+      managerId: this.state.teamInEdit.managerId,
+      description: this.state.teamInEdit.description
     };
 
     for (var i = 0; i <= Object.keys(tempData).length; i++) {
@@ -100,9 +100,9 @@ export default class DialogContainer extends React.Component {
       }
     }
     PushData(
-      "account/" + this.props.selectedOrg + "/group",
+      "account/" + this.props.selectedOrg + "/team",
       this.props.formAction,
-      this.state.groupInEdit.uuid,
+      this.state.teamInEdit.uuid,
       tempData
     ).then(response => {
       if (response.status == "success") {
@@ -123,7 +123,7 @@ export default class DialogContainer extends React.Component {
       <KendoReactWindow.Window onClose={this.props.cancel}>
         <Notification ref={this.notif} />
         <div>
-          <form id="groupForm" onSubmit={this.handleSubmit}>
+          <form id="teamForm" onSubmit={this.handleSubmit}>
             {this.props.diableField ? (
               <div className="read-only-mode">
                 <h5>(READ ONLY MODE)</h5>
@@ -131,17 +131,17 @@ export default class DialogContainer extends React.Component {
               </div>
             ) : null}
             <div className="form-group">
-              <label className="required-label">Group Name</label>
+              <label className="required-label">Team Name</label>
               <KendoReactInput.Input
                 type="text"
                 className="form-control"
                 name="name"
                 maxLength="50"
-                value={this.state.groupInEdit.name || ""}
+                value={this.state.teamInEdit.name || ""}
                 onChange={this.onDialogInputChange}
-                placeholder="Enter Group Name"
+                placeholder="Enter Team Name"
                 required={true}
-                validationMessage={"Please enter the Group name."}
+                validationMessage={"Please enter the Team name."}
                 readOnly={this.props.diableField ? true : false}
               />
             </div>
@@ -152,9 +152,9 @@ export default class DialogContainer extends React.Component {
                 className="form-control"
                 name="description"
                 maxLength="200"
-                value={this.state.groupInEdit.description || ""}
+                value={this.state.teamInEdit.description || ""}
                 onChange={this.onDialogInputChange}
-                placeholder="Enter Group Description"
+                placeholder="Enter Team Description"
                 required={true}
                 readOnly={this.props.diableField ? true : false}
               />
@@ -162,7 +162,7 @@ export default class DialogContainer extends React.Component {
             <div className="form-group">
               <div className="form-row">
                 <div className="col-4">
-                  <label className="required-label">Group Manager</label>
+                  <label className="required-label">Team Manager</label>
                   <div>
                     <DropDown
                       args={this.core}
@@ -181,14 +181,14 @@ export default class DialogContainer extends React.Component {
                   </div>
                 </div>
                 <div className="col-4">
-                  <label>Parent Group</label>
+                  <label>Parent Team</label>
                   <div>
                     <DropDown
                       args={this.core}
                       mainList={
-                        "account/" + this.props.selectedOrg + "/groups"
+                        "account/" + this.props.selectedOrg + "/teams"
                       }
-                      selectedItem={this.state.parentGroupName}
+                      selectedItem={this.state.parentTeamName}
                       selectedEntityType={"text"}
                       preFetch={true}
                       onDataChange={event =>
@@ -204,7 +204,7 @@ export default class DialogContainer extends React.Component {
           </form>
         </div>
         <SaveCancel
-          save="groupForm"
+          save="teamForm"
           cancel={this.props.cancel}
           hideSave={this.props.diableField}
         />

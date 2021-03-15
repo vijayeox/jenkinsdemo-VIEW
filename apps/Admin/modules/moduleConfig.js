@@ -1,6 +1,7 @@
 import { React } from "oxziongui";
 import DialogContainerAnnouncement from "./dialog/DialogContainerAnnouncement";
 import DialogContainerProject from "./dialog/DialogContainerPrj";
+import DialogContainerTeam from "./dialog/DialogContainerTeam";
 
 export default {
   Organization: {},
@@ -132,7 +133,7 @@ export default {
       actions: [
         { name: "Edit", type: "edit", icon: "fa fa-pencil" },
         {
-          name: "Add To Group",
+          name: "Add To Team",
           type: "assignEntity",
           icon: "fa fa-users",
           prefetch: true,
@@ -146,5 +147,84 @@ export default {
       canDelete: "MANAGE_ANNOUNCEMENT_WRITE",
     },
   },
-  Group: {},
+  Teams: {
+    title: "Manage Teams",
+    dialogWindow: DialogContainerTeam,
+    listConfig: {
+      route: "teams",
+      defaultFilters: { sort: [{ field: "date_created", dir: "desc" }] },
+      toolbarTemplate: (
+        <h5 key={Math.random()} style={{ margin: "0px" }}>
+          Team's List
+        </h5>
+      ),
+      addButton: { title: "Add Team" },
+      columnConfig: [
+        {
+          title: "Name",
+          field: "name",
+        },
+        {
+          title: "Description",
+          field: "description",
+        },
+      ],
+      actions: [
+        { name: "Edit Team Details", type: "edit", icon: "fa fa-pencil" },
+        {
+          name: "Add Users To Team",
+          type: "assignEntity",
+          icon: "fa fa-user-plus",
+          prefetch: false,
+          title: "Add Members",
+          mainList: "/users/list",
+          subList: "/team",
+          members: "Users",
+        },
+        {
+          name: "Delete Team",
+          type: "delete",
+          icon: "fa fa-trash manageIcons",
+          route: "/team",
+        },
+      ],
+      expandable: {
+        subRoute: "team/{{uuid}}/subteam",
+        columnConfig: [
+          {
+            title: "Name",
+            field: "name",
+          },
+          {
+            title: "Description",
+            field: "description",
+          },
+        ],
+        actions: [
+          { name: "Edit Team Details", type: "edit", icon: "fa fa-pencil" },
+          {
+            name: "Add Users To Team",
+            type: "assignEntity",
+            icon: "fa fa-user-plus",
+            prefetch: false,
+            title: "Add Members",
+            mainList: "/users/list",
+            subList: "/team",
+            members: "Users",
+          },
+          {
+            name: "Delete Team",
+            type: "delete",
+            icon: "fa fa-trash manageIcons",
+            route: "/team",
+          },
+        ],
+      },
+    },
+    permission: {
+      canAdd: "MANAGE_GROUP_WRITE",
+      canEdit: "MANAGE_GROUP_WRITE",
+      canDelete: "MANAGE_GROUP_WRITE",
+    },
+  },
 };

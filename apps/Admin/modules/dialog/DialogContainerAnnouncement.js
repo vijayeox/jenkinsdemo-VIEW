@@ -85,19 +85,19 @@ export default class DialogContainerAnnouncement extends React.Component {
   }
 
   sendTheData = () => {
-    var temp1 = this.state.selectedGroups;
+    var temp1 = this.state.selectedTeams;
     var temp2 = [];
     for (var i = 0; i <= temp1.length - 1; i++) {
       var gid = { id: temp1[i] };
       temp2.push(gid);
     }
-    this.pushAnnouncementGroups(this.state.ancInEdit.id, JSON.stringify(temp2));
+    this.pushAnnouncementTeams(this.state.ancInEdit.id, JSON.stringify(temp2));
 
     this.setState({
       visible: !this.state.visible,
       groupsList: [],
       value: [],
-      pushAnnouncementGroups: []
+      pushAnnouncementTeams: []
     });
   };
 

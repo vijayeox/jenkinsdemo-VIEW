@@ -43,7 +43,7 @@ class CommentsView extends React.Component {
         this.setState({ entityId:fileData.data.entity_id,fileData: file });
         this.getEntityPage().then(entityPage => {
           this.setState({entityConfig: entityPage.data});
-          this.generateViewButton();
+          this.generateViewButton(entityPage.data.enable_auditlog);
           this.fetchCommentData();
         });
       }
@@ -85,13 +85,19 @@ class CommentsView extends React.Component {
       this.loader.destroy();
     });
   }
-  generateViewButton(){
+  generateViewButton(enableAuditLog){
     let gridToolbarContent = [];
     let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
     let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
-    let editPageContent = {pageContent: [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}],title: "Edit",icon: "far fa-pencil"}
     gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
-    gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(editPageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+    if(this.state.entityConfig && !this.state.entityConfig.has_workflow){
+      filePage = [{type: "Form",form_id:this.state.entityConfig.form_uuid,name:this.state.entityConfig.form_name,fileId:this.state.fileId}];
+      let pageContent = {pageContent: filePage,title: "Edit",icon: "far fa-pencil"}
+      gridToolbarContent.push(<Button title={"Edit"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-pencil"}></i></Button>);
+    }
+    if(enableAuditLog){
+      gridToolbarContent.push(<Button title={"Audit Log"} className={"toolBarButton"} primary={true} onClick={(e) => this.callAuditLog()} ><i className={"fa fa-history"}></i></Button>);
+    }
     let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
     document.getElementById(this.appId+"_breadcrumbParent").dispatchEvent(ev);
   }
@@ -118,10 +124,9 @@ class CommentsView extends React.Component {
         name: emoji.shortname }))
   };
 
-  emoticonCheck(){
+  bubbleEmoticonCheck(input){
     const emojiObject = this.state.emojis
     var regex = /\:(.*?)\:/g
-    var input = this.state.value
     var matched = input.match(regex)
     var emoticon
     if(matched)
@@ -135,9 +140,9 @@ class CommentsView extends React.Component {
           input = input.replace(matched[i],emoticon)
         }
       }
-      this.state.value = input
     }
-}
+    return input
+  }
 
   emojiCheck() {
     var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff]|[\u200D])/g
@@ -287,6 +292,7 @@ class CommentsView extends React.Component {
             <div id="chat-container">
               <div id="chat-message-list" key={this.state.fileId}>
                 {this.state.commentsList.slice(0).reverse().map((commentItem) => {
+                  commentItem.text = this.bubbleEmoticonCheck(commentItem.text);
                   var image = this.core.config("wrapper.url") + "user/profile/" + commentItem.user_id
                   if(commentItem.user_id == that.currentUserId){
                   return (
@@ -374,7 +380,6 @@ class CommentsView extends React.Component {
                   className="commentsSaveButton"
                   disabled={this.state.value.length == 0 ? true : false}
                   onClick={() => {
-                    this.emoticonCheck();
                     this.emojiCheck();
                     this.saveComment();
                   }}

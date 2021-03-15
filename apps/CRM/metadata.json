@@ -5,7 +5,6 @@
   "singleton":true,
   "icon": "icon.svg",
   "icon_white": "icon_white.svg",
-  "singleton": true,
   "title": {
     "en_EN": "CRM"
   },

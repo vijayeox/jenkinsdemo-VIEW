@@ -1,9 +1,13 @@
 version: '3'
 services:
-       vw:
-        build: ./docker
-        network_mode: "host"
-        ports:
-            - "8081:8081" 
-        volumes:
-            - ../:/app              
+  vw:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    environment:
+      IP: ${IP}
+    network_mode: "host"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ../:/app
