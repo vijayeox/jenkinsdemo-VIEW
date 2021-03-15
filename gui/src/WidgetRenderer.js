@@ -405,7 +405,7 @@ class WidgetRenderer {
         // Code is based on https://codepen.io/team/amcharts/pen/5ae84826c9e2ab4772c9ef85021835c7
         //-----------------------------------------------------------------------------------------
         let chart = am4core.create(canvasElement, am4maps.MapChart);
-        let chartType = meta ? meta['type'] : null;
+        let chartType = configuration['oxzion-meta'] ? configuration['oxzion-meta']['type'] : null;
         if (chartType) {
             switch (chartType) {
                 case 'map':
