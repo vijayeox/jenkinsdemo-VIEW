@@ -836,9 +836,10 @@ export default class OX_Grid extends React.Component {
           groupable={this.props.groupable}
           style={this.props.gridStyles}
           pageable={this.props.pageable}
-          resizable={(this.props.resizable ? true : false)}
-          reorderable={(this.props.reorderable ? true : false)}
-          sortable={(this.props.sortable ? true : false)}
+          take={this.props.take}
+          resizable={(this.props.resizable?true:false)}
+          reorderable={(this.props.reorderable? true:false)}
+          sortable={(this.props.sortable? true:false)}
           scrollable={this.props.scrollable}
           onDataStateChange={this.dataStateChange}
           onExpandChange={this.props.expandable ? this.expandChange : null}
