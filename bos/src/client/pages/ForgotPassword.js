@@ -69,7 +69,7 @@ class ForgotPassword extends React.Component {
                   name="username"
                   className="validate"
                   id="username"
-                  placeholder="Username"
+                  placeholder="PADI Number"
                 />
                 <label htmlFor="username">Username</label>
               </div>
