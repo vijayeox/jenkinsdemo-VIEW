@@ -254,11 +254,8 @@ class DashboardManager extends React.Component {
   applyDashboardFilter(filter) {
     let dashboardStack = null
     let dashboardFilterRef = this.filterRef.current
-
     let filterOptions = dashboardFilterRef.state.applyFilterOption
-
     if (this.state.dashboardStack.length == 1) {
-
       dashboardStack = [...this.state.dashboardStack]
       let dashboardFilter = filter
       let extractedFilterValues = extractFilterValues(dashboardFilter, dashboardStack);
@@ -280,7 +277,7 @@ class DashboardManager extends React.Component {
     if (dashboardStack != null) {
       this.setState({ dashboardFilter: filter, dashboardStack: dashboardStack, filterConfiguration: filter, filter, filterOptions: filterOptions })
     } else {
-      this.setState({ dashboardFilter: filter, filterConfiguration: filter, filterOptions: filterOptions })
+      this.setState({ dashboardFilter: filter, filterConfiguration: filterOptions, filterOptions: filterOptions })
     }
     this.hideFilter()
   }
