@@ -702,22 +702,25 @@ class FormRender extends React.Component {
         if (panelComponent.errors.length>0){
           var errors = []
           panelComponent.errors.forEach((error)=>{
-            if(error.messages[0].path && error.messages[0].path.length>1){
-              var errorMessages = error.messages[0].path;
-              var errorMessage = ""
-              for(var i = 0; i<errorMessages.length;i++){
-                if(i%2!=0){
-                  errorMessage+= '['+errorMessages[i] +'].';
+            if(error.component.key !='textField'){
+              if(error.messages[0].path && error.messages[0].path.length>1){
+                var errorMessages = error.messages[0].path;
+                var errorMessage = ""
+                for(var i = 0; i<errorMessages.length;i++){
+                  if(i%2!=0){
+                    errorMessage+= '['+errorMessages[i] +'].';
+                  }
+                  else{
+                    errorMessage +=  errorMessages[i];
+                  }
                 }
-                else{
-                  errorMessage +=  errorMessages[i];
-                }
+                errors.push({'api':errorMessage});
               }
-              errors.push({'api':errorMessage});
+              else{
+                errors.push({'api':error.component.key});
+              }
             }
-            else{
-              errors.push({'api':error.component.key});
-            }
+
           })
           resolve(errors);
         }
@@ -729,6 +732,7 @@ class FormRender extends React.Component {
     }
     getUnansweredFields(formData){
       var that = this;
+      console.log(that.state.currentForm);
       if(that.state.currentForm && that.changedData){
         var data = formData;
         var panelComponents = that.state.currentForm.components;
@@ -799,6 +803,8 @@ class FormRender extends React.Component {
           },
           beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
+            console.log(that.state.currentForm);
+            console.log(that.state.submission);
             if (
               that.state.currentForm.checkValidity() &&
               that.state.currentForm.checkValidity(
@@ -1645,6 +1651,7 @@ class FormRender extends React.Component {
 
           if(actionDetails.downloadPdf){
             var that=this;
+            var downloadPDFAction = actionDetails.downloadPDFAction;
             this.getUnansweredFields(actionDetails.formData).then((unansweredFields)=>{
               var data = {};
               data["appId"] = that.state.appId;
@@ -1654,8 +1661,8 @@ class FormRender extends React.Component {
               that.state.currentForm.everyComponent(i=>sequence.push(i.component.key));
               data['sequence'] =  sequence;
               that.callDelegate("Unanswered", data).then((response) => {
-                ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
-                  var url = response.data[i];
+                // ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
+                  var url = response.data[downloadPDFAction];
                   var a = document.createElement("a");
                   a.href = url;
                   a.target = "_blank";
@@ -1666,7 +1673,7 @@ class FormRender extends React.Component {
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);
                   }, 0);
-                })
+                // })
               });
             })
           }
