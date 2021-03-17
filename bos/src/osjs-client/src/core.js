@@ -176,6 +176,8 @@ export default class Core extends CoreBase {
             }
           };
           xhr.send(formData);
+        } else {
+          window.localStorage.clear();
         }
         if(autoLogin) {
           // reset the user details on refresh
