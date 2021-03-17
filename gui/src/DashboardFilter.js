@@ -400,6 +400,7 @@ class DashboardFilter extends React.Component {
             createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }],
             applyFilterOption: this.props.applyFilterOption ? [...this.props.applyFilterOption] : [],
             filters: this.props.filterConfiguration ? [...this.props.filterConfiguration] : [],
+            filterConfiguration: this.props.filterConfiguration ? [...this.props.filterConfiguration] : [],
             defaultFilters: [],
             applyFilters: [],
             dateFormat: undefined,
@@ -445,17 +446,18 @@ class DashboardFilter extends React.Component {
 
     //showing only default filters on load
     displayDefaultFilters() {
-        let applyFilterOption = []
+        // let applyFilterOption = []
         let filters = []
         this.props.filterConfiguration && this.props.filterConfiguration.map((filter, index) => {
             if (filter.isDefault) {
                 filters.push(filter)
-            } else {
-                // this.state.filters[index]["filterName"] && applyFilterOption.push({ label: this.state.filters[index]["filterName"], value: this.state.filters[index] })
-                applyFilterOption.push({ label: filter["filterName"], value: filter })
             }
+            // else {
+            // this.state.filters[index]["filterName"] && applyFilterOption.push({ label: this.state.filters[index]["filterName"], value: this.state.filters[index] })
+            // applyFilterOption.push({ label: filter["filterName"], value: filter })
+            // }
         })
-        this.setState({ filters: filters, applyFilterOption: applyFilterOption })
+        this.setState({ filters: filters })
     }
 
     removeField(index, field) {
@@ -599,8 +601,8 @@ class DashboardFilter extends React.Component {
             filters[index][name] = value
             filters[index]["dateRange"] = true
             this.setState({ showing: false })
-            this.setState({ disableDateField: "disabled "})
-        } 
+            this.setState({ disableDateField: "disabled " })
+        }
         else if (e.target.name === "isDefault") {
             name = e.target.name
             value = e.target.checked
@@ -612,7 +614,7 @@ class DashboardFilter extends React.Component {
         }
         filters[index][name] = value
         this.setState({ filters })
-        
+
     }
 
     handleSelect(e) {
