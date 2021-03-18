@@ -135,7 +135,7 @@ class Login extends React.Component {
                     name="username"
                     className="validate"
                     id="username"
-                    placeholder="Username"
+                    placeholder="PADI Number"
                     value={this.state.username}
                     onChange={this.handleChange}
                   />
