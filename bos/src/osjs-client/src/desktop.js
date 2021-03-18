@@ -782,6 +782,8 @@ export default class Desktop extends EventEmitter {
     let helper = this.core.make('oxzion/restClient');
     let condition = await helper.request('v1','/user/me/hasLoggedIn', {}, 'get' );
     if(condition['data'] && condition['data']['has_logged_in'] !== "1" && condition['data']['verification_pending'] == null){
+      const splash = this.core.make("oxzion/splash");
+      splash.destroy();
       const { value: accept } = await Swal.fire({
         title: 'Privacy and Policy',
         allowOutsideClick: false,
@@ -793,7 +795,7 @@ export default class Desktop extends EventEmitter {
           return !result && 'You need to agree with T&C'
         }
       });
-
+      splash.show();
       if (accept) {
         let helper = this.core.make("oxzion/restClient");
         let updateterm = await helper.request(
