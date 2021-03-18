@@ -45,33 +45,33 @@ class Slider extends React.Component {
   }
 
   refreshAnc() {
-    // this.setState({
-    //   announcements: [],
-    //   currentIndex: 0,
-    //   translateValue: 0,
-    //   indexCount: 0,
-    //   isPanelOpen: false,
-    //   loading: true,
-    //   focusData: []
-    // });
-    // this.getAnnouncements().then((response) => {
-    //   let data = response.data;
-    //   let baseUrl = this.core.config("wrapper.url");
+    this.setState({
+      announcements: [],
+      currentIndex: 0,
+      translateValue: 0,
+      indexCount: 0,
+      isPanelOpen: false,
+      loading: true,
+      focusData: []
+    });
+    this.getAnnouncements().then((response) => {
+      let data = response.data;
+      let baseUrl = this.core.config("wrapper.url");
 
-    //   for (let i = 0; i < data.length; i++) {
-    //     if (data[i].media != null) {
-    //       data[i].media = baseUrl + "resource/" + data[i].media;
-    //     }
-    //   }
-    //   this.setState(
-    //     {
-    //       announcements: data,
-    //       indexCount: data.length - 1,
-    //       loading: false
-    //     },
-    //     () => this.refreshTimer()
-    //   );
-    // });
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].media != null) {
+          data[i].media = baseUrl + "resource/" + data[i].media;
+        }
+      }
+      this.setState(
+        {
+          announcements: data,
+          indexCount: data.length - 1,
+          loading: false
+        },
+        () => this.refreshTimer()
+      );
+    });
   }
 
   refreshTimer() {
