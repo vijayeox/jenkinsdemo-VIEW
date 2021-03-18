@@ -18,8 +18,10 @@ then
 	sed -ri -e "s/^SERVER=.*/SERVER=${IP}/" ./bos/src/osjs-server/.env
 	sed -ri -e "s/([0-9]{1,3}\.){3}[0-9]{1,3}:8080/${IP}:8080/" ./bos/src/server/local.js
 
-	ls ./view_built >> /dev/null 2>&1 && echo "Starting view" || (echo "Building view" && ./build.sh gui && ./build.sh iconpacks && ./build.sh themes && ./build.sh apps Admin,Announcements,Preferences && ./build.sh bos && touch ./view_built)
+	if [ ! -e ./view_built ]; then
+		ls ./view_built >> /dev/null 2>&1 && echo "Starting view" || (echo "Building view" && ./build.sh gui && ./build.sh iconpacks && ./build.sh themes && ./build.sh apps Admin,Announcements,Preferences && ./build.sh bos && touch ./view_built)
+		touch ./view_built
+	fi
 
 	npm run serve
-
 fi
