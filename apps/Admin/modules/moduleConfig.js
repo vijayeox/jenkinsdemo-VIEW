@@ -222,9 +222,9 @@ export default {
       },
     },
     permission: {
-      canAdd: "MANAGE_GROUP_WRITE",
-      canEdit: "MANAGE_GROUP_WRITE",
-      canDelete: "MANAGE_GROUP_WRITE",
+      canAdd: "MANAGE_TEAM_WRITE",
+      canEdit: "MANAGE_TEAM_WRITE",
+      canDelete: "MANAGE_TEAM_WRITE",
     },
   },
 };
