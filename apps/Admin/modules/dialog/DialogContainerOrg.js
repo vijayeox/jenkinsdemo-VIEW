@@ -195,11 +195,8 @@ export default class DialogContainer extends React.Component {
       }
     }
 
-    this.notif.current.notify(
-      "Uploading Data",
-      "Please wait for a few seconds.",
-      "default"
-    );
+    this.notif.current.notify("Uploading Data", "Please wait for a few seconds.", "default" );
+    var logoFile = undefined;
     if (this.props.formAction == "post") {
       var contactData = JSON.stringify({
         firstname: this.state.orgInEdit.contact.firstname,
@@ -208,17 +205,11 @@ export default class DialogContainer extends React.Component {
         email: this.state.orgInEdit.contact.email,
         phone: this.state.orgInEdit.contact.phone
       });
-      var logoFile = this.fUpload.state.selectedFile[0].getRawFile();
+      logoFile = this.fUpload.state.selectedFile[0].getRawFile();
     } else {
       var contactData = [];
       var contact_id = this.state.orgInEdit.contactid;
-      if (this.current){
-      var logoFile = this.fUpload.state.selectedFile[0]
-        ? this.fUpload.state.selectedFile[0].getRawFile()
-        : undefined;
-      }else{
-        var logoFile = undefined;
-      }
+      logoFile = this.fUpload.state.selectedFile[0] ? this.fUpload.state.selectedFile[0].getRawFile() : undefined;
     }
 
     let tempData = {
