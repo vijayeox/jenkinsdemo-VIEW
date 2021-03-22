@@ -91,7 +91,7 @@ class Home extends React.Component {
       },
       {
         name: "Teams",
-        api: "GROUP",
+        api: "TEAM",
         icon: "apps/Admin/group.svg",
         component: Team
       },

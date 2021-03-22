@@ -30,6 +30,7 @@
 
 import Application from './application';
 import Preloader from './utils/preloader';
+import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 
 /**
 * A registered package reference
@@ -330,10 +331,8 @@ export default class Packages {
    * Autostarts tagged packages
    */
   _autostart() {
-    let userDetails = this.core.make('oxzion/profile').get();
-    let appList = userDetails.key.blackListedApps;
-    this.metadata
-      .filter(pkg => pkg.autostart === true && !(pkg.name in appList))
+    this.getPackages()
+      .filter(pkg => pkg.autostart === true)
       .forEach((pkg) => {
         // OXZION START CHANGE
         let params = {};
@@ -411,7 +410,16 @@ export default class Packages {
     filter = filter || (() => true);
 
     const user = this.core.getUser();
-    const metadata = this.metadata.map(m => ({...m}));
+
+    let lsHelper = new LocalStorageAdapter;
+    lsHelper.supported();
+    var metadata = lsHelper.get('metadata');
+    if (!metadata) {
+      metadata = this.metadata.map(m => ({...m}));
+      lsHelper.set('metadata', metadata);
+    } else {
+      metadata = metadata.key;
+    }
     const details = this.core.make("oxzion/profile").get();
 
     const filterBlacklist = iter => details.key.blackListedApps instanceof Object
