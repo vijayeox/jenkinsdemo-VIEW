@@ -312,11 +312,11 @@ export default class OX_Grid extends React.Component {
       });
       Object.keys(this.state.actions).map(function (key, index) {
         var action = this.state.actions;
-        var string = ParameterHandler.replaceParams(this.appId, action[key].rule, dataItem);
+        var paramsRule = ParameterHandler.replaceParams(this.appId, action[key].rule, dataItem);
         var _moment = moment;
         var profile = this.userprofile;
-        string = string.replace(/moment/g, '_moment');
-        var showButton = eval(string);
+        paramsRule = paramsRule.replace(/moment/g, '_moment');
+        var showButton = eval(paramsRule);
         var buttonStyles = action[key].icon
           ? {
             width: "auto"
