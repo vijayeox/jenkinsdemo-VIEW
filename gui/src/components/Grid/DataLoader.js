@@ -226,7 +226,7 @@ export class DataLoader extends React.Component {
       var result = moment(filterItem.value).format(
         ColumnItem.filterFormat
       );
-      if (filterItem.value && result != "Invalid date") {
+      if (filterItem.value && result != "Invalid date" && filterItem1) {
         filterItem1.filters ? gridConfig.filter.filters[i].filters[j].value = result : gridConfig.filter.filters[i].value = result;
       }
     }
