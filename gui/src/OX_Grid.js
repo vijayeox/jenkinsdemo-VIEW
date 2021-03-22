@@ -544,11 +544,17 @@ export default class OX_Grid extends React.Component {
       result ? operationsList.push(i) : null;
     });
     if (operationsList.length > 1) {
+      const itemRender = (props) => {
+        return (
+          <div style={{ padding: '5px' }} text={props.item.name}><i style={{ marginRight: '5px' }} className={props.item.icon + " manageIcons"}></i>{props.item.name}</div>
+        );
+      };
       return (
         <DropDownButton
           text={config.title ? config.title : "Options"}
           textField="name"
           className="gridOperationDropdown"
+          itemRender={itemRender}
           iconClass={config.icon ? config.icon : null}
           onItemClick={(e) => {
             this.updatePageContent(e.item);
