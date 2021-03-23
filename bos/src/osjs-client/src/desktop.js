@@ -804,6 +804,7 @@ export default class Desktop extends EventEmitter {
           "post"
           );
         updateterm.status == "success" ? Swal.fire('Thank you for accepting our terms and conditions') : Swal.fire({title : updateterm.message, allowOutsideClick: false});
+        splash.destroy();
       }
     } else {
       if(condition['data']['verification_pending']){

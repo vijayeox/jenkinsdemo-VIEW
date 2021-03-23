@@ -188,14 +188,14 @@ class Project extends React.Component {
                   response.status == "success"
                     ? (this.OX_Grid.current.refreshHandler(response),
                       this.notif.current.notify(
+                        "Success",
                         "Operation succesfully completed",
-                        response.message,
                         "success"
                       ))
                     : this.notif.current.notify(
-                        "Operation Failed",
-                        response.message,
-                        "danger"
+                      "Error",
+                      "Operation Failed",
+                      "danger"
                       );
                 });
               }
@@ -203,14 +203,15 @@ class Project extends React.Component {
           } else if (response.status == "success") {
             this.OX_Grid.current.refreshHandler(response);
             this.notif.current.notify(
-              "Operation succesfully completed",
-              response.message,
-              "success"
+            "Success",
+            "Operation succesfully completed",
+            "success"
             );
+            
           } else {
             this.notif.current.notify(
+              "Error",
               "Operation Failed",
-              response.message,
               "danger"
             );
           }
