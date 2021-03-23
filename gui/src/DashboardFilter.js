@@ -32,7 +32,8 @@ const FilterFields = function (props) {
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }, { "Today": "today" }],
         "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
-        "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }]
+        "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
+        "selectoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }]
     };
 
     useEffect(() => {
@@ -250,7 +251,7 @@ const FilterFields = function (props) {
                 <Form.Group className="dashboard-filter-field">
                     <Form.Label>Operator</Form.Label>
                     {
-                        dataType === "date" || dataType === "text" || dataType === "numeric"
+                        dataType === "date" || dataType === "text" || dataType === "numeric" || dataType === "select"
                             ?
                             <Form.Control className="dashboardTextField field-width-100" as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
                                 <option disabled key="-1" value=""></option>
@@ -352,17 +353,26 @@ const FilterFields = function (props) {
                             </div>
                         :
                         // filterMode == "CREATE" ?
-                        <Select
-                            className="dashboardTextField field-width-150"
-                            selected={filters[index]["value"] || ""}
-                            name="value"
-                            id="value"
-                            onChange={(e) => onUpdate(e, index, "value")}
-                            value={filterValueOption ? filterValueOption.filter(option => option.value == filters[index]["value"]) : ""}
-                            options={filterValueOption}
-                            styles={customStyles}
-                            isLoading={isFilterValueLoading}
-                        />
+                        dataType === "select" ?
+                            <Select
+                                className="dashboardTextField field-width-150"
+                                selected={filters[index]["value"] || ""}
+                                name="value"
+                                id="value"
+                                onChange={(e) => onUpdate(e, index, "value")}
+                                value={filterValueOption ? filterValueOption.filter(option => option.value == filters[index]["value"]) : ""}
+                                options={filterValueOption}
+                                styles={customStyles}
+                                isLoading={isFilterValueLoading}
+                            />
+                            :
+                            <Form.Control className="dashboardTextField field-width-150" controlId="value" id="value"
+                                type="text"
+                                value={filters[index]["value"]}
+                                name="value"
+                                styles={customStyles}
+                                onChange={(e) => onUpdate(e, index, "value")}
+                            />
                     }
                 </Form.Group>
             </div>
@@ -397,7 +407,7 @@ class DashboardFilter extends React.Component {
             focused: null,
             inputFields: [],
             startDate: new Date(),
-            createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }],
+            createFilterOption: [{ value: "text", label: "Text" }, { value: "date", label: "Date" }, { value: "numeric", label: "Number" }, { value: "select", label: "Dropdown" }],
             applyFilterOption: this.props.applyFilterOption ? [...this.props.applyFilterOption] : [],
             filters: this.props.filterConfiguration ? [...this.props.filterConfiguration] : [],
             filterConfiguration: this.props.filterConfiguration ? [...this.props.filterConfiguration] : [],
@@ -485,6 +495,8 @@ class DashboardFilter extends React.Component {
             filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "date", operator: "", value: new Date(this.state.dateFormat), key: length })
         } else if (fieldType === "text") {
             filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "text", operator: "", value: "", key: length, filterIndex: "" })
+        } else if (fieldType === "select") {
+            filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "select", operator: "", value: "", key: length, filterIndex: "" })
         } else if (fieldType === "numeric") {
             filters.push({ filterName: '', field: '', fieldType: fieldType, dataType: "numeric", operator: "", value: "", key: length })
         } else {
@@ -512,39 +524,12 @@ class DashboardFilter extends React.Component {
         this.setState({ disableDateField: null })
         //deep cloning react state to avoid mutation
         let filters = JSON.parse(JSON.stringify(this.state.filters));
-
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
-        }
-        // else if (type == "defaultValue") {
-        //     let selectedoption = { "value": e.value, "label": e.value }
-        //     name = type !== "field" ? "value" : "field"
-        //     let filterValue = filters[index] ? filters[index][name] : []
-        //     try {
-        //         defaultValues = typeof filterValue == "string" ? JSON.parse(filterValue) : filterValue
-        //     }
-        //     catch (e) {
-        //         console.error("Filter value found is a invalid json")
-        //         defaultValues = []
-        //     }
-
-        //     if (defaultValues) {
-        //         var valueExists = defaultValues.filter(filterdefault => filterdefault.value == e.value);
-        //         //if option already exists in the list
-        //         if (valueExists.length == 0) {
-        //             defaultValues.push(selectedoption)
-        //             defaultValues["selected"] = selectedoption.value
-        //         }
-        //         else {
-        //             defaultValues["selected"] = selectedoption.value
-        //         }
-        //     }
-        //     value = defaultValues
-        // }
-        else if (type == "filterIndex" || type == "field" || type == "filterDataSource" || type == "value") {
+        } else if (type == "filterIndex" || type == "field" || type == "filterDataSource" || type == "value") {
             name = type
-            value = e.value
+            value = e.target.value
         } else if (e.target.value === "today") {
             name = e.target.name
             value = e.target.value
@@ -614,7 +599,6 @@ class DashboardFilter extends React.Component {
         }
         filters[index][name] = value
         this.setState({ filters })
-
     }
 
     handleSelect(e) {
