@@ -527,9 +527,12 @@ class DashboardFilter extends React.Component {
         if (type === "startDate" || type === "endDate") {
             name = type
             value = e
-        } else if (type == "filterIndex" || type == "field" || type == "filterDataSource" || type == "value") {
+        } else if (type == "value") {
             name = type
             value = e.target.value
+        } else if (type == "filterIndex" || type == "field" || type == "filterDataSource" || type == "value") {
+            name = type
+            value = e.value
         } else if (e.target.value === "today") {
             name = e.target.name
             value = e.target.value
