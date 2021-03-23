@@ -12,7 +12,7 @@ class ForgotPassword extends React.Component {
   triggerSubmit() {
     var username = document.getElementById("username").value;
     if (username.length == 0) {
-      this.setState({ showMessage: "Please enter your Username" });
+      this.setState({ showMessage: "Please enter your PADI Number" });
       document.getElementById("usernameError").style.color = "red";
     } else {
       document.getElementById("usernameError").style.color = "green";
