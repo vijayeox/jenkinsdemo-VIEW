@@ -176,7 +176,7 @@ class Login extends React.Component {
                 style={{ display: this.state.error ? "block" : "none" }}
               >
                 <span>
-                  The username and/or password is incorrect! Please try again.
+                  The PADI Number and/or password is incorrect! Please try again.
                 </span>
               </div>
             </div>
