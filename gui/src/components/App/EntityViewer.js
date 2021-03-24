@@ -74,6 +74,7 @@ class EntityViewer extends React.Component {
         var commentPage = {title: "Comments",icon: "far fa-comment",pageContent: [{type:"Comment",fileId: fileId}]};
         gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentPage)} ><i className={"fa fa-comment"}></i></Button>);
       }
+      gridToolbarContent.push(<Button title={"Generate Link"} className={"toolBarButton"} primary={true} onClick={(e) => this.core.make("oxzion/link").copyToClipboard('<a eoxapplication="'+this.state.entityConfig.app_name+'" file-id="'+ fileId + '" href="'+this.core.config('ui.url')+'?app='+this.state.entityConfig.app_name+'&fileId='+fileId+'" >Link</a>')} ><i className={"fa fa-share-alt"}></i></Button>);
       let ev = new CustomEvent("addcustomActions", {
         detail: { customActions: gridToolbarContent },
         bubbles: true,
