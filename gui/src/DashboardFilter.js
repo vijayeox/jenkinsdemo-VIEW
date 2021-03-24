@@ -31,7 +31,7 @@ const FilterFields = function (props) {
 
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }, { "Today": "today" }],
-        "textoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }],
+        "textoperator": [{ "Contains": "==" }, { "Does Not Contain": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
         "selectoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }]
     };
@@ -529,10 +529,10 @@ class DashboardFilter extends React.Component {
             value = e
         } else if (type == "value") {
             name = type
-            value = e.target.value
+            value = (e.value) ? e.value : e.target.value
         } else if (type == "filterIndex" || type == "field" || type == "filterDataSource" || type == "value") {
             name = type
-            value = e.value
+            value = (e.value) ? e.value : e.target.value
         } else if (e.target.value === "today") {
             name = e.target.name
             value = e.target.value
