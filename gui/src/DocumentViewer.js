@@ -418,7 +418,7 @@ export default class DocumentViewer extends Component {
                     this.setState(
                       {
                         selectedDocument: undefined,
-                        documentsList: undefined,
+                        documentsList: [],
                         documentTypes: [],
                         activeCard: "",
                         uploadFiles: [],
