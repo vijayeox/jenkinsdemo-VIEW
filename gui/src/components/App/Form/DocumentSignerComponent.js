@@ -19,11 +19,11 @@ export default class DocumentSignerComponent extends Base {
     component.uiUrl = customOptions.uiUrl;
     component.wrapperUrl = customOptions.wrapperUrl;
     this.form = this.getRoot();
+    this.signCompleted = false;
     var that = this;
     this.data = data;
     this.documentsList = [];
   }
-
   //disable
   static schema(...extend) {
     return Base.schema(
@@ -269,6 +269,7 @@ return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
       let helper = that.component.core.make("oxzion/restClient");
       helper.request("v1", "/esign/status/" + docId, {}, "get").then(function (response) {
           if (response.data["status"] == "FINALIZED" ||response.data["status"] == "CANCELLED") {
+            console.log(response.data);
             document.getElementById("myModal_"+that.id).style.display= "none";
             that.documentsList =  `<div class="docList" style="margin:0;" key="` + that.id +`">
               <div class="fileDiv">
@@ -285,6 +286,7 @@ return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
               </div>
             </div> </div><div id="` + component.key + `-filePreviewModal" class="modal"> <div style="height:inherit;display: block;background-color: white;"><div id="` + component.key +`-closeFile" class="viewer-button viewer-close" style="z-index:111"></div><div id="` + component.key + `-filePreviewWindow" style="height:inherit"></div></div></div>`;
             that.documentsList += `<div id="myModal_`+that.id+`" class="insuresign modal"></div>`;
+            that.signCompleted = true;
             that.redraw();
           } else {
             that.pollForStatus();
@@ -316,3 +318,4 @@ return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
     super.build(element);
   }
 }
+

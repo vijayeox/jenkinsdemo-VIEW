@@ -108,7 +108,7 @@ const init = () => {
   osjs.boot();
 };
 
-if(localConfig.cloudflare.enabled == true) {
+if(localConfig && localConfig.cloudflare && localConfig.cloudflare.enabled == true) {
   let cloudflareScript = document.createElement("script");
   let token = localConfig.cloudflare.token;
   cloudflareScript.setAttribute("src", "https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{\"token\":\""+token+"\"}'");
