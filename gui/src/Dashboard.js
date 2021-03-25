@@ -265,8 +265,7 @@ class Dashboard extends Component {
     }
     if (widgets.length == 0) {
       this.loader.destroy();
-    }
-    else {
+    } else {
       for (let widget of widgets) {
         var attributes = widget.attributes;
         //dispose 
@@ -281,12 +280,11 @@ class Dashboard extends Component {
                 console.error('Could not load widget.');
                 console.error(response);
                 errorFound = true;
-              }
-              else {
+              } else {
                 //dispose if widget exists
                 let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
                 let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
-                let widgetObject = WidgetRenderer.render(renderproperties);
+                let widgetObject = WidgetRenderer.render(renderproperties, widgetUUId, filterParams, this.core);
                 if (widgetObject) {
                   this.renderedWidgets[widgetUUId] = widgetObject;
                 }
@@ -336,12 +334,10 @@ class Dashboard extends Component {
       else
         drilldownDashboardFilter = widgetFilter
       event.dashboardFilter = this.state.preparedDashboardFilter
-
     } else if (dashboardFilter.length > 0) {
       //combining dashboardfilter with widgetfilter
       drilldownDashboardFilter = preparefilter(dashboardFilter, widgetFilter)
       event.dashboardFilter = dashboardFilter
-
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     event.drilldownDashboardTitle = drilldownDashboardTitle;

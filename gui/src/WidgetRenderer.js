@@ -19,7 +19,7 @@ am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
     // static render(element, widget, props,hasDashboardFilters,dashboardMode) {
-    static render(renderpropertiesObject) {
+    static render(renderpropertiesObject, widgetUUId, filterParams, core) {
         let { element, widget, props, hasDashboardFilters, dashboardEditMode } = { ...renderpropertiesObject }
         // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
@@ -48,7 +48,20 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters);
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid");
+                }
+                catch (e) {
+                    console.error(e);
+                    return null;
+                }
+                break;
+
+            case 'jsGrid':
+                if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
+                    throw (`Unexpected table widget tag "${widgetTagName}"`);
+                }
+                try {
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widgetUUId, filterParams, core);
                 }
                 catch (e) {
                     console.error(e);
@@ -381,7 +394,7 @@ class WidgetRenderer {
             if (!dataKeys) {
                 throw 'oxzion-meta configuration should have "dataKeys" element.';
             }
-            let stateKey = datakeys['state'];
+            let stateKey = dataKeys['state'];
             let valueKey = dataKeys['value'];
 
             let newData = [];
@@ -435,7 +448,7 @@ class WidgetRenderer {
         heatLegend.minValue = processedData['min'];
         heatLegend.maxValue = processedData['max'];
 
-        let meta = configuration['oxzion-meta'];
+        // let meta = configuration['oxzion-meta'];
         let legend = null;
         if (meta) {
             legend = meta['legend'];
@@ -583,7 +596,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderTable(element, configuration, data, hasDashboardFilters) {
+    static renderTable(element, configuration, data, hasDashboardFilters, widgetGridType, widgetUUId = null, filterParams = null, core) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         let isDrillDownTable = false;
@@ -632,7 +645,11 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-        ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
+        if (widgetGridType === "WidgetGrid") {
+            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement}/>, canvasElement);
+        } else if (widgetGridType === "WidgetGridNew") {
+            ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} />, canvasElement);
+        }
     }
 }
 

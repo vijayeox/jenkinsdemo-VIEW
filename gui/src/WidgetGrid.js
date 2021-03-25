@@ -223,7 +223,6 @@ export default class WidgetGrid extends React.Component {
                             formattedSum = kendo_service.toString(sum, column.format)
                         }
                         element = <td>{formattedSum}</td>
-
                     }
                 })
                 if (element != null) {
@@ -246,7 +245,6 @@ export default class WidgetGrid extends React.Component {
                 formattedSum = kendo_service.toString(total, configuration.format)
             }
             return (
-
                 <td colSpan={props.colSpan} style={configuration.style}>
                     {configuration.value}{formattedSum}
                 </td>
@@ -256,17 +254,14 @@ export default class WidgetGrid extends React.Component {
 
 
     render() {
-
         let thiz = this;
         let hasBackButton = this.hasBackButton()
-
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
                     columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
-                }
-                else {
+                } else {
                     columns.push(<GridColumn key={config['field']} {...config} />);
                 }
             }

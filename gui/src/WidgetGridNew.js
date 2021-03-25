@@ -12,9 +12,12 @@ import { WidgetGridLoader } from './WidgetGridLoader.js';
 export default class WidgetGridNew extends React.Component {
     constructor(props) {
         super(props);
+        this.core = props.core;
         this.excelExporter = null;
         this.allData = props.data ? props.data : [];
         this.filteredData = null;
+        this.filterParams = props.filterParams
+        this.uuid = props.uuid
         let configuration = props.configuration;
         this.isDrillDownTable = props.isDrillDownTable;
         this.resizable = configuration ? (configuration.resizable ? configuration.resizable : false) : false;
@@ -31,7 +34,7 @@ export default class WidgetGridNew extends React.Component {
         this.exportToExcel = oxzionMeta ? (oxzionMeta['exportToExcel'] ? oxzionMeta['exportToExcel'] : false) : false;
         // data can be assigned as allData since the first call needs to be assigned here.
         this.state = {
-            displayedData: { data: [], total: 0 },
+            displayedData: { data: this.allData, total: 0 },
             dataState: { take: 10, skip: 0 }
         };
 
@@ -45,7 +48,6 @@ export default class WidgetGridNew extends React.Component {
     }
 
     dataRecieved = (displayedData) => {
-
         this.setState({
             ...this.state,
             displayedData: displayedData
@@ -95,7 +97,7 @@ export default class WidgetGridNew extends React.Component {
         ReactDOM.unmountComponentAtNode(this.props.canvasElement)
 
     }
-    
+
     gridGroupExpansionChanged = (e) => {
         e.dataItem[e.target.props.expandField] = e.value;
         //Force state change with modified e.dataItem in this.state.displayedData. This state 
@@ -173,14 +175,12 @@ export default class WidgetGridNew extends React.Component {
     render() {
         let thiz = this;
         let hasBackButton = this.hasBackButton()
-
         async function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
                     columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
-                }
-                else {
+                } else {
                     columns.push(<GridColumn key={config['field']} {...config} />);
                 }
             }
@@ -188,67 +188,71 @@ export default class WidgetGridNew extends React.Component {
         }
 
         let gridTag = <Grid
-        style={{ height: this.height, width: this.width }}
-        filterable={true}
-        sortable={true}     // change it to this.sortable after testing 
-        pageable={true}     // change it to this.pagable after testing 
-        //pageSize={this.pageSize} 
-        {...this.state.dataState}
-        {...this.state.displayedData}
-        onDataStateChange={this.dataStateChange}
-        //className={this.isDrillDownTable ? "drillDownStyle" : ""}
-        //onGroupChange={this.gridGroupChanged}
-        //onRowClick={this.drillDownClick}
-        //groupable={this.groupable}
-        //group={this.state.group}
-        //onGroupChange={this.gridGroupChanged}
-        //onExpandChange={this.gridGroupExpansionChanged}
-        //resizable={this.resizable}
-        //expandField='expanded'
-        //reorderable={this.reorderable}
-        //cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}        // Need to change the function cell render for summation of all values and other functionalities. 
-    >
-        {/* comment all the columns for testing with our api  */}
-                    <GridColumn field="ProductID" filter="numeric" title="Id" />
-                    <GridColumn field="ProductName" title="Name" />
-                    <GridColumn field="UnitPrice" filter="numeric" format="{0:c}" title="Price" />
-                    <GridColumn field="UnitsInStock" filter="numeric" title="In stock" />
-                    {/* {await getColumns()}        to be uncommented after testing */}
-    </Grid>;
+            style={{ height: this.height, width: this.width }}
+            filterable={true}
+            data={this.allData}
+            sortable={true}     // change it to this.sortable after testing 
+            pageable={true}     // change it to this.pagable after testing 
+            //pageSize={this.pageSize} 
+            {...this.state.dataState}
+            {...this.state.displayedData}
+            onDataStateChange={this.dataStateChange}
+            className={this.isDrillDownTable ? "drillDownStyle" : ""}
+            onGroupChange={this.gridGroupChanged}
+            onRowClick={this.drillDownClick}
+            groupable={this.groupable}
+            group={this.state.group}
+            onGroupChange={this.gridGroupChanged}
+            onExpandChange={this.gridGroupExpansionChanged}
+            resizable={this.resizable}
+            expandField='expanded'
+            reorderable={this.reorderable}
+            cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}        // Need to change the function cell render for summation of all values and other functionalities. 
+        >
+            {/* comment all the columns for testing with our api  */}
+            {/* <GridColumn field="ProductID" filter="numeric" title="Id" />
+            <GridColumn field="ProductName" title="Name" />
+            <GridColumn field="UnitPrice" filter="numeric" format="{0:c}" title="Price" />
+            <GridColumn field="UnitsInStock" filter="numeric" title="In stock" /> */}
+            {getColumns()}
+        </Grid>;
 
-   let gridLoader =  <WidgetGridLoader
-        dataState={this.state.dataState}
-        onDataRecieved={this.dataRecieved}
-    />;
-        
-    return (
-        <>
-            {this.isDrillDownTable &&
-                <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
-                    <i className="fas fa-angle-double-down fa-lg"></i>
-                </div>
-            }
-            {this.exportToExcel &&
-                <>
-                    <div
-                        className="oxzion-widget-drilldown-excel-icon"
-                        style={hasBackButton ? { right: "5%" } : { right: "10px" }}
-                        onClick={this.saveAsExcel}>
-                        <i className="fa fa-file-excel fa-lg"></i>
+        let gridLoader = <WidgetGridLoader
+            dataState={this.state.dataState}
+            onDataRecieved={this.dataRecieved}
+            uuid={this.uuid}
+            filterParams={this.filterParams}
+            core={this.core}
+        />;
+
+        return (
+            <>
+                {this.isDrillDownTable &&
+                    <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
+                        <i className="fas fa-angle-double-down fa-lg"></i>
                     </div>
-                    <ExcelExport
-                        data={this.state.exportFilterData}
-                        ref={exporter => this.excelExporter = exporter}
-                        filterable
-                    >
-                        {gridTag}
-                        {gridLoader}
-                    </ExcelExport>
-                </>
-            }
-            {!this.exportToExcel && gridTag}
-        </>
-    );
+                }
+                {this.exportToExcel &&
+                    <>
+                        <div
+                            className="oxzion-widget-drilldown-excel-icon"
+                            style={hasBackButton ? { right: "5%" } : { right: "10px" }}
+                            onClick={this.saveAsExcel}>
+                            <i className="fa fa-file-excel fa-lg"></i>
+                        </div>
+                        <ExcelExport
+                            data={this.state.exportFilterData}
+                            ref={exporter => this.excelExporter = exporter}
+                            filterable
+                        >
+                            {gridTag}
+                            {gridLoader}
+                        </ExcelExport>
+                    </>
+                }
+                {!this.exportToExcel && gridTag}
+            </>
+        );
     }
 }
 
