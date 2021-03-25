@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM, { render } from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
+import WidgetGridNew from './WidgetGridNew';
 import Parser from 'html-react-parser';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import * as am4core from '../amcharts/core';
@@ -61,6 +62,7 @@ class WidgetRenderer {
                 }
                 return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
                 break;
+            // add a case for jsGrid for the server grid loading
 
             default:
                 throw (`Unexpected widget renderer "${widget.renderer}"`);
@@ -349,6 +351,7 @@ class WidgetRenderer {
     }
 
     static renderAmMap(configuration, canvasElement, data) {
+        let meta = configuration['oxzion-meta'];
         function findWidgetElement(element) {
             if ('MapPolygon' !== element.className) {
                 throw 'Unexpected element type.';
@@ -378,7 +381,7 @@ class WidgetRenderer {
             if (!dataKeys) {
                 throw 'oxzion-meta configuration should have "dataKeys" element.';
             }
-            let stateKey = dataKeys['state'];
+            let stateKey = datakeys['state'];
             let valueKey = dataKeys['value'];
 
             let newData = [];

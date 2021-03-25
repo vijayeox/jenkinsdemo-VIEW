@@ -51,6 +51,7 @@ class Dashboard extends Component {
 
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
+    // send this filters to widgets as well so that we can append those to the url that we are trying to create 
     let response = await this.helper.request(
       "v1",
       "analytics/widget/" + uuid + '?data=true' + filterParameter,
@@ -170,7 +171,7 @@ class Dashboard extends Component {
         if (this.props.dashboardStack.length > 0) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          if (drilldownDashboardFilter.length > 0) {
+          if (drilldownDashboardFilter && drilldownDashboardFilter.length > 0) {
             this.updateGraph(drilldownDashboardFilter)
           } else {
             this.setState({ preparedDashboardFilter: [] }, () => {

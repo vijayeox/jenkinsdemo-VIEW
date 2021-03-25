@@ -6,16 +6,10 @@ import { filterBy, orderBy, process } from '@progress/kendo-data-query';
 import { IntlService } from '@progress/kendo-react-intl'
 import { ExcelExport } from '@progress/kendo-react-excel-export';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
+import { WidgetGridLoader } from './WidgetGridLoader.js';
 
-const loadingPanel = (
-    <div className="k-loading-mask">
-      <span className="k-loading-text">Loading</span>
-      <div className="k-loading-image"></div>
-      <div className="k-loading-color"></div>
-    </div>
-  );
 
-export default class WidgetGrid extends React.Component {
+export default class WidgetGridNew extends React.Component {
     constructor(props) {
         super(props);
         this.excelExporter = null;
@@ -35,29 +29,27 @@ export default class WidgetGrid extends React.Component {
         this.pageSize = configuration ? (configuration.pageSize ? configuration.pageSize : 10) : 10;
         let oxzionMeta = configuration ? (configuration['oxzion-meta'] ? configuration['oxzion-meta'] : null) : null;
         this.exportToExcel = oxzionMeta ? (oxzionMeta['exportToExcel'] ? oxzionMeta['exportToExcel'] : false) : false;
+        // data can be assigned as allData since the first call needs to be assigned here.
         this.state = {
-            filter: null,
-            pagination: {
-                skip: 0,
-                take: this.pageSize
-            },
-            sort: (configuration ? (configuration.sort ? configuration.sort : null) : null),
-            group: null,
-            displayedData: [],
-            exportFilterData: []
+            displayedData: { data: [], total: 0 },
+            dataState: { take: 10, skip: 0 }
         };
 
-        let beginWith = configuration ? configuration.beginWith : null;
-        if (beginWith) {
-            let page = beginWith.page;
-            if (page) {
-                this.state.pagination.skip = page.skip ? page.skip : 0;
-                this.state.pagination.take = page.take ? page.size : 10;
-            }
-            this.state.sort = beginWith.sort ? beginWith.sort : null;
-            this.state.group = beginWith.group ? beginWith.group : null;
-            this.state.filter = beginWith.filter ? beginWith.filter : null;
-        }
+    }
+
+    dataStateChange = (e) => {
+        this.setState({
+            ...this.state,
+            dataState: e.dataState
+        });
+    }
+
+    dataRecieved = (displayedData) => {
+
+        this.setState({
+            ...this.state,
+            displayedData: displayedData
+        });
     }
 
     saveAsExcel = () => {
@@ -86,77 +78,8 @@ export default class WidgetGrid extends React.Component {
         }
     }
 
-    prepareData = (refilter) => {
-        if (this.allData) {
-            this.allData.map(data => {
-                //trimmimg time from date in order for date filter to work
-                data.date ? data.date.setHours(0, 0, 0, 0) : null
-            })
-        }
-        if (this.state.sort) {
-            this.allData = orderBy(this.allData, this.state.sort);
-        }
-        if (!this.filteredData || refilter) {
-            let filter = this.state.filter;
-            this.filteredData = filter ? filterBy(this.allData, filter) : this.allData;
-        }
-        let pagination = this.state.pagination;
-        let displayedData = process(this.filteredData, {
-            take: pagination.take,
-            skip: this.state.filter ? (refilter ? 0 : pagination.skip) : pagination.skip,
-            group: this.state.group
-        });
-        this.setState({
-            displayedData: displayedData
-        });
-    }
-
-    getFilteredRowCount = () => {
-        return this.filteredData ? this.filteredData.length : 0;
-    }
-
     componentDidMount() {
         this.parseData();
-        this.prepareData(true);
-    }
-
-    // gridPageChanged = (e) => {
-    //     console.log("page event clicked");
-    //     // call the api to get the data for the next page by passing the new page 
-    //     let pagination = {
-    //         skip: e.page.skip,
-    //         take: e.page.take
-    //     }
-    //     this.setState({
-    //         pagination: pagination
-    //     }, () => {
-    //         this.prepareData(false);
-    //     });
-    // }
-
-    gridFilterChanged = (e) => {
-        if (e.filter == null) {
-            this.setState({
-                filter: e.filter,
-                exportFilterData: this.allData,
-            });
-        } else {
-            this.setState({
-                filter: e.filter,
-                exportFilterData: e.target.props.data,
-            }, () => {
-                this.prepareData(true);
-            });
-        }
-    }
-
-    gridSortChanged = (e) => {
-        this.allData = orderBy(this.allData, e.sort);
-        this.setState({
-            sort: e.sort
-        }, () => {
-            this.prepareData(true);
-        });
     }
 
     gridGroupChanged = (e) => {
@@ -167,6 +90,12 @@ export default class WidgetGrid extends React.Component {
         });
     }
 
+    drillDownClick = (evt) => {
+        WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
+        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
+
+    }
+    
     gridGroupExpansionChanged = (e) => {
         e.dataItem[e.target.props.expandField] = e.value;
         //Force state change with modified e.dataItem in this.state.displayedData. This state 
@@ -175,18 +104,6 @@ export default class WidgetGrid extends React.Component {
             state.displayedData = this.state.displayedData;
             return state;
         });
-    }
-
-    //No implementation now. Add implementation if needed later.
-    gridDataStageChanged = (e) => {
-        console.log('Called event handler - gridDataStageChanged. Event is:');
-        console.log(e);
-    }
-
-    drillDownClick = (evt) => {
-        WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
-        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
-
     }
 
     hasBackButton() {
@@ -202,7 +119,6 @@ export default class WidgetGrid extends React.Component {
         }
 
     }
-
     cellRender(tdElement, cellProps, thiz) {
         if (cellProps.rowType === 'groupFooter') {
             let element = null
@@ -254,13 +170,11 @@ export default class WidgetGrid extends React.Component {
         } return <td></td>
     }
 
-
     render() {
-
         let thiz = this;
         let hasBackButton = this.hasBackButton()
 
-        function getColumns() {
+        async function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
@@ -274,63 +188,67 @@ export default class WidgetGrid extends React.Component {
         }
 
         let gridTag = <Grid
-            style={{ height: this.height, width: this.width }}
-            className={this.isDrillDownTable ? "drillDownStyle" : ""}
-            data={this.state.displayedData}
-            resizable={this.resizable}
-            reorderable={this.reorderable}
-            cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}
-            filterable={this.filterable}
-            filter={this.state.filter}
-            onFilterChange={this.gridFilterChanged}
-            pageSize={this.pageSize}
-            {...this.pagerConfig} //Sets grid "pageable" property
-            total={this.getFilteredRowCount()}
-            skip={this.state.pagination.skip}
-            take={this.state.pagination.take}
-            onPageChange={this.gridPageChanged}
-            sortable={this.sortable}
-            sort={this.state.sort}
-            onSortChange={this.gridSortChanged}
-            onRowClick={this.drillDownClick}
-            groupable={this.groupable}
-            group={this.state.group}
-            onGroupChange={this.gridGroupChanged}
-            onExpandChange={this.gridGroupExpansionChanged}
-            onDataStateChange={this.gridDataStageChanged}
-            expandField='expanded'
-        >
-            {getColumns()}
-        </Grid>;
+        style={{ height: this.height, width: this.width }}
+        filterable={true}
+        sortable={true}     // change it to this.sortable after testing 
+        pageable={true}     // change it to this.pagable after testing 
+        //pageSize={this.pageSize} 
+        {...this.state.dataState}
+        {...this.state.displayedData}
+        onDataStateChange={this.dataStateChange}
+        //className={this.isDrillDownTable ? "drillDownStyle" : ""}
+        //onGroupChange={this.gridGroupChanged}
+        //onRowClick={this.drillDownClick}
+        //groupable={this.groupable}
+        //group={this.state.group}
+        //onGroupChange={this.gridGroupChanged}
+        //onExpandChange={this.gridGroupExpansionChanged}
+        //resizable={this.resizable}
+        //expandField='expanded'
+        //reorderable={this.reorderable}
+        //cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}        // Need to change the function cell render for summation of all values and other functionalities. 
+    >
+        {/* comment all the columns for testing with our api  */}
+                    <GridColumn field="ProductID" filter="numeric" title="Id" />
+                    <GridColumn field="ProductName" title="Name" />
+                    <GridColumn field="UnitPrice" filter="numeric" format="{0:c}" title="Price" />
+                    <GridColumn field="UnitsInStock" filter="numeric" title="In stock" />
+                    {/* {await getColumns()}        to be uncommented after testing */}
+    </Grid>;
 
-        return (
-            <>
-            {this.state.displayedData.length === 0 && loadingPanel}
-                {this.isDrillDownTable &&
-                    <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
-                        <i className="fas fa-angle-double-down fa-lg"></i>
+   let gridLoader =  <WidgetGridLoader
+        dataState={this.state.dataState}
+        onDataRecieved={this.dataRecieved}
+    />;
+        
+    return (
+        <>
+            {this.isDrillDownTable &&
+                <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
+                    <i className="fas fa-angle-double-down fa-lg"></i>
+                </div>
+            }
+            {this.exportToExcel &&
+                <>
+                    <div
+                        className="oxzion-widget-drilldown-excel-icon"
+                        style={hasBackButton ? { right: "5%" } : { right: "10px" }}
+                        onClick={this.saveAsExcel}>
+                        <i className="fa fa-file-excel fa-lg"></i>
                     </div>
-                }
-                {this.exportToExcel &&
-                    <>
-                        <div
-                            className="oxzion-widget-drilldown-excel-icon"
-                            style={hasBackButton ? { right: "5%" } : { right: "10px" }}
-                            onClick={this.saveAsExcel}>
-                            <i className="fa fa-file-excel fa-lg"></i>
-                        </div>
-                        <ExcelExport
-                            data={this.state.exportFilterData}
-                            ref={exporter => this.excelExporter = exporter}
-                            filterable
-                        >
-                            {gridTag}
-                        </ExcelExport>
-                    </>
-                }
-                {!this.exportToExcel && gridTag}
-            </>
-        );
+                    <ExcelExport
+                        data={this.state.exportFilterData}
+                        ref={exporter => this.excelExporter = exporter}
+                        filterable
+                    >
+                        {gridTag}
+                        {gridLoader}
+                    </ExcelExport>
+                </>
+            }
+            {!this.exportToExcel && gridTag}
+        </>
+    );
     }
 }
 
