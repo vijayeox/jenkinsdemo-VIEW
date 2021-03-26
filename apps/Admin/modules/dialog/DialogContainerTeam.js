@@ -2,6 +2,7 @@ import {React,Notification,KendoReactWindow,KendoReactInput} from "oxziongui";
 import TextareaAutosize from "react-textarea-autosize";
 import { PushData, GetSingleEntityData } from "../components/apiCalls";
 import { DropDown, SaveCancel } from "../components/index";
+import Swal from "sweetalert2";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -31,12 +32,12 @@ export default class DialogContainer extends React.Component {
           }
         });
       });
-      this.props.dataItem.parentId
+      this.props.dataItem.parent_id
         ? GetSingleEntityData(
             "account/" +
               this.props.selectedOrg +
               "/team/" +
-              this.props.dataItem.parentId
+              this.props.dataItem.parent_id
           ).then(response => {
             this.setState({
               parentTeamName: {
@@ -108,6 +109,8 @@ export default class DialogContainer extends React.Component {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel();
+      } else if (response.status == 'error' && response.errorCode == 406) {
+        this.activateTeam(tempData);
       } else {
         this.notif.current.notify(
           "Error",
@@ -117,6 +120,32 @@ export default class DialogContainer extends React.Component {
       }
     });
   };
+  activateTeam(tempData) {
+    Swal.fire({
+      title: "Team already exists",
+      text: "Do you want to reactivate the Team?",
+      imageUrl: "apps/Admin/091-email-1.svg",
+      imageWidth: 75,
+      imageHeight: 75,
+      confirmButtonText: "Reactivate",
+      confirmButtonColor: "#d33",
+      showCancelButton: true,
+      cancelButtonColor: "#66bb6a",
+      target: ".Window_Admin"
+    }).then((result) => {
+      if (result.value) {
+        tempData.reactivate = "1";
+        PushData("team",this.props.formAction,this.state.teamInEdit.uuid,tempData).then((response) => {
+          if (response.status == "success") {
+            this.props.action(response);
+            this.props.cancel();
+          } else {
+            this.notif.current.notify("Error",response.message ? response.message : null,"danger");
+          }
+        });
+      }
+    });
+  }
 
   render() {
     return (

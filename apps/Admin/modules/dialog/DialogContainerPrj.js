@@ -8,6 +8,7 @@ import {
 import TextareaAutosize from "react-textarea-autosize";
 import { GetSingleEntityData, PushData } from "../components/apiCalls";
 import { SaveCancel, DropDown } from "../components/index";
+import Swal from "sweetalert2";
 
 export default class DialogContainer extends React.Component {
   constructor(props) {
@@ -38,6 +39,32 @@ export default class DialogContainer extends React.Component {
         });
       });
     }
+  }
+  activateProject(tempData) {
+    Swal.fire({
+      title: "Project already exists",
+      text: "Do you want to reactivate the Project?",
+      imageUrl: "apps/Admin/091-email-1.svg",
+      imageWidth: 75,
+      imageHeight: 75,
+      confirmButtonText: "Reactivate",
+      confirmButtonColor: "#d33",
+      showCancelButton: true,
+      cancelButtonColor: "#66bb6a",
+      target: ".Window_Admin"
+    }).then((result) => {
+      if (result.value) {
+        tempData.reactivate = "1";
+        PushData("project",this.props.formAction,this.state.prjInEdit.uuid,tempData).then((response) => {
+          if (response.status == "success") {
+            this.props.action(response);
+            this.props.cancel();
+          } else {
+            this.notif.current.notify("Error",response.message ? response.message : null,"danger");
+          }
+        });
+      }
+    });
   }
 
   onDialogInputChange = (event) => {
@@ -78,27 +105,26 @@ export default class DialogContainer extends React.Component {
       "Please wait for a few seconds.",
       "default"
     );
+    let tempData = {
+      name: this.state.prjInEdit.name,
+      description: this.state.prjInEdit.description,
+      managerId: this.state.prjInEdit.managerId,
+      parentId: this.state.prjInEdit.parentId,
+    };
     PushData(
       "project",
       this.props.formAction,
       this.props.dataItem.uuid,
-      {
-        name: this.state.prjInEdit.name,
-        description: this.state.prjInEdit.description,
-        managerId: this.state.prjInEdit.managerId,
-        parentId: this.state.prjInEdit.parentId,
-      },
+      tempData,
       this.props.selectedOrg
     ).then((response) => {
       if (response.status == "success") {
         this.props.action(response);
         this.props.cancel('save');
+      } else if (response.status == 'error' && response.errorCode == 406) {
+        this.activateProject(tempData);
       } else {
-        this.notif.current.notify(
-          "Error",
-          response.message ? response.message : null,
-          "danger"
-        );
+        this.notif.current.notify("Error",response.message ? response.message : null,"danger");
       }
     });
   };
