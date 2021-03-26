@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { toODataString } from '@progress/kendo-data-query';
+import { string } from 'prop-types';
 
 export class WidgetGridLoader extends React.Component {
 
@@ -12,9 +13,6 @@ export class WidgetGridLoader extends React.Component {
         this.uuid = props.uuid;
         this.filterParams = props.filterParams;
     }
-
-    baseUrl = 'https://demos.telerik.com/kendo-ui/service-v4/odata/Products?$count=true&';
-    init = { method: 'GET', accept: 'application/json', headers: {} };
 
     lastSuccess = '';
     pending = '';
@@ -52,17 +50,7 @@ export class WidgetGridLoader extends React.Component {
         }
 
         this.pending = string1;
-        // have to add filter parameters from dashboard as well while making the call to the server. 
-        console.log(this.baseUrl + this.pending);
-
-
-        // comment this out when we combine our api 
-        if (this.pending || toODataString(this.props.dataState) === this.lastSuccess) {
-            return;
-        }
-        this.pending = toODataString(this.props.dataState);
-        console.log(this.baseUrl + this.pending);
-
+       
         // change the fetch to the helper function call that is required to make the calls to the backend for the data. 
         // fetch(this.baseUrl + this.pending, this.init)
         //     .then(response => response.json())
@@ -79,25 +67,32 @@ export class WidgetGridLoader extends React.Component {
         //         }
         //     });
 
-        this.getWidgetByUuid(this.uuid, this.filterParams).then(response => {
+        this.getWidgetByUuid(this.uuid, this.filterParams, this.pending).then(response => {
             console.log(response);
             this.lastSuccess = this.pending;
             this.pending = '';
-            if ((this.dataState) === this.lastSuccess) {
+            var string2 = toODataString(dataStateCopy)
+            string2 = string2.replace(/\$/g, '');
+            if (string2 === this.lastSuccess) {
                 this.props.onDataRecieved.call(undefined, {
                     data: response.data.widget.data,
-                    // total: response.data.widget.total_count
+                    total: response.data.widget.total_count
+
                 });
+            }
+            else
+            {
+                this.requestDataIfNeeded();
             }
         });
     }
 
-    async getWidgetByUuid(uuid, filterParams) {
+    async getWidgetByUuid(uuid, filterParams, gridParams) {
         let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
         // send this filters to widgets as well so that we can append those to the url that we are trying to create 
         let response = await this.helper.request(
             "v1",
-            "analytics/widget/" + uuid + '?data=true' + filterParameter,
+            "analytics/widget/" + uuid + '?data=true' + filterParameter + "&" + gridParams,
             {},
             "get"
         );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Grid, GridColumn, GridToolbar } from '@progress/kendo-react-grid';
+import { Grid, GridColumn as Column, GridToolbar } from '@progress/kendo-react-grid';
 import { filterBy, orderBy, process } from '@progress/kendo-data-query';
 import { IntlService } from '@progress/kendo-react-intl'
 import { ExcelExport } from '@progress/kendo-react-excel-export';
@@ -15,7 +15,7 @@ export default class WidgetGridNew extends React.Component {
         this.core = props.core;
         this.excelExporter = null;
         this.allData = props.data ? props.data : [];
-        this.filteredData = null;
+        // this.filteredData = null;
         this.filterParams = props.filterParams
         this.uuid = props.uuid
         let configuration = props.configuration;
@@ -32,18 +32,22 @@ export default class WidgetGridNew extends React.Component {
         this.pageSize = configuration ? (configuration.pageSize ? configuration.pageSize : 10) : 10;
         let oxzionMeta = configuration ? (configuration['oxzion-meta'] ? configuration['oxzion-meta'] : null) : null;
         this.exportToExcel = oxzionMeta ? (oxzionMeta['exportToExcel'] ? oxzionMeta['exportToExcel'] : false) : false;
+        this.total_count = props.total_count
         // data can be assigned as allData since the first call needs to be assigned here.
         this.state = {
-            displayedData: { data: this.allData, total: 0 },
-            dataState: { take: 10, skip: 0 }
+            displayedData: { data: this.allData, total: this.total_count },
+            dataState: { take: this.pageSize, skip: 0 }
         };
 
     }
 
     dataStateChange = (e) => {
+        console.log(e);
         this.setState({
             ...this.state,
             dataState: e.dataState
+        }, () => {
+            console.log(this.state.dataState);
         });
     }
 
@@ -82,132 +86,43 @@ export default class WidgetGridNew extends React.Component {
 
     componentDidMount() {
         this.parseData();
+        // this.setState({displayedData: { data: [], total: 10000 },
+        //     dataState: { take: 10, skip: 0 }})
     }
-
-    gridGroupChanged = (e) => {
-        this.setState({
-            group: e.group
-        }, () => {
-            this.prepareData(false);
-        });
-    }
-
-    drillDownClick = (evt) => {
-        WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
-        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
-
-    }
-
-    gridGroupExpansionChanged = (e) => {
-        e.dataItem[e.target.props.expandField] = e.value;
-        //Force state change with modified e.dataItem in this.state.displayedData. This state 
-        //change forces Kendo grid to repaint itself with expanded/collapsed grouped row item.
-        this.setState((state) => {
-            state.displayedData = this.state.displayedData;
-            return state;
-        });
-    }
-
-    hasBackButton() {
-        if (this.props.canvasElement && this.props.canvasElement.parentElement) {
-            let backbutton = this.props.canvasElement.parentElement.getElementsByClassName('oxzion-widget-roll-up-button')
-            if (backbutton.length > 0)
-                return true
-            else
-                return false
-        }
-        else {
-            return false
-        }
-
-    }
-    cellRender(tdElement, cellProps, thiz) {
-        if (cellProps.rowType === 'groupFooter') {
-            let element = null
-            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"] != false && thiz.props.configuration["groupable"]["aggregate"]) {
-                let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
-                let sum = 0
-                let kendo_service = new IntlService()
-                let formattedSum = sum
-                aggregateColumns.forEach(column => {
-                    if (cellProps.field == column.field) {
-                        cellProps.dataItem.items.forEach(item => {
-                            if (typeof (item[column.field]) == "number") {
-                                sum += item[column.field]
-                            }
-                        })
-                        formattedSum = sum
-                        if (column.format) {
-                            formattedSum = kendo_service.toString(sum, column.format)
-                        }
-                        element = <td>{formattedSum}</td>
-
-                    }
-                })
-                if (element != null) {
-                    return <td>{formattedSum}</td>
-                }
-            }
-        }
-        return tdElement;
-    }
-
-    Aggregate = (props, configuration) => {
-        let total = 0
-        if (this.state.displayedData.data) {
-            total = this.state.displayedData.data.reduce((acc, current) => acc + (typeof (current[props.field]) == "number" ? current[props.field] : 0), 0)
-        }
-        if (!Number.isNaN(total)) {
-            let formattedSum = total
-            if (configuration.format) {
-                let kendo_service = new IntlService()
-                formattedSum = kendo_service.toString(total, configuration.format)
-            }
-            return (
-
-                <td colSpan={props.colSpan} style={configuration.style}>
-                    {configuration.value}{formattedSum}
-                </td>
-            );
-        } return <td></td>
-    }
-
     render() {
         let thiz = this;
-        let hasBackButton = this.hasBackButton()
-        async function getColumns() {
+        function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
-                    columns.push(<GridColumn key={config['field']} {...config} footerCell={(props) => thiz.Aggregate(props, config['footerAggregate'])} />);
+                    if(config['type'] == null){
+                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']}/>);
+                    }
+                    else{
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
+                    }
+                    
                 } else {
-                    columns.push(<GridColumn key={config['field']} {...config} />);
+                    if(config['type'] == null){
+                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']}/>);
+                    }
+                    else{
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"}  key={config['field']}/>);
+                    }
                 }
             }
+
             return columns;
         }
 
         let gridTag = <Grid
             style={{ height: this.height, width: this.width }}
             filterable={true}
-            data={this.allData}
-            sortable={true}     // change it to this.sortable after testing 
-            pageable={true}     // change it to this.pagable after testing 
-            //pageSize={this.pageSize} 
+            sortable={true}     
+            pageable={true} 
             {...this.state.dataState}
             {...this.state.displayedData}
             onDataStateChange={this.dataStateChange}
-            className={this.isDrillDownTable ? "drillDownStyle" : ""}
-            onGroupChange={this.gridGroupChanged}
-            onRowClick={this.drillDownClick}
-            groupable={this.groupable}
-            group={this.state.group}
-            onGroupChange={this.gridGroupChanged}
-            onExpandChange={this.gridGroupExpansionChanged}
-            resizable={this.resizable}
-            expandField='expanded'
-            reorderable={this.reorderable}
-            cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}        // Need to change the function cell render for summation of all values and other functionalities. 
         >
             {/* comment all the columns for testing with our api  */}
             {/* <GridColumn field="ProductID" filter="numeric" title="Id" />
@@ -227,7 +142,9 @@ export default class WidgetGridNew extends React.Component {
 
         return (
             <>
-                {this.isDrillDownTable &&
+            {gridTag}
+            {gridLoader}
+                {/* {this.isDrillDownTable &&
                     <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
                         <i className="fas fa-angle-double-down fa-lg"></i>
                     </div>
@@ -250,7 +167,7 @@ export default class WidgetGridNew extends React.Component {
                         </ExcelExport>
                     </>
                 }
-                {!this.exportToExcel && gridTag}
+                {!this.exportToExcel && gridTag} */}
             </>
         );
     }

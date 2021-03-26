@@ -61,7 +61,7 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widgetUUId, filterParams, core);
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widgetUUId, filterParams, core, widget['total_count']);
                 }
                 catch (e) {
                     console.error(e);
@@ -596,7 +596,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderTable(element, configuration, data, hasDashboardFilters, widgetGridType, widgetUUId = null, filterParams = null, core) {
+    static renderTable(element, configuration, data, hasDashboardFilters, widgetGridType, widgetUUId = null, filterParams = null, core, total_count = null) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         let isDrillDownTable = false;
@@ -648,7 +648,7 @@ class WidgetRenderer {
         if (widgetGridType === "WidgetGrid") {
             ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement}/>, canvasElement);
         } else if (widgetGridType === "WidgetGridNew") {
-            ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} />, canvasElement);
+            ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} totalcount={total_count} />, canvasElement);
         }
     }
 }
