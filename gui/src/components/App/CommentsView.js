@@ -20,7 +20,6 @@ class CommentsView extends React.Component {
     this.currentUserId = this.profile.uuid;
     var fileId = this.props.url ? this.props.url : null;
     fileId = this.props.fileId ? this.props.fileId : fileId;
-    console.log(fileId);
     this.state = {
       fileData: this.props.fileData,
       entityConfig: null,
@@ -286,7 +285,6 @@ class CommentsView extends React.Component {
   render() {
     var that = this;
     if (this.state.dataReady) {
-      // console.log(dataReady);
       return (
         <div className="commentsPage">
             <div id="chat-container">
@@ -347,7 +345,7 @@ class CommentsView extends React.Component {
                 allowSpaceInQuery = {true}
               >
                 <Mention
-                  trigger="@"
+                  trigger= {RegExp('(?:^|\\s)(@*([^@]*))$')}
                   markup="@[__display__](user:__name__)"
                   displayTransform={(id, username) => `@${username}`}
                   renderSuggestion={(suggestion,search, highlightedDisplay, index, focused) => (

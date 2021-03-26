@@ -173,7 +173,7 @@ class Home extends React.Component {
             <div className="titles">PPM Admin</div>
           </div>
         ) : null}
-        {this.userProfile.privileges.MANAGE_APPLICATION_WRITE ? (
+        {this.userProfile.privileges.MANAGE_APPBUILDER_READ ? (
           <div onClick={()=>this.launchExternalApp("EOXAppBuilder")}>
             <div className="block d1">
               <img src="apps/Admin/008-development-2.svg" />
@@ -182,7 +182,7 @@ class Home extends React.Component {
           </div>
         ) : null}
 
-        {!this.userProfile.blackListedApps.Analytics ? (
+        {this.userProfile.privileges.MANAGE_OIBUILDER_READ ? (
           <div onClick={()=>this.launchExternalApp("Analytics")}>
             <div className="block d1">
               <img src="apps/Admin/014-analytics.svg" />

@@ -320,6 +320,13 @@ class Team extends React.Component {
             ? (e) => this.renderRow(e, this.listConfig.expandable)
             : undefined
         }
+        filterable={true}
+        gridDefaultFilters={this.listConfig.defaultFilters}
+        reorderable={true}
+        resizable={true}
+        sortable={true}
+        columnMenuFilter={false}
+        defaultToolBar={true}
         expandable={this.listConfig.expandable ? true : undefined}
         columnConfig={this.prepareColumnData(this.listConfig)}
       />
