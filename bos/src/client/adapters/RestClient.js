@@ -151,10 +151,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
-				} else {
+				} else if ((resp.status >= 200 && resp.status < 300) ||resp.status == 412 ) {
 					return resp.json();
+				}else {
+					this.errorMessage(resp.statusText);
+					// fall through to refresh handling
 				}
-			} else if (method == 'filepost') {
+			}
+			else if (method == 'filepost') {
 				let parameters = params;
 				let formData = new FormData();
 				for (var k in parameters) {
