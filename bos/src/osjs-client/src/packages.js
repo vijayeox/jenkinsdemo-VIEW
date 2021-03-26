@@ -30,7 +30,6 @@
 
 import Application from './application';
 import Preloader from './utils/preloader';
-import LocalStorageAdapter from '../../client/adapters/localStorageAdapter.js';
 
 /**
 * A registered package reference
@@ -410,17 +409,8 @@ export default class Packages {
     filter = filter || (() => true);
 
     const user = this.core.getUser();
-
-    let lsHelper = new LocalStorageAdapter;
-    lsHelper.supported();
-    var metadata = lsHelper.get('metadata');
-    if (!metadata) {
-      metadata = this.metadata.map(m => ({...m}));
-      lsHelper.set('metadata', metadata);
-    } else {
-      metadata = metadata.key;
-    }
     const details = this.core.make("oxzion/profile").get();
+    let metadata = details.metadata;
 
     const filterBlacklist = iter => details.key.blackListedApps instanceof Object
       ? !details.key.blackListedApps[iter.name]

@@ -90,7 +90,7 @@
     }
   }
 }
-a.editprofile{
+a.profileitem{
   cursor: pointer;
 }
 
@@ -248,14 +248,14 @@ transition: all 0.5s cubic-bezier(0, 0.105, 0.035, 1.57);
 transform: scale(1.1);
 background-color: #0b242d;
 }
-img.profile-dropdown-editicon {
+img.profile-dropdown-icon {
     width: 25px;
     height: auto;
 }
-.profile-dropdown-edit {
+.profile-dropdown-item {
     display: flex;
 }
-.profile-dropdown-edit{
+.profile-dropdown-item{
     display: flex;
     padding: 10px;
 }

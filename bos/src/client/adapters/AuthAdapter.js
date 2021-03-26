@@ -23,6 +23,7 @@ const loginAdapter = (core, config) => ({
       lsHelper.purge('REFRESH_token');
       lsHelper.purge('User');
       lsHelper.purge('UserInfo');
+      lsHelper.purge('Metadata');
       lsHelper.purge('osjs/session');
       lsHelper.purge('osjs/locale');
       lsHelper.purge('osjs/desktop');
@@ -45,6 +46,7 @@ const loginAdapter = (core, config) => ({
       lsHelper.purge('REFRESH_token');
       lsHelper.purge('User');
       lsHelper.purge('UserInfo');
+      lsHelper.purge('Metadata');
       lsHelper.purge('osjs/session');
       lsHelper.purge('osjs/locale');
       lsHelper.purge('osjs/desktop');

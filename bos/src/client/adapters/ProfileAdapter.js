@@ -25,19 +25,19 @@ export class ProfileServiceProvider extends ServiceProvider {
 	}
 	get() {
         if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
-			if(this.lsHelper.get("UserInfo")){
-				return this.lsHelper.get("UserInfo");
-			} else {
-				this.getProfile()
+			if(!this.lsHelper.get("UserInfo")) {
+				this.set();
 			}
-			let profileInfo = this.lsHelper.get("UserInfo");
+			let userInfo = this.lsHelper.get("UserInfo");
+			userInfo['metadata'] = this.lsHelper.get("Metadata").key;
+			return userInfo;
 		}
-        return profileInfo['key'];
 	}
 	set() {
         if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
 			if(!this.lsHelper.get("UserInfo")){
-				this.getProfile()
+				this.getProfile();
+				this.getMetadata();
 			}
 		}
 	}
@@ -45,24 +45,28 @@ export class ProfileServiceProvider extends ServiceProvider {
 		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
 			if(this.lsHelper.get("UserInfo")){
 				this.lsHelper.purge("UserInfo");
+				this.lsHelper.purge("Metadata");
 				const settings = this.core.make('osjs/settings');
-				settings.clear("UserInfo");        	       	
+				settings.clear("UserInfo");
 			}
 		}
 		this.set();
 		this.core.emit("oxzion/profile:updated");
 	}
 	getProfile(){
-    	let helper = this.core.make("oxzion/restClient");
-		let profileInformation = JSON.parse(helper.profile());
-        if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
-			this.lsHelper.set("UserInfo",profileInformation["data"]);
+        if(this.lsHelper.supported() || lsHelper.cookieEnabled()) {
+			let helper = this.core.make("oxzion/restClient");
+			let profileInformation = JSON.parse(helper.profile());
+			this.lsHelper.set("UserInfo", profileInformation["data"]);
 			const data = this.lsHelper.get("UserInfo");
 			const settings = this.core.make('osjs/settings');
-			settings.set("UserInfo","key",data.key);
-		    settings.set("UserInfo","timestamp",data.timestamp);
-				
+			settings.set("UserInfo", "key", data.key);
+		    settings.set("UserInfo", "timestamp", data.timestamp);
 		}
+	}
+	async getMetadata() {
+		let metadata = await this.core.request(this.core.config("packages.manifest"), {}, "json");
+		this.lsHelper.set('Metadata', metadata.map(iter => ({type: 'application', ...iter})));
 	}
 	getAuth(){
 		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){

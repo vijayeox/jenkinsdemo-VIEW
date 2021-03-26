@@ -26,7 +26,7 @@ const isStorageSupported = storageName => {
 };
 
 export default class LocalStorageAdapter {
-	
+
 	constructor(core, options = {}){
 		this.localStorageExists = false;
 		this.useCookies = true;
@@ -59,9 +59,9 @@ export default class LocalStorageAdapter {
 		const isSupported = isStorageSupported('localStorage');
 		if(isSupported) {
 			this.localStorageExists = true;
-			return true;	
+			return true;
 		}
-		return false;		
+		return false;
 	}
 
 	cookieEnabled() {
@@ -75,36 +75,26 @@ export default class LocalStorageAdapter {
 		}
 	}
 
-
 	// key - string
 	// data - *
-	set(key,data) {
+	set(key, data) {
 		if(this.localStorageExists) {
 			try {
 				const value = window.localStorage.getItem(key) || null;
-				try {
-					var obj = { key:data,timestamp: new Date().getTime()}
-					this.secureStorage.setItem(key,obj);
+				var obj = { key: data, timestamp: new Date().getTime() }
+				this.secureStorage.setItem(key,obj);
 
-					console.log('local storage set');
-					return true;
-				}
-				catch (e) {
-					console.log(e);
-				}
+				console.log('local storage set');
+				return true;
 			}
 			catch (e) {
 				console.log(e)
 			}
-		}
-		else if(this.useCookies) {
+		} else if(this.useCookies) {
 			console.log('cookie used');
-			var cookies = document.cookie;
 			var now = new Date();
 			now.setTime(now.getTime() + 3 * 3600 * 1000);
-			var token =  key + ':' + data + 'expires='+ now.toUTCString() + ';';
-			cookies += token;
-			document.cookie = cookies;
+			document.cookie += key + ':' + data + 'expires='+ now.toUTCString() + ';';
 			return true;
 		}
 		console.log('storage adapter failed.')
@@ -118,7 +108,7 @@ export default class LocalStorageAdapter {
 					const data = window.localStorage.getItem(key);
 					if(data != null){
 						const getsession = window.localStorage.getItem("osjs/session");
-						if(getsession != null){	
+						if(getsession != null){
 							window.localStorage.removeItem("osjs/session");
 							let setsession = JSON.parse(getsession);
 							this.set("osjs/session",setsession);
@@ -162,27 +152,25 @@ export default class LocalStorageAdapter {
 					}
 
 					const redata = this.secureStorage.getItem(key);
-					
+
 					return redata;
-				}
-				else
+				} else {
 					return null;
+				}
 			}
 			catch (e) {}
-		}
-		else if(this.useCookies) {
-			var cookiestring = document.cookie;
-			var cookies = cookiestring.split(';');
-			for( var i =0 ;i<cookies.length;i++) {
+		} else if(this.useCookies) {
+			var cookies = document.cookie.split(';');
+			for(var i = 0; i < cookies.length; i++) {
 				var values = cookies[i].split(':');
-				if(values[0] == (key)){
+				if(values[0] == key){
 					return values[1];
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	purge(key) {
 		if(this.localStorageExists) {
 			try {
