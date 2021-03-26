@@ -27,11 +27,11 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 	}
 	// profile wrapper 
-	profile(jwt) {
+	profile() {
 		let userData = this.core.getUser();
 		this.token = userData["jwt"];
 		try {
-			let url = this.baseUrl + 'user/me/a+p+bapp';
+			let url = this.baseUrl + 'user/me/a+p+acc+bapp';
 			var xmlHttp = new XMLHttpRequest();
 			xmlHttp.open("GET", url, false);
 			let auth = 'Bearer ' + this.token;
@@ -59,7 +59,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 			formData.append('refresh_token', rtoken["key"])
 
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST', this.baseUrl + '/refreshtoken', false);
+			xhr.open('POST', this.baseUrl + 'refreshtoken', false);
 			xhr.onload = function () {
 				let data = JSON.parse(this.responseText);
 				if (data["status"] == "success") {
