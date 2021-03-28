@@ -51,6 +51,7 @@ class Dashboard extends Component {
 
   async getWidgetByUuid(uuid, filterParams) {
     let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
+    // send this filters to widgets as well so that we can append those to the url that we are trying to create 
     let response = await this.helper.request(
       "v1",
       "analytics/widget/" + uuid + '?data=true' + filterParameter,
@@ -170,7 +171,7 @@ class Dashboard extends Component {
         if (this.props.dashboardStack.length > 0) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          if (drilldownDashboardFilter.length > 0) {
+          if (drilldownDashboardFilter && drilldownDashboardFilter.length > 0) {
             this.updateGraph(drilldownDashboardFilter)
           } else {
             this.setState({ preparedDashboardFilter: [] }, () => {
@@ -264,8 +265,7 @@ class Dashboard extends Component {
     }
     if (widgets.length == 0) {
       this.loader.destroy();
-    }
-    else {
+    } else {
       for (let widget of widgets) {
         var attributes = widget.attributes;
         //dispose 
@@ -280,12 +280,11 @@ class Dashboard extends Component {
                 console.error('Could not load widget.');
                 console.error(response);
                 errorFound = true;
-              }
-              else {
+              } else {
                 //dispose if widget exists
                 let hasDashboardFilters = this.state.preparedDashboardFilter ? true : false;
                 let renderproperties = { "element": widget, "widget": response.data.widget, "hasDashboardFilters": hasDashboardFilters, "dashboardEditMode": false }
-                let widgetObject = WidgetRenderer.render(renderproperties);
+                let widgetObject = WidgetRenderer.render(renderproperties, widgetUUId, filterParams, this.core);
                 if (widgetObject) {
                   this.renderedWidgets[widgetUUId] = widgetObject;
                 }
@@ -335,12 +334,10 @@ class Dashboard extends Component {
       else
         drilldownDashboardFilter = widgetFilter
       event.dashboardFilter = this.state.preparedDashboardFilter
-
     } else if (dashboardFilter.length > 0) {
       //combining dashboardfilter with widgetfilter
       drilldownDashboardFilter = preparefilter(dashboardFilter, widgetFilter)
       event.dashboardFilter = dashboardFilter
-
     }
     event.drilldownDashboardFilter = drilldownDashboardFilter;
     event.drilldownDashboardTitle = drilldownDashboardTitle;

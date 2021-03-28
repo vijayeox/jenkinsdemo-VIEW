@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM, { render } from 'react-dom';
 var numeral = require('numeral');
 import WidgetGrid from './WidgetGrid';
+import WidgetGridNew from './WidgetGridNew';
 import Parser from 'html-react-parser';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import * as am4core from '../amcharts/core';
@@ -18,7 +19,7 @@ am4core.options.commercialLicense = true;
 
 class WidgetRenderer {
     // static render(element, widget, props,hasDashboardFilters,dashboardMode) {
-    static render(renderpropertiesObject) {
+    static render(renderpropertiesObject, widgetUUId, filterParams, core) {
         let { element, widget, props, hasDashboardFilters, dashboardEditMode } = { ...renderpropertiesObject }
         // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
@@ -47,7 +48,20 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters);
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid");
+                }
+                catch (e) {
+                    console.error(e);
+                    return null;
+                }
+                break;
+
+            case 'jsGrid':
+                if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
+                    throw (`Unexpected table widget tag "${widgetTagName}"`);
+                }
+                try {
+                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widgetUUId, filterParams, core, widget['total_count']);
                 }
                 catch (e) {
                     console.error(e);
@@ -61,6 +75,7 @@ class WidgetRenderer {
                 }
                 return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
                 break;
+            // add a case for jsGrid for the server grid loading
 
             default:
                 throw (`Unexpected widget renderer "${widget.renderer}"`);
@@ -349,6 +364,7 @@ class WidgetRenderer {
     }
 
     static renderAmMap(configuration, canvasElement, data) {
+        let meta = configuration['oxzion-meta'];
         function findWidgetElement(element) {
             if ('MapPolygon' !== element.className) {
                 throw 'Unexpected element type.';
@@ -432,7 +448,7 @@ class WidgetRenderer {
         heatLegend.minValue = processedData['min'];
         heatLegend.maxValue = processedData['max'];
 
-        let meta = configuration['oxzion-meta'];
+        // let meta = configuration['oxzion-meta'];
         let legend = null;
         if (meta) {
             legend = meta['legend'];
@@ -580,7 +596,7 @@ class WidgetRenderer {
         }
     }
 
-    static renderTable(element, configuration, data, hasDashboardFilters) {
+    static renderTable(element, configuration, data, hasDashboardFilters, widgetGridType, widgetUUId = null, filterParams = null, core, total_count = null) {
         let elementTagName = element.tagName.toUpperCase();
         let canvasElement = null;
         let isDrillDownTable = false;
@@ -629,7 +645,11 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-        ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
+        if (widgetGridType === "WidgetGrid") {
+            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement}/>, canvasElement);
+        } else if (widgetGridType === "WidgetGridNew") {
+            ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} totalcount={total_count} />, canvasElement);
+        }
     }
 }
 
