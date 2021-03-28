@@ -196,11 +196,9 @@ export default class WidgetGrid extends React.Component {
                 return true
             else
                 return false
-        }
-        else {
+        } else {
             return false
         }
-
     }
 
     cellRender(tdElement, cellProps, thiz) {

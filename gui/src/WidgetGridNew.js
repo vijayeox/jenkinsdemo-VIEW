@@ -8,7 +8,13 @@ import { ExcelExport } from '@progress/kendo-react-excel-export';
 import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 import { WidgetGridLoader } from './WidgetGridLoader.js';
 
-
+const loadingPanel = (
+    <div className="k-loading-mask">
+        <span className="k-loading-text">Loading</span>
+        <div className="k-loading-image"></div>
+        <div className="k-loading-color"></div>
+    </div>
+);
 export default class WidgetGridNew extends React.Component {
     constructor(props) {
         super(props);
@@ -39,6 +45,18 @@ export default class WidgetGridNew extends React.Component {
             dataState: { take: this.pageSize, skip: 0 }
         };
 
+        let beginWith = configuration ? configuration.beginWith : null;
+        if (beginWith) {
+            // let page = beginWith.page;
+            // if (page) {
+            //     this.state.pagination.skip = page.skip ? page.skip : 0;
+            //     this.state.pagination.take = page.take ? page.size : 10;
+            // }
+            this.state.sort = beginWith.sort ? beginWith.sort : null;
+            this.state.group = beginWith.group ? beginWith.group : null;
+            this.state.filter = beginWith.filter ? beginWith.filter : null;
+        }
+
     }
 
     dataStateChange = (e) => {
@@ -60,7 +78,7 @@ export default class WidgetGridNew extends React.Component {
 
     saveAsExcel = () => {
         let filterData;
-        filterData = (Object.keys(this.state.exportFilterData).length > 0) ? this.state.exportFilterData : this.allData
+        filterData = (Object.keys(this.state.displayedData.data).length > 0) ? this.state.displayedData.data : this.allData
         this.excelExporter.save(filterData);
     }
 
@@ -68,7 +86,7 @@ export default class WidgetGridNew extends React.Component {
         let fieldDataTypeMap = new Map();
         for (const config of this.columnConfig) {
             if (config['dataType']) {
-                fieldDataTypeMap.set(config['field'], config['dataType']);
+                fieldDataTypeMap.set(config['field'], config['dataType']);  
             }
         }
         for (let dataItem of this.allData) {
@@ -89,40 +107,110 @@ export default class WidgetGridNew extends React.Component {
         // this.setState({displayedData: { data: [], total: 10000 },
         //     dataState: { take: 10, skip: 0 }})
     }
+
+    drillDownClick = (evt) => {
+        WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
+        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
+    }
+
+    hasBackButton() {
+        if (this.props.canvasElement && this.props.canvasElement.parentElement) {
+            let backbutton = this.props.canvasElement.parentElement.getElementsByClassName('oxzion-widget-roll-up-button')
+            if (backbutton.length > 0)
+                return true
+            else
+                return false
+        } else {
+            return false
+        }
+    }
+
+    cellRender(tdElement, cellProps, thiz) {
+        if (cellProps.rowType === 'groupFooter') {
+            let element = null
+            if (thiz.props.configuration["groupable"] && thiz.props.configuration["groupable"] != false && thiz.props.configuration["groupable"]["aggregate"]) {
+                let aggregateColumns = thiz.props.configuration["groupable"]["aggregate"]
+                let sum = 0
+                let kendo_service = new IntlService()
+                let formattedSum = sum
+                aggregateColumns.forEach(column => {
+                    if (cellProps.field == column.field) {
+                        cellProps.dataItem.items.forEach(item => {
+                            if (typeof (item[column.field]) == "number") {
+                                sum += item[column.field]
+                            }
+                        })
+                        formattedSum = sum
+                        if (column.format) {
+                            formattedSum = kendo_service.toString(sum, column.format)
+                        }
+                        element = <td>{formattedSum}</td>
+                    }
+                })
+                if (element != null) {
+                    return <td>{formattedSum}</td>
+                }
+            }
+        }
+        return tdElement;
+    }
+
+    gridFilterChanged = (e) => {
+        if (e.filter == null) {
+            this.setState({
+                filter: e.filter,
+            });
+        } else {
+            this.setState({
+                filter: e.filter,
+                exportFilterData: e.target.props.data,
+            }, () => {
+                this.prepareData(true);
+            });
+        }
+    }
+
     render() {
         let thiz = this;
+        let hasBackButton = this.hasBackButton()
         function getColumns() {
             let columns = []
             for (const config of thiz.columnConfig) {
                 if (config['footerAggregate']) {
-                    if(config['type'] == null){
-                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']}/>);
-                    }
-                    else{
+                    if (config['type'] == null) {
+                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
+                    } else {
                         columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
                     }
-                    
                 } else {
-                    if(config['type'] == null){
-                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']}/>);
-                    }
-                    else{
-                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"}  key={config['field']}/>);
+                    if (config['type'] == null) {
+                        columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
+                    } else {
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
                     }
                 }
             }
-
             return columns;
         }
 
         let gridTag = <Grid
             style={{ height: this.height, width: this.width }}
+            className={this.isDrillDownTable ? "drillDownStyle" : ""}
             filterable={true}
-            sortable={true}     
-            pageable={true} 
+            sortable={true}
+            pageable={true}
+            resizable={this.resizable}
+            sortable={this.sortable}
+            sort={this.state.sort}
+            groupable={this.groupable}
+            group={this.state.group}
+            // onFilterChange={this.gridFilterChanged}
+            reorderable={this.reorderable}
             {...this.state.dataState}
             {...this.state.displayedData}
             onDataStateChange={this.dataStateChange}
+            onRowClick={this.drillDownClick}
+            cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}
         >
             {/* comment all the columns for testing with our api  */}
             {/* <GridColumn field="ProductID" filter="numeric" title="Id" />
@@ -142,13 +230,14 @@ export default class WidgetGridNew extends React.Component {
 
         return (
             <>
-            {gridTag}
-            {gridLoader}
-                {/* {this.isDrillDownTable &&
+                {gridLoader.length === 0 && loadingPanel}
+                { this.isDrillDownTable &&
                     <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
                         <i className="fas fa-angle-double-down fa-lg"></i>
                     </div>
                 }
+                {/* {gridTag}
+                {gridLoader} */}
                 {this.exportToExcel &&
                     <>
                         <div
@@ -158,7 +247,7 @@ export default class WidgetGridNew extends React.Component {
                             <i className="fa fa-file-excel fa-lg"></i>
                         </div>
                         <ExcelExport
-                            data={this.state.exportFilterData}
+                            data={this.state.displayedData}
                             ref={exporter => this.excelExporter = exporter}
                             filterable
                         >
@@ -167,7 +256,6 @@ export default class WidgetGridNew extends React.Component {
                         </ExcelExport>
                     </>
                 }
-                {!this.exportToExcel && gridTag} */}
             </>
         );
     }

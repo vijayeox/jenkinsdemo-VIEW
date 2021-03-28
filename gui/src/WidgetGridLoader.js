@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { toODataString } from '@progress/kendo-data-query';
 import { string } from 'prop-types';
+import { preparefilter } from './DashboardUtils'
 
 export class WidgetGridLoader extends React.Component {
 
@@ -18,7 +19,7 @@ export class WidgetGridLoader extends React.Component {
     pending = '';
 
     requestDataIfNeeded = () => {
-        console.log(this.props.dataState)
+        // console.log(this.props.dataState)
         // use the datastate to generate required query and pass it to the check as well
         var dataStateCopy = {}
 
@@ -39,34 +40,19 @@ export class WidgetGridLoader extends React.Component {
         }
 
         // add a way to fix the dollar sign which is created using toODataString function 
-
         var string1 = toODataString(dataStateCopy);
         string1 = string1.replace(/\$/g, '');
-        console.log(string1);
-
-        // change the check for the previous value not to return 
-        if (this.pending || string1 === this.lastSuccess) {
+        if (dataStateCopy['filter_grid']) {
+            let filterData = dataStateCopy['filter_grid']['filters'];
+            let filterFields = this.getFilterParams(filterData);
+            this.filterParams = filterFields;
+        } else if (this.pending || string1 === this.lastSuccess) {
+            // change the check for the previous value not to return 
             return;
         }
-
         this.pending = string1;
-       
-        // change the fetch to the helper function call that is required to make the calls to the backend for the data. 
-        // fetch(this.baseUrl + this.pending, this.init)
-        //     .then(response => response.json())
-        //     .then(json => {
-        //         this.lastSuccess = this.pending;
-        //         this.pending = '';
-        //         if (toODataString(this.props.dataState) === this.lastSuccess) {
-        //             this.props.onDataRecieved.call(undefined, {
-        //                 data: json.value,
-        //                 total: json['@odata.count']
-        //             });
-        //         } else {
-        //             this.requestDataIfNeeded();
-        //         }
-        //     });
-
+        console.log("State Copy");
+        console.log(dataStateCopy);
         this.getWidgetByUuid(this.uuid, this.filterParams, this.pending).then(response => {
             console.log(response);
             this.lastSuccess = this.pending;
@@ -79,12 +65,28 @@ export class WidgetGridLoader extends React.Component {
                     total: response.data.widget.total_count
 
                 });
-            }
-            else
-            {
+            } else {
                 this.requestDataIfNeeded();
             }
         });
+    }
+
+    getFilterParams = (filterParams) => {
+        let filterVal = [];
+        let preparedFilter = this.filterParams;
+        console.log("Filters Param");
+        filterParams.map(data => {
+            filterVal.push(data.field)
+            filterVal.push("AND")
+            filterVal.push(data.value)
+            if (preparedFilter.length > 0) {
+                preparedFilter = preparefilter(filterVal, preparedFilter)
+            } else {
+                preparedFilter = filterVal
+            }
+        });
+        console.log(preparedFilter);
+        return preparedFilter;
     }
 
     async getWidgetByUuid(uuid, filterParams, gridParams) {
@@ -105,7 +107,6 @@ export class WidgetGridLoader extends React.Component {
     }
 }
 
-
 class LoadingPanel extends React.Component {
     render() {
         const loadingPanel = (
@@ -115,7 +116,6 @@ class LoadingPanel extends React.Component {
                 <div className="k-loading-color"></div>
             </div>
         );
-
         const gridContent = document && document.querySelector('.k-grid-content');
         return gridContent ? ReactDOM.createPortal(loadingPanel, gridContent) : loadingPanel;
     }
