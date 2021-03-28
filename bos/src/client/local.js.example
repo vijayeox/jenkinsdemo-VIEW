@@ -1,5 +1,9 @@
 module.exports = {
   development: true,
+  cloudflare: {
+    enabled: true,
+    token: '16082753d595462c9d749babc0446ea6'
+  },
   wrapper: {
     url: "http://localhost:8080/"
   },
