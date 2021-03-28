@@ -227,6 +227,7 @@
   box-shadow: 2px 5px#c6b5b5;
   padding: 1em;
   border: 0.5px solid grey;
+  width: max-content;
 }
 
 .dashboard-rollup-button {
@@ -348,4 +349,9 @@
 }
 .disabled {
   
+}
+
+.full-width{
+  widows: 100%;
+  overflow: hidden;
 }

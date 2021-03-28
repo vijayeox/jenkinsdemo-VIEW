@@ -450,7 +450,7 @@ class DashboardFilter extends React.Component {
     }
 
     componentDidMount(props) {
-        this.getDataSourceOptions()
+        // this.getDataSourceOptions()
         this.displayDefaultFilters()
     }
 

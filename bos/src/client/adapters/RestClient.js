@@ -27,11 +27,11 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 	}
 	// profile wrapper 
-	profile(jwt) {
+	profile() {
 		let userData = this.core.getUser();
 		this.token = userData["jwt"];
 		try {
-			let url = this.baseUrl + 'user/me/a+p+bapp';
+			let url = this.baseUrl + 'user/me/a+p+acc+bapp';
 			var xmlHttp = new XMLHttpRequest();
 			xmlHttp.open("GET", url, false);
 			let auth = 'Bearer ' + this.token;
@@ -59,7 +59,7 @@ export class RestClientServiceProvider extends ServiceProvider {
 			formData.append('refresh_token', rtoken["key"])
 
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST', this.baseUrl + '/refreshtoken', false);
+			xhr.open('POST', this.baseUrl + 'refreshtoken', false);
 			xhr.onload = function () {
 				let data = JSON.parse(this.responseText);
 				if (data["status"] == "success") {
@@ -151,10 +151,14 @@ export class RestClientServiceProvider extends ServiceProvider {
 
 				if (resp.status == 400 && resp.statusText == 'Bad Request') {
 					// fall through to refresh handling
-				} else {
+				} else if ((resp.status >= 200 && resp.status < 300) ||resp.status == 412 ) {
 					return resp.json();
+				}else {
+					this.errorMessage(resp.statusText);
+					// fall through to refresh handling
 				}
-			} else if (method == 'filepost') {
+			}
+			else if (method == 'filepost') {
 				let parameters = params;
 				let formData = new FormData();
 				for (var k in parameters) {

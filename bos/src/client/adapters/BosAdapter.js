@@ -1,5 +1,4 @@
 import { ServiceProvider } from "@osjs/common";
-import LocalStorageAdapter from "./localStorageAdapter.js";
 
 export class BosAdapter extends ServiceProvider {
   constructor(core, options = {}) {
