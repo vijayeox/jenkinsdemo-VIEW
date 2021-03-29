@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   vw:
     build:
@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     environment:
       IP: ${IP}
-    network_mode: "host"
     ports:
       - "8081:8081"
     volumes:
