@@ -5,7 +5,8 @@ chmod 777 -R /app/view/bos
 chmod 777 /app/view/apps
 chmod 777 -R /app/api/v1/data
 chmod 777 -R /app/clients
-
+chmod 777 -R /app/view/build.sh
+chmod 777 -R /app/view/clean.sh
 
 if [ "$IP" ]
 then
@@ -15,7 +16,7 @@ then
 	cp ./bos/src/osjs-server/.env.example ./bos/src/osjs-server/.env
 	cp ./bos/src/server/local.js.example ./bos/src/server/local.js
 
-	sed -ri -e "s/^SERVER=.*/SERVER=${IP}/" ./bos/src/osjs-server/.env
+	sed -ri -e "s/([0-9]{1,3}\.){3}[0-9]{1,3}/${IP}/" ./bos/src/osjs-server/.env
 	sed -ri -e "s/([0-9]{1,3}\.){3}[0-9]{1,3}:8080/${IP}:8080/" ./bos/src/server/local.js
 
 	if [ ! -e ./view_built ]; then
@@ -24,4 +25,6 @@ then
 	fi
 
 	npm run serve
+	# tail -f /dev/null
+
 fi

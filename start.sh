@@ -1,16 +1,30 @@
 #!/bin/bash
 
-if [ ! -e ./view_built ]; then
-	IP=`hostname -I | awk '{ print $1 }'` docker-compose up --build
-else
-    IP=`hostname -I | awk '{ print $1 }'` docker-compose up -d --build
+IP=`hostname -I | awk '{ print $1 }'`
 
-    getopts ":yn" yn
-    while true; do
-        case $yn in
-            [Yy]* ) dirName="$(tr [A-Z] [a-z] <<< "${PWD##*/}")"; docker exec -it "${dirName//_}_vw_1" bash; break;;
-            [Nn]* ) break;;
-            * ) read -p "Do you wish to enter the container?(y/n)" yn;;
-        esac
-    done
+while getopts "h:YyNn" options
+do
+	case $options in
+			h ) IP=$OPTARG;;
+		[Yy]* ) startBash=y;;
+		[Nn]* ) startBash=n;;
+	esac
+done
+
+chmod 777 -R ./set-docker-env.sh
+
+if [ ! -e ./view_built ]; then
+	IP="$IP" docker-compose up --build
+else
+	IP="$IP" docker-compose up -d --build
 fi
+
+echo "View is being served in the background on port 8081."
+
+while true; do
+	case $startBash in
+		[Yy]* ) dirName="$(tr [A-Z] [a-z] <<< "${PWD##*/}")"; docker exec -it "${dirName//_}_vw_1" bash; break;;
+		[Nn]* ) break;;
+			* ) read -p "Do you wish to enter the container?(y/n)" startBash;;
+	esac
+done
