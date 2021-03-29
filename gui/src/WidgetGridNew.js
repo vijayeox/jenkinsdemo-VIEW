@@ -199,6 +199,7 @@ export default class WidgetGridNew extends React.Component {
             filterable={true}
             sortable={true}
             pageable={true}
+            {...this.pagerConfig}
             resizable={this.resizable}
             sortable={this.sortable}
             sort={this.state.sort}
@@ -230,15 +231,15 @@ export default class WidgetGridNew extends React.Component {
 
         return (
             <>
-                {gridLoader.length === 0 && loadingPanel}
+                {/* {gridLoader.length === 0 && loadingPanel}
                 { this.isDrillDownTable &&
                     <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
                         <i className="fas fa-angle-double-down fa-lg"></i>
                     </div>
-                }
-                {/* {gridTag}
-                {gridLoader} */}
-                {this.exportToExcel &&
+                } */}
+                {gridTag}
+                {gridLoader}
+                {/* {this.exportToExcel &&
                     <>
                         <div
                             className="oxzion-widget-drilldown-excel-icon"
@@ -255,7 +256,7 @@ export default class WidgetGridNew extends React.Component {
                             {gridLoader}
                         </ExcelExport>
                     </>
-                }
+                } */}
             </>
         );
     }

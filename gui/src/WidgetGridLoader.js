@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { toODataString } from '@progress/kendo-data-query';
 import { string } from 'prop-types';
 import { preparefilter } from './DashboardUtils'
+import { filter } from '@progress/kendo-data-query/dist/npm/transducers';
 
 export class WidgetGridLoader extends React.Component {
 
@@ -40,26 +41,19 @@ export class WidgetGridLoader extends React.Component {
         }
 
         // add a way to fix the dollar sign which is created using toODataString function 
-        var string1 = toODataString(dataStateCopy);
-        string1 = string1.replace(/\$/g, '');
-        if (dataStateCopy['filter_grid']) {
-            let filterData = dataStateCopy['filter_grid']['filters'];
-            let filterFields = this.getFilterParams(filterData);
-            this.filterParams = filterFields;
-        } else if (this.pending || string1 === this.lastSuccess) {
+
+        var filtersApplied = toODataString(this.props.dataState);
+        filtersApplied = filtersApplied.replace(/\$/g, '');
+        filtersApplied = filtersApplied.replace('filter', 'filter_grid')
+        if (this.pending || filtersApplied === this.lastSuccess) {
             // change the check for the previous value not to return 
             return;
         }
-        this.pending = string1;
-        console.log("State Copy");
-        console.log(dataStateCopy);
+        this.pending = filtersApplied;
         this.getWidgetByUuid(this.uuid, this.filterParams, this.pending).then(response => {
-            console.log(response);
             this.lastSuccess = this.pending;
             this.pending = '';
-            var string2 = toODataString(dataStateCopy)
-            string2 = string2.replace(/\$/g, '');
-            if (string2 === this.lastSuccess) {
+            if (filtersApplied === this.lastSuccess) {
                 this.props.onDataRecieved.call(undefined, {
                     data: response.data.widget.data,
                     total: response.data.widget.total_count
@@ -71,7 +65,7 @@ export class WidgetGridLoader extends React.Component {
         });
     }
 
-    getFilterParams = (filterParams) => {
+   /* getFilterParams = (filterParams) => {
         let filterVal = [];
         let preparedFilter = this.filterParams;
         console.log("Filters Param");
@@ -87,7 +81,7 @@ export class WidgetGridLoader extends React.Component {
         });
         console.log(preparedFilter);
         return preparedFilter;
-    }
+    }*/
 
     async getWidgetByUuid(uuid, filterParams, gridParams) {
         let filterParameter = (filterParams && filterParams != [] && filterParams.length != 0) ? ("&filter=" + JSON.stringify(filterParams)) : ''
