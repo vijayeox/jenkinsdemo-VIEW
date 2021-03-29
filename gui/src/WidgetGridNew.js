@@ -199,6 +199,7 @@ export default class WidgetGridNew extends React.Component {
             filterable={true}
             sortable={true}
             pageable={true}
+            {...this.pagerConfig}
             resizable={this.resizable}
             sortable={this.sortable}
             sort={this.state.sort}
