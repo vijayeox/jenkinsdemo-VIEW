@@ -24,12 +24,14 @@ export class ProfileServiceProvider extends ServiceProvider {
 		}));
 	}
 	get() {
-        if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
+        if(this.lsHelper.supported() || this.lsHelper.cookieEnabled()){
 			if(!this.lsHelper.get("UserInfo")) {
 				this.set();
 			}
 			let userInfo = this.lsHelper.get("UserInfo");
-			userInfo['metadata'] = this.lsHelper.get("Metadata").key;
+			if(this.lsHelper.get("Metadata")){
+				userInfo['metadata'] = this.lsHelper.get("Metadata").key;
+			}
 			return userInfo;
 		}
 	}
