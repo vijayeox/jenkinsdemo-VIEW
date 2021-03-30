@@ -37,25 +37,15 @@ export class WidgetGridLoader extends React.Component {
                         let gridFilterP = []
                         gridFilterP.push(data.field);
                         // Add more operators according to supported parameters. Change to switch if Many 
-                        switch (data.operator) {
-                            case 'contains':
-                                gridFilterP.push("LIKE");
-                                break;
-                            case 'eq':
-                                gridFilterP.push("==");
-                                break;
-                            default:
-                                throw `Unexpected element "${data.operator}"`;
+                        if(data.operator == 'contains'){
+                            gridFilterP.push("LIKE");
                         }
-                        // if(data.operator == 'contains'){
-                        //     gridFilterP.push("LIKE");
-                        // }
-                        // else if(data.operator == 'eq'){
-                        //     gridFilterP.push("==")
-                        // }
-                        // else {
-                        //     gridFilterP.push("==");
-                        // }
+                        else if(data.operator == 'eq'){
+                            gridFilterP.push("==")
+                        }
+                        else {
+                            gridFilterP.push("==");
+                        }
                         gridFilterP.push(data.value);
                         // if only 1 object in the filters
                         if(index + 1 == length){
@@ -63,7 +53,7 @@ export class WidgetGridLoader extends React.Component {
                             gridFilterP = []
                         }
                         else{
-                            filterVal.push(gridFilterP)
+                            filterVal.push(gridfilterP)
                             gridFilterP = []
                             gridFilterString = JSON.stringify(filterVal)
                         }
@@ -144,24 +134,17 @@ export class WidgetGridLoader extends React.Component {
         }
         this.pending = filtersApplied;
         this.getWidgetByUuid(this.uuid, this.filterParams, this.pending).then(response => {
-            if (response.status == 200){
-                this.lastSuccess = this.pending;
-                this.pending = '';
-                if (filtersApplied === this.lastSuccess) {
-                    this.props.onDataRecieved.call(undefined, {
+            this.lastSuccess = this.pending;
+            this.pending = '';
+            if (filtersApplied === this.lastSuccess) {
+                this.props.onDataRecieved.call(undefined, {
                     data: response.data.widget.data,
                     total: response.data.widget.total_count
 
                 });
-                } else {
-                    this.requestDataIfNeeded();
-                }
+            } else {
+                this.requestDataIfNeeded();
             }
-            else
-            {
-                // add an alert for server time out 
-            }
-            
         });
     }
     async getWidgetByUuid(uuid, filterParams, gridParams) {
