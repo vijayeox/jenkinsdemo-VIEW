@@ -86,7 +86,7 @@ export default class WidgetGridNew extends React.Component {
         let fieldDataTypeMap = new Map();
         for (const config of this.columnConfig) {
             if (config['dataType']) {
-                fieldDataTypeMap.set(config['field'], config['dataType']);  
+                fieldDataTypeMap.set(config['field'], config['dataType']);
             }
         }
         for (let dataItem of this.allData) {
@@ -222,11 +222,6 @@ export default class WidgetGridNew extends React.Component {
             onRowClick={this.drillDownClick}
             cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}
         >
-            {/* comment all the columns for testing with our api  */}
-            {/* <GridColumn field="ProductID" filter="numeric" title="Id" />
-            <GridColumn field="ProductName" title="Name" />
-            <GridColumn field="UnitPrice" filter="numeric" format="{0:c}" title="Price" />
-            <GridColumn field="UnitsInStock" filter="numeric" title="In stock" /> */}
             {getColumns()}
         </Grid>;
 

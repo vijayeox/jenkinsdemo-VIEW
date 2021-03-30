@@ -129,7 +129,6 @@ export class WidgetGridLoader extends React.Component {
                 this.props.onDataRecieved.call(undefined, {
                     data: response.data.widget.data,
                     total: response.data.widget.total_count
-
                 });
             } else {
                 this.requestDataIfNeeded();
@@ -141,7 +140,7 @@ export class WidgetGridLoader extends React.Component {
         // send this filters to widgets as well so that we can append those to the url that we are trying to create 
         let response = await this.helper.request(
             "v1",
-            "analytics/widget/" + uuid + '?data=true' + filterParameter + gridParams,
+            "analytics/widget/" + uuid + '?data=true' + filterParameter + "&" + gridParams,
             {},
             "get"
         );
