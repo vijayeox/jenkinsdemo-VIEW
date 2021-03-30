@@ -49,7 +49,7 @@ export class WidgetGridLoader extends React.Component {
                             gridFilterString = JSON.stringify(gridFilterP)
                             gridFilterP = []
                         } else {
-                            filterVal.push(gridfilterP)
+                            filterVal.push(gridFilterP)
                             gridFilterP = []
                             gridFilterString = JSON.stringify(filterVal)
                         }
@@ -59,7 +59,7 @@ export class WidgetGridLoader extends React.Component {
                         let gridFilterP = []
                         gridFilterP.push(data.field);
                         if (data.operator == 'contains') {
-                            gridFilterP.push("==");
+                            gridFilterP.push("LIKE");
                         } else if (data.operator == 'eq') {
                             gridFilterP.push("==")
                         } else {
@@ -104,7 +104,7 @@ export class WidgetGridLoader extends React.Component {
             // Since no filters are there, we can use the OData string 
             filtersApplied = toODataString(this.props.dataState);
             filtersApplied = filtersApplied.replace(/\$/g, '');
-            filtersApplied = filtersApplied.replace('filter', 'filter_grid')
+            // filtersApplied = filtersApplied.replace('filter', 'filter_grid')
         } else {
             // call createFilterString to get the filter String required for filters 
             this.gridfilterString = this.createFilterString(dataStateCopy['filter_grid']);

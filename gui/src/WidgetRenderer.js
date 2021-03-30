@@ -23,19 +23,20 @@ class WidgetRenderer {
         let { element, widget, props, hasDashboardFilters, dashboardEditMode } = { ...renderpropertiesObject }
         // am4core.options.queue = true //reduces load on the browser
         let widgetTagName = element.tagName.toUpperCase();
+        let widgetReturnParams = {}
         switch (widget.renderer) {
             case 'JsAggregate':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data, hasDashboardFilters, dashboardEditMode, widget);
+                widgetReturnParams = WidgetRenderer.renderAggregateValue(element, widget.configuration, props, widget.data, hasDashboardFilters, dashboardEditMode, widget);
                 break;
             case 'amCharts':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected chart widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data, hasDashboardFilters);
+                    widgetReturnParams = WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data, hasDashboardFilters);
                 }
                 catch (e) {
                     console.error(e);
@@ -48,38 +49,39 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid");
+                    widgetReturnParams = WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid");
+                    break;
                 }
                 catch (e) {
                     console.error(e);
                     return null;
                 }
-                break;
 
             case 'jsGrid':
                 if ((widgetTagName !== 'FIGURE') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    return WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widgetUUId, filterParams, core, widget['total_count']);
+                    widgetReturnParams = WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widget.uuid, filterParams, core, widget['total_count']);
+                    break;
                 }
                 catch (e) {
                     console.error(e);
                     return null;
                 }
-                break;
 
             case 'HTML':
                 if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
                     throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
-                return WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
+                widgetReturnParams = WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
                 break;
             // add a case for jsGrid for the server grid loading
 
             default:
                 throw (`Unexpected widget renderer "${widget.renderer}"`);
         }
+        return widgetReturnParams;
     }
 
     static renderAggregateValue(element, configuration, props, data, hasDashboardFilters, dashboardEditMode, widget) {
@@ -645,10 +647,11 @@ class WidgetRenderer {
                 buttonElement.remove();
             }
         }
-        if (widgetGridType === "WidgetGrid") {
-            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement}/>, canvasElement);
-        } else if (widgetGridType === "WidgetGridNew") {
+
+        if (widgetGridType == "WidgetGridNew") {
             ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} totalcount={total_count} />, canvasElement);
+        } else if (widgetGridType == "WidgetGrid") {
+            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
         }
     }
 }
