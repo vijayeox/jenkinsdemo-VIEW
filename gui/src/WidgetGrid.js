@@ -292,7 +292,7 @@ export default class WidgetGrid extends React.Component {
             group={this.state.group}
             onGroupChange={this.gridGroupChanged}
             onExpandChange={this.gridGroupExpansionChanged}
-            onDataStateChange={this.gridDataStageChanged}
+            // onDataStateChange={this.gridDataStageChanged}
             expandField='expanded'
         >
             {getColumns()}
