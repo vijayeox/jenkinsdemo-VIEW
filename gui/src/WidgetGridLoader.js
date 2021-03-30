@@ -25,53 +25,44 @@ export class WidgetGridLoader extends React.Component {
     createFilterString = (gridFilterParams) => {
         let filterVal = []
         var filterString = ""
-        for (var key of Object.keys(gridFilterParams)){
-            if (key == 'filters')
-            {
+        for (var key of Object.keys(gridFilterParams)) {
+            if (key == 'filters') {
                 var gridFilterString = ""
                 // Loop through each filter object and create elastic filters 
                 let length = gridFilterParams[key].length;
                 gridFilterParams[key].map((data, index) => {
                     // if only 1 filter is associated
-                    if (index === 0){
+                    if (index === 0) {
                         let gridFilterP = []
                         gridFilterP.push(data.field);
                         // Add more operators according to supported parameters. Change to switch if Many 
-                        if(data.operator == 'contains'){
+                        if (data.operator == 'contains') {
                             gridFilterP.push("LIKE");
-                        }
-                        else if(data.operator == 'eq'){
+                        } else if (data.operator == 'eq') {
                             gridFilterP.push("==")
-                        }
-                        else {
+                        } else {
                             gridFilterP.push("==");
                         }
                         gridFilterP.push(data.value);
                         // if only 1 object in the filters
-                        if(index + 1 == length){
+                        if (index + 1 == length) {
                             gridFilterString = JSON.stringify(gridFilterP)
                             gridFilterP = []
-                        }
-                        else{
+                        } else {
                             filterVal.push(gridfilterP)
                             gridFilterP = []
                             gridFilterString = JSON.stringify(filterVal)
                         }
-                                               
-                    }
-                    else 
-                    {
+                    } else {
                         // if not the first object i.e. multiple filters 
                         filterVal.push("AND")
                         let gridFilterP = []
                         gridFilterP.push(data.field);
-                        if(data.operator == 'contains'){
+                        if (data.operator == 'contains') {
                             gridFilterP.push("==");
-                        }
-                        else if(data.operator == 'eq'){
+                        } else if (data.operator == 'eq') {
                             gridFilterP.push("==")
-                        }
-                        else {
+                        } else {
                             gridFilterP.push("==");
                         }
                         gridFilterP.push(data.value);
@@ -108,15 +99,13 @@ export class WidgetGridLoader extends React.Component {
             dataStateCopy['group'] = this.props.dataState ? this.props.dataState['group'] : null
         }
         var filtersApplied = ''
-        let filterD = typeof(dataStateCopy['filter_grid'])
-        if(filterD == "undefined")
-        {
+        let filterD = typeof (dataStateCopy['filter_grid'])
+        if (filterD == "undefined") {
             // Since no filters are there, we can use the OData string 
             filtersApplied = toODataString(this.props.dataState);
             filtersApplied = filtersApplied.replace(/\$/g, '');
             filtersApplied = filtersApplied.replace('filter', 'filter_grid')
-        }
-        else{
+        } else {
             // call createFilterString to get the filter String required for filters 
             this.gridfilterString = this.createFilterString(dataStateCopy['filter_grid']);
             console.log(this.gridfilterString)
@@ -124,7 +113,7 @@ export class WidgetGridLoader extends React.Component {
             filtersApplied = filtersApplied.replace(/\$/g, '');
             var filterSplit = filtersApplied.split(/&(.+)/)
             filtersApplied = filterSplit[1]
-            filtersApplied = filtersApplied + "&filter_grid=" + this.gridfilterString   
+            filtersApplied = filtersApplied + "&filter=" + this.gridfilterString
         }
         console.log('final check before the filter request');
         console.log(filtersApplied);
