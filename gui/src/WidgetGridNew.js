@@ -155,6 +155,14 @@ export default class WidgetGridNew extends React.Component {
         return tdElement;
     }
 
+    // gridGroupChanged = (e) => {
+    //     this.setState({
+    //         group: e.group
+    //     }, () => {
+    //         this.prepareData(true);
+    //     });
+    // }
+
     gridFilterChanged = (e) => {
         if (e.filter == null) {
             this.setState({
@@ -199,11 +207,13 @@ export default class WidgetGridNew extends React.Component {
             filterable={true}
             sortable={true}
             pageable={true}
+            {...this.pagerConfig}
             resizable={this.resizable}
             sortable={this.sortable}
             sort={this.state.sort}
             groupable={this.groupable}
             group={this.state.group}
+            // onGroupChange={this.gridGroupChanged}
             // onFilterChange={this.gridFilterChanged}
             reorderable={this.reorderable}
             {...this.state.dataState}

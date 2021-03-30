@@ -359,7 +359,11 @@ const FilterFields = function (props) {
                                 selected={filters[index]["value"] || ""}
                                 name="value"
                                 id="value"
-                                onChange={(e) => onUpdate(e, index, "value")}
+                                onChange={(e) => {
+                                    onUpdate(e, index, "value");
+                                    var x = document.getElementById("select_notif" + index); 
+                                    x.className = "toastHide"
+                                }}
                                 value={filterValueOption ? filterValueOption.filter(option => option.value == filters[index]["value"]) : ""}
                                 options={filterValueOption}
                                 styles={customStyles}
@@ -387,6 +391,9 @@ const FilterFields = function (props) {
                         <Button className="filter_remove_button" style={{
                             cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
                         }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                    }
+                    {
+                        dataType === "select" ? <div className = "select_notif" id={"select_notif" + index}>You have not selected / changed any option</div> : ""
                     }
                 </Form.Group>
             </div>
@@ -450,7 +457,7 @@ class DashboardFilter extends React.Component {
     }
 
     componentDidMount(props) {
-        // this.getDataSourceOptions()
+        this.getDataSourceOptions()
         this.displayDefaultFilters()
     }
 
