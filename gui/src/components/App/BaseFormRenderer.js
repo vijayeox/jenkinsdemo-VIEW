@@ -168,7 +168,7 @@ class BaseFormRenderer extends React.Component {
                                     if (response.status == 'success') {
                                         next(null);
                                     } else {
-                                        next([response.errors[0].message]);
+                                        next([ response.message ? response.message : response.errors[0].message]);
                                     }
                                 });
                             }

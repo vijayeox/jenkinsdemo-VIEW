@@ -154,9 +154,10 @@ export class RestClientServiceProvider extends ServiceProvider {
 				} else if ((resp.status >= 200 && resp.status < 300) ||resp.status == 412 ) {
 					return resp.json();
 				}else {
-					this.errorMessage(resp.statusText);
-					// fall through to refresh handling
-				}
+          // this.errorMessage(resp.statusText); // TODO - Resolve the promise and if there is a message send it else use statusText
+          return resp.json();
+          // fall through to refresh handling
+        }
 			}
 			else if (method == 'filepost') {
 				let parameters = params;
