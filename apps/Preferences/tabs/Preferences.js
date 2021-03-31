@@ -15,9 +15,9 @@ class Preferences extends React.Component {
         this.userprofile.key.preferences["dateformat"] &&
           this.userprofile.key.preferences["dateformat"] != ""
           ? this.userprofile.key.preferences["dateformat"]
-          : "dd-MM-yyyy";
+          : "DD-MM-YYYY";
     } else {
-      this.userprofile.key.preferences = { dateformat: "dd-MM-yyyy" };
+      this.userprofile.key.preferences = { dateformat: "DD-MM-YYYY" };
     }
     this.state = {
       file: null,

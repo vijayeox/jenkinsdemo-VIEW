@@ -63,7 +63,7 @@ class EditProfile extends React.Component {
           ? userprofile.key.preferences["dateformat"]
           : "DD-MM-YYYY";
     } else {
-      userprofile.key.preferences = { dateformat: "dd-MM-YYYY" };
+      userprofile.key.preferences = { dateformat: "DD-MM-YYYY" };
     }
     return userprofile;
 
