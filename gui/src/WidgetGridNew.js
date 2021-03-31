@@ -86,7 +86,7 @@ export default class WidgetGridNew extends React.Component {
         let fieldDataTypeMap = new Map();
         for (const config of this.columnConfig) {
             if (config['dataType']) {
-                fieldDataTypeMap.set(config['field'], config['dataType']);
+                fieldDataTypeMap.set(config['field'], config['dataType']);  
             }
         }
         for (let dataItem of this.allData) {
@@ -155,14 +155,6 @@ export default class WidgetGridNew extends React.Component {
         return tdElement;
     }
 
-    // gridGroupChanged = (e) => {
-    //     this.setState({
-    //         group: e.group
-    //     }, () => {
-    //         this.prepareData(true);
-    //     });
-    // }
-
     gridFilterChanged = (e) => {
         if (e.filter == null) {
             this.setState({
@@ -188,13 +180,14 @@ export default class WidgetGridNew extends React.Component {
                     if (config['type'] == null) {
                         columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
                     } else {
-                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? ((config['type'] == 'number') ? 'numeric' : config['type']) : "numeric"} key={config['field']} />);
                     }
                 } else {
                     if (config['type'] == null) {
                         columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
                     } else {
-                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? ((config['type'] == 'number') ? 'numeric' : config['type']) : "numeric"
+                        } key={config['field']} />);
                     }
                 }
             }
@@ -207,13 +200,33 @@ export default class WidgetGridNew extends React.Component {
             filterable={true}
             sortable={true}
             pageable={true}
+            filterOperators={{
+                'text': [
+                    { text: 'grid.filterStartsWithOperator', operator: 'startswith' },
+                    { text: 'grid.filterContainsOperator', operator: 'contains' },
+                    { text: 'grid.filterNotContainsOperator', operator: 'doesnotcontain' },
+                    { text: 'grid.filterEqOperator', operator: 'eq' },
+                ],
+                'numeric': [
+                    { text: 'grid.filterEqOperator', operator: 'eq' },
+                    { text: 'grid.filterGteOperator', operator: 'gte' },
+                    { text: 'grid.filterGtOperator', operator: 'gt' },
+                    { text: 'grid.filterLteOperator', operator: 'lte' },
+                    { text: 'grid.filterLtOperator', operator: 'lt' },
+                ],
+                'date': [
+                    { text: 'grid.filterEqOperator', operator: 'eq' },
+                ],
+                'boolean': [
+                    { text: 'grid.filterEqOperator', operator: 'eq' }
+                ]
+            }}
             {...this.pagerConfig}
             resizable={this.resizable}
             sortable={this.sortable}
             sort={this.state.sort}
             groupable={this.groupable}
             group={this.state.group}
-            // onGroupChange={this.gridGroupChanged}
             // onFilterChange={this.gridFilterChanged}
             reorderable={this.reorderable}
             {...this.state.dataState}
@@ -221,7 +234,13 @@ export default class WidgetGridNew extends React.Component {
             onDataStateChange={this.dataStateChange}
             onRowClick={this.drillDownClick}
             cellRender={(tdelement, cellProps) => this.cellRender(tdelement, cellProps, this)}
+
         >
+            {/* comment all the columns for testing with our api  */}
+            {/* <GridColumn field="ProductID" filter="numeric" title="Id" />
+            <GridColumn field="ProductName" title="Name" />
+            <GridColumn field="UnitPrice" filter="numeric" format="{0:c}" title="Price" />
+            <GridColumn field="UnitsInStock" filter="numeric" title="In stock" /> */}
             {getColumns()}
         </Grid>;
 
