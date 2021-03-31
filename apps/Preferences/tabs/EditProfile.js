@@ -15,29 +15,15 @@ class EditProfile extends React.Component {
     super(props);
 
     this.core = this.props.args;
-    this.appConfig = this.props.appConfig;
-    this.userprofile = this.core.make("oxzion/profile").get();
-    let countryList = countryStateList.map((item) => item.country);
-    console.log(this.userprofile);
-    if (
-      this.userprofile.key.preferences != undefined ||
-      this.userprofile.key.preferences != null
-    ) {
-      this.userprofile.key.preferences["dateformat"] =
-        this.userprofile.key.preferences["dateformat"] &&
-        this.userprofile.key.preferences["dateformat"] != ""
-          ? this.userprofile.key.preferences["dateformat"]
-          : "dd-MM-yyyy";
-    } else {
-      this.userprofile.key.preferences = { dateformat: "dd-MM-yyyy" };
-    }
+    var userprofile = this.getUserProfile();
 
     this.state = {
       showImageDiv: 1,
       imageData: null,
-      icon: this.userprofile.key.icon + "?" + new Date(),
-      reload: false
-    };
+      icon: userprofile.key.icon + "?" + new Date(),
+      reload: false,
+      userprofile:userprofile
+    }
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
@@ -51,12 +37,37 @@ class EditProfile extends React.Component {
   async handleSubmit(event) {
     
     this.core.make("oxzion/profile").update();
-    this.setState({reload: true})
+    var userprofile = this.getUserProfile();
+    this.setState({reload: true,userprofile:userprofile})
       
   }
 
+  getUserProfile(){
+    var userprofile = this.core.make("oxzion/profile").get();
+    if(userprofile && userprofile.key.phone){
+      var phoneNumber = userprofile.key.phone;
+      let i = phoneNumber.indexOf("-");
+      userprofile.key.country_code = phoneNumber.slice(0,i).trim();
+      userprofile.key.contact = phoneNumber.slice(i+1, phoneNumber.length).trim();
 
+    }
+    userprofile.key.phone = "";
+    let countryList = countryStateList.map((item) => item.country);
+    if (
+      userprofile.key.preferences != undefined ||
+      userprofile.key.preferences != null
+    ) {
+      userprofile.key.preferences["dateformat"] =
+        userprofile.key.preferences["dateformat"] &&
+        userprofile.key.preferences["dateformat"] != ""
+          ? userprofile.key.preferences["dateformat"]
+          : "DD-MM-YYYY";
+    } else {
+      userprofile.key.preferences = { dateformat: "dd-MM-YYYY" };
+    }
+    return userprofile;
 
+  }
   async submitProfilePic(imageData) {
     const formData = {};
     formData["file"] = imageData;
@@ -239,7 +250,6 @@ class EditProfile extends React.Component {
   };
 
   render() {
-    console.log("edit")
     return (
       <div className="prefrencesMainDiv">
         {this.profileImageData()}
@@ -251,6 +261,7 @@ class EditProfile extends React.Component {
             <div className="formmargin">
             <FormRender 
               content = {editProfile}
+              userprofile = {this.state.userprofile}
               core ={this.core}
               route= {"/user/me/save"}
               postSubmitCallback = {this.handleSubmit}

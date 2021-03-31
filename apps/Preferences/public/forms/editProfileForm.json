@@ -16,7 +16,6 @@
 					"label": "First Name",
 					"tableView": true,
 					"redrawOn": "data",
-					"customDefaultValue": "value = data.userprofile[\"firstname\"]",
 					"validate": {
 						"required": true
 					},
@@ -38,7 +37,6 @@
 					"label": "Last Name",
 					"tableView": true,
 					"redrawOn": "data",
-					"customDefaultValue": "value = data.userprofile[\"lastname\"]",
 					"validate": {
 						"required": true
 					},
@@ -62,7 +60,6 @@
 			"disabled": true,
 			"tableView": true,
 			"redrawOn": "data",
-			"customDefaultValue": "value = data.userprofile[\"email\"]",
 			"validate": {
 				"required": true
 			},
@@ -91,7 +88,6 @@
 						"shortcut": ""
 					}],
 					"redrawOn": "data",
-					"customDefaultValue": "value = data.userprofile[\"gender\"]",
 					"validate": {
 						"required": true
 					},
@@ -117,7 +113,6 @@
 					},
 					"enableMaxDateInput": false,
 					"enableTime": false,
-					"customDefaultValue": "value = data.userprofile[\"date_of_birth\"]",
 					"validate": {
 						"required": true
 					},
@@ -160,7 +155,6 @@
 				"components": [{
 					"label": "Address 1",
 					"tableView": true,
-					"customDefaultValue": "value = data.userprofile[\"address1\"]",
 					"validate": {
 						"required": true
 					},
@@ -178,7 +172,6 @@
 				"components": [{
 					"label": "Address 2",
 					"tableView": true,
-					"customDefaultValue": "value = data.userprofile[\"address2\"]",
 					"key": "address2",
 					"type": "textfield",
 					"input": true,
@@ -211,7 +204,6 @@
 					},
 					"template": "<span>{{ item }}</span>",
 					"selectThreshold": 0.3,
-					"customDefaultValue": "value = data.userprofile[\"country\"]",
 					"validate": {
 						"required": true
 					},
@@ -243,7 +235,6 @@
 					},
 					"template": "<span>{{ item }}</span>",
 					"selectThreshold": 0.3,
-					"customDefaultValue": "value = data.userprofile[\"state\"];",
 					"validate": {
 						"required": true
 					},
@@ -271,7 +262,6 @@
 				"components": [{
 					"label": "City",
 					"tableView": true,
-					"customDefaultValue": "value = data.userprofile[\"city\"]",
 					"validate": {
 						"required": true
 					},
@@ -289,7 +279,6 @@
 				"components": [{
 					"label": "Postal Code",
 					"tableView": true,
-					"customDefaultValue": "value = data.userprofile[\"zip\"]",
 					"validate": {
 						"required": true
 					},
@@ -347,7 +336,6 @@
 							"selectThreshold": 0.3,
 							"protected": true,
 							"clearOnHide": false,
-							"customDefaultValue": "if(data.userprofile && data.userprofile[\"phone\"]){\n  let i = data.userprofile[\"phone\"].indexOf(\"-\");\n  var code = data.userprofile[\"phone\"].slice(0,i).trim();\n  let obj = data.phoneList.find(o => o.dial_code === code);\n  value = obj.dial_code;\n}",
 							"key": "country_code",
 							"type": "select",
 							"indexeddb": {
@@ -364,11 +352,10 @@
 					}, {
 						"components": [{
 							"label": "Contact",
+							"redrawOn": "phone",
 							"hideLabel": true,
 							"tableView": true,
 							"protected": true,
-							"redrawOn": "phone",
-							"customDefaultValue": "if(data.userprofile && data.userprofile[\"phone\"]){\n  i = data.userprofile[\"phone\"].indexOf(\"-\");\n  value = data.userprofile[\"phone\"].slice(i+1, data.userprofile[\"phone\"].length).trim();\n}",
 							"validate": {
 								"pattern": "^[0-9]*$"
 							},
@@ -390,9 +377,8 @@
 				}, {
 					"label": "phone",
 					"encrypted": true,
-					"redrawOn": "country_code",
-					"customDefaultValue": "value = data.userprofile[\"phone\"]",
-					"calculateValue": "value =  (data.country_code && data.contact) ? data.country_code+ \"-\"+data.contact : data.phone;",
+					"redrawOn": "contact",
+					"calculateValue": "value =  (data.country_code && data.contact) ? data.country_code+ \"-\"+data.contact : data.userprofile.phone;",
 					"key": "phone",
 					"type": "hidden",
 					"input": true,
@@ -408,7 +394,6 @@
 				"components": [{
 					"label": "Website",
 					"tableView": true,
-					"customDefaultValue": "value = data.userprofile[\"website\"]",
 					"key": "website",
 					"type": "textfield",
 					"input": true,
@@ -427,7 +412,6 @@
 		}, {
 			"label": "Interest",
 			"tableView": true,
-			"customDefaultValue": "value = data.userprofile[\"interest\"]",
 			"key": "interest",
 			"type": "textfield",
 			"input": true,
@@ -437,7 +421,6 @@
 			"editor": "ckeditor",
 			"autoExpand": false,
 			"tableView": true,
-			"customDefaultValue": "value = data.userprofile[\"about\"]",
 			"key": "about",
 			"type": "textarea",
 			"input": true,
