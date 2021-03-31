@@ -120,25 +120,27 @@ export default class WidgetGrid extends React.Component {
         this.prepareData(true);
     }
 
-    // gridPageChanged = (e) => {
-    //     console.log("page event clicked");
-    //     // call the api to get the data for the next page by passing the new page 
-    //     let pagination = {
-    //         skip: e.page.skip,
-    //         take: e.page.take
-    //     }
-    //     this.setState({
-    //         pagination: pagination
-    //     }, () => {
-    //         this.prepareData(false);
-    //     });
-    // }
+    gridPageChanged = (e) => {
+        console.log("page event clicked");
+        // call the api to get the data for the next page by passing the new page 
+        let pagination = {
+            skip: e.page.skip,
+            take: e.page.take
+        }
+        this.setState({
+            pagination: pagination
+        }, () => {
+            this.prepareData(false);
+        });
+    }
 
     gridFilterChanged = (e) => {
         if (e.filter == null) {
             this.setState({
                 filter: e.filter,
                 exportFilterData: this.allData,
+            }, () => {
+                this.prepareData(true);
             });
         } else {
             this.setState({
@@ -290,7 +292,7 @@ export default class WidgetGrid extends React.Component {
             group={this.state.group}
             onGroupChange={this.gridGroupChanged}
             onExpandChange={this.gridGroupExpansionChanged}
-            onDataStateChange={this.gridDataStageChanged}
+            // onDataStateChange={this.gridDataStageChanged}
             expandField='expanded'
         >
             {getColumns()}

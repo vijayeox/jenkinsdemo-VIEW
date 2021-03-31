@@ -50,7 +50,9 @@ export default class DropDown extends React.Component {
       for (var i = 0; i <= response.data.length - 1; i++) {
         var userName = response.data[i].name;
         var userid = response.data[i].uuid;
-        tempUsers.push({ id: userid, name: userName });
+        if(this.props.excludeItem ? !(this.props.excludeItem.uuid == userid) : true) {
+          tempUsers.push({ id: userid, name: userName });
+        }
       }
       this.setState({
         mainList: tempUsers

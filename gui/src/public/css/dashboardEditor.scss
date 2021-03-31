@@ -228,6 +228,7 @@
   padding: 1em;
   border: 0.5px solid grey;
   width: max-content;
+  min-width: 99%;
 }
 
 .dashboard-rollup-button {
@@ -351,6 +352,17 @@
   
 }
 
+.select_notif {
+  padding: 10px;
+  background: yellow;
+  color: black;
+  margin-top: 25px;
+  float: left;
+}
+
+.toastHide {
+  visibility: hidden;
+}
 .full-width{
   widows: 100%;
   overflow: hidden;

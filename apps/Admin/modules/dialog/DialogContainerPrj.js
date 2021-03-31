@@ -204,6 +204,7 @@ export default class DialogContainer extends React.Component {
                       onDataChange={(event) =>
                         this.listOnChange(event, "parentId")
                       }
+                      excludeItem = {this.state.prjInEdit}
                       disableItem={this.props.diableField}
                       validationMessage={"Please select the Parent project."}
                     />
