@@ -180,13 +180,14 @@ export default class WidgetGridNew extends React.Component {
                     if (config['type'] == null) {
                         columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
                     } else {
-                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? ((config['type'] == 'number') ? 'numeric' : config['type']) : "numeric"} key={config['field']} />);
                     }
                 } else {
                     if (config['type'] == null) {
                         columns.push(<Column field={config['field']} title={config['title']} key={config['field']} />);
                     } else {
-                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? config['type'] : "numeric"} key={config['field']} />);
+                        columns.push(<Column field={config['field']} title={config['title']} filter={config ? ((config['type'] == 'number') ? 'numeric' : config['type']) : "numeric"
+                        } key={config['field']} />);
                     }
                 }
             }

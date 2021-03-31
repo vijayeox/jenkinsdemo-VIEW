@@ -31,43 +31,42 @@ export class WidgetGridLoader extends React.Component {
                 // Loop through each filter object and create elastic filters 
                 let length = gridFilterParams[key].length;
                 gridFilterParams[key].map((data, index) => {
-                    if(data.value == null){
+                    if (data.value == null) {
                         return gridFilterString
-                    }
-                    else{
+                    } else {
                         // if only 1 filter is associated
                         if (index === 0) {
                             let gridFilterP = []
                             gridFilterP.push(data.field);
-                            if((typeof data.value) == "string"){
+                            if ((typeof data.value) == "string") {
                                 if (data.operator == 'startswith') {
                                     gridFilterP.push("STARTSWITH")
                                 }
                                 else if (data.operator == 'contains') {
                                     gridFilterP.push("LIKE");
-                                }else if (data.operator == 'doesnotcontain') {
+                                } else if (data.operator == 'doesnotcontain') {
                                     gridFilterP.push("NOT LIKE");
                                 } else if (data.operator == 'eq') {
                                     gridFilterP.push("==")
-                                }else if (data.operator == 'neq') {
+                                } else if (data.operator == 'neq') {
                                     gridFilterP.push("!=")
                                 } else {
                                     gridFilterP.push("==");
                                 }
                             }
-                            else if((typeof data.value) == "number"){
+                            else if ((typeof data.value) == "number") {
                                 if (data.operator == 'eq') {
                                     gridFilterP.push("==")
                                 }
                                 else if (data.operator == 'neq') {
                                     gridFilterP.push("!=");
-                                }else if (data.operator == 'gte') {
+                                } else if (data.operator == 'gte') {
                                     gridFilterP.push(">=");
                                 } else if (data.operator == 'gt') {
                                     gridFilterP.push(">")
-                                }else if (data.operator == 'lte') {
+                                } else if (data.operator == 'lte') {
                                     gridFilterP.push("<=")
-                                }else if (data.operator == 'lt') {
+                                } else if (data.operator == 'lt') {
                                     gridFilterP.push("<")
                                 } else {
                                     gridFilterP.push("==");
@@ -90,35 +89,35 @@ export class WidgetGridLoader extends React.Component {
                             let gridFilterP = []
                             gridFilterP.push(data.field);
                             // Add more operators according to supported parameters. Change to switch if Many 
-                            if((typeof data.value) == "string"){
+                            if ((typeof data.value) == "string") {
                                 if (data.operator == 'startswith') {
                                     gridFilterP.push("STARTSWITH")
                                 }
                                 else if (data.operator == 'contains') {
                                     gridFilterP.push("LIKE");
-                                }else if (data.operator == 'doesnotcontain') {
+                                } else if (data.operator == 'doesnotcontain') {
                                     gridFilterP.push("NOT LIKE");
                                 } else if (data.operator == 'eq') {
                                     gridFilterP.push("==")
-                                }else if (data.operator == 'neq') {
+                                } else if (data.operator == 'neq') {
                                     gridFilterP.push("<>")
                                 } else {
                                     gridFilterP.push("==");
                                 }
                             }
-                            else if((typeof data.value) == "number"){
+                            else if ((typeof data.value) == "number") {
                                 if (data.operator == 'eq') {
                                     gridFilterP.push("==")
                                 }
                                 else if (data.operator == 'neq') {
                                     gridFilterP.push("!=");
-                                }else if (data.operator == 'gte') {
+                                } else if (data.operator == 'gte') {
                                     gridFilterP.push(">=");
                                 } else if (data.operator == 'gt') {
                                     gridFilterP.push(">")
-                                }else if (data.operator == 'lte') {
+                                } else if (data.operator == 'lte') {
                                     gridFilterP.push("<=")
-                                }else if (data.operator == 'lt') {
+                                } else if (data.operator == 'lt') {
                                     gridFilterP.push("<")
                                 } else {
                                     gridFilterP.push("==");
@@ -129,7 +128,7 @@ export class WidgetGridLoader extends React.Component {
                             filterVal.push(gridFilterP)
                             gridFilterP = []
                             gridFilterString = JSON.stringify(filterVal)
-                        } 
+                        }
                     }
                 });
                 filterString = gridFilterString
@@ -174,14 +173,13 @@ export class WidgetGridLoader extends React.Component {
             filtersApplied = filtersApplied.replace(/\$/g, '');
             var filterSplit = filtersApplied.split(/&(.+)/)
             filtersApplied = filterSplit[1]
-            if (this.gridfilterString == ""){
+            if (this.gridfilterString == "") {
                 filtersApplied = filtersApplied
             }
-            else
-            {
+            else {
                 filtersApplied = filtersApplied + "&filter_grid=" + this.gridfilterString
             }
-            
+
         }
         console.log('final check before the filter request');
         console.log(filtersApplied);
@@ -191,7 +189,7 @@ export class WidgetGridLoader extends React.Component {
         }
         this.pending = filtersApplied;
         this.getWidgetByUuid(this.uuid, this.filterParams, this.pending).then(response => {
-            if(response.status == "success"){
+            if (response.status == "success") {
                 this.lastSuccess = this.pending;
                 this.pending = '';
                 if (filtersApplied === this.lastSuccess) {
@@ -203,7 +201,7 @@ export class WidgetGridLoader extends React.Component {
                     this.requestDataIfNeeded();
                 }
             }
-            else{
+            else {
                 // generate an alert for data issues
             }
         });
