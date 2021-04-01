@@ -88,7 +88,7 @@ export class WidgetGridLoader extends React.Component {
     }
 
     getDateOperator(operator) {
-        let operator = ""
+        let gridFilterP = ""
         if (operator == 'eq') {
             gridFilterP = "=="
         } else if (operator == 'neq') {
