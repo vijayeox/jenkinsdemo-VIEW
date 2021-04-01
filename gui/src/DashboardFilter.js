@@ -31,7 +31,7 @@ const FilterFields = function (props) {
 
     const filtersOptions = {
         "dateoperator": [{ "Between": "gte&&lte" }, { "Less Than": "<" }, { "Greater Than": ">" }, { "This Month": "monthly" }, { "This Year": "yearly" }, { "MTD": "mtd" }, { "YTD": "ytd" }, { "Today": "today" }],
-        "textoperator": [{ "Contains": "==" }, { "Does Not Contain": "NOT LIKE" }],
+        "textoperator": [{ "Contains": "LIKE" }, { "Does Not Contain": "NOT LIKE" }],
         "numericoperator": [{ "Less Than": "<" }, { "Greater Than": ">" }, { "Equals": "==" }, { "Not Equals": "!=" }],
         "selectoperator": [{ "Equals": "==" }, { "Not Equals": "NOT LIKE" }]
     };
@@ -130,6 +130,7 @@ const FilterFields = function (props) {
             }
         }
     }
+
     async function changeDataSource(e, Index, type) {
         setFilterIndexOption([])
         // setIsLoading(true)
@@ -172,7 +173,7 @@ const FilterFields = function (props) {
     return (
         <Form.Row>
             {visibility &&
-                <div className="dashboard-filter-field field-width-200">
+                <div className="dashboard-filter-field --200">
                     <Form.Group className="dashboard-filter-field">
                         <Form.Label>Filter DataSource</Form.Label>
                         <Select
@@ -513,7 +514,6 @@ class DashboardFilter extends React.Component {
 
         }
         this.setState({ filters: filters })
-
     }
 
     handleChange(e) {
