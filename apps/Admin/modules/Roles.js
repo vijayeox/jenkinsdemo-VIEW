@@ -100,6 +100,10 @@ class Role extends React.Component {
               {
                 title: "Description",
                 field: "description"
+              },
+              {
+                title: "App Name",
+                field: "appName"
               }
             ],
             sortMode: [{ field: "is_system_role", dir: "desc" }]
