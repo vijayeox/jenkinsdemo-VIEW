@@ -165,7 +165,6 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
               if (filtermode == "applied") {
                 startDate = new Date(filter["startDate"])
                 startDate = getformattedDate(startDate)
-
                 endDate = filter["endDate"]
                 if (typeof endDate !== "string") {
                   endDate = getformattedDate(endDate)
@@ -184,15 +183,11 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
                 endDate = getformattedDate(endDate)
               }
             }
-
-
-
             //prepare startDate array
             filterarray.push(filter["field"])
             filterarray.push(">=")
             filterarray.push(startDate)
             filterParams.push(filterarray)
-
 
             //prepare endDate array
             filterarray = []
