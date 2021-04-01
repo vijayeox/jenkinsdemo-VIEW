@@ -273,6 +273,7 @@ class Project extends React.Component {
       filterCell: {
         type: "empty",
       },
+      columnMenuFilter:false
     });
     return columnInfo;
   }

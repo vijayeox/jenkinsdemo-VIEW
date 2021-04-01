@@ -178,7 +178,7 @@ export default class OX_Grid extends React.Component {
           field={dataItem.field ? dataItem.field : undefined}
           filter={dataItem.filter ? dataItem.filter : "text"}
           filterable={this.props.columnMenuFilter == false ? dataItem.filterable : undefined}
-          columnMenu={this.props.columnMenuFilter != false ? ColumnMenu : undefined}
+          columnMenu={dataItem.columnMenuFilter==false?undefined:(this.props.columnMenuFilter != false ? ColumnMenu : undefined)}
           filterCell={
             dataItem.filterCell ? CustomFilter(dataItem.filterCell) : undefined
           }

@@ -210,10 +210,10 @@ export default class DialogContainer extends React.Component {
           date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
             "YYYY-MM-DD"
           ),
-          address1: "",
-          city: "",
+          address1: this.state.userInEdit.address1,
+          city: this.state.userInEdit.city,
           state: this.state.userInEdit.state,
-          zip: "",
+          zip: this.state.userInEdit.zip,
           country: this.state.userInEdit.country
         }
       ).then((response) => {
@@ -246,10 +246,10 @@ export default class DialogContainer extends React.Component {
         date_of_join: new Moment(this.state.userInEdit.date_of_join).format(
           "YYYY-MM-DD"
         ),
-        address1: "",
-        city: "",
+        address1: this.state.userInEdit.address1,
+        city: this.state.userInEdit.city,
         state: this.state.userInEdit.state,
-        zip: "",
+        zip: this.state.userInEdit.zip,
         country: this.state.userInEdit.country
       }).then((response) => {
         this.loader.destroy();
