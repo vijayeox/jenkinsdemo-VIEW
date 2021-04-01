@@ -172,7 +172,7 @@ const FilterFields = function (props) {
     return (
         <Form.Row>
             {visibility &&
-                <div className="dashboard-filter-field field-width-200">
+                <div className="dashboard-filter-field --200">
                     <Form.Group className="dashboard-filter-field">
                         <Form.Label>Filter DataSource</Form.Label>
                         <Select

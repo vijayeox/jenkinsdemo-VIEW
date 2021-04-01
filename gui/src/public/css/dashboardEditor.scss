@@ -75,7 +75,7 @@
 }
 
 .react-datepicker-wrapper {
-  padding-right: 10px !important;
+  padding-right: 0px !important;
 }
 
 .dashboard-filter-field {
@@ -318,6 +318,7 @@
   vertical-align: middle;
   margin-top: 25px;
   position: relative;
+  margin-left: 10px;
 }
 
 .errorMsg {
