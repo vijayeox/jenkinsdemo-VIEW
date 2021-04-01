@@ -24,6 +24,7 @@ export class WidgetGridLoader extends React.Component {
     // params - The default filterGrid event parameters that are triggered by gridstateChange event
     createFilterString = (gridFilterParams) => {
         let filterVal = []
+        let parentFilter = []
         var filterString = ""
         let dateOp = ""
         let stringOp
@@ -38,6 +39,10 @@ export class WidgetGridLoader extends React.Component {
                     } else {
                         // if only 1 filter is associated
                         if (index === 0) {
+                            // if (filterVal.length > 0) {
+                            //     parentFilter.push(filterVal);
+                            //     parentFilter.push("AND")
+                            // }
                             let gridFilterP = []
                             gridFilterP.push(data.field);
                             if ((typeof data.value) == "string") {
@@ -60,7 +65,6 @@ export class WidgetGridLoader extends React.Component {
                             }
                         } else {
                             // if not the first object i.e. multiple filters 
-                            filterVal.push("AND")
                             let gridFilterP = []
                             gridFilterP.push(data.field);
                             // Add more operators according to supported parameters. Change to switch if Many 
@@ -73,9 +77,23 @@ export class WidgetGridLoader extends React.Component {
                             }
                             // IMPORTANT - Add for date filters too //
                             gridFilterP.push(data.value);
-                            filterVal.push(gridFilterP)
-                            gridFilterP = []
-                            gridFilterString = JSON.stringify(filterVal)
+                            if (index > 1) {
+                                parentFilter = []
+                                if (filterVal.length > 0) {
+                                    parentFilter.push(filterVal)
+                                }
+                                parentFilter.push("AND")
+                                parentFilter.push(gridFilterP)
+                                gridFilterP = []
+                                // filterVal = []
+                                gridFilterString = JSON.stringify(parentFilter)
+                                filterVal = parentFilter;
+                            } else {
+                                filterVal.push("AND")
+                                filterVal.push(gridFilterP)
+                                gridFilterP = []
+                                gridFilterString = JSON.stringify(filterVal)
+                            }
                         }
                     }
                 });
