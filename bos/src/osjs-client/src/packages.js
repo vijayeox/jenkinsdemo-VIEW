@@ -410,11 +410,14 @@ export default class Packages {
 
     const user = this.core.getUser();
     const details = this.core.make("oxzion/profile").get();
-    let metadata = details.metadata;
+    let metadata = this.core.make("oxzion/profile").getMetadata();
+    if (!metadata) {
+      metadata = this.metadata;
+    }
 
     const filterBlacklist = iter => details.key.blackListedApps instanceof Object
-      ? !details.key.blackListedApps[iter.name]
-      : true;
+    ? !details.key.blackListedApps[iter.name]
+    : true;
 
     return metadata
       .filter(filterBlacklist)
