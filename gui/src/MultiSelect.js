@@ -240,25 +240,26 @@ class MultiSelect extends React.Component {
               </Grid>
             </div>
           )}
-          <DialogActionsBar>
-            <button
-              className="k-button k-primary"
-              onClick={() =>
-                this.props.manage.postSelected(
-                  this.state.selectedUsers,
-                  this.props.config.dataItem.uuid
-                )
-              }
-            >
-              Save
-            </button>
-            <button
-              className="k-button"
-              onClick={this.props.manage.closeDialog}
-            >
-              Cancel
-            </button>
-          </DialogActionsBar>
+          
+            <DialogActionsBar>
+              <button
+                className="k-button k-primary"
+                onClick={() =>
+                  this.props.manage.postSelected(
+                    this.state.selectedUsers,
+                    this.props.config.dataItem.uuid
+                  )
+                }
+              >
+                Save
+              </button>
+              <button
+                className="k-button"
+                onClick={this.props.manage.closeDialog}
+              >
+                Cancel
+              </button>
+            </DialogActionsBar>
         </Dialog>
       </div>
     );

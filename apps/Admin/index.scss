@@ -11,7 +11,7 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   overflow: visible !important;
 }
 
-.k-popup{
+.k-popup {
   padding: 0px;
 }
 // ---SweetAlert2 Fixes (End)---
@@ -758,8 +758,8 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 
   .k-grid {
     font-size: 14px;
-    .k-button{
-    font-size: 14px;
+    .k-button {
+      font-size: 14px;
     }
   }
 
@@ -1118,13 +1118,22 @@ body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 }
 
 .parentProjectDropdown {
-  display : flex;
+  display: flex;
   div {
-    width : 100%;
+    width: 100%;
   }
   button {
     border: none;
     background-color: #f4f4f4;
     border-radius: 4px;
   }
+}
+.k-dialog-buttongroup {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.k-widget.k-grid {
+  margin-bottom: 4rem;
 }
