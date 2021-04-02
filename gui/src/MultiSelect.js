@@ -240,16 +240,7 @@ class MultiSelect extends React.Component {
               </Grid>
             </div>
           )}
-          <div
-            style = {
-              {"position": "fixed",
-              "bottom": "0",
-              "width": "100%",
-              "padding-bottom": "1rem"
-              }
-            }
           
-          >
             <DialogActionsBar>
               <button
                 className="k-button k-primary"
@@ -269,7 +260,6 @@ class MultiSelect extends React.Component {
                 Cancel
               </button>
             </DialogActionsBar>
-          </div>
         </Dialog>
       </div>
     );
