@@ -20,7 +20,8 @@ export class ProfileServiceProvider extends ServiceProvider {
 			get: () => this.get(),
 			set: () => this.set(),
 			update: () => this.update(),
-			getAuth:() => this.getAuth()
+			getAuth:() => this.getAuth(),
+			getMetadata: () => this.getMetadata()
 		}));
 	}
 	get() {
@@ -29,9 +30,6 @@ export class ProfileServiceProvider extends ServiceProvider {
 				this.set();
 			}
 			let userInfo = this.lsHelper.get("UserInfo");
-			if(this.lsHelper.get("Metadata")){
-				userInfo['metadata'] = this.lsHelper.get("Metadata").key;
-			}
 			return userInfo;
 		}
 	}
@@ -39,7 +37,6 @@ export class ProfileServiceProvider extends ServiceProvider {
         if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
 			if(!this.lsHelper.get("UserInfo")){
 				this.getProfile();
-				this.getMetadata();
 			}
 		}
 	}
@@ -66,9 +63,14 @@ export class ProfileServiceProvider extends ServiceProvider {
 		    settings.set("UserInfo", "timestamp", data.timestamp);
 		}
 	}
-	async getMetadata() {
-		let metadata = await this.core.request(this.core.config("packages.manifest"), {}, "json");
-		this.lsHelper.set('Metadata', metadata.map(iter => ({type: 'application', ...iter})));
+	getMetadata() {
+	  let metadata = this.lsHelper.get("Metadata");
+		if (!metadata) {
+			this.core.request(this.core.config("packages.manifest"), {}, "json").then((response)=>{
+				this.lsHelper.set('Metadata', response.map(iter => ({type: 'application', ...iter})));
+			});
+		}
+		return (metadata) ? metadata.key : null;
 	}
 	getAuth(){
 		if(this.lsHelper.supported() || lsHelper.cookieEnabled()){
