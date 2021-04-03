@@ -37,7 +37,7 @@ export default class DialogContainer extends React.Component {
   UNSAFE_componentWillMount() {
     if (this.props.formAction == "put") {
       this.setState({
-        timeZoneValue: this.state.orgInEdit.preferences.timezone
+        timeZoneValue: (this.state.orgInEdit.preferences) ? this.state.orgInEdit.preferences.timezone : undefined
       });
 
       GetSingleEntityData(
