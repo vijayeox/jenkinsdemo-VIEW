@@ -871,8 +871,8 @@ class FormRender extends React.Component {
             }
           }
           if(that.state.data !=  undefined){
-            form.data = {...form.data, ...that.state.data };
-            // form.setSubmission({ data: that.state.data });
+            // form.data = {...form.data, ...that.state.data };
+            form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
             form.emit('submitDone', submission);
