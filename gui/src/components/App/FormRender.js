@@ -20,6 +20,7 @@ import RadioCardComponent from "./Form/RadioCardComponent";
 import PhoneNumberComponent from "./Form/PhoneNumberComponent";
 import CountryComponent from "./Form/CountryComponent";
 import FileComponent from "./Form/FileComponent";
+import { TabPanelComponent } from "react-web-tabs";
 
 class FormRender extends React.Component {
   constructor(props) {
@@ -29,6 +30,8 @@ class FormRender extends React.Component {
     this.privileges = userprofile.key.privileges;
     this.userprofile = userprofile.key;
     this.loader = this.core.make("oxzion/splash");
+    this.changedData = null;
+    this.unansweredFields = [];
     this.state = {
       form: null,
       showLoader: false,
@@ -689,6 +692,69 @@ class FormRender extends React.Component {
         }
       }
     }
+    getUnansweredFieldsFromComponent(panelComponent,data){
+      var promise = new Promise(function(resolve,reject){
+        panelComponent.checkValidity(
+          data,
+          true,
+          data
+        );
+        if (panelComponent.errors.length>0){
+          var errors = []
+          panelComponent.errors.forEach((error)=>{
+            if(error.component.key !='textField'){
+              if(error.messages[0].path && error.messages[0].path.length>1){
+                var errorMessages = error.messages[0].path;
+                var errorMessage = ""
+                for(var i = 0; i<errorMessages.length;i++){
+                  if(i%2!=0){
+                    errorMessage+= '['+errorMessages[i] +'].';
+                  }
+                  else{
+                    errorMessage +=  errorMessages[i];
+                  }
+                }
+                errors.push({'api':errorMessage});
+              }
+              else{
+                errors.push({'api':error.component.key});
+              }
+            }
+
+          })
+          resolve(errors);
+        }
+        else{
+          resolve([]);
+        }
+      })
+      return promise;
+    }
+    getUnansweredFields(formData){
+      var that = this;
+      console.log(that.state.currentForm);
+      if(that.state.currentForm && that.changedData){
+        var data = formData;
+        var panelComponents = that.state.currentForm.components;
+        var promise = new Promise(function(resolve,reject){
+          var unansweredFields = []
+          var processPanelComponents = async function(index){
+            var panelComponent = panelComponents[index];
+            var panelComponentErrors = await that.getUnansweredFieldsFromComponent(panelComponent,data);
+            if(index<panelComponents.length-1){
+              unansweredFields.push(...panelComponentErrors);
+              processPanelComponents(index+1)
+            }
+            else{
+              resolve(unansweredFields);
+            }
+          }
+          processPanelComponents(0);
+        })
+        return promise;
+      }
+    }
+
     createForm() {
       let that = this;
       Formio.registerComponent("slider", SliderComponent);
@@ -737,6 +803,8 @@ class FormRender extends React.Component {
           },
           beforeCancel: () => that.cancelFormSubmission(),
           beforeSubmit: async (submission,next) => {
+            console.log(that.state.currentForm);
+            console.log(that.state.submission);
             if (
               that.state.currentForm.checkValidity() &&
               that.state.currentForm.checkValidity(
@@ -767,12 +835,13 @@ class FormRender extends React.Component {
               that.state.currentForm.errors.forEach((error) => {
                 submitErrors.push(error.message);
               });
+
               if (submitErrors.length > 0) {
                 next([]);
               } else {
                 // Disable based on client req for go live
                 // that.state.currentForm.triggerChange();
-                // next([]);
+                next([]);
                 var response = await that
                 .saveForm(null, that.cleanData(submission.data))
                 .then(function (response) {
@@ -802,7 +871,7 @@ class FormRender extends React.Component {
             }
           }
           if(that.state.data !=  undefined){
-
+            // form.data = {...form.data, ...that.state.data };
             form.setSubmission({ data: that.state.data });
           }
           form.on("submit", async function (submission) {
@@ -826,8 +895,8 @@ class FormRender extends React.Component {
             }
           });
 
-          form.on("change", function (changed) {
-            console.log(changed);
+          form.on("change",function (changed) {
+            that.changedData = changed.data;
             if (changed && changed.changed) {
               var component = changed.changed.component;
               var instance = changed.changed.instance;
@@ -1078,7 +1147,7 @@ class FormRender extends React.Component {
               }, true);
             form.emit("render");
           });
-          that.setState({ currentForm: form });
+          that.setState({ currentForm: form }); 
     var componentList = flattenComponents(form._form.components, true);
           return form;
         });
@@ -1571,13 +1640,42 @@ class FormRender extends React.Component {
               fileId: response.data.fileId
             })
           }
-          if(this.state.currentForm){
+          if(this.state.currentForm ){
             this.state.currentForm.setSubmission(formData).then(response2 =>{
               this.state.currentForm.setPristine(true);
               actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
             });
           } else {
             actionDetails.persistLoader ? null : this.showFormLoader(false, 0);
+          }
+
+          if(actionDetails.downloadPdf){
+            var that=this;
+            var downloadPDFAction = actionDetails.downloadPDFAction;
+            this.getUnansweredFields(actionDetails.formData).then((unansweredFields)=>{
+              var data = {};
+              data["appId"] = that.state.appId;
+              data["unansweredQuestions"] = unansweredFields;
+              data['fileId'] = response.data.fileId;
+              var sequence = [];
+              that.state.currentForm.everyComponent(i=>sequence.push(i.component.key));
+              data['sequence'] =  sequence;
+              that.callDelegate("Unanswered", data).then((response) => {
+                // ["answeredQuestionsDocument" , "unansweredQuestionsDocument"].map((i)=>{
+                  var url = response.data[downloadPDFAction];
+                  var a = document.createElement("a");
+                  a.href = url;
+                  a.target = "_blank";
+                  a.download = "";
+                  document.body.appendChild(a);
+                  a.dispatchEvent(new MouseEvent('click'));
+                  setTimeout(function () {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                  }, 0);
+                // })
+              });
+            })
           }
           this.notif.current.notify(
             "Success",
@@ -1586,6 +1684,9 @@ class FormRender extends React.Component {
               : "Operation completed successfully",
             "success"
           );
+
+
+
           if (actionDetails.exit == true || actionDetails.exit == "true") {
             clearInterval(actionDetails.timerVariable);
             this.stepDownPage();
@@ -1601,6 +1702,7 @@ class FormRender extends React.Component {
         }
       });
     }
+
   };
   stepDownPage(){
     let ev = new CustomEvent("stepDownPage", {
