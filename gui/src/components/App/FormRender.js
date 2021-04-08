@@ -1007,6 +1007,9 @@ class FormRender extends React.Component {
                                         next(null);
                                     } else {
                                         next([response.errors[0].message]);
+                                        if(response.errors[0].message.length >  20){
+                                            that.handleError();
+                                        }
                                     }
                                 });
                         }
@@ -1031,6 +1034,9 @@ class FormRender extends React.Component {
                                             next([response.message]);
                                         }
                                         next([response.errors[0].message]);
+                                        if(response.errors[0].message.length >  20){
+                                            that.handleError();
+                                        }
                                     }
                                 }
                             });
