@@ -4,6 +4,7 @@ import Organization from "./modules/Organization";
 import Project from "./modules/Project";
 import User from "./modules/User";
 import Team from "./modules/Team";
+import Kra from "./modules/Kra";
 import Role from "./modules/Roles";
 import Announcement from "./modules/Announcement";
 import Errorlog from "./modules/Errorlog";
@@ -94,6 +95,12 @@ class Home extends React.Component {
         api: "TEAM",
         icon: "apps/Admin/group.svg",
         component: Team
+      },
+      {
+        name: "Kras",
+        api: "KRA",
+        icon: "apps/Admin/icons8-target-100.png",
+        component: Kra
       },
       {
         name: "Projects",
@@ -199,7 +206,7 @@ class Home extends React.Component {
     this.hideMenu();
     this.core.run(appName);
   };
-  
+
   errorLogAdminClick = e => {
     this.hideMenu();
     ReactDOM.render(
