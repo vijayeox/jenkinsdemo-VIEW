@@ -47,7 +47,7 @@ class App extends React.Component {
           tabId="vertical-tab-one"
           className="tab1"
           render={({ selected }) =>
-            selected ? <EditProfile args={this.core} /> : null
+            selected ? <EditProfile core={this.core} /> : null
           }
         ></ReactWebTabs.TabPanel>
         <ReactWebTabs.TabPanel
