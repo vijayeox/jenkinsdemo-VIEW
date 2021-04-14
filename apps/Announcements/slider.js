@@ -71,7 +71,31 @@ class Slider extends React.Component {
         },
         () => this.refreshTimer()
       );
+      this.markAsRead();
     });
+  }
+
+  markAsRead() {
+    const currentIndex = this.state.currentIndex;
+    if (document.querySelector('div[data-id="annoucementsWindow"]').getAttribute('data-focused') == "true" && this.state.announcements && (!this.state.announcements[currentIndex]['view'] || this.state.announcements[currentIndex]['view'] == "0")) {
+      let count = 0;
+      this.state.announcements[currentIndex]['view'] = 1;
+      this.state.announcements.map((announcement) => {
+        if (!announcement.view || announcement.view == "0") {
+          count++;
+        }
+      });
+
+      this.core.emit('announcement/tray:modified', count);
+
+      this.core.make("oxzion/restClient")
+      .request(
+        "v1",
+        "/announcement/markasread",
+        { "announcementId": this.state.announcements[this.state.currentIndex]['uuid'] },
+        "post"
+        );
+    }
   }
 
   refreshTimer() {
@@ -105,6 +129,7 @@ class Slider extends React.Component {
   }
 
   goToNextSlide() {
+      this.markAsRead();
     if (this.state.currentIndex === this.state.announcements.length - 1) {
       return this.setState({
         currentIndex: 0,

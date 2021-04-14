@@ -189,6 +189,7 @@ export default class DialogContainerAnnouncement extends React.Component {
         });
       }
     }
+    this.core.emit("admin/announcement:modified");
   };
 
   render() {
