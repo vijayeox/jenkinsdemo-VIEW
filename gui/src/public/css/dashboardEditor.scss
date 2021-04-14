@@ -358,7 +358,7 @@
   padding: 10px;
   background: yellow;
   color: black;
-  margin-top: 25px;
+  margin-top: 10px;
   float: left;
 }
 
@@ -368,4 +368,12 @@
 .full-width{
   widows: 100%;
   overflow: hidden;
+}
+
+.filterFields {
+  display: inline-flex !important;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+  width: 48%;
 }
