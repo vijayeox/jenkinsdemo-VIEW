@@ -396,7 +396,9 @@ class FormRender extends React.Component {
                         } else {
                             await this.storeCache(data);
                             that.showFormLoader(false, 0);
-                            that.handleError("Form Submission Failed");
+                            var message = response.message ? response.message : 'Form Submission Failed';
+                            that.handleError(message);
+                            return response;
                         }
                     }
                 })
@@ -1006,9 +1008,15 @@ class FormRender extends React.Component {
                                     if (response.status == "success") {
                                         next(null);
                                     } else {
-                                        next([response.errors[0].message]);
-                                        if(response.errors[0].message.length >  20){
-                                            that.handleError();
+                                        if(response.errors){
+                                            next([response.errors[0].message]);
+                                            if(response.errors[0].message.length >  20){
+                                                that.handleError();
+                                            }    
+                                        }else{
+                                            var message = response.message ? response.message : null;
+                                            next(message);
+                                            that.handleError(message);
                                         }
                                     }
                                 });
@@ -1033,9 +1041,15 @@ class FormRender extends React.Component {
                                         if (that.props.route) {
                                             next([response.message]);
                                         }
-                                        next([response.errors[0].message]);
-                                        if(response.errors[0].message.length >  20){
-                                            that.handleError();
+                                        if(response.errors){
+                                            next([response.errors[0].message]);
+                                            if(response.errors[0].message.length >  20){
+                                                that.handleError();
+                                            }    
+                                        }else{
+                                            var message = response.message ? response.message : null;
+                                            next(message);
+                                            that.handleError(message);
                                         }
                                     }
                                 }
