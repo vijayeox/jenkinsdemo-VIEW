@@ -478,8 +478,12 @@ export default class OX_Grid extends React.Component {
     this.forceUpdate();
   };
 
-  refreshHandler = () => {
-    this.child.current ? this.child.current.triggerGetCall() : this.child.triggerGetCall();
+  refreshHandler = (hideLoader = false) => {
+    this.child
+      ? this.child.current
+        ? this.child.current.triggerGetCall(hideLoader)
+        : this.child.triggerGetCall(hideLoader)
+      : null;
   };
 
   noRecordsJSX() {
