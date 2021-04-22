@@ -27,7 +27,7 @@ class Organization extends React.Component {
       "v1",
       "/account/" + dataItem + "/save",
       {
-        userid: dataObject
+        userIdList: dataObject
       },
       "post"
     );
@@ -44,7 +44,7 @@ class Organization extends React.Component {
         dataItem: dataItem,
         title: "Account",
         mainList: "users/list",
-        subList: "organization",
+        subList: "account",
         members: "Users"
       },
       manage: {
@@ -153,6 +153,7 @@ class Organization extends React.Component {
           manageGrid={{
             add: this.insert,
             edit: this.edit,
+            addUsers: this.addOrgUsers,
             remove: this.remove
           }}
           permission={this.state.permission}
