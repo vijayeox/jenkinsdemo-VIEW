@@ -313,6 +313,7 @@ export default class OX_Grid extends React.Component {
       Object.keys(this.state.actions).map(function (key, index) {
         var action = this.state.actions;
         var paramsRule = ParameterHandler.replaceParams(this.appId, action[key].rule, dataItem);
+        var row = dataItem;
         var _moment = moment;
         var profile = this.userprofile;
         paramsRule = paramsRule.replace(/moment/g, '_moment');
