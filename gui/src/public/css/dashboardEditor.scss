@@ -220,6 +220,16 @@
   background-color: #c5d2d6;
 }
 
+.dasboard-viewer-wrapper {
+  display: flex;
+  flex-direction: column;
+  .dashboard-drilldown-info-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+}
+
 .dasboard-viewer-content {
   // border: 1px solid#1d6165;
   min-height: 20px;
@@ -227,25 +237,24 @@
   box-shadow: 2px 5px#c6b5b5;
   padding: 1em;
   border: 0.5px solid grey;
-  width: max-content;
-  min-width: 99%;
+  width: 100%;
 }
 
 .dashboard-rollup-button {
-  color: black;
+  color: white;
   cursor: pointer;
   right: 1%;
   position: absolute;
-  top: 0.40%;
+  top: 15%;
+  padding: 0;
+  background-color: #275362;
 } 
 
 .dashboard-filter-description {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 30px;
-  width: 100%;
+  position: relative;
   font-size: 16px !important;
+  height: auto;
+  width: 100%;
 }
 
 .dashboard-preview-tab {
