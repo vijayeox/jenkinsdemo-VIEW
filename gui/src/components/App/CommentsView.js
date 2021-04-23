@@ -53,9 +53,11 @@ class CommentsView extends React.Component {
         var file = fileData.data.data ? fileData.data.data : fileData.data;
         this.setState({ entityId: fileData.data.entity_id, fileData: file });
         this.getEntityPage().then(entityPage => {
-          this.setState({ entityConfig: entityPage.data });
-          this.generateViewButton(entityPage.data.enable_auditlog);
-          this.fetchCommentData();
+          if(entityConfig.status=='success'){
+            this.setState({ entityConfig: entityPage.data });
+            this.generateViewButton(entityPage.data.enable_auditlog);
+            this.fetchCommentData();
+          }
         });
       }
     });
