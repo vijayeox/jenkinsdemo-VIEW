@@ -348,7 +348,7 @@ export default class OX_Grid extends React.Component {
     let gridToolbarContent = [];
     if (typeof this.props.gridToolbar == "string") {
       gridToolbarContent.push(
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ display: "inline-block"}}>
           <JsxParser
             bindings={{
               item: this.props.parentData,
