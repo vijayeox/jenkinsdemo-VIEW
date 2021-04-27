@@ -379,8 +379,9 @@
   overflow: hidden;
 }
 
-.filterFields {
-  display: inline-flex !important;
+.filterFieldsfilter {
+  //display: inline-flex !important;
+  display: inline-block;
   flex-wrap: wrap;
   margin-right: -5px;
   margin-left: -5px;

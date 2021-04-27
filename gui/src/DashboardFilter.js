@@ -171,10 +171,10 @@ const FilterFields = function (props) {
     const disabledFields = filterMode == "APPLY"
     const visibility = filterMode == "CREATE"
     return (
-        <Form.Row className="filterFields">
+        <Form.Row className={"filterFields"+( visibility? '' : 'filter')}>
             {visibility &&
                 <div className="dashboard-filter-field --200">
-                    <Form.Group className="dashboard-filter-field">
+                    <Form.Group className="dashboard-filter-field" >
                         <Form.Label>Filter DataSource</Form.Label>
                         <Select
                             selected={filters[index]["filterDataSource"] || ""}
