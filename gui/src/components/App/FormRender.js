@@ -11,6 +11,7 @@ class FormRender extends BaseFormRenderer {
     this.loader = this.core.make("oxzion/splash");
     this.state = {
       appId: this.props.appId,
+      entityId: this.props.entityId?this.props.entityId:null,
       workflowId: this.props.workflowId ? this.props.workflowId : null,
       cacheId: this.props.cacheId ? this.props.cacheId : null,
       isDraft: this.props.isDraft ? this.props.isDraft : false,
@@ -215,6 +216,7 @@ class FormRender extends BaseFormRenderer {
                 ...this.state.data,
                 parentData: this.formatFormData(response.data.data,true),
               },
+            entityId: response.data.entity_id
           }, () => {
             (form || this.state.currentForm) ? form ? form.setSubmission({ data: this.state.data }).then(function () { that.processProperties(form); }) : this.state.currentForm.setSubmission({ data: this.state.data }).then(function () { that.processProperties(that.state.currentForm); }) : null;
           });

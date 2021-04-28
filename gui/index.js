@@ -36,6 +36,8 @@ import DashboardFilter from "./src/DashboardFilter";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
 import DocumentList from "./src/DocumentList";
+import * as Antd from "antd";
+import * as AntdIcons from "@ant-design/icons";
 
 const LazyLoad = ({ component: Component,...rest}) => (
   <>

@@ -18,6 +18,7 @@ import * as OxzionGUIComponents from "../../../index";
 import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
+import Dashboard from "../../Dashboard";
 
 class PageContent extends React.Component {
   constructor(props) {

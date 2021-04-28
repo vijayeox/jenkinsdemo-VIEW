@@ -1031,16 +1031,25 @@ class BaseFormRenderer extends React.Component {
         }
       
     }
+    async getEntityPage(entityId,appId) {
+        let helper = this.core.make("oxzion/restClient");
+        let fileContent = await helper.request("v1","/app/" + this.state.appId + "/entity/"+this.state.entityId+"/page",{},"get");
+        return fileContent;
+    }
     generateViewButton(){
         let gridToolbarContent = [];
-        let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
-        let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
-        let commentPage = [{type:"Comment",fileId:this.state.fileId}];
-        let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
-        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
-        gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
-        let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
-        document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
+        this.getEntityPage().then(entityPage => {
+            if(entityPage.status=="success"){
+                let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
+                let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
+                let commentPage = [{type:"Comment",fileId:this.state.fileId}];
+                let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
+                gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
+                gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
+                let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
+                document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
+            }
+        });
     }
 
     async importCSS(theme){

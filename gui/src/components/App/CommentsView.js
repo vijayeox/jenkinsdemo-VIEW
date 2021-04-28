@@ -53,9 +53,11 @@ class CommentsView extends React.Component {
         var file = fileData.data.data ? fileData.data.data : fileData.data;
         this.setState({ entityId: fileData.data.entity_id, fileData: file });
         this.getEntityPage().then(entityPage => {
-          this.setState({ entityConfig: entityPage.data });
-          this.generateViewButton(entityPage.data.enable_auditlog);
-          this.fetchCommentData();
+          if (entityPage.status == "success") {
+            this.setState({ entityConfig: entityPage.data });
+            this.generateViewButton(entityPage.data.enable_auditlog);
+            this.fetchCommentData();
+          }
         });
       }
     });
@@ -331,28 +333,30 @@ class CommentsView extends React.Component {
   }
   formatFormData(data) {
     var parsedData = [];
-    for (var i = 0; i < data.length; i++) {
-      try {
-        parsedData[i] = data[i];
-        parsedData[i]["text"] =
-          typeof data[i]["text"] === "string"
-            ? JSON.parse(data[i]["text"])
-            : data[i]["text"] == undefined || data[i]["text"] == null
-            ? ""
-            : data[i]["text"];
-        if (
-          parsedData[i]["text"] == "" &&
-          data[i]["text"] &&
-          parsedData[key]["text"] != data[i]["text"]
-        ) {
-          parsedData[i]["text"] = data[i]["text"];
-        }
-        if (parsedData[key] == "[]" && data[i]["text"]) {
-          parsedData[i]["text"] = [];
-        }
-      } catch (error) {
-        if (data[i]["text"] != undefined) {
-          parsedData[i]["text"] = data[i]["text"];
+    if (data) {
+      for (var i = 0; i < data.length; i++) {
+        try {
+          parsedData[i] = data[i];
+          parsedData[i]["text"] =
+            typeof data[i]["text"] === "string"
+              ? JSON.parse(data[i]["text"])
+              : data[i]["text"] == undefined || data[i]["text"] == null
+              ? ""
+              : data[i]["text"];
+          if (
+            parsedData[i]["text"] == "" &&
+            data[i]["text"] &&
+            parsedData[key]["text"] != data[i]["text"]
+          ) {
+            parsedData[i]["text"] = data[i]["text"];
+          }
+          if (parsedData[key] == "[]" && data[i]["text"]) {
+            parsedData[i]["text"] = [];
+          }
+        } catch (error) {
+          if (data[i]["text"] != undefined) {
+            parsedData[i]["text"] = data[i]["text"];
+          }
         }
       }
     }
