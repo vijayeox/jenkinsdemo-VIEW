@@ -31,6 +31,8 @@ import { Popup } from '@progress/kendo-react-popup';
 import { Menu, MenuItem } from '@progress/kendo-react-layout';
 import ParameterHandler from "./components/App/ParameterHandler";
 import PageNavigation from "./components/PageNavigation";
+import { DateTimePicker } from '@progress/kendo-react-dateinputs';
+import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
 
 export default class OX_Grid extends React.Component {
   constructor(props) {
@@ -47,12 +49,15 @@ export default class OX_Grid extends React.Component {
     this.pageId = this.props.pageId;
     this.appId = this.props.appId;
     this.notif = this.props.notif;
+    this.datePickerValue = null;
     this.state = {
       showLoader: false,
       gridData: this.rawDataPresent ? this.props.data : { data: [], total: 0 },
       dataState: this.props.gridDefaultFilters
         ? this.props.gridDefaultFilters
         : {},
+      showButtonPopup:false,
+      buttonPopup:null,  
       contextMenuOpen: false,
       notif: this.notif,
       apiActivityCompleted: this.rawDataPresent ? true : false,
@@ -313,6 +318,7 @@ export default class OX_Grid extends React.Component {
       Object.keys(this.state.actions).map(function (key, index) {
         var action = this.state.actions;
         var paramsRule = ParameterHandler.replaceParams(this.appId, action[key].rule, dataItem);
+        var row = dataItem;
         var _moment = moment;
         var profile = this.userprofile;
         paramsRule = paramsRule.replace(/moment/g, '_moment');
@@ -347,7 +353,7 @@ export default class OX_Grid extends React.Component {
     let gridToolbarContent = [];
     if (typeof this.props.gridToolbar == "string") {
       gridToolbarContent.push(
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ display: "inline-block"}}>
           <JsxParser
             bindings={{
               item: this.props.parentData,
@@ -691,36 +697,72 @@ export default class OX_Grid extends React.Component {
               return false;
             }
           } else if (item.type == "API") {
-            action.updateOnly = true;
-            var url = ParameterHandler.replaceParams(this.appId, item.route, mergeRowData);
-            Swal.fire({
-              title: "Are you sure?",
-              text: "Do you really want to delete the record? This cannot be undone.",
-              imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
-              imageWidth: 75,
-              imageHeight: 75,
-              confirmButtonText: "Delete",
-              confirmButtonColor: "#d33",
-              showCancelButton: true,
-              cancelButtonColor: "#3085d6"
-            }).then((result) => {
-              if (result.value) {
-                this.DeleteFile(
-                  "app/" + this.appId + "/" + url,
-                  item
-                ).then((response) => {
-                  console.log(response);
-                  this.refreshHandler(response);
-                  if (response.status == "success") {
-                    this.state.notif.current.notify("Success", "Deleted Successfully", "success")
-                  } else {
-                    this.state.notif.current.notify("Error", response.message, "danger")
+            if(item.typeOfRequest == 'delete'){
+              action.updateOnly = true;
+              var url = ParameterHandler.replaceParams(this.appId, item.route, mergeRowData);
+              Swal.fire({
+                title: "Are you sure?",
+                text: "Do you really want to delete the record? This cannot be undone.",
+                imageUrl: "https://image.flaticon.com/icons/svg/1632/1632714.svg",
+                imageWidth: 75,
+                imageHeight: 75,
+                confirmButtonText: "Delete",
+                confirmButtonColor: "#d33",
+                showCancelButton: true,
+                cancelButtonColor: "#3085d6"
+              }).then((result) => {
+                if (result.value) {
+                  this.DeleteFile(
+                    "app/" + this.appId + "/" + url,
+                    item
+                  ).then((response) => {
+                    console.log(response);
+                    this.refreshHandler(response);
+                    if (response.status == "success") {
+                      this.state.notif.current.notify("Success", "Deleted Successfully", "success")
+                    } else {
+                      this.state.notif.current.notify("Error", response.message, "danger")
+  
+                    }
+                  });
+                }
+              });
+            }
+            else if(item.typeOfRequest == 'post'){
+              action.updateOnly = true;
+              var url = ParameterHandler.replaceParams(this.appId, item.route, mergeRowData);
+              var params = ParameterHandler.replaceParams(this.appId, item.params, mergeRowData);
+              this.restClient.request(
+                "v1",
+                "/" + url,
+                params,
+                "post",
+                {
+                  "Content-Type":"application/json"
+                }
+              ).then((response)=>{
+                this.refreshHandler(response);
+              })
+              
 
-                  }
-                });
-              }
-            });
-          } else {
+
+
+            }
+          } 
+
+          else if(item.type == "ButtonPopUp"){
+            action.updateOnly = true;
+            var params = ParameterHandler.replaceParams(this.appId, item.params, mergeRowData);
+              var buttonPopup = this.renderButtonPopup(params);
+              that.setState({
+                buttonPopup:buttonPopup,
+                showButtonPopup:true
+              })
+            
+
+          }
+          
+          else {
             if (item.params && item.params.page_id) {
               pageId = item.params.page_id;
               if (item.params.params) {
@@ -748,6 +790,83 @@ export default class OX_Grid extends React.Component {
       }
     }
   }
+
+  async handleDatePicker(params)
+  {
+    if(this.datePickerValue){
+      var year = this.datePickerValue.getFullYear();
+      var month = this.datePickerValue.getUTCMonth() + 1;
+      var day = this.datePickerValue.getUTCDate();
+      var hours = this.datePickerValue.getUTCHours();
+      var minute = this.datePickerValue.getUTCMinutes();
+
+      var cron = "0 " + minute.toString() + " " + hours.toString() + " " + day.toString() + " " + month.toString() + " ? " + year.toString();      
+      if(params.cron){
+        params.cron = cron;
+      }
+      let route = params.route;
+      delete params.route;
+      delete params.type;
+      let response = await this.restClient.request(
+        "v1",
+        "/" + route,
+        params,
+        "post",
+        {
+          "Content-Type":"application/json"
+        }
+      );
+      this.refreshHandler(response);
+      return response;
+
+    }
+  }
+
+  renderButtonPopup(params){
+    var that = this;
+    if(params.type == "DatePicker")
+    {
+      var toggleDialogue = () => {
+        that.setState({showButtonPopup:!that.state.showButtonPopup});
+      }
+      return (
+          <Dialog title={"Set Date & Time"} onClose={
+            toggleDialogue
+          }>
+            <DateTimePicker
+              popup={DatePickerPopup}
+              onChange = {(event) => {
+                that.datePickerValue = event.target.value;
+              }}
+            />
+            <DialogActionsBar >
+              <Button 
+                primary = {true}
+                onClick={toggleDialogue}
+              >
+                Cancel
+              </Button>
+              <Button 
+                primary = {true}
+                onClick={()=>{
+                  var currentTime = new Date();
+                  if(that.datePickerValue >= currentTime)
+                  {
+                    that.handleDatePicker(params);
+                    toggleDialogue();
+                  }
+
+                }}
+              >
+                Save
+              </Button>
+            </DialogActionsBar>
+          </Dialog>
+      )
+    }
+  }
+
+
   updateActionHandler(details, rowData) {
     var that = this;
     rowData = { ...this.props.parentData, ...rowData }
@@ -776,7 +895,8 @@ export default class OX_Grid extends React.Component {
             resolve({ status: downloadStatus });
           }
           );
-        } else {
+        } 
+        else {
           that.setState({ showLoader: false });
           resolve(response);
         }
@@ -809,6 +929,7 @@ export default class OX_Grid extends React.Component {
   render() {
     return (
       <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%", float: "left" }} className={"GridCustomStyle " + (this.props.className ? this.props.className : "")} >
+        {this.state.showButtonPopup? this.state.buttonPopup:null}
         <Popup offset={this.offset} show={this.state.contextMenuOpen} open={this.onPopupOpen} popupClass={'popup-content'} >
           <div onFocus={this.onFocusHandler} onBlur={this.onBlurHandler} tabIndex={-1} ref={el => (this.menuWrapperRef = el)} >
             <Menu vertical={true} style={{ display: 'inline-block' }} onSelect={this.handleOnSelect}>
@@ -820,6 +941,10 @@ export default class OX_Grid extends React.Component {
           <DataLoader ref={(r) => { this.child = r; }} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
         )}
         <div id="customActionsToolbar" />
+
+
+          
+
         <Grid
           rowRender={this.rowRender}
           data={this.state.gridData.data}
@@ -894,6 +1019,26 @@ export default class OX_Grid extends React.Component {
     );
   }
 }
+
+
+class DatePickerPopup extends React.Component {
+  render() {
+      return (
+        <Popup
+          {...this.props}
+          anchorAlign={{
+                  horizontal: 'center',
+                  vertical: 'center'
+              }}
+          popupAlign={{
+                  horizontal: 'center',
+                  vertical: 'center'
+              }}
+          />
+      );
+  }
+}
+
 
 class CustomCell extends GridCell {
   render() {
