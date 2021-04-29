@@ -3,8 +3,8 @@ import './public/css/DocumentListDetails.css';
 import FilterFolderContentView from '../components/FilterFolderContentView';
 import DocumentTable from "./DocumentTable";
 
-const { Button, Empty, Row, Col } = Antd;
-const { DownloadOutlined, FileFilled, FolderFilled } = AntdIcons;
+const {Empty, Row, Col } = Antd;
+const {FileFilled,FolderFilled} = AntdIcons;
 
   class DocumentListDetails extends React.Component {
     constructor(props) {

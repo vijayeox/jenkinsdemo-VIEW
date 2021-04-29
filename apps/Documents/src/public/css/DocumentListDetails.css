@@ -1,7 +1,6 @@
 .document-details {
     flex: 1;
-    padding:0px;
-    margin: 0 20px 0 20px;
+    margin: 0 0 20px 0;
     background: white;
     overflow-y: scroll;
 }
@@ -39,7 +38,7 @@
 
 .file-icon,
 .folder-icon {
-    color: #c4c4c4;
+    color: #00aeff;
     font-size: 5rem;
 }
 
@@ -52,7 +51,7 @@
 }
 
 .folder-content-icon {
-    color: #bfbfbf;
+    color: #00aeff;
     font-size: 1.5em;
     margin-right: 8px;
 }

@@ -1,5 +1,5 @@
 import { Antd, AntdIcons, React } from "oxziongui";
-const {Menu,Dropdown,Button,Radio} = Antd;
+const {Radio} = Antd;
 const {UnorderedListOutlined,AppstoreOutlined} = AntdIcons
 
 class FilterFolderContentView extends React.Component{
