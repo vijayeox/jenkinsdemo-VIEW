@@ -1,7 +1,6 @@
 import './index.scss';
-import { React,Moment,MomentTZ } from "oxziongui";
+import { React} from "oxziongui";
 import DocumentList from "./src/DocumentList";
-
 const ROOT_APPS_INFO = {
   breadcrumbs: [],
   description: "Documents app gives you secure access to all your files across apps - all in one place. Collaborate with teammates from any device.",
@@ -10,7 +9,7 @@ const ROOT_APPS_INFO = {
 };
 
 const DEFAULT_PAGE_NUMBER = 0;
-const DEFAULT_PAGE_SIZE = 2;
+const DEFAULT_PAGE_SIZE = 10;
 
 class App extends React.Component {
   constructor(props) {
@@ -373,7 +372,8 @@ class App extends React.Component {
   render() {
     const { currentView, expandedKeys, dataReady, folderData, selectedFolderInfo, selectedKeys, treeData,isdataloading} = this.state;
     if(dataReady) {
-      return (<div className="app-container" id="root">
+      return (
+      <div className="app-container" id="root">
         <DocumentList
           core={this.core}
           doSort={this.doSort}

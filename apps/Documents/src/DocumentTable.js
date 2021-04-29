@@ -1,7 +1,7 @@
 import { Antd, AntdIcons, React,Moment} from "oxziongui";
 
 const { Table,Skeleton } = Antd;
-const { FolderOutlined ,FileTextOutlined} = AntdIcons;
+const {FileTextOutlined,FolderFilled} = AntdIcons;
 
 class DocumentTable extends React.Component {
   constructor(props) {
@@ -39,7 +39,7 @@ class DocumentTable extends React.Component {
   }
 
   getIcon = (record) => {
-    return !record.isLeaf ? <FolderOutlined className="folder-content-icon" /> :
+    return !record.isLeaf ? <FolderFilled className="folder-content-icon" /> :
     <FileTextOutlined className="folder-content-icon" /> 
   }
 

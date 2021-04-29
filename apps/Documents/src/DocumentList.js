@@ -1,19 +1,20 @@
 import { Antd, AntdIcons, React } from "oxziongui";
-import './public/css/DocumentList.css';
 import "../../../gui/node_modules/antd/dist/antd.css";
+import './public/css/DocumentList.css';
 import DocumentListDetails from './DocumentListDetails';
 import FolderDescription from '../components/FolderDescription';
 
 
-const { Breadcrumb, Tree, Layout,Button } = Antd;
+const { Breadcrumb, Tree, Layout,Button,Drawer} = Antd;
 const { DirectoryTree } = Tree;
-const { DownOutlined, FolderOutlined, FolderOpenOutlined, StepForwardOutlined } = AntdIcons;
+const { DownOutlined,StepForwardOutlined,MenuOutlined,FolderOpenFilled,FolderFilled} = AntdIcons;
 const isRawHtmlRegEx  = /<\/?[a-z][\s\S]*>/i;
 class DocumentList extends React.Component {
   constructor(props){
     super(props)
     this.state={
-      isShowDrawer:false
+      isMenuBar:false,
+      isMobileView:true,
     }
     this.core = this.props.core
     this.clientX = 0;
@@ -24,8 +25,34 @@ class DocumentList extends React.Component {
     this.sidebarRef = React.createRef();
     this.sidebarBounds = null;
     this.resizerBounds = null;
-    this.launchHelper = this.core.make("oxzion/link")
+    this.launchHelper = this.core.make("oxzion/link");
+    this.resizeEvent = this.resizeEvent.bind(this);
+    document.getElementsByClassName("Window_DocumentsWindow")[0].addEventListener("windowResize", this.resizeEvent, false);
   }
+
+  resizeEvent = () => {
+    let that = this;
+    window.setTimeout(() => {
+      var screen = document
+        .querySelector(".Window_DocumentsWindow")
+        .querySelector(".osjs-window-content").clientWidth;
+      console.log("screenwidth--->",screen)
+      screen >= 768 ? this.setState({isMobileView:false}):this.setState({isMobileView:true})
+    }, 100);
+  };
+
+
+  showMenuBar = () => {
+    this.setState({
+      isMenuBar: true,
+    });
+  };
+
+  closeMenuBar = () => {
+    this.setState({
+      isMenuBar: false,
+    });
+  };
 
   componentDidMount() {
     this.resizerRef.current.addEventListener("mousedown", this.initResize);
@@ -37,6 +64,12 @@ class DocumentList extends React.Component {
     this.resizerRef.current.addEventListener("mousedown", this.initResize);
     window.removeEventListener("mousemove", this.doResize);
     window.removeEventListener("mouseup", this.stopResize);
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if(prevProps.folderData != this.props.folderData){
+       this.setState({isMenuBar:false})
+    }
   }
 
   initResize = (event) => {
@@ -68,17 +101,9 @@ class DocumentList extends React.Component {
     }
   }
 
-  showDrawer = () =>{
-    this.setState({isShowDrawer:true})
-  }
-
-  onClose = () =>{
-    this.setState({isShowDrawer: false});
-  }
-
   getTreeDirectoryIcon = ({ expanded }) => {
-    if (expanded) return <FolderOpenOutlined />;
-    return <FolderOutlined />;
+    if (expanded) return <FolderOpenFilled style={{color:'#00aeff'}}/>;
+    return <FolderFilled style={{color:'#00aeff'}} />;
   }
 
   getTreeData = () => {
@@ -96,7 +121,8 @@ class DocumentList extends React.Component {
   }
 
   render() {
-    const { doSort, expandedKeys, handleTableViewChange, loadMore, onSelect, onExpand, rootInfo, folderData, selectedFolderInfo, selectedKeys, view } = this.props;
+    const {doSort, expandedKeys, handleTableViewChange, loadMore, onSelect, onExpand, rootInfo, folderData, selectedFolderInfo, selectedKeys, view } = this.props;
+    const {isMenuBar,isMobileView} = this.state;
     const isRoot = selectedFolderInfo.key === rootInfo.key;
     const isHtmlDescription = isRawHtmlRegEx.test(selectedFolderInfo.description)
     const isTaskTree = selectedFolderInfo.appName === 'TaskApp1' && selectedFolderInfo.apiType?.includes('attachmentFile') ? true : false;
@@ -105,16 +131,17 @@ class DocumentList extends React.Component {
     const appId = selectedFolderInfo.appId;
     const titleName = selectedFolderInfo.title;
     return (
+      
       <Layout className="document-container">
-        <div ref={this.sidebarRef} style={{
-          background: "white",
-          flex: "0 0 240px",
-          overflow: 'auto',
-          left: 0,
-          maxWidth: "240px",
-          minWidth: "240px",
-          width: "240px"
-        }}>
+        <Drawer
+          title="Documents"
+          placement="left"
+          closable={true}
+          onClose={this.closeMenuBar}
+          visible={isMenuBar}
+          getContainer={false}
+          style={{position: 'absolute'}}
+        >
           <Tree
             autoExpandParent={false}
             defaultExpandParent={false}
@@ -127,10 +154,32 @@ class DocumentList extends React.Component {
             showLine
             switcherIcon={<DownOutlined />}
             treeData={this.getTreeData()}
-          />
-        </div>
+            />
+        </Drawer>
+        {!isMobileView?(
+          <div className="document-treeview" ref={this.sidebarRef}>
+            <Tree
+              autoExpandParent={false}
+              defaultExpandParent={false}
+              expandedKeys={expandedKeys}
+              key={Date.now()}
+              onSelect={onSelect}
+              onExpand={onExpand}
+              selectedKeys={selectedKeys}
+              showIcon
+              showLine
+              switcherIcon={<DownOutlined />}
+              treeData={this.getTreeData()}
+            />
+          </div>
+        ):null}
         <div className="document-resizer" ref={this.resizerRef} />
         <div className="document-content">
+          {isMobileView?
+             <div className="document-navbar">
+                <MenuOutlined className="menuBar" onClick={() => this.showMenuBar()}/>
+              </div>
+          :null}
           <div className="document-header">
             {selectedFolderInfo.breadcrumbs.length > 0 &&
               <Breadcrumb style={{marginBottom:'10px'}}>
@@ -147,7 +196,8 @@ class DocumentList extends React.Component {
               ?
                 <p>{selectedFolderInfo.description}</p>
               :
-                <FolderDescription entityName={selectedFolderInfo.title} isShow = {this.state.isShowDrawer} onClose={this.onClose} description={selectedFolderInfo.description}/>
+              null
+                // <FolderDescription entityName={selectedFolderInfo.title} isShow = {this.state.isShowDrawer} onClose={this.onClose} description={selectedFolderInfo.description}/>
             :null}
           </div>
           <DocumentListDetails

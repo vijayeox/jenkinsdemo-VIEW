@@ -12,7 +12,7 @@
 
 .document-resizer-highlight,
 .document-resizer:hover {
-    background: #1890ff;
+    background: #82b6e7;
 }
 
 .document-content {
@@ -25,7 +25,7 @@
 .document-header {
     background: white;
     padding: 20px;
-    margin: 10px 20px 4px 20px;
+    margin: 0px 0px 4px 0px;
     max-height: 200px;
     overflow: auto;
 }
@@ -36,4 +36,35 @@
 }
 .document-row {
     height: 100%;
+}
+
+.document-treeview{
+    display: block;
+    background: white;
+    flex: 0 0 240px;
+    overflow: auto;
+    left: 0;
+    max-width: 240px;
+    min-width: 240PX;
+    width: 240px;
+}
+
+.document-navbar{
+    display: block;
+    background-color: white;
+    margin-bottom: 4px;
+    padding: 8px;
+    border: solid 1px #e8e8e8;
+    box-shadow: 0 0 30px #f3f1f1;
+    border-radius: 2px;
+}
+
+.menuBar{
+    font-size: 20px;
+    cursor: pointer;
+    padding: 1px 5px;
+}
+
+.ant-drawer-body {
+    padding: 1px;
 }
