@@ -171,10 +171,10 @@ const FilterFields = function (props) {
     const disabledFields = filterMode == "APPLY"
     const visibility = filterMode == "CREATE"
     return (
-        <Form.Row>
+        <Form.Row className={"filterFields"+( visibility? '' : 'filter')}>
             {visibility &&
                 <div className="dashboard-filter-field --200">
-                    <Form.Group className="dashboard-filter-field">
+                    <Form.Group className="dashboard-filter-field" >
                         <Form.Label>Filter DataSource</Form.Label>
                         <Select
                             selected={filters[index]["filterDataSource"] || ""}
@@ -393,11 +393,11 @@ const FilterFields = function (props) {
                             cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
                         }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
                     }
-                    {
-                        dataType === "select" ? <div className = "select_notif" id={"select_notif" + index}>You have not selected / changed any option</div> : ""
-                    }
                 </Form.Group>
             </div>
+            {
+                dataType === "select" ? <div className = "select_notif" id={"select_notif" + index}>You have not selected / changed any option</div> : ""
+                    }
         </Form.Row>)
 }
 class DashboardFilter extends React.Component {
@@ -738,7 +738,7 @@ class DashboardFilter extends React.Component {
                         :
                         // Rendered on dashboard Viewer
                         (this.state.applyFilterOption.length !== 0) &&
-                        <Form.Group>
+                        <Form.Group style={{ marginTop: "20px"}}>
                             <Form.Label> Choose/Apply Filters </Form.Label>
                             <Select
                                 placeholder="Choose filters"
@@ -751,7 +751,7 @@ class DashboardFilter extends React.Component {
                             />
                         </Form.Group>
                     }
-                    <Form.Row>
+                    <Form.Row style={{ marginTop: "15px"}}>
                         <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
                     </Form.Row>
                 </Form>
