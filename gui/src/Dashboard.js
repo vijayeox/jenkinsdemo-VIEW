@@ -9,7 +9,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.core = this.props.core;
-
     this.state = {
       htmlData: this.props.htmlData ? this.props.htmlData : null,
       dashboardFilter: this.props.dashboardFilter,
@@ -78,10 +77,12 @@ class Dashboard extends Component {
     if (this.props.dashboardStack && this.props.dashboardStack.length > 1) {
       //rendering back button for drilled down dashboard
       let dashboardTitle = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardTitle"]
-      backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
+      backButton = `<div id='dashboard-rollup-button' title="Previous OI" class='dashboard-rollup-button badge'><i class='fa fa-arrow-left'  aria-hidden='true'></i></div>`
       dashboardFilterDescription = "<span class='badge badge-info dashboard-filter-description' id='dashboard-drilldown-title'>" + dashboardTitle + "</span>";
     }
-    let container = "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" + dashboardFilterDescription + backButton + htmlData + "</div>"
+    let container = "<div id='dasboard-viewer-wrapper' class='dasboard-viewer-wrapper'>"
+    + "<div id='dashboard-drilldown-info-wrapper' class='dashboard-drilldown-info-wrapper'>" + dashboardFilterDescription + backButton + "</div>"
+    + "<div id='dasboard-viewer-content' class='dasboard-viewer-content'>" +  htmlData + "</div>" + "</div>";
     return container
   }
 
@@ -101,28 +102,24 @@ class Dashboard extends Component {
           this.setState({
             htmlData: response.data.dashboard.content ? response.data.dashboard.content : null
           }, () => {
-            // this.updateGraphWithFilterChanges()
             this.setupDrillDownListeners()
           }
           );
           let extractedFilterValues = extractFilterValues(this.props.dashboardFilter, this.props.dashboardStack, this.props.loadDefaultFilters ? "default" : undefined);
-          let preapredExtractedFilterValue = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
+          let drilldownDashboardFilter = extractedFilterValues.length == 1 ? extractedFilterValues[0] : extractedFilterValues
           if (extractedFilterValues && extractedFilterValues.length > 1) {
-            preapredExtractedFilterValue = extractedFilterValues[0]
+            drilldownDashboardFilter = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
-              preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-
+              drilldownDashboardFilter = preparefilter(drilldownDashboardFilter, extractedFilterValues[i])
             }
           }
-          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(preapredExtractedFilterValue)
-
+          (this.props.drilldownDashboardFilter && this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph(drilldownDashboardFilter)
         } else {
           this.setState({
             htmlData: `<p>No Data</p>`
           });
         }
-      }).
-        catch(function (response) {
+      }). catch(function (response) {
           console.error('Could not load widget.');
           console.error(response);
           Swal.fire({
@@ -133,13 +130,11 @@ class Dashboard extends Component {
         });
     } else if (this.state.htmlData != null) {
       (this.props.drilldownDashboardFilter.length > 0) ? this.updateGraph(this.props.drilldownDashboardFilter) : this.updateGraph()
-      // this.updateGraphWithFilterChanges()
     }
     window.removeEventListener('message', this.widgetDrillDownMessageHandler, false); //avoids dupliacte event handalers to be registered
     window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
     scrollDashboardToTop()
   }
-
 
   componentWillUnmount() {
     for (let elementId in this.renderedWidgets) {
@@ -181,11 +176,9 @@ class Dashboard extends Component {
         } else {
           this.setState({ preparedDashboardFilter: [] }, () => {
             this.updateGraph()
-
           })
         }
-      }
-      else if (filterParams.length >= 1) {
+      } else if (filterParams.length >= 1) {
         if (this.props.dashboardStack.length > 1) {
           //adding drildowndashboardfilter to the dashboard filter if it exists
           let parentFilter = this.props.dashboardStack[this.props.dashboardStack.length - 2]["filterConfiguration"]
@@ -204,15 +197,11 @@ class Dashboard extends Component {
             preapredExtractedFilterValue = extractedFilterValues[0]
             for (let i = 1; i < extractedFilterValues.length; i++) {
               preapredExtractedFilterValue = preparefilter(preapredExtractedFilterValue, extractedFilterValues[i])
-
             }
           }
           if (widgetFilter.length > 0) {
             preparedFilter = preparefilter(preapredExtractedFilterValue, widgetFilter)
           }
-          // let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
-          //   if (drilldownDashboardFilter.length > 1)
-          //     preparedFilter = this.preparefilter(drilldownDashboardFilter, preparedFilter)
         }
         this.setState({ preparedDashboardFilter: preparedFilter }, () => {
           this.updateGraph(preparedFilter)
@@ -220,20 +209,17 @@ class Dashboard extends Component {
       } else {
         //adding drildowndashboardfilter to the dashboard filter if it exists
         preparedFilter = filterParams
-
         let drilldownDashboardFilter = this.props.dashboardStack[this.props.dashboardStack.length - 1]["drilldownDashboardFilter"]
         if (this.props.dashboardStack.length != 1 && drilldownDashboardFilter.length > 1) {
           preparedFilter = preparefilter(drilldownDashboardFilter, filterParams)
         } else {
           preparedFilter = filterParams
         }
-
         this.setState({ preparedDashboardFilter: preparedFilter }, () => {
           this.updateGraph(preparedFilter)
         })
       }
-    }
-    else {
+    } else {
       this.updateGraph()
     }
   }
@@ -398,7 +384,6 @@ class Dashboard extends Component {
         preparedFilter = filter ? JSON.parse(filter) : ''
       }
       filter = preparedFilter
-      filter = preparedFilter
       if (filter && ('' !== filter)) {
         url = url + '&filter=' + JSON.stringify(filter);
       } else {
@@ -416,10 +401,8 @@ class Dashboard extends Component {
       } else {
         preparedFilter = dashFilter
       }
-
       filter = preparedFilter
       url = url + '&filter=' + JSON.stringify(filter);
-
     } else if (filter && ('' !== filter)) {
       url = url + '&filter=' + encodeURIComponent(filter);
     } else {

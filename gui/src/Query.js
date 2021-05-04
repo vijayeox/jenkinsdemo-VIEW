@@ -49,7 +49,7 @@ class Query extends React.Component {
 
   async fetchDataSource() {
     let helper = this.core.make('oxzion/restClient');
-    let response = await helper.request('v1', 'analytics/datasource', {}, 'get');
+    let response = await helper.request('v1', 'analytics/datasource?filter=[{"sort":[{"field":"name","dir":"asc"}],"skip":0,"take":10000}]', {}, 'get');
     this.setState({ dataSourceOptions: response.data })
   }
 

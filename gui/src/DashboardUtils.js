@@ -11,6 +11,7 @@ export function preparefilter(filter1, filter2) {
   filter.push(filter2)
   return filter
 }
+
 //preparing filter for frontend :setting filter options and applied options
 export function replaceCommonFilters(parentFilters, childFilters, property) {
   if (parentFilters && parentFilters.length > 0) {
@@ -125,12 +126,6 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
       if (filter["dataType"] == "date") {
         var startDate = filter["startDate"]
         var endDate = null
-        //extract the first option from date fields
-        // if(Array.isArray(filter["field"])){
-        //   //set default value as first option value
-        //   if(!filter["field"].hasOwnProperty("selected"))
-        //     filter["field"]["selected"]=filter["field"][0]["value"]
-        //  }
         if (filter["operator"] === "today") {
           filter["operator"] = "=="
         }
@@ -209,7 +204,6 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
             }
             filterarray.push(startDate)
             filterParams.push(filterarray)
-
           }
         } else {
           //single date passed
@@ -230,9 +224,6 @@ export function extractFilterValues(dashboardFilter, dashboardStack, filtermode)
         filterarray.push(filter["operator"])
         filterarray.push(filter["value"])
         filterParams.push(filterarray)
-        // if (filter["value"].hasOwnProperty("selected")) {
-        //   filterParams.push(filterarray)
-        // }
       }
     }
   })
