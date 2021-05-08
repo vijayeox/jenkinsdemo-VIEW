@@ -8,7 +8,6 @@
   right: 98px;
 }
 
-
 .dashboard .flippy-back {
   height: 120vh !important;
   min-height: 70vh;
@@ -42,14 +41,12 @@
   background-color: #265160c4 !important;
 }
 
-
 .dashboard .deactivateDash .react-switch-bg {
   background: rgb(39, 83, 98) !important;
 }
 
 .dashboard .react-switch-handle {
   background: #fff !important;
-
 }
 
 //dashboard editor filter
@@ -57,7 +54,7 @@
   padding: 10px;
   float: left;
   background: #a9c4c4;
-  width: 99%;
+  width: 100%;
 }
 
 .create-filter-form .btn {
@@ -89,21 +86,20 @@
   height: 20px;
 }
 
-
 .dates-container input,
 .create-filter-form input {
   display: block;
-  height: calc(1.5em + .75rem + 2px);
-  padding: .375rem .75rem;
-  font-size: 1rem;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: .25rem;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   width: 12vw;
 }
 
@@ -113,7 +109,6 @@
 
 .dates-container input {
   width: 140px;
-
 }
 
 #filtertype {
@@ -155,9 +150,8 @@
 }
 
 .custom-react-select-container:hover {
-  background-color: #DEEBFF !important;
+  background-color: #deebff !important;
   width: 100%;
-
 }
 
 .custom-react-select-container i {
@@ -185,14 +179,11 @@
   width: 100%;
 }
 
-
-
 .react-select-container {
   z-index: 100;
   width: 300px;
   float: left;
   right: 10px;
-
 }
 
 .dash-manager-buttons .btn {
@@ -211,7 +202,7 @@
   color: #345561;
   background-color: #c5d2d6;
   border-radius: 42px;
-  font-size: 14px;
+  font-size: 13px;
   box-shadow: 0px 0px 5px 0px grey;
 }
 
@@ -233,32 +224,40 @@
 .dasboard-viewer-content {
   // border: 1px solid#1d6165;
   min-height: 20px;
-  border-radius: 4px;
-  box-shadow: 2px 5px#c6b5b5;
+  border-radius: 0px;
+  box-shadow: none;
   padding: 1em;
-  border: 0.5px solid grey;
-  width: 100%;
+  border: none;
+  width: max-content;
+  min-width: 100%;
 }
 
 .dashboard-rollup-button {
-  color: white;
+  color: black;
   cursor: pointer;
   right: 1%;
   position: absolute;
-  top: 15%;
-  padding: 0;
-  background-color: #275362;
-} 
+  top: 0.4%;
+}
 
 .dashboard-filter-description {
-  position: relative;
-  font-size: 16px !important;
-  height: auto;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 30px;
   width: 100%;
+  font-size: 13px !important;
 }
 
 .dashboard-preview-tab {
-  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
+  background-image: linear-gradient(
+    to right,
+    #275362,
+    #235764,
+    #205b65,
+    #1d5f65,
+    #1d6365
+  );
   height: 1.3em;
   color: #f2f2f2;
   top: 50%;
@@ -277,7 +276,7 @@
 }
 
 .Window_Analytics .dashboard .GridCustomStyle {
-  height: calc(100% - 91px) !important
+  height: calc(100% - 91px) !important;
 }
 
 .Window_Analytics .dashboard label {
@@ -291,19 +290,19 @@
 .k-grid-header .k-i-sort-asc-sm,
 .k-grid-header .k-i-sort-desc-sm,
 .k-grid-header .k-sort-order {
-  color: #656565 !important
+  color: #656565 !important;
 }
 
 .k-grid-header .k-grid-filter.k-state-active,
 .k-grid-header .k-header-column-menu.k-state-active,
 .k-grid-header .k-hierarchy-cell .k-icon.k-state-active {
   color: #fff;
-  background-color: #656565 !important
+  background-color: #656565 !important;
 }
 
 .k-pager-numbers .k-link.k-state-selected {
   color: #656565 !important;
-  background-color: rgba(78, 73, 73, 0.2) !important
+  background-color: rgba(78, 73, 73, 0.2) !important;
 }
 
 .k-pager-numbers .k-link {
@@ -313,7 +312,7 @@
 .k-pager-numbers .k-link:hover,
 .k-pager-numbers .k-link.k-state-hover {
   color: #656565 !important;
-  background-color: rgba(78, 73, 73, 0.2) !important
+  background-color: rgba(78, 73, 73, 0.2) !important;
 }
 
 .drillDownStyle .k-master-row:hover {
@@ -345,36 +344,36 @@
 }
 
 .field-width-75 {
-  width:75px !important;
+  width: 75px !important;
 }
 
 .field-width-100 {
-  width:100px !important;
+  width: 100px !important;
 }
 
 .field-width-150 {
-  width:150px !important;
+  width: 150px !important;
 }
 
 .field-width-200 {
-  width:200px !important;
+  width: 200px !important;
 }
 .disabled {
-  
 }
 
 .select_notif {
-  padding: 10px;
-  background: yellow;
-  color: black;
-  margin-top: 10px;
+  padding: 4px;
+  background: rgba(255, 255, 0, 0.453);
+  color: #5a5353;
+  margin-top: 0px;
   float: left;
+  margin-bottom: 15px;
 }
 
 .toastHide {
   visibility: hidden;
 }
-.full-width{
+.full-width {
   widows: 100%;
   overflow: hidden;
 }
