@@ -418,7 +418,7 @@ class Dashboard extends Component {
     this.helper.request('v1', url, null, 'get').
       then(response => {
         let renderproperties = { "element": element, "widget": response.data.widget, "props": eventData, "dashboardEditMode": false }
-        let widgetObject = WidgetRenderer.render(renderproperties);
+        let widgetObject = WidgetRenderer.render(renderproperties, undefined, undefined, this.core);
         if (widgetObject) {
           self.renderedWidgets[elementId] = widgetObject;
         }
