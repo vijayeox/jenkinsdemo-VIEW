@@ -1,0 +1,16 @@
+{
+  "type": "theme",
+  "name": "Vision",
+  "internal": true,
+  "category": null,
+  "title": {
+    "en_EN": "Vision"
+  },
+  "description": {
+    "en_EN": "Vision"
+  },
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}
