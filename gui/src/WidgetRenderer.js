@@ -76,6 +76,13 @@ class WidgetRenderer {
                 }
                 widgetReturnParams = WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
                 break;
+
+            case 'Profile' :
+                if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
+                    throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
+                }
+                widgetReturnParams = WidgetRenderer.renderProfile(element, widget.configuration, core, widget.data);
+                break;
             // add a case for jsGrid for the server grid loading
 
             default:
@@ -128,6 +135,31 @@ class WidgetRenderer {
             });
             isDrillDownChart = true;
         }
+        return null;
+    }
+
+
+    static renderProfile(element, configuration, core, data) {
+        let displayValue = null;
+        let imageHtml = '';
+        if (configuration) {
+            if (configuration.uuid) {
+                let format = configuration.uuid;
+                let uuid = data;
+                displayValue = data[0][format];
+               
+                if( core !== undefined )
+                {
+                    let src = core.config("wrapper.url") + "user/profile/" + displayValue; 
+                    imageHtml = '<img alt="" width="140px" height="100px" src="' 
+                                + src + '">';
+                }
+            }
+            else {
+                displayValue = data;
+            }
+        }
+        element.innerHTML = imageHtml;
         return null;
     }
 
