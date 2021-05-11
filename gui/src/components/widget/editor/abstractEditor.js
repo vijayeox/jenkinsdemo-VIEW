@@ -136,7 +136,7 @@ class AbstractEditor extends React.Component {
             state.widgetType = type;
             return state;
         }, () => {
-            if (this.state.selectedTab !== '' && (this.state.selectedTab == "widget" || this.state.selectedTab == "chart")) {
+            if (this.state.selectedTab !== '' && (this.state.selectedTab == "widget" || this.state.selectedTab == "chart" || this.state.selectedTab == "profile")) {
                 thiz.refreshViews();
             } else if (this.state.selectedTab !== '' && this.state.selectedTab == "query") {
                 thiz.refreshQueryPreview()
