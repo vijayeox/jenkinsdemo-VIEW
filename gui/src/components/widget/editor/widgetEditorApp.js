@@ -430,7 +430,8 @@ class WidgetEditorApp extends React.Component {
         switch (widget.type) {
             case 'aggregate':
             case 'inline':
-                // case 'html':
+            case 'profile':
+            // case 'html':
                 type = 'inline';
                 break;
 
@@ -443,7 +444,6 @@ class WidgetEditorApp extends React.Component {
             case 'html':
                 type = 'html';
                 break;
-
         }
         return {
             align: widget.align,
@@ -669,8 +669,8 @@ class WidgetEditorApp extends React.Component {
                         </div>
                         {!this.state.flipped &&
                             <div className="row">
-                                {((this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
-                                    <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                {((this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline'|| this.state.widget.type === 'profile') && (this.state.selectableWidgetOptions.length > 0) && (this.state.selectableDashboardOptions.length > 0)) &&
+                                    <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                 }
                             </div>
                         }
@@ -724,8 +724,8 @@ class WidgetEditorApp extends React.Component {
 
 
                                 <div className="row">
-                                    {(this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline' || this.state.widget.type === 'html') &&
-                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions} />
+                                    {(this.state.widget.type === 'chart' || this.state.widget.type === 'table' || this.state.widget.type === 'inline' || this.state.widget.type === 'html' || this.state.widget.type === 'profile') &&
+                                        <WidgetEditorBody ref="editor" type={this.state.widget.type} widget={this.state.widget} syncWidgetState={(name, value, data) => this.syncWidgetState(name, value, data)} selectableWidgetOptions={this.state.selectableWidgetOptions} selectableDashboardOptions={this.state.selectableDashboardOptions}/>
                                     }
 
                                 </div>
@@ -746,5 +746,5 @@ class WidgetEditorApp extends React.Component {
 export default WidgetEditorApp;
 
 window.startWidgetEditorApp = function (editor) {
-    ReactDOM.render(<WidgetEditorApp editor={editor} />, document.getElementById('root'));
+    ReactDOM.render(<WidgetEditorApp editor={editor}/>, document.getElementById('root'));
 }
