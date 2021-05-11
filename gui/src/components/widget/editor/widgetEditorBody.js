@@ -11,10 +11,10 @@ var MULTILEVEL = "multiLevel"
 class WidgetEditorBody extends AbstractEditor {
     constructor(props) {
         super(props);
-        this.type = (props.type === 'inline' || props.type === 'html') ? 'widget' : props.type;
+        this.type = (props.type === 'inline' || props.type === 'html' ) ? 'widget' : props.type;
         this.state.selectedTab = this.type;
         this.state.widgetType = this.type;
-        // this.helper = this.core.make("oxzion/restClient");
+       // this.helper = this.core.make("oxzion/restClient");
         this.amChart = null;
         this.state.selectableWidgetOptions = props.selectableWidgetOptions;
         this.state.selectableDashboardOptions = props.selectableDashboardOptions;
@@ -79,7 +79,7 @@ class WidgetEditorBody extends AbstractEditor {
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         let config = this.state.configuration;
-        if ((this.state.widgetType === 'table' || this.state.widgetType === 'widget') && (!config || (0 === config.length))) {
+        if ((this.state.widgetType === 'table' || this.state.widgetType === 'widget' || this.state.widgetType === 'profile' ) && (!config || (0 === config.length))) {
             this.state.widgetType === 'widget' ? config = {} : errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
         } else {
             try {
@@ -108,7 +108,7 @@ class WidgetEditorBody extends AbstractEditor {
                     this.amChart.dispose();
                     this.amChart = null;
                 }
-            }
+            } 
             previewElement.style.height = (cardBody.offsetHeight - 40) + 'px'; //-40px for border and margin around preview area.
 
             try {
@@ -118,6 +118,8 @@ class WidgetEditorBody extends AbstractEditor {
                 else if (this.state.widgetType === 'table') {
                     previewElement.style.width = (cardBody.offsetWidth - 40) + 'px'; //-40px for border and margin around preview area.
                     WidgetRenderer.renderTable(previewElement, config, this.data);
+                }else if( this.state.widgetType === 'profile' ) {
+                    WidgetRenderer.renderProfile(previewElement, config, undefined, this.data);
                 } else if (this.state.widgetType === 'widget') {
                     WidgetRenderer.renderAggregateValue(previewElement, config, props, this.data);
                 }
@@ -168,7 +170,7 @@ class WidgetEditorBody extends AbstractEditor {
 
     isConfigurationTabValid = (state, setErrorState = true) => {
         let isValid = true;
-        if (this.state.widgetType === 'chart' || this.state.widgetType === 'table') {
+        if (this.state.widgetType === 'chart' || this.state.widgetType === 'table' || this.state.widgetType === 'profile') {
             let configuration = state.configuration;
             let errorMessage = null;
             if ('' === configuration) {
@@ -193,7 +195,6 @@ class WidgetEditorBody extends AbstractEditor {
         }
         return isValid;
     }
-
 
     isQueryTabValid = (state, setErrorState = true) => {
         let queryErrors = state.errors.queries;
@@ -231,6 +232,7 @@ class WidgetEditorBody extends AbstractEditor {
         }
         return isValid;
     }
+    
 
     areAllFieldsValid = () => {
         function findInvalidTab(tabs) {
@@ -292,6 +294,18 @@ class WidgetEditorBody extends AbstractEditor {
                     switchToTab = findInvalidTab([{ [this.state.widgetType]: isConfigurationTabValid }, { 'query': isQueryTabValid }]);
                 }
                 break;
+
+            case 'profile':
+                if (!isConfigurationTabValid) {
+                    this.setState((state) => {
+                        thiz.isConfigurationTabValid(state);
+                    });
+                }
+                else {
+                    switchToTab = findInvalidTab([{ 'profile': isConfigurationTabValid }, { 'expression': isExpressionTabValid }]);
+                }
+                break;
+            
         }
         if (switchToTab) {
             this.configurationTabSelected(switchToTab, null);
@@ -312,6 +326,7 @@ class WidgetEditorBody extends AbstractEditor {
             case 'chart':
             case 'table':
             case 'widget':
+            case 'profile':
                 cardBody = document.querySelector('div#propertyBox div.card-body');
                 textArea = document.querySelector('textarea#configuration');
                 textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
@@ -330,6 +345,7 @@ class WidgetEditorBody extends AbstractEditor {
                     case 'chart':
                     case 'table':
                     case 'widget':
+                    case 'profile':
                         thiz.isConfigurationTabValid(state);
                         break;
                     case 'query':
@@ -345,6 +361,7 @@ class WidgetEditorBody extends AbstractEditor {
                     case 'chart':
                     case 'table':
                     case 'widget':
+                    case 'profile':
                         thiz.refreshWidgetPreview();
                         break;
                     case 'query':
@@ -398,7 +415,7 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     refreshPreview() {
-        if (this.state.selectedTab === 'chart' || this.state.selectedTab === 'table' || this.state.selectedTab === 'widget' || this.state.selectedTab === 'inline' || this.state.selectedTab === 'html') {
+        if (this.state.selectedTab === 'chart' || this.state.selectedTab === 'table' || this.state.selectedTab === 'widget' || this.state.selectedTab === 'inline' || this.state.selectedTab === 'html' || this.state.selectedTab === 'profile') {
             //refresh preview
             this.refreshWidgetPreview();
         } else if (this.state.selectedTab === 'query') {
@@ -1099,6 +1116,11 @@ class WidgetEditorBody extends AbstractEditor {
                             {(this.state.selectedTab === 'widget') &&
                                 <div id="widgetPreview">
                                     <b>Widget preview</b>
+                                </div>
+                            }
+                            {(this.state.selectedTab === 'profile') &&
+                                <div id="profilePreview">
+                                    <b>Profile preview</b>
                                 </div>
                             }
                             {((this.state.selectedTab === 'query') || (this.state.selectedTab === 'expression')) &&
