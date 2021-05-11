@@ -410,7 +410,7 @@ class DashboardManager extends React.Component {
       let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
       formData["configuration"] = JSON.stringify(parsedConfiguration["configuration"])
       formData["datasource_id"] = parsedConfiguration["datasource_id"]
-      formData["filter"] = JSON.stringify(this.state.drilldownDashboardFilter)
+      formData["filter"] = JSON.stringify(this.state.DashboardFilter)
     }
     let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
     this.notif.current.notify(
