@@ -376,7 +376,7 @@ class DashboardEditor extends React.Component {
                 renderProperties["element"] = widgetElement
                 renderProperties["widget"] = response.widget
                 renderProperties["dashboardEditMode"] = true
-                let chart = WidgetRenderer.render(renderProperties);
+                let chart = WidgetRenderer.render(renderProperties, undefined, undefined, thisInstance.core);
                 thisInstance.renderedCharts[elementId] = chart;
             },
             function (response) {
