@@ -187,7 +187,7 @@ class Home extends React.Component {
             <div className="block d1">
               <img src="apps/Admin/014-analytics.svg" />
             </div>
-            <div className="titles">OI Builder</div>
+            <div className="titles">OI Studio</div>
           </div>
         ) : null}
       </React.Fragment>
