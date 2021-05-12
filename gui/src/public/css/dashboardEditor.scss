@@ -51,10 +51,11 @@
 
 //dashboard editor filter
 .create-filter-form {
-  padding: 10px;
-  float: left;
-  background: #a9c4c4;
-  width: 100%;
+  flex-direction: column;
+  padding: 5px 5px 0 5px;
+  background: white;
+  display: flex;
+  flex: 1;
 }
 
 .create-filter-form .btn {
@@ -69,6 +70,7 @@
 
 .dates-container {
   display: flex;
+  gap: 1rem;
 }
 
 .react-datepicker-wrapper {
@@ -91,7 +93,7 @@
   display: block;
   height: calc(1.5em + 0.75rem + 2px);
   padding: 0.375rem 0.75rem;
-  font-size: 13px;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
@@ -115,20 +117,28 @@
   max-width: 23vw;
 }
 
+#filter-form-container.show-filter-panel {
+  background: white;
+  border-radius: 10px;
+  // width: 30vw;
+  margin-top: 60px;
+  box-shadow: 5px 5px 10px #bfbfb9;
+}
+
 .disappear {
   display: none;
 }
 
-#filtereditor-form-container,
-#filter-form-container {
-  background: #a9c4c4;
-  border-radius: 10px;
-  margin-top: 60px;
+.blurOut {
+  display: block;
+  filter: blur(5px);
+  pointer-events: none;
 }
 
 #filtereditor-form-container button.close,
 #filter-form-container button.close {
-  padding-right: 1em;
+  background-color: transparent;
+  border-radius: none;
 }
 
 #filtereditor-form-container label,
@@ -136,10 +146,35 @@
   color: #275362;
 }
 
+.show-filter-panel {
+  display: block;
+  position: absolute;
+  // width: 30vw;
+  z-index: 10000;
+  right: 0;
+  top: 0;
+  transition: 0.8s ease-in;
+  max-height: 65vh;
+  overflow-y: scroll;
+  height: 65vh;
+}
+
+#filtereditor-form-container {
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 60px;
+}
+
+.apply-filter-btn-wrapper {
+  display: flex;
+  margin: 10px auto;
+  padding-bottom: 10px;
+}
+
 .apply-filter-btn {
-  position: initial !important;
-  border-radius: 12px;
+  border-radius: 0px;
   margin-left: 0px;
+  flex: 1;
 }
 
 .custom-react-select-container {
@@ -330,6 +365,14 @@
   margin-left: 10px;
 }
 
+.filter_remove_button_view,
+.filter_remove_button_view.btn.btn-primary {
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+  padding: 2px 7px;
+}
+
 .errorMsg {
   color: red !important;
 }
@@ -358,16 +401,18 @@
 .field-width-200 {
   width: 200px !important;
 }
+
 .disabled {
 }
 
 .select_notif {
   padding: 4px;
-  background: rgba(255, 255, 0, 0.453);
-  color: #5a5353;
+  color: red;
+  font-size: 12px;
   margin-top: 0px;
-  float: left;
-  margin-bottom: 15px;
+  // background: rgba(255, 255, 0, 0.453);
+  // float: left;
+  // margin-bottom: 15px;
 }
 
 .toastHide {
@@ -384,5 +429,76 @@
   flex-wrap: wrap;
   margin-right: -5px;
   margin-left: -5px;
-  width: 48%;
+  // border-left: 2px solid #265160;
+  // border-bottom: 2px solid #27536296;
+  box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
+  margin-bottom: 10px;
+  padding: 0 5px;
 }
+
+.dashboard-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 100%;
+
+  .filter-header-panel {
+    display: flex;
+    flex: 0;
+    align-items: center;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 5px;
+
+    .filter-header-text {
+      font-size: 24px;
+      color: #5d6d80;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.dashboard-filter-name {
+  letter-spacing: 1px;
+  flex-basis: 50%;
+  font-size: 16px;
+  color: #275362;
+  padding: 5px;
+  border-radius: 5px;
+  margin-right: 1rem;
+}
+
+.filterFieldsfilter-section-one {
+  display: flex;
+  align-items: center;
+  flex-basis: 100%;
+  gap: 10px;
+}
+
+.filterFieldsfilter-section-one select.dashboardTextField.form-control {
+  border: none;
+}
+.filterFieldsfilter-section-two #value.dashboardTextField {
+  flex-basis: 100%;
+}
+
+.filterFieldsfilter-section-two {
+  flex: 1 0 100%;
+}
+
+// .slideOut {
+//   animation: 0.5s linear slideOut;
+// }
+
+// @keyframes slideOut {
+//   0% {
+//     opacity: 0;
+//     transform: translateX(0);
+//     transform-origin: right;
+//   }
+
+//   100% {
+//     opacity: 1;
+//     transform: translateX(35vw);
+//     transform-origin: right;
+//   }
+// }

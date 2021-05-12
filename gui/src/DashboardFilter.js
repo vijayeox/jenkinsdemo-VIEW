@@ -172,6 +172,38 @@ const FilterFields = function (props) {
     const visibility = filterMode == "CREATE"
     return (
         <Form.Row className={"filterFields"+( visibility? '' : 'filter')}>
+
+            {!visibility && 
+                <div className="filterFieldsfilter-section-one">
+                    <h2 className="dashboard-filter-name">{filterName}</h2>
+
+                    <Form.Group className="dashboard-filter-field"> {/*  View Mode : Filter Operator */}
+                        {
+                            dataType === "date" || dataType === "text" || dataType === "numeric" || dataType === "select"
+                                ?
+                                <Form.Control className="dashboardTextField" as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !==       undefined ? filters[index]["operator"] : ""}>
+                                    <option disabled key="-1" value=""></option>
+                                    {filtersOptions[dataType + 'operator'].map((item, mapindex) => {
+                                        return (<option key={mapindex} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
+                                    })}
+                                </Form.Control>
+                                :
+                                <Form.Control className="dashboardTextField field-width-75" as="select" name={"operator"} onChange={(e) =>  onUpdate(e, index)} value=  {filters  [index] !== undefined ? filters[index]["operator"] : ""}>
+                                    <option disabled key="-1" value=""></option>
+                                </Form.Control>
+                        }
+                    </Form.Group>
+                
+                
+                    <Form.Group className="dash-manager-buttons" style={{marginLeft : "auto" , marginRight : "0.5rem"}}>
+                        {!filters[index]["isParentFilter"] &&
+                            <Button className="filter_remove_button_view" onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                        }
+                    </Form.Group>
+                </div>
+            }
+
+
             {visibility &&
                 <div className="dashboard-filter-field --200">
                     <Form.Group className="dashboard-filter-field" >
@@ -210,12 +242,15 @@ const FilterFields = function (props) {
                     </Form.Group>
                 </div>
             }
-            <div className="dashboard-filter-field  field-width-150">
-                <Form.Group className="dashboard-filter-field">
-                    <Form.Label>Field Description</Form.Label>
-                    <Form.Control className="dashboardTextField field-width-150" type="text" name="filterName" title={disabledFields ? "*The entered description will be displayed in dashboard viewer as filter name" : null} value={filterName} disabled={disabledFields} onChange={(e) => onUpdate(e, index)} />
-                </Form.Group>
-            </div>
+
+            {visibility &&
+                        <div className="dashboard-filter-field" id="">
+                        <Form.Group className="dashboard-filter-field">
+                            <Form.Label>Field Description</Form.Label>
+                            <Form.Control className="dashboardTextField" type="text" name="filterName" title={disabledFields ? "*The entered description will bdisplayed in dashboard viewer as filter name" : null} value={filterName} disabled=     {disabledFields} onChange={(e) => onUpdate(eindex)} />
+                        </Form.Group>
+                    </div>
+            }
             {visibility &&
                 <div className="dashboard-filter-field  field-width-150">
                     <Form.Group className="dashboard-filter-field">
@@ -248,33 +283,36 @@ const FilterFields = function (props) {
                     </Form.Group>
                 </div>
             }
-            <div className="dashboard-filter-field field-width-100">
-                <Form.Group className="dashboard-filter-field">
-                    <Form.Label>Operator</Form.Label>
-                    {
-                        dataType === "date" || dataType === "text" || dataType === "numeric" || dataType === "select"
-                            ?
-                            <Form.Control className="dashboardTextField field-width-100" as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
-                                <option disabled key="-1" value=""></option>
-                                {filtersOptions[dataType + 'operator'].map((item, mapindex) => {
-                                    return (<option key={mapindex} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
-                                })}
-                            </Form.Control>
-                            :
-                            <Form.Control className="dashboardTextField field-width-75" as="select" name={"operator"} onChange={(e) => onUpdate(e, index)} value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
-                                <option disabled key="-1" value=""></option>
-                            </Form.Control>
-                    }
-                </Form.Group>
-            </div>
-            <div className="dashboard-filter-field">
-                <Form.Group className="dashboard-filter-field" controlId="formGridPassword">
-                    <Form.Label>Default Value</Form.Label><br />
+            {visibility &&
+                <div className="dashboard-filter-field field-width-100">
+                    <Form.Group className="dashboard-filter-field">
+                        <Form.Label>Operator</Form.Label>
+                        {
+                            dataType === "date" || dataType === "text" || dataType === "numeric" || dataType === "select"
+                                ?
+                                <Form.Control className="dashboardTextField field-width-100" as="select" name={"operator"} onChange={(e) =>  onUpdate(eindex)}  value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
+                                    <option disabled key="-1" value=""></option>
+                                    {filtersOptions[dataType + 'operator'].map((item, mapindex) => {
+                                        return (<option key={mapindex} value={Object.values(item)[0]}>{Object.keys(item)[0]}</option>)
+                                    })}
+                                </Form.Control>
+                                :
+                                <Form.Control className="dashboardTextField field-width-75" as="select" name={"operator"} onChange={(e) =>  onUpdate(e, index)}  value={filters[index] !== undefined ? filters[index]["operator"] : ""}>
+                                    <option disabled key="-1" value=""></option>
+                                </Form.Control>
+                        }
+                    </Form.Group>
+                </div>
+            }
+
+            <div className="dashboard-filter-field filterFieldsfilter-section-two">
+                <Form.Group className="dashboard-filter-field d-flex justify-content-center" controlId="formGridPassword">
+                    {/* <Form.Label>Default Value</Form.Label><br /> */}
                     {dataType === "date"
                         ?
                         ((filters[index]["operator"] !== "gte&&lte" && filters[index]["operator"] !== "mtd" && filters[index]["operator"] !== "ytd") && filters[index]["dateRange"] === false) ?
                             <DatePicker
-                                className="dashboardTextField field-width-150"
+                                className="dashboardTextField"
                                 key={index}
                                 dateFormat={dateFormat}
                                 selected={Date.parse(filters[index]["startDate"])}
@@ -299,7 +337,7 @@ const FilterFields = function (props) {
                             :
                             <div className="dates-container">
                                 <DatePicker
-                                    className="dashboardTextField field-width-100"
+                                    className="dashboardTextField"
                                     selected={Date.parse(filters[index]["startDate"])}
                                     dateFormat={dateFormat}
                                     onChange={date => onUpdate(date, index, "startDate")}
@@ -325,7 +363,7 @@ const FilterFields = function (props) {
                                     dropdownMode="select"
                                 />
                                 <DatePicker
-                                    className="dashboardTextField field-width-100"
+                                    className="dashboardTextField "
                                     selected={(filters[index]["operator"] == 'mtd' || filters[index]["operator"] == 'ytd') ? new Date() : Date.parse(filters[index]["endDate"])}
                                     dateFormat={dateFormat}
                                     onChange={date => onUpdate(date, index, "endDate")}
@@ -356,10 +394,12 @@ const FilterFields = function (props) {
                         // filterMode == "CREATE" ?
                         dataType === "select" ?
                             <Select
-                                className="dashboardTextField field-width-150"
+                                className="dashboardTextField"
                                 selected={filters[index]["value"] || ""}
                                 name="value"
                                 id="value"
+                                placeholder="Select an option"
+                                style={{flex : "1 1 100%"}}
                                 onChange={(e) => {
                                     onUpdate(e, index, "value");
                                     var x = document.getElementById("select_notif" + index); 
@@ -373,6 +413,7 @@ const FilterFields = function (props) {
                             :
                             <Form.Control className="dashboardTextField field-width-150" controlId="value" id="value"
                                 type="text"
+                                placeholder="Enter the keyword"
                                 value={filters[index]["value"]}
                                 name="value"
                                 styles={customStyles}
@@ -381,23 +422,24 @@ const FilterFields = function (props) {
                     }
                 </Form.Group>
             </div>
-            <div className="dashboard-filter-field dash-manager-buttons">
-                <Form.Group className="dashboard-filter-field">
-                    {visibility &&
-                        <Form.Control type="checkbox" name="isDefault" className="form-checkbox filter_remove_button" value={isDefault} defaultChecked={isDefault} onChange={(e) => onUpdate(e, index)} style={{
-                            cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative", width: "50px", height: "34px;"
-                        }} />
-                    }
-                    {!filters[index]["isParentFilter"] &&
-                        <Button className="filter_remove_button" style={{
-                            cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
-                        }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
-                    }
-                </Form.Group>
-            </div>
-            {
+            {visibility &&
+                <div className="dashboard-filter-field dash-manager-buttons">
+                    <Form.Group className="dashboard-filter-field">
+
+                            <Form.Control type="checkbox" name="isDefault" className="form-checkbox filter_remove_button" value={isDefault}     defaultChecked={isDefault} onChange={(e) => onUpdate(e, index)} style={{
+                                cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative", width: "50px" , margin : "5px 2px"}} />
+
+                            {!filters[index]["isParentFilter"] &&
+                                <Button className="" style={{
+                                        cursor: "pointer", float: "left", verticalAlign: "middle", position: "relative",
+                                    }} onClick={(e) => removeField(index, fieldType)}><i className="fa fa-minus" aria-hidden="true"></i></Button>
+                            }            
+                    </Form.Group>
+                </div>
+            }
+            {/* {
                 dataType === "select" ? <div className = "select_notif" id={"select_notif" + index}>You have not selected / changed any option</div> : ""
-                    }
+                    } */}
         </Form.Row>)
 }
 class DashboardFilter extends React.Component {
@@ -691,11 +733,14 @@ class DashboardFilter extends React.Component {
 
     render() {
         return (
-            <div>
-                <div className="row pull-right dash-manager-buttons" style={{ right: "22px", height: "30px", textAlign: "center", padding: "4px" }}>
-                    <Button type="button" className="close btn btn-primary" aria-label="Close" onClick={() => this.hideFilterDiv()} style={{ padding: "5px" }}>
-                        <i className="fa fa-close" aria-hidden="true"></i>
-                    </Button>
+                <div className="dashboard-filter-wrapper">
+                    <div className="filter-header-panel">
+                    <h2 className="filter-header-text">Filter By</h2>
+                    <div className="dash-manager-buttons" style={{ marginLeft: "auto" }}>
+                        <Button type="button" className="close btn btn-primary" style={{fontSize : "1.5rem" , padding : "2px" , boxShadow : "none"}} aria-label="Close" onClick={() => this.hideFilterDiv()} >
+                            <i className="fa fa-close" aria-hidden="true"></i>
+                        </Button>
+                </div>
                 </div>
                 <Form className="create-filter-form">
                     {this.state.filters.filter(obj => obj !== undefined).map((filterRow, index) => {
@@ -751,10 +796,10 @@ class DashboardFilter extends React.Component {
                             />
                         </Form.Group>
                     }
-                    <Form.Row style={{ marginTop: "15px"}}>
-                        <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
-                    </Form.Row>
                 </Form>
+                <div className="apply-filter-btn-wrapper">
+                    <Button className="apply-filter-btn" onClick={() => this.saveFilter()}>Apply Filters</Button>
+                </div>
             </div >
         )
     }
