@@ -420,6 +420,8 @@ class PageContent extends React.Component {
             sortable={sortable}
             resizable={resizable}
             reorderable={reorderable}
+            // defaultToolBar = {true}
+            customActions = {this.props.customActions}
             parentData={this.state.currentRow}
             pageId={this.pageId}
             notif={this.notif}

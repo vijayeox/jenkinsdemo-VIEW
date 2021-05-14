@@ -101,6 +101,7 @@ export default class OX_Grid extends React.Component {
   componentWillReceiveProps(nextProps) {
     // change to use componentDidUpdate later in future
     // Write different props which when changed we need to trigger a setState
+
     if (util.inspect(this.props.data, { depth: 2 }) != util.inspect(nextProps.data) || util.inspect(this.props.gridDefaultFilters, { depth: 4 }) != util.inspect(nextProps.gridDefaultFilters, { depth: 4 }) || util.inspect(this.props.columnConfig) != util.inspect(nextProps.columnConfig)) {
       if (nextProps.gridDefaultFilters) {
         let mergedFilters = { ...this.state.dataState, ...nextProps.gridDefaultFilters, };
@@ -941,10 +942,7 @@ export default class OX_Grid extends React.Component {
           <DataLoader ref={(r) => { this.child = r; }} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
         )}
         <div id="customActionsToolbar" />
-
-
-          
-
+        {(!this.props.defaultToolBar&& this.props.customActions && this.props.customActions.length == 0)?this.generateGridToolbar():null}
         <Grid
           rowRender={this.rowRender}
           data={this.state.gridData.data}

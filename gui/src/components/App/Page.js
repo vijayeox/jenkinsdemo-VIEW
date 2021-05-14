@@ -88,6 +88,7 @@ class Page extends React.Component {
           core={this.props.core}
           pageId={this.props.pageId}
           appId={this.appId}
+          customActions = {this.props.customActions}
           isTab={this.props.isTab}
           params={this.props.params}
           fileId={this.props.fileId}

@@ -303,6 +303,7 @@ getElementInsideElement(baseElement, wantedElementID) {
               proc={this.props.proc}
               app={this.props.appId}
               core={this.core}
+              customActions = {this.state.customActions}
               fileId={item.fileId}
               pageId={item.pageId}
               notif={this.notif}
