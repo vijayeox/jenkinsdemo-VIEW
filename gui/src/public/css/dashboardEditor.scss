@@ -117,13 +117,31 @@
   max-width: 23vw;
 }
 
-#filter-form-container.show-filter-panel {
+div#filter-form-container {
   background: white;
   border-radius: 10px;
-  // width: 30vw;
-  margin-top: 60px;
-  box-shadow: 5px 5px 10px #bfbfb9;
+  margin-top: 5px;
+  box-shadow: -3px 3px 18px #cccccc;
 }
+
+div#filter-form-container.show-filter-panel {
+  background: white;
+  border-radius: 5px;
+  margin-top: 5px;
+  box-shadow: -3px 3px 18px #cccccc;
+  overflow-y: scroll;
+  height: 70vh;
+  max-height: 70vh;
+  position: absolute;
+  z-index: 10000;
+  right: 0;
+  top: 0;
+  transition: 0.8s ease-in;
+}
+
+// .show-filter-panel {
+
+// }
 
 .disappear {
   display: none;
@@ -144,19 +162,6 @@
 #filtereditor-form-container label,
 #filter-form-container label {
   color: #275362;
-}
-
-.show-filter-panel {
-  display: block;
-  position: absolute;
-  // width: 30vw;
-  z-index: 10000;
-  right: 0;
-  top: 0;
-  transition: 0.8s ease-in;
-  max-height: 65vh;
-  overflow-y: scroll;
-  height: 65vh;
 }
 
 #filtereditor-form-container {
@@ -402,6 +407,10 @@
   width: 200px !important;
 }
 
+.field-width-300 {
+  width: 300px !important;
+}
+
 .disabled {
 }
 
@@ -485,20 +494,19 @@
   flex: 1 0 100%;
 }
 
-// .slideOut {
-//   animation: 0.5s linear slideOut;
-// }
+#filtereditor-form-container
+  > .dashboard-filter-wrapper
+  .create-filter-form
+  > .filterFields {
+  margin: 10px 0px;
+  padding: 5px;
+  box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
+}
 
-// @keyframes slideOut {
-//   0% {
-//     opacity: 0;
-//     transform: translateX(0);
-//     transform-origin: right;
-//   }
-
-//   100% {
-//     opacity: 1;
-//     transform: translateX(35vw);
-//     transform-origin: right;
-//   }
-// }
+#filtereditor-form-container
+  > .dashboard-filter-wrapper
+  .create-filter-form
+  .dash-manager-buttons {
+  display: flex;
+  align-items: flex-end;
+}
