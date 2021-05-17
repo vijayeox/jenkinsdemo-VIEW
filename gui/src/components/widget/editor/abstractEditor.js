@@ -27,10 +27,10 @@ class AbstractEditor extends React.Component {
                 expression: null,
                 drillDown: {},
                 queries: [],
-                target:{singleLevel:{},multiLevel:{}}
+                target: { singleLevel: {}, multiLevel: {} }
             }
         };
-        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }, { "label": "Dashboard", "value": "dashboard" }]
+        this.widgetTypes = [{ "label": "Chart", "value": "chart" }, { "label": "Inline", "value": "inline" }, { "label": "Table", "value": "table" }, { "label": "Dashboard", "value": "dashboard" }, { "label": "File", "value": "file" }]
         this.queryList = [];
         this.data = null;
     }
@@ -89,23 +89,22 @@ class AbstractEditor extends React.Component {
         if (name == "drillDownMaxDepth") {
             hasMaxDepth = true
             this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
-        }
-        else if (name == "drillDownWidget") {
+        } else if (name == "drillDownWidget") {
             if (value !== 'dashboard') {
                 hasMaxDepth = (this.props.widget["uuid"] && this.props.widget["uuid"] === value)
                 this.setState({ [name]: value, hasMaxDepth: hasMaxDepth, errors: errors })
             }
-        }
-        else if (name == "drillDownWidgetType") {
+        } else if (name == "drillDownWidgetType") {
             let filteredWidgetList = null
-            if (value == 'dashboard') {
+            if (value === 'dashboard') {
                 filteredWidgetList = this.props.selectableDashboardOptions.filter(option => option.type == value)
+            } else if (value === 'file') {
+                filteredWidgetList = this.props.selectableAppOptions.filter(option => option.type == value)
             } else {
                 filteredWidgetList = this.props.selectableWidgetOptions.filter(option => option.type == value)
             }
             this.setState({ filteredWidgetList: filteredWidgetList, drillDownWidgetType: e, drillDownWidget: "" })
-        }
-        else {
+        } else {
             this.setState({ [name]: value, errors: errors })
         }
     }
@@ -120,7 +119,7 @@ class AbstractEditor extends React.Component {
                 queries.push({
                     'uuid': query.uuid,
                     'configuration': {
-                        'filter': configuration ? (configuration.filter ? JSON.stringify(configuration.filter, null, '    ') : '') : '',
+                        'filter': configuration ? (configuration.filter ? JSON.stringify(configuration.filter, null, '') : '') : '',
                         'grouping': configuration ? (configuration.grouping ? JSON.stringify(configuration.grouping, null, '') : '') : '',
                         'sort': configuration ? (configuration.sort ? JSON.stringify(configuration.sort, null, '') : '') : ''
                     },
@@ -136,7 +135,7 @@ class AbstractEditor extends React.Component {
             state.widgetType = type;
             return state;
         }, () => {
-            if (this.state.selectedTab !== '' && (this.state.selectedTab == "widget" || this.state.selectedTab == "chart")) {
+            if (this.state.selectedTab !== '' && (this.state.selectedTab == "widget" || this.state.selectedTab == "chart" || this.state.selectedTab == "profile")) {
                 thiz.refreshViews();
             } else if (this.state.selectedTab !== '' && this.state.selectedTab == "query") {
                 thiz.refreshQueryPreview()
@@ -183,8 +182,20 @@ class AbstractEditor extends React.Component {
         });
         return errorMessage ? false : true;
     }
+
     getSelectedWidgetType = () => {
-        return this.state.drillDownWidgetType.value !== "dashboard" ? "widget" : "dashboard";
+        switch (this.state.drillDownWidgetType.value) {
+            case 'file':
+                this.state.drillDownWidgetType.value = "file";
+                break;
+            case 'widget':
+                this.state.drillDownWidgetType.value = "widget";
+                break;
+            default:
+                this.state.drillDownWidgetType.value = "dashboard";
+        }
+        return this.state.drillDownWidgetType.value;
+        // return this.state.drillDownWidgetType.value !== "dashboard" ? this.state.drillDownWidgetType.value !== "widget" ? "file" : "widget" : "dashboard";
     }
 
     ApplyDrillDown = (widgetType) => {
@@ -222,14 +233,16 @@ class AbstractEditor extends React.Component {
     }
 
     setDrillDownTargetType(target) {
-        if (this.state.selectableWidgetOptions.length > 0) {
-            let selectedWidgetOption = null
+        if (this.state.drillDownWidget.length > 0) {
+            let selectedDrillDownOption = null
             if (target == "dashboard") {
-                selectedWidgetOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+                selectedDrillDownOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+            } if (target == "file") {
+                selectedDrillDownOption = this.state.selectableAppOptions.filter(option => option.value == this.state.drillDownWidget)
             } else {
-                selectedWidgetOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+                selectedDrillDownOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
             }
-            let widget = selectedWidgetOption[0] ? selectedWidgetOption[0]["type"] : ''
+            let widget = selectedDrillDownOption[0] ? selectedDrillDownOption[0]["type"] : ''
             let selectedWidget = widget
             let widgetType = this.widgetTypes.filter(option => option.value == selectedWidget)
             this.setState({ drillDownWidgetType: widgetType[0] })
@@ -275,11 +288,15 @@ class AbstractEditor extends React.Component {
     }
 
     getSelectedDrillDownWidget() {
-        if (this.state.drillDownWidgetType !== "") {
-            return this.state.drillDownWidgetType.value == "dashboard" ?
-                this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
-                :
+        switch (this.state.drillDownWidgetType.value) {
+            case 'file':
+                this.props.selectableAppOptions.filter(option => option.value == this.state.drillDownWidget)
+                break;
+            case 'widget':
                 this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
+                break;
+            case 'widget':
+                this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
         }
     }
 
