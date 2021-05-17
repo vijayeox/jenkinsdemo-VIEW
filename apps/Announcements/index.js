@@ -4,12 +4,12 @@ import { icon_white } from './metadata.json';
 import Slider from './slider.js';
 import {React,ReactDOM} from "oxziongui";
 
-let tray = null;
 var i, finalposition, finalDimension,finalMaximised,finalMinimised;
 // Our launcher
 const register = (core, args, options, metadata) => {
   // Create a new Application instance
   const proc = core.make("osjs/application", { args, options, metadata });
+  let tray = null;
   let trayInitialized = false;
   // Create  a new Window instance
   let session = core.make('osjs/settings').get('osjs/session');
@@ -57,37 +57,52 @@ const register = (core, args, options, metadata) => {
       let announ = await helper.request("v1", "/announcement/a/ANNOUNCEMENT", {}, "get");
       return announ;
     };
-
-    let announcementsCount = 0;
-    getAnnouncements().then((response) => {
-      announcementsCount = response["data"].length;
-      if (core.has("osjs/tray") && !trayInitialized) {
-        trayInitialized = true;
-        tray = core.make("osjs/tray").create(
-        {
-          title: "AnnouncementWindow",
-          icon: proc.resource(metadata.icon_white),
-          badge: "badgeCheck",
-          count: announcementsCount,
-          pos: 1,
-          onclick: () => {
-            win.raise();
-            win.focus();
-            trigger();
-          },
-        },
-        (ev) => {
-          core.make("osjs/contextmenu").show({
-            position: ev,
-          });
-        }
-        );
-      }
-    });
+    
+    const updateTray = () => {
+      getAnnouncements().then((response) => {
+        let announcementsCount = 0;
+        response["data"].map((announcement)=> {
+          if(!announcement.view  || announcement.view =="0") announcementsCount++;
+        });
+        if (core.has("osjs/tray")) {
+          const trayObj = core.make("osjs/tray");
+          if (trayInitialized) {
+                trigger();
+                tray.update({count: announcementsCount});
+              } else {
+            trayInitialized = true;
+            tray = trayObj.create(
+              {
+                title: "AnnouncementWindow",
+                icon: proc.resource(metadata.icon_white),
+                badge: "badgeCheck",
+                count: announcementsCount,
+                pos: 1,
+                onclick: () => {
+                  win.raise();
+                  win.focus();
+                  trigger();
+                },
+              },
+              (ev) => {
+                core.make("osjs/contextmenu").show({
+                  position: ev,
+                });
+              }
+              );
+              core.on('announcement/tray:modified', (count)=>{
+                tray.update({count: count});
+              });
+            }
+          }
+        });
+      };
+      core.on('admin/announcement:modified', updateTray);
+      updateTray();
+    };
+    createProcWindow(proc);
+    return proc;
   };
-  createProcWindow(proc);
-  return proc;
-};
 
 const trigger = () => {
   var an_ev = new CustomEvent("updateAnnouncements", {

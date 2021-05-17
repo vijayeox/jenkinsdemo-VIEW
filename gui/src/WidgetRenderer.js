@@ -37,8 +37,7 @@ class WidgetRenderer {
                 }
                 try {
                     widgetReturnParams = WidgetRenderer.renderAmCharts(element, widget.configuration, props, widget.data, hasDashboardFilters);
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                     return null;
                 }
@@ -49,10 +48,9 @@ class WidgetRenderer {
                     throw (`Unexpected table widget tag "${widgetTagName}"`);
                 }
                 try {
-                    widgetReturnParams = WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid");
+                    widgetReturnParams = WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGrid", undefined, undefined, core);
                     break;
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                     return null;
                 }
@@ -64,8 +62,7 @@ class WidgetRenderer {
                 try {
                     widgetReturnParams = WidgetRenderer.renderTable(element, widget.configuration, widget.data, hasDashboardFilters, "WidgetGridNew", widget.uuid, filterParams, core, widget['total_count']);
                     break;
-                }
-                catch (e) {
+                } catch (e) {
                     console.error(e);
                     return null;
                 }
@@ -75,6 +72,13 @@ class WidgetRenderer {
                     throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
                 }
                 widgetReturnParams = WidgetRenderer.renderhtml(element, widget.configuration, props, widget.data);
+                break;
+
+            case 'Profile':
+                if ((widgetTagName !== 'SPAN') && (widgetTagName !== 'DIV')) {
+                    throw (`Unexpected inline aggregate value widget tag "${widgetTagName}"`);
+                }
+                widgetReturnParams = WidgetRenderer.renderProfile(element, widget.configuration, core, widget.data);
                 break;
             // add a case for jsGrid for the server grid loading
 
@@ -92,8 +96,7 @@ class WidgetRenderer {
                 let format = configuration.numberFormat;
                 let num = numeral(data);
                 displayValue = num.format(format);
-            }
-            else if (configuration.dateFormat) {
+            } else if (configuration.dateFormat) {
                 let format = configuration.dateFormat;
                 displayValue = dayjs(data).format(format);
             } else {
@@ -128,6 +131,30 @@ class WidgetRenderer {
             });
             isDrillDownChart = true;
         }
+        return null;
+    }
+
+
+    static renderProfile(element, configuration, core, data) {
+        let displayValue = null;
+        let imageHtml = '';
+        if (configuration) {
+            if (configuration.uuid) {
+                let format = configuration.uuid;
+                let uuid = data;
+                displayValue = data[0][format];
+
+                if (core !== undefined) {
+                    let src = core.config("wrapper.url") + "user/profile/" + displayValue;
+                    imageHtml = '<img alt="" width="140px" height="100px" src="'
+                        + src + '">';
+                }
+            }
+            else {
+                displayValue = data;
+            }
+        }
+        element.innerHTML = imageHtml;
         return null;
     }
 
@@ -651,7 +678,7 @@ class WidgetRenderer {
         if (widgetGridType == "WidgetGridNew") {
             ReactDOM.render(<WidgetGridNew configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} uuid={widgetUUId} filterParams={filterParams} core={core} totalcount={total_count} />, canvasElement);
         } else if (widgetGridType == "WidgetGrid") {
-            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} />, canvasElement);
+            ReactDOM.render(<WidgetGrid configuration={configuration} data={data} isDrillDownTable={isDrillDownTable} canvasElement={canvasElement} core={core} />, canvasElement);
         }
     }
 }

@@ -2,6 +2,7 @@ import { React } from "oxziongui";
 import DialogContainerAnnouncement from "./dialog/DialogContainerAnnouncement";
 import DialogContainerProject from "./dialog/DialogContainerPrj";
 import DialogContainerTeam from "./dialog/DialogContainerTeam";
+import DialogContainerKra from "./dialog/DialogContainerKra";
 
 export default {
   Organization: {},
@@ -225,6 +226,40 @@ export default {
       canAdd: "MANAGE_TEAM_WRITE",
       canEdit: "MANAGE_TEAM_WRITE",
       canDelete: "MANAGE_TEAM_WRITE",
+    },
+  },
+  Kras: {
+    title: "Manage Kras",
+    dialogWindow: DialogContainerKra,
+    listConfig: {
+      route: "kra",
+      defaultFilters: { sort: [{ field: "date_created", dir: "desc" }] },
+      toolbarTemplate: (
+        <h5 key={Math.random()} style={{ margin: "0px" }}>
+          Kra's List
+        </h5>
+      ),
+      addButton: { title: "Add Kra" },
+      columnConfig: [
+        {
+          title: "Name",
+          field: "name",
+        },
+      ],
+      actions: [
+        { name: "Edit Kra Details", type: "edit", icon: "fa fa-pencil" },
+        {
+          name: "Delete Kra",
+          type: "delete",
+          icon: "fa fa-trash manageIcons",
+          route: "/kra",
+        },
+      ],
+    },
+    permission: {
+      canAdd: "MANAGE_KRA_WRITE",
+      canEdit: "MANAGE_KRA_WRITE",
+      canDelete: "MANAGE_KRA_WRITE",
     },
   },
 };

@@ -595,7 +595,7 @@ class BaseFormRenderer extends React.Component {
                     else {
                         var storeCache = await that.storeCache(that.cleanData(data)).then(
                             async cacheResponse => {
-                                if (response.data.errors) {
+                                if (response.data && response.data.errors) {
                                     var storeError = await that.storeError(that.cleanData(data), response.data.errors, route).then(storeErrorResponse => {
                                         that.showFormLoader(false, 0);
                                         that.notif.current.notify("Error", "Form Submission Failed", "danger");
@@ -633,7 +633,7 @@ class BaseFormRenderer extends React.Component {
                     } else {
                         var storeCache = await that.storeCache(that.cleanData(data)).then(
                             async cacheResponse => {
-                                if (response.data.errors) {
+                                if (response.data && response.data.errors) {
                                     var storeError = await that.storeError(that.cleanData(data), response.data.errors, route).then(storeErrorResponse => {
                                         that.showFormLoader(false, 0);
                                         that.notif.current.notify("Error", "Form Submission Failed", "danger");
@@ -866,14 +866,12 @@ class BaseFormRenderer extends React.Component {
         that.showFormLoader(true, 0);
         that.callPayment(e.detail).then(response => {
           var transactionIdComponent = form.getComponent("transaction_id");
-          if (response.data) {
-            if (response.data.transaction.id && response.data.token) {
+            if (response.data && response.data.transaction.id && response.data.token) {
               transactionIdComponent.setValue(response.data.transaction.id);
               that.formSendEvent("getPaymentToken", { detail: response.data });
             } else {
               that.notif.current.notify("Error", "Transaction Token Failed!", "danger");
             }
-          }
           that.showFormLoader(false,0);
         }).catch(e => {
             that.handleError(e);
@@ -1031,16 +1029,25 @@ class BaseFormRenderer extends React.Component {
         }
       
     }
+    async getEntityPage(entityId,appId) {
+        let helper = this.core.make("oxzion/restClient");
+        let fileContent = await helper.request("v1","/app/" + this.state.appId + "/entity/"+this.state.entityId+"/page",{},"get");
+        return fileContent;
+    }
     generateViewButton(){
         let gridToolbarContent = [];
-        let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
-        let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
-        let commentPage = [{type:"Comment",fileId:this.state.fileId}];
-        let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
-        gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
-        gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
-        let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
-        document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
+        this.getEntityPage().then(entityPage => {
+            if(entityPage.status=="success"){
+                let filePage = [{type: "EntityViewer",fileId: this.state.fileId}];
+                let pageContent = {pageContent: filePage,title: "View",icon: "fa fa-eye",fileId:this.state.fileId};
+                let commentPage = [{type:"Comment",fileId:this.state.fileId}];
+                let commentContent = {pageContent: commentPage,title: "Comment",icon: "fa fa-comment"};
+                gridToolbarContent.push(<Button title={"View"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(pageContent)} ><i className={"fa fa-eye"}></i></Button>);
+                gridToolbarContent.push(<Button title={"Comments"} className={"toolBarButton"} primary={true} onClick={(e) => this.updatePageContent(commentContent)} ><i className={"fa fa-comment"}></i></Button>);
+                let ev = new CustomEvent("addcustomActions", { detail: { customActions: gridToolbarContent }, bubbles: true });
+                document.getElementById(this.state.appId+"_breadcrumbParent").dispatchEvent(ev);
+            }
+        });
     }
 
     async importCSS(theme){
@@ -1194,7 +1201,7 @@ class BaseFormRenderer extends React.Component {
                                         that.callDelegate(properties["delegate"], paramData).then(response => {
                                             var responseArray = [];
                                             for (var responseDataItem in response.data) {
-                                                if (response.data.hasOwnProperty(responseDataItem)) {
+                                                if (response.data && response.data.hasOwnProperty(responseDataItem)) {
                                                     responseArray[responseDataItem] = response.data[responseDataItem];
                                                 }
                                             }
@@ -1247,7 +1254,7 @@ class BaseFormRenderer extends React.Component {
                                             var responseArray = [];
                                             if (response.data) {
                                                 for (var responseDataItem in response.data) {
-                                                    if (response.data.hasOwnProperty(responseDataItem)) {
+                                                    if (response.data && response.data.hasOwnProperty(responseDataItem)) {
                                                         responseArray[responseDataItem] = response.data[responseDataItem];
                                                     }
                                                 }
@@ -1430,7 +1437,7 @@ class BaseFormRenderer extends React.Component {
           ).then((response) => {
             if (response.status == "success") {
               var formData = { data: this.formatFormData(response.data) };
-              if (response.data.fileId) {
+              if (response.data && response.data.fileId) {
                 this.setState({
                   fileId: response.data.fileId
                 })

@@ -8,7 +8,6 @@
   right: 98px;
 }
 
-
 .dashboard .flippy-back {
   height: 120vh !important;
   min-height: 70vh;
@@ -42,22 +41,21 @@
   background-color: #265160c4 !important;
 }
 
-
 .dashboard .deactivateDash .react-switch-bg {
   background: rgb(39, 83, 98) !important;
 }
 
 .dashboard .react-switch-handle {
   background: #fff !important;
-
 }
 
 //dashboard editor filter
 .create-filter-form {
-  padding: 10px;
-  float: left;
-  background: #a9c4c4;
-  width: 99%;
+  flex-direction: column;
+  padding: 5px 5px 0 5px;
+  background: white;
+  display: flex;
+  flex: 1;
 }
 
 .create-filter-form .btn {
@@ -72,6 +70,7 @@
 
 .dates-container {
   display: flex;
+  gap: 1rem;
 }
 
 .react-datepicker-wrapper {
@@ -89,12 +88,11 @@
   height: 20px;
 }
 
-
 .dates-container input,
 .create-filter-form input {
   display: block;
-  height: calc(1.5em + .75rem + 2px);
-  padding: .375rem .75rem;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -102,8 +100,8 @@
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: .25rem;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   width: 12vw;
 }
 
@@ -113,27 +111,52 @@
 
 .dates-container input {
   width: 140px;
-
 }
 
 #filtertype {
   max-width: 23vw;
 }
 
+div#filter-form-container {
+  background: white;
+  border-radius: 10px;
+  margin-top: 5px;
+  box-shadow: -3px 3px 18px #cccccc;
+}
+
+div#filter-form-container.show-filter-panel {
+  background: white;
+  border-radius: 5px;
+  margin-top: 5px;
+  box-shadow: -3px 3px 18px #cccccc;
+  overflow-y: scroll;
+  height: 70vh;
+  max-height: 70vh;
+  position: absolute;
+  z-index: 10000;
+  right: 0;
+  top: 0;
+  transition: 0.8s ease-in;
+}
+
+// .show-filter-panel {
+
+// }
+
 .disappear {
   display: none;
 }
 
-#filtereditor-form-container,
-#filter-form-container {
-  background: #a9c4c4;
-  border-radius: 10px;
-  margin-top: 60px;
+.blurOut {
+  display: block;
+  filter: blur(5px);
+  pointer-events: none;
 }
 
 #filtereditor-form-container button.close,
 #filter-form-container button.close {
-  padding-right: 1em;
+  background-color: transparent;
+  border-radius: none;
 }
 
 #filtereditor-form-container label,
@@ -141,10 +164,22 @@
   color: #275362;
 }
 
+#filtereditor-form-container {
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 60px;
+}
+
+.apply-filter-btn-wrapper {
+  display: flex;
+  margin: 10px auto;
+  padding-bottom: 10px;
+}
+
 .apply-filter-btn {
-  position: initial !important;
-  border-radius: 12px;
+  border-radius: 0px;
   margin-left: 0px;
+  flex: 1;
 }
 
 .custom-react-select-container {
@@ -155,9 +190,8 @@
 }
 
 .custom-react-select-container:hover {
-  background-color: #DEEBFF !important;
+  background-color: #deebff !important;
   width: 100%;
-
 }
 
 .custom-react-select-container i {
@@ -185,14 +219,11 @@
   width: 100%;
 }
 
-
-
 .react-select-container {
   z-index: 100;
   width: 300px;
   float: left;
   right: 10px;
-
 }
 
 .dash-manager-buttons .btn {
@@ -211,7 +242,7 @@
   color: #345561;
   background-color: #c5d2d6;
   border-radius: 42px;
-  font-size: 14px;
+  font-size: 13px;
   box-shadow: 0px 0px 5px 0px grey;
 }
 
@@ -220,15 +251,25 @@
   background-color: #c5d2d6;
 }
 
+.dasboard-viewer-wrapper {
+  display: flex;
+  flex-direction: column;
+  .dashboard-drilldown-info-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+}
+
 .dasboard-viewer-content {
   // border: 1px solid#1d6165;
   min-height: 20px;
-  border-radius: 4px;
-  box-shadow: 2px 5px#c6b5b5;
+  border-radius: 0px;
+  box-shadow: none;
   padding: 1em;
-  border: 0.5px solid grey;
+  border: none;
   width: max-content;
-  min-width: 99%;
+  min-width: 100%;
 }
 
 .dashboard-rollup-button {
@@ -236,7 +277,8 @@
   cursor: pointer;
   right: 1%;
   position: absolute;
-} 
+  top: 0.4%;
+}
 
 .dashboard-filter-description {
   position: absolute;
@@ -244,11 +286,18 @@
   top: 0;
   height: 30px;
   width: 100%;
-  font-size: 16px !important;
+  font-size: 13px !important;
 }
 
 .dashboard-preview-tab {
-  background-image: linear-gradient(to right, #275362, #235764, #205b65, #1d5f65, #1d6365);
+  background-image: linear-gradient(
+    to right,
+    #275362,
+    #235764,
+    #205b65,
+    #1d5f65,
+    #1d6365
+  );
   height: 1.3em;
   color: #f2f2f2;
   top: 50%;
@@ -267,7 +316,7 @@
 }
 
 .Window_Analytics .dashboard .GridCustomStyle {
-  height: calc(100% - 91px) !important
+  height: calc(100% - 91px) !important;
 }
 
 .Window_Analytics .dashboard label {
@@ -281,19 +330,19 @@
 .k-grid-header .k-i-sort-asc-sm,
 .k-grid-header .k-i-sort-desc-sm,
 .k-grid-header .k-sort-order {
-  color: #656565 !important
+  color: #656565 !important;
 }
 
 .k-grid-header .k-grid-filter.k-state-active,
 .k-grid-header .k-header-column-menu.k-state-active,
 .k-grid-header .k-hierarchy-cell .k-icon.k-state-active {
   color: #fff;
-  background-color: #656565 !important
+  background-color: #656565 !important;
 }
 
 .k-pager-numbers .k-link.k-state-selected {
   color: #656565 !important;
-  background-color: rgba(78, 73, 73, 0.2) !important
+  background-color: rgba(78, 73, 73, 0.2) !important;
 }
 
 .k-pager-numbers .k-link {
@@ -303,7 +352,7 @@
 .k-pager-numbers .k-link:hover,
 .k-pager-numbers .k-link.k-state-hover {
   color: #656565 !important;
-  background-color: rgba(78, 73, 73, 0.2) !important
+  background-color: rgba(78, 73, 73, 0.2) !important;
 }
 
 .drillDownStyle .k-master-row:hover {
@@ -321,6 +370,14 @@
   margin-left: 10px;
 }
 
+.filter_remove_button_view,
+.filter_remove_button_view.btn.btn-primary {
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+  padding: 2px 7px;
+}
+
 .errorMsg {
   color: red !important;
 }
@@ -335,36 +392,121 @@
 }
 
 .field-width-75 {
-  width:75px !important;
+  width: 75px !important;
 }
 
 .field-width-100 {
-  width:100px !important;
+  width: 100px !important;
 }
 
 .field-width-150 {
-  width:150px !important;
+  width: 150px !important;
 }
 
 .field-width-200 {
-  width:200px !important;
+  width: 200px !important;
 }
+
+.field-width-300 {
+  width: 300px !important;
+}
+
 .disabled {
-  
 }
 
 .select_notif {
-  padding: 10px;
-  background: yellow;
-  color: black;
-  margin-top: 25px;
-  float: left;
+  padding: 4px;
+  color: red;
+  font-size: 12px;
+  margin-top: 0px;
+  // background: rgba(255, 255, 0, 0.453);
+  // float: left;
+  // margin-bottom: 15px;
 }
 
 .toastHide {
   visibility: hidden;
 }
-.full-width{
+.full-width {
   widows: 100%;
   overflow: hidden;
+}
+
+.filterFieldsfilter {
+  //display: inline-flex !important;
+  display: inline-block;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+  // border-left: 2px solid #265160;
+  // border-bottom: 2px solid #27536296;
+  box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
+  margin-bottom: 10px;
+  padding: 0 5px;
+}
+
+.dashboard-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 100%;
+
+  .filter-header-panel {
+    display: flex;
+    flex: 0;
+    align-items: center;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 5px;
+
+    .filter-header-text {
+      font-size: 24px;
+      color: #5d6d80;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.dashboard-filter-name {
+  letter-spacing: 1px;
+  flex-basis: 50%;
+  font-size: 16px;
+  color: #275362;
+  padding: 5px;
+  border-radius: 5px;
+  margin-right: 1rem;
+}
+
+.filterFieldsfilter-section-one {
+  display: flex;
+  align-items: center;
+  flex-basis: 100%;
+  gap: 10px;
+}
+
+.filterFieldsfilter-section-one select.dashboardTextField.form-control {
+  border: none;
+}
+.filterFieldsfilter-section-two #value.dashboardTextField {
+  flex-basis: 100%;
+}
+
+.filterFieldsfilter-section-two {
+  flex: 1 0 100%;
+}
+
+#filtereditor-form-container
+  > .dashboard-filter-wrapper
+  .create-filter-form
+  > .filterFields {
+  margin: 10px 0px;
+  padding: 5px;
+  box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
+}
+
+#filtereditor-form-container
+  > .dashboard-filter-wrapper
+  .create-filter-form
+  .dash-manager-buttons {
+  display: flex;
+  align-items: flex-end;
 }

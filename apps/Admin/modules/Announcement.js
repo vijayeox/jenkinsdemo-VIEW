@@ -58,7 +58,7 @@ class Announcement extends React.Component {
         dataItem +
         "/save",
       {
-        groups: dataObject
+        teams: dataObject
       },
       "post"
     );
@@ -69,7 +69,7 @@ class Announcement extends React.Component {
     let helper = this.core.make("oxzion/restClient");
     let groupUsers = await helper.request(
       "v1",
-      "/announcement/" + dataItem + "/groups",
+      "/announcement/" + dataItem + "/teams",
       {},
       "get"
     );
@@ -84,7 +84,7 @@ class Announcement extends React.Component {
         config: {
           dataItem: dataItem,
           title: "Announcement",
-          mainList: "account/" + this.state.selectedOrg + "/groups/list",
+          mainList: "account/" + this.state.selectedOrg + "/teams/list",
           subList: response.data,
           members: "Teams"
         },

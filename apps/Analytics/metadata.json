@@ -8,10 +8,10 @@
   "icon": "icon.png", 
   "icon_white":"icon_white.png",
   "title": {
-    "en_EN": "OI Builder"
+    "en_EN": "OI Studio"
   },
   "description": {
-    "en_EN": "OI Builder"
+    "en_EN": "OI Studio"
   },
   "dataSource": {
     "title": {
