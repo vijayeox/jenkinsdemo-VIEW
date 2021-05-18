@@ -17,6 +17,7 @@ import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 am4core.useTheme(am4themes_animated);
 am4core.options.commercialLicense = true;
 
+
 class WidgetRenderer {
     // static render(element, widget, props,hasDashboardFilters,dashboardMode) {
     static render(renderpropertiesObject, widgetUUId, filterParams, core) {
@@ -142,13 +143,30 @@ class WidgetRenderer {
             if (configuration.uuid) {
                 let format = configuration.uuid;
                 let uuid = data;
+                let encodedKey = btoa( "wrapper.url" );
+                let imageUrl = '';
+                const imageSrcTag = '<img alt="" title="Profile Picture" width="140px" height="100px" src="';
+
                 displayValue = data[0][format];
 
                 if (core !== undefined) {
                     let src = core.config("wrapper.url") + "user/profile/" + displayValue;
                     imageHtml = '<img alt="" width="140px" height="100px" src="'
                         + src + '">';
+=======
+                if( core !== undefined ){
+                    imageUrl = core.config("wrapper.url") + "user/profile/" + displayValue; 
+                    if( window.localStorage.getItem( encodedKey) == null )
+                    {
+                        let encodedVal = btoa( core.config("wrapper.url") );
+                        window.localStorage.setItem( encodedKey, encodedVal );
+                    }
                 }
+                else{
+                    let encodedVal = window.localStorage.getItem(encodedKey);
+                    imageUrl = atob( encodedVal ) + "user/profile/" + displayValue;
+                }
+                imageHtml = imageSrcTag + imageUrl + '">';
             }
             else {
                 displayValue = data;
