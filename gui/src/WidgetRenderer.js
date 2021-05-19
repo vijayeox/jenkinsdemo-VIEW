@@ -149,11 +149,6 @@ class WidgetRenderer {
 
                 displayValue = data[0][format];
 
-                if (core !== undefined) {
-                    let src = core.config("wrapper.url") + "user/profile/" + displayValue;
-                    imageHtml = '<img alt="" width="140px" height="100px" src="'
-                        + src + '">';
-=======
                 if( core !== undefined ){
                     imageUrl = core.config("wrapper.url") + "user/profile/" + displayValue; 
                     if( window.localStorage.getItem( encodedKey) == null )
