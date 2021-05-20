@@ -5,6 +5,8 @@ import { createBrowserHistory } from "history";
 import { Chip } from "@progress/kendo-react-buttons";
 import Requests from "./Requests";
 import Notification from "./Notification";
+import ReactDOM from 'react-dom';
+import {render} from 'react-dom';
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -263,30 +265,35 @@ getElementInsideElement(baseElement, wantedElementID) {
       if (this.state.pages.length > 1 && index + 1 != this.state.pages.length) {
         clickable = true;
       }
-      if(index != 0){
-        childNode = <div
-        style={{
-          marginRight: "5px",
-          marginLeft: "5px"
-        }}
-      > {'>'} </div>;
-      }
       currentValue.title
         ? breadcrumbsList.push(
             <>
-              {index == "0" ? null : ( <div style={{ marginRight: "5px" }} /> )}
+              {index == "0" ? null : ( <div style={{ marginLeft: "5px" }} /> )}
               {childNode}
+              <i class="fas fa-angle-right" style={{ marginRight: "5px"}}></i>
               <div value={""} disabled={!clickable} className={ clickable ? "activeBreadcrumb" : "disabledBreadcrumb" } type={clickable || index == 0 ? "none" : "info"} selected={false} >
                   <a onClick={() => { clickable ? this.breadcrumbClick(currentValue, index) : null;}}>
-                    <i className={currentValue.icon} style={{ marginRight: "5px"}}></i>
+                    <i className={currentValue.icon}></i>
                     {currentValue.title}
                   </a>
               </div>
             </>
           )
         : null;
+
+      var list = document.getElementsByClassName("osjs-window-breadcrumb");
+      var name= this.props.proc.metadata.name;
+      var appName= 'Window_' + name;
+      for (let i = 0; i < list.length; i++) {
+          const listItems = list[i].parentNode.parentNode.parentNode;
+          var breadcrumbClassName = listItems.className;
+          if (breadcrumbClassName == 'osjs-window'+' '+ appName){ 
+              ReactDOM.unmountComponentAtNode(list[i]); 
+              ReactDOM.render(breadcrumbsList,list[i]);
+            }
+  	   }
     });
-    return breadcrumbsList;
+    return null;
   };
   renderPages() {
     var pageList = [];
