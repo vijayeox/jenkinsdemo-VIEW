@@ -77,7 +77,7 @@ class Slider extends React.Component {
 
   markAsRead() {
     const currentIndex = this.state.currentIndex;
-    if (document.querySelector('div[data-id="annoucementsWindow"]').getAttribute('data-focused') == "true" && this.state.announcements && (!this.state.announcements[currentIndex]['view'] || this.state.announcements[currentIndex]['view'] == "0")) {
+    if (document.querySelector('div[data-id="annoucementsWindow"]').getAttribute('data-focused') == "true" && this.state.announcements.length && (!this.state.announcements[currentIndex]['view'] || this.state.announcements[currentIndex]['view'] == "0")) {
       let count = 0;
       this.state.announcements[currentIndex]['view'] = 1;
       this.state.announcements.map((announcement) => {

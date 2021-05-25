@@ -109,9 +109,10 @@ html {
 }
 
 .osjs-window-title {
-  padding: 0;
-  padding-left: 0;
-  font-size: 14px;
+  font-size: 20px;
+  padding-left: 20px;
+  height: auto !important;
+  color: white;
 }
 
 .osjs-window-icon {
@@ -159,9 +160,7 @@ html {
   background-color: #333333;
 }
 
-.osjs-window-title {
-  color: #fff;
-}
+
 
 .osjs-window-icon > div {
   width: 3em;
@@ -182,7 +181,7 @@ html {
 }
 
 .osjs-gui-menu ul > li {
-  padding: 2px;
+  padding: 20px;
 }
 
 .osjs-panel-item[data-name="windows"] {
@@ -227,10 +226,7 @@ html {
   height: auto;
   align-items: center;
 }
-.osjs-window-title {
-  height: auto !important;
-  color: white;
-}
+
 .osjs-panel-item[data-name="windows"] > div {
 
   font-size: 12px;
@@ -298,6 +294,7 @@ label {
 }
 .appmenu .app-bar .app .appcaption {
   color: #275362;
+
 }
 .profile-dropdown-div:hover {
   color: #275362;

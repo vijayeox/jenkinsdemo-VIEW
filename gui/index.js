@@ -32,10 +32,13 @@ import DashboardManager from "./src/DashboardManager";
 import Dashboard from "./src/Dashboard";
 import DataSource from "./src/DataSource";
 import Query from "./src/Query";
+import PageContent from "./src/components/App/PageContent";
 import DashboardFilter from "./src/DashboardFilter";
 import WidgetGrid from "./src/WidgetGrid";
 import WidgetRenderer from "./src/WidgetRenderer";
 import DocumentList from "./src/DocumentList";
+import * as Antd from "antd";
+import * as AntdIcons from "@ant-design/icons";
 import Visualization from "./src/Visualization";
 import WidgetManager from "./src/WidgetManager";
 
@@ -87,6 +90,7 @@ export {
   Query,
   DashboardFilter,
   React,
+  PageContent,
   ReactDOM,
   DateFormats,
   AvatarImageCropper,
@@ -116,5 +120,7 @@ export {
   Suspense,
   Visualization,
   WidgetManager,
-  DocumentList
+  DocumentList,
+  Antd,
+  AntdIcons
 };

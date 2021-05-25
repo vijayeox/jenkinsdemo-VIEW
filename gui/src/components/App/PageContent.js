@@ -10,8 +10,6 @@ import SearchPage from "./SearchPage";
 import RenderButtons from "./RenderButtons";
 import Notification from "../../Notification";
 import DocumentViewer from "../../DocumentViewer";
-import Dashboard from "../../Dashboard";
-import DashboardManager from '../../DashboardManager';
 import Page from "./Page";
 import TabSegment from "./TabSegment";
 import merge from "deepmerge";
@@ -20,6 +18,7 @@ import * as OxzionGUIComponents from "../../../index";
 import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
+import Dashboard from "../../Dashboard";
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -281,7 +280,7 @@ class PageContent extends React.Component {
 
   postSubmitCallback() {
     let ev = new CustomEvent("handleGridRefresh", {
-      detail: {},
+      detail: {hideLoader: true},
       bubbles: true
     });
     if (document.getElementById("navigation_" + this.appId)) {

@@ -59,9 +59,9 @@
 			profileDetails = profileDetails['key'];
 
 			let profileAccounts = {};
-			// profileDetails.accounts.map((v) => {
-			//   profileAccounts[v.accountId] = v.name;
-			// });
+			profileDetails.accounts.map((v) => {
+			  profileAccounts[v.accountId] = v.name;
+			});
 			const switchaccountPopup = () => {
 				MySwal.fire({
 					title: 'Select an Account',

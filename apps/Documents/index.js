@@ -30,19 +30,16 @@ const register = (core, args, options, metadata) => {
       id: "Window_DocumentsWindow",
       title: metadata.title.en_EN,
       icon: proc.resource(icon_white),
+      position: finalposition ? finalposition : {left: 400, top: 90},
       attributes: {
         classNames: ["Window_DocumentsWindow"],
         dimension: finalDimension ? finalDimension : {
-          width: 900,
-          height: 570
+          width: 400,
+          height: 500
         },
         minDimension: {
-          width: 900,
-          height: 570
-        },
-        position:  finalposition ? finalposition : {
-          left: 150,
-          top: 50
+          width: 400,
+          height: 500
         }
       }
     })
