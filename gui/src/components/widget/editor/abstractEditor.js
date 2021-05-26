@@ -22,6 +22,11 @@ class AbstractEditor extends React.Component {
             hasMaxDepth: false,
             drillDownMaxDepth: -1,
             filteredWidgetList: [],
+            templateList:[],
+            widgetVisualType : this.props.widget.type,
+            isTemplateLoading : true,
+            selectedTemplate: "",
+            templateContent:"",
             errors: {
                 configuration: null,
                 expression: null,
@@ -296,6 +301,56 @@ class AbstractEditor extends React.Component {
             return state;
         }, () => {
             thiz.loadData(thiz.refreshQueryPreview);
+        });
+    }
+
+    getTemplateSelection = () => {
+        window.postDataRequest('analytics/template', {}, 'get')
+        .then((response)=>{
+            if(response.status == "success"){
+                this.setState({isTemplateLoading:false,templateList:response.data})
+            }
+        })
+    }
+
+    getWidgetPreView = (templateName,queries,expression) => {
+        let params = {};
+        let postUrl = '';
+        let method = '';
+        postUrl = 'analytics/widget/preview'
+        method = 'filepost'
+        if(this.state.queries[0].uuid == ""){
+            Swal.fire({
+                type: 'error',
+                title: 'Oops ...',
+                text: 'Failed to load queries. Queries Required...'
+            });
+            return;
+        }
+        else if (!expression || (expression === '')) {
+            params['configuration'] = JSON.stringify({"template":templateName});
+            params['queries'] = JSON.stringify({"queries":[queries[0].uuid]});            
+        }else{
+            params['configuration'] = JSON.stringify({"template":templateName});
+            params['queries'] = JSON.stringify({"queries":[queries[0].uuid]});
+            params['expression'] = JSON.stringify({"expression":[expression]});
+        }
+        window.postDataRequest(postUrl,params,method)
+        .then((response)=>{
+            if(response.status == 'success'){
+                this.data = response.widget.data;
+                this.refreshWidgetPreview();
+            }
+        }).catch((err)=> console.log("err-->",err));
+       
+    }
+
+    templateSelectionChanged = (evt) =>{
+        let value = evt.value;
+        this.getWidgetPreView(value.split('.')[0],this.state.queries,this.state.expression);
+        this.setState({
+            selectedTemplate:evt,
+            configuration:JSON.stringify({"template":value.split('.')[0]})
         });
     }
 

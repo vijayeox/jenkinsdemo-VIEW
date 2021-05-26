@@ -293,7 +293,6 @@ class WidgetEditorApp extends React.Component {
             });
             this.refs.editor.makeReadOnly(this.state.readOnly);
         }
-
     }
 
     updateWidgetState = (value) => {
