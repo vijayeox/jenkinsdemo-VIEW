@@ -177,7 +177,7 @@ class Home extends React.Component {
             <div className="block d1">
               <img src="apps/Admin/008-development-2.svg" />
             </div>
-            <div className="titles">PPM Admin</div>
+            <div className="titles">PM Admin</div>
           </div>
         ) : null}
         {this.userProfile.privileges.MANAGE_APPBUILDER_READ ? (
