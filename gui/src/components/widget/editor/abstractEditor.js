@@ -237,7 +237,7 @@ class AbstractEditor extends React.Component {
             let selectedDrillDownOption = null
             if (target == "dashboard") {
                 selectedDrillDownOption = this.state.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
-            } if (target == "file") {
+            } else if (target == "file") {
                 selectedDrillDownOption = this.state.selectableAppOptions.filter(option => option.value == this.state.drillDownWidget)
             } else {
                 selectedDrillDownOption = this.state.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
@@ -295,7 +295,9 @@ class AbstractEditor extends React.Component {
             case 'widget':
                 this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)
                 break;
-            case 'widget':
+            case 'dashboard':
+                this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
+            default:
                 this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget)
         }
     }

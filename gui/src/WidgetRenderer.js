@@ -123,7 +123,7 @@ class WidgetRenderer {
                     //assuming the value is going to be a formatted numeric value
                     aggregateValue = aggregateValue.replace(/\,/g, "")
                     aggregateValue = aggregateValue.replace("$", "")
-                    if (parsedAggregateValue = parseFloat(aggregateValue)) {
+                    if (aggregateValue = parseFloat(aggregateValue)) {
                         WidgetDrillDownHelper.drillDownClicked(element, { aggregatevalue: parsedAggregateValue })
                     } else {
                         throw ("Unxepected value passed as dilldownvalue")
