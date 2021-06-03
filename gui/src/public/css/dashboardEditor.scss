@@ -254,6 +254,7 @@ div#filter-form-container.show-filter-panel {
 .dasboard-viewer-wrapper {
   display: flex;
   flex-direction: column;
+
   .dashboard-drilldown-info-wrapper {
     display: flex;
     align-items: center;
@@ -427,6 +428,7 @@ div#filter-form-container.show-filter-panel {
 .toastHide {
   visibility: hidden;
 }
+
 .full-width {
   widows: 100%;
   overflow: hidden;
@@ -476,37 +478,79 @@ div#filter-form-container.show-filter-panel {
   margin-right: 1rem;
 }
 
-.filterFieldsfilter-section-one {
-  display: flex;
-  align-items: center;
-  flex-basis: 100%;
-  gap: 10px;
+// View Mode - Filter Fields CSS
+#filter-form-container {
+  .filterFieldsfilter {
+    .filterFieldsfilter-section-one {
+      display: flex;
+      align-items: center;
+      flex-basis: 100%;
+      gap: 10px;
+
+      .dashboardTextField {
+        flex-basis: 100%;
+      }
+
+      select.dashboardTextField.form-control {
+        border: none;
+      }
+
+      #value.dashboardTextField {
+        flex-basis: 100%;
+      }
+    }
+
+    .filterFieldsfilter-section-two {
+      flex: 1 0 100%;
+
+      .dashboard-filter-field {
+        display: flex;
+        justify-content: center;
+      }
+
+      #value.dashboardTextField {
+        flex-basis: 100%;
+      }
+    }
+  }
 }
 
-.filterFieldsfilter-section-one select.dashboardTextField.form-control {
-  border: none;
-}
-.filterFieldsfilter-section-two #value.dashboardTextField {
-  flex-basis: 100%;
-}
+// EDIT Mode - Filter Fields CSS
+#filtereditor-form-container {
+  .create-filter-form {
+    display: flex;
+    justify-content: flex-start;
 
-.filterFieldsfilter-section-two {
-  flex: 1 0 100%;
-}
+    > .filterFields.form-row {
+      margin: 10px 0px;
+      padding: 5px;
+      box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
+      gap: 5px;
+      align-items: center;
 
-#filtereditor-form-container
-  > .dashboard-filter-wrapper
-  .create-filter-form
-  > .filterFields {
-  margin: 10px 0px;
-  padding: 5px;
-  box-shadow: 4px 4px 10px #ebebeb, -4px -4px 10px #eaeaeab5;
-}
+      .filterFieldsfilter-section-two {
+        flex: 1;
+        align-self: flex-end;
 
-#filtereditor-form-container
-  > .dashboard-filter-wrapper
-  .create-filter-form
-  .dash-manager-buttons {
-  display: flex;
-  align-items: flex-end;
+        > .dashboard-filter-field {
+          flex: 1;
+        }
+
+        #value.dashboardTextField {
+          flex-basis: 0;
+        }
+
+        .dates-container {
+          display: inline-block;
+        }
+      }
+
+      .dash-manager-buttons {
+        display: flex;
+        align-items: flex-end;
+        margin-left: auto;
+        align-self: flex-end;
+      }
+    }
+  }
 }

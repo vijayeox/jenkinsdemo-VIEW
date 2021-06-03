@@ -38,6 +38,7 @@ class WidgetEditorBody extends AbstractEditor {
             { "label": "Single", "value": "single" },
             { "label": "Multiple", "value": "multiple" }
         ];
+        console.log(this.state.drillDownWidgetType);
     }
 
     getTargetFieldList() {
@@ -175,8 +176,7 @@ class WidgetEditorBody extends AbstractEditor {
                 try {
                     //Make sure table configuratio is valid JSON
                     JSON.parse(configuration);
-                }
-                catch (jsonParseError) {
+                } catch (jsonParseError) {
                     isValid = false;
                     console.error(jsonParseError);
                     errorMessage = this.ERRORS.TABLE_CONFIGURATION_INVALID_JSON;
@@ -224,7 +224,6 @@ class WidgetEditorBody extends AbstractEditor {
         }
         return isValid;
     }
-
 
     areAllFieldsValid = () => {
         function findInvalidTab(tabs) {
@@ -315,12 +314,13 @@ class WidgetEditorBody extends AbstractEditor {
             case 'profile':
                 cardBody = document.querySelector('div#propertyBox div.card-body');
                 textArea = document.querySelector('textarea#configuration');
-                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+                // textArea.style.height = (cardBody !== null) ? (cardBody.offsetHeight - 80) + 'px' : "500px"; //-80px for border and margin around textarea.
+                // console.log(textArea.style.height)
                 break;
             case 'expression':
                 cardBody = document.querySelector('div#propertyBox div.card-body');
                 textArea = document.querySelector('textarea#expression');
-                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+                // textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
                 break;
         }
         let thiz = this;
@@ -376,6 +376,15 @@ class WidgetEditorBody extends AbstractEditor {
         let widgetUuid = this.props.widget.uuid;
         this.getTargetData(widgetUuid);
         this.props.widget.configuration && this.getTargetFieldList();
+
+        // if(this.state.drillDownWidgetType) {
+        //     this.setState({ drillDownFilter: 'dashboar'});
+        // }
+        // this.setState((state) => {
+        //     state.drillDownWidgetType.value = drillDownWidgetType.value ? drillDownWidgetType.value  : "dashboard";
+        //     return state;
+        // });
+        
     }
 
     async getTargetData(widgetUuid) {
