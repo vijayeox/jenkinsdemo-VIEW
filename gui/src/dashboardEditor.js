@@ -10,7 +10,7 @@ import './public/css/sweetalert.css';
 import './components/widget/editor/widgetEditorApp.scss';
 import './public/css/dashboardEditor.scss'
 import '@progress/kendo-theme-bootstrap/dist/all.css';
-import {ckeditorConfig} from './CkEditorConfig';
+import { ckeditorConfig } from './CkEditorConfig';
 
 class DashboardEditor extends React.Component {
     constructor(props) {
@@ -38,8 +38,8 @@ class DashboardEditor extends React.Component {
         this.dashboardVisibility = React.createRef();
         this.dashboardDescription = React.createRef();
         this.exportModalRef = React.createRef();
-
         let thisInstance = this;
+
         this.editorDialogMessageHandler = function (event) {
             let editorDialog = event.source;
             let eventData = event.data;
@@ -73,7 +73,6 @@ class DashboardEditor extends React.Component {
         if (data['action'] !== 'oxzion-widget-drillDown') {
             return;
         }
-
         let elementId = data['elementId'];
         let widgetId = data['widgetId'];
         let chart = this.renderedCharts[elementId];
@@ -376,7 +375,7 @@ class DashboardEditor extends React.Component {
                 renderProperties["element"] = widgetElement
                 renderProperties["widget"] = response.widget
                 renderProperties["dashboardEditMode"] = true
-                let chart = WidgetRenderer.render(renderProperties);
+                let chart = WidgetRenderer.render(renderProperties, undefined, undefined, thisInstance.core);
                 thisInstance.renderedCharts[elementId] = chart;
             },
             function (response) {
@@ -394,13 +393,9 @@ class DashboardEditor extends React.Component {
             if (this.props.dashboardId === "") {
                 this.editor.setData("");
                 this.setState({ ...this.initialState })
-            }
-            else {
+            } else {
                 this.setState({ dashboardId: this.props.dashboardId }, () => this.getDashboard(this.editor))
-
             }
-            //call the update funciton here
-
         }
     }
 
@@ -409,7 +404,6 @@ class DashboardEditor extends React.Component {
             let loader = this.core.make('oxzion/splash');
             loader.destroy()
         }
-
         window.addEventListener('message', this.editorDialogMessageHandler, false);
         window.addEventListener('message', this.widgetDrillDownMessageHandler, false);
         JavascriptLoader.loadScript(this.getJsLibraryList());
@@ -436,10 +430,8 @@ class DashboardEditor extends React.Component {
     displayFilterDiv() {
         var element = document.getElementById("filtereditor-form-container");
         element.classList.remove("disappear");
-
         var element = document.getElementById("dash-manager-buttons");
         element.classList.add("disappear");
-
         document.getElementById("dashboard-container").classList.add("disappear")
         document.getElementById("dashboard-filter-btn").disabled = true
     }
@@ -470,7 +462,7 @@ class DashboardEditor extends React.Component {
         return (
             <form className="dashboard-editor-form" style={{ marginleft: '10px', width: '98%' }}>
                 <div id="dash-manager-buttons" className="dash-manager-buttons">
-                    <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i class="fas fa-file-export" title="Set Export OI Query"></i></Button>
+                    <Button id="dashboard-export-settings-btn" onClick={() => this.showExportModal(true)}><i className="fas fa-file-export" title="Set Export OI Query"></i></Button>
                     <Button id="dashboard-filter-btn" onClick={() => this.displayFilterDiv()}><i className="fa fa-filter" aria-hidden="true" title="Filter OI"></i></Button>
                     <Button onClick={this.saveDashboard} disabled={!this.state.contentChanged}><i className="fa fa-save" aria-hidden="true" title="Save OI"></i></Button>
                     <Button onClick={() => this.props.flipCard("")}><i className="fa fa-close" aria-hidden="true" title="Go back"></i></Button>
