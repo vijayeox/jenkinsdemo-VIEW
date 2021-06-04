@@ -135,6 +135,37 @@ class WidgetRenderer {
         return null;
     }
 
+    static renderProfile(element, configuration, core, data) {
+        let displayValue = null;
+        let imageHtml = '';
+        if (configuration) {
+            if (configuration.uuid) {
+                let format = configuration.uuid;
+                let uuid = data;
+                let encodedKey = btoa( "wrapper.url" );
+                let imageUrl = '';
+                const imageSrcTag = '<img alt="" title="Profile Picture" width="140px" height="100px" src="';
+                displayValue = data[0][format];
+                if( core !== undefined ){
+                    imageUrl = core.config("wrapper.url") + "user/profile/" + displayValue; 
+                    if( window.localStorage.getItem( encodedKey) == null )
+                    {
+                        let encodedVal = btoa( core.config("wrapper.url") );
+                        window.localStorage.setItem( encodedKey, encodedVal );
+                    }
+                } else{
+                    let encodedVal = window.localStorage.getItem(encodedKey);
+                    imageUrl = atob( encodedVal ) + "user/profile/" + displayValue;
+                }
+                imageHtml = imageSrcTag + imageUrl + '">';
+            } else {
+                displayValue = data;
+            }
+        }
+        element.innerHTML = imageHtml;
+        return null;
+    }
+
 
     static renderProfile(element, configuration, core, data) {
         let displayValue = null;
@@ -179,8 +210,7 @@ class WidgetRenderer {
                 let format = configuration.numberFormat;
                 let num = numeral(data);
                 displayValue = num.format(format);
-            }
-            else if (configuration.dateFormat) {
+            } else if (configuration.dateFormat) {
                 let format = configuration.dateFormat;
                 displayValue = dayjs(data).format(format);
             } else {
