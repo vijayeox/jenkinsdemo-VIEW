@@ -55,21 +55,22 @@ export default class DocumentSignerComponent extends Base {
     var icon;
     var disableView;
     var component = this.component;
+    var d=new Date();
     if (type == "pdf") {
-      url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+ "?docPath="+file.file;
+      url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+ "?docPath="+file.file+"&x="+d.getTime();
         if(file && file.file_url){
-          url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+ "?docPath="+ file.file_url;
-          downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file_url;
+          url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+ "?docPath="+ file.file_url+"&x="+d.getTime();
+          downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file_url+"&x="+d.getTime();
         } else {
-          downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file;
+          downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file+"&x="+d.getTime();
         }
       icon = "<i class='fa fa-file-pdf-o'></i>";
       disableView = false;
     } else if (type == "png" || type == "jpeg" || type == "jpg") {
-      url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file;
+      url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file+"&x="+d.getTime();
       if(file && file.file_url){
         url = component.wrapperUrl + component.appId + "/" + file.file_url;
-        downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file_url;
+        downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file_url+"&x="+d.getTime();
       } else {
         downloadUrl = url;
       }
@@ -80,8 +81,8 @@ export default class DocumentSignerComponent extends Base {
       disableView = true;
     }
 if(typeof file){
-  downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file;
-  url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file;
+  downloadUrl = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file+"&x="+d.getTime();
+  url = component.wrapperUrl + "app/" + component.appId + "/document/" + name+"?docPath="+file.file+"&x="+d.getTime();
 }
 return {url:url,downloadUrl:downloadUrl,icon:icon,disableView:disableView};
   }
