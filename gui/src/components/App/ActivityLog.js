@@ -8,6 +8,8 @@ class ActivityLog extends React.Component {
     super(props);
     this.config = this.props.config;
     this.core = this.props.core;
+    this.profileAdapter = this.core.make("oxzion/profile");
+    this.profile = this.profileAdapter.get();
     this.appId = this.props.appId;
     this.fileId = this.props.fileId;
     this.filterable = false;
@@ -15,8 +17,10 @@ class ActivityLog extends React.Component {
     this.resizable = false;
     this.sortable = true;
     this.api = "app/" + this.appId + "/file/"+this.fileId+"/audit";
-    var columnConfig = [{field:"version",title:"Version"},{field:"file_date_modified",title:"Performed On"},{field:"modifiedUser",title:"Modified By"},{field:"action",title:"Action Performed"}]
-    this.pageable = { buttonCount: 3, pageSizes: [10, 20, 50] };
+
+    var columnConfig = [{field:"version",title:"Version"},{field:"file_date_modified",title:"Performed On", filter: "date", filterFormat: "YYYY-MM-DD", cell: "<td>{formatDate(item.file_date_modified,'YYYY-MM-DD, h:mm:ss a')}</td>"},{field:"modifiedUser",title:"Modified By"},{field:"action",title:"Action Performed"}]
+
+    this.pageable = { buttonCount: 3, pageSizes: [10, 20, 50]};
     this.state = {
       columnConfig: columnConfig,
       filter: []
@@ -42,8 +46,8 @@ class ActivityLog extends React.Component {
 
   render() {
     return (
-        <KendoReactWindow.Window onClose={this.props.cancel}>
-            <div className="activityLogWindow">
+        
+        <div className="activityLogWindow">
         <div id="audit-controls">
         <div style={{textAlign: "end"}}>
         <button type="button" className="btn btn-danger" onClick={this.props.cancel} >
@@ -64,8 +68,6 @@ class ActivityLog extends React.Component {
         Please use Google Chrome or Firefox.
         </div> */}
         <div className="logResults">
-          <div className="row">
-            <div className="col-md-12">
               <OX_Grid
                 osjsCore={this.core}
                 filterable={this.filterable}
@@ -79,10 +81,7 @@ class ActivityLog extends React.Component {
                 columnConfig={this.state.columnConfig}
               />
             </div>
-      </div>
-      </div>
         </div>
-      </KendoReactWindow.Window>
       
     );
   }

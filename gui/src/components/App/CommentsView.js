@@ -8,6 +8,9 @@ import moment from "moment";
 import emojisData from "./Emoji.json";
 import FileAttachment from "./FileAttachment";
 import CommentsAttachments from "./CommentsAttachments";
+import { Smile } from 'react-feather'
+import { Picker } from 'emoji-mart'
+import 'emoji-mart/css/emoji-mart.css'
 
 class CommentsView extends React.Component {
   constructor(props) {
@@ -27,6 +30,7 @@ class CommentsView extends React.Component {
     var fileId = this.props.url ? this.props.url : null;
     fileId = this.props.fileId ? this.props.fileId : fileId;
     this.state = {
+      showEmojiPicker: null,
       fileData: this.props.fileData,
       entityConfig: null,
       dataReady: this.props.url ? false : true,
@@ -53,11 +57,9 @@ class CommentsView extends React.Component {
         var file = fileData.data.data ? fileData.data.data : fileData.data;
         this.setState({ entityId: fileData.data.entity_id, fileData: file });
         this.getEntityPage().then(entityPage => {
-          if (entityPage.status == "success") {
-            this.setState({ entityConfig: entityPage.data });
-            this.generateViewButton(entityPage.data.enable_auditlog);
-            this.fetchCommentData();
-          }
+          this.setState({ entityConfig: entityPage.data });
+          this.generateViewButton(entityPage.data.enable_auditlog);
+          this.fetchCommentData();
         });
       }
     });
@@ -321,6 +323,29 @@ class CommentsView extends React.Component {
     );
   }
 
+  toggleEmojiPicker = ()=> {
+      this.setState({
+        showEmojiPicker:  !this.state.showEmojiPicker,
+
+        
+      })
+      {console.log(this.state.showEmojiPicker)}
+
+  }
+
+  addEmoji=(emoji) =>{
+      const { newMessage } = this.state;
+      const text = `${newMessage}${emoji.native}`;
+     this.state.value= this.state.value + emoji.native
+
+      this.setState({
+        newMessage: text,
+        
+        showEmojiPicker: false,
+      });
+
+    }
+
   async saveComments(data) {
     let helper = this.core.make("oxzion/restClient");
     let fileData = await helper.request(
@@ -333,30 +358,28 @@ class CommentsView extends React.Component {
   }
   formatFormData(data) {
     var parsedData = [];
-    if (data) {
-      for (var i = 0; i < data.length; i++) {
-        try {
-          parsedData[i] = data[i];
-          parsedData[i]["text"] =
-            typeof data[i]["text"] === "string"
-              ? JSON.parse(data[i]["text"])
-              : data[i]["text"] == undefined || data[i]["text"] == null
-              ? ""
-              : data[i]["text"];
-          if (
-            parsedData[i]["text"] == "" &&
-            data[i]["text"] &&
-            parsedData[key]["text"] != data[i]["text"]
-          ) {
-            parsedData[i]["text"] = data[i]["text"];
-          }
-          if (parsedData[key] == "[]" && data[i]["text"]) {
-            parsedData[i]["text"] = [];
-          }
-        } catch (error) {
-          if (data[i]["text"] != undefined) {
-            parsedData[i]["text"] = data[i]["text"];
-          }
+    for (var i = 0; i < data.length; i++) {
+      try {
+        parsedData[i] = data[i];
+        parsedData[i]["text"] =
+          typeof data[i]["text"] === "string"
+            ? JSON.parse(data[i]["text"])
+            : data[i]["text"] == undefined || data[i]["text"] == null
+            ? ""
+            : data[i]["text"];
+        if (
+          parsedData[i]["text"] == "" &&
+          data[i]["text"] &&
+          parsedData[key]["text"] != data[i]["text"]
+        ) {
+          parsedData[i]["text"] = data[i]["text"];
+        }
+        if (parsedData[key] == "[]" && data[i]["text"]) {
+          parsedData[i]["text"] = [];
+        }
+      } catch (error) {
+        if (data[i]["text"] != undefined) {
+          parsedData[i]["text"] = data[i]["text"];
         }
       }
     }
@@ -444,13 +467,19 @@ class CommentsView extends React.Component {
     var that = this;
     if (this.state.dataReady) {
       return (
-        <div className='commentsPage'>
+        <div className='commentsPage'>          
           <FileAttachment
             show={this.state.showModal}
             onHide={() => this.setModalShow(false, null)}
             imageDetails={this.state.imageDetails}
           />
           <div id='chat-container'>
+          <ul id='emoji-list'>
+                {this.state.showEmojiPicker ? 
+                (
+                  <Picker  onSelect={this.addEmoji} />
+                ) : null}
+              </ul>       
             <div id='chat-message-list' key={this.state.fileId}>
               {this.state.commentsList &&
                 this.state.commentsList.length > 0 &&
@@ -560,7 +589,8 @@ class CommentsView extends React.Component {
             </div>
           </div>
           <div className='msger-inputarea'>
-            <div className='flexCol commentBox'>
+           
+        <div className='flexCol commentBox'>
               <MentionsInput
                 value={this.state.value}
                 onChange={this.handleChange}
@@ -606,11 +636,14 @@ class CommentsView extends React.Component {
                   className='mentions__mention'
                   style={{ backgroundColor: "#cee4e5" }}
                 />
-              </MentionsInput>
+              </MentionsInput>             
               <div style={{ padding: "5px" }}>
                 {this.state.value.length + "/1000"}
               </div>
             </div>
+            <button type="button" onClick={this.toggleEmojiPicker} >
+              <Smile />
+            </button>
             <Button
               primary={true}
               className='commentsSaveButton'

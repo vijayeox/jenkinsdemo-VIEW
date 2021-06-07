@@ -119,6 +119,13 @@ html {
   padding: 0;
 }
 
+.osjs-window-breadcrumb{
+  display: flex;
+  line-height: 0;
+  flex-grow: 25;
+  height: auto !important;
+  align-items:baseline;
+ }
 .osjs-gui-menu {
   ul {
     background-color: #333333;

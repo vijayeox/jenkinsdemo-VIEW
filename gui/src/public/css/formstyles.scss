@@ -107,6 +107,10 @@
       color: #007bff;
       cursor: pointer;
     }
+
+    a[ref*="toggleCameraMode"] {
+      display: none;
+    }
   }
   // * {
   //   box-sizing: border-box;
