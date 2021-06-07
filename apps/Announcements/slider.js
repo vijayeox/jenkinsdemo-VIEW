@@ -266,7 +266,8 @@ class Slider extends React.Component {
           >
             <div className="popup-content">
               <h6>{this.state.focusData.name}</h6>
-              <p className="mainText">{this.state.focusData.description}</p>
+              <p className="mainText"  dangerouslySetInnerHTML={{__html:this.state.focusData.description }} ></p>
+
               <div className="buttonWrap">
                 {this.state.focusData.link ? (
                   <button
