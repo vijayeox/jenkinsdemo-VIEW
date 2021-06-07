@@ -4,13 +4,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
 import Select from 'react-select'
-import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button } from 'react-bootstrap';
+import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button,Dropdown} from 'react-bootstrap';
 import { array } from 'prop-types';
 var SINGLELEVEL = "singleLevel"
 var MULTILEVEL = "multiLevel"
 class WidgetEditorBody extends AbstractEditor {
     constructor(props) {
         super(props);
+        console.log("widget body===>",this.props)
         this.type = (props.type === 'inline' || props.type === 'html') ? 'widget' : props.type;
         this.state.selectedTab = this.type;
         this.state.widgetType = this.type;
@@ -75,6 +76,7 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     refreshWidgetPreview = () => {
+        console.log("widget type====>",this.state.widgetType,this.data)
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         let config = this.state.configuration;
@@ -91,6 +93,7 @@ class WidgetEditorBody extends AbstractEditor {
         }
         if (!errorMessage) {
             let previewElement = null;
+            console.log("Preview element---->",'div#' + this.state.widgetType + 'Preview')
             previewElement = document.querySelector('div#' + this.state.widgetType + 'Preview');
             if (this.state.widgetType === 'table' && previewElement) {
                 //Remove and cleanup ReactJS rendered DOM nodes.
@@ -322,6 +325,9 @@ class WidgetEditorBody extends AbstractEditor {
                 textArea = document.querySelector('textarea#expression');
                 // textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
                 break;
+            case 'template':
+                this.getTemplateSelection();
+                break;
         }
         let thiz = this;
         this.clearAllErrors().then(function () {
@@ -385,6 +391,13 @@ class WidgetEditorBody extends AbstractEditor {
         //     return state;
         // });
         
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.widget.type != this.props.widget.type){
+            console.log("widget type changed",this.props.widget.type);
+            this.setState({widgetVisualType:this.props.widget.type})
+        }
     }
 
     async getTargetData(widgetUuid) {
@@ -592,8 +605,15 @@ class WidgetEditorBody extends AbstractEditor {
         }
     }
 
+    getTemplateListOptions = (templateList) =>{
+        let templateOptions = []
+        templateList.map(temp => templateOptions.push({value:temp,label:temp.split('.')[0]}));
+        return templateOptions;
+    }
+
     render() {
         let thiz = this;
+        const {widgetVisualType,isTemplateLoading,templateList,selectedTemplate} = this.state;
         function getQuerySelectOptoins(keyPrefix) {
             let i = 0;
             let options = [<option value="" key={keyPrefix + '00000000-0000-0000-0000-000000000000'}>-Select query-</option>];
@@ -605,6 +625,7 @@ class WidgetEditorBody extends AbstractEditor {
         };
 
         function getQuerySelections() {
+            console.log("calling.. query..")
             let querySelections = [];
             let count = thiz.state.queries.length;
             if (0 === count) {
@@ -1081,6 +1102,24 @@ class WidgetEditorBody extends AbstractEditor {
                                             </div>
                                         </Tab>
                                     }
+                                    {widgetVisualType == "html" &&
+                                        <Tab eventKey="template" title="Template">
+                                            {isTemplateLoading ?
+                                                <p>loading.....</p>
+                                            :
+                                                <div className="form-group row" style={{marginTop:'30px'}}>
+                                                    <div className="col-7">
+                                                        <Select
+                                                            placeholder="Select Template"
+                                                            onChange={(e) => {this.templateSelectionChanged(e)}}
+                                                            value={selectedTemplate ? selectedTemplate : ""}
+                                                            options={this.getTemplateListOptions(templateList)}
+                                                        />
+                                                    </div>
+                                                </div>    
+                                            }
+                                        </Tab>
+                                    }
                                 </Tabs>
                             </div>
                         </div>
@@ -1102,7 +1141,7 @@ class WidgetEditorBody extends AbstractEditor {
                                     <b>Table preview</b>
                                 </div>
                             }
-                            {(this.state.selectedTab === 'widget') &&
+                            {(this.state.selectedTab === 'widget' || this.state.selectedTab === 'template') &&
                                 <div id="widgetPreview">
                                     <b>Widget preview</b>
                                 </div>

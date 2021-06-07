@@ -19,6 +19,7 @@ import ParameterHandler from "./ParameterHandler";
 import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
 import Dashboard from "../../Dashboard";
+import DashboardManager from "../../DashboardManager";
 
 class PageContent extends React.Component {
   constructor(props) {

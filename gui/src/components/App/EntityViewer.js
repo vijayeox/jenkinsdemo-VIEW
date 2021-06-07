@@ -137,13 +137,13 @@ class EntityViewer extends React.Component {
           cancel={this.closePDF}
           idSelector={"tabpanel-"+this.filePanelUuid}
           osjsCore={this.core}
-          />: null}{this.state.showAuditLog ?
+          />: null}{this.state.content}{this.state.showAuditLog ?
             <ActivityLog
             cancel={this.closeAuditLog}
             appId={this.appId}
             fileId={this.fileId}
             core={this.core}
-            />: null}{this.state.content}</div>);
+            />: null}</div>);
       } else {
         return <div></div>;
       }

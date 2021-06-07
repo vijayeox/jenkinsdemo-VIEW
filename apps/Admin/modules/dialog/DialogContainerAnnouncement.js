@@ -1,4 +1,5 @@
 import {React,Notification,KendoReactWindow,KendoReactInput,Moment} from "oxziongui";
+import { Editor, EditorTools, EditorUtils } from '@progress/kendo-react-editor';
 import TextareaAutosize from "react-textarea-autosize";
 import scrollIntoView from "scroll-into-view-if-needed";
 import { SaveCancel, DateComponent, FileUploader } from "../components/index";
@@ -11,11 +12,11 @@ export default class DialogContainerAnnouncement extends React.Component {
       ancInEdit: this.props.dataItem || null,
       disableSave: false
     };
+    this.editor = null;
     this.fUpload = {};
     this.notif = React.createRef();
     this.loader = this.core.make("oxzion/splash");
   }
-
   valueChange = (field, event) => {
     let ancInEdit = { ...this.state.ancInEdit };
     ancInEdit[field] = event.target.value;
@@ -39,6 +40,8 @@ export default class DialogContainerAnnouncement extends React.Component {
   }
 
   async pushData(fileCode) {
+    this.state.ancInEdit['description'] = EditorUtils.getHtml(this.editor.view.state);
+
     let helper = this.core.make("oxzion/restClient");
     let ancAddData = await helper.request(
       "v1",
@@ -62,6 +65,8 @@ export default class DialogContainerAnnouncement extends React.Component {
   }
 
   async editAnnouncements(fileCode) {
+    this.state.ancInEdit['description'] = EditorUtils.getHtml(this.editor.view.state);
+
     let helper = this.core.make("oxzion/restClient");
     let orgEditData = await helper.request(
       "v1",
@@ -138,6 +143,11 @@ export default class DialogContainerAnnouncement extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    
+    let ancInEdit = { ...this.state.ancInEdit };
+    ancInEdit['description'] = EditorUtils.getHtml(this.editor.view.state);
+    this.setState({ ancInEdit: ancInEdit });
+
     if (this.props.formAction == "put") {
       this.setState({
         disableSave: true
@@ -221,19 +231,27 @@ export default class DialogContainerAnnouncement extends React.Component {
             </div>
             <div className="form-group text-area-custom">
               <label>Description</label>
-              <TextareaAutosize
-                type="text"
-                className="form-control"
-                name="description"
-                maxLength="2000"
-                value={this.state.ancInEdit.description || ""}
-                onChange={this.onDialogInputChange}
-                placeholder="Enter Announcement Description"
-                style={{ marginTop: "5px", minHeight: "100px" }}
-                readOnly={this.props.diableField ? true : false}
+              <Editor
+
+            tools={[
+                     EditorTools.Bold, EditorTools.Italic, EditorTools.Underline, EditorTools.Strikethrough,EditorTools.Subscript, EditorTools.Superscript,EditorTools.AlignLeft, EditorTools.AlignCenter, EditorTools.AlignRight, EditorTools.AlignJustify,EditorTools.Indent, EditorTools.Outdent,EditorTools.OrderedList ,
+                     EditorTools.UnorderedList,EditorTools.Undo, EditorTools.Redo,EditorTools.Link,EditorTools.Unlink,EditorTools.AddRowBefore, EditorTools.AddRowAfter, EditorTools.AddColumnBefore,EditorTools.AddColumnAfter,EditorTools.DeleteRow, EditorTools.DeleteColumn, EditorTools.DeleteTable,EditorTools.MergeCells, EditorTools.SplitCell
+
+                ]}
+                ref={editor => this.editor = editor}
+                 type="text"
+                 className="form-control"
+                 name="description"
+                 maxLength="2000"
+                 value={this.state.ancInEdit.description}
+                 onChange={this.onDialogInputChange}
+                 placeholder="Enter Announcement Description"
+                 style={{ marginTop: "20px", minHeight: "200px", maxHeight: "250px" ,height:"250px" }}
+                 readOnly={this.props.diableField ? true : false}
               />
             </div>
             <div className="form-group">
+     
               <label>External Link</label>
               <KendoReactInput.Input
                 type="url"

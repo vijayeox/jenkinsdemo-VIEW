@@ -90,6 +90,7 @@ const {FileFilled,FolderFilled} = AntdIcons;
       const folderData = this.getData();
       const hasFolderContents = !!folderData && folderData.length > 0;
       if (selectedFolderInfo && selectedFolderInfo.isLeaf) {
+        const url = this.core.config("wrapper.url") + selectedFolderInfo.file;
         return (
           <div className="document-details">
             <Row type="flex" style={{flexDirection: "column", height: "100%"}}>
@@ -101,7 +102,7 @@ const {FileFilled,FolderFilled} = AntdIcons;
                 </a> */}
               </Col>
               <Col style={{flex: "1"}}>
-                <embed src="https://www.irs.gov/pub/irs-pdf/fw4.pdf" style={{
+                <embed src={url} style={{
                   height: "100%",
                   width: "100%"
                 }} />
