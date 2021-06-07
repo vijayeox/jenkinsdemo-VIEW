@@ -39,6 +39,8 @@ import WidgetRenderer from "./src/WidgetRenderer";
 import DocumentList from "./src/DocumentList";
 import * as Antd from "antd";
 import * as AntdIcons from "@ant-design/icons";
+import Visualization from "./src/Visualization";
+import WidgetManager from "./src/WidgetManager";
 
 const LazyLoad = ({ component: Component,...rest}) => (
   <>
@@ -63,8 +65,8 @@ const CommentsView = (props) => <LazyLoad component={lazy(() => import("./src/co
 const DocumentViewer = (props) => <LazyLoad component={lazy(() => import("./src/DocumentViewer"))} {...props} />;
 const DateFormats = (props) => <LazyLoad component={lazy(() => import('./src/public/js/DateFormats.js'))} {...props} />;
 const DropDown = (props) => <LazyLoad component={lazy(() => import('./src/components/Dropdown/DropDownList'))} {...props} />;
-const Visualization = (props) => <LazyLoad component={lazy(() => import("./src/Visualization"))} {...props} />;
-const WidgetManager = (props) => <LazyLoad component={lazy(() => import("./src/WidgetManager"))} {...props} />;
+//const Visualization = (props) => <LazyLoad component={lazy(() => import("./src/Visualization"))} {...props} />;
+//const WidgetManager = (props) => <LazyLoad component={lazy(() => import("./src/WidgetManager"))} {...props} />;
 
 // const OX_Grid = lazy(() => import("./src/OX_Grid"));
 // const GridTemplate = lazy(() => import("./src/GridTemplate"));
