@@ -39,7 +39,6 @@ class WidgetEditorBody extends AbstractEditor {
             { "label": "Single", "value": "single" },
             { "label": "Multiple", "value": "multiple" }
         ];
-        console.log(this.state.drillDownWidgetType);
     }
 
     getTargetFieldList() {
