@@ -40,7 +40,7 @@ export default class DesktopServiceProvider extends ServiceProvider {
 
   constructor(core, options = {}) {
     super(core, options || {});
-
+    this.config = core.configuration;
     this.desktop = null;
   }
 
@@ -70,7 +70,8 @@ export default class DesktopServiceProvider extends ServiceProvider {
 
     this.core.on('osjs/core:started', () => {
       this.desktop.applySettings();
-      this.desktop.cookiesCheck();
+      this.desktop.cookiesCheck(this.config.termsAndConditions,this.config.useDefaultTermsAndConditions);
+        
     });
   }
 

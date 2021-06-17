@@ -778,34 +778,68 @@ export default class Desktop extends EventEmitter {
     return {width, height, top, bottom, left, right};
   }
 
-  async cookiesCheck(){
+  async showTermsAndConditionsPopup(termsAndConditions,warning = false,useDefault = true)
+  {
+    const splash = this.core.make("oxzion/splash"); 
+    splash.destroy();
+
+    useDefault = termsAndConditions.length == 0?true:useDefault;
+    var termsAndConditionsCount = useDefault == false?termsAndConditions.length:termsAndConditions.length+1;
+    
+    var termsAndConditionsHtml = useDefault ==true? `<h4> <input type="checkbox" id="checkbox1" />
+    I have read the EOX Vantage <a href="./privacy-policy" target="_blank">Privacy and Policy</a>. 
+    I agree with the terms and conditions.</h4>`:"";
+  
+    termsAndConditions.map((condition,index) =>{
+      var checkboxIndex = useDefault?(index+2):(index+1);
+    termsAndConditionsHtml  = termsAndConditionsHtml + '<h4> <input type="checkbox" id="'+"checkbox"+(checkboxIndex)+ '" />' + condition + '</h4>';
+    });
+
+    termsAndConditionsHtml = warning?termsAndConditionsHtml+'<br> <h3> You Must Accept T&C ! </h3>':termsAndConditionsHtml;
+    
+    const { value: result } = await Swal.fire(
+      {
+        title: 'Privacy and Policy',
+        allowOutsideClick: false,
+        html: termsAndConditionsHtml,
+        confirmButtonText:'Continue <i class="fa fa-arrow-right"></i>',
+        preConfirm: () =>{
+          var result = [];
+          for(let i=0;i<termsAndConditionsCount;i++)
+          {
+            result.push(document.querySelector('#checkbox'+ (i+1)).checked)
+          }
+          return result;
+        }
+      }
+    )
+
+    if(!result.includes(false))
+    {
+      splash.show();
+      let helper = this.core.make("oxzion/restClient");
+      let updateterm = await helper.request(
+        "v1",
+        "/user/me/updateLoggedIn",{},
+        "post"
+        );
+      updateterm.status == "success" ? Swal.fire('Thank you for accepting our terms and conditions') : Swal.fire({title : updateterm.message, allowOutsideClick: false});
+      splash.destroy();
+    }
+    else {
+      this.showTermsAndConditionsPopup(termsAndConditions,true,useDefault);
+    }
+  
+  }
+
+  async cookiesCheck(termsAndConditions = null,useDefault = null){
     let helper = this.core.make('oxzion/restClient');
     let condition = await helper.request('v1','/user/me/hasLoggedIn', {}, 'get' );
     if(condition['data'] && condition['data']['has_logged_in'] !== "1" && condition['data']['verification_pending'] == null){
-      const splash = this.core.make("oxzion/splash");
-      splash.destroy();
-      const { value: accept } = await Swal.fire({
-        title: 'Privacy and Policy',
-        allowOutsideClick: false,
-        input: 'checkbox',
-        inputPlaceholder: 'I have read the EOX Vatage <a href="./privacy-policy" target="_blank">Privacy and Policy</a>. I agree with the terms and conditions.',
-        confirmButtonText:
-        'Continue <i class="fa fa-arrow-right"></i>',
-        inputValidator: (result) => {
-          return !result && 'You need to agree with T&C'
-        }
-      });
-      splash.show();
-      if (accept) {
-        let helper = this.core.make("oxzion/restClient");
-        let updateterm = await helper.request(
-          "v1",
-          "/user/me/updateLoggedIn",{},
-          "post"
-          );
-        updateterm.status == "success" ? Swal.fire('Thank you for accepting our terms and conditions') : Swal.fire({title : updateterm.message, allowOutsideClick: false});
-        splash.destroy();
-      }
+    termsAndConditions = termsAndConditions==null?[]:termsAndConditions;
+    useDefault = useDefault ==null?true:useDefault;
+    this.showTermsAndConditionsPopup(termsAndConditions,false,useDefault);
+
     } else {
       if(condition['data']['verification_pending']){
         try{
