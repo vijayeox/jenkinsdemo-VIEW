@@ -792,7 +792,7 @@ export default class Desktop extends EventEmitter {
   
     termsAndConditions.map((condition,index) =>{
       var checkboxIndex = useDefault?(index+2):(index+1);
-    termsAndConditionsHtml  = termsAndConditionsHtml + '<h4> <input type="checkbox" id="'+"checkbox"+(checkboxIndex)+ '" />' + condition + '</h4>';
+    termsAndConditionsHtml  = termsAndConditionsHtml + '<h4> <input type="checkbox" id="'+"checkbox"+(checkboxIndex)+ '" /> ' + condition + '</h4>';
     });
 
     termsAndConditionsHtml = warning?termsAndConditionsHtml+'<br> <h3> You Must Accept T&C ! </h3>':termsAndConditionsHtml;
