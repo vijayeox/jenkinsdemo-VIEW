@@ -17,7 +17,7 @@
     "make:application": "osjs-cli make:application",
     "make:iframe-application": "osjs-cli make:iframe-application",
     "make:provider": "osjs-cli make:provider",
-    "build": "webpack",
+    "build": "node --max-old-space-size=4096 node_modules/webpack/bin/webpack.js",
     "watch": "webpack --watch"
   },
   "keywords": [
@@ -88,6 +88,7 @@
     "fs-extra": "7.0.0",
     "globby": "11.0.1",
     "http-post": "^0.1.1",
+    "javascript-obfuscator": "^2.15.5",
     "mime": "^2.4.4",
     "minimist": "^1.2.5",
     "morgan": "^1.10.0",
@@ -104,7 +105,8 @@
     "sweetalert2-react-content": "^1.1.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^1.1.2",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "webpack-obfuscator": "^2.6.0"
   },
   "repository": {
     "type": "git",

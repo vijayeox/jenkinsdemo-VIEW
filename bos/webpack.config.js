@@ -2,6 +2,7 @@ const path = require('path');
 const mode = process.env.NODE_ENV || 'development';
 const minimize = mode === 'production';
 const webpack = require('webpack');
+const WebpackObfuscator = require('webpack-obfuscator');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -14,20 +15,26 @@ const npm = require('./package.json');
 const plugins = [];
 
 if (mode === 'production') {
-  plugins.push(new OptimizeCSSAssetsPlugin({
-    cssProcessorOptions: {
-      discardComments: true,
-      map: {
-        inline: false
-      }
-    },
-  }));
+  plugins.push(
+    new OptimizeCSSAssetsPlugin({
+      cssProcessorOptions: {
+        discardComments: true,
+        map: {
+          inline: false
+        }
+      },
+    }),
+
+    new WebpackObfuscator ({
+      rotateStringArray: true
+    })
+  );
 }
 
 module.exports = {
 
   mode: (mode !== 'development' ? 'production' : mode),
-  devtool: 'source-map',
+  devtool: mode=='production'?false:'source-map',
   resolve: {
     alias: {
       OxzionGUI: path.resolve(__dirname, "../gui/src")
@@ -54,16 +61,17 @@ module.exports = {
     maxAssetSize: 600 * 1024
   },
   optimization: {
-    minimizer: [
-      new UglifyJSPlugin({
-        sourceMap: true,
-        uglifyOptions: {
-          compress: {
-            inline: false
-          }
-        }
-      })
-    ],
+    // minimize: true,
+    // minimizer: [
+    //   new UglifyJSPlugin({
+    //     sourceMap: true,
+    //     uglifyOptions: {
+    //       compress: {
+    //         inline: false
+    //       }
+    //     }
+    //   })
+    // ],
     runtimeChunk: false,
     splitChunks: {
       cacheGroups: {
