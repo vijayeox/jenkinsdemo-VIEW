@@ -228,15 +228,17 @@ class DashboardManager extends React.Component {
     this.setState({ showFilter: true }, state => {
       var element = document.getElementById("filter-form-container");
       element.classList.remove("disappear");
+      element.classList.add("show-filter-panel")
       var element = document.getElementById("dashboard-preview-container");
-      element.classList.add("disappear");
+      // element.classList.add("disappear");
+      element.classList.add("blurOut");
     })
   }
 
   hideFilter() {
     this.setState({ showFilter: false })
     var element = document.getElementById("dashboard-preview-container");
-    element.classList.remove("disappear");
+    element.classList.remove("blurOut");
   }
 
   applyDashboardFilter(filter) {
@@ -425,7 +427,7 @@ class DashboardManager extends React.Component {
       let parsedConfiguration = JSON.parse(this.state.exportConfiguration)
       formData["configuration"] = JSON.stringify(parsedConfiguration["configuration"])
       formData["datasource_id"] = parsedConfiguration["datasource_id"]
-      formData["filter"] = JSON.stringify(this.state.drilldownDashboardFilter)
+      formData["filter"] = JSON.stringify(this.state.DashboardFilter)
     }
     let response = await this.restClient.request('v1', 'analytics/query/preview', formData, 'filepost');
     this.notif.current.notify(
@@ -459,7 +461,7 @@ class DashboardManager extends React.Component {
           style={{ width: '100%', height: '100vh' }} /// these are optional style, it is not necessary
         >
           <FrontSide /*style={{ marginTop: '-50px' }}*/>
-            <div id="filter-form-container" className="disappear">
+            <div id="filter-form-container" style={{width : "30vw"}} className="disappear">
               {containsFilter &&
                 <DashboardFilter
                   ref={this.filterRef}

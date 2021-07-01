@@ -9,11 +9,11 @@ import WidgetDrillDownHelper from './WidgetDrillDownHelper';
 
 const loadingPanel = (
     <div className="k-loading-mask">
-      <span className="k-loading-text">Loading</span>
-      <div className="k-loading-image"></div>
-      <div className="k-loading-color"></div>
+        <span className="k-loading-text">Loading</span>
+        <div className="k-loading-image"></div>
+        <div className="k-loading-color"></div>
     </div>
-  );
+);
 
 export default class WidgetGrid extends React.Component {
     constructor(props) {
@@ -35,6 +35,8 @@ export default class WidgetGrid extends React.Component {
         this.pageSize = configuration ? (configuration.pageSize ? configuration.pageSize : 10) : 10;
         let oxzionMeta = configuration ? (configuration['oxzion-meta'] ? configuration['oxzion-meta'] : null) : null;
         this.exportToExcel = oxzionMeta ? (oxzionMeta['exportToExcel'] ? oxzionMeta['exportToExcel'] : false) : false;
+        this.core = props.core;
+        this.helper = this.core.make("oxzion/link");
         this.state = {
             filter: null,
             pagination: {
@@ -186,9 +188,30 @@ export default class WidgetGrid extends React.Component {
     }
 
     drillDownClick = (evt) => {
-        WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
-        ReactDOM.unmountComponentAtNode(this.props.canvasElement)
+        console.log(this.props.configuration);
+        let drillDownTarget = this.props.configuration["oxzion-meta"]['drillDown']['target'];
 
+        if (drillDownTarget == 'file') {
+            let appName = this.props.configuration["oxzion-meta"]['drillDown']['nextWidgetId'];
+            let eventData = evt.dataItem;
+            console.log("Inside the file log Content" + eventData); //Need to open a URL
+            this.launchApplication(eventData, appName)
+        } else {
+            WidgetDrillDownHelper.drillDownClicked(WidgetDrillDownHelper.findWidgetElement(evt.nativeEvent ? evt.nativeEvent.target : evt.target), evt.dataItem)
+            ReactDOM.unmountComponentAtNode(this.props.canvasElement)
+        }
+    }
+
+
+    launchApplication(event, selectedApplication) {
+        if (event.uuid) {
+            this.helper.launchApp({
+                // pageId: event.target.getAttribute("page-id"),
+                pageTitle: event.name,
+                // pageIcon: event.target.getAttribute("icon"),
+                fileId: event.uuid,
+            }, selectedApplication);
+        }
     }
 
     hasBackButton() {
@@ -228,6 +251,13 @@ export default class WidgetGrid extends React.Component {
                 if (element != null) {
                     return <td>{formattedSum}</td>
                 }
+            }
+        }
+        // if (this.props.configuration["oxzion-meta"]["drillDown"] != null) {
+        if (typeof this.props.isDrillDownTable === true) {
+            let target = this.props.configuration["oxzion-meta"]["drillDown"];
+            if (target["target"] == "link") {
+                return <td><a eoxapplication={target["AppName"]} file-id={column.uuid}>{column.name}</a></td>
             }
         }
         return tdElement;
@@ -300,7 +330,7 @@ export default class WidgetGrid extends React.Component {
 
         return (
             <>
-            {this.state.displayedData.length === 0 && loadingPanel}
+                {this.state.displayedData.length === 0 && loadingPanel}
                 {this.isDrillDownTable &&
                     <div className="oxzion-widget-drilldown-table-icon" style={hasBackButton ? { right: "5%" } : { right: "7px" }} title="Drilldown Table">
                         <i className="fas fa-angle-double-down fa-lg"></i>

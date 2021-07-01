@@ -1,16 +1,18 @@
 import WidgetRenderer from '../../../WidgetRenderer';
 import AbstractEditor from './abstractEditor';
+import JSONHtmlForm from "./JSONtoHTMLForm";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Swal from 'sweetalert2';
 import Select from 'react-select'
-import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button } from 'react-bootstrap';
+import { Tabs, Tab, Overlay, Tooltip, Form, Row, Col, Button,Dropdown,Spinner} from 'react-bootstrap';
 import { array } from 'prop-types';
 var SINGLELEVEL = "singleLevel"
 var MULTILEVEL = "multiLevel"
 class WidgetEditorBody extends AbstractEditor {
     constructor(props) {
         super(props);
+        console.log("widget body===>",this.props)
         this.type = (props.type === 'inline' || props.type === 'html') ? 'widget' : props.type;
         this.state.selectedTab = this.type;
         this.state.widgetType = this.type;
@@ -18,10 +20,12 @@ class WidgetEditorBody extends AbstractEditor {
         this.amChart = null;
         this.state.selectableWidgetOptions = props.selectableWidgetOptions;
         this.state.selectableDashboardOptions = props.selectableDashboardOptions;
+        this.state.selectableAppOptions = props.selectableAppOptions;
         this.state.singleTarget = true;
         this.state.disabledTargetForm = false;
         this.state.targetTypeValue = "1";
-
+        this.state.selectedJsonOption=null;
+        this.state.isJsonLoading=false;
         this.ERRORS = {
             CHART_CONFIGURATION_NEEDED: 'Chart configuration is needed',
             TABLE_CONFIGURATION_NEEDED: 'Table configuration is needed',
@@ -38,8 +42,9 @@ class WidgetEditorBody extends AbstractEditor {
             { "label": "Single", "value": "single" },
             { "label": "Multiple", "value": "multiple" }
         ];
-
-
+        console.log(this.state.drillDownWidgetType);
+        this.handleFormChange = this.handleFormChange.bind(this);
+        this.state.optionData = [];
     }
 
     getTargetFieldList() {
@@ -76,23 +81,24 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     refreshWidgetPreview = () => {
+        console.log("widget type====>",this.state.widgetType,this.data)
         let cardBody = document.querySelector('div#previewBox div.card-body');
         let errorMessage = null;
         let config = this.state.configuration;
-        if ((this.state.widgetType === 'table' || this.state.widgetType === 'widget') && (!config || (0 === config.length))) {
+        if ((this.state.widgetType === 'table' || this.state.widgetType === 'widget' || this.state.widgetType === 'profile') && (!config || (0 === config.length))) {
             this.state.widgetType === 'widget' ? config = {} : errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
         } else {
             try {
                 //Make sure chart configuratio is valid JSON
                 config = this.state.configuration != '' ? JSON.parse(this.state.configuration) : '{}';
-            }
-            catch (jsonParseError) {
+            } catch (jsonParseError) {
                 console.error(jsonParseError);
                 errorMessage = this.ERRORS.CHART_CONFIGURATION_INVALID_JSON;
             }
         }
         if (!errorMessage) {
             let previewElement = null;
+            console.log("Preview element---->",'div#' + this.state.widgetType + 'Preview')
             previewElement = document.querySelector('div#' + this.state.widgetType + 'Preview');
             if (this.state.widgetType === 'table' && previewElement) {
                 //Remove and cleanup ReactJS rendered DOM nodes.
@@ -118,11 +124,12 @@ class WidgetEditorBody extends AbstractEditor {
                 else if (this.state.widgetType === 'table') {
                     previewElement.style.width = (cardBody.offsetWidth - 40) + 'px'; //-40px for border and margin around preview area.
                     WidgetRenderer.renderTable(previewElement, config, this.data);
+                } else if (this.state.widgetType === 'profile') {
+                    WidgetRenderer.renderProfile(previewElement, config, undefined, this.data);
                 } else if (this.state.widgetType === 'widget') {
                     WidgetRenderer.renderAggregateValue(previewElement, config, props, this.data);
                 }
-            }
-            catch (renderError) {
+            } catch (renderError) {
                 console.error(renderError);
                 errorMessage = '' + renderError;
             }
@@ -152,8 +159,7 @@ class WidgetEditorBody extends AbstractEditor {
         let hasDrillDown = (configuration && configuration["oxzion-meta"] && configuration["oxzion-meta"]["drillDown"]) ? true : false
         if (hasDrillDown) {
             this.initializeDrillDownValues(configuration)
-        }
-        else {
+        } else {
             this.setState({ drillDownFilter: '', drillDownWidget: '', drillDownWidgetTitle: '', drillDownWidgetFooter: '', hasMaxDepth: false, drillDownMaxDepth: -1 })
         }
     }
@@ -168,32 +174,28 @@ class WidgetEditorBody extends AbstractEditor {
 
     isConfigurationTabValid = (state, setErrorState = true) => {
         let isValid = true;
-        if (this.state.widgetType === 'chart' || this.state.widgetType === 'table') {
+        if (this.state.widgetType === 'chart' || this.state.widgetType === 'table' || this.state.widgetType === 'profile') {
             let configuration = state.configuration;
             let errorMessage = null;
             if ('' === configuration) {
                 isValid = false;
                 errorMessage = this.ERRORS.TABLE_CONFIGURATION_NEEDED;
-            }
-            else {
+            } else {
                 try {
                     //Make sure table configuratio is valid JSON
                     JSON.parse(configuration);
-                }
-                catch (jsonParseError) {
+                } catch (jsonParseError) {
                     isValid = false;
                     console.error(jsonParseError);
                     errorMessage = this.ERRORS.TABLE_CONFIGURATION_INVALID_JSON;
                 }
             }
-
             if (setErrorState) {
                 state.errors.configuration = state.readOnly ? null : errorMessage;
             }
         }
         return isValid;
     }
-
 
     isQueryTabValid = (state, setErrorState = true) => {
         let queryErrors = state.errors.queries;
@@ -218,8 +220,7 @@ class WidgetEditorBody extends AbstractEditor {
             try {
                 //Make sure expression is valid JSON
                 JSON.parse(expression);
-            }
-            catch (jsonParseError) {
+            } catch (jsonParseError) {
                 isValid = false;
                 console.error(jsonParseError);
                 errorMessage = this.ERRORS.EXPRESSION_INVALID_JSON;
@@ -256,8 +257,7 @@ class WidgetEditorBody extends AbstractEditor {
                     this.setState((state) => {
                         thiz.isConfigurationTabValid(state);
                     });
-                }
-                else {
+                } else {
                     switchToTab = findInvalidTab([{ 'query': isQueryTabValid }, { 'expression': isExpressionTabValid }]);
                 }
                 break;
@@ -266,8 +266,7 @@ class WidgetEditorBody extends AbstractEditor {
                     this.setState((state) => {
                         thiz.isConfigurationTabValid(state);
                     });
-                }
-                else {
+                } else {
                     switchToTab = findInvalidTab([{ 'widget': isConfigurationTabValid }, { 'expression': isExpressionTabValid }]);
                 }
                 break;
@@ -277,8 +276,7 @@ class WidgetEditorBody extends AbstractEditor {
                     this.setState((state) => {
                         thiz.isQueryTabValid(state);
                     });
-                }
-                else {
+                } else {
                     switchToTab = findInvalidTab([{ 'expression': isExpressionTabValid }, { [this.state.widgetType]: isConfigurationTabValid }]);
                 }
                 break;
@@ -287,9 +285,18 @@ class WidgetEditorBody extends AbstractEditor {
                     this.setState((state) => {
                         thiz.isExpressionTabValid(state);
                     });
-                }
-                else {
+                } else {
                     switchToTab = findInvalidTab([{ [this.state.widgetType]: isConfigurationTabValid }, { 'query': isQueryTabValid }]);
+                }
+                break;
+
+            case 'profile':
+                if (!isConfigurationTabValid) {
+                    this.setState((state) => {
+                        thiz.isConfigurationTabValid(state);
+                    });
+                } else {
+                    switchToTab = findInvalidTab([{ 'profile': isConfigurationTabValid }, { 'expression': isExpressionTabValid }]);
                 }
                 break;
         }
@@ -312,14 +319,19 @@ class WidgetEditorBody extends AbstractEditor {
             case 'chart':
             case 'table':
             case 'widget':
+            case 'profile':
                 cardBody = document.querySelector('div#propertyBox div.card-body');
                 textArea = document.querySelector('textarea#configuration');
-                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+                // textArea.style.height = (cardBody !== null) ? (cardBody.offsetHeight - 80) + 'px' : "500px"; //-80px for border and margin around textarea.
+                // console.log(textArea.style.height)
                 break;
             case 'expression':
                 cardBody = document.querySelector('div#propertyBox div.card-body');
                 textArea = document.querySelector('textarea#expression');
-                textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+                // textArea.style.height = (cardBody.offsetHeight - 80) + 'px'; //-80px for border and margin around textarea.
+                break;
+            case 'template':
+                this.getTemplateSelection();
                 break;
         }
         let thiz = this;
@@ -330,6 +342,7 @@ class WidgetEditorBody extends AbstractEditor {
                     case 'chart':
                     case 'table':
                     case 'widget':
+                    case 'profile':
                         thiz.isConfigurationTabValid(state);
                         break;
                     case 'query':
@@ -345,6 +358,9 @@ class WidgetEditorBody extends AbstractEditor {
                     case 'chart':
                     case 'table':
                     case 'widget':
+                    case 'profile':
+                    case 'jsGrid':
+                    case 'HTML':
                         thiz.refreshWidgetPreview();
                         break;
                     case 'query':
@@ -371,6 +387,31 @@ class WidgetEditorBody extends AbstractEditor {
         let widgetUuid = this.props.widget.uuid;
         this.getTargetData(widgetUuid);
         this.props.widget.configuration && this.getTargetFieldList();
+
+        // if(this.state.drillDownWidgetType) {
+        //     this.setState({ drillDownFilter: 'dashboar'});
+        // }
+        // this.setState((state) => {
+        //     state.drillDownWidgetType.value = drillDownWidgetType.value ? drillDownWidgetType.value  : "dashboard";
+        //     return state;
+        // });
+        
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.widget.type != this.props.widget.type) {
+            console.log("selectedOption",this.state.selectedJsonOption)
+            this.setState({isJsonLoading:true});
+            setTimeout(() => {
+              this.setState({
+                widgetVisualType: this.props.widget.type,
+                selectedTab:this.props.type != 'html' ? this.props.type : 'widget',
+                widgetType:this.props.type != 'html' ? this.props.type : 'widget',
+                configuration: null,
+                isJsonLoading:false
+              });
+            }, 1000);
+        }
     }
 
     async getTargetData(widgetUuid) {
@@ -398,7 +439,7 @@ class WidgetEditorBody extends AbstractEditor {
     }
 
     refreshPreview() {
-        if (this.state.selectedTab === 'chart' || this.state.selectedTab === 'table' || this.state.selectedTab === 'widget' || this.state.selectedTab === 'inline' || this.state.selectedTab === 'html') {
+        if (this.state.selectedTab === 'chart' || this.state.selectedTab === 'table' || this.state.selectedTab === 'widget' || this.state.selectedTab === 'inline' || this.state.selectedTab === 'html' || this.state.selectedTab === 'profile') {
             //refresh preview
             this.refreshWidgetPreview();
         } else if (this.state.selectedTab === 'query') {
@@ -447,14 +488,11 @@ class WidgetEditorBody extends AbstractEditor {
                 params = { ...params, ...val }
                 params['version'] = (params['version']) ? params['version'] : 1
                 if (params['target_id']) { //Check if the target already exist
-
                     params['id'] = params['target_id']
                     params['uuid'] = params['target_uuid']
-
                     targetParams['target_id'] = params['target_id']
                     targetParams['widget_id'] = params['widget_id']
                     targetParams['group_value'] = params['group_value']
-
                     window.postDataRequest('analytics/target/' + params['uuid'], params, 'put').
                         then(function (response) {
                             console.log(response)
@@ -503,7 +541,6 @@ class WidgetEditorBody extends AbstractEditor {
                     });
             }
         }
-        console.log(targetVal);
         this.getTargetData(this.props.widget.uuid);
         this.setState({ disabledTargetForm: true })
     }
@@ -511,15 +548,12 @@ class WidgetEditorBody extends AbstractEditor {
     async saveTargetData(targetParams) {
         targetVal = window.postDataRequest('analytics/target/createwidgettarget', targetParams, 'post').
             then(function (response) {
-                // that.setState({ singleLimit: response[0] }, () => {
                 console.log(response);
-                // })
             });
         return targetVal;
     }
 
     handleTargetInputChange = (e) => {
-
         let errors = this.validateTargetInput(e)
         let multiLimit = this.state.multiLimit;
         if (!(this.state.singleTarget)) {
@@ -544,18 +578,15 @@ class WidgetEditorBody extends AbstractEditor {
 
     validateTargetInput = (e) => {
         let errors = JSON.parse(JSON.stringify(this.state.errors))
-
         if (e) {
             const { name, value, id } = e.target
             let limit = id == "" ? SINGLELEVEL : MULTILEVEL
-
             if (value != "") {
                 var regex_condition = /^[0-9]+$/;
                 if (limit == SINGLELEVEL) {
                     !regex_condition.test(value) ? errors["target"][SINGLELEVEL][name] = "*Please enter decimal values" : delete errors["target"][SINGLELEVEL][name]
                 } else {
                     !regex_condition.test(value) ? errors["target"][MULTILEVEL][`${name}_${id}`] = "*Please enter decimal values" : delete errors["target"][MULTILEVEL][`${name}_${id}`]
-
                 }
             } else {
                 if (limit == SINGLELEVEL) {
@@ -570,19 +601,17 @@ class WidgetEditorBody extends AbstractEditor {
             this.state.singleLimit.red_limit == '' && (errors["target"][SINGLELEVEL]["red_limit"] = "*Field cannot be empty")
             this.state.singleLimit.yellow_limit == '' && (errors["target"][SINGLELEVEL]["yellow_limit"] = "*Field cannot be empty")
             this.state.singleLimit.green_limit == '' && (errors["target"][SINGLELEVEL]["green_limit"] = "*Field cannot be empty")
-
             //checking if all fields are entered in multiple target
-            
             Array.isArray(this.props.widget.data) && this.props.widget.data.map((item, index) => {
-                let value=this.state.multiLimit[this.state.targetFields[0].label + "_" + index]
-                if (value==undefined ||(value!=undefined && value.red_limit == "")) {
-                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`]= "*Field cannot be empty"
+                let value = this.state.multiLimit[this.state.targetFields[0].label + "_" + index]
+                if (value == undefined || (value != undefined && value.red_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_red_limit`] = "*Field cannot be empty"
                 }
-                if (value==undefined ||(value!=undefined && value.green_limit == "")) {
-                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_green_limit`]= "*Field cannot be empty"
+                if (value == undefined || (value != undefined && value.green_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_green_limit`] = "*Field cannot be empty"
                 }
-                if (value==undefined ||(value!=undefined &&value.yellow_limit == "")) {
-                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_yellow_limit`]= "*Field cannot be empty"
+                if (value == undefined || (value != undefined && value.yellow_limit == "")) {
+                    errors.target[MULTILEVEL][`${this.state.targetFields[0].label}_${index}_yellow_limit`] = "*Field cannot be empty"
                 }
             })
             this.setState({ errors: errors })
@@ -590,8 +619,71 @@ class WidgetEditorBody extends AbstractEditor {
         }
     }
 
+    getTemplateListOptions = (templateList) =>{
+        let templateOptions = []
+        templateList.map(temp => templateOptions.push({value:temp,label:temp.split('.')[0]}));
+        return templateOptions;
+    }
+    handleDropDown = (key) => {
+        this.setState({selectedJsonOption:key.label})
+        var json = require(`../../../public/json/${key.value}.json`);
+        this.setState({configuration:JSON.stringify(json,undefined,3)},this.refreshWidgetPreview())
+    };
+
+    handleFormChange(keys, evt) {
+        const updatedValue = evt.target.value;
+        let configurationChart = { ...JSON.parse(this.state.configuration) };
+    
+        let result = (keys || []).reduce((result, targetKey, index) => {
+          if (index === keys.length - 1) {
+            result[targetKey] = updatedValue;
+            return result[targetKey];
+          }
+    
+          return result[targetKey] || {};
+        }, configurationChart);
+    
+        this.setState((state) => {
+          state.configuration = JSON.stringify(configurationChart, null, "    ");
+          state.errors.configuration =
+            "" === configurationChart
+              ? thiz.ERRORS.CHART_CONFIGURATION_NEEDED
+              : null;
+          return state;
+        });
+      }
+      getOptions() {
+        console.log("calling",this.state.selectedOption);
+        var options = [];
+        if(this.widgetJson[this.state.widgetVisualType]!=undefined){
+          this.widgetJson[this.state.widgetVisualType].map((item) =>
+          options.push({ label: item.name, value: item.value })
+        );
+        }
+      
+        return options;
+      }
+
     render() {
         let thiz = this;
+        let parentKeys = [];
+        const {widgetVisualType,isTemplateLoading,templateList,selectedTemplate} = this.state;
+        
+        function getFormChart() {
+            try {
+              return (
+                <JSONHtmlForm
+                  data={{ ...JSON.parse(thiz.state.configuration) }}
+                  handleFormChange={thiz.handleFormChange}
+                  stack={parentKeys}
+                />
+              );
+            } catch (error) {
+              console.log(error);
+              return <div>Error in JSON</div>;
+            }
+        }
+        
         function getQuerySelectOptoins(keyPrefix) {
             let i = 0;
             let options = [<option value="" key={keyPrefix + '00000000-0000-0000-0000-000000000000'}>-Select query-</option>];
@@ -603,6 +695,7 @@ class WidgetEditorBody extends AbstractEditor {
         };
 
         function getQuerySelections() {
+            console.log("calling.. query..")
             let querySelections = [];
             let count = thiz.state.queries.length;
             if (0 === count) {
@@ -664,7 +757,7 @@ class WidgetEditorBody extends AbstractEditor {
                                 // </div>
                             }
                         </div>
-                    </div >
+                    </div>
                 );
             }
             return querySelections;
@@ -674,6 +767,28 @@ class WidgetEditorBody extends AbstractEditor {
             var string = input;
             return string[0].toUpperCase() + string.slice(1);
         };
+
+        const DropdownComponent = (
+            <Select
+              options={this.getOptions()}
+              onChange={(e) => this.handleDropDown(e)}
+              defaultValue={
+                this.state.selectedJsonOption
+                  ? this.state.selectedJsonOption
+                  : ""
+              }
+            ></Select>
+          );
+        const SpinnerComponent = (
+            <div style={{ marginLeft: "50%", marginTop: "35%" }}>
+                <Spinner
+                animation="border"
+                role="status"
+                size="sm"
+                style={{ marginRight: "50%" }}
+                ></Spinner>
+            </div>
+        );
 
         return (
             <>
@@ -686,26 +801,87 @@ class WidgetEditorBody extends AbstractEditor {
                             <div className="form-group row" style={{ marginBottom: '0px' }}>
                                 <Tabs activeKey={this.state.selectedTab} onSelect={this.configurationTabSelected}>
                                     <Tab eventKey={this.state.widgetType} title={capitalizeFirstLetter(this.state.widgetType)}>
-                                        <div className="form-group row" style={{ marginLeft: '0px', marginRight: '0px' }}>
+                                    {!this.state.isJsonLoading ?
+                                        this.state.widgetType != 'widget'
+                                        ?
+                                            <div className="form-group row" style={{ marginLeft: "0px", marginRight: "0px" }}>
                                             <div className="col-12 no-left-padding no-right-padding">
-                                                <textarea id="configuration" name="configuration" ref="configuration"
-                                                    className="form-control form-control-sm" style={{ fontFamily: 'Monospace' }}
-                                                    onChange={this.configurationChanged} value={this.state.configuration}
-                                                    onBlur={() => {
-                                                        this.props.syncWidgetState("configuration", this.state.configuration, this.data);
-                                                        this.refreshWidgetPreview();
-                                                    }
-                                                    } disabled={this.state.readOnly} />
-                                                <Overlay id="configuration-overlay" target={this.refs.configuration}
-                                                    show={this.state.errors.configuration != null} placement="top">
-                                                    {props => (
-                                                        <Tooltip id="configuration-tooltip" {...props} className="error-tooltip">
-                                                            {this.state.errors.configuration}
-                                                        </Tooltip>
-                                                    )}
-                                                </Overlay>
+                                            {!this.state.readOnly  && <div style={{padding: "5px 5px 5px 0px",maxWidth: "300px"}}>
+                                                {DropdownComponent}
+                                            </div>}
+                                            {this.state.configuration != null ? (
+                                                !this.state.readOnly ?
+                                                <>
+                                                    <Tabs defaultActiveKey="form">
+                                                        <Tab eventKey="form" title="Form">
+                                                            <Form style={{border: "1px solid lightgray",overflowY: "scroll",height: "340px",}}>
+                                                            {getFormChart()}
+                                                            </Form>
+                                                        </Tab>
+                                                        <Tab eventKey="json" title="Json">
+                                                            <Form.Control
+                                                                as="textarea"
+                                                                rows="10"
+                                                                name="chartConfiguration"
+                                                                value={this.state.configuration}
+                                                                onChange={this.configurationChanged}
+                                                                onBlur={() => {
+                                                                    this.props.syncWidgetState(
+                                                                    "configuration",
+                                                                    this.state.configuration,
+                                                                    this.data
+                                                                    );
+                                                                    this.refreshWidgetPreview();
+                                                                }}
+                                                                disabled={this.state.readOnly}
+                                                            />
+                                                        </Tab>
+                                                    </Tabs>
+                                                </>
+                                                :
+                                                    <Form.Control
+                                                        as="textarea"
+                                                        rows="10"
+                                                        name="chartConfiguration"
+                                                        value={this.state.configuration}
+                                                        onChange={this.configurationChanged}
+                                                        onBlur={() => {
+                                                            this.props.syncWidgetState(
+                                                            "configuration",
+                                                            this.state.configuration,
+                                                            this.data
+                                                            );
+                                                            this.refreshWidgetPreview();
+                                                        }}
+                                                        disabled={this.state.readOnly}
+                                                    />
+                                            ) : null}
                                             </div>
                                         </div>
+                                        :
+                                            <div className="form-group row" style={{ marginLeft: '0px', marginRight: '0px' }}>
+                                                <div className="col-12 no-left-padding no-right-padding">
+                                                    <textarea id="configuration" name="configuration" ref="configuration"
+                                                        className="form-control form-control-sm" style={{ fontFamily: 'Monospace' }}
+                                                        onChange={this.configurationChanged} value={this.state.configuration}
+                                                        onBlur={() => {
+                                                            this.props.syncWidgetState("configuration", this.state.configuration, this.data);
+                                                            this.refreshWidgetPreview();
+                                                        }
+                                                        } disabled={this.state.readOnly} />
+                                                    <Overlay id="configuration-overlay" target={this.refs.configuration}
+                                                        show={this.state.errors.configuration != null} placement="top">
+                                                        {props => (
+                                                            <Tooltip id="configuration-tooltip" {...props} className="error-tooltip">
+                                                                {this.state.errors.configuration}
+                                                            </Tooltip>
+                                                        )}
+                                                    </Overlay>
+                                                </div>
+                                            </div>
+                                    :
+                                        <>{SpinnerComponent}</>
+                                    }
                                     </Tab>
                                     <Tab eventKey="query" title="Query">
                                         <br />
@@ -767,13 +943,17 @@ class WidgetEditorBody extends AbstractEditor {
                                                 </Col>
                                                 <Col md="3" lg="6">
                                                     <Select
-                                                        placeholder={this.state.drillDownWidgetType.value == "dashboard" ? "Choose Dashboard" : "Choose Widget"}
+                                                        placeholder={this.state.drillDownWidgetType.value == "dashboard" ? "Choose Dashboard" : this.state.drillDownWidgetType.value == "file" ? "Choose App" : "Choose Widget"}
                                                         name="drillDownWidget"
                                                         id="drillDownWidget"
                                                         isDisabled={this.state.readOnly}
                                                         onChange={(e) => this.handleSelect(e, "drillDownWidget")}
-                                                        value={this.state.drillDownWidgetType.value == "dashboard" ? this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) : this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
-                                                        options={this.state.filteredWidgetList.length > 0 ? this.state.filteredWidgetList : this.props.selectableWidgetOptions}
+                                                        value={this.state.drillDownWidgetType.value == "dashboard" ?
+                                                            this.props.selectableDashboardOptions.filter(option => option.value == this.state.drillDownWidget) :
+                                                            (this.state.drillDownWidgetType.value == "file") ?
+                                                                this.props.selectableAppOptions.filter(option => option.value == this.state.drillDownWidget) :
+                                                                this.props.selectableWidgetOptions.filter(option => option.value == this.state.drillDownWidget)}
+                                                        options={this.state.drillDownWidgetType.value == "dashboard" ? this.props.selectableDashboardOptions : this.state.drillDownWidgetType.value == 'file' ? this.props.selectableAppOptions : this.props.selectableWidgetOptions}
                                                     />
                                                     <Form.Text className="errorMsg">
                                                         {this.state.errors.drillDown["drillDownWidget"]}
@@ -1075,6 +1255,24 @@ class WidgetEditorBody extends AbstractEditor {
                                             </div>
                                         </Tab>
                                     }
+                                    {widgetVisualType == "html" &&
+                                        <Tab eventKey="template" title="Template">
+                                            {isTemplateLoading ?
+                                                <p>loading.....</p>
+                                            :
+                                                <div className="form-group row" style={{marginTop:'30px'}}>
+                                                    <div className="col-7">
+                                                        <Select
+                                                            placeholder="Select Template"
+                                                            onChange={(e) => {this.templateSelectionChanged(e)}}
+                                                            value={selectedTemplate ? selectedTemplate : ""}
+                                                            options={this.getTemplateListOptions(templateList)}
+                                                        />
+                                                    </div>
+                                                </div>    
+                                            }
+                                        </Tab>
+                                    }
                                 </Tabs>
                             </div>
                         </div>
@@ -1096,9 +1294,14 @@ class WidgetEditorBody extends AbstractEditor {
                                     <b>Table preview</b>
                                 </div>
                             }
-                            {(this.state.selectedTab === 'widget') &&
+                            {(this.state.selectedTab === 'widget' || this.state.selectedTab === 'template') &&
                                 <div id="widgetPreview">
                                     <b>Widget preview</b>
+                                </div>
+                            }
+                            {(this.state.selectedTab === 'profile') &&
+                                <div id="profilePreview">
+                                    <b>Profile preview</b>
                                 </div>
                             }
                             {((this.state.selectedTab === 'query') || (this.state.selectedTab === 'expression')) &&

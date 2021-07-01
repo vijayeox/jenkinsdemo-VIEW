@@ -18,6 +18,7 @@ export default class DialogContainer extends React.Component {
       prjInEdit: this.props.dataItem || null,
       managerName: undefined,
       parentProject: this.props.dataItem.parentId,
+      projectFlag: false
     };
     this.notif = React.createRef();
   }
@@ -109,7 +110,7 @@ export default class DialogContainer extends React.Component {
       name: this.state.prjInEdit.name,
       description: this.state.prjInEdit.description,
       managerId: this.state.prjInEdit.managerId,
-      parentId: this.state.prjInEdit.parentId,
+      parentId: this.state.projectFlag ? null : this.state.prjInEdit.parentId
     };
     PushData(
       "project",
@@ -127,6 +128,7 @@ export default class DialogContainer extends React.Component {
         this.notif.current.notify("Error",response.message ? response.message : null,"danger");
       }
     });
+    this.setState({projectFlag:false});
   };
 
   render() {
@@ -210,7 +212,7 @@ export default class DialogContainer extends React.Component {
                     />
                     <button onClick={(e)=>{
                       e.preventDefault();
-                      this.setState({parentProject:null});
+                      this.setState({parentProject:null, projectFlag: true});
                     }} >
                       <i class="fa fa-times-circle" aria-hidden="true"></i>
                     </button>
