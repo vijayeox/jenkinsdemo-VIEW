@@ -20,7 +20,18 @@
   "keywords": [
     "osjs"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/runtime": "^7.9.2",
+    "@osjs/gui": "^4.0.33",
+    "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "hyperapp": "^1.2.9",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
   "author": "Anders Evenrud <andersevenrud@gmail.com>",
   "license": "BSD-2-Clause",
   "bugs": {
@@ -31,16 +42,6 @@
     "type": "package"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
-    "@babel/runtime": "^7.9.2",
-    "@osjs/gui": "^4.0.33",
-    "babel-loader": "^8.1.0",
-    "copy-webpack-plugin": "^4.6.0",
-    "eslint": "^5.12.0",
-    "hyperapp": "^1.2.9",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "eslint": "^5.12.0"
   }
 }
