@@ -8,11 +8,11 @@
     "stylelint": "stylelint index.scss",
     "prepublishOnly": "npm run test && rm ./dist/* && npm run build"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@osjs/dev-meta": "^1.0.2",
     "dotenv-webpack": "^6.0.0"
   },
-  "devDependencies": {},
   "eslintConfig": {
     "env": {
       "browser": true,
