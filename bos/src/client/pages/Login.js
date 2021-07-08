@@ -2,7 +2,7 @@ import { Login as defaultLogin } from "../../osjs-client/index.js";
 import "../assets/scss/login.scss";
 import React from "react";
 import ReactDOM from "react-dom";
-import oxLogo from "../assets/images/eox.png";
+import oxLogo from "../assets/images/hubdrive.png";
 import AnnouncementIcon from "../assets/images/icon_white.svg";
 import ForgotPassword from "./ForgotPassword.js";
 import ResetPasswordPage from "./ResetPasswordPage.js";
