@@ -1,5 +1,5 @@
 import React from "react";
-import oxLogo from "../assets/images/eox.png";
+import oxLogo from "../assets/images/hubdrive.png";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
