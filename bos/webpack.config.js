@@ -99,7 +99,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/client/index.ejs'),
       favicon: path.resolve(__dirname, 'src/client/favicon.ico'),
-      title: 'EOX Vantage'
+      title: 'Hub Drive Online'
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css'
