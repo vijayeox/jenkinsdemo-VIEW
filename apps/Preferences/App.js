@@ -214,8 +214,6 @@ class App extends React.Component {
     }
   };
 
-  
-  //PROFILE UPDATE FUNCTION
 
   handleSubmit(response){
     console.log('HANDLE-RESPONSE',response)
