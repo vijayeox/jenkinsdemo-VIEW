@@ -213,7 +213,17 @@ class App extends React.Component {
       );
     }
   };
+
   
+  //PROFILE UPDATE FUNCTION
+
+  handleSubmit(response){
+    console.log('HANDLE-RESPONSE',response)
+   this.setState({profileData : {...response.key, phone : `${response.key.country_code}-${response.key.contact}`}})
+   
+  }
+ 
+
   render() {
     return (
       <div className="myProfileDiv row">
@@ -227,6 +237,8 @@ class App extends React.Component {
             <div className="profile-usertitle">
               <div className="profile-usertitle-name">
                 {this.state.profileData.name}
+             
+                
               </div>
               <div className="profile-usertitle-job">
                 {this.state.profileData.designation}
@@ -320,7 +332,7 @@ class App extends React.Component {
           </div>
           <div className="tabContentDiv">
             <TabContent for="vertical-tab-editprofile" key="vertical-tab-editprofile">
-              <EditProfile args={this.core} />
+              <EditProfile args={this.core} handleSubmitProfile={this.handleSubmit.bind(this)}/>
             </TabContent>
             <TabContent for="vertical-tab-password" key="vertical-tab-password">
               <ChangePassword args={this.core}/>
