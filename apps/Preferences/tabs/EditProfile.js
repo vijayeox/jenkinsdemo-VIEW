@@ -24,7 +24,7 @@ class EditProfile extends React.Component {
       reload: false,
       userprofile:userprofile
     }
-
+    this.handleSubmitProfile = this.props.handleSubmitProfile.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this);
     this.notif = React.createRef();
     this.submitProfilePic = this.submitProfilePic.bind(this);
@@ -38,13 +38,17 @@ class EditProfile extends React.Component {
     this.setState({reload:false})
     
   }
+ 
+  
   async handleSubmit(event) {
     
     this.core.make("oxzion/profile").update();
     var userprofile = this.getUserProfile();
     this.setState({reload: true,userprofile:userprofile})
-      
+    this.handleSubmitProfile(userprofile)
   }
+
+
 
   getUserProfile(){
     var userprofile = this.core.make("oxzion/profile").get();
