@@ -162,7 +162,7 @@ class EditProfile extends React.Component {
                   this.setState({ showImageDiv: 1 });
                 }}
               >
-                Cancel
+                Cancel.
               </p>
             </div>
           </div>
