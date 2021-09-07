@@ -257,7 +257,6 @@ class EditProfile extends React.Component {
       );
     }
   };
-
   render() {
     return (
       <div className="prefrencesMainDiv">
