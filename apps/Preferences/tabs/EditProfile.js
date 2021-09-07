@@ -248,7 +248,7 @@ class EditProfile extends React.Component {
                     this.setState({ showImageDiv: 3 });
                   }}
                 >
-                  Take Picture. <i className="fa fa-camera" />
+                  Take Picture <i className="fa fa-camera" />
                 </p>
               </div>
             </div>
