@@ -1,4 +1,4 @@
-import {React,ReactDOM,  AvatarImageCropper,} from "oxziongui";
+import {React,ReactDOM,  AvatarImageCropper} from "oxziongui";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
@@ -35,7 +35,7 @@ class App extends React.Component {
     return userprofile;
   }
 
-
+  
   async submitProfilePic(imageData) {
     const formData = {};
     formData["file"] = imageData;
@@ -54,7 +54,7 @@ class App extends React.Component {
       );
     } else {
       this.setState({
-        icon: imageData
+        icon: imageData 
       });
       this.core.make("oxzion/profile").update();
       this.notif.current.notify(
@@ -127,7 +127,7 @@ class App extends React.Component {
       } else {
         return (
           <div className="chooseWebcamDiv">
-            <img src={this.state.imageData} className="webCamImage" />
+            <img src={this.state.imageData} className="webCamImage"  />
             <p
               className="btn-sm btn-success imgBtn2"
               onClick={() => {
@@ -169,6 +169,8 @@ class App extends React.Component {
     }
   };
 
+
+
   profileImageData = () => {
     let displayImage, middle;
     if (this.state.icon == null || this.state.icon == "") {
@@ -187,6 +189,8 @@ class App extends React.Component {
               src={this.state.icon}
               className="rounded-circle displayImage"
               style={displayImage}
+            
+
             />
             <div className="middle" style={middle}>
               <div className="text">
@@ -212,15 +216,17 @@ class App extends React.Component {
         </div>
       );
     }
+    
   };
-
-
+  
   handleSubmit(response){
     console.log('HANDLE-RESPONSE',response)
-   this.setState({profileData : {...response.key, phone : `${response.key.country_code}-${response.key.contact}`}})
+   this.setState({profileData : {...response.key, phone : `${response.key.country_code}-${response.key.contact}` ,}})
    
   }
- 
+  
+
+
 
   render() {
     return (
@@ -324,7 +330,7 @@ class App extends React.Component {
             <TabLink to="vertical-tab-preferences">
               <i className="fa fa-key" />
                 <span>
-                  Preferences
+                  Preference
                 </span>
             </TabLink>
           </div>

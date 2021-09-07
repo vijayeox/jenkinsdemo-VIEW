@@ -230,6 +230,7 @@ class EditProfile extends React.Component {
               src={this.state.icon}
               className="rounded-circle displayImage"
               style={displayImage}
+            
             />
             <div className="middle" style={middle}>
               <div className="text">
