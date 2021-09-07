@@ -237,7 +237,7 @@ class ProfilePictureWidget extends React.Component {
                       this.setState({ showImageDiv: 3 });
                     }}
                   >
-                    Take Picture <i className="fa fa-camera" />
+                    Take Pictures <i className="fa fa-camera" />
                   </p>
                 </span>
               ) : null}
