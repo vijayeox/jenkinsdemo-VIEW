@@ -15,7 +15,7 @@ $ docker build -t view docker/
 To start the docker and use it
 $ docker run --network="host" -it -v "${PWD}/..:/app" view bash
 $ npm run serve
-
+###########################################################################33
 ------------------------------------------------------
 Note on Windows use git bash to run the above commands
 ------------------------------------------------------
