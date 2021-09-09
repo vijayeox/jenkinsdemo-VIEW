@@ -34,11 +34,16 @@ class EditProfile extends React.Component {
     var userprofile = this.getUserProfile();
     this.setState({icon: userprofile.key.icon + "?" + new Date(),userprofile:userprofile,profileReady:true});
   }
-  componentWillMount() {
-    this.setState({reload:false})
+  // componentWillMount() {
+  //   this.setState({reload:false})
     
-  }
+  // }
  
+  UNSAFE_componentWillMount() { 
+    this.setState({reload:false})
+  }
+  
+  
   
   async handleSubmit(event) {
     

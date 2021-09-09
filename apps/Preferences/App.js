@@ -1,4 +1,5 @@
-import {React,ReactDOM,  AvatarImageCropper} from "oxziongui";
+
+import {React,ReactDOM,  AvatarImageCropper,Webcam} from "oxziongui";
 import ChangePassword from "./tabs/ChangePassword.js";
 import Preferences from "./tabs/Preferences.js";
 import EditProfile from "./tabs/EditProfile.js";
@@ -28,6 +29,10 @@ class App extends React.Component {
       this.setState({ fields: response.data });
     });
   }
+
+ 
+  
+
   
   async getProfile() {
     // call to api using wrapper
@@ -182,6 +187,7 @@ class App extends React.Component {
       };
     }
     if (this.state.showImageDiv == 1) {
+      console.log(this.state.icon)
       return (
         <div className="profileImageDiv">
           <div className="displayImage">
@@ -192,6 +198,7 @@ class App extends React.Component {
             
 
             />
+            
             <div className="middle" style={middle}>
               <div className="text">
                 <p
