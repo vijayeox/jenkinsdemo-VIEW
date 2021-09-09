@@ -167,7 +167,7 @@ class EditProfile extends React.Component {
                   this.setState({ showImageDiv: 1 });
                 }}
               >
-                Cancel
+                Cancel.
               </p>
             </div>
           </div>
@@ -235,6 +235,7 @@ class EditProfile extends React.Component {
               src={this.state.icon}
               className="rounded-circle displayImage"
               style={displayImage}
+            
             />
             <div className="middle" style={middle}>
               <div className="text">
@@ -261,7 +262,6 @@ class EditProfile extends React.Component {
       );
     }
   };
-
   render() {
     return (
       <div className="prefrencesMainDiv">
