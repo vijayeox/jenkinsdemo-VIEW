@@ -4,6 +4,7 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import FormRender from "./FormRender";
 import HTMLViewer from "./HTMLViewer";
+import InvoiceViewer from "./InvoiceViewer";
 import CommentsView from "./CommentsView";
 import OX_Grid from "../../OX_Grid";
 import SearchPage from "./SearchPage";
@@ -582,7 +583,7 @@ class PageContent extends React.Component {
           />
         );
       } else if (item.type == "Document" || item.type == "HTMLViewer") {
-        var fileData = this.state.fileData? this.state.fileData : this.state.currentRow;
+        var fileData = this.state.fileData && Object.keys(this.state.fileData).length != 0? this.state.fileData : this.state.currentRow;
         var fileId = item.fileId ? item.fileId : item.uuid;
         content.push(
           <HTMLViewer
@@ -602,7 +603,7 @@ class PageContent extends React.Component {
             className={item.className}
           />
         );
-      }else if (item.type == "EntityViewer") {
+      } else if (item.type == "EntityViewer") {
         var fileId = this.props.fileId?this.props.fileId:this.state.currentRow.uuid;
         content.push(
           <EntityViewer
@@ -617,7 +618,19 @@ class PageContent extends React.Component {
             className={item.className}
           />
         );
-      } else {
+      } else if(item.type == "InvoiceViewer"){
+        content.push(
+          <InvoiceViewer
+            key={i}
+            core={this.core}
+            appId={this.appId}
+            proc={this.props.proc}
+            invoiceData={this.state.currentRow}
+          />
+        );
+      } 
+  
+      else {
         if (this.extGUICompoents && this.extGUICompoents[item.type]) {
           this.externalComponent = this.extGUICompoents[item.type];
           item.params = ParameterHandler.replaceParams(this.appId,item.params, this.state.currentRow);
