@@ -22,14 +22,18 @@ class InvoiceViewer extends React.Component {
     
     displayInvoiceData(invoiceData)
     {
+
+        var invoiceId = invoiceData['entity_id'] != null?invoiceData['invoiceUuid']:invoiceData['uuid'];
+        var pdfPath = invoiceData['invoicePDFPath'] == null? invoiceData['account_id']+"/invoice/"+invoiceData['app_id']+"/"+invoiceId+".pdf":invoiceData['invoicePDFPath'];
+
         var url =
         this.baseUrl +
         "app/" +
         this.appId +
         "/document/" +
-        invoiceData.uuid + ".pdf" +
+        invoiceId+ ".pdf" +
         "?docPath=" +
-        invoiceData.account_id+"/invoice/"+invoiceData.app_id+"/"+invoiceData.uuid+".pdf";
+        pdfPath;
 
       return (
         <div className="pdf-frame">

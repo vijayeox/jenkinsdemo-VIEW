@@ -538,6 +538,9 @@ class BaseFormRenderer extends React.Component {
             let method = "post";
             if (form._form["properties"] && form._form["properties"]["submission_api"]) {
                 var postParams = JSON.parse(form._form["properties"]["submission_api"]);
+                if (that.props.fileId || this.state.fileId) {
+                    data.fileId = this.props.fileId ? this.props.fileId : this.state.fileId;
+                }
                 route = ParameterHandler.replaceParams(that.state.appId, postParams.api.url, form.submission.data);
                 delete data.orgId;
                 method = postParams.api.method;
