@@ -927,6 +927,18 @@ export default class OX_Grid extends React.Component {
     }
   }
 
+  
+  setDefaultFilterParams(filters){
+    var filterData = {};
+    filterData = {...filters};
+    if(filterData.filter == undefined || filterData.filter == null){
+      if(this.props.gridDefaultFilters){
+        filterData.filter = this.props.gridDefaultFilters.filter;
+      }
+    }
+    return filterData;
+  }
+
   render() {
     return (
       <div style={this.props.wrapStyle ? this.props.wrapStyle : { height: "100%", float: "left" }} className={"GridCustomStyle " + (this.props.className ? this.props.className : "")} >
@@ -939,7 +951,7 @@ export default class OX_Grid extends React.Component {
           </div>
         </Popup>
         {this.rawDataPresent ? (<DataOperation args={this.props.osjsCore} gridData={this.props.data} total={this.props.data.length} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} />) : (
-          <DataLoader ref={(r) => { this.child = r; }} args={this.props.osjsCore} url={this.props.data} dataState={this.state.dataState} onDataRecieved={this.dataRecieved} {...this.props} />
+          <DataLoader ref={(r) => { this.child = r; }} args={this.props.osjsCore} url={this.props.data} dataState={this.setDefaultFilterParams(this.state.dataState)} onDataRecieved={this.dataRecieved} {...this.props} />
         )}
         <div id="customActionsToolbar" />
         {(!this.props.defaultToolBar&& this.props.customActions && this.props.customActions.length == 0)?this.generateGridToolbar():null}
