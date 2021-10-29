@@ -21,6 +21,7 @@ import PageNavigation from "../PageNavigation";
 import EntityViewer from "./EntityViewer";
 import Dashboard from "../../Dashboard";
 import DashboardManager from "../../DashboardManager";
+import Payment from "../../Payment";
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -629,6 +630,17 @@ class PageContent extends React.Component {
           />
         );
       } 
+      else if(item.type == "Payment"){
+        content.push(
+          <Payment
+            key={i}
+            core={this.core}
+            appId={this.appId}
+            proc={this.props.proc}
+            paymentData={this.state.currentRow}
+          />
+        );
+      }
   
       else {
         if (this.extGUICompoents && this.extGUICompoents[item.type]) {
