@@ -550,6 +550,14 @@ class PageContent extends React.Component {
         );
       } else if (item.type == "DashboardManager") {
         var uuid = item.content ? (item.content.uuid? item.content.uuid: null) : null;
+        var itemContent = (item.content && item.content.content) ? item.content.content:{};
+        var apiRequest = (itemContent['apiUrl'])?{
+          "apiUrl":itemContent.apiUrl,
+          "responseParam":itemContent.responseParam,
+          "apiAction":itemContent.apiAction,
+          "apiMethod": itemContent.apiMethod
+        }:null;
+        
         content.push(
           <DashboardManager
             appId={this.appId}
@@ -557,8 +565,8 @@ class PageContent extends React.Component {
             content={item.content}
             notif={this.notif}
             args={this.core}
+            apiRequest={apiRequest}
             key={i}
-            content={item.content}
             setTitle={() => {}}
             proc={this.proc}
             editDashboard="EDB"
