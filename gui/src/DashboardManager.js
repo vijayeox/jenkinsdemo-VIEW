@@ -52,7 +52,7 @@ class DashboardManager extends React.Component {
       exportConfiguration: null,
       loadDefaultFilters: false
     };
-    this.appId = this.props.app;
+    this.appId = this.props.appId;
     this.proc = this.props.proc;
     this.refresh = React.createRef();
     this.notif = React.createRef();
@@ -105,7 +105,7 @@ class DashboardManager extends React.Component {
     );
     let dash = response.data.dashboard;
     let applyFilterOption = []
-    let dashboardFilter = dash.filter_configuration != "" ? JSON.parse(dash.filter_configuration) : []
+    let dashboardFilter = dash.filter_configuration != "" && dash.filter_configuration != null? JSON.parse(dash.filter_configuration) : []
     dashData.push({ dashData: response.data });
     dashboardFilter && dashboardFilter.map((filter, index) => {
       if (!filter.isDefault) {
@@ -564,6 +564,8 @@ class DashboardManager extends React.Component {
                     this.state.uuid !== "" &&
                     <DashboardViewer
                       drilldownToDashboard={(e, type) => this.drilldownToDashboard(e, type)}
+                      apiRequest={this.props.apiRequest}
+                      appId = {this.appId}
                       ref={el => (this.dashboardViewerRef = el)}
                       key={this.state.uuid}
                       uuid={this.state.uuid}

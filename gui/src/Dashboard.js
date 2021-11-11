@@ -3,6 +3,8 @@ import WidgetRenderer from "./WidgetRenderer";
 import WidgetDrillDownHelper from "./WidgetDrillDownHelper";
 import { scrollDashboardToTop, preparefilter, overrideCommonFilters, extractFilterValues, } from "./DashboardUtils";
 import Swal from "sweetalert2";
+import ParameterHandler from "./components/App/ParameterHandler";
+
 import "./WidgetStyles.css";
 
 class Dashboard extends Component {
@@ -29,9 +31,13 @@ class Dashboard extends Component {
 			}
 		}
 		this.uuid = uuid;
+		this.appId = this.props.appId;
 		this.dashboardDivId = "dashboard_" + this.uuid;
 		this.loader = this.core.make("oxzion/splash");
 		this.helper = this.core.make("oxzion/restClient");
+		this.userProfile = this.core.make("oxzion/profile").get();
+		this.apiRequest = this.props.apiRequest;
+		this.redirect = null;
 		this.props.proc.on("destroy", () => {
 			this.removeScriptsFromDom();
 		});
@@ -57,6 +63,16 @@ class Dashboard extends Component {
 			"v1",
 			"analytics/widget/" + uuid + "?data=true" + filterParameter, {},
 			"get"
+		);
+		return response;
+	}
+
+	async getDataFromApi(url,method,data={})
+	{
+		let response = await this.helper.request(
+			"v1",
+			url,data,
+			method
 		);
 		return response;
 	}
@@ -164,18 +180,56 @@ class Dashboard extends Component {
 				this.updateGraph(this.props.drilldownDashboardFilter) :
 				this.updateGraph();
 		}
+
+		if(this.apiRequest)
+		{
+			var url = ParameterHandler.replaceParams(this.appId,this.apiRequest.apiUrl,{"uuid":this.appId});
+			var data = this.apiRequest.apiMethod=="post"?this.userProfile['key']:{};
+			var that = this;
+			this.getDataFromApi(url,this.apiRequest.apiMethod,data).then((response)=>{
+				if(response['data'])
+				{
+					var apiResponse = response['data'][this.apiRequest.responseParam];
+					if(this.apiRequest.apiAction == "redirect")
+					{
+						that.redirect = apiResponse;
+					}
+				}
+
+			})
+		}
 		window.removeEventListener(
 			"message",
 			this.widgetDrillDownMessageHandler,
 			false
 		); //avoids dupliacte event handalers to be registered
+		window.removeEventListener(
+			"apiRedirect",
+			this.apiRedirect,
+			false
+		);
 		window.addEventListener(
 			"message",
 			this.widgetDrillDownMessageHandler,
 			false
 		);
-		scrollDashboardToTop();
+		window.addEventListener(
+			"apiRedirect",
+			this.apiRedirect,
+			false
+		);
+
 	}
+
+	apiRedirect = (event) => {
+		if(this.redirect)
+		{
+			window.location.href = this.redirect;
+		}
+	}
+
+
+	
 
 	componentWillUnmount() {
 		for (let elementId in this.renderedWidgets) {
@@ -190,6 +244,11 @@ class Dashboard extends Component {
 		window.removeEventListener(
 			"message",
 			this.widgetDrillDownMessageHandler,
+			false
+		);
+		window.removeEventListener(
+			"apiRedirect",
+			this.apiRedirect,
 			false
 		);
 	}
@@ -415,6 +474,8 @@ class Dashboard extends Component {
 		}
 	};
 
+
+
 	async drillDownToDashboard(data) {
 		let event = {};
 		let elementId = data.elementId;
@@ -592,22 +653,29 @@ class Dashboard extends Component {
 			});
 	};
 
+
+
 	render() {
-		return (<
-			div ref={
-				this.myRef
-			}
-			id={
-				this.dashboardDivId
-			}
-			dangerouslySetInnerHTML={
-				{
-					__html: this.appendToDashboardContainer(
-						this.state.htmlData ? this.state.htmlData : ""
-					),
+		return (
+			<div>
+
+				<div ref={
+					this.myRef
 				}
-			}
-		/>
+				id={
+					this.dashboardDivId
+				}
+				dangerouslySetInnerHTML={
+					{
+						__html: this.appendToDashboardContainer(
+							this.state.htmlData ? this.state.htmlData : ""
+						),
+					}
+				}
+				>
+				</div>
+			</div>
+
 		);
 	}
 }
