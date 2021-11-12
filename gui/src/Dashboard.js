@@ -181,23 +181,7 @@ class Dashboard extends Component {
 				this.updateGraph();
 		}
 
-		if(this.apiRequest)
-		{
-			var url = ParameterHandler.replaceParams(this.appId,this.apiRequest.apiUrl,{"uuid":this.appId});
-			var data = this.apiRequest.apiMethod=="post"?this.userProfile['key']:{};
-			var that = this;
-			this.getDataFromApi(url,this.apiRequest.apiMethod,data).then((response)=>{
-				if(response['data'])
-				{
-					var apiResponse = response['data'][this.apiRequest.responseParam];
-					if(this.apiRequest.apiAction == "redirect")
-					{
-						that.redirect = apiResponse;
-					}
-				}
-
-			})
-		}
+		this.executeApiRequest();
 		window.removeEventListener(
 			"message",
 			this.widgetDrillDownMessageHandler,
@@ -221,10 +205,33 @@ class Dashboard extends Component {
 
 	}
 
+	executeApiRequest()
+	{
+		if(this.apiRequest)
+		{
+			var url = ParameterHandler.replaceParams(this.appId,this.apiRequest.apiUrl,{"uuid":this.appId});
+			var data = this.apiRequest.apiMethod=="post"?this.userProfile['key']:{};
+			var that = this;
+			this.getDataFromApi(url,this.apiRequest.apiMethod,data).then((response)=>{
+				if(response['data'])
+				{
+					var apiResponse = response['data'][this.apiRequest.responseParam];
+					if(this.apiRequest.apiAction == "redirect")
+					{
+						that.redirect = apiResponse;
+					}
+				}
+
+			})
+		}
+	}
+
 	apiRedirect = (event) => {
 		if(this.redirect)
 		{
-			window.location.href = this.redirect;
+			var that = this;
+			window.open(that.redirect,"_blank");
+			that.executeApiRequest();
 		}
 	}
 
