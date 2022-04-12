@@ -64,7 +64,7 @@
     "@osjs/gui": "^4.0.33",
     "@osjs/panels": "^3.0.25",
     "@osjs/widgets": "^3.0.4",
-    "ajv": "~6.8.1",
+    "ajv": "~6.12.6",
     "babel-loader": "^8.1.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
