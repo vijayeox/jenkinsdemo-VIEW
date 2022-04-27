@@ -23,7 +23,7 @@
     "react-d3": "^0.4.0",
     "react-router-dom": "^5.1.2",
     "resolve-mjs": "^2.2.2",
-    "webpack-bundle-analyzer": "^3.7.0"
+    "webpack-bundle-analyzer": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
