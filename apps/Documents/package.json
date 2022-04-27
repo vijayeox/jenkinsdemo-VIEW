@@ -15,7 +15,7 @@
     "jquery": "^3.5.0",
     "moment": "^2.24.0",
     "node-noop": "^1.0.0",
-    "webpack-bundle-analyzer": "^3.7.0"
+    "webpack-bundle-analyzer": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
